@@ -1,0 +1,244 @@
+import { BreakpointData } from '../types';
+
+export const BREAKPOINTS_DATA: BreakpointData[] = [
+  // ── 魔法使 (Sorceress) ──
+  {
+    characterClass: "魔法使",
+    classNameEn: "Sorceress",
+    type: "FCR",
+    variant: "標準法術 (冰風暴/暴風雪/火球/隕石/傳送)",
+    notes: "最核心門檻為 63% (過渡) 與 105% (終局標配)；極限衝刺 200% 可達 7 幀極速傳送。",
+    breakpoints: [
+      { frames: 13, requiredValue: 0 },
+      { frames: 12, requiredValue: 9 },
+      { frames: 11, requiredValue: 20 },
+      { frames: 10, requiredValue: 37 },
+      { frames: 9, requiredValue: 63 },
+      { frames: 8, requiredValue: 105 },
+      { frames: 7, requiredValue: 200 }
+    ]
+  },
+  {
+    characterClass: "魔法使",
+    classNameEn: "Sorceress",
+    type: "FCR",
+    variant: "閃電 / 連鎖閃電 (Lightning / Chain Lightning)",
+    notes: "閃電系具有獨立施法動作，關鍵檔位為 78% 與 117% (電法畢業標配)。",
+    breakpoints: [
+      { frames: 19, requiredValue: 0 },
+      { frames: 18, requiredValue: 7 },
+      { frames: 17, requiredValue: 15 },
+      { frames: 16, requiredValue: 23 },
+      { frames: 15, requiredValue: 35 },
+      { frames: 14, requiredValue: 52 },
+      { frames: 13, requiredValue: 78 },
+      { frames: 12, requiredValue: 117 },
+      { frames: 11, requiredValue: 194 }
+    ]
+  },
+  {
+    characterClass: "魔法使",
+    classNameEn: "Sorceress",
+    type: "FHR",
+    notes: "法師常規推薦 42% (9 幀) 或精神盾提供的 55% 直接達標 8 幀 (60% FHR 檔位需補 5%) 或 86% (7 幀)。",
+    breakpoints: [
+      { frames: 15, requiredValue: 0 },
+      { frames: 14, requiredValue: 5 },
+      { frames: 13, requiredValue: 9 },
+      { frames: 12, requiredValue: 14 },
+      { frames: 11, requiredValue: 20 },
+      { frames: 10, requiredValue: 30 },
+      { frames: 9, requiredValue: 42 },
+      { frames: 8, requiredValue: 60 },
+      { frames: 7, requiredValue: 86 },
+      { frames: 6, requiredValue: 142 }
+    ]
+  },
+
+  // ── 聖騎士 (Paladin) ──
+  {
+    characterClass: "聖騎士",
+    classNameEn: "Paladin",
+    type: "FCR",
+    variant: "祝槌 / 天堂之拳 / 傳送",
+    notes: "祝槌騎 (Hammerdin) 推薦 75% (10 幀) 或 125% (9 幀畢業速度)。",
+    breakpoints: [
+      { frames: 15, requiredValue: 0 },
+      { frames: 14, requiredValue: 9 },
+      { frames: 13, requiredValue: 18 },
+      { frames: 12, requiredValue: 30 },
+      { frames: 11, requiredValue: 48 },
+      { frames: 10, requiredValue: 75 },
+      { frames: 9, requiredValue: 125 }
+    ]
+  },
+  {
+    characterClass: "聖騎士",
+    classNameEn: "Paladin",
+    type: "FHR",
+    notes: "通常依靠精神盾 (55% FHR) 即可輕鬆踏過 48% (5 幀) 甚至搭配小符上 86% (4 幀)。",
+    breakpoints: [
+      { frames: 9, requiredValue: 0 },
+      { frames: 8, requiredValue: 7 },
+      { frames: 7, requiredValue: 15 },
+      { frames: 6, requiredValue: 27 },
+      { frames: 5, requiredValue: 48 },
+      { frames: 4, requiredValue: 86 },
+      { frames: 3, requiredValue: 200 }
+    ]
+  },
+  {
+    characterClass: "聖騎士",
+    classNameEn: "Paladin",
+    type: "FBR",
+    variant: "開啟神聖之盾 (Holy Shield)",
+    notes: "開神聖之盾後天生只要 2 幀格擋速度！達到 86% FBR 更是達到 1 幀極速格擋。",
+    breakpoints: [
+      { frames: 2, requiredValue: 0 },
+      { frames: 1, requiredValue: 86 }
+    ]
+  },
+
+  // ── 死靈法師 (Necromancer) ──
+  {
+    characterClass: "死靈法師",
+    classNameEn: "Necromancer",
+    type: "FCR",
+    variant: "人型形態 (骨矛/屍體爆炸/傳送)",
+    notes: "骨系與毒系普遍標配 75% (10 幀) 或極致 125% (9 幀)。",
+    breakpoints: [
+      { frames: 15, requiredValue: 0 },
+      { frames: 14, requiredValue: 9 },
+      { frames: 13, requiredValue: 18 },
+      { frames: 12, requiredValue: 30 },
+      { frames: 11, requiredValue: 48 },
+      { frames: 10, requiredValue: 75 },
+      { frames: 9, requiredValue: 125 }
+    ]
+  },
+  {
+    characterClass: "死靈法師",
+    classNameEn: "Necromancer",
+    type: "FHR",
+    notes: "推薦至少達成 56% (7 幀) 或 86% (6 幀)。",
+    breakpoints: [
+      { frames: 13, requiredValue: 0 },
+      { frames: 12, requiredValue: 5 },
+      { frames: 11, requiredValue: 10 },
+      { frames: 10, requiredValue: 16 },
+      { frames: 9, requiredValue: 26 },
+      { frames: 8, requiredValue: 39 },
+      { frames: 7, requiredValue: 56 },
+      { frames: 6, requiredValue: 86 },
+      { frames: 5, requiredValue: 152 }
+    ]
+  },
+
+  // ── 術士 (Warlock - RotW DLC) ──
+  {
+    characterClass: "術士",
+    classNameEn: "Warlock",
+    type: "FCR",
+    variant: "惡魔引導 / 混沌咒語",
+    notes: "《術士軍臨》DLC 全新職業，終局混沌法術爆發建議維持在 68% 或 110% 檔位。",
+    breakpoints: [
+      { frames: 14, requiredValue: 0 },
+      { frames: 13, requiredValue: 10 },
+      { frames: 12, requiredValue: 22 },
+      { frames: 11, requiredValue: 38 },
+      { frames: 10, requiredValue: 68 },
+      { frames: 9, requiredValue: 110 },
+      { frames: 8, requiredValue: 190 }
+    ]
+  },
+
+  // ── 亞馬遜 (Amazon) ──
+  {
+    characterClass: "亞馬遜",
+    classNameEn: "Amazon",
+    type: "FCR",
+    notes: "亞馬遜天生施法前搖極慢，謎團傳送推薦至少 68% (13 幀) 或 99% (12 幀)。",
+    breakpoints: [
+      { frames: 19, requiredValue: 0 },
+      { frames: 18, requiredValue: 7 },
+      { frames: 17, requiredValue: 14 },
+      { frames: 16, requiredValue: 22 },
+      { frames: 15, requiredValue: 32 },
+      { frames: 14, requiredValue: 48 },
+      { frames: 13, requiredValue: 68 },
+      { frames: 12, requiredValue: 99 },
+      { frames: 11, requiredValue: 152 }
+    ]
+  },
+  {
+    characterClass: "亞馬遜",
+    classNameEn: "Amazon",
+    type: "FHR",
+    notes: "標馬與弓馬普遍推薦 52% (6 幀) 或 86% (5 幀)。",
+    breakpoints: [
+      { frames: 11, requiredValue: 0 },
+      { frames: 10, requiredValue: 6 },
+      { frames: 9, requiredValue: 13 },
+      { frames: 8, requiredValue: 20 },
+      { frames: 7, requiredValue: 32 },
+      { frames: 6, requiredValue: 52 },
+      { frames: 5, requiredValue: 86 },
+      { frames: 4, requiredValue: 174 }
+    ]
+  },
+
+  // ── 野蠻人 (Barbarian) ──
+  {
+    characterClass: "野蠻人",
+    classNameEn: "Barbarian",
+    type: "FCR",
+    notes: "野蠻人擁有全遊戲最快施法動作（同法師）！持雙精神或雙自殺支撐即可達 105% 甚至 200% 極速吼叫打寶。",
+    breakpoints: [
+      { frames: 13, requiredValue: 0 },
+      { frames: 12, requiredValue: 9 },
+      { frames: 11, requiredValue: 20 },
+      { frames: 10, requiredValue: 37 },
+      { frames: 9, requiredValue: 63 },
+      { frames: 8, requiredValue: 105 },
+      { frames: 7, requiredValue: 200 }
+    ]
+  },
+
+  // ── 刺客 (Assassin) ──
+  {
+    characterClass: "刺客",
+    classNameEn: "Assassin",
+    type: "FCR",
+    notes: "心靈震爆與傳送檔位，陷阱擺放速度則取決於攻擊速度 (IAS) 而非施法速度 (FCR)。",
+    breakpoints: [
+      { frames: 16, requiredValue: 0 },
+      { frames: 15, requiredValue: 8 },
+      { frames: 14, requiredValue: 16 },
+      { frames: 13, requiredValue: 27 },
+      { frames: 12, requiredValue: 42 },
+      { frames: 11, requiredValue: 65 },
+      { frames: 10, requiredValue: 102 },
+      { frames: 9, requiredValue: 174 }
+    ]
+  },
+
+  // ── 德魯伊 (Druid) ──
+  {
+    characterClass: "德魯伊",
+    classNameEn: "Druid",
+    type: "FCR",
+    variant: "人型形態 (風德/火德/召喚)",
+    notes: "風德畢業檔位為 99% (11 幀) 或超極速 163% (10 幀)。",
+    breakpoints: [
+      { frames: 18, requiredValue: 0 },
+      { frames: 17, requiredValue: 4 },
+      { frames: 16, requiredValue: 10 },
+      { frames: 15, requiredValue: 19 },
+      { frames: 14, requiredValue: 30 },
+      { frames: 13, requiredValue: 46 },
+      { frames: 12, requiredValue: 68 },
+      { frames: 11, requiredValue: 99 },
+      { frames: 10, requiredValue: 163 }
+    ]
+  }
+];
