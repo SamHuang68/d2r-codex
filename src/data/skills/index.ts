@@ -6,6 +6,7 @@ import { NECROMANCER_SKILLS } from "./necromancer";
 import { BARBARIAN_SKILLS } from "./barbarian";
 import { DRUID_SKILLS } from "./druid";
 import { ASSASSIN_SKILLS } from "./assassin";
+import { WARLOCK_SKILLS } from "./warlock";
 
 export * from "./types";
 export { SORCERESS_SKILLS } from "./sorceress";
@@ -15,6 +16,7 @@ export { NECROMANCER_SKILLS } from "./necromancer";
 export { BARBARIAN_SKILLS } from "./barbarian";
 export { DRUID_SKILLS } from "./druid";
 export { ASSASSIN_SKILLS } from "./assassin";
+export { WARLOCK_SKILLS } from "./warlock";
 
 export const SKILLS_DATA: SkillTreeGroup[] = [
   SORCERESS_SKILLS,
@@ -23,5 +25,6 @@ export const SKILLS_DATA: SkillTreeGroup[] = [
   NECROMANCER_SKILLS,
   BARBARIAN_SKILLS,
   DRUID_SKILLS,
-  ASSASSIN_SKILLS
+  ASSASSIN_SKILLS,
+  WARLOCK_SKILLS
 ];

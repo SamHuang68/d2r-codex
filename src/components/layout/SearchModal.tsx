@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, Flame, Shield, Sparkles, BookOpen, MapPin, Users, Gem, Skull, ShieldAlert, Compass } from 'lucide-react';
+import { Search, X, Flame, Shield, Sparkles, BookOpen, MapPin, Users, Gem, Skull, ShieldAlert, Compass, FlaskConical, Swords } from 'lucide-react';
 import { searchOmni, SearchResultItem } from '../../utils/search';
 
 interface SearchModalProps {
@@ -76,6 +76,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         return <ShieldAlert className="w-4 h-4 text-d2-socket" />;
       case 'quest':
         return <Compass className="w-4 h-4 text-d2-gold" />;
+      case 'prop':
+        return <FlaskConical className="w-4 h-4 text-d2-magic" />;
+      case 'character':
+        return <Swords className="w-4 h-4 text-d2-fire" />;
     }
   };
 
@@ -92,10 +96,12 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         return 'bg-d2-magic/10 text-d2-magic border-d2-magic/30';
       case 'area':
       case 'uber':
+      case 'character':
         return 'bg-d2-fire/10 text-d2-fire border-d2-fire/30';
       case 'mercenary':
         return 'bg-d2-gold/10 text-d2-gold border-d2-gold/30';
       case 'valuation':
+      case 'prop':
         return 'bg-d2-magic/10 text-d2-magic border-d2-magic/30';
       case 'skill':
         return 'bg-d2-gold/10 text-d2-gold border-d2-gold/30';

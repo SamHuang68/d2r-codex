@@ -22,6 +22,8 @@ import { ValuationGuide } from './components/codex/ValuationGuide';
 import { UberBossGuide } from './components/codex/UberBossGuide';
 import { HolyGrailTracker } from './components/vault/HolyGrailTracker';
 import { BuildPlanner } from './components/vault/BuildPlanner';
+import { CharacterGuide } from './components/codex/CharacterGuide';
+import { PropCompendium } from './components/codex/PropCompendium';
 import { RUNEWORDS_DATA } from './data/runewords';
 
 export const App: React.FC = () => {
@@ -118,6 +120,20 @@ export const App: React.FC = () => {
           </div>
         )}
 
+        {activeTab === 'characters' && (
+          <CharacterGuide 
+            onNavigateToSkills={(cls) => {
+              setSelectedInitialClass(cls);
+              handleNavigate('skills');
+            }}
+            onNavigateToBreakpoints={(cls) => {
+              setSelectedInitialClass(cls);
+              handleNavigate('breakpoints');
+            }}
+            onNavigateToRunewords={(rw) => handleNavigate('runewords', rw)}
+            onNavigateToItems={handleItemOrRunewordNavigate}
+          />
+        )}
         {activeTab === 'skills' && <SkillPlanner initialClass={selectedInitialClass} />}
         {activeTab === 'runewords' && (
           <RunewordFinder 
@@ -130,6 +146,13 @@ export const App: React.FC = () => {
           <ItemCompendium 
             initialQuery={targetQuery}
             onNavigateToBase={(base) => handleNavigate('bases', base)}
+          />
+        )}
+        {activeTab === 'props' && (
+          <PropCompendium 
+            onNavigateToRunes={() => handleNavigate('runes')}
+            onNavigateToCube={() => handleNavigate('cube')}
+            onNavigateToRunewords={(rw) => handleNavigate('runewords', rw)}
           />
         )}
         {activeTab === 'bases' && (

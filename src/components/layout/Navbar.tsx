@@ -13,7 +13,8 @@ import {
   Users, 
   Gem, 
   Skull,
-  ShieldAlert
+  ShieldAlert,
+  FlaskConical
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -29,9 +30,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const navItems = [
     { id: 'overview', label: '主頁展演', icon: <Flame className="w-3.5 h-3.5" /> },
+    { id: 'characters', label: '角色寶典', icon: <Users className="w-3.5 h-3.5 text-d2-fire" /> },
     { id: 'skills', label: '技能寶典', icon: <Sparkles className="w-3.5 h-3.5 text-d2-gold" /> },
     { id: 'runewords', label: '符文之語', icon: <Sparkles className="w-3.5 h-3.5 text-d2-unique" /> },
     { id: 'items', label: '裝備寶典', icon: <Sword className="w-3.5 h-3.5 text-d2-unique" /> },
+    { id: 'props', label: '道具聖物', icon: <FlaskConical className="w-3.5 h-3.5 text-d2-magic" /> },
     { id: 'bases', label: '底材寶典', icon: <ShieldAlert className="w-3.5 h-3.5 text-d2-socket" /> },
     { id: 'quests', label: '任務事件', icon: <Compass className="w-3.5 h-3.5 text-d2-gold" /> },
     { id: 'mercenaries', label: '傭兵寶典', icon: <Users className="w-3.5 h-3.5 text-d2-gold" /> },

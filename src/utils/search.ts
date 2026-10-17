@@ -10,10 +10,18 @@ import { UBER_TRISTRAM_GUIDE } from '../data/uberBosses';
 import { SKILLS_DATA } from '../data/skills';
 import { BASE_ITEMS_DATA } from '../data/bases';
 import { QUESTS_DATA, WORLD_EVENTS_DATA } from '../data/quests';
+import { CHARACTER_CLASSES_DATA } from '../data/classes';
+import { 
+  GEMS_DATA, 
+  UBER_KEYS_ORGANS_DATA, 
+  ESSENCES_DATA, 
+  COMBAT_POTIONS_DATA, 
+  CHARMS_JEWELS_DATA 
+} from '../data/props';
 
 export interface SearchResultItem {
   id: string;
-  type: 'runeword' | 'unique' | 'set' | 'rune' | 'cube' | 'area' | 'mercenary' | 'valuation' | 'uber' | 'skill' | 'base' | 'quest';
+  type: 'runeword' | 'unique' | 'set' | 'rune' | 'cube' | 'area' | 'mercenary' | 'valuation' | 'uber' | 'skill' | 'base' | 'quest' | 'prop' | 'character';
   title: string;
   titleEn: string;
   category: string;
@@ -346,6 +354,112 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         badge: '世界事件',
         preview: evt.guide,
         targetTab: 'quests'
+      });
+    }
+  }
+
+  // 13. Search Characters
+  for (const cls of CHARACTER_CLASSES_DATA) {
+    const text = [
+      cls.name,
+      cls.nameEn,
+      cls.title,
+      cls.description,
+      cls.skillTrees.map(t => t.name).join(' '),
+      cls.popularBuilds.map(b => b.name + ' ' + b.coreSkills).join(' ')
+    ].join(' ').toLowerCase();
+
+    if (text.includes(q)) {
+      results.push({
+        id: cls.id,
+        type: 'character',
+        title: `${cls.name} (${cls.nameEn})`,
+        titleEn: cls.title,
+        category: `英雄職業 (${cls.isDLC ? 'RotW DLC' : '經典原版'})`,
+        badge: cls.isDLC ? 'RotW DLC' : '8大英雄',
+        preview: cls.description,
+        targetTab: 'characters'
+      });
+    }
+  }
+
+  // 14. Search Gems, Keys, Essences, Potions, Charms
+  for (const gem of GEMS_DATA) {
+    const text = [gem.name, gem.nameEn, gem.weaponEffect, gem.armorHelmEffect, gem.shieldEffect, gem.craftingUses.join(' ')].join(' ').toLowerCase();
+    if (text.includes(q)) {
+      results.push({
+        id: gem.id,
+        type: 'prop',
+        title: gem.name,
+        titleEn: gem.nameEn,
+        category: `完美寶石 (Lv ${gem.requiredLevel})`,
+        badge: '寶石工藝',
+        preview: `盾: ${gem.shieldEffect} | 甲: ${gem.armorHelmEffect}`,
+        targetTab: 'props'
+      });
+    }
+  }
+
+  for (const key of UBER_KEYS_ORGANS_DATA) {
+    const text = [key.name, key.nameEn, key.dropSource, key.location, key.description, key.tacticalTips].join(' ').toLowerCase();
+    if (text.includes(q)) {
+      results.push({
+        id: key.id,
+        type: 'prop',
+        title: key.name,
+        titleEn: key.nameEn,
+        category: `六王聖物 (${key.dropSource})`,
+        badge: key.type === 'key' ? '紅門鑰匙' : '魔王器官',
+        preview: key.tacticalTips,
+        targetTab: 'props'
+      });
+    }
+  }
+
+  for (const ess of ESSENCES_DATA) {
+    const text = [ess.name, ess.nameEn, ess.bossSource, ess.location, ess.description].join(' ').toLowerCase();
+    if (text.includes(q)) {
+      results.push({
+        id: ess.id,
+        type: 'prop',
+        title: ess.name,
+        titleEn: ess.nameEn,
+        category: `四大精華 (${ess.bossSource})`,
+        badge: '洗點精華',
+        preview: ess.description,
+        targetTab: 'props'
+      });
+    }
+  }
+
+  for (const pot of COMBAT_POTIONS_DATA) {
+    const text = [pot.name, pot.nameEn, pot.effect, pot.hiddenMechanic || '', pot.proTips].join(' ').toLowerCase();
+    if (text.includes(q)) {
+      results.push({
+        id: pot.id,
+        type: 'prop',
+        title: pot.name,
+        titleEn: pot.nameEn,
+        category: `戰鬥藥劑 (${pot.category})`,
+        badge: '生存黑科技',
+        preview: pot.effect,
+        targetTab: 'props'
+      });
+    }
+  }
+
+  for (const charm of CHARMS_JEWELS_DATA) {
+    const text = [charm.name, charm.nameEn, charm.keyAttributes.join(' '), charm.guide].join(' ').toLowerCase();
+    if (text.includes(q)) {
+      results.push({
+        id: charm.id,
+        type: 'prop',
+        title: charm.name,
+        titleEn: charm.nameEn,
+        category: `神級護身符 (${charm.slot})`,
+        badge: `Tier ${charm.tradeValueTier}`,
+        preview: charm.keyAttributes.join(' | '),
+        targetTab: 'props'
       });
     }
   }

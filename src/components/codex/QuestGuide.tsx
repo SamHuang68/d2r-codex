@@ -289,6 +289,83 @@ export const QuestGuide: React.FC = () => {
                   <span className="text-d2-gold font-mono">{evt.location}</span>
                 </div>
 
+                {/* ── 專屬戰術圖解 (Visual Illustrated Schematics) ── */}
+                {evt.id === 'diablo_clone' && (
+                  <div className="bg-sanctuary-950 p-3.5 rounded-xl border border-d2-fire/30 space-y-2">
+                    <div className="text-[11px] font-mono text-d2-fire font-bold flex items-center gap-1.5">
+                      <Zap className="w-3.5 h-3.5" />
+                      地表暗黑 6 階段進度條與 PMH 封鎖機制圖說
+                    </div>
+                    <div className="grid grid-cols-6 gap-1 text-[10px] font-mono text-center">
+                      <div className="p-1 rounded bg-sanctuary-900 border border-sanctuary-800 text-sanctuary-400">階 1<br/>恐怖</div>
+                      <div className="p-1 rounded bg-sanctuary-900 border border-sanctuary-800 text-sanctuary-400">階 2<br/>聚集</div>
+                      <div className="p-1 rounded bg-sanctuary-900 border border-sanctuary-800 text-sanctuary-400">階 3<br/>壯大</div>
+                      <div className="p-1 rounded bg-sanctuary-900 border border-sanctuary-800 text-amber-500">階 4<br/>逼近</div>
+                      <div className="p-1 rounded bg-sanctuary-900 border border-amber-600/50 text-amber-400 font-bold">階 5<br/>迫近</div>
+                      <div className="p-1 rounded bg-d2-fire/20 border border-d2-fire text-d2-fire font-bold animate-pulse">階 6<br/>降臨！</div>
+                    </div>
+                    <p className="text-[11px] text-sanctuary-300 font-sans leading-snug">
+                      ⚠️ <strong>回血封鎖鐵律</strong>：暗黑克隆體擁有極其恐怖的每秒千點回血。必須由角色<strong>本體</strong>使用附帶「防止怪物治療 (PMH)」的武器擊中 1 次（持續 80 分鐘）；傭兵攻擊無法觸發 PMH！
+                    </p>
+                  </div>
+                )}
+
+                {evt.id === 'uber_tristram' && (
+                  <div className="bg-sanctuary-950 p-3.5 rounded-xl border border-d2-gold/30 space-y-2">
+                    <div className="text-[11px] font-mono text-d2-gold font-bold flex items-center gap-1.5">
+                      <Zap className="w-3.5 h-3.5" />
+                      六王全流程管線圖說 (Key-to-Torch Pipeline)
+                    </div>
+                    <div className="p-2 rounded-lg bg-sanctuary-900/80 border border-sanctuary-800 text-[11px] font-mono text-sanctuary-200 leading-relaxed text-center">
+                      9把鑰匙 (3恐+3憎+3毀) ➔ 開啟 3 小紅門 ➔ 擊殺莉莉絲等斬獲 3 大器官 ➔ 終極崔斯特姆 ➔ 斬獲【地獄火炬】
+                    </div>
+                    <p className="text-[11px] text-sanctuary-300 font-sans leading-snug">
+                      🛡️ <strong>走位拉怪圖解</strong>：從城鎮入口出發，務必緊貼<strong>左側斷壁殘垣下緣</strong>潛行，將「墨菲斯托」單獨引至地圖左下角秒殺；切勿徑直衝入中央廣場，否則巴爾與墨菲斯托雙王聯手會瞬間秒殺全隊！
+                    </p>
+                  </div>
+                )}
+
+                {evt.id === 'secret_cow_level' && (
+                  <div className="bg-sanctuary-950 p-3.5 rounded-xl border border-d2-set/30 space-y-2">
+                    <div className="text-[11px] font-mono text-d2-set font-bold flex items-center gap-1.5">
+                      <Zap className="w-3.5 h-3.5" />
+                      乳牛關合成與刷寶機制圖解
+                    </div>
+                    <div className="p-2 rounded-lg bg-sanctuary-900/80 border border-sanctuary-800 text-[11px] font-mono text-sanctuary-200 leading-relaxed text-center">
+                      【懷特的腿】(石塊荒野崔斯特姆左上) + 【滿20張回城書】放入方塊 ➔ 鮮紅母牛傳送門
+                    </div>
+                    <p className="text-[11px] text-sanctuary-300 font-sans leading-snug">
+                      🐮 <strong>D2R 現代化版本規則</strong>：已徹底移除「擊殺母牛之王永久無法再開門」的古老詛咒！現在可以毫無顧忌全力擊殺母牛之王 (Cow King)，隨意反覆開門刷取白裝、無形神級底材與符文！
+                    </p>
+                  </div>
+                )}
+
+                {evt.id === 'terror_zones' && (
+                  <div className="bg-sanctuary-950 p-3.5 rounded-xl border border-d2-fire/30 space-y-2">
+                    <div className="text-[11px] font-mono text-d2-fire font-bold flex items-center gap-1.5">
+                      <Zap className="w-3.5 h-3.5" />
+                      恐懼領域動態等級運算模型
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-center text-[10px] font-mono">
+                      <div className="p-1.5 rounded bg-sanctuary-900 border border-sanctuary-800">
+                        <span className="text-sanctuary-400">一般怪物</span><br/>
+                        <strong className="text-sanctuary-100 text-xs">房主 Lv + 2</strong>
+                      </div>
+                      <div className="p-1.5 rounded bg-sanctuary-900 border border-sanctuary-800">
+                        <span className="text-sanctuary-400">冠軍精英怪</span><br/>
+                        <strong className="text-d2-magic text-xs">房主 Lv + 4</strong>
+                      </div>
+                      <div className="p-1.5 rounded bg-sanctuary-900 border border-sanctuary-800">
+                        <span className="text-sanctuary-400">暗金怪/首領</span><br/>
+                        <strong className="text-d2-gold text-xs">房主 Lv + 5 (上限99)</strong>
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-sanctuary-300 font-sans leading-snug">
+                      ⚡ <strong>破免板專屬產地</strong>：地獄 TZ 內所有冠軍怪與暗金怪均有機率掉落六大「破免護身符 (Sunder Charms)」，將怪物免疫直接壓至 95%，是法系流派終局通關聖地。
+                    </p>
+                  </div>
+                )}
+
                 <div>
                   <span className="font-mono text-sanctuary-400 font-bold block mb-1">專屬神級獎勵:</span>
                   <ul className="space-y-1">
