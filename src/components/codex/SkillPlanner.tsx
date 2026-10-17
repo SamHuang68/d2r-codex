@@ -1,5 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { SKILLS_DATA, SkillData } from '../../data/skills';
+import { SkillTreeCanvas } from './SkillTreeCanvas';
+import { SkillSynergyPanel } from './SkillSynergyPanel';
 import { 
   Sparkles, 
   RotateCcw, 
@@ -16,7 +18,9 @@ import {
   Shield,
   Crosshair,
   Skull,
-  Sword
+  Sword,
+  LayoutGrid,
+  Network
 } from 'lucide-react';
 
 const MAX_TOTAL_POINTS = 110; // 98 (等級 2-99) + 12 (任務獎勵)
@@ -32,12 +36,16 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
   const [skillPoints, setSkillPoints] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [copied, setCopied] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<'tree' | 'grid'>('tree');
+  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
+  const [hoveredSkillId, setHoveredSkillId] = useState<string | null>(null);
 
-  // Sync initialClass when prop changes
-  React.useEffect(() => {
+  // 同步 initialClass 屬性變更
+  useEffect(() => {
     if (initialClass && SKILLS_DATA.some(c => c.characterClass === initialClass)) {
       setSelectedClass(initialClass);
       setActiveTreeIndex(0);
+      setSelectedSkillId(null);
     }
   }, [initialClass]);
 
@@ -45,6 +53,9 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
   const currentClassData = useMemo(() => {
     return SKILLS_DATA.find(c => c.characterClass === selectedClass) || SKILLS_DATA[0];
   }, [selectedClass]);
+
+  // 當前選中的技能樹
+  const activeTree = currentClassData.trees[activeTreeIndex] || currentClassData.trees[0];
 
   // 當前職業的所有技能平鋪列表
   const allCurrentClassSkills = useMemo(() => {
@@ -54,6 +65,13 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
     });
     return list;
   }, [currentClassData]);
+
+  // 若尚未選取任何技能，預設選取當前技能樹的第一招技能
+  useEffect(() => {
+    if (!selectedSkillId && activeTree && activeTree.skills.length > 0) {
+      setSelectedSkillId(activeTree.skills[0].id);
+    }
+  }, [activeTree, selectedSkillId]);
 
   // 已分配總點數
   const usedPoints = useMemo(() => {
@@ -82,13 +100,14 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
   // 點擊加點
   const addPoint = (skill: SkillData, amount = 1) => {
     const current = skillPoints[skill.id] || 0;
-    if (current >= MAX_SKILL_POINTS) return;
+    const max = skill.maxPoints || MAX_SKILL_POINTS;
+    if (current >= max) return;
     if (remainingPoints <= 0) return;
 
     // 前置檢查
     if (!isPrerequisitesMet(skill)) return;
 
-    const actualAdd = Math.min(amount, MAX_SKILL_POINTS - current, remainingPoints);
+    const actualAdd = Math.min(amount, max - current, remainingPoints);
     setSkillPoints(prev => ({
       ...prev,
       [skill.id]: current + actualAdd
@@ -106,7 +125,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
         s.prerequisites && s.prerequisites.includes(skill.id) && (skillPoints[s.id] || 0) > 0
       );
       if (dependents.length > 0) {
-        alert(`無法降為0點！後續技能「${dependents.map(d => d.name).join("、")}」需要此技能作為前置。`);
+        alert(`無法降為 0 點！後續技能「${dependents.map(d => d.name).join("、")}」需要此技能作為前置。`);
         return;
       }
     }
@@ -163,14 +182,24 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // 跨系協同導航跳轉
+  const handleNavigateToSkill = (targetSkillId: string) => {
+    for (let i = 0; i < currentClassData.trees.length; i++) {
+      const targetSkill = currentClassData.trees[i].skills.find(s => s.id === targetSkillId);
+      if (targetSkill) {
+        setActiveTreeIndex(i);
+        setSelectedSkillId(targetSkillId);
+        return;
+      }
+    }
+  };
+
   // 職業切換時重設活動分頁
   const handleClassChange = (cls: string) => {
     setSelectedClass(cls);
     setActiveTreeIndex(0);
+    setSelectedSkillId(null);
   };
-
-  // 當前選中的技能樹
-  const activeTree = currentClassData.trees[activeTreeIndex] || currentClassData.trees[0];
 
   // 搜尋過濾技能
   const displayedSkills = useMemo(() => {
@@ -185,6 +214,11 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
       s.details.toLowerCase().includes(q)
     );
   }, [activeTree, searchQuery, allCurrentClassSkills]);
+
+  // 目前選中的技能物件
+  const activeSelectedSkill = useMemo(() => {
+    return allCurrentClassSkills.find(s => s.id === selectedSkillId) || activeTree.skills[0] || null;
+  }, [allCurrentClassSkills, selectedSkillId, activeTree]);
 
   // 職業圖示映射
   const getClassIcon = (cls: string) => {
@@ -208,13 +242,13 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
         <div>
           <div className="flex items-center gap-2 text-d2-gold text-xs font-mono tracking-widest uppercase">
             <Sparkles className="w-4 h-4 text-d2-gold animate-pulse" />
-            Class Skill Trees & Build Simulator
+            Authentic In-Game Skill Tree & Synergy Matrix
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            八大職業全技能寶典與加點模擬器
+            八大職業全技能樹與協同矩陣模擬器
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-3xl">
-            收錄全職業 24 系完整技能樹、解鎖等級、前置依賴與協同加成公式，內建 110 點技能模擬計算與 2.4/2.6 重生版本及 DLC 術士實戰圖說解析。
+            100% 復刻暗黑破壞神遊戲內經典 6x3 技能樹畫布與前置連線，全息整合雙向協同加成（Synergy）即時算力模型，支援 110 點加點模擬、天梯戰術圖說與配點匯出。
           </p>
         </div>
 
@@ -272,7 +306,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
         })}
       </div>
 
-      {/* 搜尋列與技能樹分頁切換 */}
+      {/* 視圖切換、技能樹分頁與搜尋列 */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         {/* 三大技能樹切換按鈕 */}
         <div className="flex items-center gap-2 bg-sanctuary-900/80 p-1.5 rounded-2xl border border-sanctuary-800 shrink-0 overflow-x-auto">
@@ -285,6 +319,9 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
                 onClick={() => {
                   setActiveTreeIndex(idx);
                   setSearchQuery("");
+                  if (tree.skills.length > 0) {
+                    setSelectedSkillId(tree.skills[0].id);
+                  }
                 }}
                 className={`px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2 whitespace-nowrap ${
                   isActive
@@ -303,24 +340,53 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
           })}
         </div>
 
-        {/* 搜尋欄 */}
-        <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-sanctuary-500" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={`搜尋 ${selectedClass} 技能、英文名或特性...`}
-            className="w-full bg-sanctuary-900 border border-sanctuary-800 rounded-xl pl-9 pr-4 py-2 text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-gold transition-colors"
-          />
-          {searchQuery && (
+        {/* 模式切換與搜尋 */}
+        <div className="flex items-center gap-2">
+          {/* 視圖切換器 (遊戲樹狀模式 vs 詳細卡片模式) */}
+          <div className="flex items-center bg-sanctuary-900 p-1 rounded-xl border border-sanctuary-800 shrink-0">
             <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-sanctuary-500 hover:text-sanctuary-300 text-xs"
+              onClick={() => setViewMode('tree')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+                viewMode === 'tree'
+                  ? 'bg-sanctuary-800 text-d2-gold shadow-sm font-bold'
+                  : 'text-sanctuary-400 hover:text-sanctuary-200'
+              }`}
             >
-              清除
+              <Network className="w-3.5 h-3.5" />
+              <span>遊戲技能樹</span>
             </button>
-          )}
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+                viewMode === 'grid'
+                  ? 'bg-sanctuary-800 text-d2-gold shadow-sm font-bold'
+                  : 'text-sanctuary-400 hover:text-sanctuary-200'
+              }`}
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+              <span>詳解清單</span>
+            </button>
+          </div>
+
+          {/* 搜尋欄 */}
+          <div className="relative flex-1 min-w-[200px] max-w-xs">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-sanctuary-500" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={`搜尋 ${selectedClass} 技能...`}
+              className="w-full bg-sanctuary-900 border border-sanctuary-800 rounded-xl pl-9 pr-4 py-2 text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-gold transition-colors"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-sanctuary-500 hover:text-sanctuary-300 text-xs"
+              >
+                清除
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -335,164 +401,197 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
         </div>
       )}
 
-      {/* 技能卡片網格 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {displayedSkills.map((skill) => {
-          const points = skillPoints[skill.id] || 0;
-          const isMax = points >= MAX_SKILL_POINTS;
-          const isUnlocked = isPrerequisitesMet(skill);
-          const hasPoints = points > 0;
+      {/* 核心內容呈現區：依據 viewMode 渲染 */}
+      {viewMode === 'tree' && !searchQuery ? (
+        /* ⚔️ 遊戲技能樹與協同解析雙面板 (左: 遊戲畫布, 右: 協同全息面板) */
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="lg:col-span-6 xl:col-span-5 flex justify-center">
+            <SkillTreeCanvas
+              skills={activeTree.skills}
+              skillPoints={skillPoints}
+              selectedSkillId={selectedSkillId}
+              hoveredSkillId={hoveredSkillId}
+              onSelectSkill={(skill) => setSelectedSkillId(skill.id)}
+              onHoverSkill={setHoveredSkillId}
+              onAddPoint={addPoint}
+              onRemovePoint={removePoint}
+              isPrerequisitesMet={isPrerequisitesMet}
+              remainingPoints={remainingPoints}
+            />
+          </div>
 
-          // 前置技能名稱
-          const prereqSkills = skill.prerequisites
-            ?.map(id => allCurrentClassSkills.find(s => s.id === id)?.name)
-            .filter(Boolean);
+          <div className="lg:col-span-6 xl:col-span-7">
+            <SkillSynergyPanel
+              skill={activeSelectedSkill}
+              skillPoints={skillPoints}
+              allSkills={allCurrentClassSkills}
+              onAddPoint={addPoint}
+              onRemovePoint={removePoint}
+              onNavigateToSkill={handleNavigateToSkill}
+              isPrerequisitesMet={isPrerequisitesMet}
+              remainingPoints={remainingPoints}
+            />
+          </div>
+        </div>
+      ) : (
+        /* 📋 全域詳解卡片網格 (保全所有既有能力與搜尋結果) */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {displayedSkills.map((skill) => {
+            const points = skillPoints[skill.id] || 0;
+            const isMax = points >= (skill.maxPoints || MAX_SKILL_POINTS);
+            const isUnlocked = isPrerequisitesMet(skill);
+            const hasPoints = points > 0;
 
-          return (
-            <div
-              key={skill.id}
-              className={`rounded-2xl border transition-all duration-200 flex flex-col justify-between overflow-hidden ${
-                hasPoints
-                  ? 'bg-sanctuary-900/90 border-d2-gold/50 shadow-lg shadow-d2-gold/5 ring-1 ring-d2-gold/30'
-                  : isUnlocked
-                  ? 'bg-sanctuary-900/50 border-sanctuary-800/90 hover:border-sanctuary-700'
-                  : 'bg-sanctuary-950/60 border-sanctuary-900/80 opacity-70'
-              }`}
-            >
-              {/* 卡片頭部 */}
-              <div className="p-4 border-b border-sanctuary-800/60 space-y-2">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-diablo font-bold text-base text-sanctuary-100">
-                        {skill.name}
-                      </span>
-                      <span className="text-[11px] font-mono text-sanctuary-400">
-                        {skill.nameEn}
-                      </span>
+            const prereqSkills = skill.prerequisites
+              ?.map(id => allCurrentClassSkills.find(s => s.id === id)?.name)
+              .filter(Boolean);
+
+            return (
+              <div
+                key={skill.id}
+                className={`rounded-2xl border transition-all duration-200 flex flex-col justify-between overflow-hidden ${
+                  hasPoints
+                    ? 'bg-sanctuary-900/90 border-d2-gold/50 shadow-lg shadow-d2-gold/5 ring-1 ring-d2-gold/30'
+                    : isUnlocked
+                    ? 'bg-sanctuary-900/50 border-sanctuary-800/90 hover:border-sanctuary-700'
+                    : 'bg-sanctuary-950/60 border-sanctuary-900/80 opacity-70'
+                }`}
+              >
+                {/* 卡片頭部 */}
+                <div className="p-4 border-b border-sanctuary-800/60 space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-diablo font-bold text-base text-sanctuary-100">
+                          {skill.name}
+                        </span>
+                        <span className="text-[11px] font-mono text-sanctuary-400">
+                          {skill.nameEn}
+                        </span>
+                      </div>
+                      <div className="text-[10px] text-sanctuary-500 font-mono mt-0.5">
+                        需求等級: Lv {skill.requiredLevel}
+                      </div>
                     </div>
-                    <div className="text-[10px] text-sanctuary-500 font-mono mt-0.5">
-                      需求等級: Lv {skill.requiredLevel}
+
+                    {/* 點數計數器徽章 */}
+                    <div className={`px-2.5 py-1 rounded-xl font-mono text-xs font-bold border transition-all ${
+                      isMax
+                        ? 'bg-d2-gold text-sanctuary-950 border-amber-300 shadow-sm shadow-d2-gold/30'
+                        : hasPoints
+                        ? 'bg-sanctuary-800 text-d2-gold border-d2-gold/40'
+                        : 'bg-sanctuary-850 text-sanctuary-400 border-sanctuary-750'
+                    }`}>
+                      {points} / {skill.maxPoints || MAX_SKILL_POINTS}
                     </div>
                   </div>
 
-                  {/* 點數計數器徽章 */}
-                  <div className={`px-2.5 py-1 rounded-xl font-mono text-xs font-bold border transition-all ${
-                    isMax
-                      ? 'bg-d2-gold text-sanctuary-950 border-amber-300 shadow-sm shadow-d2-gold/30'
-                      : hasPoints
-                      ? 'bg-sanctuary-800 text-d2-gold border-d2-gold/40'
-                      : 'bg-sanctuary-850 text-sanctuary-400 border-sanctuary-750'
-                  }`}>
-                    {points} / {MAX_SKILL_POINTS}
-                  </div>
-                </div>
+                  {/* 前置與協同標籤 */}
+                  <div className="space-y-1 pt-1">
+                    {prereqSkills && prereqSkills.length > 0 && (
+                      <div className="flex items-center gap-1.5 text-[11px]">
+                        <span className="text-sanctuary-400 font-mono">前置:</span>
+                        <div className="flex flex-wrap gap-1">
+                          {prereqSkills.map(name => {
+                            const preSkill = allCurrentClassSkills.find(s => s.name === name);
+                            const isMet = preSkill && (skillPoints[preSkill.id] || 0) > 0;
+                            return (
+                              <span
+                                key={name}
+                                className={`px-1.5 py-0.2 rounded text-[10px] font-mono ${
+                                  isMet
+                                    ? 'bg-sanctuary-800 text-sanctuary-300'
+                                    : 'bg-d2-blood/20 text-red-300 border border-d2-blood/30'
+                                }`}
+                              >
+                                {name}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
 
-                {/* 前置與協同標籤 */}
-                <div className="space-y-1 pt-1">
-                  {prereqSkills && prereqSkills.length > 0 && (
-                    <div className="flex items-center gap-1.5 text-[11px]">
-                      <span className="text-sanctuary-400 font-mono">前置:</span>
-                      <div className="flex flex-wrap gap-1">
-                        {prereqSkills.map(name => {
-                          const preSkill = allCurrentClassSkills.find(s => s.name === name);
-                          const isMet = preSkill && (skillPoints[preSkill.id] || 0) > 0;
-                          return (
-                            <span
-                              key={name}
-                              className={`px-1.5 py-0.2 rounded text-[10px] font-mono ${
-                                isMet
-                                  ? 'bg-sanctuary-800 text-sanctuary-300'
-                                  : 'bg-d2-blood/20 text-red-300 border border-d2-blood/30'
-                              }`}
-                            >
-                              {name}
+                    {skill.synergies && skill.synergies.length > 0 && (
+                      <div className="flex items-center gap-1.5 text-[11px]">
+                        <span className="text-sanctuary-400 font-mono">協同:</span>
+                        <div className="flex flex-wrap gap-1">
+                          {skill.synergies.map(syn => (
+                            <span key={syn} className="px-1.5 py-0.2 rounded text-[10px] font-mono bg-cyan-950/60 text-cyan-300 border border-cyan-800/80">
+                              {syn}
                             </span>
-                          );
-                        })}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
-
-                  {skill.synergies && skill.synergies.length > 0 && (
-                    <div className="flex items-center gap-1.5 text-[11px]">
-                      <span className="text-sanctuary-400 font-mono">協同:</span>
-                      <div className="flex flex-wrap gap-1">
-                        {skill.synergies.map(syn => (
-                          <span key={syn} className="px-1.5 py-0.2 rounded text-[10px] font-mono bg-sanctuary-850 text-sanctuary-400 border border-sanctuary-800">
-                            {syn}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* 卡片主體說明 */}
-              <div className="p-4 space-y-3 text-xs flex-1">
-                <p className="text-sanctuary-300 leading-relaxed">
-                  {skill.description}
-                </p>
-
-                {/* 戰術圖說與 2.4/2.6 重生解析 */}
-                <div className="bg-sanctuary-950/70 p-2.5 rounded-xl border border-sanctuary-800/80 space-y-1">
-                  <div className="flex items-center gap-1 text-[11px] font-mono text-d2-gold font-bold">
-                    <Zap className="w-3 h-3 text-d2-gold" />
-                    戰術解析與實戰圖說
+                    )}
                   </div>
-                  <p className="text-[11px] text-sanctuary-300 leading-normal">
-                    {skill.details}
+                </div>
+
+                {/* 卡片主體說明 */}
+                <div className="p-4 space-y-3 text-xs flex-1">
+                  <p className="text-sanctuary-300 leading-relaxed">
+                    {skill.description}
                   </p>
-                </div>
 
-                {!isUnlocked && (
-                  <div className="flex items-center gap-1.5 text-[11px] text-d2-blood font-mono bg-d2-blood/10 p-2 rounded-lg border border-d2-blood/20">
-                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                    需先點亮上方所有前置技能各至少 1 點
+                  {/* 戰術圖說與 2.4/2.6 重生解析 */}
+                  <div className="bg-sanctuary-950/70 p-2.5 rounded-xl border border-sanctuary-800/80 space-y-1">
+                    <div className="flex items-center gap-1 text-[11px] font-mono text-d2-gold font-bold">
+                      <Zap className="w-3 h-3 text-d2-gold" />
+                      戰術解析與實戰圖說
+                    </div>
+                    <p className="text-[11px] text-sanctuary-300 leading-normal">
+                      {skill.details}
+                    </p>
                   </div>
-                )}
-              </div>
 
-              {/* 卡片底端加減點控制器 */}
-              <div className="p-3 bg-sanctuary-950/90 border-t border-sanctuary-800/60 flex items-center justify-between gap-2">
-                <div className="text-[10px] text-sanctuary-400 font-mono">
-                  {points === 0 ? "未投資" : isMax ? "★ 滿級 20" : `已點 ${points} 級`}
+                  {!isUnlocked && (
+                    <div className="flex items-center gap-1.5 text-[11px] text-d2-blood font-mono bg-d2-blood/10 p-2 rounded-lg border border-d2-blood/20">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      需先點亮上方所有前置技能各至少 1 點
+                    </div>
+                  )}
                 </div>
 
-                <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={() => removePoint(skill, 1)}
-                    disabled={points <= 0}
-                    className="w-7 h-7 rounded-lg bg-sanctuary-850 hover:bg-sanctuary-750 disabled:opacity-40 disabled:cursor-not-allowed border border-sanctuary-750 text-sanctuary-300 hover:text-sanctuary-100 flex items-center justify-center transition-colors"
-                    title="扣除 1 點"
-                  >
-                    <Minus className="w-3.5 h-3.5" />
-                  </button>
+                {/* 卡片底端加減點控制器 */}
+                <div className="p-3 bg-sanctuary-950/90 border-t border-sanctuary-800/60 flex items-center justify-between gap-2">
+                  <div className="text-[10px] text-sanctuary-400 font-mono">
+                    {points === 0 ? "未投資" : isMax ? "★ 滿級" : `已點 ${points} 級`}
+                  </div>
 
-                  <button
-                    onClick={() => addPoint(skill, 1)}
-                    disabled={!isUnlocked || isMax || remainingPoints <= 0}
-                    className="w-7 h-7 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-700 disabled:opacity-40 disabled:cursor-not-allowed border border-sanctuary-700 text-d2-gold hover:text-white flex items-center justify-center transition-colors font-bold"
-                    title="增加 1 點"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => removePoint(skill, 1)}
+                      disabled={points <= 0}
+                      className="w-7 h-7 rounded-lg bg-sanctuary-850 hover:bg-sanctuary-750 disabled:opacity-40 disabled:cursor-not-allowed border border-sanctuary-750 text-sanctuary-300 hover:text-sanctuary-100 flex items-center justify-center transition-colors"
+                      title="扣除 1 點"
+                    >
+                      <Minus className="w-3.5 h-3.5" />
+                    </button>
 
-                  <button
-                    onClick={() => addPoint(skill, 20)}
-                    disabled={!isUnlocked || isMax || remainingPoints <= 0}
-                    className="px-2 py-1 rounded-lg bg-d2-gold/20 hover:bg-d2-gold/30 disabled:opacity-40 disabled:cursor-not-allowed border border-d2-gold/30 text-d2-gold text-[10px] font-mono font-bold transition-colors"
-                    title="直接加滿至 20 點"
-                  >
-                    MAX
-                  </button>
+                    <button
+                      onClick={() => addPoint(skill, 1)}
+                      disabled={!isUnlocked || isMax || remainingPoints <= 0}
+                      className="w-7 h-7 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-700 disabled:opacity-40 disabled:cursor-not-allowed border border-sanctuary-700 text-d2-gold hover:text-white flex items-center justify-center transition-colors font-bold"
+                      title="增加 1 點"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                    </button>
+
+                    <button
+                      onClick={() => addPoint(skill, 20)}
+                      disabled={!isUnlocked || isMax || remainingPoints <= 0}
+                      className="px-2 py-1 rounded-lg bg-d2-gold/20 hover:bg-d2-gold/30 disabled:opacity-40 disabled:cursor-not-allowed border border-d2-gold/30 text-d2-gold text-[10px] font-mono font-bold transition-colors"
+                      title="直接加滿至 20 點"
+                    >
+                      MAX
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
