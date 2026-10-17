@@ -16,6 +16,7 @@ import { BreakpointTable } from './components/codex/BreakpointTable';
 import { AreaGuide } from './components/codex/AreaGuide';
 import { MercenaryGuide } from './components/codex/MercenaryGuide';
 import { ValuationGuide } from './components/codex/ValuationGuide';
+import { UberBossGuide } from './components/codex/UberBossGuide';
 import { HolyGrailTracker } from './components/vault/HolyGrailTracker';
 import { BuildPlanner } from './components/vault/BuildPlanner';
 
@@ -81,6 +82,7 @@ export const App: React.FC = () => {
         {activeTab === 'areas' && <AreaGuide />}
         {activeTab === 'mercenaries' && <MercenaryGuide />}
         {activeTab === 'valuation' && <ValuationGuide />}
+        {activeTab === 'uber' && <UberBossGuide />}
         {activeTab === 'grail' && <HolyGrailTracker />}
         {activeTab === 'planner' && <BuildPlanner />}
       </main>

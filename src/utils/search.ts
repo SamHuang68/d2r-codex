@@ -6,10 +6,11 @@ import { CUBE_RECIPES_DATA } from '../data/cubeRecipes';
 import { AREA_LEVELS_DATA } from '../data/areaLevels';
 import { MERCENARIES_DATA } from '../data/mercenaries';
 import { VALUATION_ITEMS_DATA } from '../data/affixes';
+import { UBER_TRISTRAM_GUIDE } from '../data/uberBosses';
 
 export interface SearchResultItem {
   id: string;
-  type: 'runeword' | 'unique' | 'set' | 'rune' | 'cube' | 'area' | 'mercenary' | 'valuation';
+  type: 'runeword' | 'unique' | 'set' | 'rune' | 'cube' | 'area' | 'mercenary' | 'valuation' | 'uber';
   title: string;
   titleEn: string;
   category: string;
@@ -232,6 +233,24 @@ export const searchOmni = (query: string): SearchResultItem[] => {
     }
   }
 
+  // 9. Search Uber Bosses & Tristram
+  for (const st of UBER_TRISTRAM_GUIDE.steps) {
+    const text = [st.title, st.boss, st.rewards, st.strategy, st.requirements.join(' ')].join(' ').toLowerCase();
+    if (text.includes(q)) {
+      results.push({
+        id: `uber_step_${st.step}`,
+        type: 'uber',
+        title: st.title,
+        titleEn: st.boss,
+        category: `紅門六王攻略 (第 ${st.step} 階段)`,
+        badge: '地獄火炬',
+        preview: `${st.rewards} | 戰術: ${st.strategy}`,
+        targetTab: 'uber'
+      });
+    }
+  }
+
   return results.slice(0, 30);
 };
+
 

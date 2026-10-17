@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { CharacterBuildPlan } from '../../types';
 import { loadBuildPlans, saveBuildPlans } from '../../utils/storage';
 import { BREAKPOINTS_DATA } from '../../data/breakpoints';
-import { Wrench, Plus, Trash2, CheckCircle2, Zap, Sparkles } from 'lucide-react';
+import { PRESET_META_BUILDS } from '../../data/presets';
+import { Wrench, Plus, Trash2, CheckCircle2, Zap, Sparkles, BookOpen, X } from 'lucide-react';
 
 export const BuildPlanner: React.FC = () => {
   const [plans, setPlans] = useState<CharacterBuildPlan[]>(loadBuildPlans());
@@ -89,6 +90,20 @@ export const BuildPlanner: React.FC = () => {
     saveBuildPlans(next);
   };
 
+  const [isPresetModalOpen, setIsPresetModalOpen] = useState<boolean>(false);
+
+  const handleLoadPreset = (preset: Omit<CharacterBuildPlan, 'id'>) => {
+    const newPlan: CharacterBuildPlan = {
+      ...preset,
+      id: `plan_${Date.now()}`
+    };
+    const next = [...plans, newPlan];
+    setPlans(next);
+    setActivePlanId(newPlan.id);
+    saveBuildPlans(next);
+    setIsPresetModalOpen(false);
+  };
+
   // Find class FCR breakpoint
   const classFcrBp = BREAKPOINTS_DATA.find(
     (bp) => bp.characterClass === currentPlan?.characterClass && bp.type === 'FCR'
@@ -123,11 +138,19 @@ export const BuildPlanner: React.FC = () => {
           </select>
 
           <button
+            onClick={() => setIsPresetModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-d2-unique/20 hover:bg-d2-unique/30 border border-d2-unique/50 text-d2-unique transition-colors font-bold shadow-glow-gold shrink-0"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>S級主流範本</span>
+          </button>
+
+          <button
             onClick={createNewPlan}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-750 border border-sanctuary-700 text-d2-unique transition-colors font-medium"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-750 border border-sanctuary-700 text-sanctuary-200 transition-colors font-medium shrink-0"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>新增方案</span>
+            <span>自訂</span>
           </button>
 
           <button
@@ -342,6 +365,84 @@ export const BuildPlanner: React.FC = () => {
                     </div>
                   );
                 })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Preset Modal */}
+      {isPresetModalOpen && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setIsPresetModalOpen(false)}
+        >
+          <div 
+            className="w-full max-w-4xl bg-sanctuary-900 border border-sanctuary-700 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-sanctuary-800 bg-sanctuary-950">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-d2-unique/20 text-d2-unique border border-d2-unique/30">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-diablo text-xl font-bold text-sanctuary-100">
+                    載入 S 級天梯主流配裝範本 (Meta Presets)
+                  </h3>
+                  <p className="text-xs text-sanctuary-400">
+                    一鍵套用各大職業的終極畢業配裝方案、精確屬性數值與檔位心得。
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsPresetModalOpen(false)}
+                className="p-2 text-sanctuary-400 hover:text-sanctuary-100 rounded-xl hover:bg-sanctuary-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body - Presets Grid */}
+            <div className="p-6 overflow-y-auto space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {PRESET_META_BUILDS.map((preset, idx) => (
+                  <div
+                    key={idx}
+                    className="p-5 rounded-2xl bg-sanctuary-950/80 border border-sanctuary-800 hover:border-d2-unique/60 transition-all flex flex-col justify-between group"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-sanctuary-800 text-d2-unique font-bold">
+                          {preset.characterClass}
+                        </span>
+                        <span className="text-[11px] font-mono text-sanctuary-400">
+                          Lv.{preset.targetLevel}
+                        </span>
+                      </div>
+                      <h4 className="text-base font-bold text-sanctuary-100 group-hover:text-d2-unique transition-colors mb-2">
+                        {preset.buildName}
+                      </h4>
+                      <p className="text-xs text-sanctuary-400 line-clamp-2 leading-relaxed mb-4">
+                        {preset.notes}
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-sanctuary-800/60 flex items-center justify-between">
+                      <div className="flex gap-2 text-[10px] font-mono text-sanctuary-400">
+                        {preset.customStats.fcr > 0 && <span>FCR {preset.customStats.fcr}%</span>}
+                        {preset.customStats.magicFind > 0 && <span>MF {preset.customStats.magicFind}%</span>}
+                      </div>
+                      <button
+                        onClick={() => handleLoadPreset(preset)}
+                        className="px-3 py-1.5 rounded-lg bg-d2-unique/20 hover:bg-d2-unique/30 text-d2-unique border border-d2-unique/40 text-xs font-bold transition-all shadow-glow-gold"
+                      >
+                        一鍵套用方案
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

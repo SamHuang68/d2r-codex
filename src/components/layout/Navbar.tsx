@@ -11,7 +11,8 @@ import {
   Sword,
   MapPin,
   Users,
-  Gem
+  Gem,
+  Skull
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -31,6 +32,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'items', label: '裝備寶典', icon: <Sword className="w-4 h-4 text-d2-unique" /> },
     { id: 'mercenaries', label: '傭兵寶典', icon: <Users className="w-4 h-4 text-d2-gold" /> },
     { id: 'valuation', label: '鑑寶估價', icon: <Gem className="w-4 h-4 text-d2-magic" /> },
+    { id: 'uber', label: '紅門火炬', icon: <Skull className="w-4 h-4 text-d2-fire" /> },
     { id: 'runes', label: '符文寶庫', icon: <Layers className="w-4 h-4 text-d2-rune" /> },
     { id: 'cube', label: '方塊工坊', icon: <BookOpen className="w-4 h-4 text-d2-magic" /> },
     { id: 'breakpoints', label: '機制斷點', icon: <Compass className="w-4 h-4 text-d2-fire" /> },
