@@ -7,10 +7,13 @@ import { AREA_LEVELS_DATA } from '../data/areaLevels';
 import { MERCENARIES_DATA } from '../data/mercenaries';
 import { VALUATION_ITEMS_DATA } from '../data/affixes';
 import { UBER_TRISTRAM_GUIDE } from '../data/uberBosses';
+import { SKILLS_DATA } from '../data/skills';
+import { BASE_ITEMS_DATA } from '../data/bases';
+import { QUESTS_DATA, WORLD_EVENTS_DATA } from '../data/quests';
 
 export interface SearchResultItem {
   id: string;
-  type: 'runeword' | 'unique' | 'set' | 'rune' | 'cube' | 'area' | 'mercenary' | 'valuation' | 'uber';
+  type: 'runeword' | 'unique' | 'set' | 'rune' | 'cube' | 'area' | 'mercenary' | 'valuation' | 'uber' | 'skill' | 'base' | 'quest';
   title: string;
   titleEn: string;
   category: string;
@@ -98,9 +101,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
             type: 'set',
             title: piece.name,
             titleEn: piece.nameEn,
-            category: `套裝組件 (${set.name})`,
+            category: `套裝散件 (${set.name})`,
             badge: '綠色套裝',
-            preview: piece.attributes.slice(0, 2).join(' | '),
+            preview: piece.attributes.slice(0, 3).join(' | '),
             targetTab: 'items'
           });
         }
@@ -113,7 +116,6 @@ export const searchOmni = (query: string): SearchResultItem[] => {
     const textToMatch = [
       rune.name,
       rune.nameEn,
-      `${rune.number}號`,
       `#${rune.number}`,
       rune.weaponEffect,
       rune.armorHelmEffect,
@@ -125,10 +127,10 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         id: `rune_${rune.number}`,
         type: 'rune',
         title: `${rune.number}號 ${rune.name}`,
-        titleEn: `${rune.nameEn} Rune`,
-        category: `符文 (需求等級: ${rune.requiredLevel})`,
-        badge: '符文',
-        preview: `武器: ${rune.weaponEffect} | 防具: ${rune.armorHelmEffect}`,
+        titleEn: rune.nameEn,
+        category: `符文 (Lv ${rune.requiredLevel})`,
+        badge: rune.number >= 26 ? '大號符文' : (rune.number >= 16 ? '中階符文' : '初階符文'),
+        preview: `武器: ${rune.weaponEffect} | 盾甲: ${rune.shieldEffect}`,
         targetTab: 'runes'
       });
     }
@@ -139,6 +141,7 @@ export const searchOmni = (query: string): SearchResultItem[] => {
     const textToMatch = [
       recipe.title,
       recipe.titleEn,
+      recipe.category,
       recipe.inputs.join(' '),
       recipe.output,
       recipe.notes || ''
@@ -150,33 +153,32 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'cube',
         title: recipe.title,
         titleEn: recipe.titleEn,
-        category: `方塊配方 (${recipe.category})`,
-        badge: '赫拉迪姆方塊',
-        preview: `材料: ${recipe.inputs.join(' + ')} -> ${recipe.output}`,
+        category: `方塊公式 (${recipe.category})`,
+        badge: '方塊合成',
+        preview: `${recipe.inputs.join(' + ')} -> ${recipe.output}`,
         targetTab: 'cube'
       });
     }
   }
 
-  // 6. Search Area Levels
+  // 6. Search Areas & Terror Zones
   for (const area of AREA_LEVELS_DATA) {
     const textToMatch = [
       area.name,
       area.nameEn,
-      `act ${area.act}`,
-      `第${area.act}章`,
+      `第${area.act}幕`,
       area.immunities.join(' '),
       area.chestsAndBosses || ''
     ].join(' ').toLowerCase();
 
     if (textToMatch.includes(q)) {
       results.push({
-        id: `area_${area.nameEn}`,
+        id: `${area.act}_${area.nameEn.replace(/\s+/g, '_')}`,
         type: 'area',
-        title: `${area.name} (Lv ${area.areaLevel})`,
+        title: area.name,
         titleEn: area.nameEn,
-        category: `第 ${area.act} 章 ${area.isAlvl85 ? '【85 級場景】' : '場景'}`,
-        badge: area.isAlvl85 ? '85 級場景' : '區域',
+        category: `第 ${area.act} 幕 · 區域等級 Lv ${area.areaLevel}`,
+        badge: area.isAlvl85 ? 'Lv85 頂級場景' : (area.isTerrorZone ? '恐懼領域' : '常規場景'),
         preview: `免疫: ${area.immunities.join(', ')} | ${area.chestsAndBosses || ''}`,
         targetTab: 'areas'
       });
@@ -250,7 +252,103 @@ export const searchOmni = (query: string): SearchResultItem[] => {
     }
   }
 
+  // 10. Search Skills
+  for (const group of SKILLS_DATA) {
+    for (const tree of group.trees) {
+      for (const sk of tree.skills) {
+        const text = [
+          sk.name,
+          sk.nameEn,
+          sk.characterClass,
+          sk.tree,
+          sk.description,
+          sk.details,
+          (sk.synergies || []).join(' ')
+        ].join(' ').toLowerCase();
+
+        if (text.includes(q)) {
+          results.push({
+            id: sk.id,
+            type: 'skill',
+            title: sk.name,
+            titleEn: sk.nameEn,
+            category: `${sk.characterClass} · ${sk.tree} (Lv ${sk.requiredLevel})`,
+            badge: '職業技能',
+            preview: sk.description,
+            targetTab: 'skills'
+          });
+        }
+      }
+    }
+  }
+
+  // 11. Search Base Items
+  for (const base of BASE_ITEMS_DATA) {
+    const text = [
+      base.name,
+      base.nameEn,
+      base.category,
+      base.itemType,
+      base.recommendedRunewords.join(' '),
+      base.tacticalNotes,
+      base.dropRecommendation
+    ].join(' ').toLowerCase();
+
+    if (text.includes(q)) {
+      results.push({
+        id: base.id,
+        type: 'base',
+        title: base.name,
+        titleEn: base.nameEn,
+        category: `符文底材 (${base.category} · ${base.itemType} · 最多${base.maxSockets}孔)`,
+        badge: base.qualityTier,
+        preview: `推薦符文語: ${base.recommendedRunewords.slice(0, 3).join(', ')}`,
+        targetTab: 'bases'
+      });
+    }
+  }
+
+  // 12. Search Quests & Events
+  for (const quest of QUESTS_DATA) {
+    const text = [
+      quest.name,
+      quest.nameEn,
+      `第${quest.act}幕`,
+      quest.location,
+      quest.summary,
+      quest.tacticalTips,
+      quest.permanentReward?.description || ''
+    ].join(' ').toLowerCase();
+
+    if (text.includes(q)) {
+      results.push({
+        id: quest.id,
+        type: 'quest',
+        title: quest.name,
+        titleEn: quest.nameEn,
+        category: `第 ${quest.act} 幕 任務 ${quest.questNumber} (${quest.location})`,
+        badge: quest.permanentReward ? '永久獎勵' : (quest.isMandatory ? '主線必解' : '支線任務'),
+        preview: quest.permanentReward ? quest.permanentReward.description : quest.summary,
+        targetTab: 'quests'
+      });
+    }
+  }
+
+  for (const evt of WORLD_EVENTS_DATA) {
+    const text = [evt.name, evt.nameEn, evt.location, evt.triggerCondition, evt.guide].join(' ').toLowerCase();
+    if (text.includes(q)) {
+      results.push({
+        id: evt.id,
+        type: 'quest',
+        title: evt.name,
+        titleEn: evt.nameEn,
+        category: `終局世界事件 (${evt.location})`,
+        badge: '世界事件',
+        preview: evt.guide,
+        targetTab: 'quests'
+      });
+    }
+  }
+
   return results.slice(0, 30);
 };
-
-

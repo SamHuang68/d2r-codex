@@ -8,8 +8,11 @@ import { HeroSection } from './components/portal/HeroSection';
 import { ClassShowcase } from './components/portal/ClassShowcase';
 import { DLCReign } from './components/portal/DLCReign';
 
+import { SkillPlanner } from './components/codex/SkillPlanner';
 import { RunewordFinder } from './components/codex/RunewordFinder';
 import { ItemCompendium } from './components/codex/ItemCompendium';
+import { BaseItemGuide } from './components/codex/BaseItemGuide';
+import { QuestGuide } from './components/codex/QuestGuide';
 import { RuneCompendium } from './components/codex/RuneCompendium';
 import { CubeLab } from './components/codex/CubeLab';
 import { BreakpointTable } from './components/codex/BreakpointTable';
@@ -63,7 +66,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1">
+      <main className="flex-1 pb-16 lg:pb-0">
         {activeTab === 'overview' && (
           <div>
             <HeroSection onNavigateTab={(tab) => setActiveTab(tab)} />
@@ -72,8 +75,11 @@ export const App: React.FC = () => {
           </div>
         )}
 
+        {activeTab === 'skills' && <SkillPlanner />}
         {activeTab === 'runewords' && <RunewordFinder />}
         {activeTab === 'items' && <ItemCompendium />}
+        {activeTab === 'bases' && <BaseItemGuide />}
+        {activeTab === 'quests' && <QuestGuide />}
         {activeTab === 'runes' && <RuneCompendium />}
         {activeTab === 'cube' && <CubeLab />}
         {activeTab === 'breakpoints' && (
@@ -101,7 +107,7 @@ export const App: React.FC = () => {
         onOpenSearch={() => setIsSearchOpen(true)}
       />
 
-      {/* Footer */}
+      {/* Global Footer */}
       <Footer />
     </div>
   );
