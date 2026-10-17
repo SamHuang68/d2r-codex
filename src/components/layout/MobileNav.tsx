@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flame, Sparkles, Sword, BookOpen, Compass, Trophy } from 'lucide-react';
+import { Flame, Sparkles, Sword, BookOpen, Compass, Trophy, MapPin } from 'lucide-react';
 
 interface MobileNavProps {
   activeTab: string;
@@ -16,6 +16,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
     { id: 'overview', label: '主頁', icon: <Flame className="w-5 h-5" /> },
     { id: 'runewords', label: '符文語', icon: <Sparkles className="w-5 h-5" /> },
     { id: 'items', label: '裝備', icon: <Sword className="w-5 h-5" /> },
+    { id: 'areas', label: '場景', icon: <MapPin className="w-5 h-5" /> },
     { id: 'cube', label: '方塊', icon: <BookOpen className="w-5 h-5" /> },
     { id: 'breakpoints', label: '機制', icon: <Compass className="w-5 h-5" /> },
     { id: 'grail', label: '聖杯', icon: <Trophy className="w-5 h-5" /> },

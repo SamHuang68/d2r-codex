@@ -7,8 +7,9 @@ import {
   Compass, 
   Trophy, 
   Wrench, 
-  Search,
-  Sword
+  Search, 
+  Sword,
+  MapPin
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -29,6 +30,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'runes', label: '符文寶庫', icon: <Layers className="w-4 h-4 text-d2-rune" /> },
     { id: 'cube', label: '方塊工坊', icon: <BookOpen className="w-4 h-4 text-d2-magic" /> },
     { id: 'breakpoints', label: '機制斷點', icon: <Compass className="w-4 h-4 text-d2-fire" /> },
+    { id: 'areas', label: '場景恐區', icon: <MapPin className="w-4 h-4 text-d2-fire" /> },
     { id: 'grail', label: '聖杯打寶', icon: <Trophy className="w-4 h-4 text-d2-gold" /> },
     { id: 'planner', label: '配裝工坊', icon: <Wrench className="w-4 h-4 text-sanctuary-300" /> },
   ];

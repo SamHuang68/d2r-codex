@@ -175,7 +175,7 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         category: `第 ${area.act} 章 ${area.isAlvl85 ? '【85 級場景】' : '場景'}`,
         badge: area.isAlvl85 ? '85 級場景' : '區域',
         preview: `免疫: ${area.immunities.join(', ')} | ${area.chestsAndBosses || ''}`,
-        targetTab: 'breakpoints'
+        targetTab: 'areas'
       });
     }
   }

@@ -13,6 +13,7 @@ import { ItemCompendium } from './components/codex/ItemCompendium';
 import { RuneCompendium } from './components/codex/RuneCompendium';
 import { CubeLab } from './components/codex/CubeLab';
 import { BreakpointTable } from './components/codex/BreakpointTable';
+import { AreaGuide } from './components/codex/AreaGuide';
 import { HolyGrailTracker } from './components/vault/HolyGrailTracker';
 import { BuildPlanner } from './components/vault/BuildPlanner';
 
@@ -75,6 +76,7 @@ export const App: React.FC = () => {
         {activeTab === 'breakpoints' && (
           <BreakpointTable initialClass={selectedInitialClass} />
         )}
+        {activeTab === 'areas' && <AreaGuide />}
         {activeTab === 'grail' && <HolyGrailTracker />}
         {activeTab === 'planner' && <BuildPlanner />}
       </main>
