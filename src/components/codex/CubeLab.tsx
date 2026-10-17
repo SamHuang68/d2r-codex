@@ -3,7 +3,11 @@ import { CUBE_RECIPES_DATA } from '../../data/cubeRecipes';
 import { BookOpen, Plus, ArrowRight } from 'lucide-react';
 import { CubeRecipeData } from '../../types';
 
-export const CubeLab: React.FC = () => {
+export interface CubeLabProps {
+  onNavigateToRune?: (runeNumber: number) => void;
+}
+
+export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
   const [activeCategory, setActiveCategory] = useState<'all' | CubeRecipeData['category']>('all');
 
   const categories = [
@@ -84,16 +88,33 @@ export const CubeLab: React.FC = () => {
               <div className="py-4 space-y-3">
                 <div className="text-xs text-sanctuary-400 font-medium">投入材料 (Inputs)：</div>
                 <div className="flex flex-wrap items-center gap-2">
-                  {recipe.inputs.map((inp, idx) => (
-                    <React.Fragment key={idx}>
-                      <span className="px-2.5 py-1 rounded bg-sanctuary-900 border border-sanctuary-750 text-xs text-sanctuary-200 font-medium">
-                        {inp}
-                      </span>
-                      {idx < recipe.inputs.length - 1 && (
-                        <Plus className="w-3 h-3 text-sanctuary-500" />
-                      )}
-                    </React.Fragment>
-                  ))}
+                  {recipe.inputs.map((inp, idx) => {
+                    const runeMatch = inp.match(/(\d+)#/);
+                    const runeNum = runeMatch ? parseInt(runeMatch[1], 10) : null;
+
+                    return (
+                      <React.Fragment key={idx}>
+                        {runeNum && onNavigateToRune ? (
+                          <button
+                            type="button"
+                            onClick={() => onNavigateToRune(runeNum)}
+                            className="px-2.5 py-1 rounded bg-sanctuary-900 hover:bg-sanctuary-800 border border-d2-rune/40 hover:border-d2-rune text-xs text-d2-rune hover:text-white font-mono font-medium transition-all cursor-pointer shadow-sm flex items-center gap-1 group/rune"
+                            title={`點擊查看 ${runeNum}# 符文詳細屬性與升級配方`}
+                          >
+                            <span>{inp}</span>
+                            <span className="text-[9px] opacity-60 group-hover/rune:opacity-100">↗</span>
+                          </button>
+                        ) : (
+                          <span className="px-2.5 py-1 rounded bg-sanctuary-900 border border-sanctuary-750 text-xs text-sanctuary-200 font-medium">
+                            {inp}
+                          </span>
+                        )}
+                        {idx < recipe.inputs.length - 1 && (
+                          <Plus className="w-3 h-3 text-sanctuary-500" />
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
                 </div>
 
                 <div className="pt-2 flex items-center gap-2 text-xs font-semibold text-sanctuary-300">

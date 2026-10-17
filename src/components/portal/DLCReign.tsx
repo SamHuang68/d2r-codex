@@ -3,9 +3,15 @@ import { Flame, Check, Sparkles, Shield, ArrowRight } from 'lucide-react';
 
 interface DLCReignProps {
   onExploreDLCItems: () => void;
+  onNavigateToRuneword?: (name: string) => void;
+  onNavigateItem?: (name: string) => void;
 }
 
-export const DLCReign: React.FC<DLCReignProps> = ({ onExploreDLCItems }) => {
+export const DLCReign: React.FC<DLCReignProps> = ({
+  onExploreDLCItems,
+  onNavigateToRuneword,
+  onNavigateItem,
+}) => {
   return (
     <section className="py-16 bg-sanctuary-950 border-b border-sanctuary-800 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -31,13 +37,61 @@ export const DLCReign: React.FC<DLCReignProps> = ({ onExploreDLCItems }) => {
                 <Check className="w-4 h-4 text-d2-set shrink-0" />
                 <span>全新第 8 職業：<strong>術士 (Warlock)</strong> — 惡魔使役、邪異武裝、混沌暗影三大專精</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Check className="w-4 h-4 text-d2-set shrink-0" />
-                <span>新增 DLC 獨特暗金與套裝：艾迪亞布羅斯學術、貝恩的衣裝等頂階裝備</span>
+                <span>
+                  新增 DLC 獨特暗金與套裝：
+                  <button
+                    type="button"
+                    onClick={() => onNavigateItem?.('艾迪亞布羅斯學術')}
+                    className="text-d2-set hover:underline font-bold mx-1 cursor-pointer"
+                    title="點擊查看【艾迪亞布羅斯學術】"
+                  >
+                    艾迪亞布羅斯學術 ↗
+                  </button>
+                  、
+                  <button
+                    type="button"
+                    onClick={() => onNavigateItem?.('貝恩的衣裝')}
+                    className="text-d2-set hover:underline font-bold mx-1 cursor-pointer"
+                    title="點擊查看【貝恩的衣裝】"
+                  >
+                    貝恩的衣裝 ↗
+                  </button>
+                  等頂階裝備
+                </span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Check className="w-4 h-4 text-d2-set shrink-0" />
-                <span>新增終局符文之語：<strong>權威 (Authority)</strong>、<strong>巫師會 (Coven)</strong>、<strong>虛無 (Void)</strong></span>
+                <span>
+                  新增終局符文之語：
+                  <button
+                    type="button"
+                    onClick={() => onNavigateToRuneword?.('權威')}
+                    className="text-d2-unique hover:underline font-bold mx-1 cursor-pointer"
+                    title="點擊查看符文之語【權威】組成細節"
+                  >
+                    權威 (Authority) ↗
+                  </button>
+                  、
+                  <button
+                    type="button"
+                    onClick={() => onNavigateToRuneword?.('巫師會')}
+                    className="text-d2-unique hover:underline font-bold mx-1 cursor-pointer"
+                    title="點擊查看符文之語【巫師會】組成細節"
+                  >
+                    巫師會 (Coven) ↗
+                  </button>
+                  、
+                  <button
+                    type="button"
+                    onClick={() => onNavigateToRuneword?.('虛無')}
+                    className="text-d2-unique hover:underline font-bold mx-1 cursor-pointer"
+                    title="點擊查看符文之語【虛無】組成細節"
+                  >
+                    虛無 (Void) ↗
+                  </button>
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-d2-set shrink-0" />

@@ -22,11 +22,14 @@ import { ValuationGuide } from './components/codex/ValuationGuide';
 import { UberBossGuide } from './components/codex/UberBossGuide';
 import { HolyGrailTracker } from './components/vault/HolyGrailTracker';
 import { BuildPlanner } from './components/vault/BuildPlanner';
+import { RUNEWORDS_DATA } from './data/runewords';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [selectedInitialClass, setSelectedInitialClass] = useState<string>('魔法使');
+  const [targetQuery, setTargetQuery] = useState<string>('');
+  const [targetRuneNumber, setTargetRuneNumber] = useState<number | undefined>();
 
   // Global hotkey 'Q' or '/' to open search modal
   useEffect(() => {
@@ -47,13 +50,42 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleSelectSearchResult = (targetTab: string) => {
-    setActiveTab(targetTab);
+  const handleNavigate = (tab: string, query?: string, runeNumber?: number) => {
+    setActiveTab(tab);
+    if (query !== undefined) {
+      setTargetQuery(query);
+    }
+    if (runeNumber !== undefined) {
+      setTargetRuneNumber(runeNumber);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleItemOrRunewordNavigate = (rawName: string) => {
+    const cleanName = rawName.replace(/[【】]/g, '').trim();
+    const isRuneword = RUNEWORDS_DATA.some(
+      (rw) => rw.name.includes(cleanName) || cleanName.includes(rw.name)
+    );
+
+    if (isRuneword) {
+      handleNavigate('runewords', cleanName);
+    } else {
+      handleNavigate('items', cleanName);
+    }
+  };
+
+  const handleSelectSearchResult = (
+    targetTab: string,
+    _itemId: string,
+    itemTitle?: string,
+    runeNumber?: number
+  ) => {
+    handleNavigate(targetTab, itemTitle, runeNumber);
   };
 
   const handleCheckClassBreakpoints = (className: string) => {
     setSelectedInitialClass(className);
-    setActiveTab('breakpoints');
+    handleNavigate('breakpoints');
   };
 
   return (
@@ -69,31 +101,62 @@ export const App: React.FC = () => {
       <main className="flex-1 pb-16 lg:pb-0">
         {activeTab === 'overview' && (
           <div>
-            <HeroSection onNavigateTab={(tab) => setActiveTab(tab)} />
+            <HeroSection onNavigateTab={(tab) => handleNavigate(tab)} />
             <ClassShowcase 
               onCheckBreakpoints={handleCheckClassBreakpoints}
               onExploreSkills={(cls) => {
                 setSelectedInitialClass(cls);
-                setActiveTab('skills');
+                handleNavigate('skills');
               }}
-              onExploreBuilds={() => setActiveTab('planner')}
+              onExploreBuilds={() => handleNavigate('planner')}
             />
-            <DLCReign onExploreDLCItems={() => setActiveTab('runewords')} />
+            <DLCReign 
+              onExploreDLCItems={() => handleNavigate('runewords')}
+              onNavigateToRuneword={(rw) => handleNavigate('runewords', rw)}
+              onNavigateItem={handleItemOrRunewordNavigate}
+            />
           </div>
         )}
 
         {activeTab === 'skills' && <SkillPlanner initialClass={selectedInitialClass} />}
-        {activeTab === 'runewords' && <RunewordFinder />}
-        {activeTab === 'items' && <ItemCompendium />}
-        {activeTab === 'bases' && <BaseItemGuide />}
+        {activeTab === 'runewords' && (
+          <RunewordFinder 
+            initialQuery={targetQuery}
+            onNavigateToRune={(n) => handleNavigate('runes', undefined, n)}
+            onNavigateToBase={(base) => handleNavigate('bases', base)}
+          />
+        )}
+        {activeTab === 'items' && (
+          <ItemCompendium 
+            initialQuery={targetQuery}
+            onNavigateToBase={(base) => handleNavigate('bases', base)}
+          />
+        )}
+        {activeTab === 'bases' && (
+          <BaseItemGuide 
+            initialQuery={targetQuery}
+            onNavigateToRuneword={(rw) => handleNavigate('runewords', rw)}
+          />
+        )}
         {activeTab === 'quests' && <QuestGuide />}
-        {activeTab === 'runes' && <RuneCompendium />}
-        {activeTab === 'cube' && <CubeLab />}
+        {activeTab === 'runes' && (
+          <RuneCompendium 
+            targetRuneNumber={targetRuneNumber}
+            onNavigateToRuneword={(rw) => handleNavigate('runewords', rw)}
+          />
+        )}
+        {activeTab === 'cube' && (
+          <CubeLab 
+            onNavigateToRune={(n) => handleNavigate('runes', undefined, n)}
+          />
+        )}
         {activeTab === 'breakpoints' && (
           <BreakpointTable initialClass={selectedInitialClass} />
         )}
         {activeTab === 'areas' && <AreaGuide />}
-        {activeTab === 'mercenaries' && <MercenaryGuide />}
+        {activeTab === 'mercenaries' && (
+          <MercenaryGuide onNavigateItem={handleItemOrRunewordNavigate} />
+        )}
         {activeTab === 'valuation' && <ValuationGuide />}
         {activeTab === 'uber' && <UberBossGuide />}
         {activeTab === 'grail' && <HolyGrailTracker />}
@@ -101,8 +164,9 @@ export const App: React.FC = () => {
           <BuildPlanner 
             onNavigateToSkills={(cls) => {
               setSelectedInitialClass(cls);
-              setActiveTab('skills');
+              handleNavigate('skills');
             }}
+            onNavigateItem={handleItemOrRunewordNavigate}
           />
         )}
       </main>

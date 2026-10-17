@@ -15,6 +15,7 @@ interface ItemTooltipProps {
   fullSetBonuses?: string[];
   flavorText?: string;
   className?: string;
+  onNavigateToBase?: (baseName: string) => void;
 }
 
 export const ItemTooltip: React.FC<ItemTooltipProps> = ({
@@ -31,6 +32,7 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
   fullSetBonuses,
   flavorText,
   className = '',
+  onNavigateToBase,
 }) => {
   // Title color according to rarity
   const getTitleColor = () => {
@@ -85,7 +87,25 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
       {/* Base Item */}
       {baseItem && (
         <div className="text-xs text-sanctuary-300 font-medium pb-2 border-b border-sanctuary-800">
-          {baseItem} {baseItemEn && <span className="text-sanctuary-400">({baseItemEn})</span>}
+          {onNavigateToBase ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onNavigateToBase(baseItem);
+              }}
+              className="hover:text-d2-socket hover:underline cursor-pointer transition-colors inline-flex items-center gap-1 group/base"
+              title={`點擊查看【${baseItem}】符文底材指南`}
+            >
+              <span>{baseItem}</span>
+              {baseItemEn && <span className="text-sanctuary-400">({baseItemEn})</span>}
+              <span className="text-[10px] text-d2-socket opacity-60 group-hover/base:opacity-100">↗</span>
+            </button>
+          ) : (
+            <span>
+              {baseItem} {baseItemEn && <span className="text-sanctuary-400">({baseItemEn})</span>}
+            </span>
+          )}
         </div>
       )}
 

@@ -5,7 +5,7 @@ import { searchOmni, SearchResultItem } from '../../utils/search';
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectResult: (targetTab: string, itemId: string) => void;
+  onSelectResult: (targetTab: string, itemId: string, itemTitle?: string, runeNumber?: number) => void;
 }
 
 export const SearchModal: React.FC<SearchModalProps> = ({
@@ -159,7 +159,12 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               <div
                 key={item.id}
                 onClick={() => {
-                  onSelectResult(item.targetTab, item.id);
+                  let runeNum: number | undefined;
+                  if (item.type === 'rune') {
+                    const match = item.id.match(/\d+/);
+                    if (match) runeNum = parseInt(match[0], 10);
+                  }
+                  onSelectResult(item.targetTab, item.id, item.title, runeNum);
                   onClose();
                 }}
                 className="p-3 hover:bg-sanctuary-800/60 rounded-lg cursor-pointer transition-colors duration-150 group"

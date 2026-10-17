@@ -2,13 +2,30 @@ import React, { useState, useMemo } from 'react';
 import { RUNEWORDS_DATA } from '../../data/runewords';
 import { Search, Sparkles, Filter, X } from 'lucide-react';
 
-export const RunewordFinder: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+export interface RunewordFinderProps {
+  initialQuery?: string;
+  onNavigateToRune?: (runeNumber: number) => void;
+  onNavigateToBase?: (baseName: string) => void;
+}
+
+export const RunewordFinder: React.FC<RunewordFinderProps> = ({
+  initialQuery = '',
+  onNavigateToRune,
+  onNavigateToBase,
+}) => {
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [selectedSockets, setSelectedSockets] = useState<number | 'all'>('all');
   const [selectedBase, setSelectedBase] = useState<string>('all');
   const [selectedTag, setSelectedTag] = useState<string>('all');
   const [onlyLadder, setOnlyLadder] = useState<boolean>(false);
   const [onlyDLC, setOnlyDLC] = useState<boolean>(false);
+
+  // Sync initialQuery when prop changes
+  React.useEffect(() => {
+    if (initialQuery !== undefined) {
+      setSearchQuery(initialQuery);
+    }
+  }, [initialQuery]);
 
   // Extract all unique bases & tags
   const allBases = useMemo(() => {
@@ -230,8 +247,26 @@ export const RunewordFinder: React.FC = () => {
                         {rw.nameEn}
                       </span>
                     </div>
-                    <div className="text-xs text-sanctuary-300 mt-1">
-                      需求等級: <strong className="text-sanctuary-100">{rw.requiredLevel}</strong> • {rw.sockets} 孔 ({rw.allowedBases.join(' / ')})
+                    <div className="text-xs text-sanctuary-300 mt-1 flex items-center gap-1.5 flex-wrap">
+                      <span>需求等級: <strong className="text-sanctuary-100">{rw.requiredLevel}</strong> • {rw.sockets} 孔</span>
+                      <span>(</span>
+                      {rw.allowedBases.map((base, bIdx) => (
+                        <React.Fragment key={bIdx}>
+                          {bIdx > 0 && <span className="text-sanctuary-600">/</span>}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onNavigateToBase?.(base);
+                            }}
+                            className="text-sanctuary-300 hover:text-d2-socket hover:underline cursor-pointer transition-colors"
+                            title={`點擊查看【${base}】頂級符文底材指南`}
+                          >
+                            {base}
+                          </button>
+                        </React.Fragment>
+                      ))}
+                      <span>)</span>
                     </div>
                   </div>
 
@@ -254,12 +289,19 @@ export const RunewordFinder: React.FC = () => {
                 <div className="py-2.5 flex items-center gap-1.5 flex-wrap">
                   <span className="text-xs text-sanctuary-400 font-semibold mr-1">鑲嵌順序:</span>
                   {rw.runes.map((r, i) => (
-                    <span
+                    <button
                       key={i}
-                      className="px-2 py-0.5 text-xs font-mono font-bold rounded bg-d2-rune/15 text-d2-rune border border-d2-rune/30"
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onNavigateToRune?.(rw.runeNumbers[i]);
+                      }}
+                      className="group/rune px-2 py-0.5 text-xs font-mono font-bold rounded bg-d2-rune/15 hover:bg-d2-rune/30 text-d2-rune hover:text-white border border-d2-rune/30 hover:border-d2-rune transition-all hover:scale-105 cursor-pointer shadow-sm flex items-center gap-1"
+                      title={`點擊跳轉查看 ${rw.runeNumbers[i]}號 符文詳細屬性與方塊合成`}
                     >
-                      {rw.runeNumbers[i]}# {r}
-                    </span>
+                      <span>{rw.runeNumbers[i]}# {r}</span>
+                      <span className="text-[9px] opacity-0 group-hover/rune:opacity-100 transition-opacity">↗</span>
+                    </button>
                   ))}
                 </div>
 

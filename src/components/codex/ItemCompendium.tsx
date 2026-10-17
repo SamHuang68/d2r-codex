@@ -5,10 +5,26 @@ import { ItemTooltip } from '../common/ItemTooltip';
 import { Sword, Search, Shield, Sparkles, X } from 'lucide-react';
 import { GearSlot } from '../../types';
 
-export const ItemCompendium: React.FC = () => {
+export interface ItemCompendiumProps {
+  initialQuery?: string;
+  onNavigateToBase?: (baseName: string) => void;
+}
+
+export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
+  initialQuery = '',
+  onNavigateToBase,
+}) => {
   const [activeCategory, setActiveCategory] = useState<'all' | GearSlot | 'sets'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+
+  // Sync initialQuery when prop changes
+  React.useEffect(() => {
+    if (initialQuery !== undefined && initialQuery !== '') {
+      setSearchQuery(initialQuery);
+      setActiveCategory('all');
+    }
+  }, [initialQuery]);
 
   const categories = [
     { id: 'all', label: '全部裝備' },
@@ -145,6 +161,7 @@ export const ItemCompendium: React.FC = () => {
                     requiredDex={item.requiredDex}
                     attributes={item.attributes}
                     flavorText={item.flavorText}
+                    onNavigateToBase={onNavigateToBase}
                     className="h-full hover:border-d2-unique hover:scale-[1.01]"
                   />
                 </div>
@@ -191,7 +208,20 @@ export const ItemCompendium: React.FC = () => {
                           {piece.name}
                         </div>
                         <div className="text-[11px] text-sanctuary-400 mb-2 font-medium">
-                          {piece.baseItem} (需求等級: {piece.requiredLevel})
+                          {onNavigateToBase ? (
+                            <button
+                              type="button"
+                              onClick={() => onNavigateToBase(piece.baseItem)}
+                              className="hover:text-d2-socket hover:underline cursor-pointer transition-colors inline-flex items-center gap-0.5"
+                              title={`點擊查看【${piece.baseItem}】符文底材指南`}
+                            >
+                              <span>{piece.baseItem}</span>
+                              <span className="text-[9px] text-d2-socket">↗</span>
+                            </button>
+                          ) : (
+                            <span>{piece.baseItem}</span>
+                          )}{' '}
+                          (需求等級: {piece.requiredLevel})
                         </div>
                         <div className="space-y-0.5 text-d2-magic">
                           {piece.attributes.map((attr, i) => (

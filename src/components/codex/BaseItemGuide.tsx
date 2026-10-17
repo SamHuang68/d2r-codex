@@ -11,11 +11,26 @@ import {
   Gem
 } from 'lucide-react';
 
-export const BaseItemGuide: React.FC = () => {
+export interface BaseItemGuideProps {
+  initialQuery?: string;
+  onNavigateToRuneword?: (runewordName: string) => void;
+}
+
+export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
+  initialQuery = "",
+  onNavigateToRuneword,
+}) => {
   const [selectedCategory, setSelectedCategory] = useState<string>("全部");
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>(initialQuery);
   const [filterEthOnly, setFilterEthOnly] = useState<boolean>(false);
   const [filterSuperiorOnly, setFilterSuperiorOnly] = useState<boolean>(false);
+
+  // Sync initialQuery when prop changes
+  React.useEffect(() => {
+    if (initialQuery !== undefined) {
+      setSearchQuery(initialQuery);
+    }
+  }, [initialQuery]);
 
   const categories = ["全部", "單手武器", "雙手武器", "防具鎧甲", "盾牌"];
 
@@ -210,14 +225,21 @@ export const BaseItemGuide: React.FC = () => {
                 推薦頂級符文之語:
               </div>
               <div className="flex flex-wrap gap-1.5">
-                {item.recommendedRunewords.map((rw) => (
-                  <span
-                    key={rw}
-                    className="px-2 py-0.5 rounded-lg bg-sanctuary-800 border border-sanctuary-750 text-[11px] font-mono text-d2-gold"
-                  >
-                    {rw}
-                  </span>
-                ))}
+                {item.recommendedRunewords.map((rw) => {
+                  const rwCleanName = rw.split(' ')[0];
+                  return (
+                    <button
+                      key={rw}
+                      type="button"
+                      onClick={() => onNavigateToRuneword?.(rwCleanName)}
+                      className="group/rw px-2 py-0.5 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-750 border border-sanctuary-750 hover:border-d2-gold text-[11px] font-mono text-d2-gold hover:text-white transition-all flex items-center gap-1 cursor-pointer shadow-sm hover:scale-105"
+                      title={`點擊查看【${rw}】完整組成符文與屬性`}
+                    >
+                      <span>{rw}</span>
+                      <span className="text-[9px] text-d2-gold/60 group-hover/rw:text-d2-gold">↗</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 

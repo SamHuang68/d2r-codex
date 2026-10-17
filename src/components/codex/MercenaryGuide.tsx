@@ -10,10 +10,58 @@ import {
   Info
 } from 'lucide-react';
 
-export const MercenaryGuide: React.FC = () => {
+export interface MercenaryGuideProps {
+  onNavigateItem?: (itemName: string) => void;
+}
+
+export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem }) => {
   const [selectedActId, setSelectedActId] = useState<string>('act2_desert');
 
   const currentMerc = MERCENARIES_DATA.find((m) => m.id === selectedActId) || MERCENARIES_DATA[0];
+
+  const renderParsedItemLinks = (rawText: string, colorClass: string) => {
+    if (rawText.includes('【') && rawText.includes('】')) {
+      const parts = rawText.split(/(【[^】]+】)/g);
+      return (
+        <span className="flex items-center gap-1 flex-wrap justify-end">
+          {parts.map((part, idx) => {
+            if (part.startsWith('【') && part.endsWith('】')) {
+              const itemName = part.slice(1, -1);
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => onNavigateItem?.(itemName)}
+                  className={`${colorClass} hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5 transition-colors`}
+                  title={`點擊查看【${itemName}】詳細屬性`}
+                >
+                  <span>【{itemName}】</span>
+                  <span className="text-[9px] opacity-70">↗</span>
+                </button>
+              );
+            }
+            return (
+              <span key={idx} className="text-sanctuary-400 font-normal">
+                {part}
+              </span>
+            );
+          })}
+        </span>
+      );
+    }
+
+    return (
+      <button
+        type="button"
+        onClick={() => onNavigateItem?.(rawText)}
+        className={`${colorClass} font-bold hover:underline cursor-pointer transition-colors flex items-center gap-1`}
+        title={`點擊跳轉查看【${rawText}】詳細屬性`}
+      >
+        <span>{rawText}</span>
+        <span className="text-[9px] opacity-70">↗</span>
+      </button>
+    );
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
@@ -164,17 +212,17 @@ export const MercenaryGuide: React.FC = () => {
 
                   {/* Gear Slots */}
                   <div className="space-y-2 bg-sanctuary-950/70 p-3.5 rounded-xl border border-sanctuary-800/80 mb-4 text-xs font-mono">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sanctuary-500">武器：</span>
-                      <span className="text-d2-unique font-bold">{build.weapon}</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-sanctuary-500 shrink-0">武器：</span>
+                      {renderParsedItemLinks(build.weapon, 'text-d2-unique hover:text-amber-300')}
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sanctuary-500">頭盔：</span>
-                      <span className="text-d2-set font-bold">{build.helm}</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-sanctuary-500 shrink-0">頭盔：</span>
+                      {renderParsedItemLinks(build.helm, 'text-d2-set hover:text-green-300')}
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sanctuary-500">盔甲：</span>
-                      <span className="text-d2-rune font-bold">{build.armor}</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-sanctuary-500 shrink-0">盔甲：</span>
+                      {renderParsedItemLinks(build.armor, 'text-d2-rune hover:text-orange-300')}
                     </div>
                   </div>
 

@@ -5,11 +5,12 @@ import { BREAKPOINTS_DATA } from '../../data/breakpoints';
 import { PRESET_META_BUILDS } from '../../data/presets';
 import { Wrench, Plus, Trash2, CheckCircle2, Zap, Sparkles, BookOpen, X } from 'lucide-react';
 
-interface BuildPlannerProps {
+export interface BuildPlannerProps {
   onNavigateToSkills?: (className: string) => void;
+  onNavigateItem?: (itemName: string) => void;
 }
 
-export const BuildPlanner: React.FC<BuildPlannerProps> = ({ onNavigateToSkills }) => {
+export const BuildPlanner: React.FC<BuildPlannerProps> = ({ onNavigateToSkills, onNavigateItem }) => {
   const [plans, setPlans] = useState<CharacterBuildPlan[]>(loadBuildPlans());
   const [activePlanId, setActivePlanId] = useState<string>('');
 
@@ -361,9 +362,22 @@ export const BuildPlanner: React.FC<BuildPlannerProps> = ({ onNavigateToSkills }
                   const gearVal = (currentPlan.gear as any)[slot.key] || '';
                   return (
                     <div key={slot.key} className="p-3 rounded-xl bg-sanctuary-900/70 border border-sanctuary-800">
-                      <label className="block text-[11px] text-sanctuary-400 font-medium mb-1">
-                        {slot.label}
-                      </label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[11px] text-sanctuary-400 font-medium">
+                          {slot.label}
+                        </label>
+                        {gearVal && onNavigateItem && (
+                          <button
+                            type="button"
+                            onClick={() => onNavigateItem(gearVal)}
+                            className="text-[10px] text-d2-unique hover:text-amber-300 hover:underline cursor-pointer flex items-center gap-0.5 transition-colors"
+                            title={`前往資料庫查閱【${gearVal}】詳細數值`}
+                          >
+                            <span>查資料庫</span>
+                            <span className="text-[9px]">↗</span>
+                          </button>
+                        )}
+                      </div>
                       <input
                         type="text"
                         value={gearVal}
