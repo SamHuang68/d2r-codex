@@ -1827,7 +1827,396 @@ export const UNIQUE_ITEMS_DATA: UniqueItemData[] = [
       "+5-7 擊殺後獲得生命 (變動)",
       "凹槽 (1-3) (變動)"
     ]
+  },
+  {
+    id: "the_oculus",
+    name: "眼球 (渦流水晶)",
+    nameEn: "The Oculus",
+    baseItem: "渦流水晶 (Swirling Crystal)",
+    baseItemEn: "Swirling Crystal",
+    slot: "weapon",
+    requiredLevel: 42,
+    tags: ["Sorceress Skills +3", "FCR 20%", "Magic Find 50%", "All Resist 20", "Teleport on Struck"],
+    flavorText: "法師開荒與打寶不可或缺的標誌性魔杖！滿溢的魔力讓施法速度狂飆，但受到攻擊時隨機瞬移的特性也讓無數法師又愛又恨。",
+    attributes: [
+      "+3 魔法使技能等級",
+      "+20% 快速施法速度 (FCR)",
+      "+20 體力",
+      "+20 精力",
+      "所有抗性 +20",
+      "+50% 更佳機會取得魔法裝備 (MF)",
+      "+5 擊殺後獲得法力 (EK)",
+      "被擊中時有 25% 機率施展等級 15 傳送 (Teleport)"
+    ]
+  },
+  {
+    id: "bartucs_cut_throat",
+    name: "巴特克的咽喉 (巴爪)",
+    nameEn: "Bartuc's Cut-Throat",
+    baseItem: "巨鷹爪 (Greater Talon)",
+    baseItemEn: "Greater Talon",
+    slot: "weapon",
+    requiredLevel: 42,
+    tags: ["Assassin Skills +2", "Martial Arts +1", "FHR 30%", "Strength +20", "Dexterity +20"],
+    flavorText: "染滿血腥的古老異端雙爪，提供刺客最均衡的屬性加成、高速打擊恢復與高額吸血。",
+    attributes: [
+      "+2 刺客技能等級",
+      "+1 武學藝術技能 (刺客專用)",
+      "+30% 快速打擊恢復 (FHR)",
+      "+150-200% 增強傷害 (ED) (變動)",
+      "每次命中偷取 5-9% 生命 (變動)",
+      "+20 力量",
+      "+20 敏捷"
+    ]
+  },
+  {
+    id: "death_cleaver",
+    name: "死亡之刀",
+    nameEn: "Death Cleaver",
+    baseItem: "狂戰士斧 (Berserker Axe)",
+    baseItemEn: "Berserker Axe",
+    slot: "weapon",
+    requiredLevel: 70,
+    tags: ["Deadly Strike 66%", "IAS 40%", "Minus Target Defense 33%"],
+    flavorText: "狂暴近戰野蠻人的純物理兇刃！高達 66% 致命一擊配合狂戰士狂砍，刀刀烈火見骨。",
+    attributes: [
+      "+40% 攻擊速度 (IAS)",
+      "+230-280% 增強傷害 (ED) (變動)",
+      "-33% 目標防禦",
+      "66% 機率造成致命打擊 (DS) (極致致命爆發)",
+      "+6-9 擊殺後獲得生命 (變動)"
+    ]
+  },
+  {
+    id: "suicide_branch",
+    name: "自殺支系",
+    nameEn: "Suicide Branch",
+    baseItem: "焦黑之杖 (Burnt Wand)",
+    baseItemEn: "Burnt Wand",
+    slot: "weapon",
+    requiredLevel: 33,
+    tags: ["FCR 50%", "All Skills +1", "Life +40", "Extreme FCR Wand"],
+    flavorText: "提供全暗黑單手武器中最高額的 50% 快速施法速度！是風德、電法衝擊 163% 甚至 200% FCR 檔位的神級突破杖。",
+    attributes: [
+      "+1 所有技能",
+      "+50% 快速施法速度 (FCR) (全手持武器最高)",
+      "增加法力上限 10%",
+      "所有抗性 +10",
+      "+40 生命",
+      "受到攻擊者受到傷害 25"
+    ]
+  },
+  {
+    id: "buriza_do_kyanon",
+    name: "布理撒·多·凱南 (大砲)",
+    nameEn: "Buriza-Do Kyanon",
+    baseItem: "弩弓 (Ballista)",
+    baseItemEn: "Ballista",
+    slot: "weapon",
+    requiredLevel: 41,
+    tags: ["IAS 80%", "Pierce 100%", "Freeze Target", "Bowazon Classic"],
+    flavorText: "老玩家記憶中最經典的「大砲」！自帶 80% 攻速與 100% 絕對穿刺，射出一根巨弩直接洞穿整列惡魔大軍。",
+    attributes: [
+      "+80% 攻擊速度 (IAS)",
+      "+150-200% 增強傷害 (ED) (變動)",
+      "+(2.5 每等級) 最大傷害 (依角色等級增加)",
+      "穿透攻擊 (100% 絕對穿刺)",
+      "增加 32-196 冰寒傷害，持續 8 秒",
+      "凍結目標 +3",
+      "+35 敏捷"
+    ]
+  },
+  {
+    id: "witchwild_string",
+    name: "狂野之弦",
+    nameEn: "Witchwild String",
+    baseItem: "短戰鬥弓 (Short Siege Bow)",
+    baseItemEn: "Short Siege Bow",
+    slot: "weapon",
+    requiredLevel: 39,
+    tags: ["Amplify Damage on Striking", "Socketed 2", "Deadly Strike Per Level", "All Resist 40"],
+    flavorText: "自帶 2 個凹槽與 40 點全抗性！打擊時觸發高等級「傷害加深」詛咒使物理傷害翻倍，升級為鑽石弓後威力無窮。",
+    attributes: [
+      "打擊時有 2% 機率施展等級 5 傷害加深 (Amplify Damage 破除物理免疫)",
+      "+150-170% 增強傷害 (ED) (變動)",
+      "+(1 每等級) 致命打擊 (依角色等級增加，1-99%)",
+      "所有抗性 +40",
+      "魔法箭 (射出不耗箭矢的魔法箭矢)",
+      "凹槽 (2)"
+    ]
+  },
+  {
+    id: "kelpie_snare",
+    name: "水魔陷阱",
+    nameEn: "Kelpie Snare",
+    baseItem: "膨脹長柄斧 (Fuscina)",
+    baseItemEn: "Fuscina",
+    slot: "weapon",
+    requiredLevel: 33,
+    tags: ["Slows Target 75%", "Life +50", "Fire Res 50%", "Boss Neutralizer"],
+    flavorText: "打 Boss 的最強神槍！只要刺中巴爾或迪亞布羅，高達 75% 的減速效果會讓 Boss 變成連技能都放不出的慢動作木樁！",
+    attributes: [
+      "使目標減速 75% (Boss 克星特效)",
+      "+140-180% 增強傷害 (ED) (變動)",
+      "+30-50 傷害",
+      "+50 生命",
+      "抗火 +50%",
+      "+(1.25 每等級) 防禦 (依角色等級增加)"
+    ]
+  },
+  {
+    id: "blackhorns_face",
+    name: "黑角面具",
+    nameEn: "Blackhorn's Face",
+    baseItem: "死亡面具 (Death Mask)",
+    baseItemEn: "Death Mask",
+    slot: "helm",
+    requiredLevel: 41,
+    tags: ["Slows Target 20%", "Prevent Monster Heal", "Lightning Absorb +20"],
+    flavorText: "減速 20%、防止怪物自療外加吸收閃電，傭兵對抗古代人與紅門首領的絕佳控場頭具。",
+    attributes: [
+      "使目標減速 20%",
+      "防止怪物自療",
+      "吸收閃電 +20",
+      "抗電 +20%",
+      "打擊使目標致盲",
+      "+180-220% 強化防禦 (變動)"
+    ]
+  },
+  {
+    id: "ravenlore",
+    name: "烏鴉之王",
+    nameEn: "Ravenlore",
+    baseItem: "天球 (Sky Spirit)",
+    baseItemEn: "Sky Spirit",
+    slot: "helm",
+    requiredLevel: 74,
+    tags: ["Druid Elemental +3", "Minus Enemy Fire Res 10-20%", "Fire Druid BIS"],
+    flavorText: "火德魯伊的終極畢業神器！提供 +3 元素技能與極其珍貴的 -(10-20)% 敵人火焰抗性，大幅提升末日餘波與毀天滅地的破壞力。",
+    attributes: [
+      "+3 德魯伊元素技能等級",
+      "-(10-20)% 敵人火焰抗性 (變動) (火德破防神器)",
+      "+120-150% 強化防禦 (變動)",
+      "+20-30 精力 (變動)",
+      "所有抗性 +15-25 (變動)",
+      "+7 烏鴉 (Raven)"
+    ]
+  },
+  {
+    id: "darkforce_spawn",
+    name: "暗影精靈 (血王之骨)",
+    nameEn: "Darkforce Spawn",
+    baseItem: "血王之骨 (Bloodlord Skull)",
+    baseItemEn: "Bloodlord Skull",
+    slot: "shield",
+    requiredLevel: 65,
+    tags: ["Necromancer Skills +1-3", "FCR 30%", "Caster Necro Shield"],
+    flavorText: "提供高達 30% 快速施法速度的死靈法師專用骨盾，骨毒法師追求極限施法檔位的核心裝備。",
+    attributes: [
+      "+1-3 詛咒技能 (死靈專用) (變動)",
+      "+1-3 毒素與白骨技能 (死靈專用) (變動)",
+      "+1-3 召喚技能 (死靈專用) (變動)",
+      "+30% 快速施法速度 (FCR)",
+      "+140-180% 強化防禦 (變動)",
+      "法力恢復 10%"
+    ]
+  },
+  {
+    id: "goldwrap",
+    name: "金色包袱",
+    nameEn: "Goldwrap",
+    baseItem: "重扣帶 (Heavy Belt)",
+    baseItemEn: "Heavy Belt",
+    slot: "belt",
+    requiredLevel: 27,
+    tags: ["Magic Find 30%", "Gold Find 50-80%", "IAS 10%", "Farming Belt"],
+    flavorText: "全遊戲最著名的打寶腰帶！提供 30% MF、高達 80% 的打錢加成與 10% 攻擊速度，升級為戰鬥腰帶後擁有 4 排藥水欄位。",
+    attributes: [
+      "+10% 攻擊速度 (IAS)",
+      "+30% 更佳機會取得魔法裝備 (MF)",
+      "50-80% 額外金幣尋獲 (GF) (變動)",
+      "+40-60% 強化防禦 (變動)",
+      "+25 防禦",
+      "+2 照亮範圍"
+    ]
+  },
+  {
+    id: "silkweave",
+    name: "紗織",
+    nameEn: "Silkweave",
+    baseItem: "網格之靴 (Mesh Boots)",
+    baseItemEn: "Mesh Boots",
+    slot: "boots",
+    requiredLevel: 36,
+    tags: ["Mana After Kill +5", "Increase Max Mana 10%", "Run Walk 30%", "Javazon Boots"],
+    flavorText: "標槍亞馬遜與元素刺客的最愛！每擊殺一隻怪物立即回魔 +5 點，配合群怪收割讓法力球永遠處於滿溢狀態。",
+    attributes: [
+      "+30% 跑步/步行速度",
+      "+5 擊殺後獲得法力 (EK) (群刷永動回魔神技)",
+      "增加法力上限 10%",
+      "+150-190% 強化防禦 (變動)",
+      "+200 對遠程攻擊防禦"
+    ]
+  },
+  {
+    id: "goblin_toe",
+    name: "哥布林腳趾",
+    nameEn: "Goblin Toe",
+    baseItem: "輕型金屬靴 (Light Plated Boots)",
+    baseItemEn: "Light Plated Boots",
+    slot: "boots",
+    requiredLevel: 22,
+    tags: ["Crushing Blow 25%", "Budget Boss Killer Boots"],
+    flavorText: "雖然外型簡陋，但鞋尖附著高達 25% 的壓碎打擊！是盾擊騎士與近戰打紅門三魔神極高性價比的殺戮利器。",
+    attributes: [
+      "25% 機率造成壓碎打擊 (CB) (近戰打王核心特效)",
+      "+50-60% 強化防禦 (變動)",
+      "+15 防禦",
+      "魔法傷害減少 1",
+      "傷害減少 1",
+      "-1 照亮範圍"
+    ]
+  },
+  {
+    id: "lava_gout",
+    name: "熔岩角羊",
+    nameEn: "Lava Gout",
+    baseItem: "十字軍鐵手套 (Battle Gauntlets)",
+    baseItemEn: "Battle Gauntlets",
+    slot: "gloves",
+    requiredLevel: 42,
+    tags: ["IAS 20%", "Enchant on Striking", "Fire Res 24%"],
+    flavorText: "打擊時觸發等級 10 強化 (Enchant)，為自身武器注入滾滾烈焰，大幅增加攻擊準確率 (AR) 與火焰附加傷害。",
+    attributes: [
+      "打擊時有 2% 機率施展等級 10 強化 (Enchant 巨幅提升 AR 與火焰傷害)",
+      "+20% 攻擊速度 (IAS)",
+      "+150-200% 強化防禦 (變動)",
+      "增加 13-46 火焰傷害",
+      "抗火 +24%",
+      "半減冰凍時間"
+    ]
+  },
+  {
+    id: "saracens_chance",
+    name: "薩拉森的機會",
+    nameEn: "Saracen's Chance",
+    baseItem: "項鍊 (Amulet)",
+    baseItemEn: "Amulet",
+    slot: "amulet",
+    requiredLevel: 47,
+    tags: ["All Attributes +12", "All Resist 15-25", "Iron Maiden on Struck"],
+    flavorText: "鐫刻著神秘古紋的護符，為冒險者帶來全屬性 +12 點與滿滿的抗性防護。",
+    attributes: [
+      "+12 所有屬性 (力量、敏捷、體力、精力全加)",
+      "所有抗性 +15-25 (變動)",
+      "被擊中時有 10% 機率施展等級 2 鐵處女 (Iron Maiden)"
+    ]
+  },
+  {
+    id: "the_eye_of_etlich",
+    name: "艾利屈之眼",
+    nameEn: "The Eye of Etlich",
+    baseItem: "項鍊 (Amulet)",
+    baseItemEn: "Amulet",
+    slot: "amulet",
+    requiredLevel: 15,
+    tags: ["All Skills +1", "Life Steal 3-7%", "Cold Duration", "Level 15 Starter"],
+    flavorText: "15 級即可裝備的平民神鍊！提供 +1 全技能、生命偷取與隱藏的超長冰寒減速時間，通關開荒無比愜意。",
+    attributes: [
+      "+1 所有技能等級",
+      "每次命中偷取 3-7% 生命 (變動)",
+      "增加 1-2 至 3-5 冰寒傷害 (附帶 2-10 秒超長減速)",
+      "+1-5 照亮範圍 (變動)",
+      "+10-40 對遠程攻擊防禦 (變動)"
+    ]
+  },
+  {
+    id: "nokozan_relic",
+    name: "諾科藍遺物",
+    nameEn: "Nokozan Relic",
+    baseItem: "項鍊 (Amulet)",
+    baseItemEn: "Amulet",
+    slot: "amulet",
+    requiredLevel: 10,
+    tags: ["Max Fire Res +10%", "Fire Res 50%", "FHR 20%", "Level 10 Starter"],
+    flavorText: "10 級即可穿戴的火抗聖物！直接提供 +10% 最大抗火、50% 抗火與 20% FHR，對抗大菠蘿火風暴與崔凡克火球的神物。",
+    attributes: [
+      "+10% 最大火焰抗性",
+      "抗火 +50%",
+      "+20% 快速打擊恢復 (FHR)",
+      "增加 3-6 火焰傷害",
+      "+3 照亮範圍"
+    ]
+  },
+  {
+    id: "rainbow_facet_light",
+    name: "彩虹刻面 (閃電珠寶)",
+    nameEn: "Rainbow Facet (Lightning)",
+    baseItem: "珠寶 (Jewel)",
+    baseItemEn: "Jewel",
+    slot: "jewel",
+    requiredLevel: 49,
+    tags: ["Minus Enemy Light Res 3-5%", "Light Skill Damage 3-5%", "Die/Level-up Proc"],
+    flavorText: "法系電法、標馬與陷阱刺客鑲嵌的唯一真理！分為死亡施展與升級施展兩種形態，完美數值為 +5/-5。",
+    attributes: [
+      "+3-5% 閃電技能傷害 (變動)",
+      "-(3-5)% 敵人閃電抗性 (變動) (極致破防輸出)",
+      "死亡時有 100% 機率施展等級 41 連鎖閃電 (或升級施展等級 47 連鎖閃電)",
+      "增加 1-74 閃電傷害"
+    ]
+  },
+  {
+    id: "rainbow_facet_fire",
+    name: "彩虹刻面 (火焰珠寶)",
+    nameEn: "Rainbow Facet (Fire)",
+    baseItem: "珠寶 (Jewel)",
+    baseItemEn: "Jewel",
+    slot: "jewel",
+    requiredLevel: 49,
+    tags: ["Minus Enemy Fire Res 3-5%", "Fire Skill Damage 3-5%", "Die/Level-up Proc"],
+    flavorText: "火法、火德與刺客火焰陷阱鑲嵌的畢業寶石！注入狂暴地心烈焰，大幅削弱目標火抗。",
+    attributes: [
+      "+3-5% 火焰技能傷害 (變動)",
+      "-(3-5)% 敵人火焰抗性 (變動)",
+      "死亡時有 100% 機率施展等級 31 隕石 (或升級施展等級 43 火焰之球)",
+      "增加 17-45 火焰傷害"
+    ]
+  },
+  {
+    id: "rainbow_facet_cold",
+    name: "彩虹刻面 (冰寒珠寶)",
+    nameEn: "Rainbow Facet (Cold)",
+    baseItem: "珠寶 (Jewel)",
+    baseItemEn: "Jewel",
+    slot: "jewel",
+    requiredLevel: 49,
+    tags: ["Minus Enemy Cold Res 3-5%", "Cold Skill Damage 3-5%", "Die/Level-up Proc"],
+    flavorText: "冰法、亞馬遜冰箭手與冰風德的至寶，讓刺骨極寒突破惡魔的抗性防線。",
+    attributes: [
+      "+3-5% 冰寒技能傷害 (變動)",
+      "-(3-5)% 敵人冰寒抗性 (變動)",
+      "死亡時有 100% 機率施展等級 37 暴風雪 (或升級施展等級 43 冰封球)",
+      "增加 24-38 冰寒傷害"
+    ]
+  },
+  {
+    id: "rainbow_facet_poison",
+    name: "彩虹刻面 (毒素珠寶)",
+    nameEn: "Rainbow Facet (Poison)",
+    baseItem: "珠寶 (Jewel)",
+    baseItemEn: "Jewel",
+    slot: "jewel",
+    requiredLevel: 49,
+    tags: ["Minus Enemy Poison Res 3-5%", "Poison Skill Damage 3-5%", "Die/Level-up Proc"],
+    flavorText: "劇毒死靈法師與狂犬病德魯伊鑲嵌首選，將致命瘟疫滲透至骨髓之中。",
+    attributes: [
+      "+3-5% 毒素技能傷害 (變動)",
+      "-(3-5)% 敵人毒素抗性 (變動)",
+      "死亡時有 100% 機率施展等級 51 劇毒新星 (或升級施展等級 23 劇毒新星)",
+      "+100 毒素傷害，持續 4 秒"
+    ]
   }
 ];
+
 
 

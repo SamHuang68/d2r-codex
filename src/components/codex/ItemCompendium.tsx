@@ -22,6 +22,7 @@ export const ItemCompendium: React.FC = () => {
     { id: 'ring', label: '戒指 (Rings)' },
     { id: 'amulet', label: '項鍊 (Amulets)' },
     { id: 'charm', label: '護身符 (Charms)' },
+    { id: 'jewel', label: '暗金珠寶 (Jewels)' },
     { id: 'sets', label: '成套裝備 (Sets)' },
   ];
 

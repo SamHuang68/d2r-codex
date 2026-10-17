@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, Flame, Shield, Sparkles, BookOpen, MapPin } from 'lucide-react';
+import { Search, X, Flame, Shield, Sparkles, BookOpen, MapPin, Users, Gem } from 'lucide-react';
 import { searchOmni, SearchResultItem } from '../../utils/search';
 
 interface SearchModalProps {
@@ -64,6 +64,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         return <BookOpen className="w-4 h-4 text-d2-magic" />;
       case 'area':
         return <MapPin className="w-4 h-4 text-d2-fire" />;
+      case 'mercenary':
+        return <Users className="w-4 h-4 text-d2-gold" />;
+      case 'valuation':
+        return <Gem className="w-4 h-4 text-d2-magic" />;
     }
   };
 
@@ -80,6 +84,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         return 'bg-d2-magic/10 text-d2-magic border-d2-magic/30';
       case 'area':
         return 'bg-d2-fire/10 text-d2-fire border-d2-fire/30';
+      case 'mercenary':
+        return 'bg-d2-gold/10 text-d2-gold border-d2-gold/30';
+      case 'valuation':
+        return 'bg-d2-magic/10 text-d2-magic border-d2-magic/30';
     }
   };
 

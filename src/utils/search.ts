@@ -4,10 +4,12 @@ import { UNIQUE_ITEMS_DATA } from '../data/uniqueItems';
 import { SET_ITEMS_DATA } from '../data/setItems';
 import { CUBE_RECIPES_DATA } from '../data/cubeRecipes';
 import { AREA_LEVELS_DATA } from '../data/areaLevels';
+import { MERCENARIES_DATA } from '../data/mercenaries';
+import { VALUATION_ITEMS_DATA } from '../data/affixes';
 
 export interface SearchResultItem {
   id: string;
-  type: 'runeword' | 'unique' | 'set' | 'rune' | 'cube' | 'area';
+  type: 'runeword' | 'unique' | 'set' | 'rune' | 'cube' | 'area' | 'mercenary' | 'valuation';
   title: string;
   titleEn: string;
   category: string;
@@ -180,5 +182,56 @@ export const searchOmni = (query: string): SearchResultItem[] => {
     }
   }
 
+  // 7. Search Mercenaries & Builds
+  for (const merc of MERCENARIES_DATA) {
+    const mercText = [
+      merc.name,
+      merc.nameEn,
+      merc.type,
+      merc.nativeAurasOrSkills.join(' '),
+      merc.description,
+      merc.builds.map(b => `${b.name} ${b.role} ${b.weapon} ${b.helm} ${b.armor}`).join(' ')
+    ].join(' ').toLowerCase();
+
+    if (mercText.includes(q)) {
+      results.push({
+        id: merc.id,
+        type: 'mercenary',
+        title: merc.name,
+        titleEn: merc.nameEn,
+        category: `傭兵指南 (第 ${merc.act} 章: ${merc.type})`,
+        badge: '傭兵配置',
+        preview: merc.builds.map(b => b.name).join(' | '),
+        targetTab: 'mercenaries'
+      });
+    }
+  }
+
+  // 8. Search Valuation Trophy Items
+  for (const item of VALUATION_ITEMS_DATA) {
+    const valText = [
+      item.name,
+      item.nameEn,
+      item.itemType,
+      item.idealStats.join(' '),
+      item.description,
+      item.estimatedValue
+    ].join(' ').toLowerCase();
+
+    if (valText.includes(q)) {
+      results.push({
+        id: item.id,
+        type: 'valuation',
+        title: item.name,
+        titleEn: item.nameEn,
+        category: `鑑寶估價 (${item.itemType})`,
+        badge: item.rarity === 'magic' ? '極品藍裝' : '極品黃裝',
+        preview: `滿變: ${item.idealStats.slice(0, 2).join(' | ')} | 身價: ${item.estimatedValue}`,
+        targetTab: 'valuation'
+      });
+    }
+  }
+
   return results.slice(0, 30);
 };
+

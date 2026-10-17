@@ -14,7 +14,8 @@ export type GearSlot =
   | 'belt' 
   | 'amulet' 
   | 'ring' 
-  | 'charm';
+  | 'charm'
+  | 'jewel';
 
 export interface BaseItem {
   id: string;
