@@ -5,7 +5,11 @@ import { BREAKPOINTS_DATA } from '../../data/breakpoints';
 import { PRESET_META_BUILDS } from '../../data/presets';
 import { Wrench, Plus, Trash2, CheckCircle2, Zap, Sparkles, BookOpen, X } from 'lucide-react';
 
-export const BuildPlanner: React.FC = () => {
+interface BuildPlannerProps {
+  onNavigateToSkills?: (className: string) => void;
+}
+
+export const BuildPlanner: React.FC<BuildPlannerProps> = ({ onNavigateToSkills }) => {
   const [plans, setPlans] = useState<CharacterBuildPlan[]>(loadBuildPlans());
   const [activePlanId, setActivePlanId] = useState<string>('');
 
@@ -317,6 +321,17 @@ export const BuildPlanner: React.FC = () => {
                   placeholder="記錄此流派的打寶路線、鑲嵌物或傭兵配置..."
                 />
               </div>
+
+              {/* Jump to Skill Tree */}
+              {onNavigateToSkills && (
+                <button
+                  onClick={() => onNavigateToSkills(currentPlan.characterClass)}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-d2-gold/50 text-d2-gold text-xs font-bold tracking-wide transition-all shadow-md shadow-d2-gold/5"
+                >
+                  <Sparkles className="w-4 h-4 text-d2-gold" />
+                  <span>進入 {currentPlan.characterClass} 技能加點模擬 (110點)</span>
+                </button>
+              )}
             </div>
           </div>
 

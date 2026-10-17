@@ -22,12 +22,24 @@ import {
 const MAX_TOTAL_POINTS = 110; // 98 (等級 2-99) + 12 (任務獎勵)
 const MAX_SKILL_POINTS = 20;
 
-export const SkillPlanner: React.FC = () => {
-  const [selectedClass, setSelectedClass] = useState<string>("魔法使");
+export interface SkillPlannerProps {
+  initialClass?: string;
+}
+
+export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔法使" }) => {
+  const [selectedClass, setSelectedClass] = useState<string>(initialClass);
   const [activeTreeIndex, setActiveTreeIndex] = useState<number>(0);
   const [skillPoints, setSkillPoints] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [copied, setCopied] = useState<boolean>(false);
+
+  // Sync initialClass when prop changes
+  React.useEffect(() => {
+    if (initialClass && SKILLS_DATA.some(c => c.characterClass === initialClass)) {
+      setSelectedClass(initialClass);
+      setActiveTreeIndex(0);
+    }
+  }, [initialClass]);
 
   // 獲取當前選中職業的資料
   const currentClassData = useMemo(() => {

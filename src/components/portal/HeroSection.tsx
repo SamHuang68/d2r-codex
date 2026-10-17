@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Sparkles, Trophy, ArrowRight, X } from 'lucide-react';
+import { Play, Sparkles, ArrowRight, X } from 'lucide-react';
 
 interface HeroSectionProps {
   onNavigateTab: (tab: string) => void;
@@ -38,50 +38,63 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
         </p>
 
         {/* Action CTAs */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <button
-            onClick={() => onNavigateTab('runewords')}
-            className="flex items-center gap-2 px-6 py-3.5 rounded-lg bg-gradient-to-r from-d2-unique to-amber-600 hover:from-amber-500 hover:to-d2-unique text-sanctuary-950 font-bold text-sm tracking-wide shadow-glow-gold transition-all duration-200 hover:scale-[1.02]"
+            onClick={() => onNavigateTab('skills')}
+            className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-d2-gold to-amber-500 hover:from-amber-400 hover:to-d2-gold text-sanctuary-950 font-bold text-sm tracking-wide shadow-glow-gold transition-all duration-200 hover:scale-[1.02]"
           >
-            <Sparkles className="w-4 h-4" />
-            <span>查閱符文之語資料庫</span>
+            <Sparkles className="w-4 h-4 text-sanctuary-950" />
+            <span>全職業技能樹模擬器</span>
             <ArrowRight className="w-4 h-4 ml-1" />
           </button>
 
           <button
-            onClick={() => setShowVideoModal(true)}
-            className="flex items-center gap-2 px-6 py-3.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-700 text-sanctuary-200 hover:text-white font-medium text-sm transition-all duration-200 hover:scale-[1.02]"
+            onClick={() => onNavigateTab('runewords')}
+            className="flex items-center gap-2 px-5 py-3.5 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-d2-unique font-medium text-sm transition-all duration-200 hover:scale-[1.02]"
           >
-            <Play className="w-4 h-4 text-d2-fire fill-d2-fire" />
-            <span>觀看官方宣傳實機影片</span>
+            <span>符文之語 (80組)</span>
           </button>
 
           <button
-            onClick={() => onNavigateTab('grail')}
-            className="flex items-center gap-2 px-5 py-3.5 rounded-lg bg-sanctuary-950 hover:bg-sanctuary-900 border border-d2-gold/40 text-d2-gold font-medium text-sm transition-all duration-200"
+            onClick={() => onNavigateTab('bases')}
+            className="flex items-center gap-2 px-5 py-3.5 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-d2-socket font-medium text-sm transition-all duration-200 hover:scale-[1.02]"
           >
-            <Trophy className="w-4 h-4" />
-            <span>聖杯打寶進度</span>
+            <span>頂級底材寶典</span>
+          </button>
+
+          <button
+            onClick={() => onNavigateTab('quests')}
+            className="flex items-center gap-2 px-5 py-3.5 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-sanctuary-200 font-medium text-sm transition-all duration-200 hover:scale-[1.02]"
+          >
+            <span>全章節任務</span>
+          </button>
+
+          <button
+            onClick={() => setShowVideoModal(true)}
+            className="flex items-center gap-2 px-4 py-3.5 rounded-xl bg-sanctuary-950 hover:bg-sanctuary-900 border border-sanctuary-800 text-sanctuary-400 hover:text-white text-sm transition-all duration-200"
+          >
+            <Play className="w-4 h-4 text-d2-fire fill-d2-fire" />
+            <span>宣傳影片</span>
           </button>
         </div>
 
         {/* Feature Stat Matrix */}
         <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto pt-8 border-t border-sanctuary-800/60">
           <div className="p-4 rounded-xl bg-sanctuary-900/50 border border-sanctuary-800">
-            <div className="font-diablo text-2xl font-bold text-d2-unique">33 枚</div>
-            <div className="text-xs text-sanctuary-400 mt-1">全符文打孔與合成升級路徑</div>
+            <div className="font-diablo text-2xl font-bold text-d2-gold">21 系樹</div>
+            <div className="text-xs text-sanctuary-400 mt-1">7大職業全技能 110點模擬器</div>
           </div>
           <div className="p-4 rounded-xl bg-sanctuary-900/50 border border-sanctuary-800">
-            <div className="font-diablo text-2xl font-bold text-d2-unique">100+ 款</div>
-            <div className="text-xs text-sanctuary-400 mt-1">天梯與經典符文之語全屬性</div>
+            <div className="font-diablo text-2xl font-bold text-d2-unique">80+ 款</div>
+            <div className="text-xs text-sanctuary-400 mt-1">天梯 2.4/2.6 最新符文之語</div>
           </div>
           <div className="p-4 rounded-xl bg-sanctuary-900/50 border border-sanctuary-800">
-            <div className="font-diablo text-2xl font-bold text-d2-fire">8 大職業</div>
-            <div className="text-xs text-sanctuary-400 mt-1">含術士 (Warlock) 技能與斷點</div>
+            <div className="font-diablo text-2xl font-bold text-d2-socket">27 任務</div>
+            <div className="text-xs text-sanctuary-400 mt-1">永久+12技能/+15屬性/+30全抗</div>
           </div>
           <div className="p-4 rounded-xl bg-sanctuary-900/50 border border-sanctuary-800">
-            <div className="font-diablo text-2xl font-bold text-d2-set">100% 離線</div>
-            <div className="text-xs text-sanctuary-400 mt-1">本機 LocalStorage 無痕保存</div>
+            <div className="font-diablo text-2xl font-bold text-d2-fire">4 大事件</div>
+            <div className="text-xs text-sanctuary-400 mt-1">紅門六王·地表大菠蘿·牛關·TZ</div>
           </div>
         </div>
 

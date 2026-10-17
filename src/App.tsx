@@ -70,12 +70,19 @@ export const App: React.FC = () => {
         {activeTab === 'overview' && (
           <div>
             <HeroSection onNavigateTab={(tab) => setActiveTab(tab)} />
-            <ClassShowcase onCheckBreakpoints={handleCheckClassBreakpoints} />
+            <ClassShowcase 
+              onCheckBreakpoints={handleCheckClassBreakpoints}
+              onExploreSkills={(cls) => {
+                setSelectedInitialClass(cls);
+                setActiveTab('skills');
+              }}
+              onExploreBuilds={() => setActiveTab('planner')}
+            />
             <DLCReign onExploreDLCItems={() => setActiveTab('runewords')} />
           </div>
         )}
 
-        {activeTab === 'skills' && <SkillPlanner />}
+        {activeTab === 'skills' && <SkillPlanner initialClass={selectedInitialClass} />}
         {activeTab === 'runewords' && <RunewordFinder />}
         {activeTab === 'items' && <ItemCompendium />}
         {activeTab === 'bases' && <BaseItemGuide />}
@@ -90,7 +97,14 @@ export const App: React.FC = () => {
         {activeTab === 'valuation' && <ValuationGuide />}
         {activeTab === 'uber' && <UberBossGuide />}
         {activeTab === 'grail' && <HolyGrailTracker />}
-        {activeTab === 'planner' && <BuildPlanner />}
+        {activeTab === 'planner' && (
+          <BuildPlanner 
+            onNavigateToSkills={(cls) => {
+              setSelectedInitialClass(cls);
+              setActiveTab('skills');
+            }}
+          />
+        )}
       </main>
 
       {/* Search Modal */}

@@ -4,9 +4,15 @@ import { Sparkles, Shield, Swords, Compass, Flame } from 'lucide-react';
 
 interface ClassShowcaseProps {
   onCheckBreakpoints: (className: string) => void;
+  onExploreSkills?: (className: string) => void;
+  onExploreBuilds?: () => void;
 }
 
-export const ClassShowcase: React.FC<ClassShowcaseProps> = ({ onCheckBreakpoints }) => {
+export const ClassShowcase: React.FC<ClassShowcaseProps> = ({ 
+  onCheckBreakpoints, 
+  onExploreSkills, 
+  onExploreBuilds 
+}) => {
   const [selectedClassId, setSelectedClassId] = useState(CHARACTER_CLASSES_DATA[0].id);
 
   const currentClass = CHARACTER_CLASSES_DATA.find((c) => c.id === selectedClassId) || CHARACTER_CLASSES_DATA[0];
@@ -107,14 +113,26 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({ onCheckBreakpoints
                 </div>
               </div>
 
-              {/* Jump to Breakpoint Button */}
-              <button
-                onClick={() => onCheckBreakpoints(currentClass.name)}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-d2-unique text-xs font-semibold tracking-wide transition-colors"
-              >
-                <Compass className="w-4 h-4" />
-                <span>檢視 {currentClass.name} 施法速度 (FCR) 與打擊恢復 (FHR) 斷點</span>
-              </button>
+              {/* Quick Navigation Buttons */}
+              <div className="space-y-2">
+                {onExploreSkills && (
+                  <button
+                    onClick={() => onExploreSkills(currentClass.name)}
+                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-d2-gold text-sanctuary-950 font-bold text-xs tracking-wide hover:bg-amber-400 shadow-lg shadow-d2-gold/20 transition-all"
+                  >
+                    <Sparkles className="w-4 h-4 text-sanctuary-950" />
+                    <span>開啟 {currentClass.name} 完整技能樹與加點模擬器</span>
+                  </button>
+                )}
+
+                <button
+                  onClick={() => onCheckBreakpoints(currentClass.name)}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-d2-unique text-xs font-semibold tracking-wide transition-colors"
+                >
+                  <Compass className="w-4 h-4" />
+                  <span>檢視 {currentClass.name} 施法速度 (FCR) 與打擊恢復 (FHR) 斷點</span>
+                </button>
+              </div>
             </div>
 
             {/* Right Column: Skill Trees & Popular Builds */}
@@ -159,7 +177,7 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({ onCheckBreakpoints
                       key={idx}
                       className="p-4 rounded-xl bg-sanctuary-900 border border-sanctuary-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
                     >
-                      <div className="space-y-1">
+                      <div className="space-y-1 flex-1">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-extrabold px-1.5 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-mono">
                             {build.tier} 階
@@ -175,6 +193,16 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({ onCheckBreakpoints
                           <strong className="text-sanctuary-300">畢業配裝：</strong>{build.gearSummary}
                         </div>
                       </div>
+
+                      {onExploreBuilds && (
+                        <button
+                          onClick={onExploreBuilds}
+                          className="px-3 py-1.5 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-750 text-d2-unique border border-sanctuary-700 text-xs font-mono shrink-0 transition-colors flex items-center gap-1 self-end sm:self-center"
+                        >
+                          <span>載入配裝</span>
+                          <span>→</span>
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
