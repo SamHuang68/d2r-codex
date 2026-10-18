@@ -332,7 +332,7 @@ export const ArmorySimulator: React.FC<ArmorySimulatorProps> = ({
       `🛡️ 總防禦: ${combatStats.totalDefense} | 格擋率: ${combatStats.chanceToBlock}%\n` +
       `⚡ 主力技能: ${combatStats.activeSkillName} 傷害: ${combatStats.activeSkillDamageMin?.toLocaleString()} - ${combatStats.activeSkillDamageMax?.toLocaleString()}\n` +
       `💫 FCR 施法: ${combatStats.fcr}% (${combatStats.fcrFrame} 幀) | FHR 打擊恢復: ${combatStats.fhr}% (${combatStats.fhrFrame} 幀)\n` +
-      `🔗 體驗同款 1:1 配裝模擬器: https://samhuang68.github.io/d2r-codex/`;
+      `🔗 體驗同款 1:1 配裝模擬器: ${window.location.origin}${window.location.pathname}`;
     navigator.clipboard.writeText(summary);
     alert("已複製配裝總結至剪貼簿！可直接貼給戰友分享。");
   };

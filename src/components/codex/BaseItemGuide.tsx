@@ -53,9 +53,9 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const matchName = item.name.toLowerCase().includes(q) || item.nameEn.toLowerCase().includes(q);
-        const matchType = item.itemType.toLowerCase().includes(q);
-        const matchRW = item.recommendedRunewords.some(rw => rw.toLowerCase().includes(q));
-        const matchNotes = item.tacticalNotes.toLowerCase().includes(q);
+        const matchType = (item.itemType || '').toLowerCase().includes(q);
+        const matchRW = (item.recommendedRunewords || []).some((rw: string) => rw.toLowerCase().includes(q));
+        const matchNotes = (item.tacticalNotes || '').toLowerCase().includes(q);
         if (!matchName && !matchType && !matchRW && !matchNotes) {
           return false;
         }
@@ -170,6 +170,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
                     slot={item.category === '防具鎧甲' ? 'armor' : item.category === '盾牌' ? 'shield' : 'weapon'}
                     rarity="normal"
                     size="md"
+                    imageUrl={item.imageUrl}
                   />
                   <div>
                     <div className="flex items-center gap-2">
@@ -230,44 +231,50 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
             </div>
 
             {/* 推薦符文之語 */}
-            <div className="space-y-1.5">
-              <div className="text-[11px] font-mono text-sanctuary-400 flex items-center gap-1">
-                <Layers className="w-3 h-3 text-d2-gold" />
-                推薦頂級符文之語:
+            {item.recommendedRunewords && item.recommendedRunewords.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="text-[11px] font-mono text-sanctuary-400 flex items-center gap-1">
+                  <Layers className="w-3 h-3 text-d2-gold" />
+                  推薦頂級符文之語:
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {item.recommendedRunewords.map((rw: string) => {
+                    const rwCleanName = rw.split(' ')[0];
+                    return (
+                      <button
+                        key={rw}
+                        type="button"
+                        onClick={() => onNavigateToRuneword?.(rwCleanName)}
+                        className="group/rw px-2 py-0.5 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-750 border border-sanctuary-750 hover:border-d2-gold text-[11px] font-mono text-d2-gold hover:text-white transition-all flex items-center gap-1 cursor-pointer shadow-sm hover:scale-105"
+                        title={`點擊查看【${rw}】完整組成符文與屬性`}
+                      >
+                        <span>{rw}</span>
+                        <span className="text-[9px] text-d2-gold/60 group-hover/rw:text-d2-gold">↗</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="flex flex-wrap gap-1.5">
-                {item.recommendedRunewords.map((rw) => {
-                  const rwCleanName = rw.split(' ')[0];
-                  return (
-                    <button
-                      key={rw}
-                      type="button"
-                      onClick={() => onNavigateToRuneword?.(rwCleanName)}
-                      className="group/rw px-2 py-0.5 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-750 border border-sanctuary-750 hover:border-d2-gold text-[11px] font-mono text-d2-gold hover:text-white transition-all flex items-center gap-1 cursor-pointer shadow-sm hover:scale-105"
-                      title={`點擊查看【${rw}】完整組成符文與屬性`}
-                    >
-                      <span>{rw}</span>
-                      <span className="text-[9px] text-d2-gold/60 group-hover/rw:text-d2-gold">↗</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+            )}
 
             {/* 戰術圖說與評析 */}
-            <div className="bg-sanctuary-950/90 p-3 rounded-xl border border-sanctuary-800/90 space-y-2 text-xs">
-              <div className="flex items-center gap-1 text-[11px] font-mono text-d2-socket font-bold">
-                <Zap className="w-3.5 h-3.5 text-d2-socket" />
-                打寶與戰術圖說
+            {item.tacticalNotes && (
+              <div className="bg-sanctuary-950/90 p-3 rounded-xl border border-sanctuary-800/90 space-y-2 text-xs">
+                <div className="flex items-center gap-1 text-[11px] font-mono text-d2-socket font-bold">
+                  <Zap className="w-3.5 h-3.5 text-d2-socket" />
+                  打寶與戰術圖說
+                </div>
+                <p className="text-sanctuary-300 leading-relaxed text-[11px]">
+                  {item.tacticalNotes}
+                </p>
+                {item.dropRecommendation && (
+                  <div className="text-[10px] text-sanctuary-400 pt-1 border-t border-sanctuary-800/60 font-mono">
+                    <span className="text-sanctuary-500">掉落地點: </span>
+                    {item.dropRecommendation}
+                  </div>
+                )}
               </div>
-              <p className="text-sanctuary-300 leading-relaxed text-[11px]">
-                {item.tacticalNotes}
-              </p>
-              <div className="text-[10px] text-sanctuary-400 pt-1 border-t border-sanctuary-800/60 font-mono">
-                <span className="text-sanctuary-500">掉落地點: </span>
-                {item.dropRecommendation}
-              </div>
-            </div>
+            )}
 
             {/* 底部特性標籤 */}
             <div className="flex items-center justify-between pt-1 border-t border-sanctuary-800/60 text-[11px] font-mono">

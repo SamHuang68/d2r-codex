@@ -25,6 +25,7 @@ import { BuildPlanner } from './components/vault/BuildPlanner';
 import { CharacterGuide } from './components/codex/CharacterGuide';
 import { PropCompendium } from './components/codex/PropCompendium';
 import { RUNEWORDS_DATA } from './data/runewords';
+import { normalizeItemQuery } from './utils/itemQueryNormalizer';
 import { ArmorySimulator } from './components/simulator/ArmorySimulator';
 
 export const App: React.FC = () => {
@@ -55,7 +56,8 @@ export const App: React.FC = () => {
   }, []);
 
   const handleNavigate = (tab: string, query?: string, runeNumber?: number) => {
-    setActiveTab(tab);
+    const effectiveTab = tab === 'sets' ? 'items' : tab;
+    setActiveTab(effectiveTab);
     if (query !== undefined) {
       setTargetQuery(query);
     }
@@ -67,6 +69,13 @@ export const App: React.FC = () => {
 
   const handleItemOrRunewordNavigate = (rawName: string) => {
     const cleanName = rawName.replace(/[【】]/g, '').trim();
+    const normalized = normalizeItemQuery(cleanName);
+
+    if (normalized) {
+      handleNavigate(normalized.targetTab, normalized.name);
+      return;
+    }
+
     const isRuneword = RUNEWORDS_DATA.some(
       (rw) => rw.name.includes(cleanName) || cleanName.includes(rw.name)
     );
@@ -132,7 +141,7 @@ export const App: React.FC = () => {
               setSelectedInitialClass(cls);
               handleNavigate('breakpoints');
             }}
-            onNavigateToRunewords={(rw) => handleNavigate('runewords', rw)}
+            onNavigateToRunewords={handleItemOrRunewordNavigate}
             onNavigateToItems={handleItemOrRunewordNavigate}
           />
         )}

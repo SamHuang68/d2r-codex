@@ -1,7 +1,7 @@
 import { RUNES_DATA } from '../data/runes';
 import { RUNEWORDS_DATA } from '../data/runewords';
 import { UNIQUE_ITEMS_DATA } from '../data/uniqueItems';
-import { SET_ITEMS_DATA } from '../data/setItems';
+import { SET_ITEMS_DATA, ALL_SET_PIECES } from '../data/setItems';
 import { CUBE_RECIPES_DATA } from '../data/cubeRecipes';
 import { AREA_LEVELS_DATA } from '../data/areaLevels';
 import { MERCENARIES_DATA } from '../data/mercenaries';
@@ -18,6 +18,7 @@ import {
   COMBAT_POTIONS_DATA, 
   CHARMS_JEWELS_DATA 
 } from '../data/props';
+import { normalizeItemQuery, cleanSearchQuery } from './itemQueryNormalizer';
 
 export interface SearchResultItem {
   id: string;
@@ -35,12 +36,106 @@ export const searchOmni = (query: string): SearchResultItem[] => {
   if (!q) return [];
 
   const results: SearchResultItem[] = [];
+  const seenIds = new Set<string>();
+
+  // 0. Priority exact match via Query Normalizer (Aliases & Community jargon)
+  const queryCandidates = cleanSearchQuery(query);
+  for (const cand of queryCandidates) {
+    const normalized = normalizeItemQuery(cand);
+    if (!normalized || seenIds.has(normalized.id)) continue;
+
+    if (normalized.type === 'runeword') {
+      const rw = RUNEWORDS_DATA.find(r => r.id === normalized.id);
+      if (rw) {
+        seenIds.add(rw.id);
+        results.push({
+          id: rw.id,
+          type: 'runeword',
+          title: rw.name,
+          titleEn: rw.nameEn,
+          category: `符文之語 (${rw.sockets}孔: ${rw.runes.join(' + ')})`,
+          badge: '最佳匹配',
+          preview: rw.attributes.slice(0, 3).join(' | '),
+          targetTab: 'runewords'
+        });
+      }
+    } else if (normalized.type === 'unique') {
+      const uq = UNIQUE_ITEMS_DATA.find(u => u.id === normalized.id);
+      if (uq) {
+        seenIds.add(uq.id);
+        results.push({
+          id: uq.id,
+          type: 'unique',
+          title: uq.name,
+          titleEn: uq.nameEn,
+          category: `暗金裝備 (${uq.baseItem})`,
+          badge: '最佳匹配',
+          preview: uq.attributes.slice(0, 3).join(' | '),
+          targetTab: 'items'
+        });
+      }
+    } else if (normalized.type === 'set') {
+      const piece = ALL_SET_PIECES.find(p => p.id === normalized.id);
+      if (piece) {
+        seenIds.add(piece.id);
+        const parentSet = SET_ITEMS_DATA.find(s => s.pieces.some(p => p.id === piece.id));
+        results.push({
+          id: piece.id,
+          type: 'set',
+          title: piece.name,
+          titleEn: piece.nameEn,
+          category: `套裝部件 (${parentSet ? parentSet.name : '套裝'})`,
+          badge: '最佳匹配',
+          preview: piece.attributes.slice(0, 3).join(' | '),
+          targetTab: 'items'
+        });
+      } else {
+        const set = SET_ITEMS_DATA.find(s => s.id === normalized.id);
+        if (set) {
+          seenIds.add(set.id);
+          results.push({
+            id: set.id,
+            type: 'set',
+            title: set.name,
+            titleEn: set.nameEn,
+            category: `套裝組合 (${set.pieces.length} 件套)`,
+            badge: '最佳匹配',
+            preview: (set.fullBonuses && set.fullBonuses.length > 0)
+              ? set.fullBonuses.slice(0, 3).join(' | ')
+              : set.pieces.map(p => p.name).join('、'),
+            targetTab: 'items'
+          });
+        }
+      }
+    } else if (normalized.type === 'base') {
+      const base = BASE_ITEMS_DATA.find(b => b.id === normalized.id);
+      if (base) {
+        seenIds.add(base.id);
+        results.push({
+          id: base.id,
+          type: 'base',
+          title: base.name,
+          titleEn: base.nameEn,
+          category: `符文底材 (${base.category} · 最多${base.maxSockets}孔)`,
+          badge: '最佳匹配',
+          preview: (base.recommendedRunewords && base.recommendedRunewords.length > 0)
+            ? `推薦符文語: ${base.recommendedRunewords.slice(0, 3).join(', ')}`
+            : `要求力量: ${base.reqStr || 0} · 敏捷: ${base.reqDex || 0} · 最大孔數: ${base.maxSockets}`,
+          targetTab: 'bases'
+        });
+      }
+    }
+  }
+
+  const queryTerms = cleanSearchQuery(query).map(t => t.toLowerCase().trim()).filter(Boolean);
 
   // 1. Search Runewords
   for (const rw of RUNEWORDS_DATA) {
+    if (seenIds.has(rw.id)) continue;
     const textToMatch = [
       rw.name,
       rw.nameEn,
+      rw.nameClassic || '',
       rw.runes.join(' '),
       rw.allowedBases.join(' '),
       rw.tags.join(' '),
@@ -48,7 +143,8 @@ export const searchOmni = (query: string): SearchResultItem[] => {
       rw.description || ''
     ].join(' ').toLowerCase();
 
-    if (textToMatch.includes(q)) {
+    if (queryTerms.some(term => textToMatch.includes(term))) {
+      seenIds.add(rw.id);
       results.push({
         id: rw.id,
         type: 'runeword',
@@ -64,16 +160,19 @@ export const searchOmni = (query: string): SearchResultItem[] => {
 
   // 2. Search Unique Items
   for (const item of UNIQUE_ITEMS_DATA) {
+    if (seenIds.has(item.id)) continue;
     const textToMatch = [
       item.name,
       item.nameEn,
+      item.nameClassic || '',
       item.baseItem,
-      item.baseItemEn,
+      item.baseItemEn || '',
       item.attributes.join(' '),
       (item.tags || []).join(' ')
     ].join(' ').toLowerCase();
 
-    if (textToMatch.includes(q)) {
+    if (queryTerms.some(term => textToMatch.includes(term))) {
+      seenIds.add(item.id);
       results.push({
         id: item.id,
         type: 'unique',
@@ -89,8 +188,10 @@ export const searchOmni = (query: string): SearchResultItem[] => {
 
   // 3. Search Set Items
   for (const set of SET_ITEMS_DATA) {
+    if (seenIds.has(set.id)) continue;
     const setMatch = (set.name + ' ' + set.nameEn).toLowerCase().includes(q);
     if (setMatch) {
+      seenIds.add(set.id);
       results.push({
         id: set.id,
         type: 'set',
@@ -99,11 +200,13 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         category: `套裝裝備 (${set.pieces.length} 件套)`,
         badge: '成套套裝',
         preview: set.pieces.map(p => p.name).join('、'),
-        targetTab: 'items'
+        targetTab: 'sets'
       });
     } else {
       for (const piece of set.pieces) {
+        if (seenIds.has(piece.id)) continue;
         if ((piece.name + ' ' + piece.nameEn + ' ' + piece.attributes.join(' ')).toLowerCase().includes(q)) {
+          seenIds.add(piece.id);
           results.push({
             id: piece.id,
             type: 'set',
@@ -112,7 +215,7 @@ export const searchOmni = (query: string): SearchResultItem[] => {
             category: `套裝散件 (${set.name})`,
             badge: '綠色套裝',
             preview: piece.attributes.slice(0, 3).join(' | '),
-            targetTab: 'items'
+            targetTab: 'sets'
           });
         }
       }
@@ -292,14 +395,16 @@ export const searchOmni = (query: string): SearchResultItem[] => {
 
   // 11. Search Base Items
   for (const base of BASE_ITEMS_DATA) {
+    if (seenIds.has(base.id)) continue;
     const text = [
       base.name,
       base.nameEn,
+      base.nameClassic || '',
       base.category,
-      base.itemType,
-      base.recommendedRunewords.join(' '),
-      base.tacticalNotes,
-      base.dropRecommendation
+      base.itemType || '',
+      (base.recommendedRunewords || []).join(' '),
+      base.tacticalNotes || '',
+      base.dropRecommendation || ''
     ].join(' ').toLowerCase();
 
     if (text.includes(q)) {
@@ -308,9 +413,11 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'base',
         title: base.name,
         titleEn: base.nameEn,
-        category: `符文底材 (${base.category} · ${base.itemType} · 最多${base.maxSockets}孔)`,
-        badge: base.qualityTier,
-        preview: `推薦符文語: ${base.recommendedRunewords.slice(0, 3).join(', ')}`,
+        category: `符文底材 (${base.category} · ${base.itemType || '裝備'} · 最多${base.maxSockets}孔)`,
+        badge: base.qualityTier || base.grade || '底材',
+        preview: (base.recommendedRunewords && base.recommendedRunewords.length > 0)
+          ? `推薦符文語: ${base.recommendedRunewords.slice(0, 3).join(', ')}`
+          : `要求力量: ${base.reqStr || 0} · 敏捷: ${base.reqDex || 0} · 最大孔數: ${base.maxSockets}`,
         targetTab: 'bases'
       });
     }

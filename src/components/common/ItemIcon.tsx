@@ -12,6 +12,7 @@ export interface ItemIconProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
   showBorder?: boolean;
+  imageUrl?: string;
 }
 
 /**
@@ -28,6 +29,7 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
   size = 'md',
   className = '',
   showBorder = true,
+  imageUrl,
 }) => {
   const [imgError, setImgError] = useState(false);
   const n = `${name} ${nameEn} ${baseItem}`.toLowerCase();
@@ -117,6 +119,7 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
     rarity,
     runeNumber,
     baseUrl,
+    imageUrl,
   });
 
   return (

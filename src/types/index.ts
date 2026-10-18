@@ -43,6 +43,7 @@ export interface RunewordData {
   id: string;
   name: string;
   nameEn: string;
+  nameClassic?: string;
   runes: string[]; // e.g. ["Jah", "Ith", "Ber"]
   runeNumbers: number[]; // e.g. [31, 6, 30]
   sockets: number;
@@ -54,14 +55,17 @@ export interface RunewordData {
   tags: string[]; // e.g. ["FCR", "Teleport", "CB", "Magic Find", "All Skills"]
   recommendedBases?: string;
   description?: string;
+  imageUrl?: string;
 }
 
 export interface UniqueItemData {
   id: string;
   name: string;
   nameEn: string;
+  nameClassic?: string;
   baseItem: string;
-  baseItemEn: string;
+  baseItemEn?: string;
+  baseItemId?: string;
   slot: GearSlot;
   requiredLevel: number;
   requiredStr?: number;
@@ -71,26 +75,43 @@ export interface UniqueItemData {
   attributes: string[];
   flavorText?: string;
   tags?: string[];
+  imageUrl?: string;
+  grade?: 'normal' | 'exceptional' | 'elite';
+  classOnly?: string | null;
+  tc?: number | string;
+  qlvl?: number | string;
 }
 
 export interface SetPiece {
   id: string;
   name: string;
   nameEn: string;
+  nameClassic?: string;
   baseItem: string;
+  baseItemId?: string;
   slot: GearSlot;
   requiredLevel: number;
+  requiredStr?: number;
+  requiredDex?: number;
   attributes: string[];
   setBonuses?: string[];
+  imageUrl?: string;
+  grade?: 'normal' | 'exceptional' | 'elite';
+  classOnly?: string | null;
+  tc?: number | string;
+  qlvl?: number | string;
 }
 
 export interface SetItemCollection {
   id: string;
   name: string;
   nameEn: string;
+  isClassSet?: boolean;
+  class?: string | null;
   pieces: SetPiece[];
   partialBonuses: { count: number; bonus: string }[];
   fullBonuses: string[];
+  imageUrl?: string;
 }
 
 export interface CubeRecipeData {

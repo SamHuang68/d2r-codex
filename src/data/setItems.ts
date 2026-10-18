@@ -1,1832 +1,8344 @@
-import type { SetItemCollection } from '../types';
+import type { SetItemCollection, SetPiece } from '../types';
 
 export const SET_ITEMS_DATA: SetItemCollection[] = [
   {
-    id: "tal_rasha",
-    name: "塔拉夏的法衣",
-    nameEn: "Tal Rasha's Wrappings",
-    pieces: [
+    "id": "arctic_gear",
+    "name": "北極裝備",
+    "nameEn": "Arctic Gear",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
       {
-        id: "tal_helm",
-        name: "塔拉夏的赫拉迪姆紋章",
-        nameEn: "Tal Rasha's Horadric Crest",
-        baseItem: "死亡面具 (Death Mask)",
-        slot: "helm",
-        requiredLevel: 66,
-        attributes: [
-          "每次命中偷取 10% 生命",
-          "每次命中偷取 10% 法力",
+        "id": "arctic_furs",
+        "name": "北極毛皮",
+        "nameEn": "Arctic Furs",
+        "nameClassic": "北極毛皮",
+        "baseItem": "棉布甲",
+        "baseItemId": "quilted_armor",
+        "slot": "armor",
+        "grade": "normal",
+        "requiredLevel": 2,
+        "requiredStr": 12,
+        "classOnly": null,
+        "tc": 3,
+        "qlvl": 3,
+        "attributes": [
+          "防禦：45-51",
+          "防禦：(48-342)-(54-348)",
+          "需要等級：2",
+          "需要力量：12",
+          "耐久度：20",
+          "+275-325% 防禦強化",
+          "所有抗性 +10",
+          "+(3-297) 防禦 （依角色等級而定） [3 * clvl] (2)",
+          "冰寒抗性 +15% (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/quilted_armor_lgld.jpg"
+      },
+      {
+        "id": "arctic_binding",
+        "name": "北極捆索",
+        "nameEn": "Arctic Binding",
+        "nameClassic": "北極捆縛",
+        "baseItem": "輕腰帶",
+        "baseItemId": "light_belt",
+        "slot": "belt",
+        "grade": "normal",
+        "requiredLevel": 2,
+        "classOnly": null,
+        "tc": 9,
+        "qlvl": 3,
+        "attributes": [
+          "防禦：33",
+          "需要等級：2",
+          "耐久度：14",
+          "冰寒抗性 +40%",
+          "+30 防禦",
+          "尋獲魔法物品機率提高 40% (2)",
+          "冰寒抗性 +10% (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/light_belt_lgld.jpg"
+      },
+      {
+        "id": "arctic_mitts",
+        "name": "北極手套",
+        "nameEn": "Arctic Mitts",
+        "nameClassic": "北極手套",
+        "baseItem": "輕型護手",
+        "baseItemId": "light_gauntlets",
+        "slot": "gloves",
+        "grade": "normal",
+        "requiredLevel": 2,
+        "requiredStr": 45,
+        "classOnly": null,
+        "tc": 21,
+        "qlvl": 3,
+        "attributes": [
+          "防禦：9-11",
+          "需要等級：2",
+          "需要力量：45",
+          "耐久度：18",
+          "+20 生命",
+          "攻擊速度 +10%",
+          "+50 準確率 (2)",
+          "+10 敏捷 (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/light_gauntlets_lgld.jpg"
+      },
+      {
+        "id": "arctic_horn",
+        "name": "北極號角",
+        "nameEn": "Arctic Horn",
+        "nameClassic": "北極號角",
+        "baseItem": "征戰短弓",
+        "baseItemId": "short_war_bow",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 2,
+        "requiredStr": 35,
+        "requiredDex": 55,
+        "classOnly": null,
+        "tc": 27,
+        "qlvl": 3,
+        "attributes": [
+          "雙手傷害：9 - 21 點",
+          "需要等級：2",
+          "需要力量：35",
+          "需要敏捷：55",
+          "武器基本速度：[0]",
+          "+50% 傷害強化",
+          "20% 準確率加成",
+          "+(8-792) 準確率 （依角色等級而定） [8 * clvl] (2)",
+          "附加 20 - 30 冰寒傷害 (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/hellclap_lgld.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+5 力量 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "+50 生命 (3)"
+      }
+    ],
+    "fullBonuses": [
+      "+(2-198) 冰寒傷害最大值 （依角色等級而定） [2 * clvl]",
+      "+5 力量",
+      "+50 生命",
+      "無法凍結"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/quilted_armor_lgld.jpg"
+  },
+  {
+    "id": "hsarus_defense",
+    "name": "海沙魯的鐵禦",
+    "nameEn": "Hsarus' Defense",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "hsarus_iron_fist",
+        "name": "海沙魯的鐵拳",
+        "nameEn": "Hsarus' Iron Fist",
+        "nameClassic": "哈斯拉柏的鐵拳",
+        "baseItem": "小圓盾",
+        "baseItemId": "buckler",
+        "slot": "shield",
+        "grade": "normal",
+        "requiredLevel": 3,
+        "requiredStr": 12,
+        "classOnly": null,
+        "tc": 3,
+        "qlvl": 4,
+        "attributes": [
+          "防禦：4-6",
+          "防禦：(6-251)-(8-253)",
+          "需要等級：3",
+          "需要力量：12",
+          "耐久度：12",
+          "重擊傷害：1 - 3 點",
+          "格擋機率：30% (Pal)",
+          "格擋機率：25% (Ama/Asn/Bar)",
+          "格擋機率：20% (Dru/Nec/Sor)",
+          "傷害降低 2",
+          "+10 力量",
+          "+(2-247) 防禦 （依角色等級而定） [2.5 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/pelta_lunata_dred.jpg"
+      },
+      {
+        "id": "hsarus_iron_stay",
+        "name": "海沙魯的鐵扣",
+        "nameEn": "Hsarus' Iron Stay",
+        "nameClassic": "哈斯拉柏的鐵胸衣",
+        "baseItem": "腰帶",
+        "baseItemId": "belt",
+        "slot": "belt",
+        "grade": "normal",
+        "requiredLevel": 3,
+        "requiredStr": 25,
+        "classOnly": null,
+        "tc": 12,
+        "qlvl": 4,
+        "attributes": [
+          "防禦：5",
+          "防禦：7-252",
+          "需要等級：3",
+          "需要力量：25",
+          "耐久度：16",
+          "腰帶空間：+8 格",
+          "冰寒抗性 +20%",
+          "+20 生命",
+          "+(2-247) 防禦 （依角色等級而定） [2.5 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/belt_m_dred.jpg"
+      },
+      {
+        "id": "hsarus_iron_heel",
+        "name": "海沙魯的鐵跟",
+        "nameEn": "Hsarus' Iron Heel",
+        "nameClassic": "哈斯拉柏的鐵後跟",
+        "baseItem": "鎖鍊靴",
+        "baseItemId": "chain_boots",
+        "slot": "boots",
+        "grade": "normal",
+        "requiredLevel": 3,
+        "requiredStr": 30,
+        "classOnly": null,
+        "tc": 12,
+        "qlvl": 4,
+        "attributes": [
+          "防禦：8-9",
+          "需要等級：3",
+          "需要力量：30",
+          "耐久度：16",
+          "踢擊傷害：6 - 12 點",
+          "+20% 跑步 / 行走速度",
+          "火焰抗性 +25%",
+          "+(10-990) 準確率 （依角色等級而定） [10 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/chain_boots_dred.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "攻擊者反傷：5 (2)"
+      }
+    ],
+    "fullBonuses": [
+      "攻擊者反傷：5",
+      "無法凍結",
+      "電擊抗性 +25%",
+      "+5 最大傷害"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/pelta_lunata_dred.jpg"
+  },
+  {
+    "id": "berserkers_arsenal",
+    "name": "狂戰士的武裝",
+    "nameEn": "Berserker's Arsenal",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "berserkers_headgear",
+        "name": "狂戰士頭盔",
+        "nameEn": "Berserker's Headgear",
+        "nameClassic": "狂戰士的頭戴",
+        "baseItem": "頭盔",
+        "baseItemId": "helm",
+        "slot": "helm",
+        "grade": "normal",
+        "requiredLevel": 3,
+        "requiredStr": 26,
+        "classOnly": null,
+        "tc": 12,
+        "qlvl": 5,
+        "attributes": [
+          "防禦：30-33",
+          "需要等級：3",
+          "需要力量：26",
+          "耐久度：24",
+          "+15 防禦",
+          "火焰抗性 +25%",
+          "+(48-792) 準確率 （依角色等級而定） [8 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/coif_of_glory_dred.jpg"
+      },
+      {
+        "id": "berserkers_hauberk",
+        "name": "狂戰士鎖子甲",
+        "nameEn": "Berserker's Hauberk",
+        "nameClassic": "狂戰士的鎖子甲",
+        "baseItem": "板甲",
+        "baseItemId": "splint_mail",
+        "slot": "armor",
+        "grade": "normal",
+        "requiredLevel": 3,
+        "requiredStr": 51,
+        "classOnly": null,
+        "tc": 21,
+        "qlvl": 5,
+        "attributes": [
+          "防禦：90-95",
+          "防禦：(93-387)-(98-392)",
+          "需要等級：3",
+          "需要力量：51",
+          "耐久度：30",
+          "+1 野蠻人技能等級",
+          "魔法傷害降低 2",
+          "+(3-297) 防禦 （依角色等級而定） [3 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/splint_mail_dred.jpg"
+      },
+      {
+        "id": "berserkers_hatchet",
+        "name": "狂戰士手斧",
+        "nameEn": "Berserker's Hatchet",
+        "nameClassic": "狂戰士的手斧",
+        "baseItem": "雙刃斧",
+        "baseItemId": "double_axe",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 3,
+        "requiredStr": 43,
+        "classOnly": null,
+        "tc": 15,
+        "qlvl": 5,
+        "attributes": [
+          "單手傷害：5 - 13 點",
+          "單手傷害：7 - 19 點",
+          "需要等級：3",
+          "需要力量：43",
+          "耐久度：24",
+          "武器基本速度：[10]",
+          "30% 準確率加成",
+          "擊中竊取 5% 法力",
+          "+50% 傷害強化 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/double_axe_dred.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+50 生命 (2)"
+      }
+    ],
+    "fullBonuses": [
+      "+50 生命",
+      "+75 防禦",
+      "中毒的時效縮短 75%",
+      "附加 5 - 9 毒素傷害，時效 3 秒"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/coif_of_glory_dred.jpg"
+  },
+  {
+    "id": "cleglaws_brace",
+    "name": "克雷德勞的防備",
+    "nameEn": "Cleglaw's Brace",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "cleglaws_tooth",
+        "name": "克雷德勞之牙",
+        "nameEn": "Cleglaw's Tooth",
+        "nameClassic": "克雷得勞之牙",
+        "baseItem": "長劍",
+        "baseItemId": "long_sword",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 4,
+        "requiredStr": 55,
+        "requiredDex": 39,
+        "classOnly": null,
+        "tc": 21,
+        "qlvl": 6,
+        "attributes": [
+          "單手傷害：3 - 19 點",
+          "單手傷害：3 - (20-142) 點",
+          "需要等級：4",
+          "需要力量：55",
+          "需要敏捷：39",
+          "耐久度：44",
+          "武器基本速度：[-10]",
+          "+50% 致命打擊",
+          "30% 準確率加成",
+          "+(1-123) 最大傷害 （依角色等級而定） [1.25 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/hellplague_lred.jpg"
+      },
+      {
+        "id": "cleglaws_pincers",
+        "name": "克雷德勞之鉗",
+        "nameEn": "Cleglaw's Pincers",
+        "nameClassic": "克雷得勞之鉗",
+        "baseItem": "鍊甲手套",
+        "baseItemId": "chain_gloves",
+        "slot": "gloves",
+        "grade": "normal",
+        "requiredLevel": 4,
+        "requiredStr": 25,
+        "classOnly": null,
+        "tc": 12,
+        "qlvl": 6,
+        "attributes": [
+          "防禦：8-9",
+          "需要等級：4",
+          "需要力量：25",
+          "耐久度：16",
+          "使目標減慢 25%",
+          "擊退",
+          "+(10-990) 準確率 （依角色等級而定） [10 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/bracers_m_lred.jpg"
+      },
+      {
+        "id": "cleglaws_claw",
+        "name": "克雷德勞之爪",
+        "nameEn": "Cleglaw's Claw",
+        "nameClassic": "克雷得勞之爪",
+        "baseItem": "小型盾",
+        "baseItemId": "small_shield",
+        "slot": "shield",
+        "grade": "normal",
+        "requiredLevel": 4,
+        "requiredStr": 22,
+        "classOnly": null,
+        "tc": 6,
+        "qlvl": 6,
+        "attributes": [
+          "防禦：25-27",
+          "需要等級：4",
+          "需要力量：22",
+          "耐久度：16",
+          "重擊傷害：2 - 3 點",
+          "格擋機率：35% (Pal)",
+          "格擋機率：30% (Ama/Asn/Bar)",
+          "格擋機率：25% (Dru/Nec/Sor)",
+          "中毒的時效縮短 75%",
+          "+17 防禦",
+          "所有抗性 +15 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/umbral_disk_lred.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+50 防禦 (2)"
+      }
+    ],
+    "fullBonuses": [
+      "+100 防禦",
+      "+35% 機率造成粉碎打擊",
+      "擊中竊取 6% 法力",
+      "攻擊速度 +20%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/hellplague_lred.jpg"
+  },
+  {
+    "id": "infernal_tools",
+    "name": "煉獄器具",
+    "nameEn": "Infernal Tools",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "infernal_cranium",
+        "name": "煉獄頭骨",
+        "nameEn": "Infernal Cranium",
+        "nameClassic": "地獄頭骨",
+        "baseItem": "便帽",
+        "baseItemId": "cap",
+        "slot": "helm",
+        "grade": "normal",
+        "requiredLevel": 5,
+        "classOnly": null,
+        "tc": 3,
+        "qlvl": 7,
+        "attributes": [
+          "防禦：3-5",
+          "防禦：(5-201)-(7-203)",
+          "需要等級：5",
+          "耐久度：12",
+          "+20% 受到的傷害轉為法力",
+          "所有抗性 +10",
+          "+(2-198) 防禦 （依角色等級而定） [2 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/war_bonnet_lyel.jpg"
+      },
+      {
+        "id": "infernal_sign",
+        "name": "煉獄符印",
+        "nameEn": "Infernal Sign",
+        "nameClassic": "地獄符號",
+        "baseItem": "厚腰帶",
+        "baseItemId": "heavy_belt",
+        "slot": "belt",
+        "grade": "normal",
+        "requiredLevel": 5,
+        "requiredStr": 45,
+        "classOnly": null,
+        "tc": 21,
+        "qlvl": 7,
+        "attributes": [
+          "防禦：31",
+          "需要等級：5",
+          "需要力量：45",
+          "耐久度：18",
+          "腰帶空間：+8 格",
+          "+25 防禦",
+          "+20 生命",
+          "毒素抗性 +25% (2)",
+          "被凍結的時效減半 (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/heavy_belt_lyel.jpg"
+      },
+      {
+        "id": "infernal_torch",
+        "name": "煉獄火炬",
+        "nameEn": "Infernal Torch",
+        "nameClassic": "地獄火炬",
+        "baseItem": "陰森魔杖",
+        "baseItemId": "grim_wand",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 5,
+        "classOnly": null,
+        "tc": 27,
+        "qlvl": 7,
+        "attributes": [
+          "單手傷害：13 - 14 點",
+          "需要等級：5",
+          "耐久度：15",
+          "武器基本速度：[0]",
+          "+1 死靈法師技能等級",
+          "+8 最小傷害",
+          "+150% 對不死怪物的傷害",
+          "+(10-990) 準確率 （依角色等級而定） [10 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/grim_wand_lyel.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+8 毒素傷害，時效 3 秒 (2)"
+      }
+    ],
+    "fullBonuses": [
+      "+8 毒素傷害，時效 3 秒",
+      "+20% 機率造成開放傷口",
+      "+1 死靈法師技能等級",
+      "20% 準確率加成",
+      "擊中竊取 6% 法力",
+      "法力上限提高 20%",
+      "無法凍結"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/war_bonnet_lyel.jpg"
+  },
+  {
+    "id": "banes_garments",
+    "name": "貝恩的衣裝",
+    "nameEn": "Bane's Garments",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "banes_wraithskin",
+        "name": "貝恩的靈膚",
+        "nameEn": "Bane's Wraithskin",
+        "baseItem": "硬皮甲",
+        "baseItemId": "hard_leather_armor",
+        "slot": "armor",
+        "grade": "normal",
+        "requiredLevel": 8,
+        "requiredStr": 20,
+        "classOnly": null,
+        "qlvl": 7,
+        "attributes": [
+          "防禦：71-74",
+          "需要等級：8",
+          "需要力量：20",
+          "耐久度：28",
+          "+50 防禦",
+          "魔法抗性 +30%",
+          "+25% 打擊恢復 (2)",
+          "+(8-792) 準確率 （依角色等級而定） [8 * clvl] (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/hard_leather_armor_dred.jpg"
+      },
+      {
+        "id": "banes_authority",
+        "name": "貝恩的權威",
+        "nameEn": "Bane's Authority",
+        "baseItem": "輕腰帶",
+        "baseItemId": "light_belt",
+        "slot": "belt",
+        "grade": "normal",
+        "requiredLevel": 8,
+        "classOnly": null,
+        "qlvl": 7,
+        "attributes": [
+          "防禦：3",
+          "腰帶空間：+4 格",
+          "需要等級：8",
+          "耐久度：14",
+          "+10% 施法速度",
+          "+20 生命",
+          "+15 能量 (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/light_belt_dred.jpg"
+      },
+      {
+        "id": "banes_oathmaker",
+        "name": "貝恩的立誓者",
+        "nameEn": "Bane's Oathmaker",
+        "baseItem": "波刃匕首",
+        "baseItemId": "kris",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 8,
+        "requiredDex": 23,
+        "classOnly": null,
+        "qlvl": 7,
+        "attributes": [
+          "單手傷害：2 - 11 點",
+          "需要等級：8",
+          "需要敏捷：23",
+          "武器基本速度：[-20]",
+          "+20% 跑步 / 行走速度",
+          "+(1-99) 最大傷害 （依角色等級而定） [1 * clvl]",
+          "+3 擊殺法力恢復 (2)",
+          "+30% 致命打擊 (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/banes_spire.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+80% 傷害強化 (2)"
+      }
+    ],
+    "fullBonuses": [
+      "+80% 傷害強化",
+      "+1 所有技能",
+      "+15 敏捷",
+      "+25% 施法速度",
+      "尋獲魔法物品機率提高 40%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/hard_leather_armor_dred.jpg"
+  },
+  {
+    "id": "deaths_disguise",
+    "name": "死亡的偽裝",
+    "nameEn": "Death's Disguise",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "deaths_touch",
+        "name": "死亡之觸",
+        "nameEn": "Death's Touch",
+        "nameClassic": "死亡之觸",
+        "baseItem": "征戰劍",
+        "baseItemId": "war_sword",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 6,
+        "requiredStr": 71,
+        "requiredDex": 45,
+        "classOnly": null,
+        "tc": 27,
+        "qlvl": 8,
+        "attributes": [
+          "單手傷害：10 - 25 點",
+          "需要等級：6",
+          "需要力量：71",
+          "需要敏捷：45",
+          "耐久度：44",
+          "武器基本速度：[0]",
+          "+25% 傷害強化",
+          "擊中竊取 4% 生命",
+          "附加 25 - 75 冰寒傷害 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/war_sword_lred.jpg"
+      },
+      {
+        "id": "deaths_hand",
+        "name": "死亡之手",
+        "nameEn": "Death's Hand",
+        "nameClassic": "死亡之手",
+        "baseItem": "皮革手套",
+        "baseItemId": "leather_gloves",
+        "slot": "gloves",
+        "grade": "normal",
+        "requiredLevel": 6,
+        "classOnly": null,
+        "tc": 3,
+        "qlvl": 8,
+        "attributes": [
+          "防禦：2-3",
+          "需要等級：6",
+          "耐久度：12",
+          "中毒的時效縮短 75%",
+          "毒素抗性 +50%",
+          "攻擊速度 +30% (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/gloves_l_lred.jpg"
+      },
+      {
+        "id": "deaths_guard",
+        "name": "死亡之護",
+        "nameEn": "Death's Guard",
+        "nameClassic": "死亡的守護",
+        "baseItem": "束帶",
+        "baseItemId": "sash",
+        "slot": "belt",
+        "grade": "normal",
+        "requiredLevel": 6,
+        "classOnly": null,
+        "tc": 3,
+        "qlvl": 8,
+        "attributes": [
+          "防禦：22",
+          "需要等級：6",
+          "耐久度：12",
+          "腰帶空間：+4 格",
+          "無法凍結",
+          "+20 防禦",
+          "所有抗性 +15 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/sash_l_lred.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "擊中竊取 8% 生命 (2)"
+      }
+    ],
+    "fullBonuses": [
+      "擊中竊取 8% 生命",
+      "40% 準確率加成",
+      "所有抗性 +25",
+      "+10 最小傷害"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/war_sword_lred.jpg"
+  },
+  {
+    "id": "sigons_complete_steel",
+    "name": "西剛的全套鋼甲",
+    "nameEn": "Sigon's Complete Steel",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "sigons_visor",
+        "name": "西剛的護面",
+        "nameEn": "Sigon's Visor",
+        "nameClassic": "西剛之面甲",
+        "baseItem": "重盔",
+        "baseItemId": "great_helm",
+        "slot": "helm",
+        "grade": "normal",
+        "requiredLevel": 6,
+        "requiredStr": 63,
+        "classOnly": null,
+        "tc": 24,
+        "qlvl": 9,
+        "attributes": [
+          "防禦：55-60",
+          "需要等級：6",
+          "需要力量：63",
+          "耐久度：40",
+          "+25 防禦",
+          "+30 法力",
+          "+(8-792) 準確率 （依角色等級而定） [8 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/great_helm_whit.jpg"
+      },
+      {
+        "id": "sigons_shelter",
+        "name": "西剛的庇護",
+        "nameEn": "Sigon's Shelter",
+        "nameClassic": "西剛的遮蔽",
+        "baseItem": "哥德鎧甲",
+        "baseItemId": "gothic_plate",
+        "slot": "armor",
+        "grade": "normal",
+        "requiredLevel": 6,
+        "requiredStr": 70,
+        "classOnly": null,
+        "tc": 33,
+        "qlvl": 9,
+        "attributes": [
+          "防禦：170",
+          "需要等級：6",
+          "需要力量：70",
+          "耐久度：55",
+          "+25% 防禦強化",
+          "電擊抗性 +30%",
+          "攻擊者反傷：20 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/gothic_plate_whit.jpg"
+      },
+      {
+        "id": "sigons_sabot",
+        "name": "西剛的硬靴",
+        "nameEn": "Sigon's Sabot",
+        "nameClassic": "西剛的木鞋",
+        "baseItem": "護脛",
+        "baseItemId": "greaves",
+        "slot": "boots",
+        "grade": "normal",
+        "requiredLevel": 6,
+        "requiredStr": 70,
+        "classOnly": null,
+        "tc": 27,
+        "qlvl": 9,
+        "attributes": [
+          "防禦：12-15",
+          "需要等級：6",
+          "需要力量：70",
+          "耐久度：24",
+          "踢擊傷害：10 - 20 點",
+          "+20% 跑步 / 行走速度",
+          "冰寒抗性 +40%",
+          "+50 準確率 (2)",
+          "尋獲魔法物品機率提高 50% (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/plate_boots_whit.jpg"
+      },
+      {
+        "id": "sigons_guard",
+        "name": "西剛的守護",
+        "nameEn": "Sigon's Guard",
+        "nameClassic": "西剛的守護",
+        "baseItem": "塔盾",
+        "baseItemId": "tower_shield",
+        "slot": "shield",
+        "grade": "normal",
+        "requiredLevel": 6,
+        "requiredStr": 75,
+        "classOnly": null,
+        "tc": 24,
+        "qlvl": 9,
+        "attributes": [
+          "防禦：22-25",
+          "格擋機率：74% (Pal)",
+          "格擋機率：69% (Ama/Asn/Bar)",
+          "格擋機率：64% (Dru/Nec/Sor)",
+          "重擊傷害：1 - 5 點",
+          "需要等級：6",
+          "需要力量：75",
+          "耐久度：60",
+          "+1 所有技能",
+          "格擋機率提高 20%"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/bverrit_keep_whit.jpg"
+      },
+      {
+        "id": "sigons_wrap",
+        "name": "西剛的裹腰",
+        "nameEn": "Sigon's Wrap",
+        "nameClassic": "西剛的披肩",
+        "baseItem": "鎧甲腰帶",
+        "baseItemId": "plated_belt",
+        "slot": "belt",
+        "grade": "normal",
+        "requiredLevel": 6,
+        "requiredStr": 60,
+        "classOnly": null,
+        "tc": 27,
+        "qlvl": 9,
+        "attributes": [
+          "防禦：8-11",
+          "防禦：(10-206)-(13-209)",
+          "需要等級：6",
+          "需要力量：60",
+          "耐久度：24",
+          "腰帶空間：+12 格",
+          "火焰抗性 +20%",
+          "+20 生命",
+          "+(2-198) 防禦 （依角色等級而定） [2 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/girdle_h_whit.jpg"
+      },
+      {
+        "id": "sigons_gage",
+        "name": "西剛的挑戰",
+        "nameEn": "Sigon's Gage",
+        "nameClassic": "西剛的挑戰",
+        "baseItem": "鋼鐵護手",
+        "baseItemId": "gauntlets",
+        "slot": "gloves",
+        "grade": "normal",
+        "requiredLevel": 6,
+        "requiredStr": 60,
+        "classOnly": null,
+        "tc": 27,
+        "qlvl": 9,
+        "attributes": [
+          "防禦：12-15",
+          "需要等級：6",
+          "需要力量：60",
+          "耐久度：24",
+          "+20 準確率",
+          "+10 力量",
+          "攻擊速度 +30% (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/gaunlets_h_whit.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "擊中竊取 10% 生命 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "+100 防禦 (3)"
+      }
+    ],
+    "fullBonuses": [
+      "擊中竊取 10% 生命",
+      "+100 防禦",
+      "+20 法力",
+      "火焰抗性 +12%",
+      "+24 火焰傷害最大值",
+      "攻擊者反傷：12",
+      "傷害降低 7"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/great_helm_whit.jpg"
+  },
+  {
+    "id": "isenharts_armory",
+    "name": "依森哈特的軍械",
+    "nameEn": "Isenhart's Armory",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "isenharts_lightbrand",
+        "name": "依森哈特的光之烙鐵",
+        "nameEn": "Isenhart's Lightbrand",
+        "nameClassic": "依森哈德的光之烙鐵",
+        "baseItem": "闊劍",
+        "baseItemId": "broad_sword",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 8,
+        "requiredStr": 48,
+        "classOnly": null,
+        "tc": 15,
+        "qlvl": 11,
+        "attributes": [
+          "單手傷害：17 - 18 點",
+          "需要等級：8",
+          "需要力量：48",
+          "耐久度：32",
+          "武器基本速度：[0]",
+          "+10 最小傷害",
+          "攻擊速度 +20%",
+          "+(5-495) 準確率 （依角色等級而定） [5 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/griswolds_edge_lgld.jpg"
+      },
+      {
+        "id": "isenharts_horns",
+        "name": "依森哈特的角盔",
+        "nameEn": "Isenhart's Horns",
+        "nameClassic": "依森哈德的號角",
+        "baseItem": "全罩盔",
+        "baseItemId": "full_helm",
+        "slot": "helm",
+        "grade": "normal",
+        "requiredLevel": 8,
+        "requiredStr": 41,
+        "classOnly": null,
+        "tc": 15,
+        "qlvl": 11,
+        "attributes": [
+          "防禦：23-26",
+          "需要等級：8",
+          "需要力量：41",
+          "耐久度：30",
+          "傷害降低 2",
+          "+6 敏捷",
+          "所有抗性 +8 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/duskdeep_lgld.jpg"
+      },
+      {
+        "id": "isenharts_case",
+        "name": "依森哈特的外殼",
+        "nameEn": "Isenhart's Case",
+        "nameClassic": "依森哈德的外殼",
+        "baseItem": "胸鎧",
+        "baseItemId": "breast_plate",
+        "slot": "armor",
+        "grade": "normal",
+        "requiredLevel": 8,
+        "requiredStr": 30,
+        "classOnly": null,
+        "tc": 18,
+        "qlvl": 11,
+        "attributes": [
+          "防禦：105-108",
+          "防禦：(107-303)-(110-306)",
+          "需要等級：8",
+          "需要力量：30",
+          "耐久度：50",
+          "魔法傷害降低 2",
+          "+40 防禦",
+          "+(2-198) 防禦 （依角色等級而定） [2 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/breast_plate_lgld.jpg"
+      },
+      {
+        "id": "isenharts_parry",
+        "name": "依森哈特的招架",
+        "nameEn": "Isenhart's Parry",
+        "nameClassic": "依森哈德的閃避",
+        "baseItem": "哥德盾",
+        "baseItemId": "gothic_shield",
+        "slot": "shield",
+        "grade": "normal",
+        "requiredLevel": 8,
+        "requiredStr": 60,
+        "classOnly": null,
+        "tc": 30,
+        "qlvl": 11,
+        "attributes": [
+          "防禦：70-75",
+          "格擋機率：46% (Pal)",
+          "格擋機率：41% (Ama/Asn/Bar)",
+          "格擋機率：36% (Dru/Nec/Sor)",
+          "重擊傷害：2 - 6 點",
+          "需要等級：8",
+          "需要力量：60",
+          "耐久度：40",
+          "攻擊者受到 4 點電擊傷害",
+          "+40 防禦",
+          "所有抗性 +8 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/the_ward_lgld.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+10 力量 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "+10 敏捷 (3)"
+      }
+    ],
+    "fullBonuses": [
+      "+10 力量",
+      "+10 敏捷",
+      "+20% 跑步 / 行走速度",
+      "格擋機率提高 30%",
+      "35% 準確率加成",
+      "擊中竊取 5% 生命",
+      "所有抗性 +10"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/griswolds_edge_lgld.jpg"
+  },
+  {
+    "id": "civerbs_vestments",
+    "name": "克維雷布的法衣",
+    "nameEn": "Civerb's Vestments",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "civerbs_cudgel",
+        "name": "克維雷布的短棍",
+        "nameEn": "Civerb's Cudgel",
+        "nameClassic": "希弗伯的短棍",
+        "baseItem": "莊嚴權杖",
+        "baseItemId": "grand_scepter",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 9,
+        "requiredStr": 37,
+        "classOnly": null,
+        "tc": 15,
+        "qlvl": 13,
+        "attributes": [
+          "單手傷害：8 - (36-140) 點",
+          "需要等級：9",
+          "需要力量：37",
+          "耐久度：60",
+          "武器基本速度：[10]",
+          "+(1-99) 最大傷害 （依角色等級而定） [1 * clvl]",
+          "+17-23 最大傷害",
+          "+50% 對不死怪物的傷害",
+          "+75 準確率"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/grand_scepter_lyel.jpg"
+      },
+      {
+        "id": "civerbs_icon",
+        "name": "克維雷布的聖像",
+        "nameEn": "Civerb's Icon",
+        "nameClassic": "希弗伯的圖案",
+        "baseItem": "護身符",
+        "baseItemId": "amulet",
+        "slot": "amulet",
+        "grade": "normal",
+        "requiredLevel": 9,
+        "classOnly": null,
+        "qlvl": 13,
+        "attributes": [
+          "需要等級：9",
+          "生命回復 +4",
+          "法力恢復 40%",
+          "冰寒抗性 +25% (2)",
+          "+25 防禦 (全套)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/amulet_lyel.jpg"
+      },
+      {
+        "id": "civerbs_ward",
+        "name": "克維雷布的防護",
+        "nameEn": "Civerb's Ward",
+        "nameClassic": "希弗柏的防護",
+        "baseItem": "大型盾",
+        "baseItemId": "large_shield",
+        "slot": "shield",
+        "grade": "normal",
+        "requiredLevel": 9,
+        "requiredStr": 34,
+        "classOnly": null,
+        "tc": 12,
+        "qlvl": 13,
+        "attributes": [
+          "防禦：27-29",
+          "需要等級：9",
+          "需要力量：34",
+          "耐久度：24",
+          "格擋機率：57% (Pal)",
+          "格擋機率：52% (Ama/Asn/Bar)",
+          "格擋機率：47% (Dru/Nec/Sor)",
+          "重擊傷害：2 - 4 點",
+          "+15 防禦",
+          "格擋機率提高 15%",
+          "+21-22 法力 (克維雷布的聖像)",
+          "毒素抗性 +25-26% (克維雷布的短棍)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/stormguild_lyel.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "火焰抗性 +25% (2)"
+      }
+    ],
+    "fullBonuses": [
+      "25% 準確率加成",
+      "+200% 對不死怪物的傷害",
+      "+50 防禦",
+      "+15 力量",
+      "電擊抗性 +25%",
+      "火焰抗性 +25%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/grand_scepter_lyel.jpg"
+  },
+  {
+    "id": "cathans_traps",
+    "name": "卡珊的衣著",
+    "nameEn": "Cathan's Traps",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "cathans_visage",
+        "name": "卡珊的容貌",
+        "nameEn": "Cathan's Visage",
+        "nameClassic": "卡珊的容貌",
+        "baseItem": "面具",
+        "baseItemId": "mask",
+        "slot": "helm",
+        "grade": "normal",
+        "requiredLevel": 11,
+        "requiredStr": 23,
+        "classOnly": null,
+        "tc": 21,
+        "qlvl": 15,
+        "attributes": [
+          "防禦：9-27",
+          "防禦：(11-207)-(29-225)",
+          "需要等級：11",
+          "需要力量：23",
+          "耐久度：20",
+          "冰寒抗性 +25%",
+          "+20 法力",
+          "+(2-198) 防禦 （依角色等級而定） [2 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/mask_dgrn.jpg"
+      },
+      {
+        "id": "cathans_mesh",
+        "name": "卡珊的網衣",
+        "nameEn": "Cathan's Mesh",
+        "nameClassic": "卡珊之網",
+        "baseItem": "鎖鍊甲",
+        "baseItemId": "chain_mail",
+        "slot": "armor",
+        "grade": "normal",
+        "requiredLevel": 11,
+        "requiredStr": 24,
+        "classOnly": null,
+        "tc": 15,
+        "qlvl": 15,
+        "attributes": [
+          "防禦：87-90",
+          "需要等級：11",
+          "需要力量：24",
+          "耐久度：45",
+          "+15 防禦",
+          "需求 -50%",
+          "攻擊者反傷：5 (2)",
+          "火焰抗性 +30% (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/chain_mail_dgrn.jpg"
+      },
+      {
+        "id": "cathans_rule",
+        "name": "卡珊的尺杖",
+        "nameEn": "Cathan's Rule",
+        "nameClassic": "卡珊之尺",
+        "baseItem": "戰鬥法杖",
+        "baseItemId": "battle_staff",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 11,
+        "classOnly": null,
+        "tc": 18,
+        "qlvl": 15,
+        "attributes": [
+          "雙手傷害：6 - 13 點",
+          "需要等級：11",
+          "耐久度：40",
+          "武器基本速度：[0]",
+          "+1 火焰技能",
+          "+10 火焰傷害最大值",
+          "+50% 對不死怪物的傷害",
+          "+50 法力 (2)",
+          "所有抗性 +10 (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/battle_staff_dgrn.jpg"
+      },
+      {
+        "id": "cathans_sigil",
+        "name": "卡珊的魔咒",
+        "nameEn": "Cathan's Sigil",
+        "nameClassic": "卡珊的魔咒",
+        "baseItem": "護身符",
+        "baseItemId": "amulet",
+        "slot": "amulet",
+        "grade": "normal",
+        "requiredLevel": 11,
+        "classOnly": null,
+        "qlvl": 15,
+        "attributes": [
+          "需要等級：11",
+          "攻擊者受到 5 點電擊傷害",
+          "+10% 打擊恢復",
+          "+50 準確率 (2)",
+          "尋獲魔法物品機率提高 25% (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/amulet_dgrn.jpg"
+      },
+      {
+        "id": "cathans_seal",
+        "name": "卡珊的封印",
+        "nameEn": "Cathan's Seal",
+        "nameClassic": "卡珊的封印",
+        "baseItem": "戒指",
+        "baseItemId": "ring",
+        "slot": "ring",
+        "grade": "normal",
+        "requiredLevel": 11,
+        "classOnly": null,
+        "qlvl": 15,
+        "attributes": [
+          "需要等級：11",
+          "擊中竊取 6% 生命",
+          "傷害降低 2",
+          "+10 力量 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/ring_dgrn.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "附加 15 - 20 火焰傷害 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "法力恢復 16% (2)"
+      },
+      {
+        "count": 4,
+        "bonus": "電擊抗性 +25% (3)"
+      }
+    ],
+    "fullBonuses": [
+      "+10% 施法速度",
+      "+60 準確率",
+      "附加 15 - 20 火焰傷害",
+      "+20 法力",
+      "法力恢復 16%",
+      "電擊抗性 +25%",
+      "所有抗性 +25",
+      "魔法傷害降低 3"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/mask_dgrn.jpg"
+  },
+  {
+    "id": "angelic_raiment",
+    "name": "天使的衣裝",
+    "nameEn": "Angelic Raiment",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "angelic_mantle",
+        "name": "天使的披風",
+        "nameEn": "Angelic Mantle",
+        "nameClassic": "天使的披風",
+        "baseItem": "環甲",
+        "baseItemId": "ring_mail",
+        "slot": "armor",
+        "grade": "normal",
+        "requiredLevel": 12,
+        "requiredStr": 36,
+        "classOnly": null,
+        "tc": 12,
+        "qlvl": 17,
+        "attributes": [
+          "防禦：68",
+          "防禦：218",
+          "需要等級：12",
+          "需要力量：36",
+          "耐久度：26",
+          "+40% 防禦強化",
+          "傷害降低 3",
+          "+150 防禦 (2)",
+          "火焰抗性 +50% (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/ring_mail_lgry.jpg"
+      },
+      {
+        "id": "angelic_sickle",
+        "name": "天使的鐮刀",
+        "nameEn": "Angelic Sickle",
+        "nameClassic": "天使的鐮刀",
+        "baseItem": "軍刀",
+        "baseItemId": "sabre",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 12,
+        "requiredStr": 25,
+        "requiredDex": 25,
+        "classOnly": null,
+        "tc": 9,
+        "qlvl": 17,
+        "attributes": [
+          "單手傷害：3 - 8 點",
+          "單手傷害：5 - 14 點",
+          "需要等級：12",
+          "需要力量：25",
+          "需要敏捷：25",
+          "耐久度：32",
+          "武器基本速度：[-10]",
+          "+250% 對不死怪物的傷害",
+          "+75 準確率",
+          "+75% 傷害強化 (2)",
+          "攻擊速度 +30% (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/krintizs_skewer_lgry.jpg"
+      },
+      {
+        "id": "angelic_halo",
+        "name": "天使的光暈",
+        "nameEn": "Angelic Halo",
+        "nameClassic": "天使之光",
+        "baseItem": "戒指",
+        "baseItemId": "ring",
+        "slot": "ring",
+        "grade": "normal",
+        "requiredLevel": 12,
+        "classOnly": null,
+        "qlvl": 17,
+        "attributes": [
+          "需要等級：12",
+          "生命回復 +6",
+          "+20 生命",
+          "+(144-1188) 準確率 （依角色等級而定） [12 * clvl] (2)",
+          "尋獲魔法物品機率提高 50% (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/ring_lgry.jpg"
+      },
+      {
+        "id": "angelic_wings",
+        "name": "天使的翅膀",
+        "nameEn": "Angelic Wings",
+        "nameClassic": "天使之翼",
+        "baseItem": "護身符",
+        "baseItemId": "amulet",
+        "slot": "amulet",
+        "grade": "normal",
+        "requiredLevel": 12,
+        "classOnly": null,
+        "qlvl": 17,
+        "attributes": [
+          "需要等級：12",
+          "+20% 受到的傷害轉為法力",
+          "照亮範圍 +3",
+          "+75 生命 (2)",
+          "+1 所有技能 (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/amulet_lgry.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+10 敏捷 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "+50 法力 (3)"
+      }
+    ],
+    "fullBonuses": [
+      "被凍結的時效減半",
+      "所有抗性 +25",
+      "尋獲魔法物品機率提高 40%",
+      "法力恢復 8%",
+      "+10 敏捷",
+      "+50 法力"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/ring_mail_lgry.jpg"
+  },
+  {
+    "id": "vidalas_rig",
+    "name": "維達拉的配備",
+    "nameEn": "Vidala's Rig",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "vidalas_barb",
+        "name": "維達拉的倒刺",
+        "nameEn": "Vidala's Barb",
+        "nameClassic": "維達拉之倒刺",
+        "baseItem": "戰鬥長弓",
+        "baseItemId": "long_battle_bow",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 14,
+        "requiredStr": 40,
+        "requiredDex": 50,
+        "classOnly": null,
+        "tc": 24,
+        "qlvl": 19,
+        "attributes": [
+          "雙手傷害：3 - 18 點",
+          "需要等級：14",
+          "需要力量：40",
+          "需要敏捷：50",
+          "武器基本速度：[10]",
+          "附加 1 - 20 電擊傷害",
+          "+(8-792) 準確率 （依角色等級而定） [8 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/long_battle_bow_blac.jpg"
+      },
+      {
+        "id": "vidalas_ambush",
+        "name": "維達拉的突襲",
+        "nameEn": "Vidala's Ambush",
+        "nameClassic": "維達拉的突襲",
+        "baseItem": "皮革甲",
+        "baseItemId": "leather_armor",
+        "slot": "armor",
+        "grade": "normal",
+        "requiredLevel": 14,
+        "requiredStr": 15,
+        "classOnly": null,
+        "tc": 3,
+        "qlvl": 19,
+        "attributes": [
+          "防禦：64-67",
+          "防禦：(66-311)-(69-314)",
+          "需要等級：14",
+          "需要力量：15",
+          "耐久度：24",
+          "+50 防禦",
+          "+11 敏捷",
+          "火焰抗性 +24% (2)",
+          "+(2-247) 防禦 （依角色等級而定） [2.5 * clvl] (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/leather_armor_blac.jpg"
+      },
+      {
+        "id": "vidalas_fetlock",
+        "name": "維達拉的足距",
+        "nameEn": "Vidala's Fetlock",
+        "nameClassic": "維達拉的距毛",
+        "baseItem": "輕鎧靴",
+        "baseItemId": "light_plated_boots",
+        "slot": "boots",
+        "grade": "normal",
+        "requiredLevel": 14,
+        "requiredStr": 50,
+        "classOnly": null,
+        "tc": 21,
+        "qlvl": 19,
+        "attributes": [
+          "防禦：9-11",
+          "需要等級：14",
+          "需要力量：50",
+          "耐久度：18",
+          "踢擊傷害：8 - 16 點",
+          "+30% 跑步 / 行走速度",
+          "+150 精力上限",
+          "所有抗性 +8 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/light_plate_boots_blac.jpg"
+      },
+      {
+        "id": "vidalas_snare",
+        "name": "維達拉的圈套",
+        "nameEn": "Vidala's Snare",
+        "nameClassic": "維達拉的陷阱",
+        "baseItem": "護身符",
+        "baseItemId": "amulet",
+        "slot": "amulet",
+        "grade": "normal",
+        "requiredLevel": 14,
+        "classOnly": null,
+        "qlvl": 19,
+        "attributes": [
+          "需要等級：14",
+          "冰寒抗性 +20%",
+          "+15 生命",
+          "尋獲魔法物品機率提高 50% (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/amulet_blac.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+75 準確率 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "擊中竊取 7% 法力 (2)"
+      },
+      {
+        "count": 4,
+        "bonus": "+15 敏捷 (3)"
+      }
+    ],
+    "fullBonuses": [
+      "+50% 穿透攻擊",
+      "+75 準確率",
+      "+(1-148) 冰寒傷害最大值 （依角色等級而定） [1.5 * clvl]",
+      "擊中竊取 7% 法力",
+      "凍結目標",
+      "+10 力量",
+      "+15 敏捷"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/long_battle_bow_blac.jpg"
+  },
+  {
+    "id": "cow_kings_leathers",
+    "name": "牛王皮甲",
+    "nameEn": "Cow King's Leathers",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "cow_kings_hide",
+        "name": "牛王之皮",
+        "nameEn": "Cow King's Hide",
+        "nameClassic": "牛魔王之皮",
+        "baseItem": "鑲釘皮甲",
+        "baseItemId": "studded_leather",
+        "slot": "armor",
+        "grade": "normal",
+        "requiredLevel": 18,
+        "requiredStr": 27,
+        "classOnly": null,
+        "tc": 9,
+        "qlvl": 20,
+        "attributes": [
+          "防禦：57",
+          "需要等級：18",
+          "需要力量：27",
+          "耐久度：32",
+          "+60% 防禦強化",
+          "被擊中時有 18% 機率施展等級 5 連鎖閃電",
+          "所有抗性 +18",
+          "+30 生命"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/studded_leather.jpg"
+      },
+      {
+        "id": "cow_kings_hooves",
+        "name": "牛王之蹄",
+        "nameEn": "Cow King's Hooves",
+        "nameClassic": "牛魔王之蹄",
+        "baseItem": "重靴",
+        "baseItemId": "heavy_boots",
+        "slot": "boots",
+        "grade": "normal",
+        "requiredLevel": 13,
+        "requiredStr": 18,
+        "classOnly": null,
+        "tc": 9,
+        "qlvl": 20,
+        "attributes": [
+          "防禦：30-41",
+          "需要等級：13",
+          "需要力量：18",
+          "耐久度：14",
+          "踢擊傷害：4 - 10 點",
+          "+25-35 防禦",
+          "+30% 跑步 / 行走速度",
+          "附加 25 - 35 火焰傷害",
+          "+20 敏捷",
+          "尋獲魔法物品機率提高 25%"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/heavy_boots.jpg"
+      },
+      {
+        "id": "cow_kings_horns",
+        "name": "牛王之角",
+        "nameEn": "Cow King's Horns",
+        "nameClassic": "牛魔王之角",
+        "baseItem": "戰帽",
+        "baseItemId": "war_hat",
+        "slot": "helm",
+        "grade": "exceptional",
+        "requiredLevel": 25,
+        "requiredStr": 20,
+        "classOnly": null,
+        "tc": 36,
+        "qlvl": 20,
+        "attributes": [
+          "防禦：120-128",
+          "需要等級：25",
+          "需要力量：20",
+          "耐久度：12",
+          "+75 防禦",
+          "被凍結的時效減半",
+          "攻擊者反傷：10",
+          "+35% 受到的傷害轉為法力"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/cap_hat.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+100 防禦 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "毒素抗性 +25% (2)"
+      }
+    ],
+    "fullBonuses": [
+      "被擊中時有 25% 機率施展等級 5 靜電力場",
+      "+1 所有技能",
+      "攻擊速度 +30%",
+      "+100 防禦",
+      "+20 力量",
+      "+100 生命",
+      "+100 精力上限",
+      "毒素抗性 +25%",
+      "怪物金幣掉落量提高 100%",
+      "尋獲魔法物品機率提高 100%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/studded_leather.jpg"
+  },
+  {
+    "id": "arcannas_tricks",
+    "name": "阿卡娜的詭計",
+    "nameEn": "Arcanna's Tricks",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "arcannas_head",
+        "name": "阿卡娜的頭",
+        "nameEn": "Arcanna's Head",
+        "nameClassic": "阿卡娜的頭",
+        "baseItem": "顱帽",
+        "baseItemId": "skull_cap",
+        "slot": "helm",
+        "grade": "normal",
+        "requiredLevel": 15,
+        "requiredStr": 15,
+        "classOnly": null,
+        "tc": 6,
+        "qlvl": 20,
+        "attributes": [
+          "防禦：8-11",
+          "防禦：(11-305)-(14-308)",
+          "需要等級：15",
+          "需要力量：15",
+          "耐久度：18",
+          "生命回復 +4",
+          "攻擊者反傷：2",
+          "+(3-297) 防禦 （依角色等級而定） [3 * clvl] (2)",
+          "電擊抗性 +15% (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/skull_cap_blac.jpg"
+      },
+      {
+        "id": "arcannas_flesh",
+        "name": "阿卡娜的血肉",
+        "nameEn": "Arcanna's Flesh",
+        "nameClassic": "阿卡娜的血肉",
+        "baseItem": "輕型鎧甲",
+        "baseItemId": "light_plate",
+        "slot": "armor",
+        "grade": "normal",
+        "requiredLevel": 15,
+        "requiredStr": 41,
+        "classOnly": null,
+        "tc": 36,
+        "qlvl": 20,
+        "attributes": [
+          "防禦：90-107",
+          "防禦：190-207",
+          "需要等級：15",
+          "需要力量：41",
+          "耐久度：60",
+          "照亮範圍 +2",
+          "傷害降低 3",
+          "+100 防禦 (2)",
+          "+10 能量 (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/light_plate_blac.jpg"
+      },
+      {
+        "id": "arcannas_deathwand",
+        "name": "阿卡娜的死亡之杖",
+        "nameEn": "Arcanna's Deathwand",
+        "nameClassic": "阿卡娜的死亡之杖",
+        "baseItem": "征戰法杖",
+        "baseItemId": "war_staff",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 15,
+        "classOnly": null,
+        "tc": 24,
+        "qlvl": 20,
+        "attributes": [
+          "雙手傷害：12 - 28 點",
+          "需要等級：15",
+          "耐久度：50",
+          "武器基本速度：[20]",
+          "+1 魔法使技能等級",
+          "+25% 致命打擊",
+          "+50% 對不死怪物的傷害",
+          "+50 法力 (2)",
+          "法力恢復 5% (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/war_staff_blac.jpg"
+      },
+      {
+        "id": "arcannas_sign",
+        "name": "阿卡娜的符印",
+        "nameEn": "Arcanna's Sign",
+        "nameClassic": "阿卡娜的符號",
+        "baseItem": "護身符",
+        "baseItemId": "amulet",
+        "slot": "amulet",
+        "grade": "normal",
+        "requiredLevel": 15,
+        "classOnly": null,
+        "qlvl": 20,
+        "attributes": [
+          "需要等級：15",
+          "法力恢復 20%",
+          "+15 法力",
+          "尋獲魔法物品機率提高 50% (2)",
+          "火焰抗性 +20% (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/amulet_blac.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+50 法力 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "+50 生命 (3)"
+      },
+      {
+        "count": 4,
+        "bonus": "法力恢復 12% (3)"
+      }
+    ],
+    "fullBonuses": [
+      "+1 所有技能",
+      "+20% 施法速度",
+      "擊中竊取 5% 法力",
+      "+50 生命",
+      "+75 法力",
+      "法力恢復 12%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/skull_cap_blac.jpg"
+  },
+  {
+    "id": "sanders_folly",
+    "name": "山德的愚行",
+    "nameEn": "Sander's Folly",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "sanders_paragon",
+        "name": "山德的模範",
+        "nameEn": "Sander's Paragon",
+        "nameClassic": "山德的模範",
+        "baseItem": "便帽",
+        "baseItemId": "cap",
+        "slot": "helm",
+        "grade": "normal",
+        "requiredLevel": 25,
+        "classOnly": null,
+        "tc": 3,
+        "qlvl": 20,
+        "attributes": [
+          "防禦：(4-102)-(6-104)",
+          "需要等級：25",
+          "耐久度：12",
+          "+(1-99) 防禦 （依角色等級而定） [1 * clvl]",
+          "攻擊者反傷：8",
+          "尋獲魔法物品機率提高 35%"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/war_bonnet_lpur.jpg"
+      },
+      {
+        "id": "sanders_superstition",
+        "name": "山德的迷信",
+        "nameEn": "Sander's Superstition",
+        "nameClassic": "山德的迷信",
+        "baseItem": "骸骨魔杖",
+        "baseItemId": "bone_wand",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 25,
+        "classOnly": null,
+        "tc": 18,
+        "qlvl": 20,
+        "attributes": [
+          "單手傷害：5 - 12 點",
+          "需要等級：25",
+          "耐久度：15",
+          "武器基本速度：[-20]",
+          "+75% 傷害強化",
+          "+50% 對不死怪物的傷害",
+          "+20% 施法速度",
+          "+25 法力",
+          "擊中竊取 8% 法力",
+          "附加 25 - 75 冰寒傷害"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/gravenspine_lpur.jpg"
+      },
+      {
+        "id": "sanders_taboo",
+        "name": "山德的禁忌",
+        "nameEn": "Sander's Taboo",
+        "nameClassic": "山德的禁忌",
+        "baseItem": "厚皮手套",
+        "baseItemId": "heavy_gloves",
+        "slot": "gloves",
+        "grade": "normal",
+        "requiredLevel": 28,
+        "classOnly": null,
+        "tc": 9,
+        "qlvl": 20,
+        "attributes": [
+          "防禦：25-31",
+          "需要等級：28",
+          "耐久度：14",
+          "附加 9 - 11 毒素傷害，時效 3 秒",
+          "+20-25 防禦",
+          "+40 生命",
+          "攻擊速度 +20%"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/heavy_gloves_lpur.jpg"
+      },
+      {
+        "id": "sanders_riprap",
+        "name": "山德的碎石",
+        "nameEn": "Sander's Riprap",
+        "nameClassic": "山德的碎石",
+        "baseItem": "重靴",
+        "baseItemId": "heavy_boots",
+        "slot": "boots",
+        "grade": "normal",
+        "requiredLevel": 20,
+        "requiredStr": 18,
+        "classOnly": null,
+        "tc": 9,
+        "qlvl": 20,
+        "attributes": [
+          "防禦：5-6",
+          "需要等級：20",
+          "需要力量：18",
+          "耐久度：14",
+          "踢擊傷害：4 - 10 點",
+          "+40% 跑步 / 行走速度",
+          "+100 準確率",
+          "+10 敏捷",
+          "+5 力量"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/heavy_boots_lpur.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+50 防禦 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "+75 準確率 (3)"
+      }
+    ],
+    "fullBonuses": [
+      "+50 防禦",
+      "+75 準確率",
+      "+1 所有技能",
+      "擊中竊取 4% 生命",
+      "+50 法力",
+      "尋獲魔法物品機率提高 50%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/war_bonnet_lpur.jpg"
+  },
+  {
+    "id": "irathas_finery",
+    "name": "依雷撒的華服",
+    "nameEn": "Iratha's Finery",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "irathas_coil",
+        "name": "依雷撒的盤頂",
+        "nameEn": "Iratha's Coil",
+        "nameClassic": "依雷撒的線圈",
+        "baseItem": "王冠",
+        "baseItemId": "crown",
+        "slot": "helm",
+        "grade": "normal",
+        "requiredLevel": 15,
+        "requiredStr": 55,
+        "classOnly": null,
+        "tc": 30,
+        "qlvl": 21,
+        "attributes": [
+          "防禦：25-45",
+          "防禦：(27-223)-(47-243)",
+          "需要等級：15",
+          "需要力量：55",
+          "耐久度：50",
+          "電擊抗性 +30%",
+          "火焰抗性 +30%",
+          "+(2-198) 防禦 （依角色等級而定） [2 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/crown_lgry.jpg"
+      },
+      {
+        "id": "irathas_collar",
+        "name": "依雷撒的項圈",
+        "nameEn": "Iratha's Collar",
+        "nameClassic": "依雷撒的項圈",
+        "baseItem": "護身符",
+        "baseItemId": "amulet",
+        "slot": "amulet",
+        "grade": "normal",
+        "requiredLevel": 15,
+        "classOnly": null,
+        "qlvl": 21,
+        "attributes": [
+          "需要等級：15",
+          "中毒的時效縮短 75%",
+          "毒素抗性 +30%",
+          "所有抗性 +15 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/amulet_lgry.jpg"
+      },
+      {
+        "id": "irathas_cord",
+        "name": "依雷撒的腰繩",
+        "nameEn": "Iratha's Cord",
+        "nameClassic": "依雷撒之繩",
+        "baseItem": "厚腰帶",
+        "baseItemId": "heavy_belt",
+        "slot": "belt",
+        "grade": "normal",
+        "requiredLevel": 15,
+        "requiredStr": 45,
+        "classOnly": null,
+        "tc": 21,
+        "qlvl": 21,
+        "attributes": [
+          "防禦：31",
+          "需要等級：15",
+          "需要力量：45",
+          "耐久度：18",
+          "腰帶空間：+8 格",
+          "+25 防禦",
+          "+5 最小傷害",
+          "+10 敏捷 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/heavy_belt_lgry.jpg"
+      },
+      {
+        "id": "irathas_cuff",
+        "name": "依雷撒的袖銬",
+        "nameEn": "Iratha's Cuff",
+        "nameClassic": "依雷撒的袖口",
+        "baseItem": "輕型護手",
+        "baseItemId": "light_gauntlets",
+        "slot": "gloves",
+        "grade": "normal",
+        "requiredLevel": 15,
+        "requiredStr": 45,
+        "classOnly": null,
+        "tc": 21,
+        "qlvl": 21,
+        "attributes": [
+          "防禦：9-11",
+          "需要等級：15",
+          "需要力量：45",
+          "耐久度：18",
+          "被凍結的時效減半",
+          "冰寒抗性 +30%",
+          "攻擊速度 +20% (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/light_gauntlets_lgry.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+50 防禦 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "+20% 跑步 / 行走速度 (3)"
+      },
+      {
+        "count": 4,
+        "bonus": "+24% 穿透攻擊 (3)"
+      }
+    ],
+    "fullBonuses": [
+      "+20% 跑步 / 行走速度",
+      "+24% 穿透攻擊",
+      "+50 防禦",
+      "+15 敏捷",
+      "毒素抗性上限 +10%",
+      "冰寒抗性上限 +10%",
+      "電擊抗性上限 +10%",
+      "火焰抗性上限 +10%",
+      "所有抗性 +20"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/crown_lgry.jpg"
+  },
+  {
+    "id": "mavinas_battle_hymn",
+    "name": "馬維娜之戰鬥詩歌",
+    "nameEn": "M'avina's Battle Hymn",
+    "isClassSet": true,
+    "class": "亞馬遜",
+    "pieces": [
+      {
+        "id": "mavinas_icy_clutch",
+        "name": "馬維娜的冰握",
+        "nameEn": "M'avina's Icy Clutch",
+        "nameClassic": "馬維娜的冰握",
+        "baseItem": "戰鬥護手",
+        "baseItemId": "battle_gauntlets",
+        "slot": "gloves",
+        "grade": "exceptional",
+        "requiredLevel": 32,
+        "requiredStr": 88,
+        "classOnly": null,
+        "tc": 51,
+        "qlvl": 21,
+        "attributes": [
+          "防禦：84-97",
+          "需要等級：32",
+          "需要力量：88",
+          "耐久度：18",
+          "+45-50 防禦",
+          "附加 6 - 18 冰寒傷害",
+          "被凍結的時效減半",
+          "怪物金幣掉落量提高 56%",
+          "+10 力量",
+          "+15 敏捷",
+          "附加 131 - 252 冰寒傷害 (4)",
+          "+20% 冰寒技能傷害 (全套)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/light_gauntlets_whit.jpg"
+      },
+      {
+        "id": "mavinas_tenet",
+        "name": "馬維娜的教義",
+        "nameEn": "M'avina's Tenet",
+        "nameClassic": "馬維娜的教義",
+        "baseItem": "鯊皮腰帶",
+        "baseItemId": "sharkskin_belt",
+        "slot": "belt",
+        "grade": "exceptional",
+        "requiredLevel": 45,
+        "requiredStr": 20,
+        "classOnly": null,
+        "tc": 39,
+        "qlvl": 21,
+        "attributes": [
+          "防禦：81-86",
+          "需要等級：45",
+          "需要力量：20",
+          "耐久度：14",
+          "腰帶空間：+12 格",
+          "+50 防禦",
+          "+20% 跑步 / 行走速度",
+          "照亮範圍 +5",
+          "擊中竊取 5% 法力",
+          "所有抗性 +25 (4)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/light_belt_whit.jpg"
+      },
+      {
+        "id": "mavinas_true_sight",
+        "name": "馬維娜的真實之眼",
+        "nameEn": "M'avina's True Sight",
+        "nameClassic": "馬維娜的真實之眼",
+        "baseItem": "權冠",
+        "baseItemId": "diadem",
+        "slot": "helm",
+        "grade": "elite",
+        "requiredLevel": 64,
+        "classOnly": null,
+        "tc": 87,
+        "qlvl": 21,
+        "attributes": [
+          "防禦：200-210",
+          "需要等級：64",
+          "耐久度：20",
+          "+150 防禦",
+          "生命回復 +10",
+          "+25 法力",
+          "攻擊速度 +30%",
+          "+1 所有技能 (2)",
+          "50% 準確率加成 (3)",
+          "所有抗性 +25 (4)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/diadem_whit.jpg"
+      },
+      {
+        "id": "mavinas_caster",
+        "name": "馬維娜的強弓",
+        "nameEn": "M'avina's Caster",
+        "nameClassic": "馬維娜的施展",
+        "baseItem": "主母之弓",
+        "baseItemId": "grand_matron_bow",
+        "slot": "weapon",
+        "grade": "elite",
+        "requiredLevel": 70,
+        "requiredStr": 108,
+        "requiredDex": 152,
+        "classOnly": "亞馬遜",
+        "tc": 78,
+        "qlvl": 21,
+        "attributes": [
+          "雙手傷害：40 - 207 點",
+          "需要等級：70",
+          "需要力量：108",
+          "需要敏捷：152",
+          "武器基本速度：[10]",
+          "+188% 傷害強化",
+          "攻擊速度 +40%",
+          "+50 準確率",
+          "射出魔法箭矢 Level 1",
+          "附加 114 - 377 魔法傷害 (2)",
+          "擊中時有 10% 機率施展等級 15 閃電新星 (3)",
+          "+2 弓與弩技能 （只限亞馬遜） (4)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/reflex_bow_whit.jpg"
+      },
+      {
+        "id": "mavinas_embrace",
+        "name": "馬維娜的擁抱",
+        "nameEn": "M'avina's Embrace",
+        "nameClassic": "馬維娜的擁抱",
+        "baseItem": "海怪之殼",
+        "baseItemId": "kraken_shell",
+        "slot": "armor",
+        "grade": "elite",
+        "requiredLevel": 70,
+        "requiredStr": 122,
+        "classOnly": null,
+        "tc": 81,
+        "qlvl": 21,
+        "attributes": [
+          "防禦：(771-1163)-(877-1269)",
+          "需要等級：70",
+          "需要力量：122",
+          "耐久度：48",
+          "需求 -30%",
+          "被擊中時有 10% 機率施展等級 3 冰川之槍",
+          "魔法傷害降低 5-12",
+          "+(4-396) 防禦 （依角色等級而定） [4 * clvl]",
+          "+2 被動與魔法技能 （只限亞馬遜）",
+          "+350 防禦",
+          "+30% 打擊恢復 (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/field_plate_whit.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+20 力量 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "+30 敏捷 (3)"
+      }
+    ],
+    "fullBonuses": [
+      "+3 亞馬遜技能等級",
+      "+20 力量",
+      "+30 敏捷",
+      "所有抗性 +50",
+      "+100 防禦",
+      "+100 準確率",
+      "尋獲魔法物品機率提高 100%",
+      "角色顯示光環效果"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/light_gauntlets_whit.jpg"
+  },
+  {
+    "id": "natalyas_odium",
+    "name": "娜塔亞的非難",
+    "nameEn": "Natalya's Odium",
+    "isClassSet": true,
+    "class": "刺客",
+    "pieces": [
+      {
+        "id": "natalyas_totem",
+        "name": "娜塔亞的圖騰",
+        "nameEn": "Natalya's Totem",
+        "nameClassic": "娜塔亞的圖騰",
+        "baseItem": "陰森頭盔",
+        "baseItemId": "grim_helm",
+        "slot": "helm",
+        "grade": "exceptional",
+        "requiredLevel": 59,
+        "requiredStr": 58,
+        "classOnly": null,
+        "tc": 51,
+        "qlvl": 22,
+        "attributes": [
+          "防禦：195-300",
+          "需要等級：59",
+          "需要力量：58",
+          "耐久度：40",
+          "+135-175 防禦",
+          "所有抗性 +10-20",
+          "+20-30 敏捷",
+          "+10-20 力量",
+          "魔法傷害降低 3"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/wormskull_dgry.jpg"
+      },
+      {
+        "id": "natalyas_soul",
+        "name": "娜塔亞的靈魂",
+        "nameEn": "Natalya's Soul",
+        "nameClassic": "娜塔亞的靈魂",
+        "baseItem": "鐵網靴",
+        "baseItemId": "mesh_boots",
+        "slot": "boots",
+        "grade": "exceptional",
+        "requiredLevel": 25,
+        "requiredStr": 65,
+        "classOnly": null,
+        "tc": 45,
+        "qlvl": 22,
+        "attributes": [
+          "防禦：112-169",
+          "需要等級：25",
+          "需要力量：65",
+          "耐久度：66",
+          "踢擊傷害：23 - 52 點",
+          "+75-125 防禦",
+          "+40% 跑步 / 行走速度",
+          "精力恢復 +(0-24)% （依角色等級而定） [0.25 * clvl]",
+          "冰寒抗性 +15-25%",
+          "電擊抗性 +15-25%"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/chain_boots_dgry.jpg"
+      },
+      {
+        "id": "natalyas_mark",
+        "name": "娜塔亞的印記",
+        "nameEn": "Natalya's Mark",
+        "nameClassic": "娜塔亞的記號",
+        "baseItem": "穿擊剪刃",
+        "baseItemId": "scissors_suwayyah",
+        "slot": "weapon",
+        "grade": "elite",
+        "requiredLevel": 79,
+        "requiredStr": 118,
+        "requiredDex": 118,
+        "classOnly": "刺客",
+        "tc": 87,
+        "qlvl": 22,
+        "attributes": [
+          "單手傷害：120 - 153 點",
+          "需要等級：79",
+          "需要力量：118",
+          "需要敏捷：118",
+          "耐久度：68",
+          "武器基本速度：[0]",
+          "+200% 傷害強化",
+          "+200% 對不死怪物的傷害",
+          "+200% 對惡魔的傷害",
+          "附加 12 - 17 火焰傷害",
+          "無視目標防禦",
+          "攻擊速度 +40%",
+          "+50 冰寒傷害"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/natalyas_mark_dgry.jpg"
+      },
+      {
+        "id": "natalyas_shadow",
+        "name": "娜塔亞的影子",
+        "nameEn": "Natalya's Shadow",
+        "nameClassic": "娜塔亞的影子",
+        "baseItem": "綴鱗戰甲",
+        "baseItemId": "loricated_mail",
+        "slot": "armor",
+        "grade": "elite",
+        "requiredLevel": 73,
+        "requiredStr": 149,
+        "classOnly": null,
+        "tc": 75,
+        "qlvl": 22,
+        "attributes": [
+          "防禦：540-721",
+          "需要等級：73",
+          "需要力量：149",
+          "耐久度：36",
+          "+150-225 防禦",
+          "+(1-99) 生命 （依角色等級而定） [1 * clvl]",
+          "中毒的時效縮短 75%",
+          "毒素抗性 +25%",
+          "+2 暗影修行 （只限刺客）",
+          "鑲孔（1-3）"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/scale_mail_dgry.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "魔法傷害降低 15 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "+200 防禦 (3)"
+      }
+    ],
+    "fullBonuses": [
+      "+3 刺客技能等級",
+      "+350 防禦",
+      "擊中竊取 14% 生命",
+      "擊中竊取 14% 法力",
+      "所有抗性 +50",
+      "受到的物理傷害降低 30%",
+      "魔法傷害降低 15",
+      "角色顯示虛影效果"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/wormskull_dgry.jpg"
+  },
+  {
+    "id": "milabregas_regalia",
+    "name": "米拉伯佳戰裝",
+    "nameEn": "Milabrega's Regalia",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "milabregas_diadem",
+        "name": "米拉伯佳權冠",
+        "nameEn": "Milabrega's Diadem",
+        "nameClassic": "米拉伯佳的王冠",
+        "baseItem": "王冠",
+        "baseItemId": "crown",
+        "slot": "helm",
+        "grade": "normal",
+        "requiredLevel": 17,
+        "requiredStr": 55,
+        "classOnly": null,
+        "tc": 30,
+        "qlvl": 23,
+        "attributes": [
+          "防禦：25-45",
+          "需要等級：17",
+          "需要力量：55",
+          "耐久度：50",
+          "+15 法力",
+          "+15 生命",
+          "冰寒抗性 +40% (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/crown_dblu.jpg"
+      },
+      {
+        "id": "milabregas_robe",
+        "name": "米拉伯佳外袍",
+        "nameEn": "Milabrega's Robe",
+        "nameClassic": "米拉伯佳之袍",
+        "baseItem": "上古鎧甲",
+        "baseItemId": "ancient_armor",
+        "slot": "armor",
+        "grade": "normal",
+        "requiredLevel": 17,
+        "requiredStr": 100,
+        "classOnly": null,
+        "tc": 42,
+        "qlvl": 23,
+        "attributes": [
+          "防禦：234",
+          "防禦：468",
+          "需要等級：17",
+          "需要力量：100",
+          "耐久度：60",
+          "傷害降低 2",
+          "攻擊者反傷：3",
+          "+100% 防禦強化 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/victors_silk_dblu.jpg"
+      },
+      {
+        "id": "milabregas_orb",
+        "name": "米拉伯佳之球",
+        "nameEn": "Milabrega's Orb",
+        "nameClassic": "米拉伯佳之球",
+        "baseItem": "鳶盾",
+        "baseItemId": "kite_shield",
+        "slot": "shield",
+        "grade": "normal",
+        "requiredLevel": 17,
+        "requiredStr": 47,
+        "classOnly": null,
+        "tc": 15,
+        "qlvl": 23,
+        "attributes": [
+          "防禦：44",
+          "防禦：53",
+          "格擋機率：38% (Pal)",
+          "格擋機率：33% (Ama/Asn/Bar)",
+          "格擋機率：28% (Dru/Nec/Sor)",
+          "重擊傷害：2 - 5 點",
+          "需要等級：17",
+          "需要力量：47",
+          "耐久度：30",
+          "+25 防禦",
+          "尋獲魔法物品機率提高 20%",
+          "+50 生命 (2)",
+          "+50% 防禦強化 (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/steelclash_dblu.jpg"
+      },
+      {
+        "id": "milabregas_rod",
+        "name": "米拉伯佳節杖",
+        "nameEn": "Milabrega's Rod",
+        "nameClassic": "米拉伯佳之杖",
+        "baseItem": "征戰權杖",
+        "baseItemId": "war_scepter",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 17,
+        "requiredStr": 55,
+        "classOnly": null,
+        "tc": 21,
+        "qlvl": 23,
+        "attributes": [
+          "單手傷害：15 - 25 點",
+          "需要等級：17",
+          "需要力量：55",
+          "耐久度：70",
+          "武器基本速度：[-10]",
+          "+50% 傷害強化",
+          "+50% 對不死怪物的傷害",
+          "+1 聖騎士技能等級",
+          "照亮範圍 +2"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/war_scepter_dblu.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+75 準確率 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "+(2-198) 電擊傷害 （依角色等級而定） [2 * clvl] (2)"
+      },
+      {
+        "count": 4,
+        "bonus": "額外 +125 準確率 (3)"
+      },
+      {
+        "count": 5,
+        "bonus": "無法凍結 (3)"
+      }
+    ],
+    "fullBonuses": [
+      "+2 聖騎士技能等級",
+      "+200 準確率",
+      "+(2-198) 電擊傷害 （依角色等級而定） [2 * clvl]",
+      "擊中竊取 10% 法力",
+      "擊中竊取 8% 生命",
+      "毒素抗性 +15%",
+      "無法凍結"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/crown_dblu.jpg"
+  },
+  {
+    "id": "tal_rashas_wrappings",
+    "name": "塔拉夏的外袍",
+    "nameEn": "Tal Rasha's Wrappings",
+    "isClassSet": true,
+    "class": "魔法使",
+    "pieces": [
+      {
+        "id": "tal_rashas_adjudication",
+        "name": "塔拉夏的判決",
+        "nameEn": "Tal Rasha's Adjudication",
+        "nameClassic": "塔.拉夏的判決",
+        "baseItem": "護身符",
+        "baseItemId": "amulet",
+        "slot": "amulet",
+        "grade": "normal",
+        "requiredLevel": 67,
+        "classOnly": null,
+        "qlvl": 26,
+        "attributes": [
+          "需要等級：67",
+          "+2 魔法使技能等級",
+          "電擊抗性 +33%",
+          "附加 3 - 32 電擊傷害",
+          "+42 法力",
+          "+50 生命",
+          "+10% 施法速度 (4)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/amulet_dpur.jpg"
+      },
+      {
+        "id": "tal_rashas_lidless_eye",
+        "name": "塔拉夏的警惕之眼",
+        "nameEn": "Tal Rasha's Lidless Eye",
+        "nameClassic": "塔.拉夏的判決",
+        "baseItem": "渦流水晶",
+        "baseItemId": "swirling_crystal",
+        "slot": "weapon",
+        "grade": "exceptional",
+        "requiredLevel": 65,
+        "classOnly": "魔法使",
+        "tc": 51,
+        "qlvl": 26,
+        "attributes": [
+          "單手傷害：18 - 42 點",
+          "需要等級：65",
+          "耐久度：50",
+          "武器基本速度：[10]",
+          "+20% 施法速度",
+          "+77 法力",
+          "+57 生命",
+          "+10 能量",
+          "+1-2 至閃電專精 （只限魔法使）",
+          "+1-2 至火焰專精 （只限魔法使）",
+          "+1-2 至冰寒專精 （只限魔法使）",
+          "+1 魔法使技能等級 (2)",
+          "敵人火焰抗性 -15% (3)",
+          "敵人電擊抗性 -15% (4)",
+          "+15% 冰寒技能傷害 (全套)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/dragon_stone_dpur.jpg"
+      },
+      {
+        "id": "tal_rashas_horadric_crest",
+        "name": "塔拉夏的赫拉迪姆之冠",
+        "nameEn": "Tal Rasha's Horadric Crest",
+        "nameClassic": "塔.拉夏的赫拉迪克紋章",
+        "baseItem": "死亡面具",
+        "baseItemId": "death_mask",
+        "slot": "helm",
+        "grade": "exceptional",
+        "requiredLevel": 66,
+        "requiredStr": 55,
+        "classOnly": null,
+        "tc": 48,
+        "qlvl": 26,
+        "attributes": [
+          "防禦：99-131",
+          "需要等級：66",
+          "需要力量：55",
+          "耐久度：20",
+          "擊中竊取 10% 生命",
+          "擊中竊取 10% 法力",
           "所有抗性 +15",
           "+45 防禦",
-          "+60 生命",
-          "+30 法力"
-        ]
+          "+30 法力",
+          "+60 生命"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/mask_dpur.jpg"
       },
       {
-        id: "tal_armor",
-        name: "塔拉夏的守護",
-        nameEn: "Tal Rasha's Guardianship",
-        baseItem: "漆甲 (Lacquered Plate)",
-        slot: "armor",
-        requiredLevel: 71,
-        attributes: [
-          "+400 防禦",
-          "抗寒 +40%",
-          "抗火 +40%",
-          "抗電 +40%",
-          "魔法傷害減少 15",
-          "+88% 更佳機會取得魔法裝備 (MF)"
-        ]
-      },
-      {
-        id: "tal_weapon",
-        name: "塔拉夏的警惕之眼",
-        nameEn: "Tal Rasha's Lidless Eye",
-        baseItem: "渦流水晶 (Swirling Crystal)",
-        slot: "weapon",
-        requiredLevel: 65,
-        attributes: [
-          "+20% 快速施法速度 (FCR)",
-          "+1-2 閃電專精 (法師專用) (變動)",
-          "+1-2 火焰專精 (法師專用) (變動)",
-          "+1-2 冰凍專精 (法師專用) (變動)",
-          "+10 活力",
-          "+57 生命",
-          "+77 法力"
-        ]
-      },
-      {
-        id: "tal_belt",
-        name: "塔拉夏的細緻衣服",
-        nameEn: "Tal Rasha's Fine-Spun Cloth",
-        baseItem: "織網腰帶 (Mesh Belt)",
-        slot: "belt",
-        requiredLevel: 53,
-        attributes: [
-          "裝備需求 -20%",
-          "37% 受損生命轉移為法力",
+        "id": "tal_rashas_finespun_cloth",
+        "name": "塔拉夏的精織腰布",
+        "nameEn": "Tal Rasha's Fine-Spun Cloth",
+        "nameClassic": "塔.拉夏的纖細衣服",
+        "baseItem": "鐵網腰帶",
+        "baseItemId": "mesh_belt",
+        "slot": "belt",
+        "grade": "exceptional",
+        "requiredLevel": 53,
+        "requiredStr": 47,
+        "classOnly": null,
+        "tc": 45,
+        "qlvl": 26,
+        "attributes": [
+          "防禦：35-40",
+          "防禦：95-100",
+          "需要等級：53",
+          "需要力量：47",
+          "耐久度：16",
+          "腰帶空間：+12 格",
+          "需求 -20%",
+          "+37% 受到的傷害轉為法力",
           "+30 法力",
           "+20 敏捷",
-          "+10-15% 更佳機會取得魔法裝備 (MF) (變動)"
-        ]
+          "尋獲魔法物品機率提高 10-15%",
+          "+60 防禦 (2)",
+          "+10% 施法速度 (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/belt_m_dpur.jpg"
       },
       {
-        id: "tal_amulet",
-        name: "塔拉夏的審判",
-        nameEn: "Tal Rasha's Adjudication",
-        baseItem: "項鍊 (Amulet)",
-        slot: "amulet",
-        requiredLevel: 67,
-        attributes: [
-          "+2 魔法使技能",
-          "抗電 +33%",
-          "增加 3-32 閃電傷害",
+        "id": "tal_rashas_guardianship",
+        "name": "塔拉夏的守護",
+        "nameEn": "Tal Rasha's Guardianship",
+        "nameClassic": "塔.拉夏的守護",
+        "baseItem": "漆護鎧甲",
+        "baseItemId": "lacquered_plate",
+        "slot": "armor",
+        "grade": "elite",
+        "requiredLevel": 71,
+        "requiredStr": 84,
+        "classOnly": null,
+        "tc": 84,
+        "qlvl": 26,
+        "attributes": [
+          "防禦：833-941",
+          "需要等級：71",
+          "需要力量：84",
+          "耐久度：55",
+          "+400 防禦",
+          "需求 -60%",
+          "魔法傷害降低 15",
+          "冰寒抗性 +40%",
+          "電擊抗性 +40%",
+          "火焰抗性 +40%",
+          "尋獲魔法物品機率提高 88%",
+          "+10% 施法速度 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/gothic_plate_dpur.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "生命回復 +10 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "尋獲魔法物品機率提高 65% (3)"
+      },
+      {
+        "count": 4,
+        "bonus": "+25% 打擊恢復 (4)"
+      }
+    ],
+    "fullBonuses": [
+      "+3 魔法使技能等級",
+      "生命回復 +10",
+      "尋獲魔法物品機率提高 65%",
+      "+25% 打擊恢復",
+      "+150 生命",
+      "所有抗性 +50",
+      "+50 對遠程防禦",
+      "+150 防禦",
+      "角色顯示光環效果"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/amulet_dpur.jpg"
+  },
+  {
+    "id": "tancreds_battlegear",
+    "name": "坦克雷的戰裝",
+    "nameEn": "Tancred's Battlegear",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "tancreds_skull",
+        "name": "坦克雷的顱骨",
+        "nameEn": "Tancred's Skull",
+        "nameClassic": "坦克雷之骷髏",
+        "baseItem": "骸骨頭盔",
+        "baseItemId": "bone_helm",
+        "slot": "helm",
+        "grade": "normal",
+        "requiredLevel": 20,
+        "requiredStr": 25,
+        "classOnly": null,
+        "tc": 24,
+        "qlvl": 27,
+        "attributes": [
+          "防禦：33-36",
+          "需要等級：20",
+          "需要力量：25",
+          "耐久度：40",
+          "+10% 傷害強化",
+          "+40 準確率",
+          "所有抗性 +10 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/wormskull_dgld.jpg"
+      },
+      {
+        "id": "tancreds_spine",
+        "name": "坦克雷的脊柱",
+        "nameEn": "Tancred's Spine",
+        "nameClassic": "坦克雷的脊柱",
+        "baseItem": "全身鎧甲",
+        "baseItemId": "full_plate_mail",
+        "slot": "armor",
+        "grade": "normal",
+        "requiredLevel": 20,
+        "requiredStr": 80,
+        "classOnly": null,
+        "tc": 39,
+        "qlvl": 27,
+        "attributes": [
+          "防禦：150-161",
+          "防禦：(152-348)-(163-359)",
+          "需要等級：20",
+          "需要力量：80",
+          "耐久度：70",
+          "+40 生命",
+          "+15 力量",
+          "+(2-198) 防禦 （依角色等級而定） [2 * clvl] (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/goldskin_dgld.jpg"
+      },
+      {
+        "id": "tancreds_hobnails",
+        "name": "坦克雷的釘靴",
+        "nameEn": "Tancred's Hobnails",
+        "nameClassic": "坦克雷的平頭釘",
+        "baseItem": "皮靴",
+        "baseItemId": "boots",
+        "slot": "boots",
+        "grade": "normal",
+        "requiredLevel": 20,
+        "classOnly": null,
+        "tc": 3,
+        "qlvl": 27,
+        "attributes": [
+          "防禦：2-3",
+          "需要等級：20",
+          "耐久度：12",
+          "踢擊傷害：3 - 8 點",
+          "精力恢復 +25%",
+          "+10 敏捷",
+          "+30% 跑步 / 行走速度 (2)",
+          "+10 力量 (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/leather_boots_dgld.jpg"
+      },
+      {
+        "id": "tancreds_crowbill",
+        "name": "坦克雷的鴉嘴鎬",
+        "nameEn": "Tancred's Crowbill",
+        "nameClassic": "坦克雷的鴉嘴鉗",
+        "baseItem": "軍用鎬",
+        "baseItemId": "military_pick",
+        "slot": "weapon",
+        "grade": "normal",
+        "requiredLevel": 20,
+        "requiredStr": 49,
+        "requiredDex": 33,
+        "classOnly": null,
+        "tc": 21,
+        "qlvl": 27,
+        "attributes": [
+          "單手傷害：12 - 19 點",
+          "需要等級：20",
+          "需要力量：49",
+          "需要敏捷：33",
+          "耐久度：26",
+          "武器基本速度：[-10]",
+          "+80% 傷害強化",
+          "+75 準確率",
+          "+20 法力 (2)",
+          "攻擊速度 +20% (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/mindrend_dgld.jpg"
+      },
+      {
+        "id": "tancreds_weird",
+        "name": "坦克雷的怪誕",
+        "nameEn": "Tancred's Weird",
+        "nameClassic": "坦克雷的怪誕",
+        "baseItem": "護身符",
+        "baseItemId": "amulet",
+        "slot": "amulet",
+        "grade": "normal",
+        "requiredLevel": 20,
+        "classOnly": null,
+        "qlvl": 27,
+        "attributes": [
+          "需要等級：20",
+          "傷害降低 2",
+          "魔法傷害降低 1",
+          "尋獲魔法物品機率提高 78% (2)",
+          "+60 準確率 (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/amulet_dgld.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+15 電擊傷害 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "擊中竊取 5% 生命 (3)"
+      }
+    ],
+    "fullBonuses": [
+      "+15 電擊傷害",
+      "擊中竊取 5% 生命",
+      "使目標減慢 35%",
+      "擊中竊取 5% 法力",
+      "所有抗性 +10",
+      "怪物金幣掉落量提高 75%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/wormskull_dgld.jpg"
+  },
+  {
+    "id": "hwanins_majesty",
+    "name": "桓因的威嚴",
+    "nameEn": "Hwanin's Majesty",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "hwanins_blessing",
+        "name": "桓因的祝福",
+        "nameEn": "Hwanin's Blessing",
+        "nameClassic": "華寧的祝福",
+        "baseItem": "腰帶",
+        "baseItemId": "belt",
+        "slot": "belt",
+        "grade": "normal",
+        "requiredLevel": 35,
+        "requiredStr": 25,
+        "classOnly": null,
+        "tc": 12,
+        "qlvl": 28,
+        "attributes": [
+          "防禦：6-153",
+          "需要等級：35",
+          "需要力量：25",
+          "耐久度：16",
+          "腰帶空間：+8 格",
+          "+(1-148) 防禦 （依角色等級而定） [1.5 * clvl]",
+          "附加 3 - 33 電擊傷害",
+          "防止怪物自療",
+          "+12% 受到的傷害轉為法力"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/belt_m.jpg"
+      },
+      {
+        "id": "hwanins_splendor",
+        "name": "桓因的光輝",
+        "nameEn": "Hwanin's Splendor",
+        "nameClassic": "華寧的光輝",
+        "baseItem": "莊嚴王冠",
+        "baseItemId": "grand_crown",
+        "slot": "helm",
+        "grade": "exceptional",
+        "requiredLevel": 45,
+        "requiredStr": 103,
+        "classOnly": null,
+        "tc": 57,
+        "qlvl": 28,
+        "attributes": [
+          "防禦：228",
+          "需要等級：45",
+          "需要力量：103",
+          "耐久度：50",
+          "+100% 防禦強化",
+          "生命回復 +20",
+          "魔法傷害降低 10",
+          "冰寒抗性 +37%"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/crown_of_thieves.jpg"
+      },
+      {
+        "id": "hwanins_justice",
+        "name": "桓因的制裁",
+        "nameEn": "Hwanin's Justice",
+        "nameClassic": "華寧的正義",
+        "baseItem": "長柄鍥",
+        "baseItemId": "bill",
+        "slot": "weapon",
+        "grade": "exceptional",
+        "requiredLevel": 28,
+        "requiredStr": 95,
+        "classOnly": null,
+        "tc": 39,
+        "qlvl": 28,
+        "attributes": [
+          "雙手傷害：42 - 159 點",
+          "需要等級：28",
+          "需要力量：95",
+          "武器基本速度：[0]",
+          "+200% 傷害強化",
+          "附加 5 - 25 電擊傷害",
+          "攻擊速度 +40%",
+          "+330 準確率",
+          "永不毀損",
+          "擊中時有 10% 機率施展等級 3 寒冰球"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/voulge.jpg"
+      },
+      {
+        "id": "hwanins_refuge",
+        "name": "桓因的庇佑",
+        "nameEn": "Hwanin's Refuge",
+        "nameClassic": "華寧的保護",
+        "baseItem": "鎖鱗戰甲",
+        "baseItemId": "tigulated_mail",
+        "slot": "armor",
+        "grade": "exceptional",
+        "requiredLevel": 30,
+        "requiredStr": 86,
+        "classOnly": null,
+        "tc": 45,
+        "qlvl": 28,
+        "attributes": [
+          "防禦：376-390",
+          "需要等級：30",
+          "需要力量：86",
+          "耐久度：36",
+          "+200 防禦",
+          "被擊中時有 10% 機率施展等級 3 靜電力場",
+          "毒素抗性 +27%",
+          "+100 生命"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/scale_mail.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+100 防禦 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "額外 +200 防禦 (3)"
+      }
+    ],
+    "fullBonuses": [
+      "+2 所有技能",
+      "+30% 跑步 / 行走速度",
+      "擊中竊取 20% 生命",
+      "+300 防禦",
+      "所有抗性 +30"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/belt_m.jpg"
+  },
+  {
+    "id": "aldurs_watchtower",
+    "name": "艾爾多的守衛",
+    "nameEn": "Aldur's Watchtower",
+    "isClassSet": true,
+    "class": "德魯伊",
+    "pieces": [
+      {
+        "id": "aldurs_stony_gaze",
+        "name": "艾爾多的冷酷凝視",
+        "nameEn": "Aldur's Stony Gaze",
+        "nameClassic": "艾爾多的冷酷凝視",
+        "baseItem": "獵人面罩",
+        "baseItemId": "hunters_guise",
+        "slot": "helm",
+        "grade": "exceptional",
+        "requiredLevel": 36,
+        "requiredStr": 56,
+        "classOnly": "德魯伊",
+        "tc": 48,
+        "qlvl": 29,
+        "attributes": [
+          "防禦：157-171",
+          "需要等級：36",
+          "需要力量：56",
+          "耐久度：20",
+          "+90 防禦",
+          "+25% 打擊恢復",
+          "法力恢復 17%",
+          "冰寒抗性 +40-50%",
+          "鑲孔（2）",
+          "照亮範圍 +5",
+          "+15 能量 (2)",
+          "+15 能量 (3)",
+          "+15 能量 (全套)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/antlers_oran.jpg"
+      },
+      {
+        "id": "aldurs_advance",
+        "name": "艾爾多的進擊",
+        "nameEn": "Aldur's Advance",
+        "nameClassic": "艾爾多的成長",
+        "baseItem": "戰鬥靴",
+        "baseItemId": "battle_boots",
+        "slot": "boots",
+        "grade": "exceptional",
+        "requiredLevel": 45,
+        "requiredStr": 95,
+        "classOnly": null,
+        "tc": 51,
+        "qlvl": 29,
+        "attributes": [
+          "防禦：39-47",
+          "需要等級：45",
+          "需要力量：95",
+          "踢擊傷害：37 - 64 點",
+          "永不毀損",
+          "+40% 跑步 / 行走速度",
+          "+180 精力上限",
+          "+10% 受到的傷害轉為法力",
+          "精力恢復 +32%",
           "+50 生命",
-          "+42 法力"
-        ]
+          "火焰抗性 +40-50%",
+          "+15 敏捷 (2)",
+          "+15 敏捷 (3)",
+          "+15 敏捷 (全套)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/light_plate_boots_oran.jpg"
+      },
+      {
+        "id": "aldurs_rhythm",
+        "name": "艾爾多的律動",
+        "nameEn": "Aldur's Rhythm",
+        "nameClassic": "艾爾多的律動",
+        "baseItem": "鋸齒釘頭鎚",
+        "baseItemId": "jagged_star",
+        "slot": "weapon",
+        "grade": "exceptional",
+        "requiredLevel": 42,
+        "requiredStr": 74,
+        "classOnly": null,
+        "tc": 39,
+        "qlvl": 29,
+        "attributes": [
+          "單手傷害：60 - 93 點",
+          "需要等級：42",
+          "需要力量：74",
+          "耐久度：72",
+          "武器基本速度：[10]",
+          "+200% 對惡魔的傷害",
+          "+50% 對不死怪物的傷害",
+          "附加 40 - 62 傷害",
+          "附加 50 - 75 電擊傷害",
+          "攻擊速度 +30%",
+          "擊中竊取 10% 生命",
+          "擊中竊取 5% 法力",
+          "鑲孔（2-3）",
+          "+15 力量 (2)",
+          "+15 力量 (3)",
+          "+15 力量 (全套)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/bloodrise_oran.jpg"
+      },
+      {
+        "id": "aldurs_deception",
+        "name": "艾爾多的欺暪",
+        "nameEn": "Aldur's Deception",
+        "nameClassic": "艾爾多的欺瞞",
+        "baseItem": "暗影鎧甲",
+        "baseItemId": "shadow_plate",
+        "slot": "armor",
+        "grade": "elite",
+        "requiredLevel": 76,
+        "requiredStr": 115,
+        "classOnly": null,
+        "tc": 84,
+        "qlvl": 29,
+        "attributes": [
+          "防禦：746-857",
+          "需要等級：76",
+          "需要力量：115",
+          "耐久度：70",
+          "+300 防禦",
+          "需求 -50%",
+          "電擊抗性 +40-50%",
+          "+15 敏捷",
+          "+20 力量",
+          "+1 元素技能 （只限德魯伊）",
+          "+1 變形技能 （只限德魯伊）",
+          "+15 體能 (2)",
+          "+15 體能 (3)",
+          "+15 體能 (全套)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/full_plate_mail_oran.jpg"
       }
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+3 重新恢復生命" },
-      { count: 3, bonus: "+65% 更佳機會取得魔法裝備 (MF)" },
-      { count: 4, bonus: "+25% 快速打擊恢復 (FHR)" }
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "150% 準確率加成 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "尋獲魔法物品機率提高 50% (3)"
+      }
     ],
-    fullBonuses: [
-      "+3 魔法使技能",
-      "+50% 快速施法速度 (FCR)",
+    "fullBonuses": [
+      "+3 德魯伊技能等級",
+      "+350% 傷害強化",
+      "150% 準確率加成",
+      "尋獲魔法物品機率提高 50%",
+      "擊中竊取 10% 法力",
+      "所有抗性 +50",
+      "+150 防禦",
+      "+150 法力",
+      "角色顯示光環效果"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/antlers_oran.jpg"
+  },
+  {
+    "id": "trangouls_avatar",
+    "name": "塔格奧的化身",
+    "nameEn": "Trang-Oul's Avatar",
+    "isClassSet": true,
+    "class": "死靈法師",
+    "pieces": [
+      {
+        "id": "trangouls_scales",
+        "name": "塔格奧之鱗",
+        "nameEn": "Trang-Oul's Scales",
+        "nameClassic": "塔格奧之鱗",
+        "baseItem": "混沌戰甲",
+        "baseItemId": "chaos_armor",
+        "slot": "armor",
+        "grade": "exceptional",
+        "requiredLevel": 49,
+        "requiredStr": 84,
+        "classOnly": null,
+        "tc": 63,
+        "qlvl": 32,
+        "attributes": [
+          "防禦：857",
+          "需要等級：49",
+          "需要力量：84",
+          "耐久度：70",
+          "+150% 防禦強化",
+          "需求 -40%",
+          "+40% 跑步 / 行走速度",
+          "毒素抗性 +40%",
+          "+100 對遠程防禦",
+          "+2 召喚技能 （只限死靈法師）",
+          "電擊抗性 +50% (3)",
+          "受到的物理傷害降低 25% (全套)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/full_plate_mail_dyel.jpg"
+      },
+      {
+        "id": "trangouls_wing",
+        "name": "塔格奧之翼",
+        "nameEn": "Trang-Oul's Wing",
+        "nameClassic": "塔格奧之翼",
+        "baseItem": "領唱者首級",
+        "baseItemId": "cantor_trophy",
+        "slot": "shield",
+        "grade": "exceptional",
+        "requiredLevel": 54,
+        "requiredStr": 50,
+        "classOnly": "死靈法師",
+        "tc": 51,
+        "qlvl": 32,
+        "attributes": [
+          "防禦：175-189",
+          "需要等級：54",
+          "需要力量：50",
+          "耐久度：20",
+          "格擋機率：60%",
+          "+125 防禦",
+          "格擋機率提高 30%",
+          "毒素抗性 +40%",
+          "火焰抗性 +38-45%",
+          "+15 敏捷",
+          "+25 力量",
+          "+2 毒素與骸骨技能 （只限死靈法師）",
+          "敵人毒素抗性 -25% (3)",
+          "生命回復 +15 (4)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/gargoyle_head_dyel.jpg"
+      },
+      {
+        "id": "trangouls_claws",
+        "name": "塔格奧之爪",
+        "nameEn": "Trang-Oul's Claws",
+        "nameClassic": "塔格奧之手",
+        "baseItem": "重型護腕",
+        "baseItemId": "heavy_bracers",
+        "slot": "gloves",
+        "grade": "exceptional",
+        "requiredLevel": 45,
+        "requiredStr": 58,
+        "classOnly": null,
+        "tc": 45,
+        "qlvl": 32,
+        "attributes": [
+          "防禦：67-74",
+          "需要等級：45",
+          "需要力量：58",
+          "耐久度：16",
+          "+20% 施法速度",
+          "冰寒抗性 +30%",
+          "+30 防禦",
+          "+25% 毒素技能傷害",
+          "+2 詛咒 （只限死靈法師）"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/bracers_m_dyel.jpg"
+      },
+      {
+        "id": "trangouls_guise",
+        "name": "塔格奧之容",
+        "nameEn": "Trang-Oul's Guise",
+        "nameClassic": "塔格奧之外裝",
+        "baseItem": "骸骨面罩",
+        "baseItemId": "bone_visage",
+        "slot": "helm",
+        "grade": "elite",
+        "requiredLevel": 65,
+        "requiredStr": 106,
+        "classOnly": null,
+        "tc": 84,
+        "qlvl": 32,
+        "attributes": [
+          "防禦：180-257",
+          "需要等級：65",
+          "需要力量：106",
+          "耐久度：40",
+          "+25% 打擊恢復",
+          "生命回復 +5",
+          "+80-100 防禦",
+          "+150 法力",
+          "攻擊者反傷：20"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/wormskull_dgld.jpg"
+      },
+      {
+        "id": "trangouls_girth",
+        "name": "塔格奧之腹",
+        "nameEn": "Trang-Oul's Girth",
+        "nameClassic": "塔格奧之束帶",
+        "baseItem": "食人妖腰帶",
+        "baseItemId": "troll_belt",
+        "slot": "belt",
+        "grade": "elite",
+        "requiredLevel": 62,
+        "requiredStr": 91,
+        "classOnly": null,
+        "tc": 84,
+        "qlvl": 32,
+        "attributes": [
+          "防禦：134-166",
+          "需要等級：62",
+          "需要力量：91",
+          "耐久度：18",
+          "腰帶空間：+12 格",
+          "+75-100 防禦",
+          "需求 -40%",
+          "無法凍結",
+          "生命回復 +5",
+          "+25-50 法力",
+          "+30 精力上限",
+          "+66 生命",
+          "冰寒抗性 +40% (3)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/heavy_belt_dyel.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+18 至火球術 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "法力恢復 15% (2)"
+      },
+      {
+        "count": 4,
+        "bonus": "+13 至火牆術 (3)"
+      },
+      {
+        "count": 5,
+        "bonus": "額外 法力恢復 15% (3)"
+      },
+      {
+        "count": 6,
+        "bonus": "額外 法力恢復 15% (4)"
+      },
+      {
+        "count": 7,
+        "bonus": "+10 至隕石術 (4)"
+      }
+    ],
+    "fullBonuses": [
+      "+3 死靈法師技能等級",
+      "擊中竊取 20% 生命",
+      "+3 至火焰專精",
+      "+10 至隕石術",
+      "+13 至火牆術",
+      "+18 至火球術",
+      "+200 防禦",
+      "+100 法力",
+      "法力恢復 60%",
+      "所有抗性 +50",
+      "角色變成吸血鬼造型"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/full_plate_mail_dyel.jpg"
+  },
+  {
+    "id": "sazabis_grand_tribute",
+    "name": "沙薩比的崇高禮讚",
+    "nameEn": "Sazabi's Grand Tribute",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "sazabis_mental_sheath",
+        "name": "沙薩比的精神護罩",
+        "nameEn": "Sazabi's Mental Sheath",
+        "nameClassic": "沙撒璧的精神之鞘",
+        "baseItem": "輕盔",
+        "baseItemId": "basinet",
+        "slot": "helm",
+        "grade": "exceptional",
+        "requiredLevel": 43,
+        "requiredStr": 82,
+        "classOnly": null,
+        "tc": 45,
+        "qlvl": 34,
+        "attributes": [
+          "防禦：175-184",
+          "需要等級：43",
+          "需要力量：82",
+          "耐久度：30",
+          "+1 所有技能",
+          "電擊抗性 +15-20%",
+          "火焰抗性 +15-20%",
+          "+100 防禦"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/duskdeep_dblu.jpg"
+      },
+      {
+        "id": "sazabis_cobalt_redeemer",
+        "name": "沙薩比的救贖鈷劍",
+        "nameEn": "Sazabi's Cobalt Redeemer",
+        "nameClassic": "沙撒璧的懺悔之鈷",
+        "baseItem": "絕秘劍",
+        "baseItemId": "cryptic_sword",
+        "slot": "weapon",
+        "grade": "elite",
+        "requiredLevel": 73,
+        "requiredStr": 99,
+        "requiredDex": 109,
+        "classOnly": null,
+        "tc": 84,
+        "qlvl": 34,
+        "attributes": [
+          "單手傷害：12 - 192 點",
+          "需要等級：73",
+          "需要力量：99",
+          "需要敏捷：109",
+          "武器基本速度：[-10]",
+          "+150% 傷害強化",
+          "+318% 對惡魔的傷害",
+          "附加 25 - 35 冰寒傷害",
+          "攻擊速度 +40%",
+          "永不毀損",
+          "+15 敏捷",
+          "+5 力量"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/hellplague_dblu.jpg"
+      },
+      {
+        "id": "sazabis_ghost_liberator",
+        "name": "沙薩比的解靈框體",
+        "nameEn": "Sazabi's Ghost Liberator",
+        "nameClassic": "沙撒璧的鬼魂釋放者",
+        "baseItem": "炎魔皮板甲",
+        "baseItemId": "balrog_skin",
+        "slot": "armor",
+        "grade": "elite",
+        "requiredLevel": 67,
+        "requiredStr": 165,
+        "classOnly": null,
+        "tc": 78,
+        "qlvl": 34,
+        "attributes": [
+          "防禦：810-917",
+          "需要等級：67",
+          "需要力量：165",
+          "耐久度：30",
+          "+400 防禦",
+          "+30% 打擊恢復",
+          "+300 對惡魔的準確率",
+          "+25 力量",
+          "+50-75 生命"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/splint_mail_dblu.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+40% 跑步 / 行走速度 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "中毒的時效縮短 75% (2)"
+      }
+    ],
+    "fullBonuses": [
+      "+1 所有技能",
+      "+40% 跑步 / 行走速度",
+      "擊中竊取 15% 生命",
+      "生命上限提高 27%",
+      "所有抗性 +30",
+      "受到的物理傷害降低 16%",
+      "中毒的時效縮短 75%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/duskdeep_dblu.jpg"
+  },
+  {
+    "id": "immortal_king",
+    "name": "不朽之王",
+    "nameEn": "Immortal King",
+    "isClassSet": true,
+    "class": "野蠻人",
+    "pieces": [
+      {
+        "id": "immortal_kings_will",
+        "name": "不朽之王的意志",
+        "nameEn": "Immortal King's Will",
+        "nameClassic": "不朽之王的意志",
+        "baseItem": "復仇者護盔",
+        "baseItemId": "avenger_guard",
+        "slot": "helm",
+        "grade": "normal",
+        "requiredLevel": 47,
+        "requiredStr": 65,
+        "classOnly": "野蠻人",
+        "tc": 24,
+        "qlvl": 37,
+        "attributes": [
+          "防禦：160-175",
+          "需要等級：47",
+          "需要力量：65",
+          "耐久度：55",
+          "照亮範圍 +4",
+          "+125 防禦",
+          "怪物金幣掉落量提高 37%",
+          "尋獲魔法物品機率提高 25-40%",
+          "+2 戰吼 （只限野蠻人）",
+          "鑲孔（2）"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/avenger_guard_lgry.jpg"
+      },
+      {
+        "id": "immortal_kings_detail",
+        "name": "不朽之王的扈從",
+        "nameEn": "Immortal King's Detail",
+        "nameClassic": "不朽之王的瑣事",
+        "baseItem": "征戰腰帶",
+        "baseItemId": "war_belt",
+        "slot": "belt",
+        "grade": "exceptional",
+        "requiredLevel": 29,
+        "requiredStr": 110,
+        "classOnly": null,
+        "tc": 54,
+        "qlvl": 37,
+        "attributes": [
+          "防禦：89",
+          "防禦：194",
+          "防禦：247",
+          "需要等級：29",
+          "需要力量：110",
+          "耐久度：24",
+          "腰帶空間：+12 格",
+          "+36 防禦",
+          "電擊抗性 +31%",
+          "火焰抗性 +28%",
+          "+25 力量",
+          "+105 防禦 (2)",
+          "+25% 打擊恢復 (3)",
+          "+100% 防禦強化 (4)",
+          "受到的物理傷害降低 20% (5)",
+          "+2 戰鬥專精 （只限野蠻人） (全套)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/girdle_h_lgry.jpg"
+      },
+      {
+        "id": "immortal_kings_forge",
+        "name": "不朽之王的熔爐",
+        "nameEn": "Immortal King's Forge",
+        "nameClassic": "不朽之王的融爐",
+        "baseItem": "征戰護手",
+        "baseItemId": "war_gauntlets",
+        "slot": "gloves",
+        "grade": "exceptional",
+        "requiredLevel": 30,
+        "requiredStr": 110,
+        "classOnly": null,
+        "tc": 54,
+        "qlvl": 37,
+        "attributes": [
+          "防禦：108-118",
+          "防禦：228-238",
+          "需要等級：30",
+          "需要力量：110",
+          "耐久度：24",
+          "+65 防禦",
+          "被擊中時有 12% 機率施展等級 4 電能彈",
+          "+20 敏捷",
+          "+20 力量",
+          "攻擊速度 +25% (2)",
+          "+120 防禦 (3)",
+          "擊中竊取 10% 生命 (4)",
+          "擊中竊取 10% 法力 (5)",
+          "凍結目標 +2 (全套)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/gaunlets_h_lgry.jpg"
+      },
+      {
+        "id": "immortal_kings_pillar",
+        "name": "不朽之王之柱",
+        "nameEn": "Immortal King's Pillar",
+        "nameClassic": "不朽之王之柱",
+        "baseItem": "征戰靴",
+        "baseItemId": "war_boots",
+        "slot": "boots",
+        "grade": "exceptional",
+        "requiredLevel": 31,
+        "requiredStr": 125,
+        "classOnly": null,
+        "tc": 54,
+        "qlvl": 37,
+        "attributes": [
+          "防禦：118-128",
+          "防禦：278-288",
+          "需要等級：31",
+          "需要力量：125",
+          "耐久度：24",
+          "踢擊傷害：39 - 80 點",
+          "+75 防禦",
+          "+40% 跑步 / 行走速度",
+          "+110 準確率",
+          "+44 生命",
+          "尋獲魔法物品機率提高 25% (2)",
+          "+2 戰鬥技能 （只限野蠻人） (3)",
+          "+160 防禦 (4)",
+          "被凍結的時效減半 (5)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/plate_boots_lgry.jpg"
+      },
+      {
+        "id": "immortal_kings_stone_crusher",
+        "name": "不朽之王的碎魂者",
+        "nameEn": "Immortal King's Stone Crusher",
+        "nameClassic": "不朽之王的碎魂者",
+        "baseItem": "巨魔重鎚",
+        "baseItemId": "ogre_maul",
+        "slot": "weapon",
+        "grade": "elite",
+        "requiredLevel": 76,
+        "requiredStr": 225,
+        "classOnly": null,
+        "tc": 69,
+        "qlvl": 37,
+        "attributes": [
+          "雙手傷害：231 - 318 點",
+          "需要等級：76",
+          "需要力量：225",
+          "武器基本速度：[10]",
+          "+200% 傷害強化",
+          "+200% 對惡魔的傷害",
+          "+250% 對不死怪物的傷害",
+          "攻擊速度 +40%",
+          "永不毀損",
+          "+35-40% 機率造成粉碎打擊",
+          "鑲孔（2）",
+          "附加 211 - 397 火焰傷害 (2)",
+          "附加 7 - 477 電擊傷害 (3)",
+          "附加 127 - 364 冰寒傷害 (4)",
+          "+204 毒素傷害，時效 6 秒 (5)",
+          "附加 250 - 361 魔法傷害 (全套)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/maul_lgry.jpg"
+      },
+      {
+        "id": "immortal_kings_soul_cage",
+        "name": "不朽之王的靈魂牢籠",
+        "nameEn": "Immortal King's Soul Cage",
+        "nameClassic": "不朽之王的靈魂牢籠",
+        "baseItem": "神聖戰甲",
+        "baseItemId": "sacred_armor",
+        "slot": "armor",
+        "grade": "elite",
+        "requiredLevel": 76,
+        "requiredStr": 232,
+        "classOnly": null,
+        "tc": 87,
+        "qlvl": 37,
+        "attributes": [
+          "防禦：1001",
+          "防禦：1301",
+          "需要等級：76",
+          "需要力量：232",
+          "耐久度：60",
+          "+400 防禦",
+          "被擊中時有 5% 機率施展等級 5 附魔",
+          "毒素抗性 +50%",
+          "+2 戰鬥技能 （只限野蠻人）",
+          "+25% 打擊恢復 (2)",
+          "冰寒抗性 +40% (3)",
+          "火焰抗性 +40% (4)",
+          "電擊抗性 +40% (5)",
+          "+50% 防禦強化 (全套)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/victors_silk_lgry.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+50 準確率 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "額外 +75 準確率 (3)"
+      },
+      {
+        "count": 4,
+        "bonus": "額外 +125 準確率 (4)"
+      },
+      {
+        "count": 5,
+        "bonus": "額外 +200 準確率 (5)"
+      }
+    ],
+    "fullBonuses": [
+      "+3 野蠻人技能等級",
+      "+450 準確率",
       "+150 生命",
       "所有抗性 +50",
-      "+50 防禦對遠程攻擊",
-      "角色散發純金色光環"
-    ]
+      "魔法傷害降低 10",
+      "角色顯示光環效果"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/avenger_guard_lgry.jpg"
   },
   {
-    id: "trang_oul",
-    name: "塔格奧的化身",
-    nameEn: "Trang-Oul's Avatar",
-    pieces: [
+    "id": "the_disciple",
+    "name": "門徒",
+    "nameEn": "The Disciple",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
       {
-        id: "trang_helm",
-        name: "塔格奧之容",
-        nameEn: "Trang-Oul's Guise",
-        baseItem: "骨面罩 (Bone Visage)",
-        slot: "helm",
-        requiredLevel: 65,
-        attributes: ["+25% 快速打擊恢復 (FHR)", "+80-100 防禦", "+5 法力恢復", "+100 生命"]
+        "id": "telling_of_beads",
+        "name": "誦唸珠",
+        "nameEn": "Telling of Beads",
+        "nameClassic": "述說之珠",
+        "baseItem": "護身符",
+        "baseItemId": "amulet",
+        "slot": "amulet",
+        "grade": "normal",
+        "requiredLevel": 30,
+        "classOnly": null,
+        "qlvl": 39,
+        "attributes": [
+          "需要等級：30",
+          "+1 所有技能",
+          "毒素抗性 +35-50%",
+          "冰寒抗性 +18%",
+          "攻擊者反傷：8-10"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/amulet_lblu.jpg"
       },
       {
-        id: "trang_armor",
-        name: "塔格奧之鱗",
-        nameEn: "Trang-Oul's Scales",
-        baseItem: "混沌戰甲 (Chaos Armor)",
-        slot: "armor",
-        requiredLevel: 49,
-        attributes: ["+2 召喚技能 (死靈專用)", "+40% 跑速", "裝備需求 -40%", "抗毒 +40%"]
-      },
-      {
-        id: "trang_gloves",
-        name: "塔格奧之爪",
-        nameEn: "Trang-Oul's Claws",
-        baseItem: "重型手鐲 (Heavy Bracers)",
-        slot: "gloves",
-        requiredLevel: 45,
-        attributes: ["+20% 快速施法速度 (FCR)", "+25% 毒素技能傷害", "抗寒 +30%"]
-      },
-      {
-        id: "trang_belt",
-        name: "塔格奧之束帶",
-        nameEn: "Trang-Oul's Girth",
-        baseItem: "洞穴巨魔腰帶 (Troll Belt)",
-        slot: "belt",
-        requiredLevel: 62,
-        attributes: ["無法被凍結 (CBF)", "+66 生命", "+25-50 法力", "+30 最大體力"]
-      },
-      {
-        id: "trang_shield",
-        name: "塔格奧之翼",
-        nameEn: "Trang-Oul's Wing",
-        baseItem: "領頭羊之首 (Cantor Trophy)",
-        slot: "shield",
-        requiredLevel: 54,
-        attributes: ["+2 毒素與白骨技能", "+30% 快速格擋速度", "抗火 +38-45%", "抗毒 +40%"]
-      }
-    ],
-    partialBonuses: [
-      { count: 2, bonus: "+18 火球 (Fire Ball)" },
-      { count: 3, bonus: "+13 火焰壁 (Fire Wall)" }
-    ],
-    fullBonuses: [
-      "+3 死靈法師技能",
-      "+20% 生命偷取",
-      "所有抗性 +50",
-      "-25% 敵人毒素抗性",
-      "變身為吸血鬼巫妖形態 (Vampire Form)"
-    ]
-  },
-  {
-    id: "immortal_king",
-    name: "不朽之王 (IK)",
-    nameEn: "Immortal King",
-    pieces: [
-      {
-        id: "ik_helm",
-        name: "不朽之王的意志",
-        nameEn: "Immortal King's Will",
-        baseItem: "復仇者防護面甲 (Avenger Guard)",
-        slot: "helm",
-        requiredLevel: 47,
-        attributes: ["+2 戰吼技能 (野蠻人專用)", "+37% 更佳機會取得魔法裝備 (MF)", "+125 防禦", "鑲孔 (2)"]
-      },
-      {
-        id: "ik_armor",
-        name: "不朽之王的靈魂牢籠",
-        nameEn: "Immortal King's Soul Cage",
-        baseItem: "神聖盔甲 (Sacred Armor)",
-        slot: "armor",
-        requiredLevel: 76,
-        attributes: ["+2 戰鬥技能 (野蠻人專用)", "+400 防禦", "抗毒 +50%", "+25% 快速打擊恢復 (FHR)"]
-      },
-      {
-        id: "ik_weapon",
-        name: "不朽之王的碎石者",
-        nameEn: "Immortal King's Stone Crusher",
-        baseItem: "食人魔鐵槌 (Ogre Maul)",
-        slot: "weapon",
-        requiredLevel: 76,
-        attributes: ["+40% 攻擊速度 (IAS)", "35-40% 壓碎打擊 (CB)", "+200% 增強傷害", "鑲孔 (2)"]
-      },
-      {
-        id: "ik_gloves",
-        name: "不朽之王的融爐",
-        nameEn: "Immortal King's Forge",
-        baseItem: "巨型手套 (War Gauntlets)",
-        slot: "gloves",
-        requiredLevel: 30,
-        attributes: ["+20 力量", "+20 敏捷", "+65 防禦"]
-      },
-      {
-        id: "ik_boots",
-        name: "不朽之王之柱",
-        nameEn: "Immortal King's Pillar",
-        baseItem: "巨戰之靴 (War Boots)",
-        slot: "boots",
-        requiredLevel: 31,
-        attributes: ["+40% 跑步/步行速度", "+110 準確率", "+44 生命"]
-      },
-      {
-        id: "ik_belt",
-        name: "不朽之王的細節",
-        nameEn: "Immortal King's Detail",
-        baseItem: "巨戰腰帶 (War Belt)",
-        slot: "belt",
-        requiredLevel: 29,
-        attributes: ["+25 力量", "抗火 +28%", "抗電 +31%"]
-      }
-    ],
-    partialBonuses: [
-      { count: 2, bonus: "+50 攻擊準確率" },
-      { count: 3, bonus: "+75 防禦" },
-      { count: 4, bonus: "+25% 快速打擊恢復 (FHR)" }
-    ],
-    fullBonuses: [
-      "+3 野蠻人技能",
-      "+450 攻擊準確率",
-      "+150 生命",
-      "所有抗性 +50",
-      "傷害減少 20%",
-      "碎石者附加高達 +250-360 冰火電毒全元素傷害"
-    ]
-  },
-  {
-    id: "banes_garments",
-    name: "貝恩的衣裝",
-    nameEn: "Bane's Garments",
-    pieces: [
-      {
-        id: "bane_hood",
-        name: "貝恩的恐懼風帽",
-        nameEn: "Bane's Hood",
-        baseItem: "術士風帽 (Warlock Hood)",
-        slot: "helm",
-        requiredLevel: 72,
-        attributes: ["+2 混沌法術技能", "+20% 快速打擊恢復", "所有抗性 +15"]
-      },
-      {
-        id: "bane_robe",
-        name: "貝恩的暗影法袍",
-        nameEn: "Bane's Shadow Robe",
-        baseItem: "惡魔織袍 (Demon Robe)",
-        slot: "armor",
-        requiredLevel: 75,
-        attributes: ["+2 術士技能", "+30% 跑步/步行速度", "傷害減少 10%"]
-      },
-      {
-        id: "bane_grimoire",
-        name: "貝恩的禁忌之書",
-        nameEn: "Bane's Grimoire",
-        baseItem: "術士魔典 (Tome)",
-        slot: "shield",
-        requiredLevel: 74,
-        attributes: ["+20% 快速施法速度 (FCR)", "-15% 敵人暗影抗性", "+40 法力"]
-      }
-    ],
-    partialBonuses: [
-      { count: 2, bonus: "+15% 快速施法速度 (FCR)" }
-    ],
-    fullBonuses: [
-      "+3 術士所有技能",
-      "+25% 混亂法術傷害",
-      "所有抗性 +35",
-      "召喚惡魔僕從攻擊時附加虛空裂隙爆發"
-    ]
-  },
-  {
-    id: "the_disciple",
-    name: "門徒",
-    nameEn: "The Disciple",
-    pieces: [
-      {
-        id: "laying_of_hands",
-        name: "安置手套",
-        nameEn: "Laying of Hands",
-        baseItem: "荊棘連指手套 (Bramble Mitts)",
-        slot: "gloves",
-        requiredLevel: 63,
-        attributes: [
-          "+20% 攻擊速度 (IAS)",
-          "+350% 對惡魔的傷害 (Damage to Demons)",
+        "id": "rite_of_passage",
+        "name": "入門式",
+        "nameEn": "Rite of Passage",
+        "nameClassic": "儀式的走道",
+        "baseItem": "魔皮長靴",
+        "baseItemId": "demonhide_boots",
+        "slot": "boots",
+        "grade": "exceptional",
+        "requiredLevel": 29,
+        "requiredStr": 20,
+        "classOnly": null,
+        "tc": 36,
+        "qlvl": 39,
+        "attributes": [
+          "防禦：53-60",
+          "需要等級：29",
+          "需要力量：20",
+          "耐久度：12",
+          "踢擊傷害：26 - 46 點",
           "+25 防禦",
-          "抗火 +50%",
-          "打擊時有 10% 機率施展等級 3 神聖之火"
-        ]
+          "+30% 跑步 / 行走速度",
+          "+15-25 精力上限",
+          "被凍結的時效減半"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/leather_boots_lblu.jpg"
       },
       {
-        id: "telling_of_beads",
-        name: "述說之珠",
-        nameEn: "Telling of Beads",
-        baseItem: "項鍊 (Amulet)",
-        slot: "amulet",
-        requiredLevel: 30,
-        attributes: ["+1 所有技能", "抗毒 +35-50% (變動)", "抗寒 +18%", "攻擊者受到傷害 8-10"]
+        "id": "laying_of_hands",
+        "name": "按手禮",
+        "nameEn": "Laying of Hands",
+        "nameClassic": "手掌的安置",
+        "baseItem": "荊棘手套",
+        "baseItemId": "bramble_mitts",
+        "slot": "gloves",
+        "grade": "elite",
+        "requiredLevel": 63,
+        "requiredStr": 50,
+        "classOnly": null,
+        "tc": 57,
+        "qlvl": 39,
+        "attributes": [
+          "防禦：79-87",
+          "需要等級：63",
+          "需要力量：50",
+          "耐久度：12",
+          "+25 防禦",
+          "攻擊速度 +20%",
+          "+350% 對惡魔的傷害",
+          "火焰抗性 +50%",
+          "擊中時有 10% 機率施展等級 3 聖光彈"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/gloves_l_lblu.jpg"
       },
       {
-        id: "rite_of_passage",
-        name: "儀式之靴",
-        nameEn: "Rite of Passage",
-        baseItem: "惡魔皮靴 (Demonhide Boots)",
-        slot: "boots",
-        requiredLevel: 29,
-        attributes: ["+30% 跑步/步行速度", "+25 防禦", "冰凍時間減半", "+15-25 最大體力"]
+        "id": "dark_adherent",
+        "name": "隱門徒",
+        "nameEn": "Dark Adherent",
+        "nameClassic": "黑暗信徒",
+        "baseItem": "灰暮罩衣",
+        "baseItemId": "dusk_shroud",
+        "slot": "armor",
+        "grade": "elite",
+        "requiredLevel": 49,
+        "requiredStr": 77,
+        "classOnly": null,
+        "tc": 66,
+        "qlvl": 39,
+        "attributes": [
+          "防禦：666-882",
+          "需要等級：49",
+          "需要力量：77",
+          "耐久度：20",
+          "+305-415 防禦",
+          "火焰抗性 +24%",
+          "被擊中時有 25% 機率施展等級 3 閃電新星",
+          "附加 24 - 34 毒素傷害，時效 2 秒"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/quilted_armor_lblu.jpg"
       },
       {
-        id: "dark_adherent",
-        name: "黑暗信徒",
-        nameEn: "Dark Adherent",
-        baseItem: "幽暮罩衣 (Dusk Shroud)",
-        slot: "armor",
-        requiredLevel: 49,
-        attributes: ["被擊中時 25% 施展等級 3 微暗靈視", "+305-415 防禦", "抗火 +24%"]
-      },
-      {
-        id: "credendum",
-        name: "信徒腰帶",
-        nameEn: "Credendum",
-        baseItem: "秘儀腰帶 (Mithril Coil)",
-        slot: "belt",
-        requiredLevel: 65,
-        attributes: ["所有抗性 +15", "+10 力量", "+10 敏捷", "+50 防禦"]
+        "id": "credendum",
+        "name": "守信條",
+        "nameEn": "Credendum",
+        "nameClassic": "信條",
+        "baseItem": "秘銀腰帶",
+        "baseItemId": "mithril_coil",
+        "slot": "belt",
+        "grade": "elite",
+        "requiredLevel": 65,
+        "requiredStr": 106,
+        "classOnly": null,
+        "tc": 75,
+        "qlvl": 39,
+        "attributes": [
+          "防禦：108-115",
+          "需要等級：65",
+          "需要力量：106",
+          "耐久度：16",
+          "腰帶空間：+12 格",
+          "+50 防禦",
+          "所有抗性 +15",
+          "+10 敏捷",
+          "+10 力量"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/belt_m_lblu.jpg"
       }
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+150 防禦" },
-      { count: 3, bonus: "+22 毒素傷害，持續 3 秒" },
-      { count: 4, bonus: "+10 生命恢復" }
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+150 防禦 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "+22 毒素傷害，時效 3 秒 (3)"
+      },
+      {
+        "count": 4,
+        "bonus": "+10 力量 (4)"
+      }
     ],
-    fullBonuses: [
-      "+3 所有技能",
-      "+100 力量",
+    "fullBonuses": [
+      "+150 防禦",
+      "+22 毒素傷害，時效 3 秒",
+      "+10 力量",
+      "+2 所有技能",
+      "所有抗性 +50",
+      "+100 法力"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/amulet_lblu.jpg"
+  },
+  {
+    "id": "horazons_splendor",
+    "name": "赫拉森的輝煌",
+    "nameEn": "Horazon's Splendor",
+    "isClassSet": true,
+    "class": "術士",
+    "pieces": [
+      {
+        "id": "horazons_countenance",
+        "name": "赫拉森的面容",
+        "nameEn": "Horazon's Countenance",
+        "baseItem": "惡魔頭骨",
+        "baseItemId": "demonhead",
+        "slot": "helm",
+        "grade": "elite",
+        "requiredLevel": 62,
+        "requiredStr": 102,
+        "classOnly": null,
+        "qlvl": 40,
+        "attributes": [
+          "防禦：101-154",
+          "需要等級：62",
+          "需要力量：102",
+          "耐久度：20",
+          "+1 術士技能",
+          "+10-20 力量",
+          "魔法傷害降低 7-10",
+          "(1-99)% 準確率加成 （依角色等級而定） [1 * clvl]",
+          "生命上限提高 5% (2)",
+          "+15 力量 (4)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/horazons_countenance.jpg"
+      },
+      {
+        "id": "horazons_dominion",
+        "name": "赫拉森的統治",
+        "nameEn": "Horazon's Dominion",
+        "baseItem": "赤褐戰甲",
+        "baseItemId": "russet_armor",
+        "slot": "armor",
+        "grade": "elite",
+        "requiredLevel": 55,
+        "requiredStr": 97,
+        "classOnly": null,
+        "qlvl": 40,
+        "attributes": [
+          "防禦：427-488",
+          "需要等級：55",
+          "需要力量：97",
+          "耐久度：30",
+          "+2 惡魔技能 （只限術士）",
+          "+75-100 法力",
+          "冰寒抗性 +15-25%",
+          "電擊抗性 +15-25%",
+          "火焰抗性 +15-25%",
+          "毒素抗性 +25% (2)",
+          "+15 體能 (4)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/splint_mail.jpg"
+      },
+      {
+        "id": "horazons_hold",
+        "name": "赫拉森的掌控",
+        "nameEn": "Horazon's Hold",
+        "baseItem": "魔皮手套",
+        "baseItemId": "demonhide_gloves",
+        "slot": "gloves",
+        "grade": "elite",
+        "requiredLevel": 48,
+        "requiredStr": 20,
+        "classOnly": null,
+        "qlvl": 40,
+        "attributes": [
+          "防禦：28-35",
+          "需要等級：48",
+          "需要力量：20",
+          "耐久度：12",
+          "+95-150 準確率",
+          "附加 140 - 270 火焰傷害",
+          "+10% 機率造成粉碎打擊",
+          "+10-15 敏捷",
+          "+30-40 生命",
+          "攻擊速度 +30% (2)",
+          "擊中竊取 7% 法力 (3)",
+          "擊中竊取 7% 生命 (4)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/gloves_l.jpg"
+      },
+      {
+        "id": "horazons_legacy",
+        "name": "赫拉森的傳承",
+        "nameEn": "Horazon's Legacy",
+        "baseItem": "幻鏡戰靴",
+        "baseItemId": "mirrored_boots",
+        "slot": "boots",
+        "grade": "elite",
+        "requiredLevel": 67,
+        "requiredStr": 115,
+        "classOnly": null,
+        "qlvl": 40,
+        "attributes": [
+          "防禦：59-68",
+          "需要等級：67",
+          "需要力量：115",
+          "耐久度：18",
+          "+30% 跑步 / 行走速度",
+          "+10-15 力量",
+          "+10-15 敏捷",
+          "魔法抗性 +20-30%",
+          "無法凍結",
+          "需求 -30%",
+          "+10% 跑步 / 行走速度 (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/light_plate_boots.jpg"
+      },
+      {
+        "id": "horazons_secrets",
+        "name": "赫拉森的秘密",
+        "nameEn": "Horazon's Secrets",
+        "baseItem": "神秘寶典",
+        "baseItemId": "occult_codex",
+        "slot": "weapon",
+        "grade": "elite",
+        "requiredLevel": 57,
+        "requiredStr": 91,
+        "classOnly": "術士",
+        "qlvl": 40,
+        "attributes": [
+          "防禦：98-142",
+          "需要等級：57",
+          "需要力量：91",
+          "耐久度：20",
+          "格擋機率：53%",
+          "+2 邪異技能",
+          "+30% 打擊恢復",
+          "格擋機率提高 20%",
+          "+20-30 體能",
+          "+30-50 生命",
+          "中毒的時效縮短 75% (2)",
+          "敵人火焰抗性 -25% (3)",
+          "+15 能量 (4)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/ars_torbaalos.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+20 敏捷 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "+30 能量 (3)"
+      },
+      {
+        "count": 4,
+        "bonus": "+300 防禦 (4)"
+      }
+    ],
+    "fullBonuses": [
+      "+20 敏捷",
+      "+30 能量",
+      "+300 防禦",
+      "+3 術士技能",
+      "+350% 傷害強化",
+      "+30 至附魔",
+      "所有抗性 +50",
+      "尋獲魔法物品機率提高 100%",
+      "角色顯示光環效果"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/horazons_countenance.jpg"
+  },
+  {
+    "id": "orphans_call",
+    "name": "孤兒的呼喚",
+    "nameEn": "Orphan's Call",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "guillaumes_face",
+        "name": "吉永之臉",
+        "nameEn": "Guillaume's Face",
+        "nameClassic": "吉永之臉",
+        "baseItem": "翼盔",
+        "baseItemId": "winged_helm",
+        "slot": "helm",
+        "grade": "exceptional",
+        "requiredLevel": 34,
+        "requiredStr": 115,
+        "classOnly": null,
+        "tc": 51,
+        "qlvl": 41,
+        "attributes": [
+          "防禦：217",
+          "需要等級：34",
+          "需要力量：115",
+          "耐久度：40",
+          "+120% 防禦強化",
+          "+30% 打擊恢復",
+          "+15% 致命打擊",
+          "+35% 機率造成粉碎打擊",
+          "+15 力量"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/great_helm_lgry.jpg"
+      },
+      {
+        "id": "whitstans_guard",
+        "name": "惠斯坦的守護",
+        "nameEn": "Whitstan's Guard",
+        "nameClassic": "惠斯坦的武裝",
+        "baseItem": "圓型盾",
+        "baseItemId": "round_shield",
+        "slot": "shield",
+        "grade": "exceptional",
+        "requiredLevel": 29,
+        "requiredStr": 53,
+        "classOnly": null,
+        "tc": 39,
+        "qlvl": 41,
+        "attributes": [
+          "防禦：154",
+          "需要等級：29",
+          "需要力量：53",
+          "耐久度：64",
+          "格擋機率：97% (Pal)",
+          "格擋機率：92% (Ama/Asn/Bar)",
+          "格擋機率：87% (Dru/Nec/Sor)",
+          "重擊傷害：7 - 14 點",
+          "+175% 防禦強化",
+          "被凍結的時效減半",
+          "+40% 格擋速度",
+          "格擋機率提高 55%",
+          "照亮範圍 +5"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/mosers_blessed_circle_lgry.jpg"
+      },
+      {
+        "id": "magnus_skin",
+        "name": "馬格納斯之皮",
+        "nameEn": "Magnus' Skin",
+        "nameClassic": "馬格納斯之皮",
+        "baseItem": "鯊皮手套",
+        "baseItemId": "sharkskin_gloves",
+        "slot": "gloves",
+        "grade": "exceptional",
+        "requiredLevel": 37,
+        "requiredStr": 20,
+        "classOnly": null,
+        "tc": 39,
+        "qlvl": 41,
+        "attributes": [
+          "防禦：60",
+          "需要等級：37",
+          "需要力量：20",
+          "耐久度：14",
+          "+50% 防禦強化",
+          "攻擊速度 +20%",
+          "+100 準確率",
+          "照亮範圍 +3",
+          "火焰抗性 +15%"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/heavy_gloves_lgry.jpg"
+      },
+      {
+        "id": "wilhelms_pride",
+        "name": "威廉的自尊",
+        "nameEn": "Wilhelm's Pride",
+        "nameClassic": "威廉的自尊",
+        "baseItem": "戰鬥腰帶",
+        "baseItemId": "battle_belt",
+        "slot": "belt",
+        "grade": "exceptional",
+        "requiredLevel": 42,
+        "requiredStr": 88,
+        "classOnly": null,
+        "tc": 51,
+        "qlvl": 41,
+        "attributes": [
+          "防禦：75",
+          "需要等級：42",
+          "需要力量：88",
+          "耐久度：18",
+          "腰帶空間：+12 格",
+          "+75% 防禦強化",
+          "擊中竊取 5% 生命",
+          "擊中竊取 5% 法力",
+          "冰寒抗性 +10%"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/heavy_belt_lgry.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+35 生命 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "攻擊者反傷：5 (3)"
+      }
+    ],
+    "fullBonuses": [
+      "+85 生命",
+      "攻擊者反傷：5",
+      "所有抗性 +15",
+      "+100 防禦",
+      "+10 敏捷",
+      "+20 力量",
+      "尋獲魔法物品機率提高 80%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/great_helm_lgry.jpg"
+  },
+  {
+    "id": "najs_ancient_vestige",
+    "name": "娜吉的上古遺物",
+    "nameEn": "Naj's Ancient Vestige",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
+      {
+        "id": "najs_circlet",
+        "name": "娜吉的頭環",
+        "nameEn": "Naj's Circlet",
+        "nameClassic": "娜吉的小環",
+        "baseItem": "頭環",
+        "baseItemId": "circlet",
+        "slot": "helm",
+        "grade": "normal",
+        "requiredLevel": 28,
+        "classOnly": null,
+        "tc": 24,
+        "qlvl": 43,
+        "attributes": [
+          "防禦：95-105",
+          "需要等級：28",
+          "耐久度：35",
+          "+75 防禦",
+          "附加 25 - 35 火焰傷害",
+          "被擊中時有 12% 機率施展等級 5 連鎖閃電",
+          "+15 力量",
+          "照亮範圍 +5"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/circlet.jpg"
+      },
+      {
+        "id": "najs_light_plate",
+        "name": "娜吉的輕鎧",
+        "nameEn": "Naj's Light Plate",
+        "nameClassic": "娜吉的輕鎧甲",
+        "baseItem": "地獄鍛甲",
+        "baseItemId": "hellforge_plate",
+        "slot": "armor",
+        "grade": "elite",
+        "requiredLevel": 71,
+        "requiredStr": 79,
+        "classOnly": null,
+        "tc": 78,
+        "qlvl": 43,
+        "attributes": [
+          "防禦：721-830",
+          "需要等級：71",
+          "需要力量：79",
+          "耐久度：60",
+          "+300 防禦",
+          "需求 -60%",
+          "+45% 受到的傷害轉為法力",
+          "+1 所有技能",
+          "所有抗性 +25",
+          "+65 生命"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/plate_mail.jpg"
+      },
+      {
+        "id": "najs_puzzler",
+        "name": "娜吉的解謎杖",
+        "nameEn": "Naj's Puzzler",
+        "nameClassic": "娜吉解迷杖",
+        "baseItem": "長者法杖",
+        "baseItemId": "elder_staff",
+        "slot": "weapon",
+        "grade": "elite",
+        "requiredLevel": 78,
+        "requiredStr": 44,
+        "requiredDex": 37,
+        "classOnly": null,
+        "tc": 75,
+        "qlvl": 43,
+        "attributes": [
+          "雙手傷害：200 - 232 點",
+          "需要等級：78",
+          "需要力量：44",
+          "需要敏捷：37",
+          "耐久度：35",
+          "武器基本速度：[0]",
+          "+150% 傷害強化",
+          "+50% 對不死怪物的傷害",
+          "附加 6 - 45 電擊傷害",
+          "+30% 施法速度",
+          "+1 所有技能",
+          "+70 法力",
+          "+35 能量",
+          "等級 11 傳送術（69 次）"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/lazarus_spire.jpg"
+      }
+    ],
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+175 防禦 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "尋獲魔法物品機率提高 (1-148)% （依角色等級而定） [1.5 * clvl] (2)"
+      }
+    ],
+    "fullBonuses": [
+      "+1 所有技能",
+      "+2 火焰技能",
+      "+175 防禦",
+      "+20 力量",
+      "+15 敏捷",
+      "生命上限提高 12%",
+      "生命回復 +20",
       "+100 法力",
       "所有抗性 +50",
-      "+50% 快速打擊恢復 (FHR)"
-    ]
+      "尋獲魔法物品機率提高 (1-148)% （依角色等級而定） [1.5 * clvl]"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/circlet.jpg"
   },
   {
-    id: "orphans_call",
-    name: "孤兒的呼喚",
-    nameEn: "Orphan's Call",
-    pieces: [
+    "id": "griswolds_legacy",
+    "name": "格里斯瓦德的傳奇",
+    "nameEn": "Griswold's Legacy",
+    "isClassSet": true,
+    "class": "聖騎士",
+    "pieces": [
       {
-        id: "guillaumes_face_set",
-        name: "吉永之臉",
-        nameEn: "Guillaume's Face",
-        baseItem: "翼盔 (Winged Helm)",
-        slot: "helm",
-        requiredLevel: 34,
-        attributes: [
-          "+30% 快速打擊恢復 (FHR)",
-          "35% 機率造成壓碎打擊 (CB)",
-          "15% 機率造成致命打擊 (DS)",
-          "+120% 強化防禦",
-          "+15 力量"
-        ]
+        "id": "griswolds_heart",
+        "name": "格里斯瓦德之心",
+        "nameEn": "Griswold's Heart",
+        "nameClassic": "格瑞斯華爾德之心",
+        "baseItem": "華麗戰甲",
+        "baseItemId": "ornate_plate",
+        "slot": "armor",
+        "grade": "exceptional",
+        "requiredLevel": 45,
+        "requiredStr": 102,
+        "classOnly": null,
+        "tc": 66,
+        "qlvl": 44,
+        "attributes": [
+          "防禦：917-950",
+          "需要等級：45",
+          "需要力量：102",
+          "耐久度：60",
+          "+500 防禦",
+          "需求 -40%",
+          "+20 力量",
+          "+2 防禦靈氣 （只限聖騎士）",
+          "鑲孔（3）"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/corpsemourn_dgld.jpg"
       },
       {
-        id: "whitstans_guard",
-        name: "白星",
-        nameEn: "Whitstan's Guard",
-        baseItem: "圓盾 (Round Shield)",
-        slot: "shield",
-        requiredLevel: 29,
-        attributes: ["+55% 增加格擋機率", "+40% 快速格擋速度 (FBR)", "+175 強化防禦", "冰凍時間減半"]
+        "id": "griswolds_valor",
+        "name": "格里斯瓦德的勇氣",
+        "nameEn": "Griswold's Valor",
+        "nameClassic": "格瑞斯華爾德的勇氣",
+        "baseItem": "日冕之冠",
+        "baseItemId": "corona",
+        "slot": "helm",
+        "grade": "elite",
+        "requiredLevel": 69,
+        "requiredStr": 105,
+        "classOnly": null,
+        "tc": 87,
+        "qlvl": 44,
+        "attributes": [
+          "防禦：249-290",
+          "需要等級：69",
+          "需要力量：105",
+          "耐久度：50",
+          "+50-75% 防禦強化",
+          "所有抗性 +5",
+          "尋獲魔法物品機率提高 20-30%",
+          "需求 -40%",
+          "+(0-24) 冰寒傷害吸收 （依角色等級而定） [0.25 * clvl]",
+          "鑲孔（2）",
+          "+2 攻擊靈氣 （只限聖騎士） (2)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/crown_dgld.jpg"
       },
       {
-        id: "magnus_skin",
-        name: "瑪格那斯之皮",
-        nameEn: "Magnus' Skin",
-        baseItem: "鯊皮手套 (Sharkskin Gloves)",
-        slot: "gloves",
-        requiredLevel: 37,
-        attributes: ["+20% 攻擊速度 (IAS)", "+100 攻擊準確率", "抗火 +15%", "+35 防禦"]
+        "id": "griswolds_redemption",
+        "name": "格里斯瓦德的救贖",
+        "nameEn": "Griswold's Redemption",
+        "nameClassic": "格瑞斯華爾德的救贖",
+        "baseItem": "神使權杖",
+        "baseItemId": "caduceus",
+        "slot": "weapon",
+        "grade": "elite",
+        "requiredLevel": 66,
+        "requiredStr": 78,
+        "requiredDex": 56,
+        "classOnly": null,
+        "tc": 87,
+        "qlvl": 44,
+        "attributes": [
+          "單手傷害：(111-125) - (129-146) 點",
+          "單手傷害：(121-135) - (149-166) 點",
+          "單手傷害：(131-145) - (169-186) 點",
+          "需要等級：66",
+          "需要力量：78",
+          "需要敏捷：56",
+          "耐久度：70",
+          "武器基本速度：[-10]",
+          "+200-240% 傷害強化",
+          "+250% 對不死怪物的傷害",
+          "需求 -20%",
+          "攻擊速度 +40%",
+          "鑲孔（3-4）",
+          "+2 戰鬥技能 （只限聖騎士） (2)",
+          "附加 10 - 20 傷害 (3)",
+          "附加 10 - 20 傷害 (全套)"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/war_scepter_dgld.jpg"
       },
       {
-        id: "wilhelms_pride",
-        name: "威廉的自尊",
-        nameEn: "Wilhelm's Pride",
-        baseItem: "戰鬥腰帶 (Battle Belt)",
-        slot: "belt",
-        requiredLevel: 42,
-        attributes: ["每次命中偷取 5% 生命", "每次命中偷取 5% 法力", "抗寒 +10%", "+75% 強化防禦"]
+        "id": "griswolds_honor",
+        "name": "格里斯瓦德的榮耀",
+        "nameEn": "Griswold's Honor",
+        "nameClassic": "格瑞斯華爾德的榮耀",
+        "baseItem": "渦旋盾",
+        "baseItemId": "vortex_shield",
+        "slot": "shield",
+        "grade": "elite",
+        "requiredLevel": 68,
+        "requiredStr": 148,
+        "classOnly": "聖騎士",
+        "tc": 87,
+        "qlvl": 44,
+        "attributes": [
+          "防禦：290-333",
+          "需要等級：68",
+          "需要力量：148",
+          "耐久度：90",
+          "格擋機率：69%",
+          "重擊傷害：5 - 87 點",
+          "+65% 格擋速度",
+          "格擋機率提高 20%",
+          "+108 防禦",
+          "所有抗性 +45",
+          "鑲孔（3）"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/crown_shield_dgld.jpg"
       }
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+35 生命" },
-      { count: 3, bonus: "+100 攻擊準確率" }
+    "partialBonuses": [
+      {
+        "count": 2,
+        "bonus": "+20 力量 (2)"
+      },
+      {
+        "count": 3,
+        "bonus": "+30 敏捷 (3)"
+      }
     ],
-    fullBonuses: [
-      "+100 防禦",
-      "+20 敏捷",
+    "fullBonuses": [
+      "+3 聖騎士技能等級",
+      "+30% 打擊恢復",
+      "+200 準確率",
       "+20 力量",
-      "所有抗性 +35",
-      "每次命中偷取 5% 生命",
-      "85% 額外金幣從怪物身上取得"
-    ]
-  },
-  {
-    id: "angelic_raiment",
-    name: "天使的衣著",
-    nameEn: "Angelic Raiment",
-    pieces: [
-      {
-        id: "angelic_wings",
-        name: "天使之翼",
-        nameEn: "Angelic Wings",
-        baseItem: "項鍊 (Amulet)",
-        slot: "amulet",
-        requiredLevel: 12,
-        attributes: ["20% 受損生命轉移為法力", "+3 照亮範圍", "【套裝加成】：+75 生命，+1 所有技能 (配雙戒)"]
-      },
-      {
-        id: "angelic_halo",
-        name: "天使之暈",
-        nameEn: "Angelic Halo",
-        baseItem: "戒指 (Ring)",
-        slot: "ring",
-        requiredLevel: 12,
-        attributes: ["生命恢復 +6", "+20 生命", "【套裝加成】：+(12 每等級) 攻擊準確率 (AR)"]
-      },
-      {
-        id: "angelic_mantle",
-        name: "天使披風",
-        nameEn: "Angelic Mantle",
-        baseItem: "鎖子甲 (Ring Mail)",
-        slot: "armor",
-        requiredLevel: 12,
-        attributes: ["+40% 強化防禦", "傷害減少 3", "【套裝加成】：+150 防禦，抗火 +50%"]
-      },
-      {
-        id: "angelic_sickle",
-        name: "天使鐮刀",
-        nameEn: "Angelic Sickle",
-        baseItem: "彎刀 (Sabre)",
-        slot: "weapon",
-        requiredLevel: 12,
-        attributes: ["+75 攻擊準確率", "+250% 對不死生物傷害", "【套裝加成】：+30% 攻擊速度"]
-      }
-    ],
-    partialBonuses: [
-      { count: 2, bonus: "+10 敏捷" },
-      { count: 3, bonus: "+50 法力" }
-    ],
-    fullBonuses: [
-      "所有抗性 +25",
-      "+40% 快速打擊恢復 (FHR)",
-      "無法被凍結 (CBF)",
-      "+50% 更佳機會取得魔法裝備 (MF)"
-    ]
-  },
-  {
-    id: "sigons_complete_steel",
-    name: "西剛的全套鋼甲",
-    nameEn: "Sigon's Complete Steel",
-    pieces: [
-      {
-        id: "sigon_visor",
-        name: "西剛的面甲",
-        nameEn: "Sigon's Visor",
-        baseItem: "大金屬頭盔 (Great Helm)",
-        slot: "helm",
-        requiredLevel: 6,
-        attributes: ["+25 防禦", "+30 法力", "【套裝加成】：+(8 每等級) 攻擊準確率 (AR)"]
-      },
-      {
-        id: "sigon_shelter",
-        name: "西剛的守護者",
-        nameEn: "Sigon's Shelter",
-        baseItem: "哥德戰甲 (Gothic Plate)",
-        slot: "armor",
-        requiredLevel: 6,
-        attributes: ["+25% 強化防禦", "抗電 +30%", "攻擊者受到傷害 20"]
-      },
-      {
-        id: "sigon_guard",
-        name: "西剛的守衛",
-        nameEn: "Sigon's Guard",
-        baseItem: "塔盾 (Tower Shield)",
-        slot: "shield",
-        requiredLevel: 6,
-        attributes: ["+1 所有技能", "+20% 增加格擋機率"]
-      },
-      {
-        id: "sigon_gage",
-        name: "西剛的挑戰",
-        nameEn: "Sigon's Gage",
-        baseItem: "鐵手套 (Gauntlets)",
-        slot: "gloves",
-        requiredLevel: 6,
-        attributes: ["+20 攻擊準確率", "+10 力量", "【套裝加成】：+30% 攻擊速度 (IAS)"]
-      },
-      {
-        id: "sigon_sabot",
-        name: "西剛的木屐",
-        nameEn: "Sigon's Sabot",
-        baseItem: "重靴 (Greaves)",
-        slot: "boots",
-        requiredLevel: 6,
-        attributes: ["+20% 跑步/步行速度", "抗寒 +40%", "【套裝加成】：+50 攻擊準確率，+50% MF"]
-      },
-      {
-        id: "sigon_wrap",
-        name: "西剛的披肩",
-        nameEn: "Sigon's Wrap",
-        baseItem: "金屬扣帶 (Plated Belt)",
-        slot: "belt",
-        requiredLevel: 6,
-        attributes: ["抗火 +20%", "+20 生命", "【套裝加成】：+(2 每等級) 防禦"]
-      }
-    ],
-    partialBonuses: [
-      { count: 2, bonus: "每次命中偷取 10% 生命" },
-      { count: 3, bonus: "+100 防禦" }
-    ],
-    fullBonuses: [
-      "+12 傷害減少",
-      "+24 火焰傷害",
-      "+50% 更佳機會取得魔法裝備 (MF)",
-      "所有抗性 +12"
-    ]
-  },
-  {
-    id: "mavinas_battle_hymn",
-    name: "馬維娜的教條",
-    nameEn: "M'avina's Battle Hymn",
-    pieces: [
-      {
-        id: "mavina_true_sight",
-        name: "馬維娜的真實之眼",
-        nameEn: "M'avina's True Sight",
-        baseItem: "權冠 (Diadem)",
-        slot: "helm",
-        requiredLevel: 64,
-        attributes: ["+30% 攻擊速度 (IAS)", "+150 防禦", "法力恢復 +15%"]
-      },
-      {
-        id: "mavina_caster",
-        name: "馬維娜的施展符",
-        nameEn: "M'avina's Caster",
-        baseItem: "大院長之弓 (Grand Matron Bow)",
-        slot: "weapon",
-        requiredLevel: 70,
-        attributes: ["+40% 攻擊速度 (IAS)", "+188% 增強傷害", "+50 攻擊準確率", "發射魔法箭矢"]
-      },
-      {
-        id: "mavina_embrace",
-        name: "馬維娜的擁抱",
-        nameEn: "M'avina's Embrace",
-        baseItem: "海妖殼甲 (Kraken Shell)",
-        slot: "armor",
-        requiredLevel: 70,
-        attributes: ["+2 被動與魔法技能 (亞馬遜專用)", "裝備需求 -30%", "魔法傷害減少 5-12", "防禦力 +(4 每等級)"]
-      },
-      {
-        id: "mavina_icy_clutch",
-        name: "馬維娜的冰冷之握",
-        nameEn: "M'avina's Icy Clutch",
-        baseItem: "戰場手套 (Battle Gauntlets)",
-        slot: "gloves",
-        requiredLevel: 32,
-        attributes: ["+45-50 防禦", "+6-18 冰寒傷害", "冰凍時間減半", "56% 額外金幣 (GF)"]
-      },
-      {
-        id: "mavina_tenet",
-        name: "馬維娜的信條",
-        nameEn: "M'avina's Tenet",
-        baseItem: "鯊皮腰帶 (Sharkskin Belt)",
-        slot: "belt",
-        requiredLevel: 45,
-        attributes: ["+20% 跑步/步行速度", "+5 每次命中偷取法力", "+50 防禦"]
-      }
-    ],
-    partialBonuses: [
-      { count: 2, bonus: "+20 力量" },
-      { count: 3, bonus: "+30 敏捷" },
-      { count: 4, bonus: "所有抗性 +25" }
-    ],
-    fullBonuses: [
-      "+3 亞馬遜技能",
-      "+100% 攻擊準確率加成",
-      "+20% 冰冷技能傷害",
-      "所有抗性 +50",
-      "+100 防禦",
-      "角色散發純白神聖光暈"
-    ]
-  },
-  {
-    id: "griswolds_legacy",
-    name: "格里斯瓦德的遺產",
-    nameEn: "Griswold's Legacy",
-    pieces: [
-      {
-        id: "griswold_redemption",
-        name: "格里斯瓦德的救贖",
-        nameEn: "Griswold's Redemption",
-        baseItem: "卡帝納爾權杖 (Caduceus)",
-        slot: "weapon",
-        requiredLevel: 66,
-        attributes: ["+40% 攻擊速度 (IAS)", "+200-240% 增強傷害", "鑲孔 (3-4) (變動)"]
-      },
-      {
-        id: "griswold_valor",
-        name: "格里斯瓦德的勇氣",
-        nameEn: "Griswold's Valor",
-        baseItem: "頭飾頭盔 (Corona)",
-        slot: "helm",
-        requiredLevel: 69,
-        attributes: ["+50-75% 強化防禦", "所有抗性 +5", "傷害減少 20-30%", "鑲孔 (2)"]
-      },
-      {
-        id: "griswold_heart",
-        name: "格里斯瓦德的心臟",
-        nameEn: "Griswold's Heart",
-        baseItem: "裝甲胸甲 (Ornate Plate)",
-        slot: "armor",
-        requiredLevel: 45,
-        attributes: ["+2 防禦靈氣 (聖騎士專用)", "+500 防禦", "+20 力量", "裝備需求 -80%", "鑲孔 (3)"]
-      },
-      {
-        id: "griswold_honor",
-        name: "格里斯瓦德的榮譽",
-        nameEn: "Griswold's Honor",
-        baseItem: "旋風盾 (Vortex Shield)",
-        slot: "shield",
-        requiredLevel: 68,
-        attributes: ["+20% 快速格擋速度 (FBR)", "+65% 增加格擋機率", "所有抗性 +45", "鑲孔 (3)"]
-      }
-    ],
-    partialBonuses: [
-      { count: 2, bonus: "+20 力量" },
-      { count: 3, bonus: "+30 敏捷" }
-    ],
-    fullBonuses: [
-      "+3 聖騎士技能",
-      "+200 攻擊準確率",
+      "+30 敏捷",
       "+150 生命",
       "所有抗性 +50",
-      "+30% 快速打擊恢復 (FHR)",
-      "合計擁有高達 12 個鑲孔可自由打造極限客製化"
-    ]
+      "角色顯示光環效果"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/corpsemourn_dgld.jpg"
   },
   {
-    id: "horazons_splendor",
-    name: "赫拉森的輝煌",
-    nameEn: "Horazon's Splendor",
-    pieces: [
+    "id": "bulkathos_children",
+    "name": "布爾凱索的子嗣",
+    "nameEn": "Bul-Kathos' Children",
+    "isClassSet": true,
+    "class": "野蠻人",
+    "pieces": [
       {
-        id: "horazon_diadem",
-        name: "赫拉森的神秘冠冕",
-        nameEn: "Horazon's Mystic Diadem",
-        baseItem: "術士頭飾 (Tiara)",
-        slot: "helm",
-        requiredLevel: 76,
-        attributes: ["+2 術士技能", "+20% 快速施法速度 (FCR)", "法力恢復 +25%"]
+        "id": "bulkathos_sacred_charge",
+        "name": "布爾凱索的神聖職責",
+        "nameEn": "Bul-Kathos' Sacred Charge",
+        "nameClassic": "布爾凱索的神聖代價",
+        "baseItem": "巨神刃",
+        "baseItemId": "colossus_blade",
+        "slot": "weapon",
+        "grade": "elite",
+        "requiredLevel": 63,
+        "requiredStr": 189,
+        "requiredDex": 110,
+        "classOnly": null,
+        "tc": 87,
+        "qlvl": 50,
+        "attributes": [
+          "單手傷害：75 - 195 點",
+          "雙手傷害：174 - 345 點",
+          "需要等級：63",
+          "需要力量：189",
+          "需要敏捷：110",
+          "耐久度：50",
+          "武器基本速度：[5]",
+          "+200% 傷害強化",
+          "+35% 機率造成粉碎打擊",
+          "所有抗性 +20",
+          "攻擊速度 +20%",
+          "擊退"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/the_patriarch_dgrn.jpg"
       },
       {
-        id: "horazon_shroud",
-        name: "赫拉森的虛空裹屍布",
-        nameEn: "Horazon's Void Shroud",
-        baseItem: "灰暮罩衣 (Dusk Shroud)",
-        slot: "armor",
-        requiredLevel: 78,
-        attributes: ["+2 邪異武裝技能", "傷害減少 10%", "所有抗性 +25"]
-      },
-      {
-        id: "horazon_focus",
-        name: "赫拉森的奧術聚焦核心",
-        nameEn: "Horazon's Arcane Focus",
-        baseItem: "術士魔典 (Grimoire)",
-        slot: "shield",
-        requiredLevel: 77,
-        attributes: ["+30% 快速格擋速度", "-20% 敵人混沌抗性", "+50 生命"]
+        "id": "bulkathos_tribal_guardian",
+        "name": "布爾凱索的部族守護",
+        "nameEn": "Bul-Kathos' Tribal Guardian",
+        "nameClassic": "布爾凱索的部族守護",
+        "baseItem": "秘儀劍",
+        "baseItemId": "mythical_sword",
+        "slot": "weapon",
+        "grade": "elite",
+        "requiredLevel": 66,
+        "requiredStr": 147,
+        "requiredDex": 124,
+        "classOnly": null,
+        "tc": 87,
+        "qlvl": 50,
+        "attributes": [
+          "單手傷害：120 - 150 點",
+          "需要等級：66",
+          "需要力量：147",
+          "需要敏捷：124",
+          "耐久度：44",
+          "武器基本速度：[0]",
+          "+200% 傷害強化",
+          "+50 毒素傷害，時效 2 秒",
+          "火焰抗性 +50%",
+          "+20 力量",
+          "攻擊速度 +20%"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/war_sword_dgrn.jpg"
       }
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+20% 快速施法速度 (FCR)" }
+    "partialBonuses": [],
+    "fullBonuses": [
+      "+2 所有技能等級",
+      "+200 準確率",
+      "+200% 對惡魔的傷害",
+      "+200% 對不死怪物的傷害",
+      "+200 火焰傷害",
+      "擊中竊取 10% 生命",
+      "+20% 致命打擊",
+      "+200 防禦"
     ],
-    fullBonuses: [
-      "+3 術士所有技能",
-      "+30% 混亂法術傷害",
-      "所有抗性 +40",
-      "使役惡魔僕從死亡時觸發黑洞吞噬波"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/the_patriarch_dgrn.jpg"
   },
   {
-    id: "natalyas_odium",
-    name: "娜塔亞的非難",
-    nameEn: "Natalya's Odium",
-    pieces: [
+    "id": "heavens_brethren",
+    "name": "天堂的同胞",
+    "nameEn": "Heaven's Brethren",
+    "isClassSet": false,
+    "class": null,
+    "pieces": [
       {
-        id: "natalya_totem",
-        name: "娜塔亞的圖騰",
-        nameEn: "Natalya's Totem",
-        baseItem: "殘酷頭盔 (Grim Helm)",
-        slot: "helm",
-        requiredLevel: 59,
-        attributes: ["所有抗性 +10-20 (變動)", "+20-30 敏捷 (變動)", "+10-20 力量 (變動)", "魔法傷害減少 3"]
+        "id": "haemosus_adamant",
+        "name": "解慕漱的堅決",
+        "nameEn": "Haemosu's Adamant",
+        "nameClassic": "黑摩蘇的堅決",
+        "baseItem": "護胸甲",
+        "baseItemId": "cuirass",
+        "slot": "armor",
+        "grade": "exceptional",
+        "requiredLevel": 44,
+        "requiredStr": 52,
+        "classOnly": null,
+        "tc": 48,
+        "qlvl": 55,
+        "attributes": [
+          "防禦：688-702",
+          "需要等級：44",
+          "需要力量：52",
+          "耐久度：50",
+          "+500 防禦",
+          "+40 對近戰防禦",
+          "+35 對遠程防禦",
+          "需求 -20%",
+          "+75 生命"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/haemosus_adament.jpg"
       },
       {
-        id: "natalya_mark",
-        name: "娜塔亞的標記",
-        nameEn: "Natalya's Mark",
-        baseItem: "近身刃 (Scissors Suwayyah)",
-        slot: "weapon",
-        requiredLevel: 79,
-        attributes: ["+40% 攻擊速度 (IAS)", "+200% 增強傷害", "忽略目標防禦", "增加 12-17 冰寒傷害", "+200% 對不死生物傷害"]
+        "id": "dangoons_teaching",
+        "name": "檀君的教導",
+        "nameEn": "Dangoon's Teaching",
+        "nameClassic": "丹弓的教導",
+        "baseItem": "強化釘鎚",
+        "baseItemId": "reinforced_mace",
+        "slot": "weapon",
+        "grade": "elite",
+        "requiredLevel": 68,
+        "requiredStr": 145,
+        "requiredDex": 46,
+        "classOnly": null,
+        "tc": 63,
+        "qlvl": 55,
+        "attributes": [
+          "單手傷害：41 - (50-197) 點",
+          "需要等級：68",
+          "需要力量：145",
+          "需要敏捷：46",
+          "耐久度：60",
+          "武器基本速度：[0]",
+          "+(1-148) 最大傷害 （依角色等級而定） [1.5 * clvl]",
+          "+50% 對不死怪物的傷害",
+          "攻擊速度 +40%",
+          "擊中時有 10% 機率施展等級 3 冰霜新星",
+          "附加 20 - 30 火焰傷害"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/dangoons_teaching.jpg"
       },
       {
-        id: "natalya_shadow",
-        name: "娜塔亞的影子",
-        nameEn: "Natalya's Shadow",
-        baseItem: "甲殼鎧甲 (Loricated Mail)",
-        slot: "armor",
-        requiredLevel: 73,
-        attributes: ["+2 刺客暗影訓練", "+150-225 防禦 (變動)", "抗毒 +25%", "毒素持續時間縮短 75%", "凹槽 (1-3) (變動)"]
+        "id": "taebaeks_glory",
+        "name": "太白山的榮光",
+        "nameEn": "Taebaek's Glory",
+        "nameClassic": "泰比克的光榮",
+        "baseItem": "庇護盾",
+        "baseItemId": "ward",
+        "slot": "shield",
+        "grade": "elite",
+        "requiredLevel": 81,
+        "requiredStr": 185,
+        "classOnly": null,
+        "tc": 84,
+        "qlvl": 55,
+        "attributes": [
+          "防禦：203-220",
+          "需要等級：81",
+          "需要力量：185",
+          "格擋機率：79% (Pal)",
+          "格擋機率：74% (Ama/Asn/Bar)",
+          "格擋機率：69% (Dru/Nec/Sor)",
+          "重擊傷害：11 - 35 點",
+          "+50 防禦",
+          "格擋機率提高 25%",
+          "電擊抗性 +30%",
+          "永不毀損",
+          "+30% 格擋速度",
+          "+100 法力",
+          "攻擊者反傷：30"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/heavens_taebaek.jpg"
       },
       {
-        id: "natalya_soul",
-        name: "娜塔亞的靈魂",
-        nameEn: "Natalya's Soul",
-        baseItem: "網格之靴 (Mesh Boots)",
-        slot: "boots",
-        requiredLevel: 25,
-        attributes: ["+40% 跑步/步行速度", "抗寒 +15-25% (變動)", "抗電 +15-25% (變動)", "+75-125 防禦 (變動)"]
+        "id": "ondals_almighty",
+        "name": "溫達的全靈",
+        "nameEn": "Ondal's Almighty",
+        "nameClassic": "安戴爾的全靈",
+        "baseItem": "巨角頭盔",
+        "baseItemId": "spired_helm",
+        "slot": "helm",
+        "grade": "elite",
+        "requiredLevel": 69,
+        "requiredStr": 116,
+        "classOnly": null,
+        "tc": 81,
+        "qlvl": 55,
+        "attributes": [
+          "防禦：164-209",
+          "需要等級：69",
+          "需要力量：116",
+          "耐久度：40",
+          "擊中時有 10% 機率施展等級 3 削弱",
+          "+24% 打擊恢復",
+          "需求 -40%",
+          "+50 防禦",
+          "+15 敏捷",
+          "+10 力量"
+        ],
+        "imageUrl": "https://static.d2r.world/img/items/magic/ondals_almighty.jpg"
       }
     ],
-    partialBonuses: [
-      { count: 2, bonus: "魔法傷害減少 15" },
-      { count: 3, bonus: "+200 防禦" }
-    ],
-    fullBonuses: [
-      "+3 刺客技能",
-      "傷害減少 30% (DR)",
-      "所有抗性 +50",
-      "每次命中偷取 14% 生命",
-      "每次命中偷取 14% 法力",
-      "角色外觀呈現完全半透明陰影形態 (鬼魅潛行)"
-    ]
-  },
-  {
-    id: "aldurs_watchtower",
-    name: "艾爾多的守衛",
-    nameEn: "Aldur's Watchtower",
-    pieces: [
+    "partialBonuses": [
       {
-        id: "aldur_stony_gaze",
-        name: "艾爾多的律動之眼",
-        nameEn: "Aldur's Stony Gaze",
-        baseItem: "獵人的偽裝 (Hunter's Guise)",
-        slot: "helm",
-        requiredLevel: 36,
-        attributes: ["+25% 快速打擊恢復 (FHR)", "抗寒 +40-50% (變動)", "法力恢復 +17%", "凹槽 (2)"]
+        "count": 2,
+        "bonus": "精力恢復 +50% (2)"
       },
       {
-        id: "aldur_rhythm",
-        name: "艾爾多的節奏",
-        nameEn: "Aldur's Rhythm",
-        baseItem: "鋸齒之星 (Jagged Star)",
-        slot: "weapon",
-        requiredLevel: 42,
-        attributes: ["+30% 攻擊速度 (IAS)", "+200% 對惡魔傷害", "每次命中偷取 10% 生命", "每次命中偷取 5% 法力", "凹槽 (2-3) (變動)"]
-      },
-      {
-        id: "aldur_deception",
-        name: "艾爾多的石壁",
-        nameEn: "Aldur's Deception",
-        baseItem: "陰影鎧甲 (Shadow Plate)",
-        slot: "armor",
-        requiredLevel: 76,
-        attributes: ["+1 德魯伊元素技能", "+1 德魯伊變形技能", "+300 防禦", "抗電 +40-50% (變動)", "需求 -50%"]
-      },
-      {
-        id: "aldur_advance",
-        name: "艾爾多的成長 (進擊之靴)",
-        nameEn: "Aldur's Advance",
-        baseItem: "戰鬥之靴 (Battle Boots)",
-        slot: "boots",
-        requiredLevel: 45,
-        attributes: ["+40% 跑步/步行速度", "+50 生命", "抗火 +40-50% (變動)", "10% 受損生命轉移為法力"]
+        "count": 3,
+        "bonus": "生命回復 +20 (3)"
       }
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+150 攻擊準確率" },
-      { count: 3, bonus: "+50 防禦" }
-    ],
-    fullBonuses: [
-      "+3 德魯伊技能",
-      "+350% 增強傷害 (ED)",
-      "+150 法力",
-      "所有抗性 +50",
-      "+15 力量",
-      "+15 敏捷",
-      "角色散發狂野自然橙金光暈"
-    ]
-  },
-  {
-    id: "sazabis_grand_tribute",
-    name: "沙薩比的雄偉貢獻",
-    nameEn: "Sazabi's Grand Tribute",
-    pieces: [
-      {
-        id: "sazabi_mental_sheath",
-        name: "沙薩比的精神之鞘",
-        nameEn: "Sazabi's Mental Sheath",
-        baseItem: "淺樓頭盔 (Basinet)",
-        slot: "helm",
-        requiredLevel: 43,
-        attributes: ["+1 所有技能", "抗閃電 +15-20% (變動)", "抗火 +15-20% (變動)", "+100 防禦"]
-      },
-      {
-        id: "sazabi_ghost_liberator",
-        name: "沙薩比的幽靈釋放者",
-        nameEn: "Sazabi's Ghost Liberator",
-        baseItem: "炎魔皮板甲 (Balrog Skin)",
-        slot: "armor",
-        requiredLevel: 67,
-        attributes: ["+30% 快速打擊恢復 (FHR)", "+400 防禦", "+50-75 生命 (變動)", "+25 力量"]
-      },
-      {
-        id: "sazabi_cobalt_redeemer",
-        name: "沙薩比的鈷藍救贖者",
-        nameEn: "Sazabi's Cobalt Redeemer",
-        baseItem: "神秘之劍 (Cryptic Sword)",
-        slot: "weapon",
-        requiredLevel: 73,
-        attributes: ["+40% 攻擊速度 (IAS)", "+150% 增強傷害", "+318% 對惡魔傷害", "增加 25-35 冰寒傷害"]
-      }
-    ],
-    partialBonuses: [
-      { count: 2, bonus: "+175 防禦" }
-    ],
-    fullBonuses: [
-      "+1 所有技能",
-      "+27% 增加生命上限",
-      "每次命中偷取 16% 生命 (極致吸血)",
-      "所有抗性 +30",
-      "傷害減少 16% (DR)",
-      "2.4/2.6 第五幕野蠻人傭兵最強生存畢業套裝！"
-    ]
-  },
-  {
-    id: "hwanins_majesty",
-    name: "華寧的威嚴",
-    nameEn: "Hwanin's Majesty",
-    pieces: [
-      {
-        id: "hwanin_splendor",
-        name: "華寧的光輝",
-        nameEn: "Hwanin's Splendor",
-        baseItem: "大皇冠 (Grand Crown)",
-        slot: "helm",
-        requiredLevel: 45,
-        attributes: ["法力恢復 12%", "生命恢復 +20", "無法被凍結 (CBF)", "魔法傷害減少 10"]
-      },
-      {
-        id: "hwanin_justice",
-        name: "華寧的正義",
-        nameEn: "Hwanin's Justice",
-        baseItem: "比爾長柄斧 (Bill)",
-        slot: "weapon",
-        requiredLevel: 28,
-        attributes: ["+40% 攻擊速度 (IAS)", "+200% 增強傷害", "+330 攻擊準確率", "打擊時 10% 機率施展等級 3 冰風暴"]
-      },
-      {
-        id: "hwanin_refuge",
-        name: "華寧的庇護",
-        nameEn: "Hwanin's Refuge",
-        baseItem: "提格列特戰甲 (Tigulated Mail)",
-        slot: "armor",
-        requiredLevel: 30,
-        attributes: ["被擊中時 10% 機率施展等級 3 靜態力場", "+200 防禦", "抗毒 +27%"]
-      },
-      {
-        id: "hwanin_blessing",
-        name: "華寧的祝福",
-        nameEn: "Hwanin's Blessing",
-        baseItem: "飾帶 (Belt)",
-        slot: "belt",
-        requiredLevel: 35,
-        attributes: ["防止怪物自療", "+3-33 閃電傷害", "傷害減少 10% (DR)"]
-      }
-    ],
-    partialBonuses: [
-      { count: 2, bonus: "+100 防禦" },
-      { count: 3, bonus: "+200 防禦" }
-    ],
-    fullBonuses: [
+    "fullBonuses": [
       "+2 所有技能",
-      "+30% 快速打擊恢復 (FHR)",
-      "每次命中偷取 20% 生命",
-      "所有抗性 +30",
-      "角色散發金色微光"
-    ]
-  },
-  {
-    id: "cathans_traps",
-    name: "卡珊的陷阱",
-    nameEn: "Cathan's Traps",
-    pieces: [
-      {
-        id: "cathan_seal",
-        name: "卡珊的印記 (開荒神戒)",
-        nameEn: "Cathan's Seal",
-        baseItem: "戒指 (Ring)",
-        slot: "ring",
-        requiredLevel: 11,
-        attributes: ["每次命中偷取 6% 生命", "物理傷害減少 2"]
-      },
-      {
-        id: "cathan_visage",
-        name: "卡珊的面容",
-        nameEn: "Cathan's Visage",
-        baseItem: "面具 (Mask)",
-        slot: "helm",
-        requiredLevel: 11,
-        attributes: ["抗寒 +25%", "+20 法力"]
-      },
-      {
-        id: "cathan_mesh",
-        name: "卡珊的織網",
-        nameEn: "Cathan's Mesh",
-        baseItem: "鎖子甲 (Chain Mail)",
-        slot: "armor",
-        requiredLevel: 11,
-        attributes: ["需求 -50%", "+15 基礎防禦"]
-      },
-      {
-        id: "cathan_rule",
-        name: "卡珊的統治",
-        nameEn: "Cathan's Rule",
-        baseItem: "戰鬥法杖 (Battle Staff)",
-        slot: "weapon",
-        requiredLevel: 11,
-        attributes: ["+1 火焰技能", "+10 最大法力", "+50 生命"]
-      },
-      {
-        id: "cathan_sigil",
-        name: "卡珊的符號",
-        nameEn: "Cathan's Sigil",
-        baseItem: "項鍊 (Amulet)",
-        slot: "amulet",
-        requiredLevel: 11,
-        attributes: ["+10% 快速打擊恢復 (FHR)", "攻擊者受到傷害 5"]
-      }
+      "生命回復 +20",
+      "精力恢復 +50%",
+      "所有抗性 +50",
+      "無法凍結",
+      "照亮範圍 +5"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+15-20 火焰傷害" },
-      { count: 3, bonus: "抗閃電 +25%" }
-    ],
-    fullBonuses: [
-      "+1 所有技能",
-      "+20 敏捷",
-      "+20 活力",
-      "所有抗性 +25",
-      "暗黑破壞神老玩家無人不曉的經典新手神器"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/haemosus_adament.jpg"
   }
-,
-  // ── 經典與進階全套套裝 (Expansion & Classic Complete Sets) ──
+];
+
+export const ALL_SET_PIECES: SetPiece[] = [
   {
-    id: "berserkers_arsenal",
-    name: "狂戰士軍械",
-    nameEn: "Berserker's Arsenal",
-    pieces: [
-      {
-        id: "berserker_helm",
-        name: "狂戰士的面甲",
-        nameEn: "Berserker's Headgear",
-        baseItem: "頭盔 (Helm)",
-        slot: "helm",
-        requiredLevel: 3,
-        attributes: ["+15 防禦", "抗火 +25%"]
-      },
-      {
-        id: "berserker_armor",
-        name: "狂戰士的鎖子甲",
-        nameEn: "Berserker's Hauberk",
-        baseItem: "夾式甲 (Splint Mail)",
-        slot: "armor",
-        requiredLevel: 3,
-        attributes: ["+1 野蠻人技能", "魔法傷害減少 2"]
-      },
-      {
-        id: "berserker_weapon",
-        name: "狂戰士的手斧",
-        nameEn: "Berserker's Hatchet",
-        baseItem: "雙刃斧 (Double Axe)",
-        slot: "weapon",
-        requiredLevel: 3,
-        attributes: ["+30 攻擊準確率", "+50 攻擊準確率加成"]
-      }
-    ],
-    partialBonuses: [
-      { count: 2, bonus: "+50 生命" }
-    ],
-    fullBonuses: [
-      "+75 防禦",
-      "+50 生命",
-      "抗毒 +50%",
-      "無法被凍結 (CBF)"
-    ]
-  },
-  {
-    id: "isenharts_armory",
-    name: "艾森赫特的軍備",
-    nameEn: "Isenhart's Armory",
-    pieces: [
-      {
-        id: "isenhart_horns",
-        name: "艾森赫特的光輝之角",
-        nameEn: "Isenhart's Horns",
-        baseItem: "全罩式頭盔 (Full Helm)",
-        slot: "helm",
-        requiredLevel: 8,
-        attributes: ["+6 敏捷", "物理傷害減少 2"]
-      },
-      {
-        id: "isenhart_case",
-        name: "艾森赫特的箱子",
-        nameEn: "Isenhart's Case",
-        baseItem: "胸甲 (Breast Plate)",
-        slot: "armor",
-        requiredLevel: 8,
-        attributes: ["+105-107 防禦", "魔法傷害減少 2"]
-      },
-      {
-        id: "isenhart_weapon",
-        name: "艾森赫特的輕光寶劍",
-        nameEn: "Isenhart's Lightbrand",
-        baseItem: "闊劍 (Broad Sword)",
-        slot: "weapon",
-        requiredLevel: 8,
-        attributes: ["+20% 攻擊速度 (IAS)", "+10 最小傷害"]
-      },
-      {
-        id: "isenhart_shield",
-        name: "艾森赫特的格擋",
-        nameEn: "Isenhart's Parry",
-        baseItem: "哥德盾 (Gothic Shield)",
-        slot: "shield",
-        requiredLevel: 8,
-        attributes: ["+40 防禦", "+20% 增加格擋機率"]
-      }
-    ],
-    partialBonuses: [
-      { count: 2, bonus: "+10 力量" },
-      { count: 3, bonus: "+10 敏捷" }
-    ],
-    fullBonuses: [
-      "+20% 跑步/步行速度",
-      "每次命中偷取 5% 生命",
+    "id": "arctic_furs",
+    "name": "北極毛皮",
+    "nameEn": "Arctic Furs",
+    "nameClassic": "北極毛皮",
+    "baseItem": "棉布甲",
+    "baseItemId": "quilted_armor",
+    "slot": "armor",
+    "grade": "normal",
+    "requiredLevel": 2,
+    "requiredStr": 12,
+    "classOnly": null,
+    "tc": 3,
+    "qlvl": 3,
+    "attributes": [
+      "防禦：45-51",
+      "防禦：(48-342)-(54-348)",
+      "需要等級：2",
+      "需要力量：12",
+      "耐久度：20",
+      "+275-325% 防禦強化",
       "所有抗性 +10",
-      "+20 防禦"
-    ]
+      "+(3-297) 防禦 （依角色等級而定） [3 * clvl] (2)",
+      "冰寒抗性 +15% (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/quilted_armor_lgld.jpg"
   },
   {
-    id: "civerbs_vestments",
-    name: "希維爾的祭袍",
-    nameEn: "Civerb's Vestments",
-    pieces: [
-      {
-        id: "civerb_weapon",
-        name: "希維爾的短棍",
-        nameEn: "Civerb's Cudgel",
-        baseItem: "大木棒 (Grand Scepter)",
-        slot: "weapon",
-        requiredLevel: 9,
-        attributes: ["+(1 每等級) 最大傷害", "+17-23 最大傷害 (變動)"]
-      },
-      {
-        id: "civerb_shield",
-        name: "希維爾的守護",
-        nameEn: "Civerb's Ward",
-        baseItem: "大型盾牌 (Large Shield)",
-        slot: "shield",
-        requiredLevel: 9,
-        attributes: ["+15 防禦", "+15 格擋機率"]
-      },
-      {
-        id: "civerb_amulet",
-        name: "希維爾的圖騰",
-        nameEn: "Civerb's Icon",
-        baseItem: "項鍊 (Amulet)",
-        slot: "amulet",
-        requiredLevel: 9,
-        attributes: ["法力恢復 +40%", "生命恢復 +4"]
-      }
+    "id": "arctic_binding",
+    "name": "北極捆索",
+    "nameEn": "Arctic Binding",
+    "nameClassic": "北極捆縛",
+    "baseItem": "輕腰帶",
+    "baseItemId": "light_belt",
+    "slot": "belt",
+    "grade": "normal",
+    "requiredLevel": 2,
+    "classOnly": null,
+    "tc": 9,
+    "qlvl": 3,
+    "attributes": [
+      "防禦：33",
+      "需要等級：2",
+      "耐久度：14",
+      "冰寒抗性 +40%",
+      "+30 防禦",
+      "尋獲魔法物品機率提高 40% (2)",
+      "冰寒抗性 +10% (3)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+15 力量" }
-    ],
-    fullBonuses: [
-      "所有抗性 +15",
-      "+25 敏捷",
-      "+200 攻擊準確率"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/light_belt_lgld.jpg"
   },
   {
-    id: "cleglaws_brace",
-    name: "克雷得勞的支架",
-    nameEn: "Cleglaw's Brace",
-    pieces: [
-      {
-        id: "cleglaw_weapon",
-        name: "克雷得勞的牙齒",
-        nameEn: "Cleglaw's Tooth",
-        baseItem: "長劍 (Long Sword)",
-        slot: "weapon",
-        requiredLevel: 4,
-        attributes: ["50% 機率造成致命打擊 (DS)", "+30% 攻擊準確率"]
-      },
-      {
-        id: "cleglaw_gloves",
-        name: "克雷得勞之鉗",
-        nameEn: "Cleglaw's Pincers",
-        baseItem: "連指手套 (Chain Gloves)",
-        slot: "gloves",
-        requiredLevel: 4,
-        attributes: ["擊中使目標減速 25%", "擊倒目標"]
-      },
-      {
-        id: "cleglaw_shield",
-        name: "克雷得勞的銳爪",
-        nameEn: "Cleglaw's Claw",
-        baseItem: "小型盾牌 (Small Shield)",
-        slot: "shield",
-        requiredLevel: 4,
-        attributes: ["+17 防禦", "抗毒時間減半"]
-      }
+    "id": "arctic_mitts",
+    "name": "北極手套",
+    "nameEn": "Arctic Mitts",
+    "nameClassic": "北極手套",
+    "baseItem": "輕型護手",
+    "baseItemId": "light_gauntlets",
+    "slot": "gloves",
+    "grade": "normal",
+    "requiredLevel": 2,
+    "requiredStr": 45,
+    "classOnly": null,
+    "tc": 21,
+    "qlvl": 3,
+    "attributes": [
+      "防禦：9-11",
+      "需要等級：2",
+      "需要力量：45",
+      "耐久度：18",
+      "+20 生命",
+      "攻擊速度 +10%",
+      "+50 準確率 (2)",
+      "+10 敏捷 (3)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+50 防禦" }
-    ],
-    fullBonuses: [
-      "所有抗性 +15",
-      "+35% 壓碎打擊 (CB)",
-      "+100 生命",
-      "+20 敏捷"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/light_gauntlets_lgld.jpg"
   },
   {
-    id: "deaths_disguise",
-    name: "死亡的偽裝",
-    nameEn: "Death's Disguise",
-    pieces: [
-      {
-        id: "death_weapon",
-        name: "死亡之觸",
-        nameEn: "Death's Touch",
-        baseItem: "巨劍 (War Sword)",
-        slot: "weapon",
-        requiredLevel: 6,
-        attributes: ["增加 25-75 冰寒傷害", "每次命中偷取 4% 生命"]
-      },
-      {
-        id: "death_gloves",
-        name: "死亡之手",
-        nameEn: "Death's Hand",
-        baseItem: "皮革手套 (Leather Gloves)",
-        slot: "gloves",
-        requiredLevel: 6,
-        attributes: ["毒素持續時間縮短 75%", "抗毒 +50%"]
-      },
-      {
-        id: "death_belt",
-        name: "死亡守衛",
-        nameEn: "Death's Guard",
-        baseItem: "飾帶 (Sash)",
-        slot: "belt",
-        requiredLevel: 6,
-        attributes: ["無法被凍結 (CBF)", "+20 防禦"]
-      }
+    "id": "arctic_horn",
+    "name": "北極號角",
+    "nameEn": "Arctic Horn",
+    "nameClassic": "北極號角",
+    "baseItem": "征戰短弓",
+    "baseItemId": "short_war_bow",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 2,
+    "requiredStr": 35,
+    "requiredDex": 55,
+    "classOnly": null,
+    "tc": 27,
+    "qlvl": 3,
+    "attributes": [
+      "雙手傷害：9 - 21 點",
+      "需要等級：2",
+      "需要力量：35",
+      "需要敏捷：55",
+      "武器基本速度：[0]",
+      "+50% 傷害強化",
+      "20% 準確率加成",
+      "+(8-792) 準確率 （依角色等級而定） [8 * clvl] (2)",
+      "附加 20 - 30 冰寒傷害 (3)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+30% 攻擊速度 (IAS)" }
-    ],
-    fullBonuses: [
-      "所有抗性 +15",
-      "每次命中偷取 8% 生命",
-      "全元素傷害 +25-75"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/hellclap_lgld.jpg"
   },
   {
-    id: "hsarus_defense",
-    name: "哈斯拉的防禦",
-    nameEn: "Hsarus' Defense",
-    pieces: [
-      {
-        id: "hsarus_shield",
-        name: "哈斯拉的鐵拳",
-        nameEn: "Hsarus' Iron Fist",
-        baseItem: "圓盾 (Buckler)",
-        slot: "shield",
-        requiredLevel: 3,
-        attributes: ["+10 力量", "物理傷害減少 2"]
-      },
-      {
-        id: "hsarus_boots",
-        name: "哈斯拉的鐵蹄",
-        nameEn: "Hsarus' Iron Heel",
-        baseItem: "鎖子靴 (Chain Boots)",
-        slot: "boots",
-        requiredLevel: 3,
-        attributes: ["+20% 跑步/步行速度", "抗火 +25%"]
-      },
-      {
-        id: "hsarus_belt",
-        name: "哈斯拉的鐵帶",
-        nameEn: "Hsarus' Iron Stay",
-        baseItem: "重腰帶 (Belt)",
-        slot: "belt",
-        requiredLevel: 3,
-        attributes: ["+20 生命", "抗寒 +20%"]
-      }
+    "id": "hsarus_iron_fist",
+    "name": "海沙魯的鐵拳",
+    "nameEn": "Hsarus' Iron Fist",
+    "nameClassic": "哈斯拉柏的鐵拳",
+    "baseItem": "小圓盾",
+    "baseItemId": "buckler",
+    "slot": "shield",
+    "grade": "normal",
+    "requiredLevel": 3,
+    "requiredStr": 12,
+    "classOnly": null,
+    "tc": 3,
+    "qlvl": 4,
+    "attributes": [
+      "防禦：4-6",
+      "防禦：(6-251)-(8-253)",
+      "需要等級：3",
+      "需要力量：12",
+      "耐久度：12",
+      "重擊傷害：1 - 3 點",
+      "格擋機率：30% (Pal)",
+      "格擋機率：25% (Ama/Asn/Bar)",
+      "格擋機率：20% (Dru/Nec/Sor)",
+      "傷害降低 2",
+      "+10 力量",
+      "+(2-247) 防禦 （依角色等級而定） [2.5 * clvl] (2)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+(10 每等級) 攻擊準確率" }
+    "imageUrl": "https://static.d2r.world/img/items/magic/pelta_lunata_dred.jpg"
+  },
+  {
+    "id": "hsarus_iron_stay",
+    "name": "海沙魯的鐵扣",
+    "nameEn": "Hsarus' Iron Stay",
+    "nameClassic": "哈斯拉柏的鐵胸衣",
+    "baseItem": "腰帶",
+    "baseItemId": "belt",
+    "slot": "belt",
+    "grade": "normal",
+    "requiredLevel": 3,
+    "requiredStr": 25,
+    "classOnly": null,
+    "tc": 12,
+    "qlvl": 4,
+    "attributes": [
+      "防禦：5",
+      "防禦：7-252",
+      "需要等級：3",
+      "需要力量：25",
+      "耐久度：16",
+      "腰帶空間：+8 格",
+      "冰寒抗性 +20%",
+      "+20 生命",
+      "+(2-247) 防禦 （依角色等級而定） [2.5 * clvl] (2)"
     ],
-    fullBonuses: [
-      "無法被凍結",
+    "imageUrl": "https://static.d2r.world/img/items/magic/belt_m_dred.jpg"
+  },
+  {
+    "id": "hsarus_iron_heel",
+    "name": "海沙魯的鐵跟",
+    "nameEn": "Hsarus' Iron Heel",
+    "nameClassic": "哈斯拉柏的鐵後跟",
+    "baseItem": "鎖鍊靴",
+    "baseItemId": "chain_boots",
+    "slot": "boots",
+    "grade": "normal",
+    "requiredLevel": 3,
+    "requiredStr": 30,
+    "classOnly": null,
+    "tc": 12,
+    "qlvl": 4,
+    "attributes": [
+      "防禦：8-9",
+      "需要等級：3",
+      "需要力量：30",
+      "耐久度：16",
+      "踢擊傷害：6 - 12 點",
+      "+20% 跑步 / 行走速度",
+      "火焰抗性 +25%",
+      "+(10-990) 準確率 （依角色等級而定） [10 * clvl] (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/chain_boots_dred.jpg"
+  },
+  {
+    "id": "berserkers_headgear",
+    "name": "狂戰士頭盔",
+    "nameEn": "Berserker's Headgear",
+    "nameClassic": "狂戰士的頭戴",
+    "baseItem": "頭盔",
+    "baseItemId": "helm",
+    "slot": "helm",
+    "grade": "normal",
+    "requiredLevel": 3,
+    "requiredStr": 26,
+    "classOnly": null,
+    "tc": 12,
+    "qlvl": 5,
+    "attributes": [
+      "防禦：30-33",
+      "需要等級：3",
+      "需要力量：26",
+      "耐久度：24",
+      "+15 防禦",
+      "火焰抗性 +25%",
+      "+(48-792) 準確率 （依角色等級而定） [8 * clvl] (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/coif_of_glory_dred.jpg"
+  },
+  {
+    "id": "berserkers_hauberk",
+    "name": "狂戰士鎖子甲",
+    "nameEn": "Berserker's Hauberk",
+    "nameClassic": "狂戰士的鎖子甲",
+    "baseItem": "板甲",
+    "baseItemId": "splint_mail",
+    "slot": "armor",
+    "grade": "normal",
+    "requiredLevel": 3,
+    "requiredStr": 51,
+    "classOnly": null,
+    "tc": 21,
+    "qlvl": 5,
+    "attributes": [
+      "防禦：90-95",
+      "防禦：(93-387)-(98-392)",
+      "需要等級：3",
+      "需要力量：51",
+      "耐久度：30",
+      "+1 野蠻人技能等級",
+      "魔法傷害降低 2",
+      "+(3-297) 防禦 （依角色等級而定） [3 * clvl] (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/splint_mail_dred.jpg"
+  },
+  {
+    "id": "berserkers_hatchet",
+    "name": "狂戰士手斧",
+    "nameEn": "Berserker's Hatchet",
+    "nameClassic": "狂戰士的手斧",
+    "baseItem": "雙刃斧",
+    "baseItemId": "double_axe",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 3,
+    "requiredStr": 43,
+    "classOnly": null,
+    "tc": 15,
+    "qlvl": 5,
+    "attributes": [
+      "單手傷害：5 - 13 點",
+      "單手傷害：7 - 19 點",
+      "需要等級：3",
+      "需要力量：43",
+      "耐久度：24",
+      "武器基本速度：[10]",
+      "30% 準確率加成",
+      "擊中竊取 5% 法力",
+      "+50% 傷害強化 (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/double_axe_dred.jpg"
+  },
+  {
+    "id": "cleglaws_tooth",
+    "name": "克雷德勞之牙",
+    "nameEn": "Cleglaw's Tooth",
+    "nameClassic": "克雷得勞之牙",
+    "baseItem": "長劍",
+    "baseItemId": "long_sword",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 4,
+    "requiredStr": 55,
+    "requiredDex": 39,
+    "classOnly": null,
+    "tc": 21,
+    "qlvl": 6,
+    "attributes": [
+      "單手傷害：3 - 19 點",
+      "單手傷害：3 - (20-142) 點",
+      "需要等級：4",
+      "需要力量：55",
+      "需要敏捷：39",
+      "耐久度：44",
+      "武器基本速度：[-10]",
+      "+50% 致命打擊",
+      "30% 準確率加成",
+      "+(1-123) 最大傷害 （依角色等級而定） [1.25 * clvl] (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/hellplague_lred.jpg"
+  },
+  {
+    "id": "cleglaws_pincers",
+    "name": "克雷德勞之鉗",
+    "nameEn": "Cleglaw's Pincers",
+    "nameClassic": "克雷得勞之鉗",
+    "baseItem": "鍊甲手套",
+    "baseItemId": "chain_gloves",
+    "slot": "gloves",
+    "grade": "normal",
+    "requiredLevel": 4,
+    "requiredStr": 25,
+    "classOnly": null,
+    "tc": 12,
+    "qlvl": 6,
+    "attributes": [
+      "防禦：8-9",
+      "需要等級：4",
+      "需要力量：25",
+      "耐久度：16",
+      "使目標減慢 25%",
+      "擊退",
+      "+(10-990) 準確率 （依角色等級而定） [10 * clvl] (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/bracers_m_lred.jpg"
+  },
+  {
+    "id": "cleglaws_claw",
+    "name": "克雷德勞之爪",
+    "nameEn": "Cleglaw's Claw",
+    "nameClassic": "克雷得勞之爪",
+    "baseItem": "小型盾",
+    "baseItemId": "small_shield",
+    "slot": "shield",
+    "grade": "normal",
+    "requiredLevel": 4,
+    "requiredStr": 22,
+    "classOnly": null,
+    "tc": 6,
+    "qlvl": 6,
+    "attributes": [
+      "防禦：25-27",
+      "需要等級：4",
+      "需要力量：22",
+      "耐久度：16",
+      "重擊傷害：2 - 3 點",
+      "格擋機率：35% (Pal)",
+      "格擋機率：30% (Ama/Asn/Bar)",
+      "格擋機率：25% (Dru/Nec/Sor)",
+      "中毒的時效縮短 75%",
+      "+17 防禦",
+      "所有抗性 +15 (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/umbral_disk_lred.jpg"
+  },
+  {
+    "id": "infernal_cranium",
+    "name": "煉獄頭骨",
+    "nameEn": "Infernal Cranium",
+    "nameClassic": "地獄頭骨",
+    "baseItem": "便帽",
+    "baseItemId": "cap",
+    "slot": "helm",
+    "grade": "normal",
+    "requiredLevel": 5,
+    "classOnly": null,
+    "tc": 3,
+    "qlvl": 7,
+    "attributes": [
+      "防禦：3-5",
+      "防禦：(5-201)-(7-203)",
+      "需要等級：5",
+      "耐久度：12",
+      "+20% 受到的傷害轉為法力",
       "所有抗性 +10",
-      "+(2.5 每等級) 防禦力"
-    ]
+      "+(2-198) 防禦 （依角色等級而定） [2 * clvl] (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/war_bonnet_lyel.jpg"
   },
   {
-    id: "irathas_finery",
-    name: "依雷薩的華服",
-    nameEn: "Iratha's Finery",
-    pieces: [
-      {
-        id: "iratha_helm",
-        name: "依雷薩的線圈",
-        nameEn: "Iratha's Coil",
-        baseItem: "皇冠 (Crown)",
-        slot: "helm",
-        requiredLevel: 15,
-        attributes: ["抗火 +30%", "抗閃電 +30%"]
-      },
-      {
-        id: "iratha_amulet",
-        name: "依雷薩的領圈",
-        nameEn: "Iratha's Collar",
-        baseItem: "項鍊 (Amulet)",
-        slot: "amulet",
-        requiredLevel: 15,
-        attributes: ["抗毒 +30%", "毒素持續時間縮短 75%"]
-      },
-      {
-        id: "iratha_gloves",
-        name: "依雷薩的袖口",
-        nameEn: "Iratha's Cuff",
-        baseItem: "輕型鐵手套 (Light Gauntlets)",
-        slot: "gloves",
-        requiredLevel: 15,
-        attributes: ["抗寒 +30%", "冰凍時間減半"]
-      },
-      {
-        id: "iratha_belt",
-        name: "依雷薩的繩索",
-        nameEn: "Iratha's Cord",
-        baseItem: "重扣帶 (Heavy Belt)",
-        slot: "belt",
-        requiredLevel: 15,
-        attributes: ["+25 防禦", "+5 敏捷"]
-      }
+    "id": "infernal_sign",
+    "name": "煉獄符印",
+    "nameEn": "Infernal Sign",
+    "nameClassic": "地獄符號",
+    "baseItem": "厚腰帶",
+    "baseItemId": "heavy_belt",
+    "slot": "belt",
+    "grade": "normal",
+    "requiredLevel": 5,
+    "requiredStr": 45,
+    "classOnly": null,
+    "tc": 21,
+    "qlvl": 7,
+    "attributes": [
+      "防禦：31",
+      "需要等級：5",
+      "需要力量：45",
+      "耐久度：18",
+      "腰帶空間：+8 格",
+      "+25 防禦",
+      "+20 生命",
+      "毒素抗性 +25% (2)",
+      "被凍結的時效減半 (3)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+50 防禦" },
-      { count: 3, bonus: "+20% 跑步/步行速度" }
-    ],
-    fullBonuses: [
-      "+15 敏捷",
-      "所有抗性 +20 (配合部件單抗，四件套整套抗性總計達 +85%)",
-      "+10% 最大全抗性上限 (達到 85% 上限)",
-      "無法被凍結"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/heavy_belt_lyel.jpg"
   },
   {
-    id: "infernal_tools",
-    name: "地獄器具",
-    nameEn: "Infernal Tools",
-    pieces: [
-      {
-        id: "infernal_helm",
-        name: "地獄頭骨",
-        nameEn: "Infernal Cranium",
-        baseItem: "帽子 (Cap)",
-        slot: "helm",
-        requiredLevel: 5,
-        attributes: ["受損生命 20% 轉為法力", "所有抗性 +10"]
-      },
-      {
-        id: "infernal_weapon",
-        name: "地獄之火",
-        nameEn: "Infernal Torch",
-        baseItem: "殘酷之杖 (Grim Wand)",
-        slot: "weapon",
-        requiredLevel: 5,
-        attributes: ["+1 死靈法師技能", "+100-144 攻擊準確率"]
-      },
-      {
-        id: "infernal_belt",
-        name: "地獄扣帶",
-        nameEn: "Infernal Buckle",
-        baseItem: "重扣帶 (Heavy Belt)",
-        slot: "belt",
-        requiredLevel: 5,
-        attributes: ["+25 防禦", "+15 最大法力"]
-      }
+    "id": "infernal_torch",
+    "name": "煉獄火炬",
+    "nameEn": "Infernal Torch",
+    "nameClassic": "地獄火炬",
+    "baseItem": "陰森魔杖",
+    "baseItemId": "grim_wand",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 5,
+    "classOnly": null,
+    "tc": 27,
+    "qlvl": 7,
+    "attributes": [
+      "單手傷害：13 - 14 點",
+      "需要等級：5",
+      "耐久度：15",
+      "武器基本速度：[0]",
+      "+1 死靈法師技能等級",
+      "+8 最小傷害",
+      "+150% 對不死怪物的傷害",
+      "+(10-990) 準確率 （依角色等級而定） [10 * clvl] (2)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+(10 每等級) 生命" }
-    ],
-    fullBonuses: [
-      "+2 死靈法師技能",
-      "抗毒 +25%",
-      "+25 敏捷",
-      "無法被凍結"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/grim_wand_lyel.jpg"
   },
   {
-    id: "arctic_gear",
-    name: "北極裝備",
-    nameEn: "Arctic Gear",
-    pieces: [
-      {
-        id: "arctic_armor",
-        name: "北極毛皮",
-        nameEn: "Arctic Furs",
-        baseItem: "布甲 (Quilted Armor)",
-        slot: "armor",
-        requiredLevel: 2,
-        attributes: ["+300% 強化防禦", "所有抗性 +10"]
-      },
-      {
-        id: "arctic_weapon",
-        name: "北極角弓",
-        nameEn: "Arctic Horn",
-        baseItem: "短弓 (Short Bow)",
-        slot: "weapon",
-        requiredLevel: 2,
-        attributes: ["+50% 增強傷害", "+20 攻擊準確率"]
-      },
-      {
-        id: "arctic_gloves",
-        name: "北極手套",
-        nameEn: "Arctic Mitts",
-        baseItem: "輕型手套 (Light Gauntlets)",
-        slot: "gloves",
-        requiredLevel: 2,
-        attributes: ["+20 生命", "+10% 攻擊速度 (IAS)"]
-      },
-      {
-        id: "arctic_belt",
-        name: "北極束帶",
-        nameEn: "Arctic Binding",
-        baseItem: "輕扣帶 (Light Belt)",
-        slot: "belt",
-        requiredLevel: 2,
-        attributes: ["抗寒 +40%", "+30 防禦"]
-      }
+    "id": "banes_wraithskin",
+    "name": "貝恩的靈膚",
+    "nameEn": "Bane's Wraithskin",
+    "baseItem": "硬皮甲",
+    "baseItemId": "hard_leather_armor",
+    "slot": "armor",
+    "grade": "normal",
+    "requiredLevel": 8,
+    "requiredStr": 20,
+    "classOnly": null,
+    "qlvl": 7,
+    "attributes": [
+      "防禦：71-74",
+      "需要等級：8",
+      "需要力量：20",
+      "耐久度：28",
+      "+50 防禦",
+      "魔法抗性 +30%",
+      "+25% 打擊恢復 (2)",
+      "+(8-792) 準確率 （依角色等級而定） [8 * clvl] (3)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+5 力量" }
-    ],
-    fullBonuses: [
-      "+2 亞馬遜技能",
-      "增加 6-14 冰寒傷害",
-      "無法被凍結",
-      "+20% 跑步/步行速度"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/hard_leather_armor_dred.jpg"
   },
   {
-    id: "sanders_folly",
-    name: "桑德的愚行",
-    nameEn: "Sander's Folly",
-    pieces: [
-      {
-        id: "sander_helm",
-        name: "桑德的典範",
-        nameEn: "Sander's Paragon",
-        baseItem: "帽子 (Cap)",
-        slot: "helm",
-        requiredLevel: 25,
-        attributes: ["+1 所有技能", "+(1 每等級) 防禦力"]
-      },
-      {
-        id: "sander_weapon",
-        name: "桑德的迷信",
-        nameEn: "Sander's Superstition",
-        baseItem: "骨杖 (Bone Wand)",
-        slot: "weapon",
-        requiredLevel: 25,
-        attributes: ["+20% 快速施法速度 (FCR)", "+25-75 冰寒傷害"]
-      },
-      {
-        id: "sander_gloves",
-        name: "桑德的禁忌",
-        nameEn: "Sander's Taboo",
-        baseItem: "重手套 (Heavy Gloves)",
-        slot: "gloves",
-        requiredLevel: 28,
-        attributes: ["+20% 攻擊速度 (IAS)", "+40 生命"]
-      },
-      {
-        id: "sander_boots",
-        name: "桑德的碎岩",
-        nameEn: "Sander's Riprap",
-        baseItem: "重靴 (Heavy Boots)",
-        slot: "boots",
-        requiredLevel: 20,
-        attributes: ["+40% 跑步/步行速度 (經典跑速神靴)", "+10 力量", "+10 敏捷"]
-      }
+    "id": "banes_authority",
+    "name": "貝恩的權威",
+    "nameEn": "Bane's Authority",
+    "baseItem": "輕腰帶",
+    "baseItemId": "light_belt",
+    "slot": "belt",
+    "grade": "normal",
+    "requiredLevel": 8,
+    "classOnly": null,
+    "qlvl": 7,
+    "attributes": [
+      "防禦：3",
+      "腰帶空間：+4 格",
+      "需要等級：8",
+      "耐久度：14",
+      "+10% 施法速度",
+      "+20 生命",
+      "+15 能量 (3)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+50 防禦" }
+    "imageUrl": "https://static.d2r.world/img/items/magic/light_belt_dred.jpg"
+  },
+  {
+    "id": "banes_oathmaker",
+    "name": "貝恩的立誓者",
+    "nameEn": "Bane's Oathmaker",
+    "baseItem": "波刃匕首",
+    "baseItemId": "kris",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 8,
+    "requiredDex": 23,
+    "classOnly": null,
+    "qlvl": 7,
+    "attributes": [
+      "單手傷害：2 - 11 點",
+      "需要等級：8",
+      "需要敏捷：23",
+      "武器基本速度：[-20]",
+      "+20% 跑步 / 行走速度",
+      "+(1-99) 最大傷害 （依角色等級而定） [1 * clvl]",
+      "+3 擊殺法力恢復 (2)",
+      "+30% 致命打擊 (3)"
     ],
-    fullBonuses: [
+    "imageUrl": "https://static.d2r.world/img/items/magic/banes_spire.jpg"
+  },
+  {
+    "id": "deaths_touch",
+    "name": "死亡之觸",
+    "nameEn": "Death's Touch",
+    "nameClassic": "死亡之觸",
+    "baseItem": "征戰劍",
+    "baseItemId": "war_sword",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 6,
+    "requiredStr": 71,
+    "requiredDex": 45,
+    "classOnly": null,
+    "tc": 27,
+    "qlvl": 8,
+    "attributes": [
+      "單手傷害：10 - 25 點",
+      "需要等級：6",
+      "需要力量：71",
+      "需要敏捷：45",
+      "耐久度：44",
+      "武器基本速度：[0]",
+      "+25% 傷害強化",
+      "擊中竊取 4% 生命",
+      "附加 25 - 75 冰寒傷害 (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/war_sword_lred.jpg"
+  },
+  {
+    "id": "deaths_hand",
+    "name": "死亡之手",
+    "nameEn": "Death's Hand",
+    "nameClassic": "死亡之手",
+    "baseItem": "皮革手套",
+    "baseItemId": "leather_gloves",
+    "slot": "gloves",
+    "grade": "normal",
+    "requiredLevel": 6,
+    "classOnly": null,
+    "tc": 3,
+    "qlvl": 8,
+    "attributes": [
+      "防禦：2-3",
+      "需要等級：6",
+      "耐久度：12",
+      "中毒的時效縮短 75%",
+      "毒素抗性 +50%",
+      "攻擊速度 +30% (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/gloves_l_lred.jpg"
+  },
+  {
+    "id": "deaths_guard",
+    "name": "死亡之護",
+    "nameEn": "Death's Guard",
+    "nameClassic": "死亡的守護",
+    "baseItem": "束帶",
+    "baseItemId": "sash",
+    "slot": "belt",
+    "grade": "normal",
+    "requiredLevel": 6,
+    "classOnly": null,
+    "tc": 3,
+    "qlvl": 8,
+    "attributes": [
+      "防禦：22",
+      "需要等級：6",
+      "耐久度：12",
+      "腰帶空間：+4 格",
+      "無法凍結",
+      "+20 防禦",
+      "所有抗性 +15 (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/sash_l_lred.jpg"
+  },
+  {
+    "id": "sigons_visor",
+    "name": "西剛的護面",
+    "nameEn": "Sigon's Visor",
+    "nameClassic": "西剛之面甲",
+    "baseItem": "重盔",
+    "baseItemId": "great_helm",
+    "slot": "helm",
+    "grade": "normal",
+    "requiredLevel": 6,
+    "requiredStr": 63,
+    "classOnly": null,
+    "tc": 24,
+    "qlvl": 9,
+    "attributes": [
+      "防禦：55-60",
+      "需要等級：6",
+      "需要力量：63",
+      "耐久度：40",
+      "+25 防禦",
+      "+30 法力",
+      "+(8-792) 準確率 （依角色等級而定） [8 * clvl] (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/great_helm_whit.jpg"
+  },
+  {
+    "id": "sigons_shelter",
+    "name": "西剛的庇護",
+    "nameEn": "Sigon's Shelter",
+    "nameClassic": "西剛的遮蔽",
+    "baseItem": "哥德鎧甲",
+    "baseItemId": "gothic_plate",
+    "slot": "armor",
+    "grade": "normal",
+    "requiredLevel": 6,
+    "requiredStr": 70,
+    "classOnly": null,
+    "tc": 33,
+    "qlvl": 9,
+    "attributes": [
+      "防禦：170",
+      "需要等級：6",
+      "需要力量：70",
+      "耐久度：55",
+      "+25% 防禦強化",
+      "電擊抗性 +30%",
+      "攻擊者反傷：20 (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/gothic_plate_whit.jpg"
+  },
+  {
+    "id": "sigons_sabot",
+    "name": "西剛的硬靴",
+    "nameEn": "Sigon's Sabot",
+    "nameClassic": "西剛的木鞋",
+    "baseItem": "護脛",
+    "baseItemId": "greaves",
+    "slot": "boots",
+    "grade": "normal",
+    "requiredLevel": 6,
+    "requiredStr": 70,
+    "classOnly": null,
+    "tc": 27,
+    "qlvl": 9,
+    "attributes": [
+      "防禦：12-15",
+      "需要等級：6",
+      "需要力量：70",
+      "耐久度：24",
+      "踢擊傷害：10 - 20 點",
+      "+20% 跑步 / 行走速度",
+      "冰寒抗性 +40%",
+      "+50 準確率 (2)",
+      "尋獲魔法物品機率提高 50% (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/plate_boots_whit.jpg"
+  },
+  {
+    "id": "sigons_guard",
+    "name": "西剛的守護",
+    "nameEn": "Sigon's Guard",
+    "nameClassic": "西剛的守護",
+    "baseItem": "塔盾",
+    "baseItemId": "tower_shield",
+    "slot": "shield",
+    "grade": "normal",
+    "requiredLevel": 6,
+    "requiredStr": 75,
+    "classOnly": null,
+    "tc": 24,
+    "qlvl": 9,
+    "attributes": [
+      "防禦：22-25",
+      "格擋機率：74% (Pal)",
+      "格擋機率：69% (Ama/Asn/Bar)",
+      "格擋機率：64% (Dru/Nec/Sor)",
+      "重擊傷害：1 - 5 點",
+      "需要等級：6",
+      "需要力量：75",
+      "耐久度：60",
       "+1 所有技能",
-      "+50 生命",
-      "所有抗性 +20",
-      "+100 法力"
-    ]
+      "格擋機率提高 20%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/bverrit_keep_whit.jpg"
   },
   {
-    id: "tancreds_battlegear",
-    name: "譚克雷的戰裝",
-    nameEn: "Tancred's Battlegear",
-    pieces: [
-      {
-        id: "tancred_armor",
-        name: "譚克雷的脊骨",
-        nameEn: "Tancred's Spine",
-        baseItem: "全鎧甲 (Full Plate Mail)",
-        slot: "armor",
-        requiredLevel: 20,
-        attributes: ["+15 力量", "+40 生命"]
-      },
-      {
-        id: "tancred_helm",
-        name: "譚克雷的骷髏",
-        nameEn: "Tancred's Skull",
-        baseItem: "骨盔 (Bone Helm)",
-        slot: "helm",
-        requiredLevel: 20,
-        attributes: ["+10% 攻擊速度 (IAS)", "+10% 快速打擊恢復 (FHR)"]
-      },
-      {
-        id: "tancred_boots",
-        name: "譚克雷的大頭釘",
-        nameEn: "Tancred's Hobnails",
-        baseItem: "靴子 (Boots)",
-        slot: "boots",
-        requiredLevel: 20,
-        attributes: ["體力消耗減慢 50%", "+10 敏捷"]
-      },
-      {
-        id: "tancred_weapon",
-        name: "譚克雷的烏鴉嘴",
-        nameEn: "Tancred's Crowbill",
-        baseItem: "軍用鎬 (Military Pick)",
-        slot: "weapon",
-        requiredLevel: 20,
-        attributes: ["+80% 增強傷害", "+75 攻擊準確率"]
-      },
-      {
-        id: "tancred_amulet",
-        name: "譚克雷的怪異",
-        nameEn: "Tancred's Weird",
-        baseItem: "項鍊 (Amulet)",
-        slot: "amulet",
-        requiredLevel: 20,
-        attributes: ["物理傷害減少 2", "魔法傷害減少 1"]
-      }
+    "id": "sigons_wrap",
+    "name": "西剛的裹腰",
+    "nameEn": "Sigon's Wrap",
+    "nameClassic": "西剛的披肩",
+    "baseItem": "鎧甲腰帶",
+    "baseItemId": "plated_belt",
+    "slot": "belt",
+    "grade": "normal",
+    "requiredLevel": 6,
+    "requiredStr": 60,
+    "classOnly": null,
+    "tc": 27,
+    "qlvl": 9,
+    "attributes": [
+      "防禦：8-11",
+      "防禦：(10-206)-(13-209)",
+      "需要等級：6",
+      "需要力量：60",
+      "耐久度：24",
+      "腰帶空間：+12 格",
+      "火焰抗性 +20%",
+      "+20 生命",
+      "+(2-198) 防禦 （依角色等級而定） [2 * clvl] (2)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+15 法力 (若包含項鍊則額外解鎖 +78% MF)" },
-      { count: 3, bonus: "每次命中偷取 5% 生命" },
-      { count: 4, bonus: "所有抗性 +15" }
-    ],
-    fullBonuses: [
-      "緩慢目標 35%",
-      "+75 生命",
-      "+75% 攻擊準確率加成",
-      "每次命中偷取 5% 生命"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/girdle_h_whit.jpg"
   },
   {
-    id: "vidalas_rig",
-    name: "維達拉的裝備",
-    nameEn: "Vidala's Rig",
-    pieces: [
-      {
-        id: "vidala_armor",
-        name: "維達拉的伏擊",
-        nameEn: "Vidala's Ambush",
-        baseItem: "皮甲 (Leather Armor)",
-        slot: "armor",
-        requiredLevel: 14,
-        attributes: ["+11 防禦", "+15 敏捷"]
-      },
-      {
-        id: "vidala_weapon",
-        name: "維達拉的倒鉤",
-        nameEn: "Vidala's Barb",
-        baseItem: "長戰鬥弓 (Long Battle Bow)",
-        slot: "weapon",
-        requiredLevel: 14,
-        attributes: ["增加 1-20 閃電傷害", "+1-2 敏捷"]
-      },
-      {
-        id: "vidala_boots",
-        name: "維達拉的步態",
-        nameEn: "Vidala's Fetlock",
-        baseItem: "輕鋼靴 (Light Plated Boots)",
-        slot: "boots",
-        requiredLevel: 14,
-        attributes: ["+30% 跑步/步行速度", "+150 體力上限"]
-      },
-      {
-        id: "vidala_amulet",
-        name: "維達拉的抓取",
-        nameEn: "Vidala's Snare",
-        baseItem: "項鍊 (Amulet)",
-        slot: "amulet",
-        requiredLevel: 14,
-        attributes: ["抗寒 +20%", "+15 生命"]
-      }
+    "id": "sigons_gage",
+    "name": "西剛的挑戰",
+    "nameEn": "Sigon's Gage",
+    "nameClassic": "西剛的挑戰",
+    "baseItem": "鋼鐵護手",
+    "baseItemId": "gauntlets",
+    "slot": "gloves",
+    "grade": "normal",
+    "requiredLevel": 6,
+    "requiredStr": 60,
+    "classOnly": null,
+    "tc": 27,
+    "qlvl": 9,
+    "attributes": [
+      "防禦：12-15",
+      "需要等級：6",
+      "需要力量：60",
+      "耐久度：24",
+      "+20 準確率",
+      "+10 力量",
+      "攻擊速度 +30% (2)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+(8 每等級) 攻擊準確率" }
-    ],
-    fullBonuses: [
-      "+1 亞馬遜技能",
-      "擊中使目標減速 20%",
-      "貫穿攻擊 (Piercing Attack 50%)",
-      "每次命中偷取 7% 法力"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/gaunlets_h_whit.jpg"
   },
   {
-    id: "arcannas_sign",
-    name: "奧瑟娜的標誌",
-    nameEn: "Arcanna's Sign",
-    pieces: [
-      {
-        id: "arcanna_armor",
-        name: "奧瑟娜的肉體",
-        nameEn: "Arcanna's Flesh",
-        baseItem: "輕型裝甲 (Light Plate)",
-        slot: "armor",
-        requiredLevel: 15,
-        attributes: ["物理傷害減少 2", "+2 照亮範圍"]
-      },
-      {
-        id: "arcanna_helm",
-        name: "奧瑟娜之頭",
-        nameEn: "Arcanna's Head",
-        baseItem: "頭飾 (Skull Cap)",
-        slot: "helm",
-        requiredLevel: 15,
-        attributes: ["生命恢復 +4", "攻擊者受到傷害 2"]
-      },
-      {
-        id: "arcanna_weapon",
-        name: "奧瑟娜的死靈魔杖",
-        nameEn: "Arcanna's Deathwand",
-        baseItem: "巨戰法杖 (War Staff)",
-        slot: "weapon",
-        requiredLevel: 15,
-        attributes: ["+1 魔法使技能", "+25 致命攻擊"]
-      },
-      {
-        id: "arcanna_amulet",
-        name: "奧瑟娜的徽記",
-        nameEn: "Arcanna's Sign",
-        baseItem: "項鍊 (Amulet)",
-        slot: "amulet",
-        requiredLevel: 15,
-        attributes: ["+15 法力", "法力恢復 +20%"]
-      }
+    "id": "isenharts_lightbrand",
+    "name": "依森哈特的光之烙鐵",
+    "nameEn": "Isenhart's Lightbrand",
+    "nameClassic": "依森哈德的光之烙鐵",
+    "baseItem": "闊劍",
+    "baseItemId": "broad_sword",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 8,
+    "requiredStr": 48,
+    "classOnly": null,
+    "tc": 15,
+    "qlvl": 11,
+    "attributes": [
+      "單手傷害：17 - 18 點",
+      "需要等級：8",
+      "需要力量：48",
+      "耐久度：32",
+      "武器基本速度：[0]",
+      "+10 最小傷害",
+      "攻擊速度 +20%",
+      "+(5-495) 準確率 （依角色等級而定） [5 * clvl] (2)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+50 法力" }
-    ],
-    fullBonuses: [
-      "+2 所有技能",
-      "+20% 快速施法速度 (FCR)",
-      "每次命中偷取 5% 法力",
-      "+50 生命"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/griswolds_edge_lgld.jpg"
   },
   {
-    id: "cow_kings_leathers",
-    name: "牛魔王之皮",
-    nameEn: "Cow King's Leathers",
-    pieces: [
-      {
-        id: "cow_king_horns",
-        name: "牛魔王之角",
-        nameEn: "Cow King's Horns",
-        baseItem: "戰帽 (War Hat)",
-        slot: "helm",
-        requiredLevel: 25,
-        attributes: ["受損生命 35% 轉為法力", "+75 防禦", "+15 敏捷"]
-      },
-      {
-        id: "cow_king_hide",
-        name: "牛魔王之皮",
-        nameEn: "Cow King's Hide",
-        baseItem: "板甲 (Studded Leather)",
-        slot: "armor",
-        requiredLevel: 18,
-        attributes: ["所有抗性 +18", "+60% 增強防禦", "+30 生命"]
-      },
-      {
-        id: "cow_king_hooves",
-        name: "牛魔王之蹄",
-        nameEn: "Cow King's Hooves",
-        baseItem: "重靴 (Heavy Boots)",
-        slot: "boots",
-        requiredLevel: 13,
-        attributes: ["+30% 跑步/步行速度", "+25-35% 更佳機會取得魔法裝備 (MF)", "+20 敏捷"]
-      }
+    "id": "isenharts_horns",
+    "name": "依森哈特的角盔",
+    "nameEn": "Isenhart's Horns",
+    "nameClassic": "依森哈德的號角",
+    "baseItem": "全罩盔",
+    "baseItemId": "full_helm",
+    "slot": "helm",
+    "grade": "normal",
+    "requiredLevel": 8,
+    "requiredStr": 41,
+    "classOnly": null,
+    "tc": 15,
+    "qlvl": 11,
+    "attributes": [
+      "防禦：23-26",
+      "需要等級：8",
+      "需要力量：41",
+      "耐久度：30",
+      "傷害降低 2",
+      "+6 敏捷",
+      "所有抗性 +8 (2)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+100 防禦" }
-    ],
-    fullBonuses: [
-      "+25% 機率造成壓碎打擊 (CB)",
-      "+100 生命",
-      "+20 所有屬性",
-      "攻擊時 25% 施展等級 5 靜態力場"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/duskdeep_lgld.jpg"
   },
   {
-    id: "milabregas_regalia",
-    name: "米拉伯佳的君威",
-    nameEn: "Milabrega's Regalia",
-    pieces: [
-      {
-        id: "milabrega_armor",
-        name: "米拉伯佳的長袍",
-        nameEn: "Milabrega's Robe",
-        baseItem: "古代裝甲 (Ancient Armor)",
-        slot: "armor",
-        requiredLevel: 17,
-        attributes: ["物理傷害減少 2", "攻擊者受到傷害 2"]
-      },
-      {
-        id: "milabrega_helm",
-        name: "米拉伯佳的冠冕",
-        nameEn: "Milabrega's Diadem",
-        baseItem: "皇冠 (Crown)",
-        slot: "helm",
-        requiredLevel: 17,
-        attributes: ["+15 法力", "+45 生命"]
-      },
-      {
-        id: "milabrega_weapon",
-        name: "米拉伯佳的權杖",
-        nameEn: "Milabrega's Rod",
-        baseItem: "戰杖 (War Scepter)",
-        slot: "weapon",
-        requiredLevel: 17,
-        attributes: ["+1 聖騎士技能", "+50% 對不死生物的傷害"]
-      },
-      {
-        id: "milabrega_shield",
-        name: "米拉伯佳的寶珠",
-        nameEn: "Milabrega's Orb",
-        baseItem: "輕盾 (Kite Shield)",
-        slot: "shield",
-        requiredLevel: 17,
-        attributes: ["+20% 增加格擋機率", "+25 防禦"]
-      }
+    "id": "isenharts_case",
+    "name": "依森哈特的外殼",
+    "nameEn": "Isenhart's Case",
+    "nameClassic": "依森哈德的外殼",
+    "baseItem": "胸鎧",
+    "baseItemId": "breast_plate",
+    "slot": "armor",
+    "grade": "normal",
+    "requiredLevel": 8,
+    "requiredStr": 30,
+    "classOnly": null,
+    "tc": 18,
+    "qlvl": 11,
+    "attributes": [
+      "防禦：105-108",
+      "防禦：(107-303)-(110-306)",
+      "需要等級：8",
+      "需要力量：30",
+      "耐久度：50",
+      "魔法傷害降低 2",
+      "+40 防禦",
+      "+(2-198) 防禦 （依角色等級而定） [2 * clvl] (2)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+75 生命" }
-    ],
-    fullBonuses: [
-      "+2 聖騎士技能",
-      "所有抗性 +20",
-      "+20 力量",
-      "無法被凍結"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/breast_plate_lgld.jpg"
   },
   {
-    id: "najs_ancient_vestige",
-    name: "娜吉的古代遺物",
-    nameEn: "Naj's Ancient Vestige",
-    pieces: [
-      {
-        id: "naj_armor",
-        name: "娜吉的輕甲",
-        nameEn: "Naj's Light Plate",
-        baseItem: "地獄鍛造裝甲 (Hellforge Plate)",
-        slot: "armor",
-        requiredLevel: 71,
-        attributes: ["+1 所有技能", "所有抗性 +25", "+300 防禦", "+65 生命"]
-      },
-      {
-        id: "naj_helm",
-        name: "娜吉的小圓環",
-        nameEn: "Naj's Circlet",
-        baseItem: "頭飾 (Circlet)",
-        slot: "helm",
-        requiredLevel: 28,
-        attributes: ["+1 所有技能", "+12 敏捷", "+5 照亮範圍"]
-      },
-      {
-        id: "naj_staff",
-        name: "娜吉的解謎杖",
-        nameEn: "Naj's Puzzler",
-        baseItem: "長老之杖 (Elder Staff)",
-        slot: "weapon",
-        requiredLevel: 78,
-        attributes: ["+1 所有技能", "+30% 快速施法速度 (FCR)", "等級 11 傳送 (Teleport - 69 次聚氣，拓荒副手神杖)"]
-      }
+    "id": "isenharts_parry",
+    "name": "依森哈特的招架",
+    "nameEn": "Isenhart's Parry",
+    "nameClassic": "依森哈德的閃避",
+    "baseItem": "哥德盾",
+    "baseItemId": "gothic_shield",
+    "slot": "shield",
+    "grade": "normal",
+    "requiredLevel": 8,
+    "requiredStr": 60,
+    "classOnly": null,
+    "tc": 30,
+    "qlvl": 11,
+    "attributes": [
+      "防禦：70-75",
+      "格擋機率：46% (Pal)",
+      "格擋機率：41% (Ama/Asn/Bar)",
+      "格擋機率：36% (Dru/Nec/Sor)",
+      "重擊傷害：2 - 6 點",
+      "需要等級：8",
+      "需要力量：60",
+      "耐久度：40",
+      "攻擊者受到 4 點電擊傷害",
+      "+40 防禦",
+      "所有抗性 +8 (2)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+175 防禦" }
+    "imageUrl": "https://static.d2r.world/img/items/magic/the_ward_lgld.jpg"
+  },
+  {
+    "id": "civerbs_cudgel",
+    "name": "克維雷布的短棍",
+    "nameEn": "Civerb's Cudgel",
+    "nameClassic": "希弗伯的短棍",
+    "baseItem": "莊嚴權杖",
+    "baseItemId": "grand_scepter",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 9,
+    "requiredStr": 37,
+    "classOnly": null,
+    "tc": 15,
+    "qlvl": 13,
+    "attributes": [
+      "單手傷害：8 - (36-140) 點",
+      "需要等級：9",
+      "需要力量：37",
+      "耐久度：60",
+      "武器基本速度：[10]",
+      "+(1-99) 最大傷害 （依角色等級而定） [1 * clvl]",
+      "+17-23 最大傷害",
+      "+50% 對不死怪物的傷害",
+      "+75 準確率"
     ],
-    fullBonuses: [
-      "+3 所有技能",
-      "所有抗性 +50",
-      "+20 力量",
+    "imageUrl": "https://static.d2r.world/img/items/magic/grand_scepter_lyel.jpg"
+  },
+  {
+    "id": "civerbs_icon",
+    "name": "克維雷布的聖像",
+    "nameEn": "Civerb's Icon",
+    "nameClassic": "希弗伯的圖案",
+    "baseItem": "護身符",
+    "baseItemId": "amulet",
+    "slot": "amulet",
+    "grade": "normal",
+    "requiredLevel": 9,
+    "classOnly": null,
+    "qlvl": 13,
+    "attributes": [
+      "需要等級：9",
+      "生命回復 +4",
+      "法力恢復 40%",
+      "冰寒抗性 +25% (2)",
+      "+25 防禦 (全套)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/amulet_lyel.jpg"
+  },
+  {
+    "id": "civerbs_ward",
+    "name": "克維雷布的防護",
+    "nameEn": "Civerb's Ward",
+    "nameClassic": "希弗柏的防護",
+    "baseItem": "大型盾",
+    "baseItemId": "large_shield",
+    "slot": "shield",
+    "grade": "normal",
+    "requiredLevel": 9,
+    "requiredStr": 34,
+    "classOnly": null,
+    "tc": 12,
+    "qlvl": 13,
+    "attributes": [
+      "防禦：27-29",
+      "需要等級：9",
+      "需要力量：34",
+      "耐久度：24",
+      "格擋機率：57% (Pal)",
+      "格擋機率：52% (Ama/Asn/Bar)",
+      "格擋機率：47% (Dru/Nec/Sor)",
+      "重擊傷害：2 - 4 點",
+      "+15 防禦",
+      "格擋機率提高 15%",
+      "+21-22 法力 (克維雷布的聖像)",
+      "毒素抗性 +25-26% (克維雷布的短棍)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/stormguild_lyel.jpg"
+  },
+  {
+    "id": "cathans_visage",
+    "name": "卡珊的容貌",
+    "nameEn": "Cathan's Visage",
+    "nameClassic": "卡珊的容貌",
+    "baseItem": "面具",
+    "baseItemId": "mask",
+    "slot": "helm",
+    "grade": "normal",
+    "requiredLevel": 11,
+    "requiredStr": 23,
+    "classOnly": null,
+    "tc": 21,
+    "qlvl": 15,
+    "attributes": [
+      "防禦：9-27",
+      "防禦：(11-207)-(29-225)",
+      "需要等級：11",
+      "需要力量：23",
+      "耐久度：20",
+      "冰寒抗性 +25%",
+      "+20 法力",
+      "+(2-198) 防禦 （依角色等級而定） [2 * clvl] (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/mask_dgrn.jpg"
+  },
+  {
+    "id": "cathans_mesh",
+    "name": "卡珊的網衣",
+    "nameEn": "Cathan's Mesh",
+    "nameClassic": "卡珊之網",
+    "baseItem": "鎖鍊甲",
+    "baseItemId": "chain_mail",
+    "slot": "armor",
+    "grade": "normal",
+    "requiredLevel": 11,
+    "requiredStr": 24,
+    "classOnly": null,
+    "tc": 15,
+    "qlvl": 15,
+    "attributes": [
+      "防禦：87-90",
+      "需要等級：11",
+      "需要力量：24",
+      "耐久度：45",
+      "+15 防禦",
+      "需求 -50%",
+      "攻擊者反傷：5 (2)",
+      "火焰抗性 +30% (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/chain_mail_dgrn.jpg"
+  },
+  {
+    "id": "cathans_rule",
+    "name": "卡珊的尺杖",
+    "nameEn": "Cathan's Rule",
+    "nameClassic": "卡珊之尺",
+    "baseItem": "戰鬥法杖",
+    "baseItemId": "battle_staff",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 11,
+    "classOnly": null,
+    "tc": 18,
+    "qlvl": 15,
+    "attributes": [
+      "雙手傷害：6 - 13 點",
+      "需要等級：11",
+      "耐久度：40",
+      "武器基本速度：[0]",
+      "+1 火焰技能",
+      "+10 火焰傷害最大值",
+      "+50% 對不死怪物的傷害",
+      "+50 法力 (2)",
+      "所有抗性 +10 (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/battle_staff_dgrn.jpg"
+  },
+  {
+    "id": "cathans_sigil",
+    "name": "卡珊的魔咒",
+    "nameEn": "Cathan's Sigil",
+    "nameClassic": "卡珊的魔咒",
+    "baseItem": "護身符",
+    "baseItemId": "amulet",
+    "slot": "amulet",
+    "grade": "normal",
+    "requiredLevel": 11,
+    "classOnly": null,
+    "qlvl": 15,
+    "attributes": [
+      "需要等級：11",
+      "攻擊者受到 5 點電擊傷害",
+      "+10% 打擊恢復",
+      "+50 準確率 (2)",
+      "尋獲魔法物品機率提高 25% (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/amulet_dgrn.jpg"
+  },
+  {
+    "id": "cathans_seal",
+    "name": "卡珊的封印",
+    "nameEn": "Cathan's Seal",
+    "nameClassic": "卡珊的封印",
+    "baseItem": "戒指",
+    "baseItemId": "ring",
+    "slot": "ring",
+    "grade": "normal",
+    "requiredLevel": 11,
+    "classOnly": null,
+    "qlvl": 15,
+    "attributes": [
+      "需要等級：11",
+      "擊中竊取 6% 生命",
+      "傷害降低 2",
+      "+10 力量 (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/ring_dgrn.jpg"
+  },
+  {
+    "id": "angelic_mantle",
+    "name": "天使的披風",
+    "nameEn": "Angelic Mantle",
+    "nameClassic": "天使的披風",
+    "baseItem": "環甲",
+    "baseItemId": "ring_mail",
+    "slot": "armor",
+    "grade": "normal",
+    "requiredLevel": 12,
+    "requiredStr": 36,
+    "classOnly": null,
+    "tc": 12,
+    "qlvl": 17,
+    "attributes": [
+      "防禦：68",
+      "防禦：218",
+      "需要等級：12",
+      "需要力量：36",
+      "耐久度：26",
+      "+40% 防禦強化",
+      "傷害降低 3",
+      "+150 防禦 (2)",
+      "火焰抗性 +50% (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/ring_mail_lgry.jpg"
+  },
+  {
+    "id": "angelic_sickle",
+    "name": "天使的鐮刀",
+    "nameEn": "Angelic Sickle",
+    "nameClassic": "天使的鐮刀",
+    "baseItem": "軍刀",
+    "baseItemId": "sabre",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 12,
+    "requiredStr": 25,
+    "requiredDex": 25,
+    "classOnly": null,
+    "tc": 9,
+    "qlvl": 17,
+    "attributes": [
+      "單手傷害：3 - 8 點",
+      "單手傷害：5 - 14 點",
+      "需要等級：12",
+      "需要力量：25",
+      "需要敏捷：25",
+      "耐久度：32",
+      "武器基本速度：[-10]",
+      "+250% 對不死怪物的傷害",
+      "+75 準確率",
+      "+75% 傷害強化 (2)",
+      "攻擊速度 +30% (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/krintizs_skewer_lgry.jpg"
+  },
+  {
+    "id": "angelic_halo",
+    "name": "天使的光暈",
+    "nameEn": "Angelic Halo",
+    "nameClassic": "天使之光",
+    "baseItem": "戒指",
+    "baseItemId": "ring",
+    "slot": "ring",
+    "grade": "normal",
+    "requiredLevel": 12,
+    "classOnly": null,
+    "qlvl": 17,
+    "attributes": [
+      "需要等級：12",
+      "生命回復 +6",
+      "+20 生命",
+      "+(144-1188) 準確率 （依角色等級而定） [12 * clvl] (2)",
+      "尋獲魔法物品機率提高 50% (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/ring_lgry.jpg"
+  },
+  {
+    "id": "angelic_wings",
+    "name": "天使的翅膀",
+    "nameEn": "Angelic Wings",
+    "nameClassic": "天使之翼",
+    "baseItem": "護身符",
+    "baseItemId": "amulet",
+    "slot": "amulet",
+    "grade": "normal",
+    "requiredLevel": 12,
+    "classOnly": null,
+    "qlvl": 17,
+    "attributes": [
+      "需要等級：12",
+      "+20% 受到的傷害轉為法力",
+      "照亮範圍 +3",
+      "+75 生命 (2)",
+      "+1 所有技能 (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/amulet_lgry.jpg"
+  },
+  {
+    "id": "vidalas_barb",
+    "name": "維達拉的倒刺",
+    "nameEn": "Vidala's Barb",
+    "nameClassic": "維達拉之倒刺",
+    "baseItem": "戰鬥長弓",
+    "baseItemId": "long_battle_bow",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 14,
+    "requiredStr": 40,
+    "requiredDex": 50,
+    "classOnly": null,
+    "tc": 24,
+    "qlvl": 19,
+    "attributes": [
+      "雙手傷害：3 - 18 點",
+      "需要等級：14",
+      "需要力量：40",
+      "需要敏捷：50",
+      "武器基本速度：[10]",
+      "附加 1 - 20 電擊傷害",
+      "+(8-792) 準確率 （依角色等級而定） [8 * clvl] (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/long_battle_bow_blac.jpg"
+  },
+  {
+    "id": "vidalas_ambush",
+    "name": "維達拉的突襲",
+    "nameEn": "Vidala's Ambush",
+    "nameClassic": "維達拉的突襲",
+    "baseItem": "皮革甲",
+    "baseItemId": "leather_armor",
+    "slot": "armor",
+    "grade": "normal",
+    "requiredLevel": 14,
+    "requiredStr": 15,
+    "classOnly": null,
+    "tc": 3,
+    "qlvl": 19,
+    "attributes": [
+      "防禦：64-67",
+      "防禦：(66-311)-(69-314)",
+      "需要等級：14",
+      "需要力量：15",
+      "耐久度：24",
+      "+50 防禦",
+      "+11 敏捷",
+      "火焰抗性 +24% (2)",
+      "+(2-247) 防禦 （依角色等級而定） [2.5 * clvl] (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/leather_armor_blac.jpg"
+  },
+  {
+    "id": "vidalas_fetlock",
+    "name": "維達拉的足距",
+    "nameEn": "Vidala's Fetlock",
+    "nameClassic": "維達拉的距毛",
+    "baseItem": "輕鎧靴",
+    "baseItemId": "light_plated_boots",
+    "slot": "boots",
+    "grade": "normal",
+    "requiredLevel": 14,
+    "requiredStr": 50,
+    "classOnly": null,
+    "tc": 21,
+    "qlvl": 19,
+    "attributes": [
+      "防禦：9-11",
+      "需要等級：14",
+      "需要力量：50",
+      "耐久度：18",
+      "踢擊傷害：8 - 16 點",
+      "+30% 跑步 / 行走速度",
+      "+150 精力上限",
+      "所有抗性 +8 (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/light_plate_boots_blac.jpg"
+  },
+  {
+    "id": "vidalas_snare",
+    "name": "維達拉的圈套",
+    "nameEn": "Vidala's Snare",
+    "nameClassic": "維達拉的陷阱",
+    "baseItem": "護身符",
+    "baseItemId": "amulet",
+    "slot": "amulet",
+    "grade": "normal",
+    "requiredLevel": 14,
+    "classOnly": null,
+    "qlvl": 19,
+    "attributes": [
+      "需要等級：14",
+      "冰寒抗性 +20%",
+      "+15 生命",
+      "尋獲魔法物品機率提高 50% (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/amulet_blac.jpg"
+  },
+  {
+    "id": "cow_kings_hide",
+    "name": "牛王之皮",
+    "nameEn": "Cow King's Hide",
+    "nameClassic": "牛魔王之皮",
+    "baseItem": "鑲釘皮甲",
+    "baseItemId": "studded_leather",
+    "slot": "armor",
+    "grade": "normal",
+    "requiredLevel": 18,
+    "requiredStr": 27,
+    "classOnly": null,
+    "tc": 9,
+    "qlvl": 20,
+    "attributes": [
+      "防禦：57",
+      "需要等級：18",
+      "需要力量：27",
+      "耐久度：32",
+      "+60% 防禦強化",
+      "被擊中時有 18% 機率施展等級 5 連鎖閃電",
+      "所有抗性 +18",
+      "+30 生命"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/studded_leather.jpg"
+  },
+  {
+    "id": "cow_kings_hooves",
+    "name": "牛王之蹄",
+    "nameEn": "Cow King's Hooves",
+    "nameClassic": "牛魔王之蹄",
+    "baseItem": "重靴",
+    "baseItemId": "heavy_boots",
+    "slot": "boots",
+    "grade": "normal",
+    "requiredLevel": 13,
+    "requiredStr": 18,
+    "classOnly": null,
+    "tc": 9,
+    "qlvl": 20,
+    "attributes": [
+      "防禦：30-41",
+      "需要等級：13",
+      "需要力量：18",
+      "耐久度：14",
+      "踢擊傷害：4 - 10 點",
+      "+25-35 防禦",
+      "+30% 跑步 / 行走速度",
+      "附加 25 - 35 火焰傷害",
       "+20 敏捷",
-      "+100 法力"
-    ]
+      "尋獲魔法物品機率提高 25%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/heavy_boots.jpg"
   },
   {
-    id: "bulkathos_children",
-    name: "布爾凱索的孩子 (雙神劍套裝)",
-    nameEn: "Bul-Kathos' Children",
-    pieces: [
-      {
-        id: "bulkathos_sacred_charge",
-        name: "布爾凱索的神聖代價",
-        nameEn: "Bul-Kathos' Sacred Charge",
-        baseItem: "巨神之刃 (Colossus Blade)",
-        slot: "weapon",
-        requiredLevel: 63,
-        attributes: ["+200% 增強傷害", "35% 機率造成壓碎打擊 (CB)", "擊倒目標", "所有抗性 +20"]
-      },
-      {
-        id: "bulkathos_tribal_guardian",
-        name: "布爾凱索的部族守護",
-        nameEn: "Bul-Kathos' Tribal Guardian",
-        baseItem: "秘儀之劍 (Mythical Sword)",
-        slot: "weapon",
-        requiredLevel: 66,
-        attributes: ["+200% 增強傷害", "+20 力量", "+20 敏捷", "增加 50 毒素傷害"]
-      }
+    "id": "cow_kings_horns",
+    "name": "牛王之角",
+    "nameEn": "Cow King's Horns",
+    "nameClassic": "牛魔王之角",
+    "baseItem": "戰帽",
+    "baseItemId": "war_hat",
+    "slot": "helm",
+    "grade": "exceptional",
+    "requiredLevel": 25,
+    "requiredStr": 20,
+    "classOnly": null,
+    "tc": 36,
+    "qlvl": 20,
+    "attributes": [
+      "防禦：120-128",
+      "需要等級：25",
+      "需要力量：20",
+      "耐久度：12",
+      "+75 防禦",
+      "被凍結的時效減半",
+      "攻擊者反傷：10",
+      "+35% 受到的傷害轉為法力"
     ],
-    partialBonuses: [],
-    fullBonuses: [
-      "+2 所有技能",
-      "+200 對惡魔的傷害",
-      "+200 對不死生物的傷害",
-      "+20 全屬性",
-      "每次命中偷取 10% 生命"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/cap_hat.jpg"
   },
   {
-    id: "heavens_brethren",
-    name: "天堂信徒",
-    nameEn: "Heaven's Brethren",
-    pieces: [
-      {
-        id: "heavens_helm",
-        name: "翁達爾的全能",
-        nameEn: "Ondal's Almighty",
-        baseItem: "螺旋頭盔 (Spired Helm)",
-        slot: "helm",
-        requiredLevel: 69,
-        attributes: ["+50 防禦", "+10% 快速打擊恢復 (FHR)", "等級 3 虛弱 (15 次聚氣)"]
-      },
-      {
-        id: "heavens_armor",
-        name: "海默蘇的堅毅",
-        nameEn: "Haemosu's Adament",
-        baseItem: "護胸甲 (Cuirass)",
-        slot: "armor",
-        requiredLevel: 44,
-        attributes: ["+500 防禦", "+40 生命", "近戰防禦 +35"]
-      },
-      {
-        id: "heavens_shield",
-        name: "太白之榮耀",
-        nameEn: "Taebaek's Glory",
-        baseItem: "保護盾牌 (Ward)",
-        slot: "shield",
-        requiredLevel: 81,
-        attributes: ["+50 防禦", "+30% 快速格擋速度", "+25% 增加格擋機率", "無法被凍結"]
-      },
-      {
-        id: "heavens_weapon",
-        name: "丹古的教誨",
-        nameEn: "Dangoon's Teaching",
-        baseItem: "強化硬棒 (Reinforced Mace)",
-        slot: "weapon",
-        requiredLevel: 68,
-        attributes: ["+40% 攻擊速度 (IAS)", "+1.5 每等級 最大傷害", "擊中時 10% 施展等級 3 冰風暴"]
-      }
+    "id": "arcannas_head",
+    "name": "阿卡娜的頭",
+    "nameEn": "Arcanna's Head",
+    "nameClassic": "阿卡娜的頭",
+    "baseItem": "顱帽",
+    "baseItemId": "skull_cap",
+    "slot": "helm",
+    "grade": "normal",
+    "requiredLevel": 15,
+    "requiredStr": 15,
+    "classOnly": null,
+    "tc": 6,
+    "qlvl": 20,
+    "attributes": [
+      "防禦：8-11",
+      "防禦：(11-305)-(14-308)",
+      "需要等級：15",
+      "需要力量：15",
+      "耐久度：18",
+      "生命回復 +4",
+      "攻擊者反傷：2",
+      "+(3-297) 防禦 （依角色等級而定） [3 * clvl] (2)",
+      "電擊抗性 +15% (3)"
     ],
-    partialBonuses: [
-      { count: 2, bonus: "+50 生命" }
+    "imageUrl": "https://static.d2r.world/img/items/magic/skull_cap_blac.jpg"
+  },
+  {
+    "id": "arcannas_flesh",
+    "name": "阿卡娜的血肉",
+    "nameEn": "Arcanna's Flesh",
+    "nameClassic": "阿卡娜的血肉",
+    "baseItem": "輕型鎧甲",
+    "baseItemId": "light_plate",
+    "slot": "armor",
+    "grade": "normal",
+    "requiredLevel": 15,
+    "requiredStr": 41,
+    "classOnly": null,
+    "tc": 36,
+    "qlvl": 20,
+    "attributes": [
+      "防禦：90-107",
+      "防禦：190-207",
+      "需要等級：15",
+      "需要力量：41",
+      "耐久度：60",
+      "照亮範圍 +2",
+      "傷害降低 3",
+      "+100 防禦 (2)",
+      "+10 能量 (3)"
     ],
-    fullBonuses: [
-      "+2 所有技能",
-      "所有抗性 +50",
-      "每次命中偷取 10% 生命",
-      "物理傷害減少 20%"
-    ]
+    "imageUrl": "https://static.d2r.world/img/items/magic/light_plate_blac.jpg"
+  },
+  {
+    "id": "arcannas_deathwand",
+    "name": "阿卡娜的死亡之杖",
+    "nameEn": "Arcanna's Deathwand",
+    "nameClassic": "阿卡娜的死亡之杖",
+    "baseItem": "征戰法杖",
+    "baseItemId": "war_staff",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 15,
+    "classOnly": null,
+    "tc": 24,
+    "qlvl": 20,
+    "attributes": [
+      "雙手傷害：12 - 28 點",
+      "需要等級：15",
+      "耐久度：50",
+      "武器基本速度：[20]",
+      "+1 魔法使技能等級",
+      "+25% 致命打擊",
+      "+50% 對不死怪物的傷害",
+      "+50 法力 (2)",
+      "法力恢復 5% (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/war_staff_blac.jpg"
+  },
+  {
+    "id": "arcannas_sign",
+    "name": "阿卡娜的符印",
+    "nameEn": "Arcanna's Sign",
+    "nameClassic": "阿卡娜的符號",
+    "baseItem": "護身符",
+    "baseItemId": "amulet",
+    "slot": "amulet",
+    "grade": "normal",
+    "requiredLevel": 15,
+    "classOnly": null,
+    "qlvl": 20,
+    "attributes": [
+      "需要等級：15",
+      "法力恢復 20%",
+      "+15 法力",
+      "尋獲魔法物品機率提高 50% (2)",
+      "火焰抗性 +20% (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/amulet_blac.jpg"
+  },
+  {
+    "id": "sanders_paragon",
+    "name": "山德的模範",
+    "nameEn": "Sander's Paragon",
+    "nameClassic": "山德的模範",
+    "baseItem": "便帽",
+    "baseItemId": "cap",
+    "slot": "helm",
+    "grade": "normal",
+    "requiredLevel": 25,
+    "classOnly": null,
+    "tc": 3,
+    "qlvl": 20,
+    "attributes": [
+      "防禦：(4-102)-(6-104)",
+      "需要等級：25",
+      "耐久度：12",
+      "+(1-99) 防禦 （依角色等級而定） [1 * clvl]",
+      "攻擊者反傷：8",
+      "尋獲魔法物品機率提高 35%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/war_bonnet_lpur.jpg"
+  },
+  {
+    "id": "sanders_superstition",
+    "name": "山德的迷信",
+    "nameEn": "Sander's Superstition",
+    "nameClassic": "山德的迷信",
+    "baseItem": "骸骨魔杖",
+    "baseItemId": "bone_wand",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 25,
+    "classOnly": null,
+    "tc": 18,
+    "qlvl": 20,
+    "attributes": [
+      "單手傷害：5 - 12 點",
+      "需要等級：25",
+      "耐久度：15",
+      "武器基本速度：[-20]",
+      "+75% 傷害強化",
+      "+50% 對不死怪物的傷害",
+      "+20% 施法速度",
+      "+25 法力",
+      "擊中竊取 8% 法力",
+      "附加 25 - 75 冰寒傷害"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/gravenspine_lpur.jpg"
+  },
+  {
+    "id": "sanders_taboo",
+    "name": "山德的禁忌",
+    "nameEn": "Sander's Taboo",
+    "nameClassic": "山德的禁忌",
+    "baseItem": "厚皮手套",
+    "baseItemId": "heavy_gloves",
+    "slot": "gloves",
+    "grade": "normal",
+    "requiredLevel": 28,
+    "classOnly": null,
+    "tc": 9,
+    "qlvl": 20,
+    "attributes": [
+      "防禦：25-31",
+      "需要等級：28",
+      "耐久度：14",
+      "附加 9 - 11 毒素傷害，時效 3 秒",
+      "+20-25 防禦",
+      "+40 生命",
+      "攻擊速度 +20%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/heavy_gloves_lpur.jpg"
+  },
+  {
+    "id": "sanders_riprap",
+    "name": "山德的碎石",
+    "nameEn": "Sander's Riprap",
+    "nameClassic": "山德的碎石",
+    "baseItem": "重靴",
+    "baseItemId": "heavy_boots",
+    "slot": "boots",
+    "grade": "normal",
+    "requiredLevel": 20,
+    "requiredStr": 18,
+    "classOnly": null,
+    "tc": 9,
+    "qlvl": 20,
+    "attributes": [
+      "防禦：5-6",
+      "需要等級：20",
+      "需要力量：18",
+      "耐久度：14",
+      "踢擊傷害：4 - 10 點",
+      "+40% 跑步 / 行走速度",
+      "+100 準確率",
+      "+10 敏捷",
+      "+5 力量"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/heavy_boots_lpur.jpg"
+  },
+  {
+    "id": "irathas_coil",
+    "name": "依雷撒的盤頂",
+    "nameEn": "Iratha's Coil",
+    "nameClassic": "依雷撒的線圈",
+    "baseItem": "王冠",
+    "baseItemId": "crown",
+    "slot": "helm",
+    "grade": "normal",
+    "requiredLevel": 15,
+    "requiredStr": 55,
+    "classOnly": null,
+    "tc": 30,
+    "qlvl": 21,
+    "attributes": [
+      "防禦：25-45",
+      "防禦：(27-223)-(47-243)",
+      "需要等級：15",
+      "需要力量：55",
+      "耐久度：50",
+      "電擊抗性 +30%",
+      "火焰抗性 +30%",
+      "+(2-198) 防禦 （依角色等級而定） [2 * clvl] (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/crown_lgry.jpg"
+  },
+  {
+    "id": "irathas_collar",
+    "name": "依雷撒的項圈",
+    "nameEn": "Iratha's Collar",
+    "nameClassic": "依雷撒的項圈",
+    "baseItem": "護身符",
+    "baseItemId": "amulet",
+    "slot": "amulet",
+    "grade": "normal",
+    "requiredLevel": 15,
+    "classOnly": null,
+    "qlvl": 21,
+    "attributes": [
+      "需要等級：15",
+      "中毒的時效縮短 75%",
+      "毒素抗性 +30%",
+      "所有抗性 +15 (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/amulet_lgry.jpg"
+  },
+  {
+    "id": "irathas_cord",
+    "name": "依雷撒的腰繩",
+    "nameEn": "Iratha's Cord",
+    "nameClassic": "依雷撒之繩",
+    "baseItem": "厚腰帶",
+    "baseItemId": "heavy_belt",
+    "slot": "belt",
+    "grade": "normal",
+    "requiredLevel": 15,
+    "requiredStr": 45,
+    "classOnly": null,
+    "tc": 21,
+    "qlvl": 21,
+    "attributes": [
+      "防禦：31",
+      "需要等級：15",
+      "需要力量：45",
+      "耐久度：18",
+      "腰帶空間：+8 格",
+      "+25 防禦",
+      "+5 最小傷害",
+      "+10 敏捷 (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/heavy_belt_lgry.jpg"
+  },
+  {
+    "id": "irathas_cuff",
+    "name": "依雷撒的袖銬",
+    "nameEn": "Iratha's Cuff",
+    "nameClassic": "依雷撒的袖口",
+    "baseItem": "輕型護手",
+    "baseItemId": "light_gauntlets",
+    "slot": "gloves",
+    "grade": "normal",
+    "requiredLevel": 15,
+    "requiredStr": 45,
+    "classOnly": null,
+    "tc": 21,
+    "qlvl": 21,
+    "attributes": [
+      "防禦：9-11",
+      "需要等級：15",
+      "需要力量：45",
+      "耐久度：18",
+      "被凍結的時效減半",
+      "冰寒抗性 +30%",
+      "攻擊速度 +20% (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/light_gauntlets_lgry.jpg"
+  },
+  {
+    "id": "mavinas_icy_clutch",
+    "name": "馬維娜的冰握",
+    "nameEn": "M'avina's Icy Clutch",
+    "nameClassic": "馬維娜的冰握",
+    "baseItem": "戰鬥護手",
+    "baseItemId": "battle_gauntlets",
+    "slot": "gloves",
+    "grade": "exceptional",
+    "requiredLevel": 32,
+    "requiredStr": 88,
+    "classOnly": null,
+    "tc": 51,
+    "qlvl": 21,
+    "attributes": [
+      "防禦：84-97",
+      "需要等級：32",
+      "需要力量：88",
+      "耐久度：18",
+      "+45-50 防禦",
+      "附加 6 - 18 冰寒傷害",
+      "被凍結的時效減半",
+      "怪物金幣掉落量提高 56%",
+      "+10 力量",
+      "+15 敏捷",
+      "附加 131 - 252 冰寒傷害 (4)",
+      "+20% 冰寒技能傷害 (全套)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/light_gauntlets_whit.jpg"
+  },
+  {
+    "id": "mavinas_tenet",
+    "name": "馬維娜的教義",
+    "nameEn": "M'avina's Tenet",
+    "nameClassic": "馬維娜的教義",
+    "baseItem": "鯊皮腰帶",
+    "baseItemId": "sharkskin_belt",
+    "slot": "belt",
+    "grade": "exceptional",
+    "requiredLevel": 45,
+    "requiredStr": 20,
+    "classOnly": null,
+    "tc": 39,
+    "qlvl": 21,
+    "attributes": [
+      "防禦：81-86",
+      "需要等級：45",
+      "需要力量：20",
+      "耐久度：14",
+      "腰帶空間：+12 格",
+      "+50 防禦",
+      "+20% 跑步 / 行走速度",
+      "照亮範圍 +5",
+      "擊中竊取 5% 法力",
+      "所有抗性 +25 (4)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/light_belt_whit.jpg"
+  },
+  {
+    "id": "mavinas_true_sight",
+    "name": "馬維娜的真實之眼",
+    "nameEn": "M'avina's True Sight",
+    "nameClassic": "馬維娜的真實之眼",
+    "baseItem": "權冠",
+    "baseItemId": "diadem",
+    "slot": "helm",
+    "grade": "elite",
+    "requiredLevel": 64,
+    "classOnly": null,
+    "tc": 87,
+    "qlvl": 21,
+    "attributes": [
+      "防禦：200-210",
+      "需要等級：64",
+      "耐久度：20",
+      "+150 防禦",
+      "生命回復 +10",
+      "+25 法力",
+      "攻擊速度 +30%",
+      "+1 所有技能 (2)",
+      "50% 準確率加成 (3)",
+      "所有抗性 +25 (4)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/diadem_whit.jpg"
+  },
+  {
+    "id": "mavinas_caster",
+    "name": "馬維娜的強弓",
+    "nameEn": "M'avina's Caster",
+    "nameClassic": "馬維娜的施展",
+    "baseItem": "主母之弓",
+    "baseItemId": "grand_matron_bow",
+    "slot": "weapon",
+    "grade": "elite",
+    "requiredLevel": 70,
+    "requiredStr": 108,
+    "requiredDex": 152,
+    "classOnly": "亞馬遜",
+    "tc": 78,
+    "qlvl": 21,
+    "attributes": [
+      "雙手傷害：40 - 207 點",
+      "需要等級：70",
+      "需要力量：108",
+      "需要敏捷：152",
+      "武器基本速度：[10]",
+      "+188% 傷害強化",
+      "攻擊速度 +40%",
+      "+50 準確率",
+      "射出魔法箭矢 Level 1",
+      "附加 114 - 377 魔法傷害 (2)",
+      "擊中時有 10% 機率施展等級 15 閃電新星 (3)",
+      "+2 弓與弩技能 （只限亞馬遜） (4)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/reflex_bow_whit.jpg"
+  },
+  {
+    "id": "mavinas_embrace",
+    "name": "馬維娜的擁抱",
+    "nameEn": "M'avina's Embrace",
+    "nameClassic": "馬維娜的擁抱",
+    "baseItem": "海怪之殼",
+    "baseItemId": "kraken_shell",
+    "slot": "armor",
+    "grade": "elite",
+    "requiredLevel": 70,
+    "requiredStr": 122,
+    "classOnly": null,
+    "tc": 81,
+    "qlvl": 21,
+    "attributes": [
+      "防禦：(771-1163)-(877-1269)",
+      "需要等級：70",
+      "需要力量：122",
+      "耐久度：48",
+      "需求 -30%",
+      "被擊中時有 10% 機率施展等級 3 冰川之槍",
+      "魔法傷害降低 5-12",
+      "+(4-396) 防禦 （依角色等級而定） [4 * clvl]",
+      "+2 被動與魔法技能 （只限亞馬遜）",
+      "+350 防禦",
+      "+30% 打擊恢復 (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/field_plate_whit.jpg"
+  },
+  {
+    "id": "natalyas_totem",
+    "name": "娜塔亞的圖騰",
+    "nameEn": "Natalya's Totem",
+    "nameClassic": "娜塔亞的圖騰",
+    "baseItem": "陰森頭盔",
+    "baseItemId": "grim_helm",
+    "slot": "helm",
+    "grade": "exceptional",
+    "requiredLevel": 59,
+    "requiredStr": 58,
+    "classOnly": null,
+    "tc": 51,
+    "qlvl": 22,
+    "attributes": [
+      "防禦：195-300",
+      "需要等級：59",
+      "需要力量：58",
+      "耐久度：40",
+      "+135-175 防禦",
+      "所有抗性 +10-20",
+      "+20-30 敏捷",
+      "+10-20 力量",
+      "魔法傷害降低 3"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/wormskull_dgry.jpg"
+  },
+  {
+    "id": "natalyas_soul",
+    "name": "娜塔亞的靈魂",
+    "nameEn": "Natalya's Soul",
+    "nameClassic": "娜塔亞的靈魂",
+    "baseItem": "鐵網靴",
+    "baseItemId": "mesh_boots",
+    "slot": "boots",
+    "grade": "exceptional",
+    "requiredLevel": 25,
+    "requiredStr": 65,
+    "classOnly": null,
+    "tc": 45,
+    "qlvl": 22,
+    "attributes": [
+      "防禦：112-169",
+      "需要等級：25",
+      "需要力量：65",
+      "耐久度：66",
+      "踢擊傷害：23 - 52 點",
+      "+75-125 防禦",
+      "+40% 跑步 / 行走速度",
+      "精力恢復 +(0-24)% （依角色等級而定） [0.25 * clvl]",
+      "冰寒抗性 +15-25%",
+      "電擊抗性 +15-25%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/chain_boots_dgry.jpg"
+  },
+  {
+    "id": "natalyas_mark",
+    "name": "娜塔亞的印記",
+    "nameEn": "Natalya's Mark",
+    "nameClassic": "娜塔亞的記號",
+    "baseItem": "穿擊剪刃",
+    "baseItemId": "scissors_suwayyah",
+    "slot": "weapon",
+    "grade": "elite",
+    "requiredLevel": 79,
+    "requiredStr": 118,
+    "requiredDex": 118,
+    "classOnly": "刺客",
+    "tc": 87,
+    "qlvl": 22,
+    "attributes": [
+      "單手傷害：120 - 153 點",
+      "需要等級：79",
+      "需要力量：118",
+      "需要敏捷：118",
+      "耐久度：68",
+      "武器基本速度：[0]",
+      "+200% 傷害強化",
+      "+200% 對不死怪物的傷害",
+      "+200% 對惡魔的傷害",
+      "附加 12 - 17 火焰傷害",
+      "無視目標防禦",
+      "攻擊速度 +40%",
+      "+50 冰寒傷害"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/natalyas_mark_dgry.jpg"
+  },
+  {
+    "id": "natalyas_shadow",
+    "name": "娜塔亞的影子",
+    "nameEn": "Natalya's Shadow",
+    "nameClassic": "娜塔亞的影子",
+    "baseItem": "綴鱗戰甲",
+    "baseItemId": "loricated_mail",
+    "slot": "armor",
+    "grade": "elite",
+    "requiredLevel": 73,
+    "requiredStr": 149,
+    "classOnly": null,
+    "tc": 75,
+    "qlvl": 22,
+    "attributes": [
+      "防禦：540-721",
+      "需要等級：73",
+      "需要力量：149",
+      "耐久度：36",
+      "+150-225 防禦",
+      "+(1-99) 生命 （依角色等級而定） [1 * clvl]",
+      "中毒的時效縮短 75%",
+      "毒素抗性 +25%",
+      "+2 暗影修行 （只限刺客）",
+      "鑲孔（1-3）"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/scale_mail_dgry.jpg"
+  },
+  {
+    "id": "milabregas_diadem",
+    "name": "米拉伯佳權冠",
+    "nameEn": "Milabrega's Diadem",
+    "nameClassic": "米拉伯佳的王冠",
+    "baseItem": "王冠",
+    "baseItemId": "crown",
+    "slot": "helm",
+    "grade": "normal",
+    "requiredLevel": 17,
+    "requiredStr": 55,
+    "classOnly": null,
+    "tc": 30,
+    "qlvl": 23,
+    "attributes": [
+      "防禦：25-45",
+      "需要等級：17",
+      "需要力量：55",
+      "耐久度：50",
+      "+15 法力",
+      "+15 生命",
+      "冰寒抗性 +40% (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/crown_dblu.jpg"
+  },
+  {
+    "id": "milabregas_robe",
+    "name": "米拉伯佳外袍",
+    "nameEn": "Milabrega's Robe",
+    "nameClassic": "米拉伯佳之袍",
+    "baseItem": "上古鎧甲",
+    "baseItemId": "ancient_armor",
+    "slot": "armor",
+    "grade": "normal",
+    "requiredLevel": 17,
+    "requiredStr": 100,
+    "classOnly": null,
+    "tc": 42,
+    "qlvl": 23,
+    "attributes": [
+      "防禦：234",
+      "防禦：468",
+      "需要等級：17",
+      "需要力量：100",
+      "耐久度：60",
+      "傷害降低 2",
+      "攻擊者反傷：3",
+      "+100% 防禦強化 (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/victors_silk_dblu.jpg"
+  },
+  {
+    "id": "milabregas_orb",
+    "name": "米拉伯佳之球",
+    "nameEn": "Milabrega's Orb",
+    "nameClassic": "米拉伯佳之球",
+    "baseItem": "鳶盾",
+    "baseItemId": "kite_shield",
+    "slot": "shield",
+    "grade": "normal",
+    "requiredLevel": 17,
+    "requiredStr": 47,
+    "classOnly": null,
+    "tc": 15,
+    "qlvl": 23,
+    "attributes": [
+      "防禦：44",
+      "防禦：53",
+      "格擋機率：38% (Pal)",
+      "格擋機率：33% (Ama/Asn/Bar)",
+      "格擋機率：28% (Dru/Nec/Sor)",
+      "重擊傷害：2 - 5 點",
+      "需要等級：17",
+      "需要力量：47",
+      "耐久度：30",
+      "+25 防禦",
+      "尋獲魔法物品機率提高 20%",
+      "+50 生命 (2)",
+      "+50% 防禦強化 (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/steelclash_dblu.jpg"
+  },
+  {
+    "id": "milabregas_rod",
+    "name": "米拉伯佳節杖",
+    "nameEn": "Milabrega's Rod",
+    "nameClassic": "米拉伯佳之杖",
+    "baseItem": "征戰權杖",
+    "baseItemId": "war_scepter",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 17,
+    "requiredStr": 55,
+    "classOnly": null,
+    "tc": 21,
+    "qlvl": 23,
+    "attributes": [
+      "單手傷害：15 - 25 點",
+      "需要等級：17",
+      "需要力量：55",
+      "耐久度：70",
+      "武器基本速度：[-10]",
+      "+50% 傷害強化",
+      "+50% 對不死怪物的傷害",
+      "+1 聖騎士技能等級",
+      "照亮範圍 +2"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/war_scepter_dblu.jpg"
+  },
+  {
+    "id": "tal_rashas_adjudication",
+    "name": "塔拉夏的判決",
+    "nameEn": "Tal Rasha's Adjudication",
+    "nameClassic": "塔.拉夏的判決",
+    "baseItem": "護身符",
+    "baseItemId": "amulet",
+    "slot": "amulet",
+    "grade": "normal",
+    "requiredLevel": 67,
+    "classOnly": null,
+    "qlvl": 26,
+    "attributes": [
+      "需要等級：67",
+      "+2 魔法使技能等級",
+      "電擊抗性 +33%",
+      "附加 3 - 32 電擊傷害",
+      "+42 法力",
+      "+50 生命",
+      "+10% 施法速度 (4)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/amulet_dpur.jpg"
+  },
+  {
+    "id": "tal_rashas_lidless_eye",
+    "name": "塔拉夏的警惕之眼",
+    "nameEn": "Tal Rasha's Lidless Eye",
+    "nameClassic": "塔.拉夏的判決",
+    "baseItem": "渦流水晶",
+    "baseItemId": "swirling_crystal",
+    "slot": "weapon",
+    "grade": "exceptional",
+    "requiredLevel": 65,
+    "classOnly": "魔法使",
+    "tc": 51,
+    "qlvl": 26,
+    "attributes": [
+      "單手傷害：18 - 42 點",
+      "需要等級：65",
+      "耐久度：50",
+      "武器基本速度：[10]",
+      "+20% 施法速度",
+      "+77 法力",
+      "+57 生命",
+      "+10 能量",
+      "+1-2 至閃電專精 （只限魔法使）",
+      "+1-2 至火焰專精 （只限魔法使）",
+      "+1-2 至冰寒專精 （只限魔法使）",
+      "+1 魔法使技能等級 (2)",
+      "敵人火焰抗性 -15% (3)",
+      "敵人電擊抗性 -15% (4)",
+      "+15% 冰寒技能傷害 (全套)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/dragon_stone_dpur.jpg"
+  },
+  {
+    "id": "tal_rashas_horadric_crest",
+    "name": "塔拉夏的赫拉迪姆之冠",
+    "nameEn": "Tal Rasha's Horadric Crest",
+    "nameClassic": "塔.拉夏的赫拉迪克紋章",
+    "baseItem": "死亡面具",
+    "baseItemId": "death_mask",
+    "slot": "helm",
+    "grade": "exceptional",
+    "requiredLevel": 66,
+    "requiredStr": 55,
+    "classOnly": null,
+    "tc": 48,
+    "qlvl": 26,
+    "attributes": [
+      "防禦：99-131",
+      "需要等級：66",
+      "需要力量：55",
+      "耐久度：20",
+      "擊中竊取 10% 生命",
+      "擊中竊取 10% 法力",
+      "所有抗性 +15",
+      "+45 防禦",
+      "+30 法力",
+      "+60 生命"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/mask_dpur.jpg"
+  },
+  {
+    "id": "tal_rashas_finespun_cloth",
+    "name": "塔拉夏的精織腰布",
+    "nameEn": "Tal Rasha's Fine-Spun Cloth",
+    "nameClassic": "塔.拉夏的纖細衣服",
+    "baseItem": "鐵網腰帶",
+    "baseItemId": "mesh_belt",
+    "slot": "belt",
+    "grade": "exceptional",
+    "requiredLevel": 53,
+    "requiredStr": 47,
+    "classOnly": null,
+    "tc": 45,
+    "qlvl": 26,
+    "attributes": [
+      "防禦：35-40",
+      "防禦：95-100",
+      "需要等級：53",
+      "需要力量：47",
+      "耐久度：16",
+      "腰帶空間：+12 格",
+      "需求 -20%",
+      "+37% 受到的傷害轉為法力",
+      "+30 法力",
+      "+20 敏捷",
+      "尋獲魔法物品機率提高 10-15%",
+      "+60 防禦 (2)",
+      "+10% 施法速度 (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/belt_m_dpur.jpg"
+  },
+  {
+    "id": "tal_rashas_guardianship",
+    "name": "塔拉夏的守護",
+    "nameEn": "Tal Rasha's Guardianship",
+    "nameClassic": "塔.拉夏的守護",
+    "baseItem": "漆護鎧甲",
+    "baseItemId": "lacquered_plate",
+    "slot": "armor",
+    "grade": "elite",
+    "requiredLevel": 71,
+    "requiredStr": 84,
+    "classOnly": null,
+    "tc": 84,
+    "qlvl": 26,
+    "attributes": [
+      "防禦：833-941",
+      "需要等級：71",
+      "需要力量：84",
+      "耐久度：55",
+      "+400 防禦",
+      "需求 -60%",
+      "魔法傷害降低 15",
+      "冰寒抗性 +40%",
+      "電擊抗性 +40%",
+      "火焰抗性 +40%",
+      "尋獲魔法物品機率提高 88%",
+      "+10% 施法速度 (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/gothic_plate_dpur.jpg"
+  },
+  {
+    "id": "tancreds_skull",
+    "name": "坦克雷的顱骨",
+    "nameEn": "Tancred's Skull",
+    "nameClassic": "坦克雷之骷髏",
+    "baseItem": "骸骨頭盔",
+    "baseItemId": "bone_helm",
+    "slot": "helm",
+    "grade": "normal",
+    "requiredLevel": 20,
+    "requiredStr": 25,
+    "classOnly": null,
+    "tc": 24,
+    "qlvl": 27,
+    "attributes": [
+      "防禦：33-36",
+      "需要等級：20",
+      "需要力量：25",
+      "耐久度：40",
+      "+10% 傷害強化",
+      "+40 準確率",
+      "所有抗性 +10 (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/wormskull_dgld.jpg"
+  },
+  {
+    "id": "tancreds_spine",
+    "name": "坦克雷的脊柱",
+    "nameEn": "Tancred's Spine",
+    "nameClassic": "坦克雷的脊柱",
+    "baseItem": "全身鎧甲",
+    "baseItemId": "full_plate_mail",
+    "slot": "armor",
+    "grade": "normal",
+    "requiredLevel": 20,
+    "requiredStr": 80,
+    "classOnly": null,
+    "tc": 39,
+    "qlvl": 27,
+    "attributes": [
+      "防禦：150-161",
+      "防禦：(152-348)-(163-359)",
+      "需要等級：20",
+      "需要力量：80",
+      "耐久度：70",
+      "+40 生命",
+      "+15 力量",
+      "+(2-198) 防禦 （依角色等級而定） [2 * clvl] (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/goldskin_dgld.jpg"
+  },
+  {
+    "id": "tancreds_hobnails",
+    "name": "坦克雷的釘靴",
+    "nameEn": "Tancred's Hobnails",
+    "nameClassic": "坦克雷的平頭釘",
+    "baseItem": "皮靴",
+    "baseItemId": "boots",
+    "slot": "boots",
+    "grade": "normal",
+    "requiredLevel": 20,
+    "classOnly": null,
+    "tc": 3,
+    "qlvl": 27,
+    "attributes": [
+      "防禦：2-3",
+      "需要等級：20",
+      "耐久度：12",
+      "踢擊傷害：3 - 8 點",
+      "精力恢復 +25%",
+      "+10 敏捷",
+      "+30% 跑步 / 行走速度 (2)",
+      "+10 力量 (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/leather_boots_dgld.jpg"
+  },
+  {
+    "id": "tancreds_crowbill",
+    "name": "坦克雷的鴉嘴鎬",
+    "nameEn": "Tancred's Crowbill",
+    "nameClassic": "坦克雷的鴉嘴鉗",
+    "baseItem": "軍用鎬",
+    "baseItemId": "military_pick",
+    "slot": "weapon",
+    "grade": "normal",
+    "requiredLevel": 20,
+    "requiredStr": 49,
+    "requiredDex": 33,
+    "classOnly": null,
+    "tc": 21,
+    "qlvl": 27,
+    "attributes": [
+      "單手傷害：12 - 19 點",
+      "需要等級：20",
+      "需要力量：49",
+      "需要敏捷：33",
+      "耐久度：26",
+      "武器基本速度：[-10]",
+      "+80% 傷害強化",
+      "+75 準確率",
+      "+20 法力 (2)",
+      "攻擊速度 +20% (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/mindrend_dgld.jpg"
+  },
+  {
+    "id": "tancreds_weird",
+    "name": "坦克雷的怪誕",
+    "nameEn": "Tancred's Weird",
+    "nameClassic": "坦克雷的怪誕",
+    "baseItem": "護身符",
+    "baseItemId": "amulet",
+    "slot": "amulet",
+    "grade": "normal",
+    "requiredLevel": 20,
+    "classOnly": null,
+    "qlvl": 27,
+    "attributes": [
+      "需要等級：20",
+      "傷害降低 2",
+      "魔法傷害降低 1",
+      "尋獲魔法物品機率提高 78% (2)",
+      "+60 準確率 (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/amulet_dgld.jpg"
+  },
+  {
+    "id": "hwanins_blessing",
+    "name": "桓因的祝福",
+    "nameEn": "Hwanin's Blessing",
+    "nameClassic": "華寧的祝福",
+    "baseItem": "腰帶",
+    "baseItemId": "belt",
+    "slot": "belt",
+    "grade": "normal",
+    "requiredLevel": 35,
+    "requiredStr": 25,
+    "classOnly": null,
+    "tc": 12,
+    "qlvl": 28,
+    "attributes": [
+      "防禦：6-153",
+      "需要等級：35",
+      "需要力量：25",
+      "耐久度：16",
+      "腰帶空間：+8 格",
+      "+(1-148) 防禦 （依角色等級而定） [1.5 * clvl]",
+      "附加 3 - 33 電擊傷害",
+      "防止怪物自療",
+      "+12% 受到的傷害轉為法力"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/belt_m.jpg"
+  },
+  {
+    "id": "hwanins_splendor",
+    "name": "桓因的光輝",
+    "nameEn": "Hwanin's Splendor",
+    "nameClassic": "華寧的光輝",
+    "baseItem": "莊嚴王冠",
+    "baseItemId": "grand_crown",
+    "slot": "helm",
+    "grade": "exceptional",
+    "requiredLevel": 45,
+    "requiredStr": 103,
+    "classOnly": null,
+    "tc": 57,
+    "qlvl": 28,
+    "attributes": [
+      "防禦：228",
+      "需要等級：45",
+      "需要力量：103",
+      "耐久度：50",
+      "+100% 防禦強化",
+      "生命回復 +20",
+      "魔法傷害降低 10",
+      "冰寒抗性 +37%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/crown_of_thieves.jpg"
+  },
+  {
+    "id": "hwanins_justice",
+    "name": "桓因的制裁",
+    "nameEn": "Hwanin's Justice",
+    "nameClassic": "華寧的正義",
+    "baseItem": "長柄鍥",
+    "baseItemId": "bill",
+    "slot": "weapon",
+    "grade": "exceptional",
+    "requiredLevel": 28,
+    "requiredStr": 95,
+    "classOnly": null,
+    "tc": 39,
+    "qlvl": 28,
+    "attributes": [
+      "雙手傷害：42 - 159 點",
+      "需要等級：28",
+      "需要力量：95",
+      "武器基本速度：[0]",
+      "+200% 傷害強化",
+      "附加 5 - 25 電擊傷害",
+      "攻擊速度 +40%",
+      "+330 準確率",
+      "永不毀損",
+      "擊中時有 10% 機率施展等級 3 寒冰球"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/voulge.jpg"
+  },
+  {
+    "id": "hwanins_refuge",
+    "name": "桓因的庇佑",
+    "nameEn": "Hwanin's Refuge",
+    "nameClassic": "華寧的保護",
+    "baseItem": "鎖鱗戰甲",
+    "baseItemId": "tigulated_mail",
+    "slot": "armor",
+    "grade": "exceptional",
+    "requiredLevel": 30,
+    "requiredStr": 86,
+    "classOnly": null,
+    "tc": 45,
+    "qlvl": 28,
+    "attributes": [
+      "防禦：376-390",
+      "需要等級：30",
+      "需要力量：86",
+      "耐久度：36",
+      "+200 防禦",
+      "被擊中時有 10% 機率施展等級 3 靜電力場",
+      "毒素抗性 +27%",
+      "+100 生命"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/scale_mail.jpg"
+  },
+  {
+    "id": "aldurs_stony_gaze",
+    "name": "艾爾多的冷酷凝視",
+    "nameEn": "Aldur's Stony Gaze",
+    "nameClassic": "艾爾多的冷酷凝視",
+    "baseItem": "獵人面罩",
+    "baseItemId": "hunters_guise",
+    "slot": "helm",
+    "grade": "exceptional",
+    "requiredLevel": 36,
+    "requiredStr": 56,
+    "classOnly": "德魯伊",
+    "tc": 48,
+    "qlvl": 29,
+    "attributes": [
+      "防禦：157-171",
+      "需要等級：36",
+      "需要力量：56",
+      "耐久度：20",
+      "+90 防禦",
+      "+25% 打擊恢復",
+      "法力恢復 17%",
+      "冰寒抗性 +40-50%",
+      "鑲孔（2）",
+      "照亮範圍 +5",
+      "+15 能量 (2)",
+      "+15 能量 (3)",
+      "+15 能量 (全套)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/antlers_oran.jpg"
+  },
+  {
+    "id": "aldurs_advance",
+    "name": "艾爾多的進擊",
+    "nameEn": "Aldur's Advance",
+    "nameClassic": "艾爾多的成長",
+    "baseItem": "戰鬥靴",
+    "baseItemId": "battle_boots",
+    "slot": "boots",
+    "grade": "exceptional",
+    "requiredLevel": 45,
+    "requiredStr": 95,
+    "classOnly": null,
+    "tc": 51,
+    "qlvl": 29,
+    "attributes": [
+      "防禦：39-47",
+      "需要等級：45",
+      "需要力量：95",
+      "踢擊傷害：37 - 64 點",
+      "永不毀損",
+      "+40% 跑步 / 行走速度",
+      "+180 精力上限",
+      "+10% 受到的傷害轉為法力",
+      "精力恢復 +32%",
+      "+50 生命",
+      "火焰抗性 +40-50%",
+      "+15 敏捷 (2)",
+      "+15 敏捷 (3)",
+      "+15 敏捷 (全套)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/light_plate_boots_oran.jpg"
+  },
+  {
+    "id": "aldurs_rhythm",
+    "name": "艾爾多的律動",
+    "nameEn": "Aldur's Rhythm",
+    "nameClassic": "艾爾多的律動",
+    "baseItem": "鋸齒釘頭鎚",
+    "baseItemId": "jagged_star",
+    "slot": "weapon",
+    "grade": "exceptional",
+    "requiredLevel": 42,
+    "requiredStr": 74,
+    "classOnly": null,
+    "tc": 39,
+    "qlvl": 29,
+    "attributes": [
+      "單手傷害：60 - 93 點",
+      "需要等級：42",
+      "需要力量：74",
+      "耐久度：72",
+      "武器基本速度：[10]",
+      "+200% 對惡魔的傷害",
+      "+50% 對不死怪物的傷害",
+      "附加 40 - 62 傷害",
+      "附加 50 - 75 電擊傷害",
+      "攻擊速度 +30%",
+      "擊中竊取 10% 生命",
+      "擊中竊取 5% 法力",
+      "鑲孔（2-3）",
+      "+15 力量 (2)",
+      "+15 力量 (3)",
+      "+15 力量 (全套)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/bloodrise_oran.jpg"
+  },
+  {
+    "id": "aldurs_deception",
+    "name": "艾爾多的欺暪",
+    "nameEn": "Aldur's Deception",
+    "nameClassic": "艾爾多的欺瞞",
+    "baseItem": "暗影鎧甲",
+    "baseItemId": "shadow_plate",
+    "slot": "armor",
+    "grade": "elite",
+    "requiredLevel": 76,
+    "requiredStr": 115,
+    "classOnly": null,
+    "tc": 84,
+    "qlvl": 29,
+    "attributes": [
+      "防禦：746-857",
+      "需要等級：76",
+      "需要力量：115",
+      "耐久度：70",
+      "+300 防禦",
+      "需求 -50%",
+      "電擊抗性 +40-50%",
+      "+15 敏捷",
+      "+20 力量",
+      "+1 元素技能 （只限德魯伊）",
+      "+1 變形技能 （只限德魯伊）",
+      "+15 體能 (2)",
+      "+15 體能 (3)",
+      "+15 體能 (全套)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/full_plate_mail_oran.jpg"
+  },
+  {
+    "id": "trangouls_scales",
+    "name": "塔格奧之鱗",
+    "nameEn": "Trang-Oul's Scales",
+    "nameClassic": "塔格奧之鱗",
+    "baseItem": "混沌戰甲",
+    "baseItemId": "chaos_armor",
+    "slot": "armor",
+    "grade": "exceptional",
+    "requiredLevel": 49,
+    "requiredStr": 84,
+    "classOnly": null,
+    "tc": 63,
+    "qlvl": 32,
+    "attributes": [
+      "防禦：857",
+      "需要等級：49",
+      "需要力量：84",
+      "耐久度：70",
+      "+150% 防禦強化",
+      "需求 -40%",
+      "+40% 跑步 / 行走速度",
+      "毒素抗性 +40%",
+      "+100 對遠程防禦",
+      "+2 召喚技能 （只限死靈法師）",
+      "電擊抗性 +50% (3)",
+      "受到的物理傷害降低 25% (全套)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/full_plate_mail_dyel.jpg"
+  },
+  {
+    "id": "trangouls_wing",
+    "name": "塔格奧之翼",
+    "nameEn": "Trang-Oul's Wing",
+    "nameClassic": "塔格奧之翼",
+    "baseItem": "領唱者首級",
+    "baseItemId": "cantor_trophy",
+    "slot": "shield",
+    "grade": "exceptional",
+    "requiredLevel": 54,
+    "requiredStr": 50,
+    "classOnly": "死靈法師",
+    "tc": 51,
+    "qlvl": 32,
+    "attributes": [
+      "防禦：175-189",
+      "需要等級：54",
+      "需要力量：50",
+      "耐久度：20",
+      "格擋機率：60%",
+      "+125 防禦",
+      "格擋機率提高 30%",
+      "毒素抗性 +40%",
+      "火焰抗性 +38-45%",
+      "+15 敏捷",
+      "+25 力量",
+      "+2 毒素與骸骨技能 （只限死靈法師）",
+      "敵人毒素抗性 -25% (3)",
+      "生命回復 +15 (4)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/gargoyle_head_dyel.jpg"
+  },
+  {
+    "id": "trangouls_claws",
+    "name": "塔格奧之爪",
+    "nameEn": "Trang-Oul's Claws",
+    "nameClassic": "塔格奧之手",
+    "baseItem": "重型護腕",
+    "baseItemId": "heavy_bracers",
+    "slot": "gloves",
+    "grade": "exceptional",
+    "requiredLevel": 45,
+    "requiredStr": 58,
+    "classOnly": null,
+    "tc": 45,
+    "qlvl": 32,
+    "attributes": [
+      "防禦：67-74",
+      "需要等級：45",
+      "需要力量：58",
+      "耐久度：16",
+      "+20% 施法速度",
+      "冰寒抗性 +30%",
+      "+30 防禦",
+      "+25% 毒素技能傷害",
+      "+2 詛咒 （只限死靈法師）"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/bracers_m_dyel.jpg"
+  },
+  {
+    "id": "trangouls_guise",
+    "name": "塔格奧之容",
+    "nameEn": "Trang-Oul's Guise",
+    "nameClassic": "塔格奧之外裝",
+    "baseItem": "骸骨面罩",
+    "baseItemId": "bone_visage",
+    "slot": "helm",
+    "grade": "elite",
+    "requiredLevel": 65,
+    "requiredStr": 106,
+    "classOnly": null,
+    "tc": 84,
+    "qlvl": 32,
+    "attributes": [
+      "防禦：180-257",
+      "需要等級：65",
+      "需要力量：106",
+      "耐久度：40",
+      "+25% 打擊恢復",
+      "生命回復 +5",
+      "+80-100 防禦",
+      "+150 法力",
+      "攻擊者反傷：20"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/wormskull_dgld.jpg"
+  },
+  {
+    "id": "trangouls_girth",
+    "name": "塔格奧之腹",
+    "nameEn": "Trang-Oul's Girth",
+    "nameClassic": "塔格奧之束帶",
+    "baseItem": "食人妖腰帶",
+    "baseItemId": "troll_belt",
+    "slot": "belt",
+    "grade": "elite",
+    "requiredLevel": 62,
+    "requiredStr": 91,
+    "classOnly": null,
+    "tc": 84,
+    "qlvl": 32,
+    "attributes": [
+      "防禦：134-166",
+      "需要等級：62",
+      "需要力量：91",
+      "耐久度：18",
+      "腰帶空間：+12 格",
+      "+75-100 防禦",
+      "需求 -40%",
+      "無法凍結",
+      "生命回復 +5",
+      "+25-50 法力",
+      "+30 精力上限",
+      "+66 生命",
+      "冰寒抗性 +40% (3)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/heavy_belt_dyel.jpg"
+  },
+  {
+    "id": "sazabis_mental_sheath",
+    "name": "沙薩比的精神護罩",
+    "nameEn": "Sazabi's Mental Sheath",
+    "nameClassic": "沙撒璧的精神之鞘",
+    "baseItem": "輕盔",
+    "baseItemId": "basinet",
+    "slot": "helm",
+    "grade": "exceptional",
+    "requiredLevel": 43,
+    "requiredStr": 82,
+    "classOnly": null,
+    "tc": 45,
+    "qlvl": 34,
+    "attributes": [
+      "防禦：175-184",
+      "需要等級：43",
+      "需要力量：82",
+      "耐久度：30",
+      "+1 所有技能",
+      "電擊抗性 +15-20%",
+      "火焰抗性 +15-20%",
+      "+100 防禦"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/duskdeep_dblu.jpg"
+  },
+  {
+    "id": "sazabis_cobalt_redeemer",
+    "name": "沙薩比的救贖鈷劍",
+    "nameEn": "Sazabi's Cobalt Redeemer",
+    "nameClassic": "沙撒璧的懺悔之鈷",
+    "baseItem": "絕秘劍",
+    "baseItemId": "cryptic_sword",
+    "slot": "weapon",
+    "grade": "elite",
+    "requiredLevel": 73,
+    "requiredStr": 99,
+    "requiredDex": 109,
+    "classOnly": null,
+    "tc": 84,
+    "qlvl": 34,
+    "attributes": [
+      "單手傷害：12 - 192 點",
+      "需要等級：73",
+      "需要力量：99",
+      "需要敏捷：109",
+      "武器基本速度：[-10]",
+      "+150% 傷害強化",
+      "+318% 對惡魔的傷害",
+      "附加 25 - 35 冰寒傷害",
+      "攻擊速度 +40%",
+      "永不毀損",
+      "+15 敏捷",
+      "+5 力量"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/hellplague_dblu.jpg"
+  },
+  {
+    "id": "sazabis_ghost_liberator",
+    "name": "沙薩比的解靈框體",
+    "nameEn": "Sazabi's Ghost Liberator",
+    "nameClassic": "沙撒璧的鬼魂釋放者",
+    "baseItem": "炎魔皮板甲",
+    "baseItemId": "balrog_skin",
+    "slot": "armor",
+    "grade": "elite",
+    "requiredLevel": 67,
+    "requiredStr": 165,
+    "classOnly": null,
+    "tc": 78,
+    "qlvl": 34,
+    "attributes": [
+      "防禦：810-917",
+      "需要等級：67",
+      "需要力量：165",
+      "耐久度：30",
+      "+400 防禦",
+      "+30% 打擊恢復",
+      "+300 對惡魔的準確率",
+      "+25 力量",
+      "+50-75 生命"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/splint_mail_dblu.jpg"
+  },
+  {
+    "id": "immortal_kings_will",
+    "name": "不朽之王的意志",
+    "nameEn": "Immortal King's Will",
+    "nameClassic": "不朽之王的意志",
+    "baseItem": "復仇者護盔",
+    "baseItemId": "avenger_guard",
+    "slot": "helm",
+    "grade": "normal",
+    "requiredLevel": 47,
+    "requiredStr": 65,
+    "classOnly": "野蠻人",
+    "tc": 24,
+    "qlvl": 37,
+    "attributes": [
+      "防禦：160-175",
+      "需要等級：47",
+      "需要力量：65",
+      "耐久度：55",
+      "照亮範圍 +4",
+      "+125 防禦",
+      "怪物金幣掉落量提高 37%",
+      "尋獲魔法物品機率提高 25-40%",
+      "+2 戰吼 （只限野蠻人）",
+      "鑲孔（2）"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/avenger_guard_lgry.jpg"
+  },
+  {
+    "id": "immortal_kings_detail",
+    "name": "不朽之王的扈從",
+    "nameEn": "Immortal King's Detail",
+    "nameClassic": "不朽之王的瑣事",
+    "baseItem": "征戰腰帶",
+    "baseItemId": "war_belt",
+    "slot": "belt",
+    "grade": "exceptional",
+    "requiredLevel": 29,
+    "requiredStr": 110,
+    "classOnly": null,
+    "tc": 54,
+    "qlvl": 37,
+    "attributes": [
+      "防禦：89",
+      "防禦：194",
+      "防禦：247",
+      "需要等級：29",
+      "需要力量：110",
+      "耐久度：24",
+      "腰帶空間：+12 格",
+      "+36 防禦",
+      "電擊抗性 +31%",
+      "火焰抗性 +28%",
+      "+25 力量",
+      "+105 防禦 (2)",
+      "+25% 打擊恢復 (3)",
+      "+100% 防禦強化 (4)",
+      "受到的物理傷害降低 20% (5)",
+      "+2 戰鬥專精 （只限野蠻人） (全套)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/girdle_h_lgry.jpg"
+  },
+  {
+    "id": "immortal_kings_forge",
+    "name": "不朽之王的熔爐",
+    "nameEn": "Immortal King's Forge",
+    "nameClassic": "不朽之王的融爐",
+    "baseItem": "征戰護手",
+    "baseItemId": "war_gauntlets",
+    "slot": "gloves",
+    "grade": "exceptional",
+    "requiredLevel": 30,
+    "requiredStr": 110,
+    "classOnly": null,
+    "tc": 54,
+    "qlvl": 37,
+    "attributes": [
+      "防禦：108-118",
+      "防禦：228-238",
+      "需要等級：30",
+      "需要力量：110",
+      "耐久度：24",
+      "+65 防禦",
+      "被擊中時有 12% 機率施展等級 4 電能彈",
+      "+20 敏捷",
+      "+20 力量",
+      "攻擊速度 +25% (2)",
+      "+120 防禦 (3)",
+      "擊中竊取 10% 生命 (4)",
+      "擊中竊取 10% 法力 (5)",
+      "凍結目標 +2 (全套)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/gaunlets_h_lgry.jpg"
+  },
+  {
+    "id": "immortal_kings_pillar",
+    "name": "不朽之王之柱",
+    "nameEn": "Immortal King's Pillar",
+    "nameClassic": "不朽之王之柱",
+    "baseItem": "征戰靴",
+    "baseItemId": "war_boots",
+    "slot": "boots",
+    "grade": "exceptional",
+    "requiredLevel": 31,
+    "requiredStr": 125,
+    "classOnly": null,
+    "tc": 54,
+    "qlvl": 37,
+    "attributes": [
+      "防禦：118-128",
+      "防禦：278-288",
+      "需要等級：31",
+      "需要力量：125",
+      "耐久度：24",
+      "踢擊傷害：39 - 80 點",
+      "+75 防禦",
+      "+40% 跑步 / 行走速度",
+      "+110 準確率",
+      "+44 生命",
+      "尋獲魔法物品機率提高 25% (2)",
+      "+2 戰鬥技能 （只限野蠻人） (3)",
+      "+160 防禦 (4)",
+      "被凍結的時效減半 (5)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/plate_boots_lgry.jpg"
+  },
+  {
+    "id": "immortal_kings_stone_crusher",
+    "name": "不朽之王的碎魂者",
+    "nameEn": "Immortal King's Stone Crusher",
+    "nameClassic": "不朽之王的碎魂者",
+    "baseItem": "巨魔重鎚",
+    "baseItemId": "ogre_maul",
+    "slot": "weapon",
+    "grade": "elite",
+    "requiredLevel": 76,
+    "requiredStr": 225,
+    "classOnly": null,
+    "tc": 69,
+    "qlvl": 37,
+    "attributes": [
+      "雙手傷害：231 - 318 點",
+      "需要等級：76",
+      "需要力量：225",
+      "武器基本速度：[10]",
+      "+200% 傷害強化",
+      "+200% 對惡魔的傷害",
+      "+250% 對不死怪物的傷害",
+      "攻擊速度 +40%",
+      "永不毀損",
+      "+35-40% 機率造成粉碎打擊",
+      "鑲孔（2）",
+      "附加 211 - 397 火焰傷害 (2)",
+      "附加 7 - 477 電擊傷害 (3)",
+      "附加 127 - 364 冰寒傷害 (4)",
+      "+204 毒素傷害，時效 6 秒 (5)",
+      "附加 250 - 361 魔法傷害 (全套)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/maul_lgry.jpg"
+  },
+  {
+    "id": "immortal_kings_soul_cage",
+    "name": "不朽之王的靈魂牢籠",
+    "nameEn": "Immortal King's Soul Cage",
+    "nameClassic": "不朽之王的靈魂牢籠",
+    "baseItem": "神聖戰甲",
+    "baseItemId": "sacred_armor",
+    "slot": "armor",
+    "grade": "elite",
+    "requiredLevel": 76,
+    "requiredStr": 232,
+    "classOnly": null,
+    "tc": 87,
+    "qlvl": 37,
+    "attributes": [
+      "防禦：1001",
+      "防禦：1301",
+      "需要等級：76",
+      "需要力量：232",
+      "耐久度：60",
+      "+400 防禦",
+      "被擊中時有 5% 機率施展等級 5 附魔",
+      "毒素抗性 +50%",
+      "+2 戰鬥技能 （只限野蠻人）",
+      "+25% 打擊恢復 (2)",
+      "冰寒抗性 +40% (3)",
+      "火焰抗性 +40% (4)",
+      "電擊抗性 +40% (5)",
+      "+50% 防禦強化 (全套)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/victors_silk_lgry.jpg"
+  },
+  {
+    "id": "telling_of_beads",
+    "name": "誦唸珠",
+    "nameEn": "Telling of Beads",
+    "nameClassic": "述說之珠",
+    "baseItem": "護身符",
+    "baseItemId": "amulet",
+    "slot": "amulet",
+    "grade": "normal",
+    "requiredLevel": 30,
+    "classOnly": null,
+    "qlvl": 39,
+    "attributes": [
+      "需要等級：30",
+      "+1 所有技能",
+      "毒素抗性 +35-50%",
+      "冰寒抗性 +18%",
+      "攻擊者反傷：8-10"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/amulet_lblu.jpg"
+  },
+  {
+    "id": "rite_of_passage",
+    "name": "入門式",
+    "nameEn": "Rite of Passage",
+    "nameClassic": "儀式的走道",
+    "baseItem": "魔皮長靴",
+    "baseItemId": "demonhide_boots",
+    "slot": "boots",
+    "grade": "exceptional",
+    "requiredLevel": 29,
+    "requiredStr": 20,
+    "classOnly": null,
+    "tc": 36,
+    "qlvl": 39,
+    "attributes": [
+      "防禦：53-60",
+      "需要等級：29",
+      "需要力量：20",
+      "耐久度：12",
+      "踢擊傷害：26 - 46 點",
+      "+25 防禦",
+      "+30% 跑步 / 行走速度",
+      "+15-25 精力上限",
+      "被凍結的時效減半"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/leather_boots_lblu.jpg"
+  },
+  {
+    "id": "laying_of_hands",
+    "name": "按手禮",
+    "nameEn": "Laying of Hands",
+    "nameClassic": "手掌的安置",
+    "baseItem": "荊棘手套",
+    "baseItemId": "bramble_mitts",
+    "slot": "gloves",
+    "grade": "elite",
+    "requiredLevel": 63,
+    "requiredStr": 50,
+    "classOnly": null,
+    "tc": 57,
+    "qlvl": 39,
+    "attributes": [
+      "防禦：79-87",
+      "需要等級：63",
+      "需要力量：50",
+      "耐久度：12",
+      "+25 防禦",
+      "攻擊速度 +20%",
+      "+350% 對惡魔的傷害",
+      "火焰抗性 +50%",
+      "擊中時有 10% 機率施展等級 3 聖光彈"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/gloves_l_lblu.jpg"
+  },
+  {
+    "id": "dark_adherent",
+    "name": "隱門徒",
+    "nameEn": "Dark Adherent",
+    "nameClassic": "黑暗信徒",
+    "baseItem": "灰暮罩衣",
+    "baseItemId": "dusk_shroud",
+    "slot": "armor",
+    "grade": "elite",
+    "requiredLevel": 49,
+    "requiredStr": 77,
+    "classOnly": null,
+    "tc": 66,
+    "qlvl": 39,
+    "attributes": [
+      "防禦：666-882",
+      "需要等級：49",
+      "需要力量：77",
+      "耐久度：20",
+      "+305-415 防禦",
+      "火焰抗性 +24%",
+      "被擊中時有 25% 機率施展等級 3 閃電新星",
+      "附加 24 - 34 毒素傷害，時效 2 秒"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/quilted_armor_lblu.jpg"
+  },
+  {
+    "id": "credendum",
+    "name": "守信條",
+    "nameEn": "Credendum",
+    "nameClassic": "信條",
+    "baseItem": "秘銀腰帶",
+    "baseItemId": "mithril_coil",
+    "slot": "belt",
+    "grade": "elite",
+    "requiredLevel": 65,
+    "requiredStr": 106,
+    "classOnly": null,
+    "tc": 75,
+    "qlvl": 39,
+    "attributes": [
+      "防禦：108-115",
+      "需要等級：65",
+      "需要力量：106",
+      "耐久度：16",
+      "腰帶空間：+12 格",
+      "+50 防禦",
+      "所有抗性 +15",
+      "+10 敏捷",
+      "+10 力量"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/belt_m_lblu.jpg"
+  },
+  {
+    "id": "horazons_countenance",
+    "name": "赫拉森的面容",
+    "nameEn": "Horazon's Countenance",
+    "baseItem": "惡魔頭骨",
+    "baseItemId": "demonhead",
+    "slot": "helm",
+    "grade": "elite",
+    "requiredLevel": 62,
+    "requiredStr": 102,
+    "classOnly": null,
+    "qlvl": 40,
+    "attributes": [
+      "防禦：101-154",
+      "需要等級：62",
+      "需要力量：102",
+      "耐久度：20",
+      "+1 術士技能",
+      "+10-20 力量",
+      "魔法傷害降低 7-10",
+      "(1-99)% 準確率加成 （依角色等級而定） [1 * clvl]",
+      "生命上限提高 5% (2)",
+      "+15 力量 (4)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/horazons_countenance.jpg"
+  },
+  {
+    "id": "horazons_dominion",
+    "name": "赫拉森的統治",
+    "nameEn": "Horazon's Dominion",
+    "baseItem": "赤褐戰甲",
+    "baseItemId": "russet_armor",
+    "slot": "armor",
+    "grade": "elite",
+    "requiredLevel": 55,
+    "requiredStr": 97,
+    "classOnly": null,
+    "qlvl": 40,
+    "attributes": [
+      "防禦：427-488",
+      "需要等級：55",
+      "需要力量：97",
+      "耐久度：30",
+      "+2 惡魔技能 （只限術士）",
+      "+75-100 法力",
+      "冰寒抗性 +15-25%",
+      "電擊抗性 +15-25%",
+      "火焰抗性 +15-25%",
+      "毒素抗性 +25% (2)",
+      "+15 體能 (4)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/splint_mail.jpg"
+  },
+  {
+    "id": "horazons_hold",
+    "name": "赫拉森的掌控",
+    "nameEn": "Horazon's Hold",
+    "baseItem": "魔皮手套",
+    "baseItemId": "demonhide_gloves",
+    "slot": "gloves",
+    "grade": "elite",
+    "requiredLevel": 48,
+    "requiredStr": 20,
+    "classOnly": null,
+    "qlvl": 40,
+    "attributes": [
+      "防禦：28-35",
+      "需要等級：48",
+      "需要力量：20",
+      "耐久度：12",
+      "+95-150 準確率",
+      "附加 140 - 270 火焰傷害",
+      "+10% 機率造成粉碎打擊",
+      "+10-15 敏捷",
+      "+30-40 生命",
+      "攻擊速度 +30% (2)",
+      "擊中竊取 7% 法力 (3)",
+      "擊中竊取 7% 生命 (4)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/gloves_l.jpg"
+  },
+  {
+    "id": "horazons_legacy",
+    "name": "赫拉森的傳承",
+    "nameEn": "Horazon's Legacy",
+    "baseItem": "幻鏡戰靴",
+    "baseItemId": "mirrored_boots",
+    "slot": "boots",
+    "grade": "elite",
+    "requiredLevel": 67,
+    "requiredStr": 115,
+    "classOnly": null,
+    "qlvl": 40,
+    "attributes": [
+      "防禦：59-68",
+      "需要等級：67",
+      "需要力量：115",
+      "耐久度：18",
+      "+30% 跑步 / 行走速度",
+      "+10-15 力量",
+      "+10-15 敏捷",
+      "魔法抗性 +20-30%",
+      "無法凍結",
+      "需求 -30%",
+      "+10% 跑步 / 行走速度 (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/light_plate_boots.jpg"
+  },
+  {
+    "id": "horazons_secrets",
+    "name": "赫拉森的秘密",
+    "nameEn": "Horazon's Secrets",
+    "baseItem": "神秘寶典",
+    "baseItemId": "occult_codex",
+    "slot": "weapon",
+    "grade": "elite",
+    "requiredLevel": 57,
+    "requiredStr": 91,
+    "classOnly": "術士",
+    "qlvl": 40,
+    "attributes": [
+      "防禦：98-142",
+      "需要等級：57",
+      "需要力量：91",
+      "耐久度：20",
+      "格擋機率：53%",
+      "+2 邪異技能",
+      "+30% 打擊恢復",
+      "格擋機率提高 20%",
+      "+20-30 體能",
+      "+30-50 生命",
+      "中毒的時效縮短 75% (2)",
+      "敵人火焰抗性 -25% (3)",
+      "+15 能量 (4)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/ars_torbaalos.jpg"
+  },
+  {
+    "id": "guillaumes_face",
+    "name": "吉永之臉",
+    "nameEn": "Guillaume's Face",
+    "nameClassic": "吉永之臉",
+    "baseItem": "翼盔",
+    "baseItemId": "winged_helm",
+    "slot": "helm",
+    "grade": "exceptional",
+    "requiredLevel": 34,
+    "requiredStr": 115,
+    "classOnly": null,
+    "tc": 51,
+    "qlvl": 41,
+    "attributes": [
+      "防禦：217",
+      "需要等級：34",
+      "需要力量：115",
+      "耐久度：40",
+      "+120% 防禦強化",
+      "+30% 打擊恢復",
+      "+15% 致命打擊",
+      "+35% 機率造成粉碎打擊",
+      "+15 力量"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/great_helm_lgry.jpg"
+  },
+  {
+    "id": "whitstans_guard",
+    "name": "惠斯坦的守護",
+    "nameEn": "Whitstan's Guard",
+    "nameClassic": "惠斯坦的武裝",
+    "baseItem": "圓型盾",
+    "baseItemId": "round_shield",
+    "slot": "shield",
+    "grade": "exceptional",
+    "requiredLevel": 29,
+    "requiredStr": 53,
+    "classOnly": null,
+    "tc": 39,
+    "qlvl": 41,
+    "attributes": [
+      "防禦：154",
+      "需要等級：29",
+      "需要力量：53",
+      "耐久度：64",
+      "格擋機率：97% (Pal)",
+      "格擋機率：92% (Ama/Asn/Bar)",
+      "格擋機率：87% (Dru/Nec/Sor)",
+      "重擊傷害：7 - 14 點",
+      "+175% 防禦強化",
+      "被凍結的時效減半",
+      "+40% 格擋速度",
+      "格擋機率提高 55%",
+      "照亮範圍 +5"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/mosers_blessed_circle_lgry.jpg"
+  },
+  {
+    "id": "magnus_skin",
+    "name": "馬格納斯之皮",
+    "nameEn": "Magnus' Skin",
+    "nameClassic": "馬格納斯之皮",
+    "baseItem": "鯊皮手套",
+    "baseItemId": "sharkskin_gloves",
+    "slot": "gloves",
+    "grade": "exceptional",
+    "requiredLevel": 37,
+    "requiredStr": 20,
+    "classOnly": null,
+    "tc": 39,
+    "qlvl": 41,
+    "attributes": [
+      "防禦：60",
+      "需要等級：37",
+      "需要力量：20",
+      "耐久度：14",
+      "+50% 防禦強化",
+      "攻擊速度 +20%",
+      "+100 準確率",
+      "照亮範圍 +3",
+      "火焰抗性 +15%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/heavy_gloves_lgry.jpg"
+  },
+  {
+    "id": "wilhelms_pride",
+    "name": "威廉的自尊",
+    "nameEn": "Wilhelm's Pride",
+    "nameClassic": "威廉的自尊",
+    "baseItem": "戰鬥腰帶",
+    "baseItemId": "battle_belt",
+    "slot": "belt",
+    "grade": "exceptional",
+    "requiredLevel": 42,
+    "requiredStr": 88,
+    "classOnly": null,
+    "tc": 51,
+    "qlvl": 41,
+    "attributes": [
+      "防禦：75",
+      "需要等級：42",
+      "需要力量：88",
+      "耐久度：18",
+      "腰帶空間：+12 格",
+      "+75% 防禦強化",
+      "擊中竊取 5% 生命",
+      "擊中竊取 5% 法力",
+      "冰寒抗性 +10%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/heavy_belt_lgry.jpg"
+  },
+  {
+    "id": "najs_circlet",
+    "name": "娜吉的頭環",
+    "nameEn": "Naj's Circlet",
+    "nameClassic": "娜吉的小環",
+    "baseItem": "頭環",
+    "baseItemId": "circlet",
+    "slot": "helm",
+    "grade": "normal",
+    "requiredLevel": 28,
+    "classOnly": null,
+    "tc": 24,
+    "qlvl": 43,
+    "attributes": [
+      "防禦：95-105",
+      "需要等級：28",
+      "耐久度：35",
+      "+75 防禦",
+      "附加 25 - 35 火焰傷害",
+      "被擊中時有 12% 機率施展等級 5 連鎖閃電",
+      "+15 力量",
+      "照亮範圍 +5"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/circlet.jpg"
+  },
+  {
+    "id": "najs_light_plate",
+    "name": "娜吉的輕鎧",
+    "nameEn": "Naj's Light Plate",
+    "nameClassic": "娜吉的輕鎧甲",
+    "baseItem": "地獄鍛甲",
+    "baseItemId": "hellforge_plate",
+    "slot": "armor",
+    "grade": "elite",
+    "requiredLevel": 71,
+    "requiredStr": 79,
+    "classOnly": null,
+    "tc": 78,
+    "qlvl": 43,
+    "attributes": [
+      "防禦：721-830",
+      "需要等級：71",
+      "需要力量：79",
+      "耐久度：60",
+      "+300 防禦",
+      "需求 -60%",
+      "+45% 受到的傷害轉為法力",
+      "+1 所有技能",
+      "所有抗性 +25",
+      "+65 生命"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/plate_mail.jpg"
+  },
+  {
+    "id": "najs_puzzler",
+    "name": "娜吉的解謎杖",
+    "nameEn": "Naj's Puzzler",
+    "nameClassic": "娜吉解迷杖",
+    "baseItem": "長者法杖",
+    "baseItemId": "elder_staff",
+    "slot": "weapon",
+    "grade": "elite",
+    "requiredLevel": 78,
+    "requiredStr": 44,
+    "requiredDex": 37,
+    "classOnly": null,
+    "tc": 75,
+    "qlvl": 43,
+    "attributes": [
+      "雙手傷害：200 - 232 點",
+      "需要等級：78",
+      "需要力量：44",
+      "需要敏捷：37",
+      "耐久度：35",
+      "武器基本速度：[0]",
+      "+150% 傷害強化",
+      "+50% 對不死怪物的傷害",
+      "附加 6 - 45 電擊傷害",
+      "+30% 施法速度",
+      "+1 所有技能",
+      "+70 法力",
+      "+35 能量",
+      "等級 11 傳送術（69 次）"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/lazarus_spire.jpg"
+  },
+  {
+    "id": "griswolds_heart",
+    "name": "格里斯瓦德之心",
+    "nameEn": "Griswold's Heart",
+    "nameClassic": "格瑞斯華爾德之心",
+    "baseItem": "華麗戰甲",
+    "baseItemId": "ornate_plate",
+    "slot": "armor",
+    "grade": "exceptional",
+    "requiredLevel": 45,
+    "requiredStr": 102,
+    "classOnly": null,
+    "tc": 66,
+    "qlvl": 44,
+    "attributes": [
+      "防禦：917-950",
+      "需要等級：45",
+      "需要力量：102",
+      "耐久度：60",
+      "+500 防禦",
+      "需求 -40%",
+      "+20 力量",
+      "+2 防禦靈氣 （只限聖騎士）",
+      "鑲孔（3）"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/corpsemourn_dgld.jpg"
+  },
+  {
+    "id": "griswolds_valor",
+    "name": "格里斯瓦德的勇氣",
+    "nameEn": "Griswold's Valor",
+    "nameClassic": "格瑞斯華爾德的勇氣",
+    "baseItem": "日冕之冠",
+    "baseItemId": "corona",
+    "slot": "helm",
+    "grade": "elite",
+    "requiredLevel": 69,
+    "requiredStr": 105,
+    "classOnly": null,
+    "tc": 87,
+    "qlvl": 44,
+    "attributes": [
+      "防禦：249-290",
+      "需要等級：69",
+      "需要力量：105",
+      "耐久度：50",
+      "+50-75% 防禦強化",
+      "所有抗性 +5",
+      "尋獲魔法物品機率提高 20-30%",
+      "需求 -40%",
+      "+(0-24) 冰寒傷害吸收 （依角色等級而定） [0.25 * clvl]",
+      "鑲孔（2）",
+      "+2 攻擊靈氣 （只限聖騎士） (2)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/crown_dgld.jpg"
+  },
+  {
+    "id": "griswolds_redemption",
+    "name": "格里斯瓦德的救贖",
+    "nameEn": "Griswold's Redemption",
+    "nameClassic": "格瑞斯華爾德的救贖",
+    "baseItem": "神使權杖",
+    "baseItemId": "caduceus",
+    "slot": "weapon",
+    "grade": "elite",
+    "requiredLevel": 66,
+    "requiredStr": 78,
+    "requiredDex": 56,
+    "classOnly": null,
+    "tc": 87,
+    "qlvl": 44,
+    "attributes": [
+      "單手傷害：(111-125) - (129-146) 點",
+      "單手傷害：(121-135) - (149-166) 點",
+      "單手傷害：(131-145) - (169-186) 點",
+      "需要等級：66",
+      "需要力量：78",
+      "需要敏捷：56",
+      "耐久度：70",
+      "武器基本速度：[-10]",
+      "+200-240% 傷害強化",
+      "+250% 對不死怪物的傷害",
+      "需求 -20%",
+      "攻擊速度 +40%",
+      "鑲孔（3-4）",
+      "+2 戰鬥技能 （只限聖騎士） (2)",
+      "附加 10 - 20 傷害 (3)",
+      "附加 10 - 20 傷害 (全套)"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/war_scepter_dgld.jpg"
+  },
+  {
+    "id": "griswolds_honor",
+    "name": "格里斯瓦德的榮耀",
+    "nameEn": "Griswold's Honor",
+    "nameClassic": "格瑞斯華爾德的榮耀",
+    "baseItem": "渦旋盾",
+    "baseItemId": "vortex_shield",
+    "slot": "shield",
+    "grade": "elite",
+    "requiredLevel": 68,
+    "requiredStr": 148,
+    "classOnly": "聖騎士",
+    "tc": 87,
+    "qlvl": 44,
+    "attributes": [
+      "防禦：290-333",
+      "需要等級：68",
+      "需要力量：148",
+      "耐久度：90",
+      "格擋機率：69%",
+      "重擊傷害：5 - 87 點",
+      "+65% 格擋速度",
+      "格擋機率提高 20%",
+      "+108 防禦",
+      "所有抗性 +45",
+      "鑲孔（3）"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/crown_shield_dgld.jpg"
+  },
+  {
+    "id": "bulkathos_sacred_charge",
+    "name": "布爾凱索的神聖職責",
+    "nameEn": "Bul-Kathos' Sacred Charge",
+    "nameClassic": "布爾凱索的神聖代價",
+    "baseItem": "巨神刃",
+    "baseItemId": "colossus_blade",
+    "slot": "weapon",
+    "grade": "elite",
+    "requiredLevel": 63,
+    "requiredStr": 189,
+    "requiredDex": 110,
+    "classOnly": null,
+    "tc": 87,
+    "qlvl": 50,
+    "attributes": [
+      "單手傷害：75 - 195 點",
+      "雙手傷害：174 - 345 點",
+      "需要等級：63",
+      "需要力量：189",
+      "需要敏捷：110",
+      "耐久度：50",
+      "武器基本速度：[5]",
+      "+200% 傷害強化",
+      "+35% 機率造成粉碎打擊",
+      "所有抗性 +20",
+      "攻擊速度 +20%",
+      "擊退"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/the_patriarch_dgrn.jpg"
+  },
+  {
+    "id": "bulkathos_tribal_guardian",
+    "name": "布爾凱索的部族守護",
+    "nameEn": "Bul-Kathos' Tribal Guardian",
+    "nameClassic": "布爾凱索的部族守護",
+    "baseItem": "秘儀劍",
+    "baseItemId": "mythical_sword",
+    "slot": "weapon",
+    "grade": "elite",
+    "requiredLevel": 66,
+    "requiredStr": 147,
+    "requiredDex": 124,
+    "classOnly": null,
+    "tc": 87,
+    "qlvl": 50,
+    "attributes": [
+      "單手傷害：120 - 150 點",
+      "需要等級：66",
+      "需要力量：147",
+      "需要敏捷：124",
+      "耐久度：44",
+      "武器基本速度：[0]",
+      "+200% 傷害強化",
+      "+50 毒素傷害，時效 2 秒",
+      "火焰抗性 +50%",
+      "+20 力量",
+      "攻擊速度 +20%"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/war_sword_dgrn.jpg"
+  },
+  {
+    "id": "haemosus_adamant",
+    "name": "解慕漱的堅決",
+    "nameEn": "Haemosu's Adamant",
+    "nameClassic": "黑摩蘇的堅決",
+    "baseItem": "護胸甲",
+    "baseItemId": "cuirass",
+    "slot": "armor",
+    "grade": "exceptional",
+    "requiredLevel": 44,
+    "requiredStr": 52,
+    "classOnly": null,
+    "tc": 48,
+    "qlvl": 55,
+    "attributes": [
+      "防禦：688-702",
+      "需要等級：44",
+      "需要力量：52",
+      "耐久度：50",
+      "+500 防禦",
+      "+40 對近戰防禦",
+      "+35 對遠程防禦",
+      "需求 -20%",
+      "+75 生命"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/haemosus_adament.jpg"
+  },
+  {
+    "id": "dangoons_teaching",
+    "name": "檀君的教導",
+    "nameEn": "Dangoon's Teaching",
+    "nameClassic": "丹弓的教導",
+    "baseItem": "強化釘鎚",
+    "baseItemId": "reinforced_mace",
+    "slot": "weapon",
+    "grade": "elite",
+    "requiredLevel": 68,
+    "requiredStr": 145,
+    "requiredDex": 46,
+    "classOnly": null,
+    "tc": 63,
+    "qlvl": 55,
+    "attributes": [
+      "單手傷害：41 - (50-197) 點",
+      "需要等級：68",
+      "需要力量：145",
+      "需要敏捷：46",
+      "耐久度：60",
+      "武器基本速度：[0]",
+      "+(1-148) 最大傷害 （依角色等級而定） [1.5 * clvl]",
+      "+50% 對不死怪物的傷害",
+      "攻擊速度 +40%",
+      "擊中時有 10% 機率施展等級 3 冰霜新星",
+      "附加 20 - 30 火焰傷害"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/dangoons_teaching.jpg"
+  },
+  {
+    "id": "taebaeks_glory",
+    "name": "太白山的榮光",
+    "nameEn": "Taebaek's Glory",
+    "nameClassic": "泰比克的光榮",
+    "baseItem": "庇護盾",
+    "baseItemId": "ward",
+    "slot": "shield",
+    "grade": "elite",
+    "requiredLevel": 81,
+    "requiredStr": 185,
+    "classOnly": null,
+    "tc": 84,
+    "qlvl": 55,
+    "attributes": [
+      "防禦：203-220",
+      "需要等級：81",
+      "需要力量：185",
+      "格擋機率：79% (Pal)",
+      "格擋機率：74% (Ama/Asn/Bar)",
+      "格擋機率：69% (Dru/Nec/Sor)",
+      "重擊傷害：11 - 35 點",
+      "+50 防禦",
+      "格擋機率提高 25%",
+      "電擊抗性 +30%",
+      "永不毀損",
+      "+30% 格擋速度",
+      "+100 法力",
+      "攻擊者反傷：30"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/heavens_taebaek.jpg"
+  },
+  {
+    "id": "ondals_almighty",
+    "name": "溫達的全靈",
+    "nameEn": "Ondal's Almighty",
+    "nameClassic": "安戴爾的全靈",
+    "baseItem": "巨角頭盔",
+    "baseItemId": "spired_helm",
+    "slot": "helm",
+    "grade": "elite",
+    "requiredLevel": 69,
+    "requiredStr": 116,
+    "classOnly": null,
+    "tc": 81,
+    "qlvl": 55,
+    "attributes": [
+      "防禦：164-209",
+      "需要等級：69",
+      "需要力量：116",
+      "耐久度：40",
+      "擊中時有 10% 機率施展等級 3 削弱",
+      "+24% 打擊恢復",
+      "需求 -40%",
+      "+50 防禦",
+      "+15 敏捷",
+      "+10 力量"
+    ],
+    "imageUrl": "https://static.d2r.world/img/items/magic/ondals_almighty.jpg"
   }
 ];

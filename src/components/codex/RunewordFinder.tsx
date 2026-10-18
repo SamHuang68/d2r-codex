@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { RUNEWORDS_DATA } from '../../data/runewords';
+import { cleanSearchQuery, normalizeItemQuery } from '../../utils/itemQueryNormalizer';
 import { ItemIcon } from '../common/ItemIcon';
 import { Search, Sparkles, Filter, X } from 'lucide-react';
 
@@ -46,13 +47,22 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
     return RUNEWORDS_DATA.filter((rw) => {
       // Search
       if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const matchesName = rw.name.toLowerCase().includes(q) || rw.nameEn.toLowerCase().includes(q);
-        const matchesRunes = rw.runes.some((r) => r.toLowerCase().includes(q));
-        const matchesAttrs = rw.attributes.some((a) => a.toLowerCase().includes(q));
-        const matchesBases = rw.allowedBases.some((b) => b.toLowerCase().includes(q));
-        if (!matchesName && !matchesRunes && !matchesAttrs && !matchesBases) {
-          return false;
+        const norm = normalizeItemQuery(searchQuery);
+        if (norm && norm.type === 'runeword' && rw.id === norm.id) {
+          // Exact alias or normalized match (e.g. 剛毅甲 -> fortitude, 信心弓 -> faith)
+        } else {
+          const queryTerms = cleanSearchQuery(searchQuery);
+          const matchesQuery = queryTerms.some((term) => {
+            const q = term.toLowerCase().trim();
+            const matchesName = rw.name.toLowerCase().includes(q) || 
+                                rw.nameEn.toLowerCase().includes(q) ||
+                                (rw.nameClassic && rw.nameClassic.toLowerCase().includes(q));
+            const matchesRunes = rw.runes.some((r) => r.toLowerCase().includes(q));
+            const matchesAttrs = rw.attributes.some((a) => a.toLowerCase().includes(q));
+            const matchesBases = rw.allowedBases.some((b) => b.toLowerCase().includes(q));
+            return matchesName || matchesRunes || matchesAttrs || matchesBases;
+          });
+          if (!matchesQuery) return false;
         }
       }
 
@@ -246,6 +256,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                       baseItem={rw.allowedBases[0]}
                       rarity="runeword"
                       size="md"
+                      imageUrl={rw.imageUrl}
                     />
                     <div>
                       <div className="flex items-center gap-2">

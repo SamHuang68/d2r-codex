@@ -21,5 +21,9 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
 *.tsbuildinfo
+
+# Scripts temporary scratch files
+scripts/debug_images/
+scripts/*.ttf
+scripts/*.png

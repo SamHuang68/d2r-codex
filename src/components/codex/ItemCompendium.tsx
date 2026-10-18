@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { UNIQUE_ITEMS_DATA } from '../../data/uniqueItems';
 import { SET_ITEMS_DATA } from '../../data/setItems';
+import { cleanSearchQuery, normalizeItemQuery } from '../../utils/itemQueryNormalizer';
 import { ItemTooltip } from '../common/ItemTooltip';
 import { ItemIcon } from '../common/ItemIcon';
 import { Sword, Search, Shield, Sparkles, X } from 'lucide-react';
@@ -51,11 +52,22 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         return false;
       }
       if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const matchName = item.name.toLowerCase().includes(q) || item.nameEn.toLowerCase().includes(q);
-        const matchBase = item.baseItem.toLowerCase().includes(q) || item.baseItemEn.toLowerCase().includes(q);
-        const matchAttr = item.attributes.some((a) => a.toLowerCase().includes(q));
-        if (!matchName && !matchBase && !matchAttr) return false;
+        const norm = normalizeItemQuery(searchQuery);
+        if (norm && norm.type === 'unique' && item.id === norm.id) {
+          return true;
+        }
+        const queryTerms = cleanSearchQuery(searchQuery);
+        const matchesQuery = queryTerms.some((term) => {
+          const q = term.toLowerCase().trim();
+          const matchName = item.name.toLowerCase().includes(q) || 
+                            item.nameEn.toLowerCase().includes(q) ||
+                            (item.nameClassic && item.nameClassic.toLowerCase().includes(q));
+          const matchBase = item.baseItem.toLowerCase().includes(q) || 
+                            (item.baseItemEn ? item.baseItemEn.toLowerCase().includes(q) : false);
+          const matchAttr = item.attributes.some((a) => a.toLowerCase().includes(q));
+          return matchName || matchBase || matchAttr;
+        });
+        if (!matchesQuery) return false;
       }
       return true;
     });
@@ -66,12 +78,23 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     if (activeCategory !== 'all' && activeCategory !== 'sets') return [];
     return SET_ITEMS_DATA.filter((set) => {
       if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const matchSetName = set.name.toLowerCase().includes(q) || set.nameEn.toLowerCase().includes(q);
-        const matchPieces = set.pieces.some(
-          (p) => p.name.toLowerCase().includes(q) || p.nameEn.toLowerCase().includes(q) || p.attributes.some(a => a.toLowerCase().includes(q))
-        );
-        if (!matchSetName && !matchPieces) return false;
+        const norm = normalizeItemQuery(searchQuery);
+        if (norm && norm.type === 'set' && (set.id === norm.id || set.pieces.some(p => p.id === norm.id))) {
+          return true;
+        }
+        const queryTerms = cleanSearchQuery(searchQuery);
+        const matchesQuery = queryTerms.some((term) => {
+          const q = term.toLowerCase().trim();
+          const matchSetName = set.name.toLowerCase().includes(q) || set.nameEn.toLowerCase().includes(q);
+          const matchPieces = set.pieces.some(
+            (p) => p.name.toLowerCase().includes(q) || 
+                   p.nameEn.toLowerCase().includes(q) || 
+                   (p.nameClassic && p.nameClassic.toLowerCase().includes(q)) ||
+                   p.attributes.some(a => a.toLowerCase().includes(q))
+          );
+          return matchSetName || matchPieces;
+        });
+        if (!matchesQuery) return false;
       }
       return true;
     });
@@ -163,6 +186,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                     attributes={item.attributes}
                     flavorText={item.flavorText}
                     onNavigateToBase={onNavigateToBase}
+                    imageUrl={item.imageUrl}
                     className="h-full hover:border-d2-unique hover:scale-[1.01]"
                   />
                 </div>
@@ -212,6 +236,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                           slot={piece.slot}
                           rarity="set"
                           size="md"
+                          imageUrl={piece.imageUrl}
                         />
                         <div className="flex-1 min-w-0">
                           <div className="font-diablo font-bold text-d2-set text-sm">

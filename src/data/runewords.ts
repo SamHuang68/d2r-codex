@@ -2,1997 +2,3859 @@ import type { RunewordData } from '../types';
 
 export const RUNEWORDS_DATA: RunewordData[] = [
   {
-    id: "enigma",
-    name: "謎團",
-    nameEn: "Enigma",
-    runes: ["Jah", "Ith", "Ber"],
-    runeNumbers: [31, 6, 30],
-    sockets: 3,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 65,
-    ladderOnly: false,
-    tags: ["Teleport", "All Skills", "Magic Find", "Damage Reduction", "Strength"],
-    recommendedBases: "法師鎧甲 (Mage Plate 3S)、執政官鎧甲 (Archon Plate 3S)",
-    description: "全遊戲最具革命性的神裝符文之語，賦予任何職業 +1 傳送 (Teleport) 技能與海量力量加成，是絕大多數終局配裝的絕對核心。",
-    attributes: [
-      "+2 所有技能",
-      "+45% 跑步/步行速度",
-      "+1 傳送 (Teleport)",
-      "+750-775 防禦 (變動)",
-      "+(0.75 每等級) +0.75-74.25 力量 (依角色等級增加)",
-      "增加生命上限 5%",
-      "傷害減少 8% (DR)",
-      "+14 擊殺後獲得生命",
-      "15% 受損生命轉移為法力",
-      "+(1 每等級) +1-99% 更佳機會取得魔法裝備 (MF)"
+    "id": "ancients_pledge",
+    "name": "先祖之契",
+    "nameEn": "Ancients' Pledge",
+    "nameClassic": "古代人的契約",
+    "runes": [
+      "Ral",
+      "Ort",
+      "Tal"
+    ],
+    "runeNumbers": [
+      8,
+      9,
+      7
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "盾牌"
+    ],
+    "requiredLevel": 21,
+    "ladderOnly": false,
+    "attributes": [
+      "+50% 防禦強化",
+      "冰寒抗性 +43%",
+      "火焰抗性 +48%",
+      "電擊抗性 +48%",
+      "毒素抗性 +48%",
+      "+10% 受到的傷害轉為法力"
+    ],
+    "tags": [
+      "Resistances",
+      "Mana"
     ]
   },
   {
-    id: "spirit",
-    name: "精神",
-    nameEn: "Spirit",
-    runes: ["Tal", "Thul", "Ort", "Amn"],
-    runeNumbers: [7, 8, 9, 10],
-    sockets: 4,
-    allowedBases: ["劍 (Swords)", "盾牌 (Shields)"],
-    requiredLevel: 25,
-    ladderOnly: false,
-    tags: ["FCR", "All Skills", "FHR", "Mana", "Resistances"],
-    recommendedBases: "水晶劍 (Crystal Sword)、統治者大盾 (Monarch 4S)、聖騎士專用盾 (4S 45全抗神聖小盾)",
-    description: "性價比之王，法系職業過渡至畢業的必備神符之語，提供高額施法速度、法力與全抗（盾牌）。",
-    attributes: [
-      "+2 所有技能",
-      "+25-35% 快速施法速度 (FCR) (變動)",
-      "+55% 快速打擊恢復 (FHR)",
-      "+250 對遠程攻擊防禦",
-      "+22 活力",
-      "+89-112 法力 (變動)",
-      "+3-8 魔法吸收 (變動)",
-      "【盾牌額外效果】：抗寒 +35%、抗電 +35%、抗毒 +35%",
-      "【武器額外效果】：+1-50 閃電傷害、+3-14 冰寒傷害、+75 毒素傷害、7% 生命偷取"
-    ]
-  },
-  {
-    id: "grief",
-    name: "悔恨",
-    nameEn: "Grief",
-    runes: ["Eth", "Tir", "Lo", "Mal", "Ral"],
-    runeNumbers: [5, 3, 28, 23, 8],
-    sockets: 5,
-    allowedBases: ["劍 (Swords)", "斧 (Axes)"],
-    requiredLevel: 59,
-    ladderOnly: false,
-    tags: ["IAS", "Direct Damage", "Deadly Strike", "Physical DPS"],
-    recommendedBases: "幻化之刃 (Phase Blade 5S)、狂戰士斧 (Berserker Axe 5S)",
-    description: "近戰物理單手武器的天花板！直接加上 +340-400 的面板純白字傷害，配合高速攻擊能造成恐怖的爆發輸出。",
-    attributes: [
-      "打擊時有 35% 機率施展等級 15 劇毒新星",
-      "+30-40% 攻擊速度 (IAS) (變動)",
-      "傷害 +340-400 (變動)",
-      "忽略目標防禦",
-      "-25% 目標防禦",
-      "+(1.875 每等級) 對惡魔傷害加成 (依角色等級增加)",
-      "增加 5-30 火焰傷害",
-      "-20-25% 目標毒素抗性 (變動)",
-      "20% 機率造成致命打擊 (DS)",
-      "防止怪物自療",
-      "+2 擊殺後獲得法力 (EK)",
-      "+10-15 擊殺後獲得生命 (變動)"
-    ]
-  },
-  {
-    id: "infinity",
-    name: "無限",
-    nameEn: "Infinity",
-    runes: ["Ber", "Mal", "Ber", "Ist"],
-    runeNumbers: [30, 23, 30, 24],
-    sockets: 4,
-    allowedBases: ["長柄武器 (Polearms)", "長矛 (Spears)"],
-    requiredLevel: 63,
-    ladderOnly: false,
-    tags: ["Conviction", "Minus Enemy Res", "Crushing Blow", "Mercenary BIS"],
-    recommendedBases: "無形巨神之斧 (Colossus Voulge)、無形銳利之斧 (Thresher 4S)、鐮刀 (Scythe 4S 自持電法)",
-    description: "元素法系的絕對質變裝備，自帶 12 級審判靈氣 (Conviction Aura)，破除大部分地獄怪物的電抗性與火/冰抗性。",
-    attributes: [
-      "裝備時賦予等級 12 審判靈氣 (Conviction Aura)",
-      "+35% 跑步/步行速度",
-      "+255-325% 增強傷害 (ED) (變動)",
-      "-(45-55)% 敵人閃電抗性 (自持有效) (變動)",
-      "40% 機率造成壓碎打擊 (CB)",
-      "防止怪物自療",
-      "+(0.5 每等級) 體力 (依角色等級增加)",
-      "+30% 更佳機會取得魔法裝備 (MF)",
-      "等級 21 旋風裝甲 (30 次聚氣)"
-    ]
-  },
-  {
-    id: "fortitude",
-    name: "剛毅",
-    nameEn: "Fortitude",
-    runes: ["El", "Sol", "Dol", "Lo"],
-    runeNumbers: [1, 12, 14, 28],
-    sockets: 4,
-    allowedBases: ["武器 (Weapons)", "胸甲 (Body Armor)"],
-    requiredLevel: 59,
-    ladderOnly: false,
-    tags: ["Enhanced Damage", "All Resist", "Life", "Armor", "Chilling Armor"],
-    recommendedBases: "無形神聖盔甲 (Sacred Armor 4S 給傭兵)、執政官鎧甲 (Archon Plate 4S 自穿)",
-    description: "物理自穿與米山傭兵的終極畢業防具，提供高達 +300% 增強傷害、全抗 +25-30 以及被擊中時觸發寒冰裝甲。",
-    attributes: [
-      "被擊中時有 20% 機率施展等級 15 寒冰裝甲 (Chilling Armor)",
-      "+25% 快速施法速度 (FCR)",
-      "+300% 增強傷害 (ED)",
-      "+200% 強化防禦",
-      "+(1-1.5 每等級) 生命 (依角色等級增加，1-148.5) (變動)",
-      "所有抗性 +25-30 (變動)",
-      "12% 受損生命轉移為法力",
-      "+1 照亮範圍",
-      "+5% 最大閃電抗性",
-      "傷害減少 7",
-      "生命恢復 +7"
-    ]
-  },
-  {
-    id: "call_to_arms",
-    name: "戰爭召喚",
-    nameEn: "Call to Arms (CTA)",
-    runes: ["Amn", "Ral", "Mal", "Ist", "Ohm"],
-    runeNumbers: [11, 8, 23, 24, 27],
-    sockets: 5,
-    allowedBases: ["所有武器 (Weapons)"],
-    requiredLevel: 57,
-    ladderOnly: false,
-    tags: ["Battle Orders", "Battle Command", "Shout", "All Skills", "Secondary Weapon"],
-    recommendedBases: "水晶劍 (Crystal Sword 5S)、連枷 (Flail 5S)",
-    description: "全職業副手切換必備！賦予野蠻人的戰鬥狂嗥、戰鬥體質 (BO) 與戰鬥指揮，直接使隊伍全體生命法力倍增。",
-    attributes: [
-      "+1 所有技能",
-      "+40% 攻擊速度 (IAS)",
-      "+250-290% 增強傷害 (ED) (變動)",
-      "+(2-6) 戰鬥指揮 (Battle Command) (變動)",
-      "+(1-6) 戰鬥體質 (Battle Orders) (變動)",
-      "+(1-4) 戰吼 (Battle Cry) (變動)",
-      "防止怪物自療",
-      "生命恢復 +12",
-      "+30% 更佳機會取得魔法裝備 (MF)"
-    ]
-  },
-  {
-    id: "heart_of_the_oak",
-    name: "橡樹之心",
-    nameEn: "Heart of the Oak (HOTO)",
-    runes: ["Ko", "Vex", "Pul", "Thul"],
-    runeNumbers: [18, 26, 21, 10],
-    sockets: 4,
-    allowedBases: ["連枷 (Flails)", "長棍 (Staves)"],
-    requiredLevel: 55,
-    ladderOnly: false,
-    tags: ["FCR", "All Skills", "All Resist", "Mana"],
-    recommendedBases: "連枷 (Flail 4S)",
-    description: "法系泛用神手，+3 全技能、+40% 快速施法速度，以及最高 +40 全抗性，是風德、錘丁、純冰火法常用主手。",
-    attributes: [
-      "+3 所有技能",
-      "+40% 快速施法速度 (FCR)",
-      "+75% 對惡魔傷害, +100 對惡魔準確率",
-      "+3-14 冰寒傷害",
-      "每次命中偷取 7% 法力",
-      "+10 敏捷",
-      "生命恢復 +20",
-      "增加法力上限 15%",
-      "所有抗性 +30-40 (變動)",
-      "等級 4 橡樹智者 (25 次聚氣)",
-      "等級 14 烏鴉 (60 次聚氣)"
-    ]
-  },
-  {
-    id: "insight",
-    name: "眼光",
-    nameEn: "Insight",
-    runes: ["Ral", "Tir", "Tal", "Sol"],
-    runeNumbers: [8, 3, 7, 12],
-    sockets: 4,
-    allowedBases: ["長柄武器 (Polearms)", "長矛 (Spears)", "弓 (Bows)"],
-    requiredLevel: 27,
-    ladderOnly: false,
-    tags: ["Meditation", "Mana Regen", "Critical Strike", "Budget BIS"],
-    recommendedBases: "巨神之斧、神秘之斧、銳利之斧、女長老之弓 (給京子)",
-    description: "拓荒與成長期最不可或缺的平民神之語！等級 12-17 冥想靈氣使法力恢復速度飆升數倍，徹底告別喝藍水煩惱。",
-    attributes: [
-      "裝備時賦予等級 12-17 冥想靈氣 (Meditation Aura) (變動)",
-      "+35% 快速施法速度 (FCR)",
-      "+200-260% 增強傷害 (ED) (變動)",
-      "+9 最小傷害值",
-      "+180-250% 攻擊準確率加成 (變動)",
-      "+5-30 火焰傷害",
-      "+75 毒素傷害，持續 5 秒",
-      "+(1-6) 雙倍打擊 (Critical Strike) (變動)",
-      "+5 所有屬性",
-      "+2 擊殺後獲得法力 (EK)",
-      "+23% 更佳機會取得魔法裝備 (MF)"
-    ]
-  },
-  {
-    id: "mosaic",
-    name: "馬賽克",
-    nameEn: "Mosaic",
-    runes: ["Mal", "Gul", "Amn"],
-    runeNumbers: [23, 25, 11],
-    sockets: 3,
-    allowedBases: ["爪 (Claws)"],
-    requiredLevel: 53,
-    ladderOnly: true,
-    tags: ["Martial Arts", "Assassin God Tier", "Finishing Moves", "Elemental DPS"],
-    recommendedBases: "大院長之爪、近身刃、符紋爪 (自帶 +3 鳳凰攻擊或神龍擺尾)",
-    description: "2.6 版本徹底顛覆刺客的超級神裝！雙持時達到 100% 機率在施展終結技時不消耗聚氣，製造毀天滅地的全螢幕元素彈幕。",
-    attributes: [
-      "+50% 機率施展終結技時不消耗聚氣 (雙持達 100%)",
-      "當終結技未消耗聚氣時，重置聚氣持續時間",
-      "+2 武學藝術技能 (刺客專用)",
-      "+20% 攻擊速度 (IAS)",
-      "+200-250% 增強傷害 (ED) (變動)",
-      "+20% 攻擊準確率加成",
-      "+8-15% 冰冷技能傷害 (變動)",
-      "+8-15% 閃電技能傷害 (變動)",
-      "+8-15% 火焰技能傷害 (變動)",
-      "防止怪物自療",
-      "每次命中偷取 7% 生命"
-    ]
-  },
-  {
-    id: "flickering_flame",
-    name: "搖曳焰火",
-    nameEn: "Flickering Flame",
-    runes: ["Nef", "Pul", "Vex"],
-    runeNumbers: [4, 21, 26],
-    sockets: 3,
-    allowedBases: ["頭盔 (Helms)"],
-    requiredLevel: 55,
-    ladderOnly: true,
-    tags: ["Resist Fire Aura", "Fire Skills", "Minus Fire Res", "Fire Druid/Sorc"],
-    recommendedBases: "權冠 (Diadem 3S)、大地精靈之角 (德魯伊專用 3S 帶 +3 毀天滅地)",
-    description: "2.4 新增火系神頭！賦予對抗火焰靈氣（有效抵銷破火符的自損副作用），並降低敵人 10-15% 火焰抗性。",
-    attributes: [
-      "裝備時賦予等級 4-8 對抗火焰靈氣 (Resist Fire) (變動)",
-      "+3 火焰技能",
-      "-(10-15)% 敵人火焰抗性 (變動)",
-      "+30% 強化防禦",
-      "+30 對遠程攻擊防禦",
-      "+5% 最大火焰抗性",
-      "冰凍時間減半",
-      "毒素持續時間減少 50%"
-    ]
-  },
-  {
-    id: "metamorphosis",
-    name: "變形",
-    nameEn: "Metamorphosis",
-    runes: ["Io", "Cham", "Fal"],
-    runeNumbers: [16, 32, 19],
-    sockets: 3,
-    allowedBases: ["頭盔 (Helms)"],
-    requiredLevel: 67,
-    ladderOnly: true,
-    tags: ["Druid Shapeshifting", "Werewolf", "Werebear", "Cannot Be Frozen"],
-    recommendedBases: "德魯伊專用狼頭/鹿角 (自帶 +3 狂怒或變身技能)",
-    description: "2.6 專為變形德魯伊打造的終極頭盔，狼人打擊附加命中與生命加成，熊人打擊附加攻速與減傷加成。",
-    attributes: [
-      "狼人形態攻擊賦予狼印：+30% 攻擊準確率加成、增加生命上限 20%",
-      "熊人形態攻擊賦予熊印：+25% 攻擊速度 (IAS)、物理傷害減免 20%",
-      "+5 變形技能 (德魯伊專用)",
-      "+25% 機率造成壓碎打擊 (CB)",
-      "+50-80% 強化防禦 (變動)",
-      "+10 力量",
-      "+10 活力",
-      "所有抗性 +10",
-      "無法被凍結 (CBF)"
-    ]
-  },
-  {
-    id: "hustle",
-    name: "喧囂",
-    nameEn: "Hustle",
-    runes: ["Shael", "Ko", "Eld"],
-    runeNumbers: [13, 18, 2],
-    sockets: 3,
-    allowedBases: ["武器 (Weapons)", "胸甲 (Body Armor)"],
-    requiredLevel: 39,
-    ladderOnly: true,
-    tags: ["Burst of Speed", "IAS", "Run Walk", "Budget Physical"],
-    recommendedBases: "法師鎧甲 (鎧甲版)、幻化之刃/弓 (武器版)",
-    description: "2.6 超高人氣平民過渡裝，武器擊中可觸發刺客的速度爆發 (Burst of Speed)，鎧甲版提供高達 65% 高跑與攻速。",
-    attributes: [
-      "【武器效果】：擊中時有 5% 機率施展等級 1 速度爆發 (Burst of Speed)、+40% 攻擊速度、+130-150% 增強傷害",
-      "【胸甲效果】：+65% 跑步/步行速度、+40% 攻擊速度 (IAS)、+20% 快速打擊恢復 (FHR)",
-      "+10 敏捷",
-      "體力消耗減慢 50%"
-    ]
-  },
-  {
-    id: "stealth",
-    name: "隱密",
-    nameEn: "Stealth",
-    runes: ["Tal", "Eth"],
-    runeNumbers: [7, 5],
-    sockets: 2,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 17,
-    ladderOnly: false,
-    tags: ["FCR", "Run Walk", "FHR", "Early Game God Tier"],
-    recommendedBases: "鑲嵌甲、硬皮甲、胸甲 (Breast Plate 2S)",
-    description: "任何職業從普通難度第 1 章開始必做的第一件神器！只要 Tal + Eth，提供高跑、施法速度、打擊恢復與法力恢復。",
-    attributes: [
-      "+25% 跑步/步行速度",
-      "+25% 快速施法速度 (FCR)",
-      "+25% 快速打擊恢復 (FHR)",
-      "+6 敏捷",
-      "法力恢復 +15%",
-      "+15 體力上限",
-      "抗毒 +30%",
-      "魔法傷害減少 3"
-    ]
-  },
-  {
-    id: "rhyme",
-    name: "韻律",
-    nameEn: "Rhyme",
-    runes: ["Shael", "Eth"],
-    runeNumbers: [13, 5],
-    sockets: 2,
-    allowedBases: ["盾牌 (Shields)"],
-    requiredLevel: 29,
-    ladderOnly: false,
-    tags: ["Cannot Be Frozen", "Block Rate", "Magic Find", "All Resist"],
-    recommendedBases: "白骨盾牌 (Bone Shield 2S)、恐懼之盾、聖騎士專用盾",
-    description: "初期最容易入手的「無法被凍結」盾牌，自帶 25 全抗性與 25% MF，打寶過渡必備。",
-    attributes: [
-      "+20% 增加格擋機率",
-      "+40% 快速格擋速度 (FBR)",
-      "法力恢復 +15%",
-      "所有抗性 +25",
-      "無法被凍結 (CBF)",
-      "+50% 額外金幣從怪物身上取得 (GF)",
-      "+25% 更佳機會取得魔法裝備 (MF)"
-    ]
-  },
-  {
-    id: "ancients_pledge",
-    name: "古代的誓約",
-    nameEn: "Ancients' Pledge",
-    runes: ["Ral", "Ort", "Tal"],
-    runeNumbers: [8, 9, 7],
-    sockets: 3,
-    allowedBases: ["盾牌 (Shields)"],
-    requiredLevel: 21,
-    ladderOnly: false,
-    tags: ["All Resist", "Defense", "Act 5 Quest"],
-    recommendedBases: "大盾 (Large Shield 3S)、風箏盾 (Kite Shield 3S)",
-    description: "第五章拯救野蠻人士兵任務直接獎勵 3 枚符文！在普通進入惡夢難度時，一次性補齊近 50% 的元素抗性。",
-    attributes: [
-      "+50% 強化防禦",
-      "抗寒 +43%",
-      "抗火 +48%",
-      "抗電 +48%",
-      "抗毒 +48%",
-      "10% 受損生命轉移為法力"
-    ]
-  },
-  {
-    id: "treachery",
-    name: "背信",
-    nameEn: "Treachery",
-    runes: ["Shael", "Thul", "Lem"],
-    runeNumbers: [13, 10, 20],
-    sockets: 3,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 43,
-    ladderOnly: false,
-    tags: ["Fade", "IAS", "Mercenary BIS", "Damage Reduction"],
-    recommendedBases: "法師鎧甲 (自穿)、精英無形甲 (給傭兵)",
-    description: "被擊中時 5% 觸發等級 15 能量消解 (Fade)，提供高達 15% 物理減傷與 60 全抗，且自帶 +45% 超高攻速！",
-    attributes: [
-      "被擊中時有 5% 機率施展等級 15 能量消解 (Fade)",
-      "攻擊時有 25% 機率施展等級 15 劇毒新星",
-      "+2 刺客技能",
-      "+45% 攻擊速度 (IAS)",
-      "+20% 快速打擊恢復 (FHR)",
-      "抗寒 +30%",
-      "50% 額外金幣從怪物身上取得 (GF)"
-    ]
-  },
-  {
-    id: "beast",
-    name: "野獸",
-    nameEn: "Beast",
-    runes: ["Ber", "Tir", "Um", "Mal", "Lum"],
-    runeNumbers: [30, 3, 22, 23, 17],
-    sockets: 5,
-    allowedBases: ["斧 (Axes)", "權杖 (Scepters)", "鐵鎚 (Hammers)"],
-    requiredLevel: 63,
-    ladderOnly: false,
-    tags: ["Fanaticism", "Werebear", "Summoner Necro", "Crushing Blow"],
-    recommendedBases: "狂戰士斧 (Berserker Axe 5S)",
-    description: "賦予等級 9 狂熱靈氣 (Fanaticism)！召喚死靈法師的畢業主手，大幅強化骷髏部隊攻擊頻率與傷害，並能變身熊人狂暴近戰。",
-    attributes: [
-      "裝備時賦予等級 9 狂熱靈氣 (Fanaticism Aura)",
-      "+40% 攻擊速度 (IAS)",
-      "+240-270% 增強傷害 (ED) (變動)",
-      "20% 機率造成壓碎打擊 (CB)",
-      "25% 機率造成撕開傷口",
-      "+3 熊人變化 (Werebear)",
-      "+3 變形術 (Lycanthropy)",
-      "防止怪物自療",
-      "+25-40 力量 (變動)",
-      "+10 精力",
-      "+2 擊殺後獲得法力 (EK)"
-    ]
-  },
-  {
-    id: "faith",
-    name: "信心",
-    nameEn: "Faith",
-    runes: ["Ohm", "Jah", "Lem", "Eld"],
-    runeNumbers: [27, 31, 20, 2],
-    sockets: 4,
-    allowedBases: ["遠程武器 (Missile Weapons)"],
-    requiredLevel: 65,
-    ladderOnly: false,
-    tags: ["Fanaticism", "All Skills", "Ignore Target Def", "Bowazon BIS"],
-    recommendedBases: "大院長之弓 (Grand Matron Bow 4S +3弓技)、女長老之弓",
-    description: "物理弓馬的絕對信仰！賦予最高等級 15 狂熱靈氣，使攻速檔位輕鬆封頂，並附帶忽略防禦與高額傷害。",
-    attributes: [
-      "裝備時賦予等級 12-15 狂熱靈氣 (Fanaticism Aura) (變動)",
-      "+1-2 所有技能 (變動)",
-      "+330% 增強傷害 (ED)",
-      "忽略目標防禦",
-      "+300% 攻擊準確率加成",
-      "+75% 對不死生物的傷害",
-      "+50 對不死生物的準確率",
-      "+120 火焰傷害",
-      "所有抗性 +15",
-      "10% 重生為被復 raw 者",
-      "75% 額外金幣從怪物身上取得 (GF)"
-    ]
-  },
-  {
-    id: "white",
-    name: "白骨",
-    nameEn: "White",
-    runes: ["Dol", "Io"],
-    runeNumbers: [14, 16],
-    sockets: 2,
-    allowedBases: ["魔杖 (Wands)"],
-    requiredLevel: 35,
-    ladderOnly: false,
-    tags: ["Bone Spear", "Poison and Bone", "Necromancer", "FCR"],
-    recommendedBases: "骨杖、紫衫魔杖 (自帶 +3 骨矛 / +3 骨魂)",
-    description: "骨系死靈法師的屠神魔杖！結合好底材能累計提供 +8 骨矛技能與 20% 施法速度，造價極為親民。",
-    attributes: [
-      "擊中使怪物逃跑 25%",
-      "+10 活力",
-      "+3 毒素與白骨技能 (死靈法師專用)",
-      "+2 骨矛 (Bone Spear) (死靈法師專用)",
-      "+4 白骨裝甲 (Bone Armor) (死靈法師專用)",
-      "+3 白骨之牆 (Bone Wall) (死靈法師專用)",
-      "+20% 快速施法速度 (FCR)",
-      "+13 法力",
-      "魔法傷害減少 4"
-    ]
-  },
-  {
-    id: "chains_of_honor",
-    name: "榮耀之鏈",
-    nameEn: "Chains of Honor (CoH)",
-    runes: ["Dol", "Um", "Ber", "Ist"],
-    runeNumbers: [14, 22, 30, 24],
-    sockets: 4,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 63,
-    ladderOnly: false,
-    tags: ["All Skills", "All Resist", "Damage Reduction", "Demon Damage", "Life Leech"],
-    recommendedBases: "執政官鎧甲 (Archon Plate 4S)、暮光防護 (Dusk Shroud 4S)",
-    description: "+2 全技能、+65 超巨額全抗性與 8% 物理減傷，是法系在已有傳送技能或重視生存抗性時的最佳盔甲之一。",
-    attributes: [
-      "+2 所有技能",
-      "+200% 對惡魔的傷害",
-      "+100% 對不死生物的傷害",
-      "每次命中偷取 8% 生命",
-      "+70% 強化防禦",
-      "+20 力量",
-      "生命恢復 +7",
-      "所有抗性 +65",
-      "傷害減少 8% (DR)",
-      "+25% 更佳機會取得魔法裝備 (MF)"
-    ]
-  },
-  // Reign of the Warlock (RotW) & 擴充符文之語
-  {
-    id: "authority",
-    name: "權威",
-    nameEn: "Authority",
-    runes: ["Zod", "Cham", "Jah"],
-    runeNumbers: [33, 32, 31],
-    sockets: 3,
-    allowedBases: ["術士魔典 (Tomes)", "盾牌 (Shields)"],
-    requiredLevel: 69,
-    ladderOnly: true,
-    isNewDLC: true,
-    tags: ["Warlock BIS", "Demon Mastery", "All Skills", "Cannot Be Frozen"],
-    recommendedBases: "遠古魔典 (Ancient Grimoire 3S)",
-    description: "《術士軍臨》DLC 登場的頂級神符之語！提供極致的惡魔使役強度、壓制暗影傷害與不可摧毀特質。",
-    attributes: [
-      "+3 術士所有技能",
-      "+30% 快速施法速度 (FCR)",
-      "+(1-2) 惡魔支配 (Demon Mastery)",
-      "無法被凍結 (CBF)",
-      "無法破壞 (Indestructible)",
-      "增加生命上限 5%",
-      "所有抗性 +30-45 (變動)",
-      "傷害減少 10%"
-    ]
-  },
-  {
-    id: "coven",
-    name: "巫師會",
-    nameEn: "Coven",
-    runes: ["Ko", "Vex", "Pul"],
-    runeNumbers: [18, 26, 21],
-    sockets: 3,
-    allowedBases: ["法杖 (Staves)", "術士匕首 (Daggers)"],
-    requiredLevel: 55,
-    ladderOnly: true,
-    isNewDLC: true,
-    tags: ["Chaos Magic", "FCR", "Minus Dark Res", "RotW"],
-    recommendedBases: "祭祀匕首 (Ceremonial Dagger 3S)",
-    description: "《術士軍臨》混沌派系推薦符文之語，強化暗影與火焰爆擊，並大幅減少混沌法術冷卻時間。",
-    attributes: [
+    "id": "authority",
+    "name": "權威",
+    "nameEn": "Authority",
+    "nameClassic": "權威",
+    "runes": [
+      "Hel",
+      "Shael",
+      "Ral"
+    ],
+    "runeNumbers": [
+      15,
+      13,
+      8
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 29,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 10% 機率施展等級 15 瘴氣鎖鏈",
+      "被擊中時有 2% 機率施展等級 10 靈能護盾",
       "+2 術士技能",
-      "+35% 快速施法速度 (FCR)",
-      "-20% 敵人混沌抗性",
-      "+15-25% 混亂法術傷害 (變動)",
-      "+10 敏捷",
-      "+5% 最大抗火",
-      "+30% 強化防禦"
+      "+20% 打擊恢復",
+      "+40-60% 傷害強化",
+      "火焰抗性 +30%",
+      "需求 -15%"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances"
     ]
   },
   {
-    id: "void",
-    name: "虛無",
-    nameEn: "Void",
-    runes: ["Ber", "Sur", "Ohm"],
-    runeNumbers: [30, 29, 27],
-    sockets: 3,
-    allowedBases: ["長柄武器 (Polearms)", "雙手劍 (Two-Handed Swords)"],
-    requiredLevel: 63,
-    ladderOnly: true,
-    isNewDLC: true,
-    tags: ["Crushing Blow", "Void Aura", "Physical", "RotW"],
-    recommendedBases: "巨神之劍 (Colossus Sword 3S)",
-    description: "釋放虛空裂隙的邪異力量，擊中時伴隨真實傷害震波，對 Boss 與精英首領具備極高的破甲穿透力。",
-    attributes: [
-      "打擊時有 20% 機率施展等級 20 虛空崩解",
-      "+280-340% 增強傷害 (ED) (變動)",
-      "20% 機率造成壓碎打擊 (CB)",
-      "擊中使目標目盲",
-      "傷害減少 8%",
-      "+50 增強傷害",
-      "法力上限提升 5%"
+    "id": "beast",
+    "name": "野獸",
+    "nameEn": "Beast",
+    "nameClassic": "野獸",
+    "runes": [
+      "Ber",
+      "Tir",
+      "Um",
+      "Mal",
+      "Lum"
+    ],
+    "runeNumbers": [
+      30,
+      3,
+      22,
+      23,
+      17
+    ],
+    "sockets": 5,
+    "allowedBases": [
+      "斧",
+      "權杖",
+      "重槌"
+    ],
+    "requiredLevel": 63,
+    "ladderOnly": false,
+    "attributes": [
+      "裝備時賦予等級 9 狂熱靈氣",
+      "攻擊速度 +40%",
+      "+240-270% 傷害強化",
+      "+20% 機率造成粉碎打擊",
+      "+25% 機率造成開放傷口",
+      "+3 至熊人變化",
+      "+3 至變形術",
+      "防止怪物自療",
+      "+25-40 力量",
+      "+10 能量",
+      "+2 擊殺法力恢復",
+      "等級 13 召喚灰熊（5 次）"
+    ],
+    "tags": [
+      "Mana",
+      "CB",
+      "Aura"
     ]
   },
   {
-    id: "breath_of_the_dying",
-    name: "死亡呼吸",
-    nameEn: "Breath of the Dying (BotD)",
-    runes: ["Vex", "Hel", "El", "Eld", "Zod", "Eth"],
-    runeNumbers: [26, 15, 1, 2, 33, 5],
-    sockets: 6,
-    allowedBases: ["所有武器 (Weapons)"],
-    requiredLevel: 69,
-    ladderOnly: false,
-    tags: ["Max Damage", "Indestructible", "Life Leech", "Mana Leech", "All Attributes"],
-    recommendedBases: "無形狂戰士斧 (Ethereal Berserker Axe 6S)、無形巨神之刃 (Colossus Blade 6S)、無形鬼魂之矛",
-    description: "傳統物理雙手與單手武器面板天花板，因鑲入 Zod 必須使用無形底材，提供高達 +400% 增強傷害、雙吸與 +30 全屬性。",
-    attributes: [
-      "擊殺怪物時有 50% 機率施展等級 20 劇毒新星",
-      "無法破壞 (Indestructible)",
-      "+60% 攻擊速度 (IAS)",
-      "+350-400% 增強傷害 (ED) (變動)",
+    "id": "black",
+    "name": "黑錘",
+    "nameEn": "Black",
+    "nameClassic": "黑色",
+    "runes": [
+      "Thul",
+      "Io",
+      "Nef"
+    ],
+    "runeNumbers": [
+      10,
+      16,
+      4
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "短棒",
+      "重槌",
+      "釘鎚"
+    ],
+    "requiredLevel": 35,
+    "ladderOnly": false,
+    "attributes": [
+      "+120% 傷害強化",
+      "+40% 機率造成粉碎打擊",
+      "+200 準確率",
+      "附加 3 - 14 冰寒傷害",
+      "+10 體能",
+      "攻擊速度 +15%",
+      "擊退",
+      "魔法傷害降低 2",
+      "等級 4 屍爆（12 次）"
+    ],
+    "tags": [
+      "CB"
+    ]
+  },
+  {
+    "id": "bone",
+    "name": "骸骨",
+    "nameEn": "Bone",
+    "nameClassic": "白骨",
+    "runes": [
+      "Sol",
+      "Um",
+      "Um"
+    ],
+    "runeNumbers": [
+      12,
+      22,
+      22
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 47,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 15% 機率施展等級 10 骸骨護甲",
+      "擊中時有 15% 機率施展等級 10 骨矛",
+      "+2 死靈法師技能等級",
+      "+100-150 法力",
+      "所有抗性 +30",
+      "傷害降低 7"
+    ],
+    "tags": [
+      "All Skills",
+      "Resistances",
+      "Mana"
+    ]
+  },
+  {
+    "id": "bramble",
+    "name": "刺藤",
+    "nameEn": "Bramble",
+    "nameClassic": "野薔薇",
+    "runes": [
+      "Ral",
+      "Ohm",
+      "Sur",
+      "Eth"
+    ],
+    "runeNumbers": [
+      8,
+      27,
+      29,
+      5
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 61,
+    "ladderOnly": false,
+    "attributes": [
+      "裝備時賦予等級 15-21 荊棘靈氣",
+      "+50% 打擊恢復",
+      "+25-50% 毒素技能傷害",
+      "+300 防禦",
+      "法力上限提高 5%",
+      "法力恢復 15%",
+      "冰寒抗性上限 +5%",
+      "火焰抗性 +30%",
+      "毒素抗性 +100%",
+      "+13 擊殺生命恢復",
+      "等級 13 荊棘之靈（33 次）"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances",
+      "Life",
+      "Mana",
+      "Aura"
+    ]
+  },
+  {
+    "id": "brand",
+    "name": "烙印",
+    "nameEn": "Brand",
+    "nameClassic": "品牌",
+    "runes": [
+      "Jah",
+      "Lo",
+      "Mal",
+      "Gul"
+    ],
+    "runeNumbers": [
+      31,
+      28,
+      23,
+      25
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "弓或弩"
+    ],
+    "requiredLevel": 65,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 35% 機率施展等級 14 傷害加深",
+      "擊中時有 100% 機率施展等級 18 骨矛",
+      "+260-340% 傷害強化",
+      "無視目標防禦",
+      "20% 準確率加成",
+      "+280-330% 對惡魔的傷害",
+      "+20% 致命打擊",
+      "防止怪物自療",
+      "擊退",
+      "射出爆炸的弓矢或弩箭 15"
+    ],
+    "tags": [
+      "Runeword"
+    ]
+  },
+  {
+    "id": "breath_of_the_dying",
+    "name": "死亡呼吸",
+    "nameEn": "Breath of the Dying",
+    "nameClassic": "死亡呼吸",
+    "runes": [
+      "Vex",
+      "Hel",
+      "El",
+      "Eld",
+      "Zod",
+      "Eth"
+    ],
+    "runeNumbers": [
+      26,
+      15,
+      1,
+      2,
+      33,
+      5
+    ],
+    "sockets": 6,
+    "allowedBases": [
+      "武器"
+    ],
+    "requiredLevel": 69,
+    "ladderOnly": false,
+    "attributes": [
+      "當你殺敵時有 50% 機率施展等級 20 劇毒新星",
+      "永不毀損",
+      "攻擊速度 +60%",
+      "+350-400% 傷害強化",
+      "+200% 對不死怪物的傷害",
       "-25% 目標防禦",
-      "+50 攻擊準確率",
-      "+200% 對不死生物的傷害",
-      "+50 對不死生物的準確率",
-      "每次命中偷取 12-15% 生命 (變動)",
-      "每次命中偷取 7% 法力",
+      "+50 準確率",
+      "+50 對不死怪物的準確率",
+      "擊中竊取 7% 法力",
+      "擊中竊取 12-15% 生命",
       "防止怪物自療",
       "+30 所有屬性",
-      "+1 照亮範圍",
-      "裝備需求 -20%"
+      "照亮範圍 +1",
+      "需求 -20%"
+    ],
+    "tags": [
+      "Life",
+      "Mana"
     ]
   },
   {
-    id: "death",
-    name: "死亡",
-    nameEn: "Death",
-    runes: ["Hel", "El", "Vex", "Ort", "Gul"],
-    runeNumbers: [15, 1, 26, 9, 25],
-    sockets: 5,
-    allowedBases: ["劍 (Swords)", "斧 (Axes)"],
-    requiredLevel: 55,
-    ladderOnly: false,
-    tags: ["Crushing Blow 50%", "Deadly Strike", "Indestructible", "Glacial Spike"],
-    recommendedBases: "無形狂戰士斧 (5S)、無形巨神之劍 (5S)",
-    description: "自帶「無法破壞」，專為無形底材量身打造！擁有高達 50% 壓碎打擊與依等級成長的致命打擊，近戰雙熱聖騎士擊碎 Boss 核心武裝。",
-    attributes: [
-      "被擊中時有 100% 機率施展等級 44 連鎖閃電",
-      "攻擊時有 25% 機率施展等級 18 冰風暴",
-      "無法破壞 (Indestructible)",
-      "+300-385% 增強傷害 (ED) (變動)",
-      "+20% 攻擊準確率加成",
-      "+50 攻擊準確率",
-      "+1-50 閃電傷害",
-      "每次命中偷取 7% 法力",
-      "50% 機率造成壓碎打擊 (CB)",
-      "+(0.5 每等級) 機率造成致命打擊 (DS) (依角色等級增加，0.5-49.5%)",
-      "+1 照亮範圍",
-      "等級 22 鮮血石魔 (15 次聚氣)",
-      "裝備需求 -20%"
+    "id": "bulwark",
+    "name": "壁壘",
+    "nameEn": "Bulwark",
+    "runes": [
+      "Shael",
+      "Io",
+      "Sol"
+    ],
+    "runeNumbers": [
+      13,
+      16,
+      12
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "頭盔"
+    ],
+    "requiredLevel": 35,
+    "ladderOnly": true,
+    "attributes": [
+      "+20% 打擊恢復",
+      "擊中竊取 4-6% 生命",
+      "+75-100% 防禦強化",
+      "+10 體能",
+      "生命上限提高 5%",
+      "生命回復 +30",
+      "傷害降低 7",
+      "受到的物理傷害降低 10-15%"
+    ],
+    "tags": [
+      "FHR",
+      "Life"
     ]
   },
   {
-    id: "phoenix",
-    name: "鳳凰",
-    nameEn: "Phoenix",
-    runes: ["Vex", "Vex", "Lo", "Jah"],
-    runeNumbers: [26, 26, 28, 31],
-    sockets: 4,
-    allowedBases: ["盾牌 (Shields)", "武器 (Weapons)"],
-    requiredLevel: 65,
-    ladderOnly: false,
-    tags: ["Redemption Aura", "Enhanced Damage 400%", "Max Fire Res", "Life"],
-    recommendedBases: "統治者大盾 (Monarch 4S)、神聖小盾 (聖騎士 45 全抗 4S)",
-    description: "自帶等級 10-15 救贖靈氣 (Redemption)，隨時吞噬周邊陣亡怪物屍體為自身秒速回滿生命與法力，盾牌版更提供近戰物理角色夢寐以求的 +400% 巨額傷害。",
-    attributes: [
-      "打擊時有 100% 機率施展等級 40 火焰風暴",
-      "擊中時有 40% 機率施展等級 22 火焰風暴",
-      "裝備時賦予等級 10-15 救贖靈氣 (Redemption Aura) (變動)",
-      "+350-400% 增強傷害 (ED) (變動)",
-      "-28% 敵人火焰抗性",
-      "+350-400 對遠程攻擊防禦 (變動)",
-      "+50 生命",
-      "+5% 最大閃電抗性",
-      "+10% 最大火焰抗性",
-      "+15-21 火焰吸收 (變動)"
-    ]
-  },
-  {
-    id: "dream",
-    name: "夢境",
-    nameEn: "Dream",
-    runes: ["Io", "Jah", "Pul"],
-    runeNumbers: [16, 31, 21],
-    sockets: 3,
-    allowedBases: ["頭盔 (Helms)", "盾牌 (Shields)"],
-    requiredLevel: 65,
-    ladderOnly: false,
-    tags: ["Holy Shock Aura", "FHR", "All Resist", "Dual Dream Paladin"],
-    recommendedBases: "權冠 (Diadem 3S)、骨面罩 (Bone Visage 3S)、聖騎士專用神聖小盾 (45全抗 3S)",
-    description: "「雙夢騎士」的核心關鍵！頭盔與盾牌各裝備一件夢境，神聖衝擊靈氣等級將直接疊加至 30 級，普攻即可觸發破萬的毀滅性連鎖閃電脈衝。",
-    attributes: [
-      "被擊中時有 10% 機率施展等級 15 迷亂 (Confuse)",
-      "裝備時賦予等級 15 神聖衝擊靈氣 (Holy Shock Aura)",
-      "+20-30% 快速打擊恢復 (FHR) (變動)",
-      "+30% 強化防禦",
-      "+150-220 防禦 (變動)",
-      "+10 活力",
-      "增加生命上限 5%",
-      "+(0.625 每等級) 法力 (依角色等級增加，0.625-61.875)",
-      "所有抗性 +5-20 (變動)",
-      "+12-25% 更佳機會取得魔法裝備 (MF) (變動)"
-    ]
-  },
-  {
-    id: "exile",
-    name: "流亡",
-    nameEn: "Exile",
-    runes: ["Vex", "Ohm", "Ist", "Dol"],
-    runeNumbers: [26, 27, 24, 14],
-    sockets: 4,
-    allowedBases: ["聖騎士專用盾牌 (Paladin Shields)"],
-    requiredLevel: 57,
-    ladderOnly: false,
-    tags: ["Life Tap", "Defiance Aura", "Auto Repair Ethereal", "Uber Smiter BIS"],
-    recommendedBases: "無形旋風盾 (Ethereal Vortex Shield 4S)、無形神聖小盾 (4S 45全抗)",
-    description: "打紅門超級崔斯特姆的最強生存盾牌！打擊時觸發等級 5 偷取生命詛咒 (Life Tap)，自帶反抗防禦靈氣與耐久度每 4 秒自動修復（必用無形底材）。",
-    attributes: [
-      "打擊時有 15% 機率施展等級 5 偷取生命 (Life Tap)",
-      "裝備時賦予等級 13-16 反抗靈氣 (Defiance Aura) (變動)",
-      "+2 攻擊靈氣 (聖騎士專用)",
-      "+30% 快速格擋速度 (FBR)",
-      "凍結目標 +3",
-      "+220-260% 強化防禦 (變動)",
-      "生命恢復 +7",
-      "+5% 最大抗寒",
-      "+5% 最大抗火",
-      "+25% 更佳機會取得魔法裝備 (MF)",
-      "耐久度每 4 秒自動修復 1 點"
-    ]
-  },
-  {
-    id: "chaos",
-    name: "混沌",
-    nameEn: "Chaos",
-    runes: ["Fal", "Ohm", "Um"],
-    runeNumbers: [19, 27, 22],
-    sockets: 3,
-    allowedBases: ["爪 (Claws)"],
-    requiredLevel: 57,
-    ladderOnly: false,
-    tags: ["Whirlwind", "Assassin Unique Build", "Open Wounds", "Magic Damage"],
-    recommendedBases: "近身刃 (Suwayyah 3S)、符紋爪 (Runic Talons 3S)",
-    description: "賦予刺客野蠻人的經典招牌「+1 旋風斬 (Whirlwind)」，徹底開創「旋風刺客」流派，兼具武學被動、速度爆發與全螢幕魔力彈跳。",
-    attributes: [
-      "打擊時有 9% 機率施展等級 11 冰封球",
-      "打擊時有 11% 機率施展等級 9 充能彈",
-      "+35% 攻擊速度 (IAS)",
-      "+290-340% 增強傷害 (ED) (變動)",
-      "增加 216-471 魔法傷害",
-      "25% 機率造成撕開傷口",
-      "+1 旋風斬 (Whirlwind)",
-      "+10 力量",
-      "+15 擊殺後獲得生命"
-    ]
-  },
-  {
-    id: "doom",
-    name: "末日",
-    nameEn: "Doom",
-    runes: ["Hel", "Ohm", "Um", "Lo", "Cham"],
-    runeNumbers: [15, 27, 22, 28, 32],
-    sockets: 5,
-    allowedBases: ["斧 (Axes)", "長柄武器 (Polearms)", "鐵鎚 (Hammers)"],
-    requiredLevel: 67,
-    ladderOnly: false,
-    tags: ["Holy Freeze Aura", "Minus Enemy Cold Res", "Deadly Strike", "All Skills"],
-    recommendedBases: "狂戰士斧 (Berserker Axe 5S)、無形銳利之斧 (給傭兵)",
-    description: "自帶等級 12 神聖冰凍靈氣 (Holy Freeze)，無視怪物冰凍抗性全面減速敵人，並提供高達 -(40-60)% 敵人冰抗與 +2 全技能。",
-    attributes: [
-      "打擊時有 5% 機率施展等級 18 火山爆發",
-      "裝備時賦予等級 12 神聖冰凍靈氣 (Holy Freeze Aura)",
-      "+2 所有技能",
-      "+45% 攻擊速度 (IAS)",
-      "+330-370% 增強傷害 (ED) (變動)",
-      "-(40-60)% 敵人冰寒抗性 (自持有效) (變動)",
-      "20% 機率造成致命打擊 (DS)",
-      "25% 機率造成撕開傷口",
+    "id": "call_to_arms",
+    "name": "戰爭召喚",
+    "nameEn": "Call to Arms",
+    "nameClassic": "戰爭召喚",
+    "runes": [
+      "Amn",
+      "Ral",
+      "Mal",
+      "Ist",
+      "Ohm"
+    ],
+    "runeNumbers": [
+      11,
+      8,
+      23,
+      24,
+      27
+    ],
+    "sockets": 5,
+    "allowedBases": [
+      "武器"
+    ],
+    "requiredLevel": 57,
+    "ladderOnly": false,
+    "attributes": [
+      "+1 所有技能",
+      "攻擊速度 +40%",
+      "+250-290% 傷害強化",
+      "附加 5 - 30 火焰傷害",
+      "擊中竊取 7% 生命",
+      "+2-6 至戰鬥指揮",
+      "+1-6 至戰鬥命令",
+      "+1-4 至戰鬥怒吼",
       "防止怪物自療",
-      "冰凍目標 +3",
-      "裝備需求 -20%"
+      "生命回復 +12",
+      "尋獲魔法物品機率提高 30%"
+    ],
+    "tags": [
+      "All Skills",
+      "Life"
     ]
   },
   {
-    id: "pride",
-    name: "驕傲",
-    nameEn: "Pride",
-    runes: ["Cham", "Sur", "Io", "Lo"],
-    runeNumbers: [32, 29, 16, 28],
-    sockets: 4,
-    allowedBases: ["長柄武器 (Polearms)"],
-    requiredLevel: 67,
-    ladderOnly: false,
-    tags: ["Concentration Aura", "Physical Mercenary BIS", "Deadly Strike"],
-    recommendedBases: "無形銳利之斧 (Thresher 4S)、無形巨神之斧",
-    description: "物理職業（弓馬、狂亂蠻、雙熱騎）米山傭兵的終極增傷長柄！賦予最高 20 級專注靈氣 (Concentration)，使全隊物理傷害大幅暴增 345%。",
-    attributes: [
-      "被擊中時有 25% 機率施展等級 17 火焰風暴",
-      "裝備時賦予等級 16-20 專注靈氣 (Concentration Aura) (變動)",
-      "+260-300% 攻擊準確率加成 (變動)",
-      "+(1 每等級) 對惡魔傷害加成 (依角色等級增加)",
-      "+50-280 閃電傷害",
-      "20% 機率造成致命打擊 (DS)",
+    "id": "chains_of_honor",
+    "name": "榮耀之鍊",
+    "nameEn": "Chains of Honor",
+    "nameClassic": "榮耀之鍊",
+    "runes": [
+      "Dol",
+      "Um",
+      "Ber",
+      "Ist"
+    ],
+    "runeNumbers": [
+      14,
+      22,
+      30,
+      24
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 63,
+    "ladderOnly": false,
+    "attributes": [
+      "+2 所有技能",
+      "+200% 對惡魔的傷害",
+      "+100% 對不死怪物的傷害",
+      "擊中竊取 8% 生命",
+      "+70% 防禦強化",
+      "+20 力量",
+      "生命回復 +7",
+      "所有抗性 +65",
+      "受到的物理傷害降低 8%",
+      "尋獲魔法物品機率提高 25%"
+    ],
+    "tags": [
+      "All Skills",
+      "Resistances",
+      "Life"
+    ]
+  },
+  {
+    "id": "chaos",
+    "name": "混沌",
+    "nameEn": "Chaos",
+    "nameClassic": "沌頓",
+    "runes": [
+      "Fal",
+      "Ohm",
+      "Um"
+    ],
+    "runeNumbers": [
+      19,
+      27,
+      22
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "爪或拳刃"
+    ],
+    "requiredLevel": 57,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 9% 機率施展等級 11 冰封球",
+      "擊中時有 11% 機率施展等級 9 電能彈",
+      "攻擊速度 +35%",
+      "+290-340% 傷害強化",
+      "附加 216 - 471 魔法傷害",
+      "+25% 機率造成開放傷口",
+      "+1 至旋風斬",
+      "+10 力量",
+      "+15 擊殺惡魔生命恢復"
+    ],
+    "tags": [
+      "Life"
+    ]
+  },
+  {
+    "id": "coven",
+    "name": "巫師會",
+    "nameEn": "Coven",
+    "runes": [
+      "Ist",
+      "Ral",
+      "Io"
+    ],
+    "runeNumbers": [
+      24,
+      8,
+      16
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "頭盔"
+    ],
+    "requiredLevel": 51,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 5% 機率施展等級 10 咒印：昏沉",
+      "+1 所有技能",
+      "+20% 施法速度",
+      "+30-50% 防禦強化",
+      "+1-5 擊殺生命恢復",
+      "尋獲魔法物品機率提高 26-40%",
+      "火焰抗性 +30%",
+      "+10 體能"
+    ],
+    "tags": [
+      "All Skills",
+      "FCR",
+      "Resistances",
+      "Life"
+    ]
+  },
+  {
+    "id": "crescent_moon",
+    "name": "新月",
+    "nameEn": "Crescent Moon",
+    "nameClassic": "新月",
+    "runes": [
+      "Shael",
+      "Um",
+      "Tir"
+    ],
+    "runeNumbers": [
+      13,
+      22,
+      3
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "斧",
+      "刀劍",
+      "長柄武器"
+    ],
+    "requiredLevel": 47,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 10% 機率施展等級 17 連鎖閃電",
+      "擊中時有 7% 機率施展等級 13 靜電力場",
+      "攻擊速度 +20%",
+      "+180-220% 傷害強化",
+      "無視目標防禦",
+      "敵人電擊抗性 -35%",
+      "+25% 機率造成開放傷口",
+      "+9-11 魔法吸收",
+      "+2 擊殺法力恢復",
+      "等級 18 召喚幽靈狼（30 次）"
+    ],
+    "tags": [
+      "Resistances",
+      "Mana"
+    ]
+  },
+  {
+    "id": "cure",
+    "name": "治癒",
+    "nameEn": "Cure",
+    "runes": [
+      "Shael",
+      "Io",
+      "Tal"
+    ],
+    "runeNumbers": [
+      13,
+      16,
+      7
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "頭盔"
+    ],
+    "requiredLevel": 35,
+    "ladderOnly": true,
+    "attributes": [
+      "裝備時賦予等級 1 淨化靈氣",
+      "+20% 打擊恢復",
+      "+75-100% 防禦強化",
+      "+10 體能",
+      "生命上限提高 5%",
+      "毒素抗性 +40-60%",
+      "中毒的時效縮短 50%"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances",
+      "Life",
+      "Aura"
+    ]
+  },
+  {
+    "id": "death",
+    "name": "死神",
+    "nameEn": "Death",
+    "nameClassic": "死神",
+    "runes": [
+      "Hel",
+      "El",
+      "Vex",
+      "Ort",
+      "Gul"
+    ],
+    "runeNumbers": [
+      15,
+      1,
+      26,
+      9,
+      25
+    ],
+    "sockets": 5,
+    "allowedBases": [
+      "刀劍",
+      "斧"
+    ],
+    "requiredLevel": 55,
+    "ladderOnly": false,
+    "attributes": [
+      "當你死亡時有 100% 機率施展等級 44 連鎖閃電",
+      "攻擊時有 25% 機率施展等級 18 冰川之槍",
+      "永不毀損",
+      "+300-385% 傷害強化",
+      "20% 準確率加成",
+      "+50 準確率",
+      "附加 1 - 50 電擊傷害",
+      "擊中竊取 7% 法力",
+      "+50% 機率造成粉碎打擊",
+      "+(0.5-49.5)% 致命打擊 （依角色等級而定） [0.5 * clvl]",
+      "照亮範圍 +1",
+      "等級 22 鮮血魔像（15 次）",
+      "需求 -20%"
+    ],
+    "tags": [
+      "Mana",
+      "CB"
+    ]
+  },
+  {
+    "id": "delirium",
+    "name": "精神錯亂",
+    "nameEn": "Delirium",
+    "nameClassic": "迪勒瑞姆",
+    "runes": [
+      "Lem",
+      "Ist",
+      "Io"
+    ],
+    "runeNumbers": [
+      20,
+      24,
+      16
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "頭盔"
+    ],
+    "requiredLevel": 51,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 1% 機率施展等級 50 精神錯亂",
+      "被擊中時有 6% 機率施展等級 14 心靈震爆",
+      "被擊中時有 14% 機率施展等級 13 恐懼",
+      "擊中時有 11% 機率施展等級 18 混亂",
+      "+2 所有技能",
+      "+261 防禦",
+      "+10 體能",
+      "怪物金幣掉落量提高 50%",
+      "尋獲魔法物品機率提高 25%",
+      "等級 17 致命吸引（60 次）"
+    ],
+    "tags": [
+      "All Skills"
+    ]
+  },
+  {
+    "id": "destruction",
+    "name": "毀滅",
+    "nameEn": "Destruction",
+    "nameClassic": "毀滅",
+    "runes": [
+      "Vex",
+      "Lo",
+      "Ber",
+      "Jah",
+      "Ko"
+    ],
+    "runeNumbers": [
+      26,
+      28,
+      30,
+      31,
+      18
+    ],
+    "sockets": 5,
+    "allowedBases": [
+      "長柄武器",
+      "刀劍"
+    ],
+    "requiredLevel": 65,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 23% 機率施展等級 12 火山噴發",
+      "擊中時有 5% 機率施展等級 23 熔火巨石",
+      "當你死亡時有 100% 機率施展等級 45 隕石術",
+      "攻擊時有 15% 機率施展等級 22 閃電新星",
+      "+350% 傷害強化",
+      "無視目標防禦",
+      "附加 100 - 180 魔法傷害",
+      "擊中竊取 7% 法力",
+      "+20% 機率造成粉碎打擊",
+      "+20% 致命打擊",
+      "防止怪物自療",
+      "+10 敏捷"
+    ],
+    "tags": [
+      "Mana",
+      "CB"
+    ]
+  },
+  {
+    "id": "doom",
+    "name": "末日",
+    "nameEn": "Doom",
+    "nameClassic": "末日",
+    "runes": [
+      "Hel",
+      "Ohm",
+      "Um",
+      "Lo",
+      "Cham"
+    ],
+    "runeNumbers": [
+      15,
+      27,
+      22,
+      28,
+      32
+    ],
+    "sockets": 5,
+    "allowedBases": [
+      "斧",
+      "長柄武器",
+      "重槌"
+    ],
+    "requiredLevel": 67,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 5% 機率施展等級 18 火山噴發",
+      "裝備時賦予等級 12 神聖冰凍靈氣",
+      "+2 所有技能",
+      "攻擊速度 +45%",
+      "+330-370% 傷害強化",
+      "敵人冰寒抗性 -40-60%",
+      "+20% 致命打擊",
+      "+25% 機率造成開放傷口",
+      "防止怪物自療",
+      "凍結目標 +3",
+      "需求 -20%"
+    ],
+    "tags": [
+      "All Skills",
+      "Resistances",
+      "Aura"
+    ]
+  },
+  {
+    "id": "dragon",
+    "name": "飛龍",
+    "nameEn": "Dragon",
+    "nameClassic": "飛龍",
+    "runes": [
+      "Sur",
+      "Lo",
+      "Sol"
+    ],
+    "runeNumbers": [
+      29,
+      28,
+      12
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "護甲",
+      "盾牌"
+    ],
+    "requiredLevel": 61,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 20% 機率施展等級 18 淬毒",
+      "擊中時有 12% 機率施展等級 15 多頭蛇",
+      "裝備時賦予等級 14 神聖火焰靈氣",
+      "+360 防禦",
+      "+230 對遠程防禦",
+      "+3-5 所有屬性",
+      "+(0.375-37.125) 力量 （依角色等級而定） [0.375 * clvl]",
+      "法力上限提高 5% （只限護甲）",
+      "+50 法力 （只限盾牌）",
+      "電擊抗性上限 +5%",
+      "傷害降低 7"
+    ],
+    "tags": [
+      "Resistances",
+      "Mana",
+      "Aura"
+    ]
+  },
+  {
+    "id": "dream",
+    "name": "夢境",
+    "nameEn": "Dream",
+    "nameClassic": "夢境",
+    "runes": [
+      "Io",
+      "Jah",
+      "Pul"
+    ],
+    "runeNumbers": [
+      16,
+      31,
+      21
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "頭盔",
+      "盾牌"
+    ],
+    "requiredLevel": 65,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 10% 機率施展等級 15 混亂",
+      "裝備時賦予等級 15 神聖電擊靈氣",
+      "+20-30% 打擊恢復",
+      "+30% 防禦強化",
+      "+150-220 防禦",
+      "+10 體能",
+      "生命上限提高 5% （只限頭盔）",
+      "+50 生命 （只限盾牌）",
+      "+(0.625-61.875) 法力 （依角色等級而定） [0.625 * clvl]",
+      "所有抗性 +5-20",
+      "尋獲魔法物品機率提高 12-25%"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances",
+      "Life",
+      "Mana",
+      "Aura"
+    ]
+  },
+  {
+    "id": "duress",
+    "name": "強制",
+    "nameEn": "Duress",
+    "nameClassic": "強制",
+    "runes": [
+      "Shael",
+      "Um",
+      "Thul"
+    ],
+    "runeNumbers": [
+      13,
+      22,
+      10
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 47,
+    "ladderOnly": false,
+    "attributes": [
+      "+40% 打擊恢復",
+      "+10-20% 傷害強化",
+      "附加 37 - 133 冰寒傷害",
+      "+15% 機率造成粉碎打擊",
+      "+33% 機率造成開放傷口",
+      "+150-200% 防禦強化",
+      "精力消耗減緩 -20%",
+      "冰寒抗性 +45%",
+      "電擊抗性 +15%",
+      "火焰抗性 +15%",
+      "毒素抗性 +15%"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances",
+      "CB"
+    ]
+  },
+  {
+    "id": "edge",
+    "name": "邊緣",
+    "nameEn": "Edge",
+    "nameClassic": "邊緣",
+    "runes": [
+      "Tir",
+      "Tal",
+      "Amn"
+    ],
+    "runeNumbers": [
+      3,
+      7,
+      11
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "弓或弩"
+    ],
+    "requiredLevel": 25,
+    "ladderOnly": false,
+    "attributes": [
+      "裝備時賦予等級 15 荊棘靈氣",
+      "攻擊速度 +35%",
+      "+320-380% 對惡魔的傷害",
+      "+280% 對不死怪物的傷害",
+      "+75 毒素傷害，時效 5 秒",
+      "擊中竊取 7% 生命",
+      "防止怪物自療",
+      "+5-10 所有屬性",
+      "+2 擊殺法力恢復",
+      "所有商人的價格降低 15%"
+    ],
+    "tags": [
+      "Life",
+      "Mana",
+      "Aura"
+    ]
+  },
+  {
+    "id": "enigma",
+    "name": "謎團",
+    "nameEn": "Enigma",
+    "nameClassic": "謎團",
+    "runes": [
+      "Jah",
+      "Ith",
+      "Ber"
+    ],
+    "runeNumbers": [
+      31,
+      6,
+      30
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 65,
+    "ladderOnly": false,
+    "attributes": [
+      "+2 所有技能",
+      "+45% 跑步 / 行走速度",
+      "+1 至傳送術",
+      "+750-775 防禦",
+      "+(0-74) 力量 （依角色等級而定） [0.75 * clvl]",
+      "生命上限提高 5%",
+      "受到的物理傷害降低 8%",
+      "+14 擊殺生命恢復",
+      "+15% 受到的傷害轉為法力",
+      "尋獲魔法物品機率提高 (1-99)% （依角色等級而定） [1 * clvl]"
+    ],
+    "tags": [
+      "All Skills",
+      "Life",
+      "Mana",
+      "Teleport"
+    ]
+  },
+  {
+    "id": "enlightenment",
+    "name": "教化",
+    "nameEn": "Enlightenment",
+    "nameClassic": "教化",
+    "runes": [
+      "Pul",
+      "Ral",
+      "Sol"
+    ],
+    "runeNumbers": [
+      21,
+      8,
+      12
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 45,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 5% 機率施展等級 15 熾烈之徑",
+      "擊中時有 5% 機率施展等級 15 火球術",
+      "+2 魔法使技能等級",
+      "+1 至暖流",
+      "+30% 防禦強化",
+      "火焰抗性 +30%",
+      "傷害降低 7"
+    ],
+    "tags": [
+      "All Skills",
+      "Resistances"
+    ]
+  },
+  {
+    "id": "eternity",
+    "name": "永恆",
+    "nameEn": "Eternity",
+    "nameClassic": "永恆",
+    "runes": [
+      "Amn",
+      "Ber",
+      "Ist",
+      "Sol",
+      "Sur"
+    ],
+    "runeNumbers": [
+      11,
+      30,
+      24,
+      12,
+      29
+    ],
+    "sockets": 5,
+    "allowedBases": [
+      "近戰武器"
+    ],
+    "requiredLevel": 63,
+    "ladderOnly": false,
+    "attributes": [
+      "永不毀損",
+      "+260-310% 傷害強化",
+      "+9 最小傷害",
+      "擊中竊取 7% 生命",
+      "+20% 機率造成粉碎打擊",
       "擊中使目標目盲",
-      "冰凍目標 +3",
-      "+10 活力",
-      "生命恢復 +8",
-      "+(1.875 每等級) 額外金幣從怪物身上取得"
+      "使目標減慢 33%",
+      "法力恢復 16%",
+      "生命回復 +16",
+      "無法凍結",
+      "尋獲魔法物品機率提高 30%",
+      "等級 8 重生（88 次）"
+    ],
+    "tags": [
+      "Life",
+      "Mana",
+      "CB"
     ]
   },
   {
-    id: "lawbringer",
-    name: "執法者",
-    nameEn: "Lawbringer",
-    runes: ["Amn", "Lem", "Ko"],
-    runeNumbers: [11, 20, 18],
-    sockets: 3,
-    allowedBases: ["劍 (Swords)", "鐵鎚 (Hammers)", "權杖 (Scepters)"],
-    requiredLevel: 43,
-    ladderOnly: false,
-    tags: ["Decrepify", "Sanctuary Aura", "Slain Monsters Rest In Peace", "Physical Utility"],
-    recommendedBases: "幻化之刃 (Phase Blade 3S)、傳說之劍 (給第五章野蠻人傭兵)",
-    description: "極度廉價卻無比致命的破除物免神之語！打擊時高頻率觸發衰老詛咒 (Decrepify)，自帶庇護所靈氣無視不死生物物免，且怪物死亡安息杜絕尼拉塞克爆屍。",
-    attributes: [
-      "打擊時有 20% 機率施展等級 15 衰老 (Decrepify)",
-      "裝備時賦予等級 16-18 庇護所靈氣 (Sanctuary Aura) (變動)",
-      "-50% 目標防禦",
-      "+150-210 火焰傷害",
-      "+130-180 冰寒傷害",
-      "每次命中偷取 7% 生命",
-      "消滅怪物使之安息 (Slain Monsters Rest in Peace)",
-      "+200-250 對遠程攻擊防禦 (變動)",
+    "id": "exile",
+    "name": "流亡",
+    "nameEn": "Exile",
+    "nameClassic": "流亡",
+    "runes": [
+      "Vex",
+      "Ohm",
+      "Ist",
+      "Dol"
+    ],
+    "runeNumbers": [
+      26,
+      27,
+      24,
+      14
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "聖騎士盾牌"
+    ],
+    "requiredLevel": 57,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 15% 機率施展等級 5 偷取生命",
+      "裝備時賦予等級 13-16 反抗靈氣",
+      "+2 攻擊靈氣 （只限聖騎士）",
+      "+30% 格擋速度",
+      "凍結目標",
+      "+220-260% 防禦強化",
+      "生命回復 +7",
+      "冰寒抗性上限 +5%",
+      "火焰抗性上限 +5%",
+      "尋獲魔法物品機率提高 25%",
+      "每 4 秒修復 1 點耐久度"
+    ],
+    "tags": [
+      "Resistances",
+      "Life",
+      "Aura"
+    ]
+  },
+  {
+    "id": "faith",
+    "name": "信心",
+    "nameEn": "Faith",
+    "nameClassic": "信心",
+    "runes": [
+      "Ohm",
+      "Jah",
+      "Lem",
+      "Eld"
+    ],
+    "runeNumbers": [
+      27,
+      31,
+      20,
+      2
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "弓或弩"
+    ],
+    "requiredLevel": 65,
+    "ladderOnly": false,
+    "attributes": [
+      "裝備時賦予等級 12-15 狂熱靈氣",
+      "+1-2 所有技能",
+      "+330% 傷害強化",
+      "無視目標防禦",
+      "300% 準確率加成",
+      "+75% 對不死怪物的傷害",
+      "+50 對不死怪物的準確率",
+      "+120 火焰傷害",
+      "所有抗性 +15",
+      "10% 機率將目標復生為：返世亡靈",
+      "怪物金幣掉落量提高 75%"
+    ],
+    "tags": [
+      "All Skills",
+      "Resistances",
+      "Aura"
+    ]
+  },
+  {
+    "id": "famine",
+    "name": "饑荒",
+    "nameEn": "Famine",
+    "nameClassic": "饑荒",
+    "runes": [
+      "Fal",
+      "Ohm",
+      "Ort",
+      "Jah"
+    ],
+    "runeNumbers": [
+      19,
+      27,
+      9,
+      31
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "斧",
+      "重槌"
+    ],
+    "requiredLevel": 65,
+    "ladderOnly": false,
+    "attributes": [
+      "攻擊速度 +30%",
+      "+320-370% 傷害強化",
+      "無視目標防禦",
+      "附加 180 - 200 魔法傷害",
+      "附加 50 - 200 火焰傷害",
+      "附加 51 - 250 電擊傷害",
+      "附加 50 - 200 冰寒傷害",
+      "擊中竊取 12% 生命",
+      "防止怪物自療",
+      "+10 力量"
+    ],
+    "tags": [
+      "Life"
+    ]
+  },
+  {
+    "id": "flickering_flame",
+    "name": "閃爍火焰",
+    "nameEn": "Flickering Flame",
+    "nameClassic": "火焰",
+    "runes": [
+      "Nef",
+      "Pul",
+      "Vex"
+    ],
+    "runeNumbers": [
+      4,
+      21,
+      26
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "頭盔"
+    ],
+    "requiredLevel": 55,
+    "ladderOnly": false,
+    "attributes": [
+      "裝備時賦予等級 4-8 抗火靈氣",
+      "+3 火焰技能",
+      "敵人火焰抗性 -10-15%",
+      "+30% 防禦強化",
+      "+30 對遠程防禦",
+      "+50-75 法力",
+      "被凍結的時效減半",
+      "火焰抗性上限 +5%",
+      "中毒的時效縮短 50%"
+    ],
+    "tags": [
+      "Resistances",
+      "Mana",
+      "Aura"
+    ]
+  },
+  {
+    "id": "fortitude",
+    "name": "剛毅",
+    "nameEn": "Fortitude",
+    "nameClassic": "剛毅",
+    "runes": [
+      "El",
+      "Sol",
+      "Dol",
+      "Lo"
+    ],
+    "runeNumbers": [
+      1,
+      12,
+      14,
+      28
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "武器",
+      "護甲"
+    ],
+    "requiredLevel": 59,
+    "ladderOnly": false,
+    "attributes": [
+      "傷害降低 7",
+      "+15 防禦",
+      "生命回復 +7",
+      "電擊抗性上限 +5%",
+      "+9 最小傷害",
+      "+50 準確率",
+      "+25% 機率擊中使怪物逃跑",
+      "+20% 致命打擊",
+      "+200% 防禦強化",
+      "所有抗性 +25-30",
+      "+300% 傷害強化",
+      "+1-148.5 生命 （依角色等級而定）",
+      "被擊中時有 20% 機率施展等級 15 寒冰甲",
+      "+25% 施法速度",
+      "照亮範圍 +1",
+      "+12% 受到的傷害轉為法力"
+    ],
+    "tags": [
+      "FCR",
+      "Resistances",
+      "Life",
+      "Mana"
+    ]
+  },
+  {
+    "id": "fury",
+    "name": "狂怒",
+    "nameEn": "Fury",
+    "nameClassic": "狂怒",
+    "runes": [
+      "Jah",
+      "Gul",
+      "Eth"
+    ],
+    "runeNumbers": [
+      31,
+      25,
+      5
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "近戰武器"
+    ],
+    "requiredLevel": 65,
+    "ladderOnly": false,
+    "attributes": [
+      "+209% 傷害強化",
+      "攻擊速度 +40%",
+      "防止怪物自療",
+      "+66% 機率造成開放傷口",
+      "+33% 致命打擊",
+      "無視目標防禦",
+      "-25% 目標防禦",
+      "20% 準確率加成",
+      "擊中竊取 6% 生命",
+      "+5 至狂亂連擊 （只限野蠻人）"
+    ],
+    "tags": [
+      "Life"
+    ]
+  },
+  {
+    "id": "gloom",
+    "name": "幽暗",
+    "nameEn": "Gloom",
+    "nameClassic": "幽暗",
+    "runes": [
+      "Fal",
+      "Um",
+      "Pul"
+    ],
+    "runeNumbers": [
+      19,
+      22,
+      21
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 47,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 15% 機率施展等級 3 昏暗視野",
+      "+10% 打擊恢復",
+      "+200-260% 防禦強化",
+      "+10 力量",
+      "所有抗性 +45",
+      "被凍結的時效減半",
+      "+5% 受到的傷害轉為法力",
+      "照亮範圍 -3"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances",
+      "Mana"
+    ]
+  },
+  {
+    "id": "grief",
+    "name": "悔恨",
+    "nameEn": "Grief",
+    "nameClassic": "悔恨",
+    "runes": [
+      "Eth",
+      "Tir",
+      "Lo",
+      "Mal",
+      "Ral"
+    ],
+    "runeNumbers": [
+      5,
+      3,
+      28,
+      23,
+      8
+    ],
+    "sockets": 5,
+    "allowedBases": [
+      "刀劍",
+      "斧"
+    ],
+    "requiredLevel": 59,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 35% 機率施展等級 15 淬毒",
+      "攻擊速度 +30-40%",
+      "傷害 +340-400",
+      "無視目標防禦",
+      "-25% 目標防禦",
+      "+(1.875-185.625)% 對惡魔的傷害 （依角色等級而定） [1.875 * clvl]",
+      "附加 5 - 30 火焰傷害",
+      "敵人毒素抗性 -20-25%",
+      "+20% 致命打擊",
+      "防止怪物自療",
+      "+2 擊殺法力恢復",
+      "+10-15 擊殺生命恢復"
+    ],
+    "tags": [
+      "Resistances",
+      "Life",
+      "Mana"
+    ]
+  },
+  {
+    "id": "ground",
+    "name": "接地",
+    "nameEn": "Ground",
+    "runes": [
+      "Shael",
+      "Io",
+      "Ort"
+    ],
+    "runeNumbers": [
+      13,
+      16,
+      9
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "頭盔"
+    ],
+    "requiredLevel": 35,
+    "ladderOnly": true,
+    "attributes": [
+      "+20% 打擊恢復",
+      "+75-100% 防禦強化",
+      "+10 體能",
+      "生命上限提高 5%",
+      "電擊抗性 +40-60%",
+      "電擊吸收 +10-15%"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances",
+      "Life"
+    ]
+  },
+  {
+    "id": "hand_of_justice",
+    "name": "正義之手",
+    "nameEn": "Hand of Justice",
+    "nameClassic": "正義之手",
+    "runes": [
+      "Sur",
+      "Cham",
+      "Amn",
+      "Lo"
+    ],
+    "runeNumbers": [
+      29,
+      32,
+      11,
+      28
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "武器"
+    ],
+    "requiredLevel": 67,
+    "ladderOnly": false,
+    "attributes": [
+      "當你升級時有 100% 機率施展等級 36 熾烈之徑",
+      "當你死亡時有 100% 機率施展等級 48 隕石術",
+      "裝備時賦予等級 16 神聖火焰靈氣",
+      "攻擊速度 +33%",
+      "+280-330% 傷害強化",
+      "無視目標防禦",
+      "擊中竊取 7% 生命",
+      "敵人火焰抗性 -20%",
+      "+20% 致命打擊",
+      "擊中使目標目盲",
+      "凍結目標 +3"
+    ],
+    "tags": [
+      "Resistances",
+      "Life",
+      "Aura"
+    ]
+  },
+  {
+    "id": "harmony",
+    "name": "和諧",
+    "nameEn": "Harmony",
+    "nameClassic": "和諧",
+    "runes": [
+      "Tir",
+      "Ith",
+      "Sol",
+      "Ko"
+    ],
+    "runeNumbers": [
+      3,
+      6,
+      12,
+      18
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "弓或弩"
+    ],
+    "requiredLevel": 39,
+    "ladderOnly": false,
+    "attributes": [
+      "裝備時賦予等級 10 活力靈氣",
+      "+200-275% 傷害強化",
+      "+9 最小傷害",
+      "+9 最大傷害",
+      "附加 55 - 160 電擊傷害",
+      "附加 55 - 160 火焰傷害",
+      "附加 55 - 160 冰寒傷害",
+      "+2-6 至女武神",
       "+10 敏捷",
-      "75% 額外金幣從怪物身上取得 (GF)"
+      "法力恢復 20%",
+      "+2 擊殺法力恢復",
+      "照亮範圍 +2",
+      "等級 20 重生（25 次）"
+    ],
+    "tags": [
+      "Mana",
+      "Aura"
     ]
   },
   {
-    id: "oath",
-    name: "誓約",
-    nameEn: "Oath",
-    runes: ["Shael", "Pul", "Lum", "Ko"],
-    runeNumbers: [13, 21, 17, 18],
-    sockets: 4,
-    allowedBases: ["劍 (Swords)", "斧 (Axes)", "鐵鎚 (Maces)"],
-    requiredLevel: 49,
-    ladderOnly: false,
-    tags: ["Indestructible", "High IAS", "Budget God Tier", "Iron Golem"],
-    recommendedBases: "無形狂戰士斧 (4S)、無形高地之劍 (4S)、無形炎魔之刃 (4S)",
-    description: "近戰過渡至悔恨前的頂級利刃！自帶無法破壞因此強烈建議鑲嵌於無形底材，提供 50% 攻速與最高 340% 增傷，造價僅需 Pul 和 Lum。",
-    attributes: [
-      "打擊時有 30% 機率施展等級 20 白骨之靈",
-      "無法破壞 (Indestructible)",
-      "+50% 攻擊速度 (IAS)",
-      "+210-340% 增強傷害 (ED) (變動)",
+    "id": "heart_of_the_oak",
+    "name": "橡樹之心",
+    "nameEn": "Heart of the Oak",
+    "nameClassic": "橡樹之心",
+    "runes": [
+      "Ko",
+      "Vex",
+      "Pul",
+      "Thul"
+    ],
+    "runeNumbers": [
+      18,
+      26,
+      21,
+      10
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "法杖",
+      "釘鎚"
+    ],
+    "requiredLevel": 55,
+    "ladderOnly": false,
+    "attributes": [
+      "+3 所有技能",
+      "+40% 施法速度",
+      "+75% 對惡魔的傷害",
+      "+100 對惡魔的準確率",
+      "附加 3 - 14 冰寒傷害",
+      "擊中竊取 7% 法力",
+      "+10 敏捷",
+      "生命回復 +20",
+      "法力上限提高 15%",
+      "所有抗性 +30-40",
+      "等級 4 橡木智者（25 次）",
+      "等級 14 掠鴉（60 次）"
+    ],
+    "tags": [
+      "All Skills",
+      "FCR",
+      "Resistances",
+      "Life",
+      "Mana"
+    ]
+  },
+  {
+    "id": "hearth",
+    "name": "火爐",
+    "nameEn": "Hearth",
+    "runes": [
+      "Shael",
+      "Io",
+      "Thul"
+    ],
+    "runeNumbers": [
+      13,
+      16,
+      10
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "頭盔"
+    ],
+    "requiredLevel": 35,
+    "ladderOnly": true,
+    "attributes": [
+      "+20% 打擊恢復",
+      "+75-100% 防禦強化",
+      "+10 體能",
+      "生命上限提高 5%",
+      "冰寒抗性 +40-60%",
+      "冰寒吸收 +10-15%",
+      "無法凍結"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances",
+      "Life"
+    ]
+  },
+  {
+    "id": "holy_thunder",
+    "name": "神聖雷擊",
+    "nameEn": "Holy Thunder",
+    "nameClassic": "神聖雷擊",
+    "runes": [
+      "Eth",
+      "Ral",
+      "Ort",
+      "Tal"
+    ],
+    "runeNumbers": [
+      5,
+      8,
+      9,
+      7
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "權杖"
+    ],
+    "requiredLevel": 21,
+    "ladderOnly": false,
+    "attributes": [
+      "+60% 傷害強化",
+      "-25% 目標防禦",
+      "附加 5 - 30 火焰傷害",
+      "附加 21 - 110 電擊傷害",
+      "+75 毒素傷害，時效 5 秒",
+      "+10 最大傷害",
+      "電擊抗性 +60%",
+      "電擊抗性上限 +5%",
+      "+3 至神聖電擊 （只限聖騎士）",
+      "等級 7 連鎖閃電（60 次）"
+    ],
+    "tags": [
+      "Resistances"
+    ]
+  },
+  {
+    "id": "honor",
+    "name": "榮耀",
+    "nameEn": "Honor",
+    "nameClassic": "榮耀",
+    "runes": [
+      "Amn",
+      "El",
+      "Ith",
+      "Tir",
+      "Sol"
+    ],
+    "runeNumbers": [
+      11,
+      1,
+      6,
+      3,
+      12
+    ],
+    "sockets": 5,
+    "allowedBases": [
+      "近戰武器"
+    ],
+    "requiredLevel": 27,
+    "ladderOnly": false,
+    "attributes": [
+      "+160% 傷害強化",
+      "+9 最小傷害",
+      "+9 最大傷害",
+      "+25% 致命打擊",
+      "+250 準確率",
+      "+1 所有技能",
+      "擊中竊取 7% 生命",
+      "生命回復 +10",
+      "+10 力量",
+      "照亮範圍 +1",
+      "+2 擊殺法力恢復"
+    ],
+    "tags": [
+      "All Skills",
+      "Life",
+      "Mana"
+    ]
+  },
+  {
+    "id": "hustle",
+    "name": "歇斯底里",
+    "nameEn": "Hysteria",
+    "runes": [
+      "Shael",
+      "Ko",
+      "Eld"
+    ],
+    "runeNumbers": [
+      13,
+      18,
+      2
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "武器",
+      "護甲"
+    ],
+    "requiredLevel": 39,
+    "ladderOnly": true,
+    "attributes": [
+      "+65% 跑步 / 行走速度",
+      "攻擊速度 +40%",
+      "+20% 打擊恢復",
+      "+6 至閃避",
+      "精力消耗減緩 50%",
+      "所有抗性 +10",
+      "擊中時有 5% 機率施展等級 1 速度爆發",
+      "裝備時賦予等級 1 狂熱靈氣",
+      "攻擊速度 +30%",
+      "+180-200% 傷害強化",
+      "+75% 對不死怪物的傷害",
+      "+50 對不死怪物的準確率",
+      "+10 敏捷"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances",
+      "Aura"
+    ]
+  },
+  {
+    "id": "ice",
+    "name": "寒冰",
+    "nameEn": "Ice",
+    "nameClassic": "冰凍",
+    "runes": [
+      "Amn",
+      "Shael",
+      "Jah",
+      "Lo"
+    ],
+    "runeNumbers": [
+      11,
+      13,
+      31,
+      28
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "弓或弩"
+    ],
+    "requiredLevel": 65,
+    "ladderOnly": false,
+    "attributes": [
+      "當你升級時有 100% 機率施展等級 40 暴風雪",
+      "擊中時有 25% 機率施展等級 22 冰霜新星",
+      "裝備時賦予等級 18 神聖冰凍靈氣",
+      "攻擊速度 +20%",
+      "+140-210% 傷害強化",
+      "無視目標防禦",
+      "+25-30% 冰寒技能傷害",
+      "敵人冰寒抗性 -20%",
+      "擊中竊取 7% 生命",
+      "+20% 致命打擊",
+      "怪物金幣掉落量提高 (3.125-309.375)% （依角色等級而定） [3.125 * clvl]"
+    ],
+    "tags": [
+      "Resistances",
+      "Life",
+      "Aura"
+    ]
+  },
+  {
+    "id": "infinity",
+    "name": "無限",
+    "nameEn": "Infinity",
+    "nameClassic": "無限",
+    "runes": [
+      "Ber",
+      "Mal",
+      "Ber",
+      "Ist"
+    ],
+    "runeNumbers": [
+      30,
+      23,
+      30,
+      24
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "長柄武器",
+      "長矛"
+    ],
+    "requiredLevel": 63,
+    "ladderOnly": false,
+    "attributes": [
+      "當你殺敵時有 50% 機率施展等級 20 連鎖閃電",
+      "裝備時賦予等級 12 信念靈氣",
+      "+35% 跑步 / 行走速度",
+      "+255-325% 傷害強化",
+      "敵人電擊抗性 -45-55%",
+      "+40% 機率造成粉碎打擊",
+      "防止怪物自療",
+      "+(0.5-49.5) 體能 （依角色等級而定） [0.5 * clvl]",
+      "尋獲魔法物品機率提高 30%",
+      "等級 21 氣旋護甲（30 次）"
+    ],
+    "tags": [
+      "Resistances",
+      "CB",
+      "Aura"
+    ]
+  },
+  {
+    "id": "insight",
+    "name": "靈光",
+    "nameEn": "Insight",
+    "nameClassic": "眼光",
+    "runes": [
+      "Ral",
+      "Tir",
+      "Tal",
+      "Sol"
+    ],
+    "runeNumbers": [
+      8,
+      3,
+      7,
+      12
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "長柄武器",
+      "法杖",
+      "弓或弩"
+    ],
+    "requiredLevel": 27,
+    "ladderOnly": false,
+    "attributes": [
+      "裝備時賦予等級 12-17 冥想靈氣",
+      "+35% 施法速度",
+      "+200-260% 傷害強化",
+      "+9 最小傷害",
+      "180-250% 準確率加成",
+      "附加 5 - 30 火焰傷害",
+      "+75 毒素傷害，時效 5 秒",
+      "+1-6 至致命攻勢",
+      "+5 所有屬性",
+      "+2 擊殺法力恢復",
+      "尋獲魔法物品機率提高 23%"
+    ],
+    "tags": [
+      "FCR",
+      "Mana",
+      "Aura"
+    ]
+  },
+  {
+    "id": "kings_grace",
+    "name": "王者的慈悲",
+    "nameEn": "King's Grace",
+    "nameClassic": "王者的慈悲",
+    "runes": [
+      "Amn",
+      "Ral",
+      "Thul"
+    ],
+    "runeNumbers": [
+      11,
+      8,
+      10
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "刀劍",
+      "權杖"
+    ],
+    "requiredLevel": 25,
+    "ladderOnly": false,
+    "attributes": [
+      "+100% 傷害強化",
+      "+100% 對惡魔的傷害",
+      "+50% 對不死怪物的傷害",
+      "附加 5 - 30 火焰傷害",
+      "附加 3 - 14 冰寒傷害",
+      "+150 準確率",
+      "+100 對惡魔的準確率",
+      "+100 對不死怪物的準確率",
+      "擊中竊取 7% 生命"
+    ],
+    "tags": [
+      "Life"
+    ]
+  },
+  {
+    "id": "kingslayer",
+    "name": "弒王者",
+    "nameEn": "Kingslayer",
+    "nameClassic": "弒王者",
+    "runes": [
+      "Mal",
+      "Um",
+      "Gul",
+      "Fal"
+    ],
+    "runeNumbers": [
+      23,
+      22,
+      25,
+      19
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "刀劍",
+      "斧"
+    ],
+    "requiredLevel": 53,
+    "ladderOnly": false,
+    "attributes": [
+      "攻擊速度 +30%",
+      "+230-270% 傷害強化",
+      "-25% 目標防禦",
+      "20% 準確率加成",
+      "+33% 機率造成粉碎打擊",
+      "+50% 機率造成開放傷口",
+      "+1 至復仇打擊",
+      "防止怪物自療",
+      "+10 力量",
+      "怪物金幣掉落量提高 40%"
+    ],
+    "tags": [
+      "CB"
+    ]
+  },
+  {
+    "id": "last_wish",
+    "name": "最後遺願",
+    "nameEn": "Last Wish",
+    "nameClassic": "最後希望",
+    "runes": [
+      "Jah",
+      "Mal",
+      "Jah",
+      "Sur",
+      "Jah",
+      "Ber"
+    ],
+    "runeNumbers": [
+      31,
+      23,
+      31,
+      29,
+      31,
+      30
+    ],
+    "sockets": 6,
+    "allowedBases": [
+      "刀劍",
+      "重槌",
+      "斧"
+    ],
+    "requiredLevel": 65,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 6% 機率施展等級 11 影散",
+      "擊中時有 10% 機率施展等級 18 偷取生命",
+      "攻擊時有 20% 機率施展等級 20 電能彈",
+      "裝備時賦予等級 17 力量靈氣",
+      "+330-375% 傷害強化",
+      "無視目標防禦",
+      "+60-70% 機率造成粉碎打擊",
+      "防止怪物自療",
+      "擊中使目標目盲",
+      "尋獲魔法物品機率提高 (0.5-49.5)% （依角色等級而定） [0.5 * clvl]"
+    ],
+    "tags": [
+      "Life",
+      "CB",
+      "Aura"
+    ]
+  },
+  {
+    "id": "lawbringer",
+    "name": "執法者",
+    "nameEn": "Lawbringer",
+    "nameClassic": "執法者",
+    "runes": [
+      "Amn",
+      "Lem",
+      "Ko"
+    ],
+    "runeNumbers": [
+      11,
+      20,
+      18
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "刀劍",
+      "重槌",
+      "權杖"
+    ],
+    "requiredLevel": 43,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 20% 機率施展等級 15 衰老",
+      "裝備時賦予等級 16-18 庇護靈氣",
+      "-50% 目標防禦",
+      "附加 150 - 210 火焰傷害",
+      "附加 130 - 180 冰寒傷害",
+      "擊中竊取 7% 生命",
+      "殺死的怪物就此安息",
+      "+200-250 對遠程防禦",
+      "+10 敏捷",
+      "怪物金幣掉落量提高 75%"
+    ],
+    "tags": [
+      "Life",
+      "Aura"
+    ]
+  },
+  {
+    "id": "leaf",
+    "name": "葉子",
+    "nameEn": "Leaf",
+    "nameClassic": "葉子",
+    "runes": [
+      "Tir",
+      "Ral"
+    ],
+    "runeNumbers": [
+      3,
+      8
+    ],
+    "sockets": 2,
+    "allowedBases": [
+      "法杖"
+    ],
+    "requiredLevel": 19,
+    "ladderOnly": false,
+    "attributes": [
+      "附加 5 - 30 火焰傷害",
+      "+3 火焰技能",
+      "+3 至火焰彈 （只限魔法使）",
+      "+3 至煉獄之火 （只限魔法使）",
+      "+3 至暖流 （只限魔法使）",
+      "+2 擊殺法力恢復",
+      "+(2-198) 防禦 （依角色等級而定） [2 * clvl]",
+      "冰寒抗性 +33%"
+    ],
+    "tags": [
+      "Resistances",
+      "Mana"
+    ]
+  },
+  {
+    "id": "lionheart",
+    "name": "獅子心",
+    "nameEn": "Lionheart",
+    "nameClassic": "獅子心",
+    "runes": [
+      "Hel",
+      "Lum",
+      "Fal"
+    ],
+    "runeNumbers": [
+      15,
+      17,
+      19
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 41,
+    "ladderOnly": false,
+    "attributes": [
+      "+20% 傷害強化",
+      "需求 -15%",
+      "+25 力量",
+      "+10 能量",
+      "+20 體能",
+      "+15 敏捷",
+      "+50 生命",
+      "所有抗性 +30"
+    ],
+    "tags": [
+      "Resistances",
+      "Life"
+    ]
+  },
+  {
+    "id": "lore",
+    "name": "知識",
+    "nameEn": "Lore",
+    "nameClassic": "知識",
+    "runes": [
+      "Ort",
+      "Sol"
+    ],
+    "runeNumbers": [
+      9,
+      12
+    ],
+    "sockets": 2,
+    "allowedBases": [
+      "頭盔"
+    ],
+    "requiredLevel": 27,
+    "ladderOnly": false,
+    "attributes": [
+      "+1 所有技能等級",
+      "+10 能量",
+      "+2 擊殺法力恢復",
+      "電擊抗性 +30%",
+      "傷害降低 7",
+      "照亮範圍 +2"
+    ],
+    "tags": [
+      "All Skills",
+      "Resistances",
+      "Mana"
+    ]
+  },
+  {
+    "id": "malice",
+    "name": "怨恨",
+    "nameEn": "Malice",
+    "nameClassic": "怨恨",
+    "runes": [
+      "Ith",
+      "El",
+      "Eth"
+    ],
+    "runeNumbers": [
+      6,
+      1,
+      5
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "近戰武器"
+    ],
+    "requiredLevel": 15,
+    "ladderOnly": false,
+    "attributes": [
+      "+33% 傷害強化",
+      "+9 最大傷害",
+      "+100% 機率造成開放傷口",
+      "-25% 目標防禦",
+      "擊中使怪物防禦 -100",
+      "防止怪物自療",
+      "+50 準確率",
+      "吸取生命 -5"
+    ],
+    "tags": [
+      "Life"
+    ]
+  },
+  {
+    "id": "melody",
+    "name": "旋律",
+    "nameEn": "Melody",
+    "nameClassic": "旋律",
+    "runes": [
+      "Shael",
+      "Ko",
+      "Nef"
+    ],
+    "runeNumbers": [
+      13,
+      18,
+      4
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "弓或弩"
+    ],
+    "requiredLevel": 39,
+    "ladderOnly": false,
+    "attributes": [
+      "+50% 傷害強化",
+      "+300% 對不死怪物的傷害",
+      "+3 弓與弩技能 （只限亞馬遜）",
+      "+3 至致命攻勢 （只限亞馬遜）",
+      "+3 至閃躲 （只限亞馬遜）",
+      "+3 至緩箭術 （只限亞馬遜）",
+      "攻擊速度 +20%",
+      "+10 敏捷",
+      "擊退"
+    ],
+    "tags": [
+      "Runeword"
+    ]
+  },
+  {
+    "id": "memory",
+    "name": "記憶",
+    "nameEn": "Memory",
+    "nameClassic": "記憶",
+    "runes": [
+      "Lum",
+      "Io",
+      "Sol",
+      "Eth"
+    ],
+    "runeNumbers": [
+      17,
+      16,
+      12,
+      5
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "法杖"
+    ],
+    "requiredLevel": 37,
+    "ladderOnly": false,
+    "attributes": [
+      "+3 魔法使技能等級",
+      "+33% 施法速度",
+      "法力上限提高 20%",
+      "+3 至能量護盾 （只限魔法使）",
+      "+2 至靜電力場 （只限魔法使）",
+      "+10 能量",
+      "+10 體能",
+      "+9 最小傷害",
+      "-25% 目標防禦",
+      "魔法傷害降低 7",
+      "+50% 防禦強化"
+    ],
+    "tags": [
+      "All Skills",
+      "FCR",
+      "Mana"
+    ]
+  },
+  {
+    "id": "metamorphosis",
+    "name": "變化",
+    "nameEn": "Metamorphosis",
+    "runes": [
+      "Io",
+      "Cham",
+      "Fal"
+    ],
+    "runeNumbers": [
+      16,
+      32,
+      19
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "頭盔"
+    ],
+    "requiredLevel": 67,
+    "ladderOnly": true,
+    "attributes": [
+      "狼人變化的攻擊會賦予印記，持續 180",
+      "熊人變化的攻擊會賦予印記，持續 180",
+      "+5 變形技能 （只限德魯伊）",
+      "+25% 機率造成粉碎打擊",
+      "+50-80% 防禦強化",
+      "+10 力量",
+      "+10 體能",
+      "所有抗性 +10",
+      "無法凍結",
+      "30% 準確率加成",
+      "生命上限提高 40%",
+      "攻擊速度 +25%",
+      "受到的物理傷害降低 20%"
+    ],
+    "tags": [
+      "Resistances",
+      "Life",
+      "CB"
+    ]
+  },
+  {
+    "id": "mist",
+    "name": "迷霧",
+    "nameEn": "Mist",
+    "nameClassic": "迷霧",
+    "runes": [
+      "Cham",
+      "Shael",
+      "Gul",
+      "Thul",
+      "Ith"
+    ],
+    "runeNumbers": [
+      32,
+      13,
+      25,
+      10,
+      6
+    ],
+    "sockets": 5,
+    "allowedBases": [
+      "弓或弩"
+    ],
+    "requiredLevel": 67,
+    "ladderOnly": false,
+    "attributes": [
+      "裝備時賦予等級 8-12 專注靈氣",
+      "+3 所有技能",
+      "攻擊速度 +20%",
+      "+100% 穿透攻擊",
+      "+325-375% 傷害強化",
+      "+9 最大傷害",
+      "20% 準確率加成",
+      "附加 3 - 14 冰寒傷害",
+      "凍結目標 +3",
+      "+24 體能",
+      "所有抗性 +40"
+    ],
+    "tags": [
+      "All Skills",
+      "Resistances",
+      "Aura"
+    ]
+  },
+  {
+    "id": "mosaic",
+    "name": "嵌飾",
+    "nameEn": "Mosaic",
+    "runes": [
+      "Mal",
+      "Gul",
+      "Amn"
+    ],
+    "runeNumbers": [
+      23,
+      25,
+      11
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "爪或拳刃"
+    ],
+    "requiredLevel": 53,
+    "ladderOnly": false,
+    "attributes": [
+      "+50% 機率使終結技不消耗集氣的力量",
+      "+2 武學技藝 （只限刺客）",
+      "攻擊速度 +20%",
+      "+200-250% 傷害強化",
+      "20% 準確率加成",
+      "擊中竊取 7% 生命",
+      "+8-15% 冰寒技能傷害",
+      "+8-15% 閃電技能傷害",
+      "+8-15% 火焰技能傷害",
+      "防止怪物自療"
+    ],
+    "tags": [
+      "Life"
+    ]
+  },
+  {
+    "id": "myth",
+    "name": "神話",
+    "nameEn": "Myth",
+    "nameClassic": "神話",
+    "runes": [
+      "Hel",
+      "Amn",
+      "Nef"
+    ],
+    "runeNumbers": [
+      15,
+      11,
+      4
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 25,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 3% 機率施展等級 1 狂嗥",
+      "擊中時有 10% 機率施展等級 1 嘲諷",
+      "+2 野蠻人技能等級",
+      "+30 對遠程防禦",
+      "生命回復 +10",
+      "攻擊者反傷：14",
+      "需求 -15%"
+    ],
+    "tags": [
+      "All Skills",
+      "Life"
+    ]
+  },
+  {
+    "id": "nadir",
+    "name": "天底",
+    "nameEn": "Nadir",
+    "nameClassic": "天底",
+    "runes": [
+      "Nef",
+      "Tir"
+    ],
+    "runeNumbers": [
+      4,
+      3
+    ],
+    "sockets": 2,
+    "allowedBases": [
+      "頭盔"
+    ],
+    "requiredLevel": 13,
+    "ladderOnly": false,
+    "attributes": [
+      "+50% 防禦強化",
+      "+10 防禦",
+      "+30 對遠程防禦",
+      "等級 13 魔影斗蓬（9 次）",
+      "+2 擊殺法力恢復",
+      "+5 力量",
+      "怪物金幣掉落量提高 -33%",
+      "照亮範圍 -3"
+    ],
+    "tags": [
+      "Mana"
+    ]
+  },
+  {
+    "id": "oath",
+    "name": "誓約",
+    "nameEn": "Oath",
+    "nameClassic": "誓約",
+    "runes": [
+      "Shael",
+      "Pul",
+      "Mal",
+      "Lum"
+    ],
+    "runeNumbers": [
+      13,
+      21,
+      23,
+      17
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "刀劍",
+      "斧",
+      "釘鎚"
+    ],
+    "requiredLevel": 49,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 30% 機率施展等級 20 骸骨之魂",
+      "永不毀損",
+      "攻擊速度 +50%",
+      "+210-340% 傷害強化",
       "+75% 對惡魔的傷害",
       "+100 對惡魔的準確率",
       "防止怪物自療",
-      "+10 精力",
-      "+10-15 魔法吸收 (變動)",
-      "等級 16 狼獾之心 (20 次聚氣)",
-      "等級 17 鋼鐵石魔 (14 次聚氣)"
+      "+10 能量",
+      "+10-15 魔法吸收",
+      "等級 16 狼獾之心（20 次）",
+      "等級 17 鋼鐵魔像（14 次）"
+    ],
+    "tags": [
+      "Runeword"
     ]
   },
   {
-    id: "black",
-    name: "黑色",
-    nameEn: "Black",
-    runes: ["Thul", "Io", "Nef"],
-    runeNumbers: [10, 16, 4],
-    sockets: 3,
-    allowedBases: ["鐵鎚 (Clubs)", "權杖 (Scepters)", "連枷 (Flails)"],
-    requiredLevel: 35,
-    ladderOnly: false,
-    tags: ["Crushing Blow 40%", "Budget Smiter", "Knockback"],
-    recommendedBases: "連枷 (Flail 3S)、釘頭槌",
-    description: "平民重擊聖騎士 (Smiter) 通關地獄與擊殺超級暗黑破壞神的低造價神器，僅需 Thul+Io+Nef 即可擁有 40% 壓碎打擊與 15% 攻速。",
-    attributes: [
-      "+15% 攻擊速度 (IAS)",
-      "+120% 增強傷害 (ED)",
-      "+200 攻擊準確率",
-      "增加 3-14 冰寒傷害，持續 3 秒",
-      "40% 機率造成壓碎打擊 (CB)",
-      "擊退 (Knockback)",
-      "+10 活力",
-      "魔法傷害減少 2",
-      "等級 4 屍體爆炸 (12 次聚氣)"
-    ]
-  },
-  {
-    id: "leaf",
-    name: "葉子",
-    nameEn: "Leaf",
-    runes: ["Tir", "Ral"],
-    runeNumbers: [3, 8],
-    sockets: 2,
-    allowedBases: ["雙手法杖 (Staves)"],
-    requiredLevel: 19,
-    ladderOnly: false,
-    tags: ["Fire Skills +3", "Fire Sorc / Druid", "Early Game Leveling"],
-    recommendedBases: "雙手短杖 (自帶 +3 火球或 +3 暖氣)",
-    description: "法師與德魯伊普通難度拓荒的神作！等級 19 即可佩戴，提供巨額 +3 火焰技能與 +3 火球，傷害瞬間質變。",
-    attributes: [
-      "+3 火焰技能",
-      "+(5-30) 火焰傷害",
-      "+3 炙烈之徑 (Fire Wall)",
-      "+3 暖氣 (Warmth)",
-      "+3 火火 (Fire Bolt)",
-      "+(2 每等級) 防禦 (依角色等級增加)",
-      "抗寒 +33%",
-      "+2 擊殺後獲得法力 (EK)"
-    ]
-  },
-  {
-    id: "steel",
-    name: "鋼鐵",
-    nameEn: "Steel",
-    runes: ["Tir", "El"],
-    runeNumbers: [3, 1],
-    sockets: 2,
-    allowedBases: ["劍 (Swords)", "斧 (Axes)", "鐵鎚 (Maces)"],
-    requiredLevel: 13,
-    ladderOnly: false,
-    tags: ["Open Wounds 50%", "IAS 25%", "Early Game Leveling"],
-    recommendedBases: "彎刀 (Scimitar 2S)、闊劍 (Broad Sword 2S)",
-    description: "任何近戰物理角色在第 1 章 13 級時必做的第一件過渡武器，撕開傷口使怪物無法回血並持續掉血。",
-    attributes: [
-      "+25% 攻擊速度 (IAS)",
-      "+20% 增強傷害 (ED)",
-      "+3 最小傷害值",
-      "+3 最大傷害值",
-      "+50 攻擊準確率",
-      "50% 機率造成撕開傷口",
-      "+2 擊殺後獲得法力 (EK)",
-      "+1 照亮範圍"
-    ]
-  },
-  {
-    id: "harmony",
-    name: "和諧",
-    nameEn: "Harmony",
-    runes: ["Tir", "Ith", "Sol", "Ko"],
-    runeNumbers: [3, 6, 12, 18],
-    sockets: 4,
-    allowedBases: ["遠程武器 (Missile Weapons)"],
-    requiredLevel: 39,
-    ladderOnly: false,
-    tags: ["Vigor Aura", "Elemental Damage", "Run Walk", "Switch Weapon"],
-    recommendedBases: "主母之弓、女長老之弓 (自穿) 或刀鋒弓 (放在副手趕路)",
-    description: "自帶等級 10 活力靈氣 (Vigor Aura)，提供 +36% 跑步移動速度！常被各職業置於副手作為跑圖趕路神弓，主手亦有不錯的四系混合元素傷害。",
-    attributes: [
-      "裝備時賦予等級 10 活力靈氣 (Vigor Aura)",
-      "+200-275% 增強傷害 (ED) (變動)",
-      "+9 最小傷害值",
-      "+9 最大傷害值",
-      "+55-160 火焰傷害",
-      "+55-160 冰寒傷害",
-      "+55-160 閃電傷害",
-      "+(2-6) 女武神 (Valkyrie) (變動)",
-      "+10 敏捷",
-      "法力恢復 +20%",
-      "+2 擊殺後獲得法力 (EK)",
-      "+2 照亮範圍",
-      "等級 20 重生 (25 次聚氣)"
-    ]
-  },
-  {
-    id: "ice",
-    name: "冰凍",
-    nameEn: "Ice",
-    runes: ["Amn", "Shael", "Jah", "Lo"],
-    runeNumbers: [11, 13, 31, 28],
-    sockets: 4,
-    allowedBases: ["遠程武器 (Missile Weapons)"],
-    requiredLevel: 65,
-    ladderOnly: false,
-    tags: ["Holy Freeze Aura", "Cold Skill Damage", "Frost Arrow Bowazon BIS"],
-    recommendedBases: "大院長之弓 (4S +3弓系技能)、女長老之弓",
-    description: "急凍箭元素弓馬的終極畢業聖弓！自帶等級 18 神聖冰凍靈氣，並附加最高 +30% 冰冷技能傷害與 -20% 敵方冰抗。",
-    attributes: [
-      "打擊時有 6% 機率施展等級 40 暴風雪",
-      "擊中時有 25% 機率施展等級 22 霜之新星",
-      "裝備時賦予等級 18 神聖冰凍靈氣 (Holy Freeze Aura)",
-      "+20% 攻擊速度 (IAS)",
-      "+140-210% 增強傷害 (ED) (變動)",
-      "忽略目標防禦",
-      "+(25-30)% 冰寒技能傷害 (變動)",
-      "-20% 敵人冰寒抗性",
-      "每次命中偷取 7% 生命",
-      "20% 機率造成致命打擊 (DS)",
-      "+(3.125 每等級) 額外金幣從怪物身上取得"
-    ]
-  },
-  {
-    id: "mist",
-    name: "迷霧",
-    nameEn: "Mist",
-    runes: ["Cham", "Shael", "Gul", "Thul", "Ith"],
-    runeNumbers: [32, 13, 25, 10, 6],
-    sockets: 5,
-    allowedBases: ["遠程武器 (Missile Weapons)"],
-    requiredLevel: 67,
-    ladderOnly: true,
-    tags: ["Concentration Aura", "100% Piercing", "All Skills +3", "All Resist"],
-    recommendedBases: "大院長之弓 (5S +3弓技)、女長老之弓",
-    description: "2.4 新增的強力弓箭符文之語！提供等級 8-12 專注靈氣 (Concentration)、+3 全技能與 100% 穿透攻擊，免去穿刺腰帶的綁定限制。",
-    attributes: [
-      "裝備時賦予等級 8-12 專注靈氣 (Concentration Aura) (變動)",
-      "+3 所有技能",
-      "+20% 攻擊速度 (IAS)",
-      "100% 穿刺攻擊 (Piercing Attack)",
-      "+325-375% 增強傷害 (ED) (變動)",
-      "+9 最大傷害值",
-      "+20% 攻擊準確率加成",
-      "+3-14 冰寒傷害",
-      "冰凍目標 +3",
-      "+24 活力",
-      "所有抗性 +40"
-    ]
-  },
-  {
-    id: "plague",
-    name: "瘟疫",
-    nameEn: "Plague",
-    runes: ["Cham", "Fal", "Um"],
-    runeNumbers: [32, 19, 22],
-    sockets: 3,
-    allowedBases: ["劍 (Swords)", "爪 (Claws)", "匕首 (Daggers)"],
-    requiredLevel: 67,
-    ladderOnly: true,
-    tags: ["Cleansing Aura", "Lower Resist Proc", "Poison Damage", "Cannot Be Frozen"],
-    recommendedBases: "幻化之刃 (3S)、秘儀之刃、符紋爪",
-    description: "2.4 全新戰略符文之語！自帶淨化靈氣 (Cleansing) 極速化解劇毒與詛咒持續時間，被擊中時 20% 施展降低抗性詛咒 (Lower Resist)。",
-    attributes: [
-      "被擊中時有 20% 機率施展等級 12 降低抗性 (Lower Resist)",
-      "打擊時有 25% 機率施展等級 15 劇毒新星",
-      "裝備時賦予等級 13-17 淨化靈氣 (Cleansing Aura) (變動)",
-      "+1-2 所有技能 (變動)",
-      "+20% 攻擊速度 (IAS)",
-      "+220-320% 增強傷害 (ED) (變動)",
-      "-23% 敵人毒素抗性",
-      "+(0.375 每等級) 致命打擊 (DS) (依角色等級增加，0.375-37.125%)",
-      "+25% 機率造成撕開傷口",
-      "冰凍目標 +3",
-      "+10 力量"
-    ]
-  },
-  {
-    id: "unbending_will",
-    name: "不屈意志",
-    nameEn: "Unbending Will",
-    runes: ["Fal", "Io", "Ith", "Eld", "El", "Hel"],
-    runeNumbers: [19, 16, 6, 2, 1, 15],
-    sockets: 6,
-    allowedBases: ["劍 (Swords)"],
-    requiredLevel: 41,
-    ladderOnly: true,
-    tags: ["Taunt Proc", "Damage Reduction", "Life Leech", "A5 Mercenary BIS"],
-    recommendedBases: "巨神之劍 (Colossus Blade 6S)、幻化之刃",
-    description: "2.4 新手與中度開荒野蠻人以及第 5 章傭兵的絕佳平民大劍！高達 330% ED、偷取生命與傷害減免，材料極度容易湊齊。",
-    attributes: [
-      "打擊時有 18% 機率施展等級 18 嘲弄 (Taunt)",
-      "+3 戰鬥技能 (野蠻人專用)",
-      "+20-30% 攻擊速度 (IAS) (變動)",
-      "+300-330% 增強傷害 (ED) (變動)",
-      "+9 最大傷害值",
-      "+50 攻擊準確率",
-      "+75% 對不死生物的傷害",
-      "+50 對不死生物的準確率",
-      "每次命中偷取 8-10% 生命 (變動)",
-      "防止怪物自療",
+    "id": "obedience",
+    "name": "遵從",
+    "nameEn": "Obedience",
+    "nameClassic": "遵從",
+    "runes": [
+      "Hel",
+      "Ko",
+      "Thul",
+      "Eth",
+      "Fal"
+    ],
+    "runeNumbers": [
+      15,
+      18,
+      10,
+      5,
+      19
+    ],
+    "sockets": 5,
+    "allowedBases": [
+      "長柄武器",
+      "長矛"
+    ],
+    "requiredLevel": 41,
+    "ladderOnly": false,
+    "attributes": [
+      "當你殺敵時有 30% 機率施展等級 21 附魔",
+      "+40% 打擊恢復",
+      "+370% 傷害強化",
+      "-25% 目標防禦",
+      "附加 3 - 14 冰寒傷害",
+      "敵人火焰抗性 -25%",
+      "+40% 機率造成粉碎打擊",
+      "+200-300 防禦",
       "+10 力量",
-      "+10 活力",
-      "傷害減少 8",
-      "+1 照亮範圍",
-      "裝備需求 -20%"
-    ]
-  },
-  {
-    id: "obsession",
-    name: "執念",
-    nameEn: "Obsession",
-    runes: ["Zod", "Ist", "Lem", "Lum"],
-    runeNumbers: [33, 24, 20, 17],
-    sockets: 6,
-    allowedBases: ["雙手法杖 (Staves)"],
-    requiredLevel: 69,
-    ladderOnly: true,
-    tags: ["All Skills +4", "FCR 65%", "Max Life 20%", "Magic Find 60%"],
-    recommendedBases: "執政官之杖 (6S 自帶 +3 暴風雪/+3 連鎖閃電/+3 隕石)",
-    description: "2.4 為法師雙手長杖正名的終極符文之語！提供超震撼的 +4 全技能、+65% 快速施法速度、增加生命上限 20% 與 60% MF，擊中時還能觸發衰老詛咒。",
-    attributes: [
-      "被擊中時有 24% 機率施展等級 10 衰老 (Decrepify)",
-      "+4 所有技能",
-      "+65% 快速施法速度 (FCR)",
-      "+60% 快速打擊恢復 (FHR)",
-      "擊退 (Knockback)",
-      "+10 活力",
-      "+10 精力",
-      "增加生命上限 15-25% (變動)",
-      "法力恢復 +15-30% (變動)",
-      "所有抗性 +60-70 (變動)",
-      "+60-75% 更佳機會取得魔法裝備 (MF) (變動)",
-      "無法破壞 (Indestructible)"
-    ]
-  },
-  {
-    id: "bramble",
-    name: "荊棘",
-    nameEn: "Bramble",
-    runes: ["Ral", "Ohm", "Sur", "Eth"],
-    runeNumbers: [8, 27, 29, 5],
-    sockets: 4,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 61,
-    ladderOnly: false,
-    tags: ["Thorns Aura", "Poison Skill Damage 50%", "Poison Necro", "Rabies Druid"],
-    recommendedBases: "法師鎧甲 (Mage Plate 4S)、執政官鎧甲",
-    description: "毒系死靈法師與劇毒狼德的傷害極限甲！提供高達 +25-50% 毒素技能傷害與等級 15-21 刺針靈氣 (Thorns)。",
-    attributes: [
-      "裝備時賦予等級 15-21 刺針靈氣 (Thorns Aura) (變動)",
-      "+50% 快速打擊恢復 (FHR)",
-      "+(25-50)% 毒素技能傷害 (變動)",
-      "+300 防禦",
-      "增加法力上限 5%",
-      "法力恢復 +15%",
-      "+5% 最大抗寒",
-      "抗火 +30%",
-      "抗毒 +100%",
-      "+13 擊殺後獲得生命",
-      "等級 13 靈魂榨取 (33 次聚氣)"
-    ]
-  },
-  {
-    id: "stone",
-    name: "石塊",
-    nameEn: "Stone",
-    runes: ["Shael", "Um", "Pul", "Lum"],
-    runeNumbers: [13, 22, 21, 17],
-    sockets: 4,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 47,
-    ladderOnly: false,
-    tags: ["Huge Defense 290%", "FHR 60%", "Clay Golem", "All Resist"],
-    recommendedBases: "無形神聖盔甲 (4S 給傭兵)、無形執政官鎧甲",
-    description: "防禦力極高且性價比拔群的過渡傭兵防具，高達 +290% 強化防禦，讓無形底材防禦輕鬆突破 4000+，並自帶 60% FHR 與全抗。",
-    attributes: [
-      "+60% 快速打擊恢復 (FHR)",
-      "+250-290% 強化防禦 (變動)",
-      "+300 對遠程攻擊防禦",
-      "+16 力量",
-      "+16 活力",
-      "+10 精力",
-      "所有抗性 +15",
-      "等級 16 熔岩魔石 (Molten Boulder) (80 次聚氣)",
-      "等級 16 黏土石魔 (Clay Golem) (16 次聚氣)"
-    ]
-  },
-  {
-    id: "smoke",
-    name: "煙霧",
-    nameEn: "Smoke",
-    runes: ["Nef", "Lum"],
-    runeNumbers: [4, 17],
-    sockets: 2,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 37,
-    ladderOnly: false,
-    tags: ["All Resist 50", "Budget Survival", "FHR 20%"],
-    recommendedBases: "法師鎧甲 (2S)、幽靈盔甲",
-    description: "噩夢進入地獄時抗性不足的最強救急平民甲！只要 Nef+Lum，直接給予 +50 全抗性與 20% FHR。",
-    attributes: [
-      "+20% 快速打擊恢復 (FHR)",
-      "+75% 強化防禦",
-      "+280 對遠程攻擊防禦",
-      "+10 精力",
-      "所有抗性 +50",
-      "-1 照亮範圍",
-      "等級 6 削弱 (Weaken) (18 次聚氣)"
-    ]
-  },
-  {
-    id: "lore",
-    name: "知識",
-    nameEn: "Lore",
-    runes: ["Ort", "Sol"],
-    runeNumbers: [8, 12],
-    sockets: 2,
-    allowedBases: ["頭盔 (Helms)"],
-    requiredLevel: 27,
-    ladderOnly: false,
-    tags: ["All Skills +1", "Mana After Kill", "Budget Starter Head"],
-    recommendedBases: "白骨頭盔 (2S)、王冠 (2S)",
-    description: "普通難度進入惡夢時所有法系必做的第一頂神頭！提供 +1 全技能、擊殺回魔與 30% 抗電。",
-    attributes: [
-      "+1 所有技能",
-      "+10 精力",
-      "+2 擊殺後獲得法力 (EK)",
-      "抗電 +30%",
-      "傷害減少 7",
-      "+2 照亮範圍"
-    ]
-  },
-  {
-    id: "cure",
-    name: "治癒",
-    nameEn: "Cure",
-    runes: ["Shael", "Io", "Tal"],
-    runeNumbers: [13, 16, 7],
-    sockets: 3,
-    allowedBases: ["頭盔 (Helms)"],
-    requiredLevel: 35,
-    ladderOnly: true,
-    tags: ["Cleansing Aura", "Mercenary BIS", "Triple Aura Healer"],
-    recommendedBases: "權冠 (3S)、骨面罩 (3S)",
-    description: "2.6 第二章祈禱米山傭兵的終極神裝！賦予等級 1 淨化靈氣 (Cleansing)，與祈禱 (Prayer) 及眼光 (Meditation) 形成「三靈氣協同回血」連鎖，每秒回血超過 100 點並秒解劇毒與詛咒。",
-    attributes: [
-      "裝備時賦予等級 1 淨化靈氣 (Cleansing Aura)",
-      "+20% 快速打擊恢復 (FHR)",
-      "+75-100% 強化防禦 (變動)",
-      "+10 活力",
-      "增加生命上限 5%",
-      "抗毒 +40-60% (變動)",
-      "毒素持續時間縮短 50%"
-    ]
-  },
-  {
-    id: "vigilance",
-    name: "戒慎",
-    nameEn: "Vigilance",
-    runes: ["Sur", "Cham", "Amn"],
-    runeNumbers: [29, 32, 11],
-    sockets: 3,
-    allowedBases: ["術士魔典 (Tomes)", "盾牌 (Shields)"],
-    requiredLevel: 67,
-    ladderOnly: true,
-    isNewDLC: true,
-    tags: ["Damage Reduction 15%", "Cannot Be Frozen", "RotW"],
-    recommendedBases: "古代術士魔典 (3S)",
-    description: "《術士軍臨》DLC 專為高難度恐懼區域與極限挑戰打造的防禦型魔典，提供高額格擋、免凍結與 15% 物理減傷。",
-    attributes: [
-      "+2 術士技能",
-      "+30% 快速格擋速度 (FBR)",
-      "+20% 增加格擋機率",
-      "傷害減少 15% (DR)",
-      "無法被凍結 (CBF)",
-      "增加法力上限 5%",
-      "每次命中偷取 7% 生命",
-      "所有抗性 +30"
-    ]
-  },
-  {
-    id: "ritual",
-    name: "儀式",
-    nameEn: "Ritual",
-    runes: ["Vex", "Gul", "Ko"],
-    runeNumbers: [26, 25, 18],
-    sockets: 3,
-    allowedBases: ["術士法杖 (Staves)", "祭祀匕首 (Daggers)"],
-    requiredLevel: 55,
-    ladderOnly: true,
-    isNewDLC: true,
-    tags: ["Demon Enslavement +3", "FCR 25%", "RotW"],
-    recommendedBases: "祭祀匕首 (3S)",
-    description: "《術士軍臨》惡魔使役流派的核心利刃，強化使役奴僕的生存力與爆發攻速。",
-    attributes: [
-      "+3 惡魔奴僕技能 (術士專用)",
-      "+25% 快速施法速度 (FCR)",
-      "每次命中偷取 7% 法力",
-      "+20% 攻擊準確率加成",
       "+10 敏捷",
-      "+5% 最大抗火",
-      "使役惡魔僕從攻擊時附加 25% 壓碎打擊"
-    ]
-  },
-  {
-    id: "rift",
-    name: "裂縫",
-    nameEn: "Rift",
-    runes: ["Hel", "Ko", "Lem", "Gul"],
-    runeNumbers: [15, 18, 20, 25],
-    sockets: 4,
-    allowedBases: ["長柄武器 (Polearms)", "權杖 (Scepters)"],
-    requiredLevel: 53,
-    ladderOnly: false,
-    tags: ["Frozen Orb on Striking", "Kicksin BIS", "Tornado"],
-    recommendedBases: "四孔狂戰士斧、四孔四齒釘頭槌、軍用權杖",
-    description: "武學踢腿刺客 (Kicksin) 的標誌性武器！每次踢擊命中時有 16% 機率觸發等級 21 冰封球，結合極速龍爪一秒噴射數顆冰球淹沒戰場。",
-    attributes: [
-      "打擊時有 20% 機率施展等級 16 龍捲風",
-      "打擊時有 16% 機率施展等級 21 冰封球 (Frozen Orb)",
-      "+(5 每等級) 攻擊準確率 (依角色等級增加)",
-      "增加 160-250 魔法傷害",
-      "增加 60-180 冰寒傷害",
-      "+5-10 所有屬性 (變動)",
-      "38% 受損生命轉移為法力",
-      "等級 15 鋼鐵石魔 (40 次聚氣)",
+      "所有抗性 +20-30",
       "需求 -20%"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances",
+      "CB"
     ]
   },
   {
-    id: "dragon",
-    name: "飛龍",
-    nameEn: "Dragon",
-    runes: ["Sur", "Cham", "Lo"],
-    runeNumbers: [29, 32, 28],
-    sockets: 3,
-    allowedBases: ["胸甲 (Body Armor)", "盾牌 (Shields)"],
-    requiredLevel: 61,
-    ladderOnly: false,
-    tags: ["Holy Fire Aura", "Aura Stacking", "Auradin Core"],
-    recommendedBases: "法師鎧甲 (3S)、神聖小盾 (3S 45全抗)",
-    description: "雙飛龍聖火聖騎士 (Auradin) 的核心基石！胸甲與盾牌各賦予等級 14 神聖之火靈氣，與正義之手 (等級 16) 疊加達到恐怖的 44 級神聖之火，連走過怪堆怪就自爆。",
-    attributes: [
-      "打擊時有 20% 機率施展等級 18 毒焰 (Venom)",
-      "裝備時賦予等級 14 神聖之火靈氣 (Holy Fire Aura)",
-      "+360 防禦",
-      "+230 對遠程攻擊防禦",
-      "+3-5 所有屬性 (變動)",
-      "+(0.375 每等級) 力量 (依角色等級增加)",
-      "增加法力上限 5%",
-      "+5% 最大閃電抗性",
-      "傷害減少 7"
+    "id": "obsession",
+    "name": "執念",
+    "nameEn": "Obsession",
+    "nameClassic": "著魔",
+    "runes": [
+      "Zod",
+      "Ist",
+      "Lem",
+      "Lum",
+      "Io",
+      "Nef"
+    ],
+    "runeNumbers": [
+      33,
+      24,
+      20,
+      17,
+      16,
+      4
+    ],
+    "sockets": 6,
+    "allowedBases": [
+      "法杖"
+    ],
+    "requiredLevel": 69,
+    "ladderOnly": false,
+    "attributes": [
+      "永不毀損",
+      "被擊中時有 24% 機率施展等級 10 削弱",
+      "+4 所有技能",
+      "+65% 施法速度",
+      "+60% 打擊恢復",
+      "擊退",
+      "+10 體能",
+      "+10 能量",
+      "生命上限提高 15-25%",
+      "法力恢復 15-30%",
+      "所有抗性 +60-70",
+      "怪物金幣掉落量提高 75%",
+      "尋獲魔法物品機率提高 30%"
+    ],
+    "tags": [
+      "All Skills",
+      "FCR",
+      "FHR",
+      "Resistances",
+      "Life",
+      "Mana"
     ]
   },
   {
-    id: "hand_of_justice",
-    name: "正義之手",
-    nameEn: "Hand of Justice (HOJ)",
-    runes: ["Sur", "Cham", "Amn", "Lo"],
-    runeNumbers: [29, 32, 11, 28],
-    sockets: 4,
-    allowedBases: ["所有武器 (Weapons)"],
-    requiredLevel: 67,
-    ladderOnly: false,
-    tags: ["Holy Fire Aura", "Cannot Be Frozen", "Auradin Core"],
-    recommendedBases: "幻化之刃 (Phase Blade 4S)",
-    description: "自帶等級 16 神聖之火靈氣與無法被冰凍的神級武器，配合「飛龍甲 + 飛龍盾」達成三位一體聖火降臨。",
-    attributes: [
-      "升級時有 100% 機率施展等級 36 暴風雪",
-      "打擊時有 100% 機率施展等級 41 隕石",
-      "裝備時賦予等級 16 神聖之火靈氣 (Holy Fire Aura)",
-      "+33% 攻擊速度 (IAS)",
-      "+280-330% 增強傷害 (ED) (變動)",
-      "忽略目標防禦",
-      "-20% 目標防禦",
-      "每次命中偷取 7% 生命",
-      "20% 機率造成致命打擊 (DS)",
-      "打擊使目標致盲",
-      "無法被凍結 (CBF)"
+    "id": "passion",
+    "name": "熱情",
+    "nameEn": "Passion",
+    "nameClassic": "熱情",
+    "runes": [
+      "Dol",
+      "Ort",
+      "Eld",
+      "Lem"
+    ],
+    "runeNumbers": [
+      14,
+      9,
+      2,
+      20
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "武器"
+    ],
+    "requiredLevel": 43,
+    "ladderOnly": false,
+    "attributes": [
+      "攻擊速度 +25%",
+      "+160-210% 傷害強化",
+      "50-80% 準確率加成",
+      "+75% 對不死怪物的傷害",
+      "+50 對不死怪物的準確率",
+      "附加 1 - 50 電擊傷害",
+      "+1 至狂暴之擊",
+      "+1 至熱忱打擊",
+      "擊中使目標目盲 +10",
+      "+25% 機率擊中使怪物逃跑",
+      "怪物金幣掉落量提高 75%",
+      "等級 3 狼獾之心（12 次）"
+    ],
+    "tags": [
+      "Runeword"
     ]
   },
   {
-    id: "edge",
-    name: "邊緣",
-    nameEn: "Edge",
-    runes: ["Tir", "Tal", "Amn"],
-    runeNumbers: [3, 7, 11],
-    sockets: 3,
-    allowedBases: ["遠程武器 (Missile Weapons)"],
-    requiredLevel: 25,
-    ladderOnly: false,
-    tags: ["Vendor Discount 15%", "Gambling BIS", "Thorns Aura"],
-    recommendedBases: "短弓 (Short Bow 3S)、獵弓 (Hunting Bow 3S)",
-    description: "全遊戲人手一把的「賭博神弓」！只要 3#+7#+11#，裝備後在所有商人處購物與賭博直接享有 15% 骨折折扣，省下數百萬金幣必備神器。",
-    attributes: [
-      "裝備時賦予等級 15 荊棘靈氣 (Thorns Aura)",
-      "+35% 攻擊速度 (IAS)",
-      "+320-380% 對惡魔傷害加成 (變動)",
-      "+280% 對不死生物傷害加成",
-      "+75 毒素傷害，持續 5 秒",
-      "每次命中偷取 7% 生命",
-      "防止怪物自療",
-      "+5-10 所有屬性 (變動)",
-      "+2 擊殺後獲得法力 (EK)",
-      "減低所有商人價格 15% (賭博打折神技)"
-    ]
-  },
-  {
-    id: "splendor",
-    name: "燦爛",
-    nameEn: "Splendor",
-    runes: ["Eth", "Lum"],
-    runeNumbers: [5, 17],
-    sockets: 2,
-    allowedBases: ["盾牌 (Shields)"],
-    requiredLevel: 37,
-    ladderOnly: false,
-    tags: ["All Skills +1", "FCR 20%", "Magic Find 20%", "Budget Caster Shield"],
-    recommendedBases: "白骨盾牌 (2S)、死靈法師專用盾 (2S 帶骨矛技能)",
-    description: "法系與死靈法師絕佳的過渡與開荒副手盾！只要 2 孔與廉價符文，即可獲得 +1 全技能、20% 快速施法與 20% MF。",
-    attributes: [
-      "+1 所有技能",
-      "+20% 快速施法速度 (FCR)",
-      "+20% 快速格擋速度 (FBR)",
-      "+60-100% 強化防禦 (變動)",
-      "+10 精力",
-      "法力恢復 17%",
-      "+20% 更佳機會取得魔法裝備 (MF)",
-      "+3 照亮範圍"
-    ]
-  },
-  {
-    id: "lionheart",
-    name: "獅子心",
-    nameEn: "Lionheart",
-    runes: ["Hel", "Lum", "Fal"],
-    runeNumbers: [15, 17, 19],
-    sockets: 3,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 41,
-    ladderOnly: false,
-    tags: ["Strength +25", "Life +50", "All Resist 30", "Stats Booster"],
-    recommendedBases: "法師鎧甲 (3S)、執政官鎧甲 (3S)",
-    description: "噩夢進入地獄時近戰與遠程物理角色的極品性價比防具！狂加 25 力量、15 敏捷、20 體力、50 生命與 30 全抗，需求還降低 15%。",
-    attributes: [
-      "+20% 增強傷害 (ED)",
-      "+25 力量",
-      "+15 敏捷",
-      "+20 活力",
-      "+10 精力",
-      "+50 生命",
-      "所有抗性 +30",
-      "需求 -15%"
-    ]
-  },
-  {
-    id: "duress",
-    name: "強制",
-    nameEn: "Duress",
-    runes: ["Shael", "Um", "Thul"],
-    runeNumbers: [13, 22, 10],
-    sockets: 3,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 47,
-    ladderOnly: false,
-    tags: ["Crushing Blow 15%", "Open Wounds 33%", "FHR 40%", "Cold Res 45%"],
-    recommendedBases: "執政官鎧甲 (3S)、陰影鎧甲 (3S)",
-    description: "近戰打王、雙熱聖騎士與盾擊騎擊殺紅門王者的超值戰甲！提供 15% 壓碎打擊、33% 撕裂傷口與 40% FHR，極度全面。",
-    attributes: [
-      "+40% 快速打擊恢復 (FHR)",
-      "+10-20% 增強傷害 (ED) (變動)",
-      "增加 37-133 冰寒傷害",
-      "15% 機率造成壓碎打擊 (CB)",
-      "33% 機率造成撕裂傷口 (OW)",
-      "+150-200% 強化防禦 (變動)",
-      "-20% 減緩耐力消耗",
-      "抗寒 +45%",
-      "抗電 +15%",
-      "抗火 +15%",
-      "抗毒 +15%"
-    ]
-  },
-  {
-    id: "peace",
-    name: "和平",
-    nameEn: "Peace",
-    runes: ["Shael", "Thul", "Amn"],
-    runeNumbers: [13, 10, 11],
-    sockets: 3,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 29,
-    ladderOnly: false,
-    tags: ["Amazon Skills +2", "Summon Valkyrie", "FHR 20%"],
-    recommendedBases: "法師鎧甲 (3S)、鬼魂鎧甲 (3S)",
-    description: "亞馬遜極度熱門的開荒過渡戰甲！只要 Shael+Thul+Amn 就能直接獲取 +2 亞馬遜全技能，命中時還有 2% 機率召喚等級 15 強力女武神作肉盾。",
-    attributes: [
-      "被擊中時有 4% 機率施展等級 5 慢速箭 (Slow Missiles)",
-      "打擊時有 2% 機率施展等級 15 女武神 (Valkyrie)",
-      "+2 亞馬遜技能等級",
-      "+20% 快速打擊恢復 (FHR)",
-      "+2 致命攻擊 (Critical Strike)",
-      "抗寒 +30%",
-      "反彈受到的物理傷害 14"
-    ]
-  },
-  {
-    id: "bone",
-    name: "白骨",
-    nameEn: "Bone",
-    runes: ["Sol", "Um", "Um"],
-    runeNumbers: [12, 22, 22],
-    sockets: 3,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 47,
-    ladderOnly: false,
-    tags: ["Necromancer Skills +2", "Mana +150", "Bone Armor Procs"],
-    recommendedBases: "法師鎧甲 (3S)、古龍皮 (3S)",
-    description: "骨系死靈法師的量身定製神甲！提供 +2 死靈技能、海量 +100-150 法力與全抗 +30，被擊中時自動觸發等級 10 骨甲吸收傷害。",
-    attributes: [
-      "打擊時有 15% 機率施展等級 10 白骨之矛",
-      "被擊中時有 15% 機率施展等級 10 白骨裝甲 (Bone Armor)",
-      "+2 死靈法師技能等級",
-      "+100-150 法力 (變動)",
-      "所有抗性 +30",
-      "傷害減少 7"
-    ]
-  },
-  {
-    id: "kingslayer",
-    name: "弒君者",
-    nameEn: "Kingslayer",
-    runes: ["Mal", "Um", "Gul", "Fal"],
-    runeNumbers: [23, 22, 25, 19],
-    sockets: 4,
-    allowedBases: ["劍 (Swords)", "斧 (Axes)"],
-    requiredLevel: 53,
-    ladderOnly: false,
-    tags: ["Crushing Blow 33%", "Open Wounds 50%", "Vengeance +1", "Boss Killer"],
-    recommendedBases: "幻化之刃 (4S)、隱秘之刃 (4S)",
-    description: "擊殺高血量首領與地獄紅門 Boss 的特效殺戮兵器！自帶 33% 壓碎打擊、50% 撕裂傷口與防止自療，更賦予 +1 復仇技能破除物理免疫。",
-    attributes: [
-      "+30% 攻擊速度 (IAS)",
-      "+230-270% 增強傷害 (ED) (變動)",
-      "-25% 目標防禦",
-      "20% 額外攻擊準確率加成",
-      "33% 機率造成壓碎打擊 (CB)",
-      "50% 機率造成撕裂傷口 (OW)",
-      "+1 復仇 (Vengeance)",
-      "防止怪物自療",
-      "+10 力量",
-      "40% 額外金幣尋獲 (GF)"
-    ]
-  },
-  {
-    id: "passion",
-    name: "狂殺",
-    nameEn: "Passion",
-    runes: ["Dol", "Ort", "Eld", "Lem"],
-    runeNumbers: [14, 9, 2, 20],
-    sockets: 4,
-    allowedBases: ["所有武器 (Weapons)"],
-    requiredLevel: 43,
-    ladderOnly: false,
-    tags: ["Zeal +1", "Berserk +1", "Cross-class Melee"],
-    recommendedBases: "幻化之刃 (4S)",
-    description: "開啟奇蹟跨職業流派的靈魂符文！賦予任何裝備者 +1 熱忱 (Zeal) 與 +1 狂戰士 (Berserk)，使法師 (近戰火法)、死靈法師也能化身近戰揮砍王者。",
-    attributes: [
-      "+25% 攻擊速度 (IAS)",
-      "+160-210% 增強傷害 (ED) (變動)",
-      "50-80% 額外攻擊準確率加成 (變動)",
-      "+75% 對不死生物傷害加成",
-      "+50 對不死生物攻擊準確率",
-      "增加 1-50 閃電傷害",
-      "+1 狂戰士 (Berserk)",
-      "+1 熱忱 (Zeal)",
-      "擊中時使目標致盲",
-      "擊中時使怪物逃跑 25%",
-      "75% 額外金幣尋獲 (GF)",
-      "等級 3 碎靈之心 (12 次聚氣)"
-    ]
-  },
-  {
-    id: "delirium",
-    name: "迷惘",
-    nameEn: "Delirium",
-    runes: ["Lem", "Ist", "Io", "Ral"],
-    runeNumbers: [20, 24, 16, 8],
-    sockets: 3,
-    allowedBases: ["頭盔 (Helms)"],
-    requiredLevel: 51,
-    ladderOnly: false,
-    tags: ["All Skills +2", "Confuse on Striking", "Delirium Stygian Doll", "Crowd Control"],
-    recommendedBases: "骨面罩 (3S)、野蠻人/德魯伊專用頭 (3S 帶 3 技能)",
-    description: "最強控場頭盔！打擊時觸發等級 18 混亂 (Confuse) 讓全螢幕怪物自相殘殺。+2 全技能與 50% MF，但被擊中時有 1% 機率變身為可愛的冥河娃娃狂奔。",
-    attributes: [
-      "被擊中時有 1% 機率施展等級 50 迷惘變身 (變成冥河娃娃)",
-      "打擊時有 6% 機率施展等級 14 心靈震懾 (Mind Blast)",
-      "打擊時有 14% 機率施展等級 13 恐懼 (Terror)",
-      "打擊時有 11% 機率施展等級 18 混亂 (Confuse) (全場大暴動)",
-      "+2 所有技能",
-      "+261 防禦",
-      "+10 活力",
-      "50% 額外金幣尋獲 (GF)",
-      "+50% 更佳機會取得魔法裝備 (MF)"
-    ]
-  },
-  {
-    id: "memory",
-    name: "記憶",
-    nameEn: "Memory",
-    runes: ["Lum", "Io", "Sol", "Eth"],
-    runeNumbers: [17, 16, 12, 5],
-    sockets: 4,
-    allowedBases: ["法杖 (Staves)"],
-    requiredLevel: 37,
-    ladderOnly: false,
-    tags: ["Energy Shield +6 Staff", "Sorceress Buff Weapon", "Prebuff BIS"],
-    recommendedBases: "帶有 +3 能量護盾的四孔法杖 (總計可達 +6 ES)",
-    description: "法師頂級能量護盾 (Energy Shield) 戰前放狀態神兵！自帶 +3 法師技能與 +3 能量護盾，若底材原生帶 +3 能量護盾，切副手一放就是高達 +9 級護盾加成！",
-    attributes: [
-      "+3 法師技能等級",
-      "+33% 快速施法速度 (FCR)",
-      "增加法力上限 20%",
-      "+3 能量護盾 (Energy Shield)",
-      "+2 靜態力場 (Static Field)",
-      "+10 活力",
-      "+10 精力",
-      "+9 最小傷害",
-      "-25% 目標防禦",
-      "魔法傷害減少 7",
-      "+50% 強化防禦"
-    ]
-  },
-  {
-    id: "destruction",
-    name: "毀滅",
-    nameEn: "Destruction",
-    runes: ["Vex", "Lo", "Ber", "Jah", "Ko"],
-    runeNumbers: [26, 28, 30, 31, 18],
-    sockets: 5,
-    allowedBases: ["長柄武器 (Polearms)", "劍 (Swords)"],
-    requiredLevel: 65,
-    ladderOnly: false,
-    tags: ["Volcano on Striking", "Crushing Blow 20%", "Deadly Strike 20%", "Apocalypse"],
-    recommendedBases: "幻化之刃 (5S)、狂戰士斧 (5S)",
-    description: "末日浩劫般的特效轟炸神裝！命中與打擊時瘋狂觸發火山、連鎖閃電、隕石與新星，配備壓碎打擊與致命一擊，毀滅一切生靈。",
-    attributes: [
-      "打擊時有 23% 機率施展等級 12 火山 (Volcano)",
-      "打擊時有 5% 機率施展等級 23 熔岩巨石",
-      "死亡時有 100% 機率施展等級 45 彗星",
-      "打擊時有 15% 機率施展等級 22 新星",
-      "+350% 增強傷害 (ED)",
-      "忽略目標防禦",
-      "每次命中偷取 7% 法力",
-      "20% 機率造成壓碎打擊 (CB)",
-      "20% 機率造成致命打擊 (DS)",
-      "防止怪物自療",
-      "+10 敏捷"
-    ]
-  },
-  {
-    id: "bulwark",
-    name: "碎骨",
-    nameEn: "Bulwark",
-    runes: ["Shael", "Io", "Sol"],
-    runeNumbers: [13, 16, 12],
-    sockets: 3,
-    allowedBases: ["頭盔 (Helms)"],
-    requiredLevel: 35,
-    ladderOnly: true,
-    tags: ["Life Steal 6%", "Physical DR 15%", "Patch 2.6", "Merc Budget BIS"],
-    recommendedBases: "權冠 (3S)、骨面罩 (3S)、惡魔頭蓋骨面具 (3S)",
-    description: "2.6 天梯限定物理生存頭盔！只要 13#+16#+12#，給予米山傭兵高達 4-6% 吸血、10-15% 物理傷害減免與 +30 生命恢復，是安達利爾頭盔前最強的生存頭。",
-    attributes: [
-      "+20% 快速打擊恢復 (FHR)",
-      "每次命中偷取 4-6% 生命 (變動)",
-      "+75-100% 強化防禦 (變動)",
-      "+10 活力",
-      "增加生命上限 5%",
-      "生命恢復 +30",
-      "傷害減少 10-15% (DR) (變動)",
-      "物理傷害減少 7"
-    ]
-  },
-  {
-    id: "ground",
-    name: "大地",
-    nameEn: "Ground",
-    runes: ["Shael", "Io", "Ort"],
-    runeNumbers: [13, 16, 9],
-    sockets: 3,
-    allowedBases: ["頭盔 (Helms)"],
-    requiredLevel: 35,
-    ladderOnly: true,
-    tags: ["Lightning Absorb 15%", "Lightning Res 60%", "Patch 2.6", "Anti-Souls"],
-    recommendedBases: "權冠 (3S)、骨面罩 (3S)",
-    description: "2.6 天梯限定電抗神頭！專為突破世界之石要塞電鬼 (Burning Souls) 狙擊而生，提供 40-60% 電抗與 10-15% 閃電吸收，讓電鬼雷光變成補血溫泉。",
-    attributes: [
-      "+20% 快速打擊恢復 (FHR)",
-      "+75-100% 強化防禦 (變動)",
-      "+10 活力",
-      "增加生命上限 5%",
-      "抗電 +40-60% (變動)",
-      "吸收閃電 +10-15% (變動)"
-    ]
-  },
-  {
-    id: "hearth",
-    name: "爐火",
-    nameEn: "Hearth",
-    runes: ["Shael", "Io", "Thul"],
-    runeNumbers: [13, 16, 10],
-    sockets: 3,
-    allowedBases: ["頭盔 (Helms)"],
-    requiredLevel: 35,
-    ladderOnly: true,
-    tags: ["Cannot Be Frozen", "Cold Absorb 15%", "Patch 2.6", "Anti-Cold"],
-    recommendedBases: "權冠 (3S)、骨面罩 (3S)",
-    description: "2.6 天梯限定防寒神頭！自帶極具價值的「無法被凍結 (CBF)」、40-60% 抗寒與 10-15% 冰寒吸收，完美剋制暴風雪怪與督瑞爾。",
-    attributes: [
-      "+20% 快速打擊恢復 (FHR)",
-      "+75-100% 強化防禦 (變動)",
-      "+10 活力",
-      "增加生命上限 5%",
-      "抗寒 +40-60% (變動)",
-      "吸收冰寒 +10-15% (變動)",
-      "無法被凍結 (CBF)"
-    ]
-  },
-  {
-    id: "temper",
-    name: "回火",
-    nameEn: "Temper",
-    runes: ["Shael", "Io", "Ral"],
-    runeNumbers: [13, 16, 8],
-    sockets: 3,
-    allowedBases: ["頭盔 (Helms)"],
-    requiredLevel: 35,
-    ladderOnly: true,
-    tags: ["Fire Absorb 15%", "Fire Res 60%", "Patch 2.6", "Anti-Fire"],
-    recommendedBases: "權冠 (3S)、骨面罩 (3S)",
-    description: "2.6 天梯限定火抗頭盔！專門對抗崔凡克瘸子九頭海蛇、混沌避難所深淵騎士與大菠蘿火風暴，提供 40-60% 火抗與 10-15% 火焰吸收。",
-    attributes: [
-      "+20% 快速打擊恢復 (FHR)",
-      "+75-100% 強化防禦 (變動)",
-      "+10 活力",
-      "增加生命上限 5%",
-      "抗火 +40-60% (變動)",
-      "吸收火焰 +10-15% (變動)"
-    ]
-  },
-  {
-    id: "fury",
-    name: "狂怒",
-    nameEn: "Fury",
-    runes: ["Jah", "Gul", "Eth"],
-    runeNumbers: [31, 25, 5],
-    sockets: 3,
-    allowedBases: ["近戰武器 (Melee Weapons)"],
-    requiredLevel: 65,
-    ladderOnly: false,
-    tags: ["Open Wounds 66%", "IAS 40%", "Deadly Strike 33%", "Ignore Defense"],
-    recommendedBases: "狂戰士斧 (3S)、幻化之刃 (3S)、近身刃 (3S)",
-    description: "極致的物理撕裂殺神兵！66% 撕裂傷口與 33% 致命一擊，配合 40% IAS 與忽略目標防禦，近戰狂戰士揮刀即讓目標鮮血噴濺而亡。",
-    attributes: [
-      "+40% 攻擊速度 (IAS)",
-      "+209% 增強傷害 (ED)",
-      "忽略目標防禦",
-      "-25% 目標防禦",
-      "20% 額外攻擊準確率加成",
-      "每次命中偷取 6% 生命",
-      "66% 機率造成撕裂傷口 (OW)",
-      "33% 機率造成致命打擊 (DS)",
-      "防止怪物自療",
-      "+5 狂亂 (Frenzy) (野蠻人專用)"
-    ]
-  },
-  {
-    id: "malice",
-    name: "怨恨",
-    nameEn: "Malice",
-    runes: ["Ith", "El", "Eth"],
-    runeNumbers: [6, 1, 5],
-    sockets: 3,
-    allowedBases: ["近戰武器 (Melee Weapons)"],
-    requiredLevel: 15,
-    ladderOnly: false,
-    tags: ["Open Wounds 100%", "Prevent Monster Heal", "Minus Target Def 100"],
-    recommendedBases: "連枷 (3S)、水晶劍 (3S)、鉤爪 (3S)",
-    description: "只要 6#+1#+5# 的超低等級神兵！自帶 100% 撕裂傷口與防止自療，是近戰角色打安達利爾與督瑞爾最快讓 Boss 血條狂掉的救命兵器。",
-    attributes: [
-      "+33% 增強傷害 (ED)",
-      "+9 最大傷害",
-      "100% 機率造成撕裂傷口 (OW)",
-      "-25% 目標防禦",
-      "-100 每次命中目標防禦",
-      "防止怪物自療",
-      "+50 攻擊準確率",
-      "生命損耗 -5"
-    ]
-  },
-  {
-    id: "strength",
-    name: "力量",
-    nameEn: "Strength",
-    runes: ["Amn", "Tir"],
-    runeNumbers: [11, 3],
-    sockets: 2,
-    allowedBases: ["近戰武器 (Melee Weapons)"],
-    requiredLevel: 25,
-    ladderOnly: false,
-    tags: ["Crushing Blow 25%", "Life Steal 7%", "Strength +20"],
-    recommendedBases: "巨戰之斧 (2S)、長柄武器 (2S)",
-    description: "25 級平民打 Boss 首選！只要 2 孔與 Amn+Tir，直接給予 25% 壓碎打擊 (CB)、7% 生命偷取與 +20 力量，傭兵過渡神器。",
-    attributes: [
-      "+35% 增強傷害 (ED)",
-      "25% 機率造成壓碎打擊 (CB)",
-      "每次命中偷取 7% 生命",
-      "+2 擊殺後獲得法力 (EK)",
-      "+20 力量",
-      "+10 活力"
-    ]
-  },
-  {
-    id: "gloom",
-    name: "幽暗",
-    nameEn: "Gloom",
-    runes: ["Fal", "Um", "Pul"],
-    runeNumbers: [19, 22, 21],
-    sockets: 3,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 47,
-    ladderOnly: false,
-    tags: ["Dim Vision Procs", "All Resist 45", "High Defense Armor"],
-    recommendedBases: "執政官鎧甲 (3S)、陰影鎧甲 (3S)",
-    description: "對抗遠程弓箭手與電鬼集群的防守戰甲！被擊中時 15% 機率施展微弱暗光 (Dim Vision) 致盲全圖遠程怪，並提供 +45 全抗性與 200%+ 防禦加成。",
-    attributes: [
-      "被擊中時有 15% 機率施展等級 3 微弱暗光 (致盲遠程怪物)",
-      "+10% 快速打擊恢復 (FHR)",
-      "+200-260% 強化防禦 (變動)",
-      "+10 力量",
-      "所有抗性 +45",
-      "凍結目標 3",
-      "5% 受損生命轉移為法力",
-      "-3 照亮範圍"
-    ]
-  },
-  {
-    id: "prudence",
-    name: "慎重",
-    nameEn: "Prudence",
-    runes: ["Mal", "Tir"],
-    runeNumbers: [23, 3],
-    sockets: 2,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 49,
-    ladderOnly: false,
-    tags: ["Self Repair", "All Resist 25-35", "FHR 25%", "Eth Armor BIS"],
-    recommendedBases: "無形神聖盔甲 (2S)、無形漆黑之甲 (2S)",
-    description: "無形胸甲專屬神符！每 4 秒自動回復 1 點耐久度，因此必須使用無形超高防禦底材製作，成型後防禦力逼近 3500+，全抗 +25-35 與 25% FHR。",
-    attributes: [
-      "+25% 快速打擊恢復 (FHR)",
-      "+140-170% 強化防禦 (變動)",
-      "所有抗性 +25-35 (變動)",
-      "傷害減少 3",
-      "魔法傷害減少 17",
-      "+2 擊殺後獲得法力 (EK)",
-      "+1 照亮範圍",
-      "自動修復耐久度 (每 4 秒回復 1 點，無形專屬神甲)"
-    ]
-  },
-  {
-    id: "sanctuary",
-    name: "聖堂 (庇護所)",
-    nameEn: "Sanctuary",
-    runes: ["Ko", "Ko", "Mal"],
-    runeNumbers: [18, 18, 23],
-    sockets: 3,
-    allowedBases: ["盾牌 (Shields)"],
-    requiredLevel: 49,
-    ladderOnly: false,
-    tags: ["All Resist 50-70", "FHR 20%", "FBR 20%", "Slow Missiles"],
-    recommendedBases: "巨神刃盾 (3S)、聖騎士神聖小盾 (3S 45全抗底材可達 115 全抗！)",
-    description: "全遊戲抗性最高的頂級防守盾牌！狂加 +50-70 全抗性，若鑲嵌在自帶 45 全抗的聖騎士盾上，總全抗直接突破 115！自帶慢速箭與 20% 快速格擋。",
-    attributes: [
-      "+20% 快速打擊恢復 (FHR)",
-      "+20% 快速格擋速度 (FBR)",
-      "20% 增加格擋機率",
-      "+130-160% 強化防禦 (變動)",
-      "+250 對遠程攻擊防禦",
-      "+20 敏捷",
-      "所有抗性 +50-70 (變動) (全遊戲最高全抗盾)",
-      "魔法傷害減少 7",
-      "等級 12 慢速箭 (60 次聚氣)"
-    ]
-  },
-  {
-    id: "wisdom",
-    name: "智慧",
-    nameEn: "Wisdom",
-    runes: ["Pul", "Ith", "Eld"],
-    runeNumbers: [21, 6, 2],
-    sockets: 3,
-    allowedBases: ["頭盔 (Helms)"],
-    requiredLevel: 45,
-    ladderOnly: true,
-    tags: ["Pierce 33%", "Cannot Be Frozen", "Mana Leech 5%", "Patch 2.4 Bowazon"],
-    recommendedBases: "權冠 (3S)、骨面罩 (3S)",
-    description: "2.4 天梯專為遠程射手打造的穿刺頭盔！自帶 33% 穿透攻擊 (Pierce)，搭配剃刀之尾腰帶 (33%) 與基礎被動，輕鬆達成 100% 絕對穿透！附帶無法被凍結與吸藍。",
-    attributes: [
-      "+33% 穿透攻擊 (Pierce) (弓馬/標馬穿透神技)",
-      "+15-25% 額外攻擊準確率加成 (變動)",
-      "每次命中偷取 5% 法力",
-      "+30% 強化防禦",
-      "+10 精力",
-      "無法被凍結 (CBF)",
-      "抗毒 +15-25% (變動)",
-      "受損生命轉移為法力 5%"
-    ]
-  },
-  {
-    id: "pattern",
-    name: "圖樣",
-    nameEn: "Pattern",
-    runes: ["Tal", "Ort", "Thul"],
-    runeNumbers: [7, 9, 10],
-    sockets: 3,
-    allowedBases: ["爪 (Claws)"],
-    requiredLevel: 23,
-    ladderOnly: true,
-    tags: ["FBR 30%", "All Resist 30-50", "IAS 10%", "Patch 2.4 Kick/Martial"],
-    recommendedBases: "手鐮 (3S)、腕劍 (3S)",
-    description: "2.4 新加入的武學刺客開荒爪！只要 7#+9#+10#，提供 30% 快速格擋、三元素抗性各 +30%、攻速與全屬性加成，早期平滑通關首選。",
-    attributes: [
-      "+30% 快速格擋速度 (FBR)",
-      "+40-80% 增強傷害 (ED) (變動)",
-      "10% 額外攻擊準確率加成",
-      "增加 17-62 火焰傷害",
-      "增加 1-50 閃電傷害",
-      "增加 3-14 冰寒傷害",
-      "+75 毒素傷害，持續 5 秒",
+    "id": "pattern",
+    "name": "圖紋",
+    "nameEn": "Pattern",
+    "nameClassic": "啪噠",
+    "runes": [
+      "Tal",
+      "Ort",
+      "Thul"
+    ],
+    "runeNumbers": [
+      7,
+      9,
+      10
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "爪或拳刃"
+    ],
+    "requiredLevel": 23,
+    "ladderOnly": false,
+    "attributes": [
+      "+30% 格擋速度",
+      "+40-80% 傷害強化",
+      "10% 準確率加成",
+      "附加 12 - 32 火焰傷害",
+      "附加 1 - 50 電擊傷害",
+      "附加 3 - 14 冰寒傷害",
+      "+75 毒素傷害，時效 5 秒",
       "+6 力量",
       "+6 敏捷",
-      "所有抗性 +15 (額外火/電/寒各 +30%)"
+      "所有抗性 +15"
+    ],
+    "tags": [
+      "Resistances"
     ]
   },
   {
-    id: "enlightenment",
-    name: "啟蒙",
-    nameEn: "Enlightenment",
-    runes: ["Pul", "Ral", "Sol"],
-    runeNumbers: [21, 8, 12],
-    sockets: 3,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 45,
-    ladderOnly: false,
-    tags: ["Sorceress Skills +2", "Warmth +1", "Chain Lightning on Striking"],
-    recommendedBases: "法師鎧甲 (3S)、執政官鎧甲 (3S)",
-    description: "法師專屬符文戰甲！提供 +2 巫師技能、+1 暖氣 (Warmth)、擊中時 5% 觸發連鎖閃電與傷害減少 7，抗火 +30%。",
-    attributes: [
-      "打擊時有 5% 機率施展等級 15 連鎖閃電",
-      "被擊中時有 5% 機率施展等級 15 烈火之徑",
-      "+2 法師技能等級",
-      "+1 暖氣 (Warmth)",
-      "+30% 強化防禦",
-      "抗火 +30%",
-      "傷害減少 7"
+    "id": "peace",
+    "name": "和平",
+    "nameEn": "Peace",
+    "nameClassic": "和平",
+    "runes": [
+      "Shael",
+      "Thul",
+      "Amn"
+    ],
+    "runeNumbers": [
+      13,
+      10,
+      11
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 29,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 4% 機率施展等級 5 緩箭術",
+      "擊中時有 2% 機率施展等級 15 女武神",
+      "+2 亞馬遜技能等級",
+      "+20% 打擊恢復",
+      "+2 至致命攻勢",
+      "冰寒抗性 +30%",
+      "攻擊者反傷：14"
+    ],
+    "tags": [
+      "All Skills",
+      "FHR",
+      "Resistances"
     ]
   },
   {
-    id: "myth",
-    name: "神話",
-    nameEn: "Myth",
-    runes: ["Hel", "Amn", "Nef"],
-    runeNumbers: [15, 11, 4],
-    sockets: 3,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 25,
-    ladderOnly: false,
-    tags: ["Barbarian Skills +2", "Replenish Life +10", "Requirements -15%"],
-    recommendedBases: "法師鎧甲 (3S)、古代裝甲 (3S)",
-    description: "野蠻人開荒專屬甲！25 級即可穿戴，提供 +2 野蠻人技能、生命恢復 +10 與受損生命轉移法力，需求降低 15%。",
-    attributes: [
-      "打擊時有 3% 機率施展等級 1 嚎叫 (Howl)",
-      "被擊中時有 10% 機率施展等級 1 嘲弄 (Taunt)",
-      "+2 野蠻人技能等級",
-      "+30 對遠程攻擊防禦",
-      "生命恢復 +10",
-      "反彈受到的物理傷害 14",
-      "需求 -15%"
+    "id": "phoenix",
+    "name": "鳳凰",
+    "nameEn": "Phoenix",
+    "nameClassic": "鳳凰",
+    "runes": [
+      "Vex",
+      "Vex",
+      "Lo",
+      "Jah"
+    ],
+    "runeNumbers": [
+      26,
+      26,
+      28,
+      31
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "武器",
+      "盾牌"
+    ],
+    "requiredLevel": 65,
+    "ladderOnly": false,
+    "attributes": [
+      "+50 生命",
+      "電擊抗性上限 +5%",
+      "火焰抗性上限 +10%",
+      "無視目標防禦",
+      "擊中竊取 14% 法力",
+      "+20% 致命打擊",
+      "+350-400% 傷害強化",
+      "當你升級時有 100% 機率施展等級 40 熾烈之徑",
+      "擊中時有 40% 機率施展等級 22 火焰風暴",
+      "+15-21 火焰吸收",
+      "裝備時賦予等級 10-15 救贖靈氣",
+      "+350-400 對遠程防禦",
+      "敵人火焰抗性 -28%"
+    ],
+    "tags": [
+      "Resistances",
+      "Life",
+      "Mana",
+      "Aura"
     ]
   },
   {
-    id: "principle",
-    name: "原則",
-    nameEn: "Principle",
-    runes: ["Ral", "Gul", "Eld"],
-    runeNumbers: [8, 25, 2],
-    sockets: 3,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 53,
-    ladderOnly: false,
-    tags: ["Paladin Skills +2", "Life +100-150", "Holy Bolt on Striking"],
-    recommendedBases: "法師鎧甲 (3S)、聖堂武士鎧甲 (3S)",
-    description: "聖騎士專屬符文戰甲！提供 +2 聖騎士技能、海量 +100-150 生命、打擊時 10% 觸發等級 5 聖光彈，抗火 +30% 與最大毒抗 +5%。",
-    attributes: [
-      "打擊時有 10% 機率施展等級 5 聖光彈 (Holy Bolt)",
+    "id": "plague",
+    "name": "瘟疫",
+    "nameEn": "Plague",
+    "nameClassic": "瘟疫",
+    "runes": [
+      "Cham",
+      "Shael",
+      "Um"
+    ],
+    "runeNumbers": [
+      32,
+      13,
+      22
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "刀劍",
+      "爪或拳刃",
+      "匕首"
+    ],
+    "requiredLevel": 67,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 20% 機率施展等級 12 降低抗性",
+      "擊中時有 25% 機率施展等級 15 劇毒新星",
+      "裝備時賦予等級 13-17 淨化靈氣",
+      "+1-2 所有技能",
+      "攻擊速度 +20%",
+      "+220-320% 傷害強化",
+      "敵人毒素抗性 -23%",
+      "+(0-37)% 致命打擊 （依角色等級而定） [0.375 * clvl]",
+      "+25% 機率造成開放傷口",
+      "凍結目標 +3"
+    ],
+    "tags": [
+      "All Skills",
+      "Resistances",
+      "Aura"
+    ]
+  },
+  {
+    "id": "pride",
+    "name": "驕傲",
+    "nameEn": "Pride",
+    "nameClassic": "驕傲",
+    "runes": [
+      "Cham",
+      "Sur",
+      "Io",
+      "Lo"
+    ],
+    "runeNumbers": [
+      32,
+      29,
+      16,
+      28
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "長柄武器",
+      "長矛"
+    ],
+    "requiredLevel": 67,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 25% 機率施展等級 17 火牆術",
+      "裝備時賦予等級 16-20 專注靈氣",
+      "260-300% 準確率加成",
+      "+(1-99)% 對惡魔的傷害 （依角色等級而定） [1 * clvl]",
+      "附加 50 - 280 電擊傷害",
+      "+20% 致命打擊",
+      "擊中使目標目盲",
+      "凍結目標 +3",
+      "+10 體能",
+      "生命回復 +8",
+      "怪物金幣掉落量提高 (1.875-185.625)% （依角色等級而定） [1.875 * clvl]"
+    ],
+    "tags": [
+      "Life",
+      "Aura"
+    ]
+  },
+  {
+    "id": "principle",
+    "name": "原則",
+    "nameEn": "Principle",
+    "nameClassic": "原理",
+    "runes": [
+      "Ral",
+      "Gul",
+      "Eld"
+    ],
+    "runeNumbers": [
+      8,
+      25,
+      2
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 53,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 100% 機率施展等級 5 聖光彈",
       "+2 聖騎士技能等級",
-      "+100-150 生命 (變動)",
-      "減緩耐力消耗 50%",
-      "+5% 最大毒素抗性",
-      "抗火 +30%"
+      "+50% 對不死怪物的傷害",
+      "+100-150 生命",
+      "精力消耗減緩 15%",
+      "毒素抗性上限 +5%",
+      "火焰抗性 +30%"
+    ],
+    "tags": [
+      "All Skills",
+      "Resistances",
+      "Life"
     ]
   },
   {
-    id: "rain",
-    name: "雨天",
-    nameEn: "Rain",
-    runes: ["Ort", "Mal", "Ith"],
-    runeNumbers: [9, 23, 6],
-    sockets: 3,
-    allowedBases: ["胸甲 (Body Armor)"],
-    requiredLevel: 49,
-    ladderOnly: false,
-    tags: ["Druid Skills +2", "Twister on Striking", "Mana +100-150"],
-    recommendedBases: "法師鎧甲 (3S)、古龍皮 (3S)",
-    description: "德魯伊專屬符文戰甲！提供 +2 德魯伊技能、+100-150 法力、被擊中時觸發龍捲風控場，抗電 +30% 與魔法傷害減少 7。",
-    attributes: [
-      "打擊時有 5% 機率施展等級 15 旋風 (Twister)",
-      "被擊中時有 5% 機率施展等級 15 暴風雪 (Cyclone Armor)",
+    "id": "prudence",
+    "name": "謹慎",
+    "nameEn": "Prudence",
+    "nameClassic": "謹重",
+    "runes": [
+      "Mal",
+      "Tir"
+    ],
+    "runeNumbers": [
+      23,
+      3
+    ],
+    "sockets": 2,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 49,
+    "ladderOnly": false,
+    "attributes": [
+      "+25% 打擊恢復",
+      "+140-170% 防禦強化",
+      "所有抗性 +25-35",
+      "傷害降低 3",
+      "魔法傷害降低 17",
+      "+2 擊殺法力恢復",
+      "照亮範圍 +1",
+      "每 4 秒修復 1 點耐久度"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances",
+      "Mana"
+    ]
+  },
+  {
+    "id": "radiance",
+    "name": "光輝",
+    "nameEn": "Radiance",
+    "nameClassic": "光輝",
+    "runes": [
+      "Nef",
+      "Sol",
+      "Ith"
+    ],
+    "runeNumbers": [
+      4,
+      12,
+      6
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "頭盔"
+    ],
+    "requiredLevel": 27,
+    "ladderOnly": false,
+    "attributes": [
+      "+75% 防禦強化",
+      "+30 對遠程防禦",
+      "+10 能量",
+      "+10 體能",
+      "+15% 受到的傷害轉為法力",
+      "魔法傷害降低 3",
+      "+33 法力",
+      "傷害降低 7",
+      "照亮範圍 +5"
+    ],
+    "tags": [
+      "Mana"
+    ]
+  },
+  {
+    "id": "rain",
+    "name": "降雨",
+    "nameEn": "Rain",
+    "nameClassic": "降雨",
+    "runes": [
+      "Ort",
+      "Mal",
+      "Ith"
+    ],
+    "runeNumbers": [
+      9,
+      23,
+      6
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 49,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 5% 機率施展等級 15 氣旋護甲",
+      "擊中時有 5% 機率施展等級 15 旋風術",
       "+2 德魯伊技能等級",
-      "+100-150 法力 (變動)",
-      "抗電 +30%",
-      "魔法傷害減少 7",
-      "15% 受損生命轉移為法力"
+      "+100-150 法力",
+      "電擊抗性 +30%",
+      "魔法傷害降低 7",
+      "+15% 受到的傷害轉為法力"
+    ],
+    "tags": [
+      "All Skills",
+      "Resistances",
+      "Mana"
+    ]
+  },
+  {
+    "id": "rhyme",
+    "name": "聲韻",
+    "nameEn": "Rhyme",
+    "nameClassic": "押韻",
+    "runes": [
+      "Shael",
+      "Eth"
+    ],
+    "runeNumbers": [
+      13,
+      5
+    ],
+    "sockets": 2,
+    "allowedBases": [
+      "盾牌"
+    ],
+    "requiredLevel": 29,
+    "ladderOnly": false,
+    "attributes": [
+      "格擋機率提高 20%",
+      "+40% 格擋速度",
+      "所有抗性 +25",
+      "法力恢復 15%",
+      "無法凍結",
+      "怪物金幣掉落量提高 50%",
+      "尋獲魔法物品機率提高 25%"
+    ],
+    "tags": [
+      "Resistances",
+      "Mana"
+    ]
+  },
+  {
+    "id": "rift",
+    "name": "裂隙",
+    "nameEn": "Rift",
+    "nameClassic": "裂縫",
+    "runes": [
+      "Hel",
+      "Ko",
+      "Lem",
+      "Gul"
+    ],
+    "runeNumbers": [
+      15,
+      18,
+      20,
+      25
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "長柄武器",
+      "權杖"
+    ],
+    "requiredLevel": 53,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 20% 機率施展等級 16 龍捲風",
+      "攻擊時有 16% 機率施展等級 21 冰封球",
+      "20% 準確率加成",
+      "附加 160 - 250 魔法傷害",
+      "附加 60 - 180 火焰傷害",
+      "+5-10 所有屬性",
+      "+10 敏捷",
+      "+38% 受到的傷害轉為法力",
+      "怪物金幣掉落量提高 75%",
+      "等級 15 攻擊反噬（40 次）",
+      "需求 -20%"
+    ],
+    "tags": [
+      "Mana"
+    ]
+  },
+  {
+    "id": "ritual",
+    "name": "儀式",
+    "nameEn": "Ritual",
+    "runes": [
+      "Amn",
+      "Shael",
+      "Ohm"
+    ],
+    "runeNumbers": [
+      11,
+      13,
+      27
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "匕首"
+    ],
+    "requiredLevel": 57,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 13% 機率施展等級 1 咒印：死亡",
+      "攻擊速度 +40%",
+      "+250-320% 傷害強化",
+      "200-260% 準確率加成",
+      "+150-250% 對惡魔的傷害",
+      "+3-5 擊殺生命恢復",
+      "殺死的怪物就此安息",
+      "擊中竊取 7% 生命"
+    ],
+    "tags": [
+      "Life"
+    ]
+  },
+  {
+    "id": "sanctuary",
+    "name": "聖堂",
+    "nameEn": "Sanctuary",
+    "nameClassic": "聖堂",
+    "runes": [
+      "Ko",
+      "Ko",
+      "Mal"
+    ],
+    "runeNumbers": [
+      18,
+      18,
+      23
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "盾牌"
+    ],
+    "requiredLevel": 49,
+    "ladderOnly": false,
+    "attributes": [
+      "+20% 打擊恢復",
+      "+20% 格擋速度",
+      "格擋機率提高 20%",
+      "+130-160% 防禦強化",
+      "+250 對遠程防禦",
+      "+20 敏捷",
+      "所有抗性 +50-70",
+      "魔法傷害降低 7",
+      "等級 12 緩箭術（60 次）"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances"
+    ]
+  },
+  {
+    "id": "silence",
+    "name": "寂靜",
+    "nameEn": "Silence",
+    "nameClassic": "寂靜",
+    "runes": [
+      "Dol",
+      "Eld",
+      "Hel",
+      "Ist",
+      "Tir",
+      "Vex"
+    ],
+    "runeNumbers": [
+      14,
+      2,
+      15,
+      24,
+      3,
+      26
+    ],
+    "sockets": 6,
+    "allowedBases": [
+      "武器"
+    ],
+    "requiredLevel": 55,
+    "ladderOnly": false,
+    "attributes": [
+      "+200% 傷害強化",
+      "+75% 對不死怪物的傷害",
+      "需求 -20%",
+      "攻擊速度 +20%",
+      "+50 對不死怪物的準確率",
+      "+2 所有技能",
+      "所有抗性 +75",
+      "+20% 打擊恢復",
+      "擊中竊取 11% 法力",
+      "+25% 機率擊中使怪物逃跑",
+      "擊中使目標目盲 +33",
+      "+2 擊殺法力恢復",
+      "尋獲魔法物品機率提高 30%"
+    ],
+    "tags": [
+      "All Skills",
+      "FHR",
+      "Resistances",
+      "Mana"
+    ]
+  },
+  {
+    "id": "smoke",
+    "name": "煙霧",
+    "nameEn": "Smoke",
+    "nameClassic": "煙霧",
+    "runes": [
+      "Nef",
+      "Lum"
+    ],
+    "runeNumbers": [
+      4,
+      17
+    ],
+    "sockets": 2,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 37,
+    "ladderOnly": false,
+    "attributes": [
+      "+75% 防禦強化",
+      "+280 對遠程防禦",
+      "所有抗性 +50",
+      "+20% 打擊恢復",
+      "等級 6 削弱（18 次）",
+      "+10 能量",
+      "照亮範圍 -1"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances"
+    ]
+  },
+  {
+    "id": "spirit",
+    "name": "精神",
+    "nameEn": "Spirit",
+    "nameClassic": "精神",
+    "runes": [
+      "Tal",
+      "Thul",
+      "Ort",
+      "Amn"
+    ],
+    "runeNumbers": [
+      7,
+      10,
+      9,
+      11
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "刀劍",
+      "盾牌"
+    ],
+    "requiredLevel": 25,
+    "ladderOnly": false,
+    "attributes": [
+      "電擊抗性 +35%",
+      "攻擊者反傷：14",
+      "冰寒抗性 +35%",
+      "毒素抗性 +35%",
+      "附加 1 - 50 電擊傷害",
+      "附加 3 - 14 冰寒傷害",
+      "+75 毒素傷害，時效 5 秒",
+      "擊中竊取 7% 生命",
+      "+3-8 魔法吸收",
+      "+25-35% 施法速度",
+      "+2 所有技能",
+      "+55% 打擊恢復",
+      "+22 體能",
+      "+250 對遠程防禦",
+      "+89-112 法力"
+    ],
+    "tags": [
+      "All Skills",
+      "FCR",
+      "FHR",
+      "Resistances",
+      "Life",
+      "Mana"
+    ]
+  },
+  {
+    "id": "splendor",
+    "name": "燦爛",
+    "nameEn": "Splendor",
+    "nameClassic": "燦爛",
+    "runes": [
+      "Eth",
+      "Lum"
+    ],
+    "runeNumbers": [
+      5,
+      17
+    ],
+    "sockets": 2,
+    "allowedBases": [
+      "盾牌"
+    ],
+    "requiredLevel": 37,
+    "ladderOnly": false,
+    "attributes": [
+      "+1 所有技能",
+      "+10% 施法速度",
+      "+20% 格擋速度",
+      "+60-100% 防禦強化",
+      "+10 能量",
+      "法力恢復 15%",
+      "怪物金幣掉落量提高 50%",
+      "尋獲魔法物品機率提高 20%",
+      "照亮範圍 +3"
+    ],
+    "tags": [
+      "All Skills",
+      "FCR",
+      "Mana"
+    ]
+  },
+  {
+    "id": "stealth",
+    "name": "隱密",
+    "nameEn": "Stealth",
+    "nameClassic": "隱密",
+    "runes": [
+      "Tal",
+      "Eth"
+    ],
+    "runeNumbers": [
+      7,
+      5
+    ],
+    "sockets": 2,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 17,
+    "ladderOnly": false,
+    "attributes": [
+      "魔法傷害降低 3",
+      "+6 敏捷",
+      "+15 精力上限",
+      "毒素抗性 +30%",
+      "法力恢復 15%",
+      "+25% 跑步 / 行走速度",
+      "+25% 施法速度",
+      "+25% 打擊恢復"
+    ],
+    "tags": [
+      "FCR",
+      "FHR",
+      "Resistances",
+      "Mana"
+    ]
+  },
+  {
+    "id": "steel",
+    "name": "鋼鐵",
+    "nameEn": "Steel",
+    "nameClassic": "鋼鐵",
+    "runes": [
+      "Tir",
+      "El"
+    ],
+    "runeNumbers": [
+      3,
+      1
+    ],
+    "sockets": 2,
+    "allowedBases": [
+      "刀劍",
+      "斧",
+      "釘鎚"
+    ],
+    "requiredLevel": 13,
+    "ladderOnly": false,
+    "attributes": [
+      "+20% 傷害強化",
+      "+3 最小傷害",
+      "+3 最大傷害",
+      "+50 準確率",
+      "+50% 機率造成開放傷口",
+      "攻擊速度 +25%",
+      "+2 擊殺法力恢復",
+      "照亮範圍 +1"
+    ],
+    "tags": [
+      "Mana"
+    ]
+  },
+  {
+    "id": "stone",
+    "name": "石塊",
+    "nameEn": "Stone",
+    "nameClassic": "石塊",
+    "runes": [
+      "Shael",
+      "Um",
+      "Pul",
+      "Lum"
+    ],
+    "runeNumbers": [
+      13,
+      22,
+      21,
+      17
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 47,
+    "ladderOnly": false,
+    "attributes": [
+      "+60% 打擊恢復",
+      "+250-290% 防禦強化",
+      "+300 對遠程防禦",
+      "+16 力量",
+      "+16 體能",
+      "+10 能量",
+      "所有抗性 +15",
+      "等級 16 熔火巨石（80 次）",
+      "等級 16 黏土魔像（16 次）"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances"
+    ]
+  },
+  {
+    "id": "strength",
+    "name": "力量",
+    "nameEn": "Strength",
+    "nameClassic": "力量",
+    "runes": [
+      "Amn",
+      "Tir"
+    ],
+    "runeNumbers": [
+      11,
+      3
+    ],
+    "sockets": 2,
+    "allowedBases": [
+      "近戰武器"
+    ],
+    "requiredLevel": 25,
+    "ladderOnly": false,
+    "attributes": [
+      "+35% 傷害強化",
+      "+25% 機率造成粉碎打擊",
+      "擊中竊取 7% 生命",
+      "+2 擊殺法力恢復",
+      "+20 力量",
+      "+10 體能"
+    ],
+    "tags": [
+      "Life",
+      "Mana",
+      "CB"
+    ]
+  },
+  {
+    "id": "temper",
+    "name": "和緩",
+    "nameEn": "Temper",
+    "runes": [
+      "Shael",
+      "Io",
+      "Ral"
+    ],
+    "runeNumbers": [
+      13,
+      16,
+      8
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "頭盔"
+    ],
+    "requiredLevel": 35,
+    "ladderOnly": true,
+    "attributes": [
+      "+20% 打擊恢復",
+      "+75-100% 防禦強化",
+      "+10 體能",
+      "生命上限提高 5%",
+      "火焰抗性 +40-60%",
+      "火焰吸收 +10-15%"
+    ],
+    "tags": [
+      "FHR",
+      "Resistances",
+      "Life"
+    ]
+  },
+  {
+    "id": "treachery",
+    "name": "背信",
+    "nameEn": "Treachery",
+    "nameClassic": "背信",
+    "runes": [
+      "Shael",
+      "Thul",
+      "Lem"
+    ],
+    "runeNumbers": [
+      13,
+      10,
+      20
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 43,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 5% 機率施展等級 15 影散",
+      "擊中時有 25% 機率施展等級 15 淬毒",
+      "+2 刺客技能等級",
+      "攻擊速度 +45%",
+      "+20% 打擊恢復",
+      "冰寒抗性 +30%",
+      "怪物金幣掉落量提高 50%"
+    ],
+    "tags": [
+      "All Skills",
+      "FHR",
+      "Resistances"
+    ]
+  },
+  {
+    "id": "unbending_will",
+    "name": "不屈意志",
+    "nameEn": "Unbending Will",
+    "nameClassic": "堅定意志",
+    "runes": [
+      "Fal",
+      "Io",
+      "Ith",
+      "Eld",
+      "El",
+      "Hel"
+    ],
+    "runeNumbers": [
+      19,
+      16,
+      6,
+      2,
+      1,
+      15
+    ],
+    "sockets": 6,
+    "allowedBases": [
+      "刀劍"
+    ],
+    "requiredLevel": 41,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 18% 機率施展等級 18 嘲諷",
+      "+3 戰鬥技能 （只限野蠻人）",
+      "攻擊速度 +20-30%",
+      "+300-350% 傷害強化",
+      "+9 最大傷害",
+      "+50 準確率",
+      "+75% 對不死怪物的傷害",
+      "+50 對不死怪物的準確率",
+      "擊中竊取 8-10% 生命",
+      "防止怪物自療",
+      "+10 力量",
+      "+10 體能",
+      "傷害降低 8",
+      "照亮範圍 +1",
+      "需求 -20%"
+    ],
+    "tags": [
+      "Life"
+    ]
+  },
+  {
+    "id": "venom",
+    "name": "劇毒",
+    "nameEn": "Venom",
+    "nameClassic": "毒牙",
+    "runes": [
+      "Tal",
+      "Dol",
+      "Mal"
+    ],
+    "runeNumbers": [
+      7,
+      14,
+      23
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "武器"
+    ],
+    "requiredLevel": 49,
+    "ladderOnly": false,
+    "attributes": [
+      "+25% 機率擊中使怪物逃跑",
+      "防止怪物自療",
+      "無視目標防禦",
+      "擊中竊取 7% 法力",
+      "等級 15 毒爆（27 次）",
+      "等級 13 劇毒新星（11 次）",
+      "+273 毒素傷害，時效 6 秒"
+    ],
+    "tags": [
+      "Mana"
+    ]
+  },
+  {
+    "id": "vigilance",
+    "name": "戒慎",
+    "nameEn": "Vigilance",
+    "runes": [
+      "Dol",
+      "Gul"
+    ],
+    "runeNumbers": [
+      14,
+      25
+    ],
+    "sockets": 2,
+    "allowedBases": [
+      "盾牌"
+    ],
+    "requiredLevel": 53,
+    "ladderOnly": false,
+    "attributes": [
+      "被擊中時有 5% 機率施展等級 10 火焰之環",
+      "+10% 跑步 / 行走速度",
+      "+30% 格擋速度",
+      "+75-100% 防禦強化",
+      "+20-40 生命",
+      "+20-40 法力",
+      "所有抗性 +25-35",
+      "生命回復 +7",
+      "毒素抗性上限 +5%"
+    ],
+    "tags": [
+      "Resistances",
+      "Life",
+      "Mana"
+    ]
+  },
+  {
+    "id": "voice_of_reason",
+    "name": "理性之聲",
+    "nameEn": "Voice of Reason",
+    "nameClassic": "思考之聲",
+    "runes": [
+      "Lem",
+      "Ko",
+      "El",
+      "Eld"
+    ],
+    "runeNumbers": [
+      20,
+      18,
+      1,
+      2
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "刀劍",
+      "釘鎚"
+    ],
+    "requiredLevel": 43,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 15% 機率施展等級 13 冰封球",
+      "擊中時有 18% 機率施展等級 20 寒冰球",
+      "+50 準確率",
+      "+220-350% 對惡魔的傷害",
+      "+355-375% 對不死怪物的傷害",
+      "+50 對不死怪物的準確率",
+      "附加 100 - 220 冰寒傷害",
+      "敵人冰寒抗性 -24%",
+      "+10 敏捷",
+      "無法凍結",
+      "怪物金幣掉落量提高 75%",
+      "照亮範圍 +1"
+    ],
+    "tags": [
+      "Resistances"
+    ]
+  },
+  {
+    "id": "void",
+    "name": "虛無",
+    "nameEn": "Void",
+    "nameClassic": "虛無之",
+    "runes": [
+      "Thul",
+      "Zod",
+      "Ist"
+    ],
+    "runeNumbers": [
+      10,
+      33,
+      24
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "匕首"
+    ],
+    "requiredLevel": 69,
+    "ladderOnly": false,
+    "attributes": [
+      "+2 所有技能",
+      "+40% 施法速度",
+      "+10-15% 魔法技能傷害",
+      "+1-3 至深淵裂口",
+      "+8-12 所有屬性",
+      "等級 4 衰老（35 次）",
+      "附加 3 - 14 冰寒傷害",
+      "永不毀損",
+      "尋獲魔法物品機率提高 30%"
+    ],
+    "tags": [
+      "All Skills",
+      "FCR"
+    ]
+  },
+  {
+    "id": "wealth",
+    "name": "財富",
+    "nameEn": "Wealth",
+    "nameClassic": "財富",
+    "runes": [
+      "Lem",
+      "Ko",
+      "Tir"
+    ],
+    "runeNumbers": [
+      20,
+      18,
+      3
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "護甲"
+    ],
+    "requiredLevel": 43,
+    "ladderOnly": false,
+    "attributes": [
+      "怪物金幣掉落量提高 300%",
+      "尋獲魔法物品機率提高 100%",
+      "+2 擊殺法力恢復",
+      "+10 敏捷"
+    ],
+    "tags": [
+      "Mana"
+    ]
+  },
+  {
+    "id": "white",
+    "name": "蒼白",
+    "nameEn": "White",
+    "nameClassic": "白色",
+    "runes": [
+      "Dol",
+      "Io"
+    ],
+    "runeNumbers": [
+      14,
+      16
+    ],
+    "sockets": 2,
+    "allowedBases": [
+      "魔杖"
+    ],
+    "requiredLevel": 35,
+    "ladderOnly": false,
+    "attributes": [
+      "+25% 機率擊中使怪物逃跑",
+      "+10 體能",
+      "+3 毒素與骸骨技能 （只限死靈法師）",
+      "+3 至骸骨護甲 （只限死靈法師）",
+      "+2 至骨矛 （只限死靈法師）",
+      "+4 至骷髏專精 （只限死靈法師）",
+      "魔法傷害降低 4",
+      "+20% 施法速度",
+      "+13 法力"
+    ],
+    "tags": [
+      "FCR",
+      "Mana"
+    ]
+  },
+  {
+    "id": "wind",
+    "name": "輕風",
+    "nameEn": "Wind",
+    "nameClassic": "輕風",
+    "runes": [
+      "Sur",
+      "El"
+    ],
+    "runeNumbers": [
+      29,
+      1
+    ],
+    "sockets": 2,
+    "allowedBases": [
+      "近戰武器"
+    ],
+    "requiredLevel": 61,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 10% 機率施展等級 9 龍捲風",
+      "+20% 跑步 / 行走速度",
+      "攻擊速度 +40%",
+      "+15% 打擊恢復",
+      "+120-160% 傷害強化",
+      "-50% 目標防禦",
+      "+50 準確率",
+      "擊中使目標目盲",
+      "照亮範圍 +1",
+      "等級 13 旋風術（127 次）"
+    ],
+    "tags": [
+      "FHR"
+    ]
+  },
+  {
+    "id": "wisdom",
+    "name": "智慧",
+    "nameEn": "Wisdom",
+    "nameClassic": "智慧",
+    "runes": [
+      "Pul",
+      "Ith",
+      "Eld"
+    ],
+    "runeNumbers": [
+      21,
+      6,
+      2
+    ],
+    "sockets": 3,
+    "allowedBases": [
+      "頭盔"
+    ],
+    "requiredLevel": 45,
+    "ladderOnly": false,
+    "attributes": [
+      "+33% 穿透攻擊",
+      "15-25% 準確率加成",
+      "擊中竊取 4-8% 法力",
+      "+30% 防禦強化",
+      "+10 能量",
+      "精力消耗減緩 15%",
+      "無法凍結",
+      "+5 擊殺法力恢復",
+      "+15% 受到的傷害轉為法力"
+    ],
+    "tags": [
+      "Mana"
+    ]
+  },
+  {
+    "id": "wrath",
+    "name": "憤怒",
+    "nameEn": "Wrath",
+    "nameClassic": "憤怒",
+    "runes": [
+      "Pul",
+      "Lum",
+      "Ber",
+      "Mal"
+    ],
+    "runeNumbers": [
+      21,
+      17,
+      30,
+      23
+    ],
+    "sockets": 4,
+    "allowedBases": [
+      "弓或弩"
+    ],
+    "requiredLevel": 63,
+    "ladderOnly": false,
+    "attributes": [
+      "擊中時有 30% 機率施展等級 1 衰老",
+      "擊中時有 5% 機率施展等級 10 偷取生命",
+      "+375% 對惡魔的傷害",
+      "+100 對惡魔的準確率",
+      "+250-300% 對不死怪物的傷害",
+      "附加 85 - 120 魔法傷害",
+      "附加 41 - 240 電擊傷害",
+      "+20% 機率造成粉碎打擊",
+      "防止怪物自療",
+      "+10 能量",
+      "無法凍結"
+    ],
+    "tags": [
+      "Life",
+      "CB"
+    ]
+  },
+  {
+    "id": "zephyr",
+    "name": "和風",
+    "nameEn": "Zephyr",
+    "nameClassic": "和風",
+    "runes": [
+      "Ort",
+      "Eth"
+    ],
+    "runeNumbers": [
+      9,
+      5
+    ],
+    "sockets": 2,
+    "allowedBases": [
+      "弓或弩"
+    ],
+    "requiredLevel": 21,
+    "ladderOnly": false,
+    "attributes": [
+      "+33% 傷害強化",
+      "+66 準確率",
+      "附加 1 - 50 電擊傷害",
+      "-25% 目標防禦",
+      "+25 防禦",
+      "+25% 跑步 / 行走速度",
+      "攻擊速度 +25%",
+      "被擊中時有 7% 機率施展等級 1 旋風術"
+    ],
+    "tags": [
+      "Runeword"
     ]
   }
 ];
-
-
-

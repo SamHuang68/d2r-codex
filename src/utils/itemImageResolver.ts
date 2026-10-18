@@ -13,6 +13,7 @@ export interface ResolveItemImageParams {
   rarity?: ItemRarity | 'unique' | 'set' | 'runeword' | 'rune' | 'charm' | 'gem' | 'prop' | 'rare' | 'magic' | 'crafted';
   runeNumber?: number;
   baseUrl?: string;
+  imageUrl?: string;
 }
 
 /**
@@ -57,7 +58,7 @@ const RUNE_LOOKUP: Record<string, number> = {
 /**
  * 智能解析物品的實際真實遊戲立繪圖片路徑
  *
- * @param params 物品屬性參數（名稱、英文名、底材、槽位、稀有度、符文編號、基本路徑）
+ * @param params 物品屬性參數（名稱、英文名、底材、槽位、稀有度、符文編號、基本路徑、直接圖片連結）
  * @returns 完整的相對或絕對立繪路徑
  */
 export function resolveItemImagePath({
@@ -68,7 +69,13 @@ export function resolveItemImagePath({
   rarity = 'unique',
   runeNumber,
   baseUrl = './',
+  imageUrl,
 }: ResolveItemImageParams): string {
+  // 若傳入已確定的官方實物圖片連結，優先直接使用
+  if (imageUrl && imageUrl.trim()) {
+    return imageUrl.trim();
+  }
+
   const base = baseUrl ? (baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`) : '';
   const n = `${name} ${nameEn} ${baseItem}`.toLowerCase();
 

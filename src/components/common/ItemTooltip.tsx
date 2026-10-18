@@ -17,6 +17,7 @@ interface ItemTooltipProps {
   flavorText?: string;
   className?: string;
   onNavigateToBase?: (baseName: string) => void;
+  imageUrl?: string;
 }
 
 export const ItemTooltip: React.FC<ItemTooltipProps> = ({
@@ -34,6 +35,7 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
   flavorText,
   className = '',
   onNavigateToBase,
+  imageUrl,
 }) => {
   // Title color according to rarity
   const getTitleColor = () => {
@@ -83,6 +85,7 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
           baseItem={baseItem}
           rarity={rarity}
           size="lg"
+          imageUrl={imageUrl}
         />
       </div>
 
