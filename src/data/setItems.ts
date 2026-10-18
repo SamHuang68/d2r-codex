@@ -971,6 +971,862 @@ export const SET_ITEMS_DATA: SetItemCollection[] = [
       "暗黑破壞神老玩家無人不曉的經典新手神器"
     ]
   }
+,
+  // ── 經典與進階全套套裝 (Expansion & Classic Complete Sets) ──
+  {
+    id: "berserkers_arsenal",
+    name: "狂戰士軍械",
+    nameEn: "Berserker's Arsenal",
+    pieces: [
+      {
+        id: "berserker_helm",
+        name: "狂戰士的面甲",
+        nameEn: "Berserker's Headgear",
+        baseItem: "頭盔 (Helm)",
+        slot: "helm",
+        requiredLevel: 3,
+        attributes: ["+15 防禦", "抗火 +25%"]
+      },
+      {
+        id: "berserker_armor",
+        name: "狂戰士的鎖子甲",
+        nameEn: "Berserker's Hauberk",
+        baseItem: "夾式甲 (Splint Mail)",
+        slot: "armor",
+        requiredLevel: 3,
+        attributes: ["+1 野蠻人技能", "魔法傷害減少 2"]
+      },
+      {
+        id: "berserker_weapon",
+        name: "狂戰士的手斧",
+        nameEn: "Berserker's Hatchet",
+        baseItem: "雙刃斧 (Double Axe)",
+        slot: "weapon",
+        requiredLevel: 3,
+        attributes: ["+30 攻擊準確率", "+50 攻擊準確率加成"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+50 生命" }
+    ],
+    fullBonuses: [
+      "+75 防禦",
+      "+50 生命",
+      "抗毒 +50%",
+      "無法被凍結 (CBF)"
+    ]
+  },
+  {
+    id: "isenharts_armory",
+    name: "艾森赫特的軍備",
+    nameEn: "Isenhart's Armory",
+    pieces: [
+      {
+        id: "isenhart_horns",
+        name: "艾森赫特的光輝之角",
+        nameEn: "Isenhart's Horns",
+        baseItem: "全罩式頭盔 (Full Helm)",
+        slot: "helm",
+        requiredLevel: 8,
+        attributes: ["+6 敏捷", "物理傷害減少 2"]
+      },
+      {
+        id: "isenhart_case",
+        name: "艾森赫特的箱子",
+        nameEn: "Isenhart's Case",
+        baseItem: "胸甲 (Breast Plate)",
+        slot: "armor",
+        requiredLevel: 8,
+        attributes: ["+105-107 防禦", "魔法傷害減少 2"]
+      },
+      {
+        id: "isenhart_weapon",
+        name: "艾森赫特的輕光寶劍",
+        nameEn: "Isenhart's Lightbrand",
+        baseItem: "闊劍 (Broad Sword)",
+        slot: "weapon",
+        requiredLevel: 8,
+        attributes: ["+20% 攻擊速度 (IAS)", "+10 最小傷害"]
+      },
+      {
+        id: "isenhart_shield",
+        name: "艾森赫特的格擋",
+        nameEn: "Isenhart's Parry",
+        baseItem: "哥德盾 (Gothic Shield)",
+        slot: "shield",
+        requiredLevel: 8,
+        attributes: ["+40 防禦", "+20% 增加格擋機率"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+10 力量" },
+      { count: 3, bonus: "+10 敏捷" }
+    ],
+    fullBonuses: [
+      "+20% 跑步/步行速度",
+      "每次命中偷取 5% 生命",
+      "所有抗性 +10",
+      "+20 防禦"
+    ]
+  },
+  {
+    id: "civerbs_vestments",
+    name: "希維爾的祭袍",
+    nameEn: "Civerb's Vestments",
+    pieces: [
+      {
+        id: "civerb_weapon",
+        name: "希維爾的短棍",
+        nameEn: "Civerb's Cudgel",
+        baseItem: "大木棒 (Grand Scepter)",
+        slot: "weapon",
+        requiredLevel: 9,
+        attributes: ["+(1 每等級) 最大傷害", "+17-23 最大傷害 (變動)"]
+      },
+      {
+        id: "civerb_shield",
+        name: "希維爾的守護",
+        nameEn: "Civerb's Ward",
+        baseItem: "大型盾牌 (Large Shield)",
+        slot: "shield",
+        requiredLevel: 9,
+        attributes: ["+15 防禦", "+15 格擋機率"]
+      },
+      {
+        id: "civerb_amulet",
+        name: "希維爾的圖騰",
+        nameEn: "Civerb's Icon",
+        baseItem: "項鍊 (Amulet)",
+        slot: "amulet",
+        requiredLevel: 9,
+        attributes: ["法力恢復 +40%", "生命恢復 +4"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+15 力量" }
+    ],
+    fullBonuses: [
+      "所有抗性 +15",
+      "+25 敏捷",
+      "+200 攻擊準確率"
+    ]
+  },
+  {
+    id: "cleglaws_brace",
+    name: "克雷得勞的支架",
+    nameEn: "Cleglaw's Brace",
+    pieces: [
+      {
+        id: "cleglaw_weapon",
+        name: "克雷得勞的牙齒",
+        nameEn: "Cleglaw's Tooth",
+        baseItem: "長劍 (Long Sword)",
+        slot: "weapon",
+        requiredLevel: 4,
+        attributes: ["50% 機率造成致命打擊 (DS)", "+30% 攻擊準確率"]
+      },
+      {
+        id: "cleglaw_gloves",
+        name: "克雷得勞之鉗",
+        nameEn: "Cleglaw's Pincers",
+        baseItem: "連指手套 (Chain Gloves)",
+        slot: "gloves",
+        requiredLevel: 4,
+        attributes: ["擊中使目標減速 25%", "擊倒目標"]
+      },
+      {
+        id: "cleglaw_shield",
+        name: "克雷得勞的銳爪",
+        nameEn: "Cleglaw's Claw",
+        baseItem: "小型盾牌 (Small Shield)",
+        slot: "shield",
+        requiredLevel: 4,
+        attributes: ["+17 防禦", "抗毒時間減半"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+50 防禦" }
+    ],
+    fullBonuses: [
+      "所有抗性 +15",
+      "+35% 壓碎打擊 (CB)",
+      "+100 生命",
+      "+20 敏捷"
+    ]
+  },
+  {
+    id: "deaths_disguise",
+    name: "死亡的偽裝",
+    nameEn: "Death's Disguise",
+    pieces: [
+      {
+        id: "death_weapon",
+        name: "死亡之觸",
+        nameEn: "Death's Touch",
+        baseItem: "巨劍 (War Sword)",
+        slot: "weapon",
+        requiredLevel: 6,
+        attributes: ["增加 25-75 冰寒傷害", "每次命中偷取 4% 生命"]
+      },
+      {
+        id: "death_gloves",
+        name: "死亡之手",
+        nameEn: "Death's Hand",
+        baseItem: "皮革手套 (Leather Gloves)",
+        slot: "gloves",
+        requiredLevel: 6,
+        attributes: ["毒素持續時間縮短 75%", "抗毒 +50%"]
+      },
+      {
+        id: "death_belt",
+        name: "死亡守衛",
+        nameEn: "Death's Guard",
+        baseItem: "飾帶 (Sash)",
+        slot: "belt",
+        requiredLevel: 6,
+        attributes: ["無法被凍結 (CBF)", "+20 防禦"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+30% 攻擊速度 (IAS)" }
+    ],
+    fullBonuses: [
+      "所有抗性 +15",
+      "每次命中偷取 8% 生命",
+      "全元素傷害 +25-75"
+    ]
+  },
+  {
+    id: "hsarus_defense",
+    name: "哈斯拉的防禦",
+    nameEn: "Hsarus' Defense",
+    pieces: [
+      {
+        id: "hsarus_shield",
+        name: "哈斯拉的鐵拳",
+        nameEn: "Hsarus' Iron Fist",
+        baseItem: "圓盾 (Buckler)",
+        slot: "shield",
+        requiredLevel: 3,
+        attributes: ["+10 力量", "物理傷害減少 2"]
+      },
+      {
+        id: "hsarus_boots",
+        name: "哈斯拉的鐵蹄",
+        nameEn: "Hsarus' Iron Heel",
+        baseItem: "鎖子靴 (Chain Boots)",
+        slot: "boots",
+        requiredLevel: 3,
+        attributes: ["+20% 跑步/步行速度", "抗火 +25%"]
+      },
+      {
+        id: "hsarus_belt",
+        name: "哈斯拉的鐵帶",
+        nameEn: "Hsarus' Iron Stay",
+        baseItem: "重腰帶 (Belt)",
+        slot: "belt",
+        requiredLevel: 3,
+        attributes: ["+20 生命", "抗寒 +20%"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+(10 每等級) 攻擊準確率" }
+    ],
+    fullBonuses: [
+      "無法被凍結",
+      "所有抗性 +10",
+      "+(2.5 每等級) 防禦力"
+    ]
+  },
+  {
+    id: "irathas_finery",
+    name: "依雷薩的華服",
+    nameEn: "Iratha's Finery",
+    pieces: [
+      {
+        id: "iratha_helm",
+        name: "依雷薩的線圈",
+        nameEn: "Iratha's Coil",
+        baseItem: "皇冠 (Crown)",
+        slot: "helm",
+        requiredLevel: 15,
+        attributes: ["抗火 +30%", "抗閃電 +30%"]
+      },
+      {
+        id: "iratha_amulet",
+        name: "依雷薩的領圈",
+        nameEn: "Iratha's Collar",
+        baseItem: "項鍊 (Amulet)",
+        slot: "amulet",
+        requiredLevel: 15,
+        attributes: ["抗毒 +30%", "毒素持續時間縮短 75%"]
+      },
+      {
+        id: "iratha_gloves",
+        name: "依雷薩的袖口",
+        nameEn: "Iratha's Cuff",
+        baseItem: "輕型鐵手套 (Light Gauntlets)",
+        slot: "gloves",
+        requiredLevel: 15,
+        attributes: ["抗寒 +30%", "冰凍時間減半"]
+      },
+      {
+        id: "iratha_belt",
+        name: "依雷薩的繩索",
+        nameEn: "Iratha's Cord",
+        baseItem: "重扣帶 (Heavy Belt)",
+        slot: "belt",
+        requiredLevel: 15,
+        attributes: ["+25 防禦", "+5 敏捷"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+50 防禦" },
+      { count: 3, bonus: "+20% 跑步/步行速度" }
+    ],
+    fullBonuses: [
+      "+15 敏捷",
+      "所有抗性 +20 (配合部件單抗，四件套整套抗性總計達 +85%)",
+      "+10% 最大全抗性上限 (達到 85% 上限)",
+      "無法被凍結"
+    ]
+  },
+  {
+    id: "infernal_tools",
+    name: "地獄器具",
+    nameEn: "Infernal Tools",
+    pieces: [
+      {
+        id: "infernal_helm",
+        name: "地獄頭骨",
+        nameEn: "Infernal Cranium",
+        baseItem: "帽子 (Cap)",
+        slot: "helm",
+        requiredLevel: 5,
+        attributes: ["受損生命 20% 轉為法力", "所有抗性 +10"]
+      },
+      {
+        id: "infernal_weapon",
+        name: "地獄之火",
+        nameEn: "Infernal Torch",
+        baseItem: "殘酷之杖 (Grim Wand)",
+        slot: "weapon",
+        requiredLevel: 5,
+        attributes: ["+1 死靈法師技能", "+100-144 攻擊準確率"]
+      },
+      {
+        id: "infernal_belt",
+        name: "地獄扣帶",
+        nameEn: "Infernal Buckle",
+        baseItem: "重扣帶 (Heavy Belt)",
+        slot: "belt",
+        requiredLevel: 5,
+        attributes: ["+25 防禦", "+15 最大法力"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+(10 每等級) 生命" }
+    ],
+    fullBonuses: [
+      "+2 死靈法師技能",
+      "抗毒 +25%",
+      "+25 敏捷",
+      "無法被凍結"
+    ]
+  },
+  {
+    id: "arctic_gear",
+    name: "北極裝備",
+    nameEn: "Arctic Gear",
+    pieces: [
+      {
+        id: "arctic_armor",
+        name: "北極毛皮",
+        nameEn: "Arctic Furs",
+        baseItem: "布甲 (Quilted Armor)",
+        slot: "armor",
+        requiredLevel: 2,
+        attributes: ["+300% 強化防禦", "所有抗性 +10"]
+      },
+      {
+        id: "arctic_weapon",
+        name: "北極角弓",
+        nameEn: "Arctic Horn",
+        baseItem: "短弓 (Short Bow)",
+        slot: "weapon",
+        requiredLevel: 2,
+        attributes: ["+50% 增強傷害", "+20 攻擊準確率"]
+      },
+      {
+        id: "arctic_gloves",
+        name: "北極手套",
+        nameEn: "Arctic Mitts",
+        baseItem: "輕型手套 (Light Gauntlets)",
+        slot: "gloves",
+        requiredLevel: 2,
+        attributes: ["+20 生命", "+10% 攻擊速度 (IAS)"]
+      },
+      {
+        id: "arctic_belt",
+        name: "北極束帶",
+        nameEn: "Arctic Binding",
+        baseItem: "輕扣帶 (Light Belt)",
+        slot: "belt",
+        requiredLevel: 2,
+        attributes: ["抗寒 +40%", "+30 防禦"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+5 力量" }
+    ],
+    fullBonuses: [
+      "+2 亞馬遜技能",
+      "增加 6-14 冰寒傷害",
+      "無法被凍結",
+      "+20% 跑步/步行速度"
+    ]
+  },
+  {
+    id: "sanders_folly",
+    name: "桑德的愚行",
+    nameEn: "Sander's Folly",
+    pieces: [
+      {
+        id: "sander_helm",
+        name: "桑德的典範",
+        nameEn: "Sander's Paragon",
+        baseItem: "帽子 (Cap)",
+        slot: "helm",
+        requiredLevel: 25,
+        attributes: ["+1 所有技能", "+(1 每等級) 防禦力"]
+      },
+      {
+        id: "sander_weapon",
+        name: "桑德的迷信",
+        nameEn: "Sander's Superstition",
+        baseItem: "骨杖 (Bone Wand)",
+        slot: "weapon",
+        requiredLevel: 25,
+        attributes: ["+20% 快速施法速度 (FCR)", "+25-75 冰寒傷害"]
+      },
+      {
+        id: "sander_gloves",
+        name: "桑德的禁忌",
+        nameEn: "Sander's Taboo",
+        baseItem: "重手套 (Heavy Gloves)",
+        slot: "gloves",
+        requiredLevel: 28,
+        attributes: ["+20% 攻擊速度 (IAS)", "+40 生命"]
+      },
+      {
+        id: "sander_boots",
+        name: "桑德的碎岩",
+        nameEn: "Sander's Riprap",
+        baseItem: "重靴 (Heavy Boots)",
+        slot: "boots",
+        requiredLevel: 20,
+        attributes: ["+40% 跑步/步行速度 (經典跑速神靴)", "+10 力量", "+10 敏捷"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+50 防禦" }
+    ],
+    fullBonuses: [
+      "+1 所有技能",
+      "+50 生命",
+      "所有抗性 +20",
+      "+100 法力"
+    ]
+  },
+  {
+    id: "tancreds_battlegear",
+    name: "譚克雷的戰裝",
+    nameEn: "Tancred's Battlegear",
+    pieces: [
+      {
+        id: "tancred_armor",
+        name: "譚克雷的脊骨",
+        nameEn: "Tancred's Spine",
+        baseItem: "全鎧甲 (Full Plate Mail)",
+        slot: "armor",
+        requiredLevel: 20,
+        attributes: ["+15 力量", "+40 生命"]
+      },
+      {
+        id: "tancred_helm",
+        name: "譚克雷的骷髏",
+        nameEn: "Tancred's Skull",
+        baseItem: "骨盔 (Bone Helm)",
+        slot: "helm",
+        requiredLevel: 20,
+        attributes: ["+10% 攻擊速度 (IAS)", "+10% 快速打擊恢復 (FHR)"]
+      },
+      {
+        id: "tancred_boots",
+        name: "譚克雷的大頭釘",
+        nameEn: "Tancred's Hobnails",
+        baseItem: "靴子 (Boots)",
+        slot: "boots",
+        requiredLevel: 20,
+        attributes: ["體力消耗減慢 50%", "+10 敏捷"]
+      },
+      {
+        id: "tancred_weapon",
+        name: "譚克雷的烏鴉嘴",
+        nameEn: "Tancred's Crowbill",
+        baseItem: "軍用鎬 (Military Pick)",
+        slot: "weapon",
+        requiredLevel: 20,
+        attributes: ["+80% 增強傷害", "+75 攻擊準確率"]
+      },
+      {
+        id: "tancred_amulet",
+        name: "譚克雷的怪異",
+        nameEn: "Tancred's Weird",
+        baseItem: "項鍊 (Amulet)",
+        slot: "amulet",
+        requiredLevel: 20,
+        attributes: ["物理傷害減少 2", "魔法傷害減少 1"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+15 法力 (若包含項鍊則額外解鎖 +78% MF)" },
+      { count: 3, bonus: "每次命中偷取 5% 生命" },
+      { count: 4, bonus: "所有抗性 +15" }
+    ],
+    fullBonuses: [
+      "緩慢目標 35%",
+      "+75 生命",
+      "+75% 攻擊準確率加成",
+      "每次命中偷取 5% 生命"
+    ]
+  },
+  {
+    id: "vidalas_rig",
+    name: "維達拉的裝備",
+    nameEn: "Vidala's Rig",
+    pieces: [
+      {
+        id: "vidala_armor",
+        name: "維達拉的伏擊",
+        nameEn: "Vidala's Ambush",
+        baseItem: "皮甲 (Leather Armor)",
+        slot: "armor",
+        requiredLevel: 14,
+        attributes: ["+11 防禦", "+15 敏捷"]
+      },
+      {
+        id: "vidala_weapon",
+        name: "維達拉的倒鉤",
+        nameEn: "Vidala's Barb",
+        baseItem: "長戰鬥弓 (Long Battle Bow)",
+        slot: "weapon",
+        requiredLevel: 14,
+        attributes: ["增加 1-20 閃電傷害", "+1-2 敏捷"]
+      },
+      {
+        id: "vidala_boots",
+        name: "維達拉的步態",
+        nameEn: "Vidala's Fetlock",
+        baseItem: "輕鋼靴 (Light Plated Boots)",
+        slot: "boots",
+        requiredLevel: 14,
+        attributes: ["+30% 跑步/步行速度", "+150 體力上限"]
+      },
+      {
+        id: "vidala_amulet",
+        name: "維達拉的抓取",
+        nameEn: "Vidala's Snare",
+        baseItem: "項鍊 (Amulet)",
+        slot: "amulet",
+        requiredLevel: 14,
+        attributes: ["抗寒 +20%", "+15 生命"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+(8 每等級) 攻擊準確率" }
+    ],
+    fullBonuses: [
+      "+1 亞馬遜技能",
+      "擊中使目標減速 20%",
+      "貫穿攻擊 (Piercing Attack 50%)",
+      "每次命中偷取 7% 法力"
+    ]
+  },
+  {
+    id: "arcannas_sign",
+    name: "奧瑟娜的標誌",
+    nameEn: "Arcanna's Sign",
+    pieces: [
+      {
+        id: "arcanna_armor",
+        name: "奧瑟娜的肉體",
+        nameEn: "Arcanna's Flesh",
+        baseItem: "輕型裝甲 (Light Plate)",
+        slot: "armor",
+        requiredLevel: 15,
+        attributes: ["物理傷害減少 2", "+2 照亮範圍"]
+      },
+      {
+        id: "arcanna_helm",
+        name: "奧瑟娜之頭",
+        nameEn: "Arcanna's Head",
+        baseItem: "頭飾 (Skull Cap)",
+        slot: "helm",
+        requiredLevel: 15,
+        attributes: ["生命恢復 +4", "攻擊者受到傷害 2"]
+      },
+      {
+        id: "arcanna_weapon",
+        name: "奧瑟娜的死靈魔杖",
+        nameEn: "Arcanna's Deathwand",
+        baseItem: "巨戰法杖 (War Staff)",
+        slot: "weapon",
+        requiredLevel: 15,
+        attributes: ["+1 魔法使技能", "+25 致命攻擊"]
+      },
+      {
+        id: "arcanna_amulet",
+        name: "奧瑟娜的徽記",
+        nameEn: "Arcanna's Sign",
+        baseItem: "項鍊 (Amulet)",
+        slot: "amulet",
+        requiredLevel: 15,
+        attributes: ["+15 法力", "法力恢復 +20%"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+50 法力" }
+    ],
+    fullBonuses: [
+      "+2 所有技能",
+      "+20% 快速施法速度 (FCR)",
+      "每次命中偷取 5% 法力",
+      "+50 生命"
+    ]
+  },
+  {
+    id: "cow_kings_leathers",
+    name: "牛魔王之皮",
+    nameEn: "Cow King's Leathers",
+    pieces: [
+      {
+        id: "cow_king_horns",
+        name: "牛魔王之角",
+        nameEn: "Cow King's Horns",
+        baseItem: "戰帽 (War Hat)",
+        slot: "helm",
+        requiredLevel: 25,
+        attributes: ["受損生命 35% 轉為法力", "+75 防禦", "+15 敏捷"]
+      },
+      {
+        id: "cow_king_hide",
+        name: "牛魔王之皮",
+        nameEn: "Cow King's Hide",
+        baseItem: "板甲 (Studded Leather)",
+        slot: "armor",
+        requiredLevel: 18,
+        attributes: ["所有抗性 +18", "+60% 增強防禦", "+30 生命"]
+      },
+      {
+        id: "cow_king_hooves",
+        name: "牛魔王之蹄",
+        nameEn: "Cow King's Hooves",
+        baseItem: "重靴 (Heavy Boots)",
+        slot: "boots",
+        requiredLevel: 13,
+        attributes: ["+30% 跑步/步行速度", "+25-35% 更佳機會取得魔法裝備 (MF)", "+20 敏捷"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+100 防禦" }
+    ],
+    fullBonuses: [
+      "+25% 機率造成壓碎打擊 (CB)",
+      "+100 生命",
+      "+20 所有屬性",
+      "攻擊時 25% 施展等級 5 靜態力場"
+    ]
+  },
+  {
+    id: "milabregas_regalia",
+    name: "米拉伯佳的君威",
+    nameEn: "Milabrega's Regalia",
+    pieces: [
+      {
+        id: "milabrega_armor",
+        name: "米拉伯佳的長袍",
+        nameEn: "Milabrega's Robe",
+        baseItem: "古代裝甲 (Ancient Armor)",
+        slot: "armor",
+        requiredLevel: 17,
+        attributes: ["物理傷害減少 2", "攻擊者受到傷害 2"]
+      },
+      {
+        id: "milabrega_helm",
+        name: "米拉伯佳的冠冕",
+        nameEn: "Milabrega's Diadem",
+        baseItem: "皇冠 (Crown)",
+        slot: "helm",
+        requiredLevel: 17,
+        attributes: ["+15 法力", "+45 生命"]
+      },
+      {
+        id: "milabrega_weapon",
+        name: "米拉伯佳的權杖",
+        nameEn: "Milabrega's Rod",
+        baseItem: "戰杖 (War Scepter)",
+        slot: "weapon",
+        requiredLevel: 17,
+        attributes: ["+1 聖騎士技能", "+50% 對不死生物的傷害"]
+      },
+      {
+        id: "milabrega_shield",
+        name: "米拉伯佳的寶珠",
+        nameEn: "Milabrega's Orb",
+        baseItem: "輕盾 (Kite Shield)",
+        slot: "shield",
+        requiredLevel: 17,
+        attributes: ["+20% 增加格擋機率", "+25 防禦"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+75 生命" }
+    ],
+    fullBonuses: [
+      "+2 聖騎士技能",
+      "所有抗性 +20",
+      "+20 力量",
+      "無法被凍結"
+    ]
+  },
+  {
+    id: "najs_ancient_vestige",
+    name: "娜吉的古代遺物",
+    nameEn: "Naj's Ancient Vestige",
+    pieces: [
+      {
+        id: "naj_armor",
+        name: "娜吉的輕甲",
+        nameEn: "Naj's Light Plate",
+        baseItem: "地獄鍛造裝甲 (Hellforge Plate)",
+        slot: "armor",
+        requiredLevel: 71,
+        attributes: ["+1 所有技能", "所有抗性 +25", "+300 防禦", "+65 生命"]
+      },
+      {
+        id: "naj_helm",
+        name: "娜吉的小圓環",
+        nameEn: "Naj's Circlet",
+        baseItem: "頭飾 (Circlet)",
+        slot: "helm",
+        requiredLevel: 28,
+        attributes: ["+1 所有技能", "+12 敏捷", "+5 照亮範圍"]
+      },
+      {
+        id: "naj_staff",
+        name: "娜吉的解謎杖",
+        nameEn: "Naj's Puzzler",
+        baseItem: "長老之杖 (Elder Staff)",
+        slot: "weapon",
+        requiredLevel: 78,
+        attributes: ["+1 所有技能", "+30% 快速施法速度 (FCR)", "等級 11 傳送 (Teleport - 69 次聚氣，拓荒副手神杖)"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+175 防禦" }
+    ],
+    fullBonuses: [
+      "+3 所有技能",
+      "所有抗性 +50",
+      "+20 力量",
+      "+20 敏捷",
+      "+100 法力"
+    ]
+  },
+  {
+    id: "bulkathos_children",
+    name: "布爾凱索的孩子 (雙神劍套裝)",
+    nameEn: "Bul-Kathos' Children",
+    pieces: [
+      {
+        id: "bulkathos_sacred_charge",
+        name: "布爾凱索的神聖代價",
+        nameEn: "Bul-Kathos' Sacred Charge",
+        baseItem: "巨神之刃 (Colossus Blade)",
+        slot: "weapon",
+        requiredLevel: 63,
+        attributes: ["+200% 增強傷害", "35% 機率造成壓碎打擊 (CB)", "擊倒目標", "所有抗性 +20"]
+      },
+      {
+        id: "bulkathos_tribal_guardian",
+        name: "布爾凱索的部族守護",
+        nameEn: "Bul-Kathos' Tribal Guardian",
+        baseItem: "秘儀之劍 (Mythical Sword)",
+        slot: "weapon",
+        requiredLevel: 66,
+        attributes: ["+200% 增強傷害", "+20 力量", "+20 敏捷", "增加 50 毒素傷害"]
+      }
+    ],
+    partialBonuses: [],
+    fullBonuses: [
+      "+2 所有技能",
+      "+200 對惡魔的傷害",
+      "+200 對不死生物的傷害",
+      "+20 全屬性",
+      "每次命中偷取 10% 生命"
+    ]
+  },
+  {
+    id: "heavens_brethren",
+    name: "天堂信徒",
+    nameEn: "Heaven's Brethren",
+    pieces: [
+      {
+        id: "heavens_helm",
+        name: "翁達爾的全能",
+        nameEn: "Ondal's Almighty",
+        baseItem: "螺旋頭盔 (Spired Helm)",
+        slot: "helm",
+        requiredLevel: 69,
+        attributes: ["+50 防禦", "+10% 快速打擊恢復 (FHR)", "等級 3 虛弱 (15 次聚氣)"]
+      },
+      {
+        id: "heavens_armor",
+        name: "海默蘇的堅毅",
+        nameEn: "Haemosu's Adament",
+        baseItem: "護胸甲 (Cuirass)",
+        slot: "armor",
+        requiredLevel: 44,
+        attributes: ["+500 防禦", "+40 生命", "近戰防禦 +35"]
+      },
+      {
+        id: "heavens_shield",
+        name: "太白之榮耀",
+        nameEn: "Taebaek's Glory",
+        baseItem: "保護盾牌 (Ward)",
+        slot: "shield",
+        requiredLevel: 81,
+        attributes: ["+50 防禦", "+30% 快速格擋速度", "+25% 增加格擋機率", "無法被凍結"]
+      },
+      {
+        id: "heavens_weapon",
+        name: "丹古的教誨",
+        nameEn: "Dangoon's Teaching",
+        baseItem: "強化硬棒 (Reinforced Mace)",
+        slot: "weapon",
+        requiredLevel: 68,
+        attributes: ["+40% 攻擊速度 (IAS)", "+1.5 每等級 最大傷害", "擊中時 10% 施展等級 3 冰風暴"]
+      }
+    ],
+    partialBonuses: [
+      { count: 2, bonus: "+50 生命" }
+    ],
+    fullBonuses: [
+      "+2 所有技能",
+      "所有抗性 +50",
+      "每次命中偷取 10% 生命",
+      "物理傷害減少 20%"
+    ]
+  }
 ];
-
-

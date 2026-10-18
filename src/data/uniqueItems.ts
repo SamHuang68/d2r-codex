@@ -2216,7 +2216,1852 @@ export const UNIQUE_ITEMS_DATA: UniqueItemData[] = [
       "+100 毒素傷害，持續 4 秒"
     ]
   }
+,
+  // ── 經典與拓荒傳奇暗金裝備 (Classic & Leveling Prominent Uniques) ──
+  // 頭盔 (Helms)
+  {
+    id: "tarnhelm",
+    name: "塔恩頭盔",
+    nameEn: "Tarnhelm",
+    baseItem: "帽子 (Cap)",
+    baseItemEn: "Cap",
+    slot: "helm",
+    requiredLevel: 15,
+    tags: ["All Skills +1", "Magic Find 50%", "Classic MF BIS"],
+    flavorText: "經典時期所有開荒角色夢寐以求的打寶神帽，提供 +1 技能與高達 50% MF。",
+    attributes: [
+      "+1 所有技能",
+      "+25-50% 更佳機會取得魔法裝備 (MF) (變動)",
+      "+75% 額外金幣尋獲 (GF)"
+    ]
+  },
+  {
+    id: "coifofglory",
+    name: "榮耀頭巾",
+    nameEn: "Coif of Glory",
+    baseItem: "頭巾 (Helm)",
+    baseItemEn: "Helm",
+    slot: "helm",
+    requiredLevel: 14,
+    tags: ["Blind Target", "Lightning Resist", "Mana Leech"],
+    flavorText: "戰士在早期壓制遠程弓箭手與法系小怪的利器，擊中可直接使目標目盲。",
+    attributes: [
+      "擊中使目標目盲",
+      "抗閃電 +15%",
+      "每次命中偷取 3% 法力",
+      "攻擊者受到傷害 7",
+      "+10 防禦"
+    ]
+  },
+  {
+    id: "duskdeep",
+    name: "暮光深處",
+    nameEn: "Duskdeep",
+    baseItem: "全罩式頭盔 (Full Helm)",
+    baseItemEn: "Full Helm",
+    slot: "helm",
+    requiredLevel: 17,
+    tags: ["All Resist 15", "Damage Reduction 7", "Leveling Defense"],
+    flavorText: "普通難度前中期的鐵壁護首，提供全抗性 +15 與珍貴的 7 點物理減傷。",
+    attributes: [
+      "+30-50% 強化防禦 (變動)",
+      "+10-20 最大防禦",
+      "所有抗性 +15",
+      "傷害減少 7",
+      "-2 照亮範圍"
+    ]
+  },
+  {
+    id: "howltusk",
+    name: "狼嚎長牙",
+    nameEn: "Howltusk",
+    baseItem: "巨型頭盔 (Great Helm)",
+    baseItemEn: "Great Helm",
+    slot: "helm",
+    requiredLevel: 25,
+    tags: ["Monster Flee", "Knockback", "Damage Taken to Mana"],
+    flavorText: "將恐懼散播至惡魔軍團的野蠻重盔，擊中擊退並使怪物驚駭逃竄。",
+    attributes: [
+      "擊退目標 (Knockback)",
+      "擊中使怪物逃跑 25%",
+      "受損生命 35% 轉為法力",
+      "魔法傷害減少 2"
+    ]
+  },
+  {
+    id: "undeadcrown",
+    name: "不死皇冠",
+    nameEn: "Undead Crown",
+    baseItem: "皇冠 (Crown)",
+    baseItemEn: "Crown",
+    slot: "helm",
+    requiredLevel: 29,
+    tags: ["Life Leech 5%", "Damage to Undead", "Necromancer"],
+    flavorText: "灌注亡靈憎恨的漆黑王冠，賦予對不死怪物的毀滅性打擊與生命偷取。",
+    attributes: [
+      "+3 骷髏復生 (死靈法師專用)",
+      "每次命中偷取 5% 生命",
+      "+50% 對不死生物的傷害",
+      "+100 對不死生物的準確率",
+      "+40-60 防禦 (變動)",
+      "抗毒 +50%"
+    ]
+  },
+  {
+    id: "wormskull",
+    name: "蠕蟲頭骨",
+    nameEn: "Wormskull",
+    baseItem: "骨盔 (Bone Helm)",
+    baseItemEn: "Bone Helm",
+    slot: "helm",
+    requiredLevel: 21,
+    tags: ["Necromancer Skills +1", "Life Leech 5%", "Poison Damage"],
+    flavorText: "雕刻著蠕蟲圖騰的死靈巫師頭骨面具，早期毒骨系與召喚系極佳過渡裝。",
+    attributes: [
+      "+1 死靈法師技能",
+      "+80 毒素傷害，持續 8 秒",
+      "每次命中偷取 5% 生命",
+      "+10 生命",
+      "抗毒 +25%"
+    ]
+  },
+
+  // 護甲 (Armors)
+  {
+    id: "goldskin",
+    name: "黃金之皮",
+    nameEn: "Goldskin",
+    baseItem: "全鎧甲 (Full Plate Mail)",
+    baseItemEn: "Full Plate Mail",
+    slot: "armor",
+    requiredLevel: 28,
+    tags: ["All Resist 35", "Gold Find 100%", "Classic All Resist"],
+    flavorText: "通體純金鍛造的厚重鎧甲，提供高達 +35 全抗性與翻倍的金幣掉落。",
+    attributes: [
+      "+120-150% 強化防禦 (變動)",
+      "所有抗性 +35",
+      "+100% 額外金幣尋獲 (GF)",
+      "攻擊者受到傷害 10",
+      "+2 照亮範圍"
+    ]
+  },
+  {
+    id: "iceblink",
+    name: "冰雪眨眼",
+    nameEn: "Iceblink",
+    baseItem: "夾式甲 (Splint Mail)",
+    baseItemEn: "Splint Mail",
+    slot: "armor",
+    requiredLevel: 22,
+    tags: ["Freezes Target", "Cold Resist", "Classic Crowd Control"],
+    flavorText: "近戰控場傳奇！任何物理打擊均能將非免疫怪物直接完全凍結成冰雕。",
+    attributes: [
+      "凍結目標 (Freezes Target)",
+      "+70-80% 強化防禦 (變動)",
+      "抗寒 +30%",
+      "魔法傷害減少 1",
+      "+4 照亮範圍"
+    ]
+  },
+  {
+    id: "rattlecage",
+    name: "震動籠牢",
+    nameEn: "Rattlecage",
+    baseItem: "哥德甲 (Gothic Plate)",
+    baseItemEn: "Gothic Plate",
+    slot: "armor",
+    requiredLevel: 29,
+    tags: ["Crushing Blow 25%", "Monster Flee", "Budget Boss Killer"],
+    flavorText: "自帶 25% 壓碎打擊的拓荒打 Boss 神甲，打擊時伴隨金屬震顫聲令群魔奔逃。",
+    attributes: [
+      "25% 機率造成壓碎打擊 (CB)",
+      "擊中使怪物逃跑 40%",
+      "+200 防禦",
+      "+45 攻擊準確率"
+    ]
+  },
+  {
+    id: "hawkmail",
+    name: "鷹爪甲",
+    nameEn: "Hawkmail",
+    baseItem: "鱗甲 (Scale Mail)",
+    baseItemEn: "Scale Mail",
+    slot: "armor",
+    requiredLevel: 15,
+    tags: ["Cannot Be Frozen", "Run Walk 10%", "Max Cold Resist"],
+    flavorText: "15 級即可裝備的無法被凍結神甲！早期對抗都瑞爾與冰凍怪物的最堅實後盾。",
+    attributes: [
+      "無法被凍結 (Cannot Be Frozen)",
+      "+10% 跑步/步行速度",
+      "+80-100% 強化防禦 (變動)",
+      "抗寒 +15%",
+      "+15% 最大抗寒上限"
+    ]
+  },
+  {
+    id: "rockfleece",
+    name: "岩石羊毛",
+    nameEn: "Rockfleece",
+    baseItem: "戰場裝甲 (Field Plate)",
+    baseItemEn: "Field Plate",
+    slot: "armor",
+    requiredLevel: 28,
+    tags: ["Damage Reduction 10%", "Physical Wall", "Strength"],
+    flavorText: "厚如山岩的減傷甲，提供 10% 物理減傷與高額防禦，極大減輕近戰承傷。",
+    attributes: [
+      "傷害減少 10% (DR)",
+      "+100-130% 強化防禦 (變動)",
+      "物理傷害減少 5",
+      "+5 力量",
+      "需求 -10%"
+    ]
+  },
+  {
+    id: "twitchthroe",
+    name: "抽動的掙扎",
+    nameEn: "Twitchthroe",
+    baseItem: "鑲嵌甲 (Studded Leather)",
+    baseItemEn: "Studded Leather",
+    slot: "armor",
+    requiredLevel: 16,
+    tags: ["IAS 20%", "FHR 20%", "Block Chance 25%", "Classic God Armor"],
+    flavorText: "暗黑二代最傳奇的低等級全能甲！攻速、打擊恢復、格擋機率與雙屬性完美集於一身。",
+    attributes: [
+      "+20% 攻擊速度 (IAS)",
+      "+20% 快速打擊恢復 (FHR)",
+      "+25% 增加格擋機率",
+      "+25 防禦",
+      "+10 力量",
+      "+10 敏捷"
+    ]
+  },
+  {
+    id: "blinkbatsform",
+    name: "閃爍蝙蝠的外貌",
+    nameEn: "Blinkbat's Form",
+    baseItem: "皮甲 (Leather Armor)",
+    baseItemEn: "Leather Armor",
+    slot: "armor",
+    requiredLevel: 12,
+    tags: ["Run Walk 40%", "FHR 40%", "Lightweight"],
+    flavorText: "極致敏捷的輕甲，高達 40% 跑速與 40% FHR 讓佩戴者如蝙蝠般在陰影穿梭。",
+    attributes: [
+      "+40% 跑步/步行速度",
+      "+40% 快速打擊恢復 (FHR)",
+      "+25 防禦",
+      "+50 對遠程攻擊防禦"
+    ]
+  },
+  {
+    id: "boneflesh",
+    name: "白骨之肉",
+    nameEn: "Boneflesh",
+    baseItem: "板甲 (Plate Mail)",
+    baseItemEn: "Plate Mail",
+    slot: "armor",
+    requiredLevel: 26,
+    tags: ["Open Wounds 25%", "Life Leech 5%", "Physical Leveling"],
+    flavorText: "白骨倒刺交錯的肉搏戰甲，附加 25% 撕開傷口阻止怪物自療。",
+    attributes: [
+      "25% 機率造成撕開傷口",
+      "每次命中偷取 5% 生命",
+      "+100-120% 強化防禦 (變動)",
+      "+35 防禦"
+    ]
+  },
+  {
+    id: "darkglow",
+    name: "暗黑之光",
+    nameEn: "Darkglow",
+    baseItem: "環甲 (Ring Mail)",
+    baseItemEn: "Ring Mail",
+    slot: "armor",
+    requiredLevel: 14,
+    tags: ["All Resist 10", "Max All Resist +5%", "Leveling All Resist"],
+    flavorText: "散發微弱晦光的古老環甲，突破常規提升全元素抗性上限 5%。",
+    attributes: [
+      "所有抗性 +10",
+      "+5% 最大抗火 / 抗寒 / 抗電 / 抗毒上限",
+      "+70-100% 強化防禦 (變動)",
+      "+50 攻擊準確率",
+      "+3 照亮範圍"
+    ]
+  },
+  {
+    id: "greyform",
+    name: "灰色形態",
+    nameEn: "Greyform",
+    baseItem: "布甲 (Quilted Armor)",
+    baseItemEn: "Quilted Armor",
+    slot: "armor",
+    requiredLevel: 7,
+    tags: ["Fire Resist 20%", "Cold Resist 20%", "Life Leech 5%", "Level 7 Starter BIS"],
+    flavorText: "7 級即可穿戴的開荒神衣！提供火冰雙抗 +20% 與 5% 生命偷取，伴隨新手平穩度過第一章。",
+    attributes: [
+      "抗火 +20%",
+      "抗寒 +20%",
+      "每次命中偷取 5% 生命",
+      "+20 防禦",
+      "+10 敏捷",
+      "魔法傷害減少 3"
+    ]
+  },
+  {
+    id: "heavenlygarb",
+    name: "天堂法衣",
+    nameEn: "Heavenly Garb",
+    baseItem: "輕型裝甲 (Light Plate)",
+    baseItemEn: "Light Plate",
+    slot: "armor",
+    requiredLevel: 29,
+    tags: ["All Resist 10", "Mana Regen 25%", "Undead Defense"],
+    flavorText: "大天使祝福過的聖潔長袍，顯著提升法力恢復並免疫不死生物毒害。",
+    attributes: [
+      "所有抗性 +10",
+      "法力恢復 +25%",
+      "+100% 強化防禦",
+      "+(1.5 每等級) 對不死生物防禦",
+      "+15 活力"
+    ]
+  },
+  {
+    id: "sparklingmail",
+    name: "閃光之甲",
+    nameEn: "Sparkling Mail",
+    baseItem: "鎖子甲 (Chain Mail)",
+    baseItemEn: "Chain Mail",
+    slot: "armor",
+    requiredLevel: 17,
+    tags: ["Lightning Resist 30%", "Attacker Takes Lightning Damage"],
+    flavorText: "雷光躍動的鎖子甲，提供 30% 抗電並向攻擊者反彈狂暴電弧。",
+    attributes: [
+      "+75-85% 強化防禦 (變動)",
+      "增加 1-20 閃電傷害",
+      "抗閃電 +30%",
+      "攻擊者受到閃電傷害 10-14"
+    ]
+  },
+  {
+    id: "thecenturion",
+    name: "百夫長",
+    nameEn: "The Centurion",
+    baseItem: "硬皮甲 (Hard Leather Armor)",
+    baseItemEn: "Hard Leather Armor",
+    slot: "armor",
+    requiredLevel: 14,
+    tags: ["Life 50", "Mana 50", "Stamina"],
+    flavorText: "羅馬軍團百夫長的榮譽戰衣，大幅充實佩戴者的生命、法力與體力儲備。",
+    attributes: [
+      "+50 生命",
+      "+50 法力",
+      "+15 最大體力",
+      "體力消耗減慢 40%",
+      "物理傷害減少 2"
+    ]
+  },
+  {
+    id: "venomsward",
+    name: "毒液防禦",
+    nameEn: "Venomsward",
+    baseItem: "胸甲 (Breast Plate)",
+    baseItemEn: "Breast Plate",
+    slot: "armor",
+    requiredLevel: 20,
+    tags: ["Poison Resist 90%", "Max Poison Resist +15%", "Anti-Poison BIS"],
+    flavorText: "抗毒天花板！將佩戴者的抗毒上限推至 90%，安達利爾毒液宛如拂面微風。",
+    attributes: [
+      "抗毒 +90%",
+      "+15% 最大抗毒上限 (達到 90% 抗毒！)",
+      "毒素持續時間縮短 50%",
+      "+60-100% 強化防禦 (變動)",
+      "+2 照亮範圍"
+    ]
+  },
+  {
+    id: "victorssilk",
+    name: "勝利之絲",
+    nameEn: "Victors Silk",
+    baseItem: "古代裝甲 (Ancient Armor)",
+    baseItemEn: "Ancient Armor",
+    slot: "armor",
+    requiredLevel: 28,
+    tags: ["All Skills +1", "Mana Leech 5%", "Classic Skills BIS"],
+    flavorText: "經典時代法系與物理雙修戰甲，罕見地在古代裝甲上提供 +1 所有技能與偷法。",
+    attributes: [
+      "+1 所有技能",
+      "每次命中偷取 5% 法力",
+      "+100-120% 強化防禦 (變動)",
+      "+35 防禦"
+    ]
+  },
+
+  // 盾牌 (Shields)
+  {
+    id: "steelclash",
+    name: "鋼鐵碰撞",
+    nameEn: "Steelclash",
+    baseItem: "輕盾 (Kite Shield)",
+    baseItemEn: "Kite Shield",
+    slot: "shield",
+    requiredLevel: 17,
+    tags: ["Paladin Skills +1", "All Resist 15", "Block Chance 25%"],
+    flavorText: "聖騎士早期無可挑剔的攻防一體聖盾，兼顧技能、格擋與全抗性。",
+    attributes: [
+      "+1 聖騎士技能",
+      "+25% 增加格擋機率",
+      "+20% 快速格擋速度 (FBR)",
+      "所有抗性 +15",
+      "+60-100% 強化防禦 (變動)",
+      "+3 照亮範圍"
+    ]
+  },
+  {
+    id: "theward",
+    name: "守衛",
+    nameEn: "The Ward",
+    baseItem: "哥德盾 (Gothic Shield)",
+    baseItemEn: "Gothic Shield",
+    slot: "shield",
+    requiredLevel: 26,
+    tags: ["All Resist 30-50", "Block Chance", "Classic Tank Shield"],
+    flavorText: "全抗高達 30-50 的重裝防禦大盾，經典模式拓荒防禦核心。",
+    attributes: [
+      "所有抗性 +30-50 (變動)",
+      "+10% 增加格擋機率",
+      "+100% 強化防禦",
+      "+40 防禦",
+      "魔法傷害減少 2"
+    ]
+  },
+  {
+    id: "walloftheeyeless",
+    name: "無眼之牆",
+    nameEn: "Wall of the Eyeless",
+    baseItem: "骨盾 (Bone Shield)",
+    baseItemEn: "Bone Shield",
+    slot: "shield",
+    requiredLevel: 20,
+    tags: ["FCR 20%", "Mana After Each Kill +5", "Classic Caster BIS"],
+    flavorText: "法系角色經典畢業副手盾牌，20% FCR 搭配擊殺回藍是早期流暢刷怪的保證。",
+    attributes: [
+      "+20% 快速施法速度 (FCR)",
+      "+5 擊殺後獲得法力 (EK)",
+      "+30-40% 強化防禦 (變動)",
+      "+10 防禦",
+      "毒素持續時間縮短 50%"
+    ]
+  },
+  {
+    id: "bverritkeep",
+    name: "布維利特要塞",
+    nameEn: "Bverrit Keep",
+    baseItem: "塔盾 (Tower Shield)",
+    baseItemEn: "Tower Shield",
+    slot: "shield",
+    requiredLevel: 19,
+    tags: ["Fire Resist 75%", "Strength 5", "Heavy Defense"],
+    flavorText: "火焰絕緣要塞！提供驚人的 75% 抗火，任何火系法術與吐息皆難傷分毫。",
+    attributes: [
+      "抗火 +75%",
+      "+80-120% 強化防禦 (變動)",
+      "+30 防禦",
+      "+5 力量",
+      "魔法傷害減少 5"
+    ]
+  },
+  {
+    id: "peltalunata",
+    name: "佩爾塔盧納塔",
+    nameEn: "Pelta Lunata",
+    baseItem: "圓盾 (Buckler)",
+    baseItemEn: "Buckler",
+    slot: "shield",
+    requiredLevel: 2,
+    tags: ["Level 2 Starter Shield", "Block Rate 40%", "Vitality 10"],
+    flavorText: "2 級即可裝備的新手守護小盾，擁有極高的 40% 格擋速度加成。",
+    attributes: [
+      "+40% 快速格擋速度 (FBR)",
+      "+20% 增加格擋機率",
+      "+10 活力",
+      "+2 力量",
+      "+30-40% 強化防禦 (變動)"
+    ]
+  },
+  {
+    id: "stormguild",
+    name: "暴風公會",
+    nameEn: "Stormguild",
+    baseItem: "大盾 (Large Shield)",
+    baseItemEn: "Large Shield",
+    slot: "shield",
+    requiredLevel: 13,
+    tags: ["Lightning Resist 25%", "Block Rate", "Magic Damage Reduction"],
+    flavorText: "抗擊風暴的輕便金屬盾，強化格擋並反彈閃電衝擊。",
+    attributes: [
+      "+30% 快速格擋速度 (FBR)",
+      "+25% 增加格擋機率",
+      "抗閃電 +25%",
+      "魔法傷害減少 1",
+      "攻擊者受到閃電傷害 1-6"
+    ]
+  },
+  {
+    id: "swordbackhold",
+    name: "劍背堡壘",
+    nameEn: "Swordback Hold",
+    baseItem: "長盾 (Spiked Shield)",
+    baseItemEn: "Spiked Shield",
+    slot: "shield",
+    requiredLevel: 15,
+    tags: ["Open Wounds 50%", "Block Chance", "Damage Return"],
+    flavorText: "盾面嵌滿尖銳刀刃的攻擊型盾牌，高達 50% 機率讓敵人傷口大開血流不止。",
+    attributes: [
+      "50% 機率造成撕開傷口",
+      "+20% 增加格擋機率",
+      "+30-60% 強化防禦 (變動)",
+      "+10 防禦",
+      "攻擊者受到傷害 10"
+    ]
+  },
+  {
+    id: "umbraldisk",
+    name: "陰影之盤",
+    nameEn: "Umbral Disk",
+    baseItem: "小圓盾 (Small Shield)",
+    baseItemEn: "Small Shield",
+    slot: "shield",
+    requiredLevel: 12,
+    tags: ["Blind Target", "Life 20", "Fast Block"],
+    flavorText: "漆黑吸光的刺客小盾，格擋敏捷且能令貼身近戰之敵目盲失去目標。",
+    attributes: [
+      "擊中使目標目盲",
+      "+30% 快速格擋速度 (FBR)",
+      "+10-15 敏捷 (變動)",
+      "+20 生命",
+      "+40-50% 強化防禦 (變動)"
+    ]
+  },
+
+  // 腰帶 (Belts)
+  {
+    id: "bladebuckle",
+    name: "刀鋒扣帶",
+    nameEn: "Bladebuckle",
+    baseItem: "鐵線腰帶 (Plated Belt)",
+    baseItemEn: "Plated Belt",
+    slot: "belt",
+    requiredLevel: 29,
+    tags: ["FHR 30%", "Strength 5", "Dexterity 10"],
+    flavorText: "暗藏防身利刃的金屬腰帶，提供 30% 快速打擊恢復與力量敏捷雙加成。",
+    attributes: [
+      "+30% 快速打擊恢復 (FHR)",
+      "+5 力量",
+      "+10 敏捷",
+      "物理傷害減少 3",
+      "攻擊者受到傷害 8"
+    ]
+  },
+  {
+    id: "nightsmoke",
+    name: "夜煙",
+    nameEn: "Nightsmoke",
+    baseItem: "腰帶 (Belt)",
+    baseItemEn: "Belt",
+    slot: "belt",
+    requiredLevel: 20,
+    tags: ["All Resist 10", "Damage to Mana 50%", "Caster Leveling"],
+    flavorText: "受損生命 50% 轉化為法力，法系角色被圍毆時續航不竭的救命腰帶。",
+    attributes: [
+      "所有抗性 +10",
+      "受損生命 50% 轉為法力",
+      "+20 法力",
+      "物理傷害減少 2",
+      "+30-50% 強化防禦 (變動)"
+    ]
+  },
+  {
+    id: "snakecord",
+    name: "蛇繩",
+    nameEn: "Snakecord",
+    baseItem: "輕扣帶 (Light Belt)",
+    baseItemEn: "Light Belt",
+    slot: "belt",
+    requiredLevel: 12,
+    tags: ["Poison Resist 25%", "Poison Length Reduced", "Life Replenish"],
+    flavorText: "由劇毒水蛇皮鞣製的柔軟輕帶，顯著化解初期惡毒的持續腐蝕。",
+    attributes: [
+      "抗毒 +25%",
+      "毒素持續時間縮短 50%",
+      "增加 12 毒素傷害，持續 3 秒",
+      "生命恢復 +5",
+      "+20-30% 強化防禦 (變動)"
+    ]
+  },
+
+  // 手套與靴子 (Gloves & Boots)
+  {
+    id: "bloodfist",
+    name: "血拳",
+    nameEn: "Bloodfist",
+    baseItem: "重手套 (Heavy Gloves)",
+    baseItemEn: "Heavy Gloves",
+    slot: "gloves",
+    requiredLevel: 9,
+    tags: ["FHR 30%", "IAS 10%", "Life 40", "Level 9 PVP/PVE God"],
+    flavorText: "全遊戲性價比最高的手套之一！僅需 9 級即可提供 30% FHR、10% IAS 與 40 點高額生命。",
+    attributes: [
+      "+30% 快速打擊恢復 (FHR)",
+      "+10% 攻擊速度 (IAS)",
+      "+40 生命",
+      "+5 最小傷害",
+      "+10-20% 強化防禦 (變動)"
+    ]
+  },
+  {
+    id: "thehandofbroc",
+    name: "布洛克之手",
+    nameEn: "The Hand of Broc",
+    baseItem: "皮手套 (Leather Gloves)",
+    baseItemEn: "Leather Gloves",
+    slot: "gloves",
+    requiredLevel: 5,
+    tags: ["Dual Leech 3%", "Mana 20", "Level 5 Starter"],
+    flavorText: "5 級雙吸手套！每次命中偷取 3% 生命與法力，物理拓荒前期無價之寶。",
+    attributes: [
+      "每次命中偷取 3% 生命",
+      "每次命中偷取 3% 法力",
+      "+20 法力",
+      "抗毒 +10%",
+      "+10-20% 強化防禦 (變動)"
+    ]
+  },
+  {
+    id: "gorefoot",
+    name: "血腳",
+    nameEn: "Gorefoot",
+    baseItem: "重靴 (Heavy Boots)",
+    baseItemEn: "Heavy Boots",
+    slot: "boots",
+    requiredLevel: 9,
+    tags: ["Run Walk 20%", "Mana Leech 2%", "Leap Skills"],
+    flavorText: "浸染鮮血的堅韌戰靴，賦予跑速與偷法，並額外提升野蠻人的跳躍能力。",
+    attributes: [
+      "+20% 跑步/步行速度",
+      "每次命中偷取 2% 法力",
+      "+2 跳躍 (野蠻人專用)",
+      "+20-30% 強化防禦 (變動)",
+      "攻擊者受到傷害 2"
+    ]
+  },
+  {
+    id: "tearhaunch",
+    name: "淚之臀",
+    nameEn: "Tearhaunch",
+    baseItem: "護脛 (Greaves)",
+    baseItemEn: "Greaves",
+    slot: "boots",
+    requiredLevel: 29,
+    tags: ["All Resist 10", "Run Walk 20%", "Strength 10", "Dexterity 10"],
+    flavorText: "力敏雙加各 10 點，並附帶 10 全抗性與 20% 跑速的扎實防護金屬脛甲。",
+    attributes: [
+      "+20% 跑步/步行速度",
+      "所有抗性 +10",
+      "+10 力量",
+      "+10 敏捷",
+      "+2 活力靈氣 (聖騎士專用)",
+      "+60-80% 強化防禦 (變動)"
+    ]
+  },
+  {
+    id: "treadsofcthon",
+    name: "庫頓之趾",
+    nameEn: "Treads of Cthon",
+    baseItem: "鎖子靴 (Chain Boots)",
+    baseItemEn: "Chain Boots",
+    slot: "boots",
+    requiredLevel: 15,
+    tags: ["Run Walk 30%", "Stamina Drain", "Missile Defense"],
+    flavorText: "奔馳如風的輕量鎖子靴，提供 30% 跑速並大幅減少長途疾跑的體力損耗。",
+    attributes: [
+      "+30% 跑步/步行速度",
+      "+50 對遠程攻擊防禦",
+      "體力消耗減慢 50%",
+      "+50 體力上限",
+      "+30-40% 強化防禦 (變動)"
+    ]
+  },
+
+  // 武器 (Weapons)
+  {
+    id: "spectralshard",
+    name: "幽靈碎片",
+    nameEn: "Spectral Shard",
+    baseItem: "刀刃 (Blade)",
+    baseItemEn: "Blade",
+    slot: "weapon",
+    requiredLevel: 25,
+    tags: ["FCR 50%", "All Resist 10", "Mana 50", "Classic Caster Weapon BIS"],
+    flavorText: "經典時代法系終極畢業匕首！驚人的 50% FCR 施法速度搭配 50 法力與全抗。",
+    attributes: [
+      "+50% 快速施法速度 (FCR)",
+      "所有抗性 +10",
+      "+50 法力",
+      "+55 攻擊準確率"
+    ]
+  },
+  {
+    id: "bonesnap",
+    name: "碎骨",
+    nameEn: "Bonesnap",
+    baseItem: "大木槌 (Maul)",
+    baseItemEn: "Maul",
+    slot: "weapon",
+    requiredLevel: 24,
+    tags: ["Crushing Blow 40%", "Enhanced Damage 300%", "Classic Melee Boss Killer"],
+    flavorText: "物理近戰經典終極核彈大槌！高達 40% 壓碎打擊與最高 300% ED，敲碎一切 Boss 骨骸。",
+    attributes: [
+      "40% 機率造成壓碎打擊 (CB)",
+      "+200-300% 增強傷害 (ED) (變動)",
+      "抗火 +30%",
+      "抗寒 +30%"
+    ]
+  },
+  {
+    id: "steeldriver",
+    name: "鋼鐵驅馳",
+    nameEn: "Steeldriver",
+    baseItem: "巨鐵槌 (Great Maul)",
+    baseItemEn: "Great Maul",
+    slot: "weapon",
+    requiredLevel: 29,
+    tags: ["IAS 40%", "Enhanced Damage 250%", "Req -50%", "Leveling God Hammer"],
+    flavorText: "需求直降 50% 的高速巨槌，自帶 40% 攻速，升級至菁英底材後威力無比驚人。",
+    attributes: [
+      "+40% 攻擊速度 (IAS)",
+      "+150-250% 增強傷害 (ED) (變動)",
+      "體力消耗減慢 25%",
+      "生命恢復 +5",
+      "裝備需求 -50%"
+    ]
+  },
+  {
+    id: "culwenspoint",
+    name: "庫爾文的焦點",
+    nameEn: "Culwen's Point",
+    baseItem: "巨劍 (War Sword)",
+    baseItemEn: "War Sword",
+    slot: "weapon",
+    requiredLevel: 29,
+    tags: ["All Skills +1", "FHR 20%", "IAS 20%", "Classic Sword"],
+    flavorText: "鍛造均勻的純鋼戰劍，罕見附帶 +1 全技能、20% 攻速與 20% 打擊恢復。",
+    attributes: [
+      "+1 所有技能",
+      "+20% 攻擊速度 (IAS)",
+      "+20% 快速打擊恢復 (FHR)",
+      "+70-80% 增強傷害 (變動)",
+      "+60 攻擊準確率",
+      "毒素持續時間縮短 50%"
+    ]
+  },
+  {
+    id: "hellplague",
+    name: "地獄瘟疫",
+    nameEn: "Hellplague",
+    baseItem: "長劍 (Long Sword)",
+    baseItemEn: "Long Sword",
+    slot: "weapon",
+    requiredLevel: 22,
+    tags: ["Dual Leech 5%", "Fire/Poison Damage", "Leveling Sword"],
+    flavorText: "燃燒毒火的地獄闊刃，每次打擊雙吸 5% 並注入大量火毒雙重痛苦。",
+    attributes: [
+      "每次命中偷取 5% 生命",
+      "每次命中偷取 5% 法力",
+      "增加 25-75 火焰傷害",
+      "+28-56 毒素傷害，持續 6 秒"
+    ]
+  },
+  {
+    id: "thegnasher",
+    name: "磨齒者",
+    nameEn: "The Gnasher",
+    baseItem: "手斧 (Hand Axe)",
+    baseItemEn: "Hand Axe",
+    slot: "weapon",
+    requiredLevel: 5,
+    tags: ["Crushing Blow 20%", "Open Wounds 50%", "Level 5 Starter Axe"],
+    flavorText: "5 級即可持有的壓碎打擊小斧，自帶 50% 撕開傷口，讓初期頭目迅速崩解。",
+    attributes: [
+      "20% 機率造成壓碎打擊 (CB)",
+      "50% 機率造成撕開傷口",
+      "+60-70% 增強傷害 (變動)"
+    ]
+  },
+  {
+    id: "torchofiro",
+    name: "艾羅之火炬",
+    nameEn: "Torch of Iro",
+    baseItem: "魔杖 (Wand)",
+    baseItemEn: "Wand",
+    slot: "weapon",
+    requiredLevel: 5,
+    tags: ["Necromancer Skills +1", "Fire Damage", "Life Replenish"],
+    flavorText: "死靈法師 5 級可用之引魂神杖，頂端燃燒幽冥烈火，提供 +1 死靈技能。",
+    attributes: [
+      "+1 死靈法師技能",
+      "增加 5-9 火焰傷害",
+      "每次命中偷取 6% 生命",
+      "生命恢復 +10",
+      "+3 照亮範圍"
+    ]
+  },
+  {
+    id: "woestave",
+    name: "悲慘之杖",
+    nameEn: "Woestave",
+    baseItem: "斧槍 (Halberd)",
+    baseItemEn: "Halberd",
+    slot: "weapon",
+    requiredLevel: 28,
+    tags: ["Slows Target 50%", "Prevent Monster Heal", "Open Wounds 50%", "Boss Debuff King"],
+    flavorText: "全遊戲最強減益傭兵武器之一！50% 減速、致盲、凍結、撕開傷口並防止怪物自療。",
+    attributes: [
+      "擊中使目標減速 50%",
+      "擊中使目標目盲",
+      "凍結目標 +1",
+      "50% 機率造成撕開傷口",
+      "防止怪物自療",
+      "-50 怪物防禦"
+    ]
+  },
+  {
+    id: "umeslament",
+    name: "尤姆的悲嘆",
+    nameEn: "Ume's Lament",
+    baseItem: "殘酷之杖 (Grim Wand)",
+    baseItemEn: "Grim Wand",
+    slot: "weapon",
+    requiredLevel: 28,
+    tags: ["Necromancer Skills +2", "FCR 20%", "Decrepify"],
+    flavorText: "經典死靈 +2 技能魔杖，賦予 20% 施法速度與衰老詛咒強化。",
+    attributes: [
+      "+2 死靈法師技能",
+      "+20% 快速施法速度 (FCR)",
+      "+2 衰老 (死靈法師專用)",
+      "+3 恐懼 (死靈法師專用)",
+      "+40 法力"
+    ]
+  },
+  {
+    id: "wizendraw",
+    name: "凋零",
+    nameEn: "Wizendraw",
+    baseItem: "長弓 (Long Bow)",
+    baseItemEn: "Long Bow",
+    slot: "weapon",
+    requiredLevel: 26,
+    tags: ["Minus Enemy Cold Resist 35%", "Fires Magic Arrows", "Cold Bow"],
+    flavorText: "元素弓馬拓荒利器！自帶最高 -35% 敵人冰寒抗性，大幅提升冰箭殺傷力。",
+    attributes: [
+      "發射魔法箭矢 (無需消耗箭袋)",
+      "-(20-35)% 敵人冰寒抗性 (變動)",
+      "+70-80% 增強傷害 (變動)",
+      "+50-100 攻擊準確率",
+      "+15 能量",
+      "+30 法力"
+    ]
+  },
+  {
+    id: "ravensclaw",
+    name: "烏鴉之爪",
+    nameEn: "Raven's Claw",
+    baseItem: "長弓 (Long Bow)",
+    baseItemEn: "Long Bow",
+    slot: "weapon",
+    requiredLevel: 15,
+    tags: ["Fires Explosive Arrows", "Leveling AOE Bow"],
+    flavorText: "射出等級 3 爆破箭的速刷拓荒神弓，群怪成片炸裂倒下。",
+    attributes: [
+      "發射爆裂箭矢 (等級 3 Explosive Arrows)",
+      "+60-70% 增強傷害 (變動)",
+      "+(3 每等級) 攻擊準確率",
+      "+3 力量",
+      "+3 敏捷"
+    ]
+  },
+  {
+    id: "blastbark",
+    name: "爆裂吠叫",
+    nameEn: "Blastbark",
+    baseItem: "巨戰之弓 (War Bow)",
+    baseItemEn: "War Bow",
+    slot: "weapon",
+    requiredLevel: 28,
+    tags: ["Bow Skills +1", "Mana Leech 5%", "Leveling Bow"],
+    flavorText: "射擊沉重有力的硬木戰弓，每次命中偷取 5% 法力以維持多重箭射擊。",
+    attributes: [
+      "+1 弓與十字弓技能 (亞馬遜專用)",
+      "+70-130% 增強傷害 (變動)",
+      "每次命中偷取 5% 法力",
+      "+5 力量"
+    ]
+  },
+  {
+    id: "leadcrow",
+    name: "鉛烏鴉",
+    nameEn: "Leadcrow",
+    baseItem: "輕十字弓 (Light Crossbow)",
+    baseItemEn: "Light Crossbow",
+    slot: "weapon",
+    requiredLevel: 9,
+    tags: ["Deadly Strike 25%", "Level 9 Crossbow"],
+    flavorText: "鉛製箭槽的重實輕弩，賦予 25% 致命打擊造成翻倍物理傷害。",
+    attributes: [
+      "25% 機率造成致命打擊 (DS)",
+      "+40 攻擊準確率",
+      "+70% 增強傷害",
+      "+10 敏捷",
+      "毒素持續時間縮短 25%"
+    ]
+  },
+  {
+    id: "ichorsting",
+    name: "膿汁之刺",
+    nameEn: "Ichorsting",
+    baseItem: "十字弓 (Crossbow)",
+    baseItemEn: "Crossbow",
+    slot: "weapon",
+    requiredLevel: 28,
+    tags: ["Pierce 50%", "Poison Damage", "Crossbow"],
+    flavorText: "浸泡劇毒膿汁的連發弩，穿透攻擊達 50% 貫穿整列魔潮。",
+    attributes: [
+      "貫穿攻擊 (Piercing Attack 50%)",
+      "+50 毒素傷害，持續 5 秒",
+      "+50% 增強傷害",
+      "+20 敏捷",
+      "+20 體力上限"
+    ]
+  },
+  {
+    id: "chieftain",
+    name: "酋長",
+    nameEn: "The Chieftain",
+    baseItem: "戰斧 (Battle Axe)",
+    baseItemEn: "Battle Axe",
+    slot: "weapon",
+    requiredLevel: 19,
+    tags: ["All Resist 10-20", "Mana After Each Kill", "Two-Handed Axe"],
+    flavorText: "部落頭目代代傳承的重斧，擊殺怪物獲得法力並提供難得的全抗性。",
+    attributes: [
+      "所有抗性 +10-20 (變動)",
+      "+10% 攻擊速度 (IAS)",
+      "+100% 增強傷害",
+      "+6 擊殺後獲得法力 (EK)",
+      "增加 1-40 火焰傷害"
+    ]
+  },
+  {
+    id: "brainhew",
+    name: "斷腦者",
+    nameEn: "Brainhew",
+    baseItem: "大斧 (Great Axe)",
+    baseItemEn: "Great Axe",
+    slot: "weapon",
+    requiredLevel: 25,
+    tags: ["Mana Leech 10-13%", "Mana 25", "Two-Handed Axe"],
+    flavorText: "兇悍的劈砍巨斧，巨額偷取 10-13% 法力，確保旋風狂斬不斷檔。",
+    attributes: [
+      "每次命中偷取 10-13% 法力 (變動)",
+      "+50-80% 增強傷害 (變動)",
+      "+25 法力",
+      "+14 照亮範圍"
+    ]
+  },
+  {
+    id: "thehumongous",
+    name: "龐大之斧",
+    nameEn: "The Humongous",
+    baseItem: "巨型斬斧 (Giant Axe)",
+    baseItemEn: "Giant Axe",
+    slot: "weapon",
+    requiredLevel: 29,
+    tags: ["Crushing Blow 33%", "Strength 25", "Huge Damage"],
+    flavorText: "粗獷沉重的超規格巨斧，附加 33% 壓碎打擊與 25 點額外力量。",
+    attributes: [
+      "33% 機率造成壓碎打擊 (CB)",
+      "+80-120% 增強傷害 (變動)",
+      "+25 力量",
+      "裝備需求 +20%"
+    ]
+  },
+  {
+    id: "crushflange",
+    name: "碎骨凸緣",
+    nameEn: "Crushflange",
+    baseItem: "狼牙棒 (Mace)",
+    baseItemEn: "Mace",
+    slot: "weapon",
+    requiredLevel: 9,
+    tags: ["Crushing Blow 33%", "Fire Resist 50%", "Level 9 Boss Smiter"],
+    flavorText: "9 級持有的終極重擊鈍器！33% 壓碎打擊配合 50% 抗火，重擊聖騎士拓荒必備。",
+    attributes: [
+      "33% 機率造成壓碎打擊 (CB)",
+      "抗火 +50%",
+      "+50-60% 增強傷害 (變動)",
+      "+15 力量",
+      "+2 照亮範圍"
+    ]
+  },
+  {
+    id: "thegeneralstandoliga",
+    name: "坦杜里加將軍",
+    nameEn: "The General's Tan Do Li Ga",
+    baseItem: "長連枷 (Flail)",
+    baseItemEn: "Flail",
+    slot: "weapon",
+    requiredLevel: 21,
+    tags: ["Slows Target 50%", "IAS 20%", "Life Leech 5%"],
+    flavorText: "揮擊速度極快且自帶 50% 減速的長連枷，讓強悍敵人動彈不得。",
+    attributes: [
+      "擊中使目標減速 50%",
+      "+20% 攻擊速度 (IAS)",
+      "每次命中偷取 5% 生命",
+      "+50-60% 增強傷害 (變動)",
+      "+25 最大防禦"
+    ]
+  },
+  {
+    id: "ironstone",
+    name: "鐵石",
+    nameEn: "Ironstone",
+    baseItem: "戰錘 (War Hammer)",
+    baseItemEn: "War Hammer",
+    slot: "weapon",
+    requiredLevel: 27,
+    tags: ["Crushing Blow", "Attack Rating", "High Damage"],
+    flavorText: "整塊玄鐵一體成型的沉重戰錘，附帶強大準確率加成擊碎防線。",
+    attributes: [
+      "+100-150 攻擊準確率",
+      "+100-140% 增強傷害 (變動)",
+      "+10 力量",
+      "增加 1-10 閃電傷害"
+    ]
+  },
+  {
+    id: "dimoakshew",
+    name: "迪莫克的砍刀",
+    nameEn: "Dimoak's Hew",
+    baseItem: "鉤鐮 (Bardiche)",
+    baseItemEn: "Bardiche",
+    slot: "weapon",
+    requiredLevel: 8,
+    tags: ["Enhanced Damage 100%", "Level 8 Mercenary Polearm"],
+    flavorText: "第一章與第二章傭兵的早期殺神大刀，8 級即達 100% 增強傷害。",
+    attributes: [
+      "+100% 增強傷害",
+      "+15 敏捷",
+      "防禦力 -8"
+    ]
+  },
+  {
+    id: "steelgoad",
+    name: "鋼鐵刺棒",
+    nameEn: "Steelgoad",
+    baseItem: "長矛 (Voulge)",
+    baseItemEn: "Voulge",
+    slot: "weapon",
+    requiredLevel: 19,
+    tags: ["Deadly Strike 30%", "Monster Flee", "Polearm"],
+    flavorText: "尖端如棘刺般銳利的鐵矛，高達 30% 致命打擊撕裂敵人軀體。",
+    attributes: [
+      "30% 機率造成致命打擊 (DS)",
+      "擊中使怪物逃跑 75%",
+      "+60-80% 增強傷害 (變動)",
+      "+30 攻擊準確率"
+    ]
+  },
+  {
+    id: "soulharvest",
+    name: "靈魂收割者",
+    nameEn: "Soul Harvest",
+    baseItem: "長鎌 (Scythe)",
+    baseItemEn: "Scythe",
+    slot: "weapon",
+    requiredLevel: 19,
+    tags: ["Dual Leech 5%", "Open Wounds 30%", "All Resist 20"],
+    flavorText: "收割生靈魂魄的漆黑鐮刀，提供全抗性 +20 與雙吸生命法力。",
+    attributes: [
+      "所有抗性 +20",
+      "每次命中偷取 5% 生命",
+      "每次命中偷取 5% 法力",
+      "30% 機率造成撕開傷口",
+      "+50-90% 增強傷害 (變動)"
+    ]
+  },
+  {
+    id: "battlebranch",
+    name: "戰役之枝",
+    nameEn: "The Battlebranch",
+    baseItem: "長柄斧 (Poleaxe)",
+    baseItemEn: "Poleaxe",
+    slot: "weapon",
+    requiredLevel: 25,
+    tags: ["IAS 30%", "Life Leech 7%", "Polearm"],
+    flavorText: "兼具 30% 揮舞速度與 7% 生命偷取的均衡長柄斧，傭兵過渡良伴。",
+    attributes: [
+      "+30% 攻擊速度 (IAS)",
+      "每次命中偷取 7% 生命",
+      "+50-70% 增強傷害 (變動)",
+      "+50-100 攻擊準確率"
+    ]
+  },
+  {
+    id: "thegrimreaper",
+    name: "嚴酷收割者",
+    nameEn: "The Grim Reaper",
+    baseItem: "巨戰鐮刀 (War Scythe)",
+    baseItemEn: "War Scythe",
+    slot: "weapon",
+    requiredLevel: 29,
+    tags: ["Deadly Strike 100%", "Prevent Monster Heal", "Classic Polearm"],
+    flavorText: "死神本尊的揮斬之鐮！每一擊皆是 100% 致命打擊，造成必然的翻倍傷害。",
+    attributes: [
+      "100% 機率造成致命打擊 (DS - 刀刀暴擊！)",
+      "防止怪物自療",
+      "+15 致命攻擊",
+      "每次命中偷取 5% 法力"
+    ]
+  },
+  {
+    id: "baneash",
+    name: "災難之灰",
+    nameEn: "Bane Ash",
+    baseItem: "短杖 (Short Staff)",
+    baseItemEn: "Short Staff",
+    slot: "weapon",
+    requiredLevel: 5,
+    tags: ["Sorceress Skills +1", "Fire Skills", "Mana 30", "Level 5 Staff"],
+    flavorText: "魔法使 5 級開荒法杖，自帶火焰彈、熱情靈氣加成與法力儲備。",
+    attributes: [
+      "+1 魔法使技能",
+      "+2 暖氣 (魔法使專用)",
+      "+4 火焰彈 (魔法使專用)",
+      "增加 4-40 火焰傷害",
+      "+30 法力"
+    ]
+  },
+  {
+    id: "serpentlord",
+    name: "蛇王",
+    nameEn: "Serpent Lord",
+    baseItem: "長杖 (Long Staff)",
+    baseItemEn: "Long Staff",
+    slot: "weapon",
+    requiredLevel: 9,
+    tags: ["Mana Leech 100%", "Target Defense -50%", "Staff"],
+    flavorText: "蛇眼閃爍的巫毒法杖，擁有高達 100% 的偷取法力，敲擊即回滿魔泉。",
+    attributes: [
+      "每次命中偷取 100% 法力",
+      "-50% 目標防禦",
+      "+30-40% 增強傷害 (變動)",
+      "抗毒 +50%"
+    ]
+  },
+  {
+    id: "spireoflazarus",
+    name: "拉薩路之尖頂",
+    nameEn: "Spire of Lazarus",
+    baseItem: "粗糙法杖 (Gnarled Staff)",
+    baseItemEn: "Gnarled Staff",
+    slot: "weapon",
+    requiredLevel: 18,
+    tags: ["Sorceress Skills +1", "Lightning Skills", "Damage Taken to Mana"],
+    flavorText: "大主教拉薩路失落的奧術尖杖，大幅強化閃電法術威力與靜態力場。",
+    attributes: [
+      "+1 魔法使技能",
+      "+2 靜態力場 (魔法使專用)",
+      "+1 閃電 (魔法使專用)",
+      "+2 連鎖閃電 (魔法使專用)",
+      "受損生命 40% 轉為法力"
+    ]
+  },
+  {
+    id: "thesalamander",
+    name: "沙羅曼達",
+    nameEn: "The Salamander",
+    baseItem: "戰斧杖 (Battle Staff)",
+    baseItemEn: "Battle Staff",
+    slot: "weapon",
+    requiredLevel: 21,
+    tags: ["Fire Skills +2", "Fireball +3", "Fire Resist 30%"],
+    flavorText: "火蜥蜴精魂附體的赤紅烈杖，讓火球與火牆威力昇華至全新境界。",
+    attributes: [
+      "+2 火焰技能 (魔法使專用)",
+      "+3 火球 (魔法使專用)",
+      "+2 火牆 (魔法使專用)",
+      "+1 暖氣 (魔法使專用)",
+      "抗火 +30%"
+    ]
+  },
+  {
+    id: "theironiangbong",
+    name: "鐵棒",
+    nameEn: "The Iron Jang Bong",
+    baseItem: "巨戰法杖 (War Staff)",
+    baseItemEn: "War Staff",
+    slot: "weapon",
+    requiredLevel: 28,
+    tags: ["Sorceress Skills +2", "FCR 20%", "Frost Nova +3"],
+    flavorText: "玄鐵包裹的沉重法杖，提供 20% 施法速度與全方位的冰火電法術加成。",
+    attributes: [
+      "+2 魔法使技能",
+      "+20% 快速施法速度 (FCR)",
+      "+3 霜之新星 (魔法使專用)",
+      "+2 閃電新星 (魔法使專用)",
+      "+50 防禦"
+    ]
+  },
+  {
+    id: "pluckeye",
+    name: "拔眼",
+    nameEn: "Pluckeye",
+    baseItem: "短弓 (Short Bow)",
+    baseItemEn: "Short Bow",
+    slot: "weapon",
+    requiredLevel: 7,
+    tags: ["Mana Leech 3%", "Life 10", "Level 7 Bow"],
+    flavorText: "7 級弓箭手極品過渡短弓，提供生命偷取與視野優勢。",
+    attributes: [
+      "每次命中偷取 3% 法力",
+      "+10 生命",
+      "+100 增強傷害",
+      "+2 照亮範圍",
+      "+28 攻擊準確率"
+    ]
+  },
+  {
+    id: "witherstring",
+    name: "枯萎之弦",
+    nameEn: "Witherstring",
+    baseItem: "獵弓 (Hunter's Bow)",
+    baseItemEn: "Hunter's Bow",
+    slot: "weapon",
+    requiredLevel: 13,
+    tags: ["Fires Magic Arrows", "Enhanced Damage", "Leveling Bow"],
+    flavorText: "枯枝纏繞的輕巧獵弓，自帶魔法箭矢，免除隨身攜帶箭袋的負擔。",
+    attributes: [
+      "發射魔法箭矢 (等級 3 Magic Arrows)",
+      "+40-50% 增強傷害 (變動)",
+      "+30 攻擊準確率",
+      "增加 1-3 物理傷害"
+    ]
+  },
+  {
+    id: "roguesbow",
+    name: "蘿格之弓",
+    nameEn: "Rogue's Bow",
+    baseItem: "複合弓 (Composite Bow)",
+    baseItemEn: "Composite Bow",
+    slot: "weapon",
+    requiredLevel: 20,
+    tags: ["IAS 30%", "Deadly Strike 100%", "Fast Bow"],
+    flavorText: "蘿格盲眼姐妹會神箭手佩弓，自帶 30% 攻速與驚人的 100% 致命打擊！",
+    attributes: [
+      "+30% 攻擊速度 (IAS)",
+      "100% 機率造成致命打擊 (DS - 暴擊神弓！)",
+      "+40-60% 增強傷害 (變動)",
+      "+60 攻擊準確率"
+    ]
+  },
+  {
+    id: "stormstrike",
+    name: "暴風打擊",
+    nameEn: "Stormstrike",
+    baseItem: "短戰鬥弓 (Short Battle Bow)",
+    baseItemEn: "Short Battle Bow",
+    slot: "weapon",
+    requiredLevel: 25,
+    tags: ["Piercing Attack 25%", "Lightning Damage", "Bow"],
+    flavorText: "召喚狂暴雷暴的戰鬥弓，附加穿透打擊與閃電穿心效果。",
+    attributes: [
+      "貫穿攻擊 (Piercing Attack 25%)",
+      "增加 1-30 閃電傷害",
+      "+70-90% 增強傷害 (變動)",
+      "+28 攻擊準確率",
+      "抗閃電 +25%"
+    ]
+  },
+  {
+    id: "hellclap",
+    name: "地獄拍擊",
+    nameEn: "Hellclap",
+    baseItem: "短巨戰之弓 (Short War Bow)",
+    baseItemEn: "Short War Bow",
+    slot: "weapon",
+    requiredLevel: 27,
+    tags: ["Fire Skills +1", "Fire Damage", "Fire Resist 40%"],
+    flavorText: "拍擊產生爆轟烈焰的巨弓，大幅加成火焰箭與爆炸箭的威力。",
+    attributes: [
+      "+1 火焰技能",
+      "+70-90% 增強傷害 (變動)",
+      "增加 15-30 火焰傷害",
+      "抗火 +40%",
+      "+12 敏捷"
+    ]
+  },
+  {
+    id: "hellcast",
+    name: "地獄投擲",
+    nameEn: "Hellcast",
+    baseItem: "重十字弓 (Heavy Crossbow)",
+    baseItemEn: "Heavy Crossbow",
+    slot: "weapon",
+    requiredLevel: 27,
+    tags: ["Explosive Bolts", "Fire Damage", "Crossbow"],
+    flavorText: "射出爆炸重箭的烈焰弩砲，對密集怪群造成恐怖的範圍清場效果。",
+    attributes: [
+      "發射爆裂弩箭 (等級 5 Explosive Bolts)",
+      "+70-80% 增強傷害 (變動)",
+      "增加 15-35 火焰傷害",
+      "抗火 +15%",
+      "+20% 攻擊速度 (IAS)"
+    ]
+  },
+  {
+    id: "doomslinger",
+    name: "末日彈弓",
+    nameEn: "Doomslinger",
+    baseItem: "連發十字弓 (Repeating Crossbow)",
+    baseItemEn: "Repeating Crossbow",
+    slot: "weapon",
+    requiredLevel: 28,
+    tags: ["All Skills +1", "Piercing Attack 35%", "Fast Crossbow"],
+    flavorText: "高速連射的末日輕弩，提供難得的 +1 全技能與 35% 穿透打擊。",
+    attributes: [
+      "+1 所有技能",
+      "貫穿攻擊 (Piercing Attack 35%)",
+      "+60-100% 增強傷害 (變動)",
+      "+30% 攻擊速度 (IAS)"
+    ]
+  },
+  {
+    id: "maelstrom",
+    name: "漩渦",
+    nameEn: "Maelstrom",
+    baseItem: "紫杉魔杖 (Yew Wand)",
+    baseItemEn: "Yew Wand",
+    slot: "weapon",
+    requiredLevel: 14,
+    tags: ["Necromancer Skills +1", "Lightning Resist 40%", "Iron Maiden"],
+    flavorText: "雷光渦流環繞的巫毒魔杖，提供 40% 閃電抗性與鐵魔咒法術強化。",
+    attributes: [
+      "+1 死靈法師技能",
+      "+3 鋼鐵石魔 (死靈法師專用)",
+      "+2 鐵處女 (死靈法師專用)",
+      "抗閃電 +40%",
+      "受損生命 30% 轉為法力"
+    ]
+  },
+  {
+    id: "gravenspine",
+    name: "雕骨",
+    nameEn: "Gravenspine",
+    baseItem: "骨杖 (Bone Wand)",
+    baseItemEn: "Bone Wand",
+    slot: "weapon",
+    requiredLevel: 20,
+    tags: ["Necromancer Skills +2", "Mana 25-50", "Classic Wand"],
+    flavorText: "刻滿符文的脊骨法杖，罕見地在 20 級即提供 +2 死靈法師全技能。",
+    attributes: [
+      "+2 死靈法師技能",
+      "每次命中偷取 5% 法力",
+      "+25-50 法力 (變動)",
+      "+10 敏捷",
+      "+10 力量"
+    ]
+  },
+  {
+    id: "thediggler",
+    name: "掘墓者",
+    nameEn: "The Diggler",
+    baseItem: "短匕首 (Dirk)",
+    baseItemEn: "Dirk",
+    slot: "weapon",
+    requiredLevel: 11,
+    tags: ["IAS 30%", "All Resist 10", "Fast Dagger"],
+    flavorText: "盜墓賊開棺專用的鋒利掘錐，攻速高達 30% 並附帶全抗性。",
+    attributes: [
+      "+30% 攻擊速度 (IAS)",
+      "所有抗性 +10",
+      "+10 敏捷",
+      "+50% 增強傷害"
+    ]
+  },
+  {
+    id: "thejadetando",
+    name: "翠玉短劍",
+    nameEn: "The Jade Tan Do",
+    baseItem: "匕首 (Kris)",
+    baseItemEn: "Kris",
+    slot: "weapon",
+    requiredLevel: 19,
+    tags: ["Poison Resist 95%", "Cannot Be Frozen", "Poison Knife"],
+    flavorText: "浸滿翠綠玉毒的刺客匕首，提供抗毒 95% 與無法被凍結。",
+    attributes: [
+      "抗毒 +95%",
+      "+20% 最大抗毒上限 (達到 95% 極限抗毒！)",
+      "無法被凍結 (Cannot Be Frozen)",
+      "+180 毒素傷害，持續 4 秒",
+      "+100-150 攻擊準確率"
+    ]
+  },
+  {
+    id: "rixotskeen",
+    name: "銳克特的尖銳",
+    nameEn: "Rixot's Keen",
+    baseItem: "短劍 (Short Sword)",
+    baseItemEn: "Short Sword",
+    slot: "weapon",
+    requiredLevel: 2,
+    tags: ["Crushing Blow 25%", "Level 2 Starter Sword BIS"],
+    flavorText: "全遊戲最低等級壓碎打擊武器！2 級即可手持 25% CB 利刃痛擊惡魔。",
+    attributes: [
+      "25% 機率造成壓碎打擊 (CB)",
+      "+100% 增強傷害",
+      "+20% 增加格擋機率",
+      "+25 防禦",
+      "+2 照亮範圍"
+    ]
+  },
+  {
+    id: "bloodcrescent",
+    name: "血月",
+    nameEn: "Blood Crescent",
+    baseItem: "彎刀 (Scimitar)",
+    baseItemEn: "Scimitar",
+    slot: "weapon",
+    requiredLevel: 7,
+    tags: ["Life Leech 15%", "IAS 15%", "All Resist 15", "Level 7 Sword"],
+    flavorText: "鮮血凝結的月牙彎刀，驚人的 15% 命偷、15% 攻速與 15 全抗性。",
+    attributes: [
+      "每次命中偷取 15% 生命 (海量吸血！)",
+      "+15% 攻擊速度 (IAS)",
+      "所有抗性 +15",
+      "+60-80% 增強傷害 (變動)",
+      "+15 生命"
+    ]
+  },
+  {
+    id: "skewerofkrintiz",
+    name: "克林茲之串",
+    nameEn: "Skewer of Krintiz",
+    baseItem: "闊劍 (Broad Sword)",
+    baseItemEn: "Broad Sword",
+    slot: "weapon",
+    requiredLevel: 10,
+    tags: ["Mana Leech 7%", "Ignore Target Defense", "Level 10 Sword"],
+    flavorText: "忽略目標防禦的突刺長劍，刀刀必中且巨額偷取 7% 法力。",
+    attributes: [
+      "忽略目標防禦 (Ignore Target's Defense)",
+      "每次命中偷取 7% 法力",
+      "+50% 增強傷害",
+      "+10 敏捷"
+    ]
+  },
+  {
+    id: "gleamscythe",
+    name: "亮光之鐮",
+    nameEn: "Gleamscythe",
+    baseItem: "彎刀 (Falchion)",
+    baseItemEn: "Falchion",
+    slot: "weapon",
+    requiredLevel: 13,
+    tags: ["IAS 20%", "Cold Damage", "Defense 30"],
+    flavorText: "鋒面流轉寒冰亮光的利刃，附加 20% 揮擊速度與冰凍傷害。",
+    attributes: [
+      "+20% 攻擊速度 (IAS)",
+      "增加 1-10 冰寒傷害，持續 3 秒",
+      "+60-70% 增強傷害 (變動)",
+      "+30 防禦",
+      "+3 照亮範圍"
+    ]
+  },
+  {
+    id: "griswoldsedge",
+    name: "格里斯瓦德之刃",
+    nameEn: "Griswold's Edge",
+    baseItem: "闊劍 (Broad Sword)",
+    baseItemEn: "Broad Sword",
+    slot: "weapon",
+    requiredLevel: 17,
+    tags: ["Knockback", "Fire Damage", "IAS 10%", "崔斯特姆鐵匠紀念"],
+    flavorText: "崔斯特姆傳奇鐵匠生前親手熔鑄的名刃，打擊伴隨烈焰並擊退邪祟。",
+    attributes: [
+      "擊退目標 (Knockback)",
+      "增加 10-12 火焰傷害",
+      "+10-12 最小與最大傷害",
+      "+10% 攻擊速度 (IAS)",
+      "+80-120% 增強傷害 (變動)"
+    ]
+  },
+  {
+    id: "shadowfang",
+    name: "暗影之牙",
+    nameEn: "Shadowfang",
+    baseItem: "雙手劍 (Two-Handed Sword)",
+    baseItemEn: "Two-Handed Sword",
+    slot: "weapon",
+    requiredLevel: 12,
+    tags: ["Dual Leech 9%", "Cold Damage", "Level 12 Two-Handed"],
+    flavorText: "漆黑深淵中鍛造的雙手重劍，揮砍時雙吸 9% 生命與法力。",
+    attributes: [
+      "每次命中偷取 9% 生命",
+      "每次命中偷取 9% 法力",
+      "增加 10-30 冰寒傷害",
+      "+100% 增強傷害",
+      "-2 照亮範圍"
+    ]
+  },
+  {
+    id: "soulflay",
+    name: "靈魂剝離",
+    nameEn: "Soulflay",
+    baseItem: "大劍 (Claymore)",
+    baseItemEn: "Claymore",
+    slot: "weapon",
+    requiredLevel: 19,
+    tags: ["Dual Leech 10%", "All Resist 5", "Two-Handed Sword"],
+    flavorText: "專注於剝奪敵人靈魂的大劍，雙吸達 10% 並附帶全抗性。",
+    attributes: [
+      "每次命中偷取 10% 生命",
+      "每次命中偷取 4% 法力",
+      "所有抗性 +5",
+      "+70-100% 增強傷害 (變動)"
+    ]
+  },
+  {
+    id: "kinemilsawl",
+    name: "基尼米爾之錐",
+    nameEn: "Kinemil's Awl",
+    baseItem: "巨劍 (Giant Sword)",
+    baseItemEn: "Giant Sword",
+    slot: "weapon",
+    requiredLevel: 23,
+    tags: ["Paladin Holy Fire +6", "Attack Rating +100-150%", "Huge AR"],
+    flavorText: "聖火聖騎士早期神劍！狂暴提供 +6 神聖之火與 +100-150% 驚天準確率加成。",
+    attributes: [
+      "+6 神聖之火 (聖騎士專用)",
+      "+(100-150)% 攻擊準確率加成 (變動)",
+      "增加 6-150 火焰傷害",
+      "+80-100% 增強傷害 (變動)"
+    ]
+  },
+  {
+    id: "blacktongue",
+    name: "黑舌",
+    nameEn: "Blacktongue",
+    baseItem: "混種大劍 (Bastard Sword)",
+    baseItemEn: "Bastard Sword",
+    slot: "weapon",
+    requiredLevel: 26,
+    tags: ["Prevent Monster Heal", "Poison Damage 113", "Sword"],
+    flavorText: "塗抹黑巫術劇毒的長劍，附加 113 點巨毒並永久阻止怪物自癒。",
+    attributes: [
+      "防止怪物自療",
+      "+113 毒素傷害，持續 6 秒",
+      "+50-60% 增強傷害 (變動)",
+      "抗毒 +50%"
+    ]
+  },
+  {
+    id: "ripsaw",
+    name: "撕裂鋸",
+    nameEn: "Ripsaw",
+    baseItem: "雙刃大劍 (Flamberge)",
+    baseItemEn: "Flamberge",
+    slot: "weapon",
+    requiredLevel: 26,
+    tags: ["Open Wounds 80%", "IAS 20%", "Bleed Sword"],
+    flavorText: "布滿倒刺鋸齒的兇殘闊劍，高達 80% 撕開傷口讓魔怪血崩不止。",
+    attributes: [
+      "80% 機率造成撕開傷口",
+      "+20% 攻擊速度 (IAS)",
+      "+80-100% 增強傷害 (變動)",
+      "+15 最大傷害"
+    ]
+  },
+  {
+    id: "thepatriarch",
+    name: "族長",
+    nameEn: "The Patriarch",
+    baseItem: "巨型巨劍 (Great Sword)",
+    baseItemEn: "Great Sword",
+    slot: "weapon",
+    requiredLevel: 29,
+    tags: ["Blind Target", "Damage Reduction 3", "Two-Handed Sword"],
+    flavorText: "古代部落首領的沉重雙手劍，揮擊時令敵人盲目並帶來物理傷害減免。",
+    attributes: [
+      "擊中使目標目盲",
+      "物理傷害減少 3",
+      "+100-120% 增強傷害 (變動)",
+      "+50 防禦",
+      "+100% 額外金幣尋獲 (GF)"
+    ]
+  },
+  {
+    id: "deathspade",
+    name: "死亡鐵鏟",
+    nameEn: "Deathspade",
+    baseItem: "斧 (Axe)",
+    baseItemEn: "Axe",
+    slot: "weapon",
+    requiredLevel: 9,
+    tags: ["Mana After Each Kill +4", "Enhanced Damage", "Starter Axe"],
+    flavorText: "葬儀人揮舞的鋒利鐵鏟，擊殺怪物後立即掠奪 4 點法力。",
+    attributes: [
+      "+4 擊殺後獲得法力 (EK)",
+      "+60-70% 增強傷害 (變動)",
+      "+8 最小傷害",
+      "+15% 額外金幣尋獲"
+    ]
+  },
+  {
+    id: "bladebone",
+    name: "刀鋒之骨",
+    nameEn: "Bladebone",
+    baseItem: "雙刃斧 (Double Axe)",
+    baseItemEn: "Double Axe",
+    slot: "weapon",
+    requiredLevel: 15,
+    tags: ["IAS 20%", "Damage to Undead 100%", "Undead Slayer"],
+    flavorText: "由白骨拼接而成的雙手雙刃斧，專門劈砍不死生物並附加 20% 攻速。",
+    attributes: [
+      "+20% 攻擊速度 (IAS)",
+      "+100% 對不死生物的傷害",
+      "+40 對不死生物的準確率",
+      "+30-50% 增強傷害 (變動)"
+    ]
+  },
+  {
+    id: "mindrend",
+    name: "心靈撕裂",
+    nameEn: "Mindrend",
+    baseItem: "巨戰斧 (War Axe)",
+    baseItemEn: "War Axe",
+    slot: "weapon",
+    requiredLevel: 21,
+    tags: ["Mana Leech 4%", "Cold Damage", "Axe"],
+    flavorText: "震撼心靈的狂暴戰斧，撕裂獵物的法力並凍結其意志。",
+    attributes: [
+      "每次命中偷取 4% 法力",
+      "增加 5-15 冰寒傷害，持續 3 秒",
+      "+60-100% 增強傷害 (變動)",
+      "+15 致命打擊"
+    ]
+  },
+  {
+    id: "rakescar",
+    name: "耙痕",
+    nameEn: "Rakescar",
+    baseItem: "軍用鎬 (Military Pick)",
+    baseItemEn: "Military Pick",
+    slot: "weapon",
+    requiredLevel: 27,
+    tags: ["IAS 30%", "Poison Damage", "Fast Pick"],
+    flavorText: "30% 揮舞極速的破甲軍用鎬，在敵人身上留下潰爛的毒傷耙痕。",
+    attributes: [
+      "+30% 攻擊速度 (IAS)",
+      "+38 毒素傷害，持續 3 秒",
+      "+75-100% 增強傷害 (變動)",
+      "+50 攻擊準確率"
+    ]
+  },
+  {
+    id: "axeoffechmar",
+    name: "費克馬之斧",
+    nameEn: "Axe of Fechmar",
+    baseItem: "大型斧 (Large Axe)",
+    baseItemEn: "Large Axe",
+    slot: "weapon",
+    requiredLevel: 8,
+    tags: ["Freezes Target +3", "Cold Resist 50%", "Level 8 Freezer"],
+    flavorText: "8 級即可裝備的冰凍神斧，打擊直接凍結目標長達 3 秒。",
+    attributes: [
+      "凍結目標 +3 (直接冰凍！)",
+      "抗寒 +50%",
+      "+70-90% 增強傷害 (變動)",
+      "+2 照亮範圍"
+    ]
+  },
+  {
+    id: "goreshovel",
+    name: "凝血鏟",
+    nameEn: "Goreshovel",
+    baseItem: "闊斧 (Broad Axe)",
+    baseItemEn: "Broad Axe",
+    slot: "weapon",
+    requiredLevel: 14,
+    tags: ["Open Wounds 60%", "Strength 25", "Heavy Bleed"],
+    flavorText: "巨大鏟面重劈撕裂出 60% 撕開傷口，並大幅提升 25 點力量。",
+    attributes: [
+      "60% 機率造成撕開傷口",
+      "+25 力量",
+      "+40-50% 增強傷害 (變動)",
+      "+9 最小傷害"
+    ]
+  },
+  {
+    id: "felloak",
+    name: "伐木橡木",
+    nameEn: "Felloak",
+    baseItem: "木棒 (Club)",
+    baseItemEn: "Club",
+    slot: "weapon",
+    requiredLevel: 3,
+    tags: ["Knockback", "Lightning Resist 60%", "Level 3 Starter"],
+    flavorText: "3 級可用擊退木棒，提供驚人的 60% 閃電抗性抵禦第一章電鬼。",
+    attributes: [
+      "擊退目標 (Knockback)",
+      "抗閃電 +60%",
+      "抗火 +20%",
+      "+70-80% 增強傷害 (變動)"
+    ]
+  },
+  {
+    id: "stoutnail",
+    name: "粗釘",
+    nameEn: "Stoutnail",
+    baseItem: "狼牙棒 (Spiked Club)",
+    baseItemEn: "Spiked Club",
+    slot: "weapon",
+    requiredLevel: 5,
+    tags: ["Damage Reduction 2", "Attacker Takes Damage", "Level 5 Starter"],
+    flavorText: "密布粗大鐵釘的重型狼牙棒，兼顧傷害減免與物理反震。",
+    attributes: [
+      "物理傷害減少 2",
+      "攻擊者受到傷害 10",
+      "+100% 增強傷害",
+      "+7 活力"
+    ]
+  },
+  {
+    id: "bloodrise",
+    name: "血升",
+    nameEn: "Bloodrise",
+    baseItem: "流星錘 (Morning Star)",
+    baseItemEn: "Morning Star",
+    slot: "weapon",
+    requiredLevel: 15,
+    tags: ["Life Leech 5%", "Open Wounds 50%", "Level 15 Mace"],
+    flavorText: "每一次錘擊都帶起漫天血霧，附帶 50% 撕開傷口與生命偷取。",
+    attributes: [
+      "50% 機率造成撕開傷口",
+      "每次命中偷取 5% 生命",
+      "+110-120% 增強傷害 (變動)",
+      "+2 照亮範圍"
+    ]
+  },
+  {
+    id: "lycanders_aim",
+    name: "萊坎德的瞄準",
+    nameEn: "Lycander's Aim",
+    baseItem: "祭典之弓 (Ceremonial Bow)",
+    baseItemEn: "Ceremonial Bow",
+    slot: "weapon",
+    requiredLevel: 42,
+    tags: ["Amazon Skills +2", "Bow Skills +2", "Mana Leech 5-8%", "Mid-Game Bow BIS"],
+    flavorText: "亞馬遜中期最強物理與元素兩用神弓！高達 +4 弓系技能加成與 20% 攻速。",
+    attributes: [
+      "+2 亞馬遜技能",
+      "+2 弓與十字弓技能 (亞馬遜專用)",
+      "+20% 攻擊速度 (IAS)",
+      "+150-200% 增強傷害 (ED) (變動)",
+      "每次命中偷取 5-8% 法力 (變動)",
+      "+20 敏捷",
+      "+20 能量",
+      "+20% 強化防禦"
+    ]
+  },
+  {
+    id: "lycanders_flank",
+    name: "萊坎德的側翼",
+    nameEn: "Lycander's Flank",
+    baseItem: "祭典長矛 (Ceremonial Pike)",
+    baseItemEn: "Ceremonial Pike",
+    slot: "weapon",
+    requiredLevel: 42,
+    tags: ["Amazon Skills +2", "Spear Skills +2", "Life Leech 5-9%", "Mid-Game Spear BIS"],
+    flavorText: "矛系亞馬遜中期的中流砥柱！高達 +4 長矛技能加成與厚實的生命防禦加持。",
+    attributes: [
+      "+2 亞馬遜技能",
+      "+2 標槍與長矛技能 (亞馬遜專用)",
+      "+30% 攻擊速度 (IAS)",
+      "+130-170% 增強傷害 (ED) (變動)",
+      "每次命中偷取 5-9% 生命 (變動)",
+      "+20 力量",
+      "+20 活力",
+      "+20% 強化防禦"
+    ]
+  },
+  {
+    id: "baranars_star",
+    name: "巴拉那之星",
+    nameEn: "Baranar's Star",
+    baseItem: "惡魔之星 (Devil Star)",
+    baseItemEn: "Devil Star",
+    slot: "weapon",
+    requiredLevel: 65,
+    tags: ["Elemental Damage 600", "IAS 50%", "Attack Rating 200%", "Physical/Elemental BIS"],
+    flavorText: "冰火電三修物理鈍器巔峰！高達 50% 攻速、200% 準確率加成與 600 點混元傷害。",
+    attributes: [
+      "+50% 攻擊速度 (IAS)",
+      "+200% 增強傷害 (ED)",
+      "+200% 攻擊準確率加成",
+      "增加 1-200 火焰傷害",
+      "增加 1-200 閃電傷害",
+      "增加 1-200 冰寒傷害",
+      "+15 敏捷",
+      "+15 力量"
+    ]
+  },
+  {
+    id: "schaefers_hammer",
+    name: "謝夫之錘",
+    nameEn: "Schaefer's Hammer",
+    baseItem: "傳說之錘 (Legendary Mallet)",
+    baseItemEn: "Legendary Mallet",
+    slot: "weapon",
+    requiredLevel: 79,
+    tags: ["Static Field 20%", "Max Damage per Level", "Lightning Resist 75%", "Zealot BIS"],
+    flavorText: "熱誠狂熱聖騎士的終極重器之一！擊中時 20% 觸發靜態力場，巨幅血條瞬間瓦解。",
+    attributes: [
+      "打擊時有 20% 機率施展等級 10 靜態力場",
+      "+(2 每等級) 最大傷害 (依角色等級增加，2-198)",
+      "+100-130% 增強傷害 (ED) (變動)",
+      "+(8 每等級) 攻擊準確率",
+      "增加 50-200 閃電傷害",
+      "+50 生命",
+      "抗閃電 +75%",
+      "+1 照亮範圍"
+    ]
+  },
+  {
+    id: "doombringer",
+    name: "毀滅之刃",
+    nameEn: "Doombringer",
+    baseItem: "冠軍之劍 (Champion Sword)",
+    baseItemEn: "Champion Sword",
+    slot: "weapon",
+    requiredLevel: 69,
+    tags: ["Life 20%", "Weaken 8%", "Life Leech 5-7%", "Endgame Sword"],
+    flavorText: "傳奇雙手巨劍，提供驚人的 +20% 生命上限提升，打擊時使周圍敵人陷入虛弱。",
+    attributes: [
+      "打擊時有 8% 機率施展等級 3 虛弱",
+      "+180-250% 增強傷害 (ED) (變動)",
+      "增加生命上限 20%",
+      "每次命中偷取 5-7% 生命 (變動)",
+      "+30-250 攻擊準確率加成",
+      "物理傷害減少 39",
+      "+30-100 額外命中率"
+    ]
+  }
 ];
-
-
-

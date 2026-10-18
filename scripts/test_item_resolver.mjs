@@ -61,27 +61,27 @@ function assertSemanticSlot(relPath, expectedSlot, testName) {
   switch (expectedSlot) {
     case 'armor':
     case 'chest':
-      matches = p.includes('plate') || p.includes('armor') || p.includes('mail') || p.includes('leather') || p.includes('cage') || p.includes('shroud') || p.includes('guardianship') || p.includes('flesh') || p.includes('mantle') || p.includes('furs') || p.includes('hauberk') || p.includes('hide') || p.includes('robe') || p.includes('shadow') || p.includes('deception') || p.includes('scales') || p.includes('embrace') || p.includes('heart') || p.includes('shelter') || p.includes('ambush') || p.includes('garb') || p.includes('silk') || p.includes('quilted') || p.includes('adherent') || p.includes('ringmail');
+      matches = p.includes('plate') || p.includes('armor') || p.includes('mail') || p.includes('leather') || p.includes('cage') || p.includes('shroud') || p.includes('guardianship') || p.includes('flesh') || p.includes('mantle') || p.includes('furs') || p.includes('hauberk') || p.includes('hide') || p.includes('robe') || p.includes('shadow') || p.includes('deception') || p.includes('scales') || p.includes('embrace') || p.includes('heart') || p.includes('shelter') || p.includes('ambush') || p.includes('garb') || p.includes('silk') || p.includes('quilted') || p.includes('adherent') || p.includes('ringmail') || p.includes('liberator') || p.includes('refuge') || p.includes('mesh') || p.includes('case') || p.includes('spine') || p.includes('adament') || p.includes('skin') || p.includes('centurion') || p.includes('twitchthroe') || p.includes('sparkingmail') || p.includes('darkglow') || p.includes('hawkmail') || p.includes('venomward') || p.includes('venomsward') || p.includes('iceblink') || p.includes('boneflesh') || p.includes('rockfleece') || p.includes('rattlecage') || p.includes('goldskin') || p.includes('victorssilk') || p.includes('heavenlycoat') || p.includes('form') || p.includes('blinkbat');
       break;
     case 'helm':
-      matches = p.includes('crest') || p.includes('face') || p.includes('will') || p.includes('crown') || p.includes('helm') || p.includes('veil') || p.includes('skull') || p.includes('diadem') || p.includes('head') || p.includes('tiara') || p.includes('coronet') || p.includes('circlet') || p.includes('mask') || p.includes('cap') || p.includes('visage') || p.includes('horns') || p.includes('gaze') || p.includes('guise') || p.includes('sight') || p.includes('valor') || p.includes('visor') || p.includes('sheath') || p.includes('splendor') || p.includes('totem') || p.includes('mane') || p.includes('antlers') || p.includes('avengerguard');
+      matches = p.includes('crest') || p.includes('face') || p.includes('will') || p.includes('crown') || p.includes('helm') || p.includes('veil') || p.includes('skull') || p.includes('diadem') || p.includes('head') || p.includes('tiara') || p.includes('coronet') || p.includes('circlet') || p.includes('mask') || p.includes('cap') || p.includes('visage') || p.includes('horns') || p.includes('gaze') || p.includes('guise') || p.includes('sight') || p.includes('valor') || p.includes('visor') || p.includes('sheath') || p.includes('splendor') || p.includes('totem') || p.includes('mane') || p.includes('antlers') || p.includes('avengerguard') || p.includes('coil') || p.includes('cranium') || p.includes('paragon') || p.includes('almighty') || p.includes('tarnhelm') || p.includes('coif') || p.includes('duskdeep') || p.includes('howltusk') || p.includes('undeadcrown') || p.includes('thefaceofhorror') || p.includes('wormskull');
       break;
     case 'gloves':
-      matches = p.includes('glove') || p.includes('gauntlet') || p.includes('fist') || p.includes('guard') || p.includes('mitt') || p.includes('forge') || p.includes('pincer') || p.includes('hand') || p.includes('cuff') || p.includes('taboo') || p.includes('gage') || p.includes('claws') || p.includes('clutch') || p.includes('bracer') || p.includes('frostburn') || p.includes('magnus_skin');
+      matches = p.includes('glove') || p.includes('gauntlet') || p.includes('fist') || p.includes('guard') || p.includes('mitt') || p.includes('forge') || p.includes('pincer') || p.includes('hand') || p.includes('cuff') || p.includes('taboo') || p.includes('gage') || p.includes('claws') || p.includes('clutch') || p.includes('bracer') || p.includes('frostburn') || p.includes('magnus_skin') || p.includes('thehandofbroc') || p.includes('bloodfist') || p.includes('chanceguards') || p.includes('magefist') || p.includes('ghoulhide') || p.includes('lavagout') || p.includes('hellmouth') || p.includes('dracul');
       break;
     case 'boots':
-      matches = p.includes('boot') || p.includes('traveler') || p.includes('rider') || p.includes('toe') || p.includes('pillar') || p.includes('foot') || p.includes('spur') || p.includes('heel') || p.includes('sabot') || p.includes('riprap') || p.includes('soul') || p.includes('advance') || p.includes('passage') || p.includes('fetlock') || p.includes('hobnail');
+      matches = p.includes('boot') || p.includes('traveler') || p.includes('rider') || p.includes('toe') || p.includes('pillar') || p.includes('foot') || p.includes('spur') || p.includes('heel') || p.includes('sabot') || p.includes('riprap') || p.includes('soul') || p.includes('advance') || p.includes('passage') || p.includes('fetlock') || p.includes('hobnail') || p.includes('hooves') || p.includes('hotspur') || p.includes('gorefoot') || p.includes('treads') || p.includes('tearhaunch') || p.includes('goblintoe') || p.includes('waterwalk') || p.includes('silkweave') || p.includes('wartraveler') || p.includes('gore_rider') || p.includes('shadow_dancer');
       break;
     case 'belt':
-      matches = p.includes('mesh') || p.includes('vigor') || p.includes('belt') || p.includes('sash') || p.includes('wrap') || p.includes('detail') || p.includes('buckle') || p.includes('cord') || p.includes('stay') || p.includes('blessing') || p.includes('girth') || p.includes('tenet') || p.includes('credendum') || p.includes('pride') || p.includes('cloth') || p.includes('girdle') || p.includes('coil');
+      matches = p.includes('mesh') || p.includes('vigor') || p.includes('belt') || p.includes('sash') || p.includes('wrap') || p.includes('detail') || p.includes('buckle') || p.includes('cord') || p.includes('stay') || p.includes('blessing') || p.includes('girth') || p.includes('tenet') || p.includes('credendum') || p.includes('pride') || p.includes('cloth') || p.includes('girdle') || p.includes('coil') || p.includes('deaths_guard') || p.includes('guard') || p.includes('binding') || p.includes('lenymo') || p.includes('snakecord') || p.includes('nightsmoke') || p.includes('goldwrap') || p.includes('bladebuckle') || p.includes('stringofears') || p.includes('razortail') || p.includes('gloomstrap') || p.includes('snowclash') || p.includes('thundergods_vigor') || p.includes('arachnid_mesh') || p.includes('nosferatus_coil') || p.includes('verdungos_hearty_cord');
       break;
     case 'shield':
     case 'offHand':
-      matches = p.includes('shield') || p.includes('zakarum') || p.includes('monarch') || p.includes('targe') || p.includes('tome') || p.includes('head') || p.includes('ward') || p.includes('wall') || p.includes('disk') || p.includes('parry') || p.includes('wing') || p.includes('honor') || p.includes('guard') || p.includes('glory') || p.includes('aerin') || p.includes('rondache') || p.includes('buckler') || p.includes('trollnest') || p.includes('aegis') || p.includes('homunculus');
+      matches = p.includes('shield') || p.includes('zakarum') || p.includes('monarch') || p.includes('targe') || p.includes('tome') || p.includes('head') || p.includes('ward') || p.includes('wall') || p.includes('disk') || p.includes('parry') || p.includes('wing') || p.includes('honor') || p.includes('guard') || p.includes('glory') || p.includes('aerin') || p.includes('rondache') || p.includes('buckler') || p.includes('trollnest') || p.includes('aegis') || p.includes('homunculus') || p.includes('cleglaws_claw') || p.includes('hsarus_ironfist') || p.includes('milabregas_orb') || p.includes('pelta') || p.includes('umbral') || p.includes('stormguild') || p.includes('steelclash') || p.includes('swordback') || p.includes('bverrit') || p.includes('wallofeyeless') || p.includes('theward');
       break;
     case 'weapon':
     case 'mainHand':
-      matches = p.includes('blade') || p.includes('sword') || p.includes('flail') || p.includes('axe') || p.includes('bow') || p.includes('thresher') || p.includes('crusher') || p.includes('spear') || p.includes('claw') || p.includes('crossbow') || p.includes('wand') || p.includes('staff') || p.includes('scepter') || p.includes('hammer') || p.includes('dagger') || p.includes('spike') || p.includes('maul') || p.includes('scythe') || p.includes('pike') || p.includes('javelin') || p.includes('oculus') || p.includes('orb') || p.includes('fathom') || p.includes('crescent') || p.includes('fang') || p.includes('plague') || p.includes('saw') || p.includes('point') || p.includes('tongue') || p.includes('branch') || p.includes('hew') || p.includes('spire') || p.includes('torch') || p.includes('spade') || p.includes('slinger') || p.includes('spittle') || p.includes('oak') || p.includes('gnasher') || p.includes('reaper') || p.includes('pitch') || p.includes('crow') || p.includes('nail') || p.includes('puzzler') || p.includes('touch') || p.includes('sickle') || p.includes('teaching') || p.includes('mark') || p.includes('rhythm') || p.includes('caster') || p.includes('redemption') || p.includes('justice') || p.includes('barb') || p.includes('steel') || p.includes('driver') || p.includes('shard') || p.includes('gull') || p.includes('titans_revenge') || p.includes('dragonstone') || p.includes('azurewrath') || p.includes('bartuc') || p.includes('eye');
+      matches = p.includes('blade') || p.includes('sword') || p.includes('flail') || p.includes('axe') || p.includes('bow') || p.includes('thresher') || p.includes('crusher') || p.includes('spear') || p.includes('claw') || p.includes('crossbow') || p.includes('wand') || p.includes('staff') || p.includes('scepter') || p.includes('hammer') || p.includes('dagger') || p.includes('spike') || p.includes('maul') || p.includes('scythe') || p.includes('pike') || p.includes('javelin') || p.includes('oculus') || p.includes('orb') || p.includes('fathom') || p.includes('crescent') || p.includes('fang') || p.includes('plague') || p.includes('saw') || p.includes('point') || p.includes('tongue') || p.includes('branch') || p.includes('hew') || p.includes('spire') || p.includes('torch') || p.includes('spade') || p.includes('slinger') || p.includes('spittle') || p.includes('oak') || p.includes('gnasher') || p.includes('reaper') || p.includes('pitch') || p.includes('crow') || p.includes('nail') || p.includes('puzzler') || p.includes('touch') || p.includes('sickle') || p.includes('teaching') || p.includes('mark') || p.includes('rhythm') || p.includes('caster') || p.includes('redemption') || p.includes('justice') || p.includes('barb') || p.includes('steel') || p.includes('driver') || p.includes('shard') || p.includes('gull') || p.includes('titans_revenge') || p.includes('dragonstone') || p.includes('azurewrath') || p.includes('bartuc') || p.includes('eye') || p.includes('soulflay') || p.includes('patriarch') || p.includes('mindrend') || p.includes('rakescar') || p.includes('goreshovel') || p.includes('bloodrise') || p.includes('lycander') || p.includes('morningstar') || p.includes('sazabi') || p.includes('redeemer') || p.includes('cathan') || p.includes('rule') || p.includes('berserker') || p.includes('hatchet') || p.includes('isenhart') || p.includes('lightbrand') || p.includes('civerb') || p.includes('cudgel') || p.includes('cleglaw') || p.includes('tooth') || p.includes('arctic_horn') || p.includes('sander') || p.includes('superstition') || p.includes('milabrega') || p.includes('rod') || p.includes('bulkathos') || p.includes('charge') || p.includes('guardian') || p.includes('crushflange') || p.includes('bonesnap') || p.includes('spectral') || p.includes('steeldriver') || p.includes('gravenspine') || p.includes('grimreaper') || p.includes('humongous') || p.includes('woestave') || p.includes('spineripper') || p.includes('heartcarver') || p.includes('blackbog') || p.includes('stormspike') || p.includes('buriza') || p.includes('witchwild') || p.includes('windforce') || p.includes('thunderstroke') || p.includes('deathsfathom') || p.includes('eschuta') || p.includes('wizardspike') || p.includes('lament') || p.includes('wizendraw') || p.includes('bark') || p.includes('sting') || p.includes('chieftan') || p.includes('tandoliga') || p.includes('ironstone') || p.includes('harvest') || p.includes('baneash') || p.includes('serpent') || p.includes('salamander') || p.includes('iangbong') || p.includes('jangbong') || p.includes('string') || p.includes('strike') || p.includes('clap') || p.includes('cast') || p.includes('maelstrom') || p.includes('diggler') || p.includes('tando') || p.includes('keen') || p.includes('skewer') || p.includes('edge');
       break;
     case 'ring':
       matches = p.includes('jordan') || p.includes('frost') || p.includes('band') || p.includes('ring');
@@ -189,6 +189,48 @@ assertEqual(
   'images/items/bases/ialals_mane.gif',
   "Jalal's Mane must resolve to bases/ialals_mane.gif"
 );
+
+assertEqual(
+  resolveItemImagePath({ name: '守護天使', nameEn: 'Guardian Angel', baseItem: '聖堂騎士甲', slot: 'armor', rarity: 'unique' }),
+  'images/items/bases/platemail.gif',
+  'Guardian Angel (守護天使) must NOT be intercepted by Angelic Raiment sets/angelic_mantle.gif'
+);
+
+assertEqual(
+  resolveItemImagePath({ name: '赫拉迪克方塊', nameEn: 'Horadric Cube', slot: 'charm' }),
+  'images/items/props/horadric_cube.gif',
+  'Horadric Cube must resolve to existing horadric_cube.gif'
+);
+
+assertEqual(
+  resolveItemImagePath({ name: '赦免徽章', nameEn: 'Token of Absolution' }),
+  'images/items/props/token_of_absolution.jpg',
+  'Token of Absolution must resolve to existing token_of_absolution.jpg'
+);
+
+assertEqual(
+  resolveItemImagePath({ name: '完美紅寶石', nameEn: 'Perfect Ruby' }),
+  'images/items/props/perfect_ruby.gif',
+  'Perfect Ruby must resolve to existing perfect_ruby.gif'
+);
+
+assertEqual(
+  resolveItemImagePath({ name: '毀滅之鑰', nameEn: 'Key of Destruction' }),
+  'images/items/props/uber_key.gif',
+  'Key of Destruction must resolve to existing uber_key.gif'
+);
+
+assertEqual(
+  resolveItemImagePath({ name: '痛苦精華', nameEn: 'Twisted Essence of Suffering' }),
+  'images/items/props/essences.png',
+  'Twisted Essence of Suffering must resolve to existing essences.png'
+);
+
+assertFileExists('images/items/props/horadric_cube.gif', 'Props: horadric_cube.gif');
+assertFileExists('images/items/props/token_of_absolution.jpg', 'Props: token_of_absolution.jpg');
+assertFileExists('images/items/props/perfect_ruby.gif', 'Props: perfect_ruby.gif');
+assertFileExists('images/items/props/uber_key.gif', 'Props: uber_key.gif');
+assertFileExists('images/items/props/essences.png', 'Props: essences.png');
 
 // Strict BaseURL verification
 assertStrictEqual(
