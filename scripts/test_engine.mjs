@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -200,4 +200,55 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
     console.log(`    描述覆蓋 ${total - unknown}/${total}（未知 ${unknown}）`);
     assert.ok(unknown / total < 0.15, `未知比例過高 ${unknown}/${total}`);
   });
+}
+
+// ── 鑲嵌與範本 ──
+{
+  const { getCatalog, getSocketables, socketCapacity, eligibleBases, withBase, buildEngineItem, autoAllocate, resolvePreset, SIM_PRESETS, computeCharacter: cc } = E;
+  console.log('【鑲嵌與範本】');
+  t('鑲嵌：寶石與符文依部位取得不同效果（塔爾：武器＝毒素傷害、護甲＝毒抗 30、盾牌＝毒抗 35）', () => {
+    const sk = getSocketables().find((s) => s.nameEn === 'Tal Rune');
+    const entry = (n) => getCatalog().find((e) => e.id === n);
+    const mk = (kind, base, slot) => ({ entry: { ...getCatalog().find((e) => e.kind === 'base' && e.slot === kind), baseCode: base }, sockets: [sk.id], slot });
+    const armor = cc(gameData, { className: 'Paladin', level: 90, allocated: none, items: [buildEngineItem({ entry: getCatalog().find((e) => e.kind === 'base' && e.slot === 'body'), sockets: [sk.id] }, 'body')] });
+    assert.equal(armor.stats.poisonresist, 30);
+    const weap = cc(gameData, { className: 'Paladin', level: 90, allocated: none, items: [buildEngineItem({ entry: getCatalog().find((e) => e.kind === 'base' && e.slot === 'weapon'), sockets: [sk.id] }, 'weapon')] });
+    assert.equal(weap.stats.poisonmaxdam, 154); void entry; void mk;
+    const sh = cc(gameData, { className: 'Paladin', level: 90, allocated: none, items: [buildEngineItem({ entry: getCatalog().find((e) => e.kind === 'base' && e.slot === 'shield' && !e.classCode), sockets: [sk.id] }, 'shield')] });
+    assert.equal(sh.stats.poisonresist, 35);
+  });
+  t('鑲嵌：暗金珠寶（彩虹刻面）只有 8 種，且 mods 直接生效', () => {
+    const jw = getSocketables().filter((s) => s.kind === 'jewel'); assert.equal(jw.length, 8);
+    const j = jw.find((s) => /Blizzard/.test(JSON.stringify(s.jewelMods)));
+    const r = cc(gameData, { className: 'Sorceress', level: 90, allocated: none, items: [buildEngineItem({ entry: getCatalog().find((e) => e.kind === 'base' && e.slot === 'head'), sockets: [j.id] }, 'head')] });
+    assert.ok((r.stats.coldmaxdam ?? 0) > 0);
+  });
+  t('孔數：符文之語＝符文數；暗金依「插槽」屬性；白裝由底材上限決定', () => {
+    const rw = getCatalog().find((e) => e.kind === 'runeword' && e.nameEn === 'Enigma'); assert.deepEqual([socketCapacity(rw).fixed, socketCapacity(rw).count], [true, 3]);
+    const sc = getCatalog().find((e) => e.nameEn === "Immortal King's Stone Crusher"); assert.equal(socketCapacity(sc).count, 2);
+    const wb = getCatalog().find((e) => e.kind === 'base' && e.slot === 'body'); assert.equal(socketCapacity(wb).fixed, false); assert.ok(socketCapacity(wb).max >= 1);
+  });
+  t('符文之語換底材：Enigma 可選多種護甲，且預設底材不會是職業專屬', () => {
+    const rw = getCatalog().find((e) => e.kind === 'runeword' && e.nameEn === 'Enigma');
+    assert.ok(eligibleBases(rw).length > 5); assert.equal(rw.classCode, undefined);
+    const inf = getCatalog().find((e) => e.kind === 'runeword' && e.nameEn === 'Infinity'); assert.equal(inf.classCode, undefined, '無限預設底材不應是亞馬遜長矛');
+    assert.notEqual(withBase(rw, eligibleBases(rw)[1].code).baseCode, rw.baseCode);
+  });
+  for (const p of SIM_PRESETS) {
+    t(`範本「${p.name}」：所有物品與鑲嵌皆可解析、無未處理屬性、滿足需求`, () => {
+      const r = resolvePreset(p); assert.deepEqual(r.errors, []);
+      const items = []; for (const [k, eq] of Object.entries(r.equipped)) { if (k.endsWith('II')) continue; items.push(buildEngineItem(eq, eq.entry.slot === 'weapon' ? (k.startsWith('shield') ? 'weapon2' : 'weapon') : eq.entry.slot === 'shield' ? 'shield' : k)); }
+      r.charms.forEach((c, i) => items.push(buildEngineItem({ entry: c }, 'charm' + i)));
+      const cs = gameData.charstats.find((c) => c.class === ({ sor: 'Sorceress', pal: 'Paladin', ass: 'Assassin', bar: 'Barbarian' })[p.classCode]);
+      const reqs = { str: Math.max(0, ...items.map((i) => gameData.bases.find((b) => b.code === i.baseCode)?.reqStr ?? 0)), dex: Math.max(0, ...items.map((i) => gameData.bases.find((b) => b.code === i.baseCode)?.reqDex ?? 0)) };
+      const base = { className: cs.class, level: p.level, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } };
+      const alloc = autoAllocate(gameData, base, { totalPoints: (p.level - 1) * 5 + 15, blockTarget: p.blockTarget, rest: p.rest }, reqs);
+      assert.equal(alloc.str + alloc.dex + alloc.vit + alloc.ene, (p.level - 1) * 5 + 15);
+      const res = cc(gameData, { ...base, allocated: alloc });
+      console.log(`    ${p.name}: 生命${res.life} 法力${res.mana} 防禦${res.defense} 格擋${res.blockChance}% 抗${res.resist.fire}/${res.resist.cold}/${res.resist.lightning}/${res.resist.poison} 配點${JSON.stringify(alloc)}`);
+      assert.deepEqual(res.unhandled.filter((x) => !KNOWN_UNDEFINED.has(x.code)), []);
+      assert.deepEqual(res.requirementsUnmet, [], JSON.stringify(res.requirementsUnmet));
+      if (p.blockTarget) assert.ok(res.blockChance >= 75 || alloc.dex > 0);
+    });
+  }
 }

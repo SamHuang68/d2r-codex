@@ -6,6 +6,10 @@ export type DollSlot = 'head' | 'neck' | 'body' | 'gloves' | 'belt' | 'ring1' | 
 export interface Equipped {
   entry: CatalogEntry;
   ethereal?: boolean;
+  /** 使用者鑲嵌的寶石／符文／珠寶（Socketable id）。符文之語自身的符文不在此 */
+  sockets?: string[];
+  /** 白裝底材的孔數（暗金／套裝／符文之語為固定） */
+  socketCount?: number;
 }
 
 export type EquippedMap = Partial<Record<DollSlot, Equipped>>;

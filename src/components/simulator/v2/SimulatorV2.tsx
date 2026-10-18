@@ -1,14 +1,19 @@
 import React, { useMemo, useState } from 'react';
 import { computeCharacter } from '../../../engine/character';
 import { gameData } from '../../../engine/data';
-import { ENGINE_CLASS_BY_CODE, SLOT_ZH, toEquipped, type CatalogEntry } from '../../../engine/catalog';
+import { ENGINE_CLASS_BY_CODE, SLOT_ZH, toEquipped, withBase, type CatalogEntry } from '../../../engine/catalog';
+import { autoAllocate } from '../../../engine/alloc';
+import { buildEngineItem } from '../../../engine/build';
+import { resolvePreset } from '../../../data/presetResolver';
+import { SIM_PRESETS } from '../../../data/simulatorPresets';
 import { describeModifiers } from '../../../engine/describe';
 import type { EquippedItem } from '../../../engine/types';
 import { SkillTreeSimulator } from './../SkillTreeSimulator';
 import { PaperDollV2, canFitCharm } from './PaperDollV2';
 import { AttributesTab } from './AttributesTab';
 import { GearTreeTab } from './GearTreeTab';
-import { DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type EquippedMap, type Quests, type TabKey } from './types';
+import { SocketEditor } from './SocketEditor';
+import { DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type Quests, type TabKey } from './types';
 
 const CLASSES: { zh: string; en: string; code: string }[] = [
   { zh: '亞馬遜', en: 'Amazon', code: 'ama' }, { zh: '魔法使', en: 'Sorceress', code: 'sor' }, { zh: '死靈法師', en: 'Necromancer', code: 'nec' },
@@ -57,7 +62,9 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
       if ((k === 'weaponI' || k === 'shieldI' || k === 'weaponII' || k === 'shieldII') && !arm.includes(k)) return;
       const eq = equipped[k]; if (!eq) return;
       const kind = DOLL_SLOT_KIND[k];
-      out.push(toEquipped(eq.entry, kind === 'weapon' ? 'weapon' : kind === 'shield' ? 'shield' : k, { ethereal: eq.ethereal, roll: rollMax ? 1 : 0 }));
+      // 副手欄放武器（雙持）時，引擎槽位用 weapon2，不當作盾牌
+      const slot = kind === 'weapon' ? 'weapon' : kind === 'shield' ? (eq.entry.slot === 'weapon' ? 'weapon2' : 'shield') : k;
+      out.push(buildEngineItem(eq, slot, rollMax));
     });
     charms.forEach((c, i) => out.push(toEquipped(c, `charm${i}`, { roll: rollMax ? 1 : 0 })));
     return out;
@@ -74,7 +81,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const needDex = Math.max(0, ...engineItems.map((i) => baseByCode.get(i.baseCode)?.reqDex ?? 0));
   const unmetSlots = useMemo(() => {
     const m: Record<string, boolean> = {};
-    result.requirementsUnmet.forEach((u) => { m[u.slot === 'weapon' ? (swap === 'I' ? 'weaponI' : 'weaponII') : u.slot === 'shield' ? (swap === 'I' ? 'shieldI' : 'shieldII') : u.slot] = true; });
+    result.requirementsUnmet.forEach((u) => { m[u.slot === 'weapon' ? (swap === 'I' ? 'weaponI' : 'weaponII') : u.slot === 'shield' || u.slot === 'weapon2' ? (swap === 'I' ? 'shieldI' : 'shieldII') : u.slot] = true; });
     return m;
   }, [result, swap]);
 
@@ -84,14 +91,23 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     if (hint && hint !== 'charms') return DOLL_SLOT_KIND[hint] === entry.slot ? hint : null;
     switch (entry.slot) {
       case 'ring': return !equipped.ring1 ? 'ring1' : !equipped.ring2 ? 'ring2' : 'ring1';
-      case 'weapon': return swap === 'I' ? 'weaponI' : 'weaponII';
+      case 'weapon': {
+        const main: DollSlot = swap === 'I' ? 'weaponI' : 'weaponII'; const off: DollSlot = swap === 'I' ? 'shieldI' : 'shieldII';
+        return equipped[main] && !equipped[off] && !entry.twoHanded && canDrop(off, entry) === null ? off : main;
+      }
       case 'shield': return swap === 'I' ? 'shieldI' : 'shieldII';
       default: return entry.slot as DollSlot;
     }
   };
   const canDrop = (target: DollSlot | 'charms', entry: CatalogEntry): string | null => {
     if (target === 'charms') return entry.slot !== 'charm' ? '只有護身符能放進背包' : canFitCharm(charms, entry) ? null : '背包空間不足';
-    if (DOLL_SLOT_KIND[target] !== entry.slot) return `「${entry.name}」是${SLOT_ZH[entry.slot]}，不能放在${DOLL_SLOT_ZH[target]}`;
+    const dualWield = entry.slot === 'weapon' && (target === 'shieldI' || target === 'shieldII') && (cls.en === 'Barbarian' || cls.en === 'Assassin');
+    if (dualWield) {
+      const main = equipped[target === 'shieldI' ? 'weaponI' : 'weaponII']?.entry;
+      if (entry.twoHanded) return '雙手武器不能放在副手欄';
+      if (main?.twoHanded) return '主手為雙手武器，副手欄不能放武器';
+      if (cls.en === 'Assassin' && !/^(h2h|h2h2)$/.test(baseByCode.get(entry.baseCode)?.type ?? '')) return '刺客雙持只能使用爪類武器';
+    } else if (DOLL_SLOT_KIND[target] !== entry.slot) return `「${entry.name}」是${SLOT_ZH[entry.slot]}，不能放在${DOLL_SLOT_ZH[target]}`;
     if (entry.classCode && ENGINE_CLASS_BY_CODE[entry.classCode] !== cls.en) return `「${entry.name}」只有${CLASSES.find((c) => c.code === entry.classCode)?.zh}能使用`;
     if (entry.slot === 'shield') {
       const w = equipped[target === 'shieldI' ? 'weaponI' : 'weaponII']?.entry;
@@ -149,6 +165,28 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
       ...(Object.keys(equipped) as DollSlot[]).map((k) => `${DOLL_SLOT_ZH[k]}：${equipped[k]!.entry.name}`), ...charms.map((c) => `護身符：${c.name}`)];
     navigator.clipboard?.writeText(lines.join('\n')).then(() => say('已複製配裝摘要'), () => say('無法複製（瀏覽器未授權）'));
   };
+  const patchEquipped = (slot: DollSlot, patch: Partial<Equipped>) => setEquipped((m) => (m[slot] ? { ...m, [slot]: { ...m[slot]!, ...patch } } : m));
+  const changeBase = (slot: DollSlot, baseCode: string) => setEquipped((m) => (m[slot] ? { ...m, [slot]: { ...m[slot]!, entry: withBase(m[slot]!.entry, baseCode) } } : m));
+
+  const loadPreset = (id: string) => {
+    const p = SIM_PRESETS.find((x) => x.id === id); if (!p) return;
+    const c = CLASSES.find((x) => x.code === p.classCode)!;
+    const r = resolvePreset(p);
+    setCls(c); setLevel(p.level); setDifficulty('hell'); setQuests({ lifePotions: 3, anya: 3, lamEsen: 3 }); setSkillPoints({}); setActiveSkillId('');
+    setEquipped(r.equipped); setCharms(r.charms); setSwap('I'); setSelected(null);
+    // 以新狀態配點
+    const items: EquippedItem[] = [];
+    (Object.keys(r.equipped) as DollSlot[]).forEach((k) => {
+      if (k === 'weaponII' || k === 'shieldII') return;
+      const eq = r.equipped[k]!; const kind = DOLL_SLOT_KIND[k];
+      items.push(buildEngineItem(eq, kind === 'weapon' ? 'weapon' : kind === 'shield' ? (eq.entry.slot === 'weapon' ? 'weapon2' : 'shield') : k, true));
+    });
+    r.charms.forEach((ch, i) => items.push(toEquipped(ch, `charm${i}`, { roll: 1 })));
+    const reqs = { str: Math.max(0, ...items.map((i) => baseByCode.get(i.baseCode)?.reqStr ?? 0)), dex: Math.max(0, ...items.map((i) => baseByCode.get(i.baseCode)?.reqDex ?? 0)) };
+    const total = (p.level - 1) * 5 + 15;
+    setAlloc(autoAllocate(gameData, { className: c.en, level: p.level, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } }, { totalPoints: total, blockTarget: p.blockTarget, rest: p.rest }, reqs));
+    if (r.errors.length) say(`範本有 ${r.errors.length} 項無法載入：${r.errors.join('；')}`); else say(`已載入範本：${p.name}`);
+  };
   const clearAll = () => { setEquipped({}); setCharms([]); setAlloc(ZERO); setSelected(null); };
 
   const selEq = selected ? equipped[selected] : undefined;
@@ -182,6 +220,12 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
           </select>
         </label>
         <div className="flex-1" />
+        <label className="text-xs text-sanctuary-300 inline-flex items-center gap-1">範本
+          <select value="" onChange={(e) => { if (e.target.value) loadPreset(e.target.value); }} className="bg-sanctuary-950 border border-sanctuary-600 text-sanctuary-100 px-1 py-0.5" aria-label="載入配裝範本">
+            <option value="">載入…</option>
+            {SIM_PRESETS.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </select>
+        </label>
         <span className="text-xs text-sanctuary-300">剩餘屬性點 <b className={remaining ? 'text-red-400' : 'text-d2-gold'}>{remaining}</b></span>
         <button type="button" onClick={share} className="text-xs border border-sanctuary-600 px-2 py-1 text-sanctuary-200 hover:bg-sanctuary-700">分享</button>
         <button type="button" onClick={clearAll} className="text-xs border border-sanctuary-600 px-2 py-1 text-sanctuary-200 hover:bg-sanctuary-700">清空</button>
@@ -212,8 +256,8 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
               </div>
               <ul className="mt-2 text-xs space-y-0.5 text-d2-magic">
                 {describeModifiers(selEq.entry.mods, rollMax ? 1 : 0, level).map((l, i) => <li key={i} className={l.known ? '' : 'text-red-400'}>{l.text}</li>)}
-                {selEq.entry.sockets && <li className="text-sanctuary-400">符文：{selEq.entry.sockets.join(' + ')}（鑲嵌效果已計入）</li>}
               </ul>
+              <SocketEditor eq={selEq} level={level} onChange={(patch) => patchEquipped(selected, patch)} onChangeBase={(code) => changeBase(selected, code)} />
             </div>
           )}
         </div>

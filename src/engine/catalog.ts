@@ -80,14 +80,68 @@ function runewordEntry(r: typeof runewords[number]): CatalogEntry | undefined {
   const rw = r as unknown as { id: string; name: string; nameEn: string; itypes: string[]; etypes: string[]; runes: string[]; mods: Modifier[] };
   const ok = (b: BaseItem) => rw.itypes.some((t) => b.ancestors.includes(t)) && !rw.etypes.some((t) => b.ancestors.includes(t)) && (b.sockets ?? 0) >= rw.runes.length && !!slotOfBase(b);
   // 預設底材：精英、需求最低者（容易穿戴）；之後可由 UI 更換
-  const cands = gameData.bases.filter((b) => b.kind !== 'misc' && ok(b)).sort((a, b) => (b.tier === 'elite' ? 1 : 0) - (a.tier === 'elite' ? 1 : 0) || (a.reqStr ?? 0) - (b.reqStr ?? 0));
+  const cands = gameData.bases.filter((b) => b.kind !== 'misc' && ok(b)).sort((a, b) => (a.class ? 1 : 0) - (b.class ? 1 : 0) || (b.tier === 'elite' ? 1 : 0) - (a.tier === 'elite' ? 1 : 0) || (a.reqStr ?? 0) - (b.reqStr ?? 0));
   const b = cands[0]; if (!b) return undefined;
   const slot = slotOfBase(b)!;
   return {
     id: `runeword:${rw.id}`, kind: 'runeword', name: rw.name, nameEn: rw.nameEn, slot, group: groupOfSlot(slot), tier: b.tier as Tier | undefined,
-    classCode: undefined, baseCode: b.code, baseName: b.name, baseNameEn: b.nameEn, mods: rw.mods, sockets: rw.runes,
+    classCode: b.class, baseCode: b.code, baseName: b.name, baseNameEn: b.nameEn, mods: rw.mods, sockets: rw.runes,
     twoHanded: b.twoHanded, width: b.width ?? 1, height: b.height ?? 1,
   };
+}
+
+/** 符文之語可用的底材（依遊戲規則：類型符合、未被排除、孔數足夠）。非符文之語回傳空陣列 */
+export function eligibleBases(entry: CatalogEntry): BaseItem[] {
+  if (entry.kind !== 'runeword') return [];
+  const rw = (runewords as unknown as { id: string; itypes: string[]; etypes: string[]; runes: string[] }[]).find((r) => `runeword:${r.id}` === entry.id);
+  if (!rw) return [];
+  return gameData.bases.filter((b) => b.kind !== 'misc' && rw.itypes.some((t) => b.ancestors.includes(t)) && !rw.etypes.some((t) => b.ancestors.includes(t)) && (b.sockets ?? 0) >= rw.runes.length && !!slotOfBase(b))
+    .sort((a, b) => (a.class ? 1 : 0) - (b.class ? 1 : 0) || (a.tier === b.tier ? 0 : a.tier === 'elite' ? -1 : b.tier === 'elite' ? 1 : a.tier === 'exceptional' ? -1 : 1) || (a.reqStr ?? 0) - (b.reqStr ?? 0));
+}
+
+/** 換底材（符文之語用） */
+export function withBase(entry: CatalogEntry, baseCode: string): CatalogEntry {
+  const b = baseByCode.get(baseCode); if (!b) return entry;
+  const slot = slotOfBase(b) ?? entry.slot;
+  return { ...entry, slot, group: groupOfSlot(slot), tier: b.tier as Tier | undefined, classCode: b.class, baseCode: b.code, baseName: b.name, baseNameEn: b.nameEn, twoHanded: b.twoHanded, width: b.width ?? 1, height: b.height ?? 1 };
+}
+
+/**
+ * 此物品的孔數：
+ * - 符文之語＝符文數（固定）
+ * - 暗金／套裝＝屬性中的「插槽」數為自帶孔數；遊戲內實測（撒卡蘭姆使者提示框「鑲孔 (1)」而資料表無插槽屬性）顯示玩家可額外打孔，故允許增加到底材上限
+ * - 白裝底材＝0 到底材上限
+ */
+export function socketCapacity(entry: CatalogEntry): { fixed: boolean; count: number; max: number } {
+  if (entry.kind === 'runeword') return { fixed: true, count: entry.sockets?.length ?? 0, max: entry.sockets?.length ?? 0 };
+  const b = baseByCode.get(entry.baseCode);
+  const baseMax = b && b.kind !== 'misc' ? b.sockets ?? 0 : 0;
+  if (entry.kind === 'base') return { fixed: false, count: 0, max: baseMax };
+  const sock = entry.mods.find((m) => m.code === 'sock');
+  const n = sock ? (sock.max ?? sock.min ?? 0) : 0;
+  return { fixed: false, count: n, max: Math.max(n, baseMax) };
+}
+
+export type SocketCategory = 'weapon' | 'armor' | 'shield';
+export const categoryOfEntry = (e: CatalogEntry): SocketCategory => (e.slot === 'weapon' ? 'weapon' : e.slot === 'shield' ? 'shield' : 'armor');
+
+export interface Socketable { id: string; kind: 'gem' | 'rune' | 'jewel'; name: string; nameEn: string; code?: string; jewelMods?: Modifier[] }
+let sockCache: Socketable[] | undefined;
+/** 可鑲嵌物：寶石、符文、暗金珠寶（彩虹刻面等）。魔法／稀有珠寶的詞綴隨機，尚未支援 */
+export function getSocketables(): Socketable[] {
+  if (sockCache) return sockCache;
+  const out: Socketable[] = [];
+  for (const g of gameData.gems) out.push({ id: `gem:${g.code}`, kind: /^r\d+$/.test(g.code) ? 'rune' : 'gem', name: g.name ?? g.nameEn, nameEn: g.nameEn, code: g.code });
+  for (const u of uniques as unknown as (Row & { code: string })[]) {
+    if (u.code === 'jew' && !u.disabled) out.push({ id: `jewel:${u.id}`, kind: 'jewel', name: `${u.name}（${(u.mods.find((m) => /skill$/.test(m.code))?.par ?? '')}）`, nameEn: u.nameEn, jewelMods: u.mods });
+  }
+  sockCache = out; return out;
+}
+export function findSocketable(id: string): Socketable | undefined { return getSocketables().find((s) => s.id === id); }
+/** 鑲嵌物對此部位的效果（寶石／符文依部位不同；珠寶不分） */
+export function socketEffectMods(s: Socketable, cat: SocketCategory): Modifier[] {
+  if (s.jewelMods) return s.jewelMods;
+  const g = gameData.gems.find((x) => x.code === s.code); return g ? g[cat] : [];
 }
 
 let cache: CatalogEntry[] | undefined;
