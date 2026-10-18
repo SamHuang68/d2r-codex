@@ -10,7 +10,8 @@
     "test": "node --experimental-strip-types scripts/test_item_resolver.mjs",
     "preview": "vite preview",
     "data:build": "node scripts/data-pipeline/build_game_data.mjs",
-    "data:audit": "node scripts/data-pipeline/audit_game_data.mjs src/data/game"
+    "data:audit": "node scripts/data-pipeline/audit_game_data.mjs src/data/game",
+    "test:engine": "node scripts/test_engine.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
