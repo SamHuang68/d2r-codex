@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GearSlot, ItemRarity } from '../../types';
 
 export interface ItemIconProps {
@@ -14,7 +14,8 @@ export interface ItemIconProps {
 }
 
 /**
- * 聖休亞瑞暗黑物品圖示解析與渲染器
+ * 聖休亞瑞暗黑物品真實遊戲立繪圖片解析與渲染引擎
+ * 採用遊戲原版真實提取物品貼圖（Sprites），結合復古像素銳化渲染
  */
 export const ItemIcon: React.FC<ItemIconProps> = ({
   name = '',
@@ -27,401 +28,358 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
   className = '',
   showBorder = true,
 }) => {
-  const n = (name + ' ' + nameEn + ' ' + baseItem).toLowerCase();
+  const [imgError, setImgError] = useState(false);
+  const n = `${name} ${nameEn} ${baseItem}`.toLowerCase();
+  const envBase = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || './';
+  const baseUrl = envBase.endsWith('/') ? envBase : `${envBase}/`;
 
   // 1. 決定尺寸類別
   const sizeMap = {
-    xs: 'w-5 h-5 text-[10px]',
-    sm: 'w-7 h-7 text-xs',
-    md: 'w-10 h-10 text-sm',
-    lg: 'w-14 h-14 text-base',
-    xl: 'w-20 h-20 text-lg',
+    xs: 'w-5 h-5 min-w-[20px] min-h-[20px]',
+    sm: 'w-7 h-7 min-w-[28px] min-h-[28px]',
+    md: 'w-10 h-10 min-w-[40px] min-h-[40px]',
+    lg: 'w-14 h-14 min-w-[56px] min-h-[56px]',
+    xl: 'w-20 h-20 min-w-[80px] min-h-[80px]',
   };
 
   const containerSize = sizeMap[size] || sizeMap.md;
 
-  // 2. 決定稀有度與光暈顏色
+  // 2. 決定稀有度光暈色彩
   const getColors = () => {
-    if (rarity === 'set' || n.includes('套裝')) {
+    if (rarity === 'set' || n.includes('套裝') || n.includes('tal rasha') || n.includes('immortal king') || n.includes('natalya') || n.includes('guillaume')) {
       return {
-        border: 'border-emerald-500/50 hover:border-emerald-400',
-        bg: 'from-emerald-950/80 via-sanctuary-950 to-sanctuary-900',
-        glow: 'shadow-emerald-950/50',
+        border: 'border-emerald-500/60 hover:border-emerald-400',
+        bg: 'bg-emerald-950/40',
+        glow: 'shadow-emerald-950/40',
         accent: '#10b981',
       };
     }
-    if (rarity === 'rune' || runeNumber !== undefined || n.includes('符文') || n.includes('runeword')) {
+    if (rarity === 'rune' || runeNumber !== undefined || n.includes('符文') || n.includes('runeword') || rarity === 'runeword') {
       return {
-        border: 'border-amber-500/60 hover:border-amber-400',
-        bg: 'from-amber-950/80 via-sanctuary-950 to-sanctuary-900',
-        glow: 'shadow-amber-950/50',
+        border: 'border-amber-500/70 hover:border-amber-400',
+        bg: 'bg-amber-950/40',
+        glow: 'shadow-amber-950/40',
         accent: '#f59e0b',
       };
     }
     if (rarity === 'magic' || n.includes('魔法') || n.includes('藍色')) {
       return {
-        border: 'border-sky-500/50 hover:border-sky-400',
-        bg: 'from-sky-950/80 via-sanctuary-950 to-sanctuary-900',
-        glow: 'shadow-sky-950/50',
+        border: 'border-sky-500/60 hover:border-sky-400',
+        bg: 'bg-sky-950/40',
+        glow: 'shadow-sky-950/40',
         accent: '#38bdf8',
       };
     }
     if (rarity === 'rare' || n.includes('亮金')) {
       return {
-        border: 'border-yellow-400/60 hover:border-yellow-300',
-        bg: 'from-yellow-950/80 via-sanctuary-950 to-sanctuary-900',
-        glow: 'shadow-yellow-950/50',
+        border: 'border-yellow-400/70 hover:border-yellow-300',
+        bg: 'bg-yellow-950/40',
+        glow: 'shadow-yellow-950/40',
         accent: '#facc15',
       };
     }
     // 預設暗金 (Unique)
     return {
-      border: 'border-amber-600/60 hover:border-d2-unique',
-      bg: 'from-amber-950/80 via-sanctuary-950 to-sanctuary-900',
-      glow: 'shadow-amber-900/40',
+      border: 'border-amber-600/70 hover:border-d2-unique',
+      bg: 'bg-stone-950/60',
+      glow: 'shadow-amber-900/30',
       accent: '#c79b32',
     };
   };
 
   const colorConfig = getColors();
 
-  // 3. 渲染特定的 SVG 物品圖騰
-  const renderItemArt = () => {
-    // ── 符文 (Rune 1-33#) ──
-    if (runeNumber !== undefined || n.includes('符文') && runeNumber) {
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          {/* 石碑邊角 */}
-          <polygon points="10,4 38,4 44,14 44,38 36,44 12,44 4,36 4,12" fill="#2d2217" stroke={colorConfig.accent} strokeWidth="1.5" />
-          <polygon points="12,7 36,7 41,15 41,36 34,41 14,41 7,34 7,14" fill="#1b140f" />
-          {/* 刻痕字母印記 */}
-          <circle cx="24" cy="24" r="11" stroke={colorConfig.accent} strokeWidth="1" strokeDasharray="2 2" opacity="0.6" />
-          <text x="24" y="28" textAnchor="middle" fill={colorConfig.accent} fontSize="14" fontWeight="bold" fontFamily="monospace">
-            {runeNumber || 'R'}
-          </text>
-        </svg>
-      );
-    }
+  // 3. 智能解析遊戲真實物品圖片路徑
+  const resolveActualImagePath = (): string => {
+    // ── 符文 (1-33#) ──
+    const runeMap: Record<string, number> = {
+      '艾爾': 1, 'el': 1, '艾德': 2, 'eld': 2, '特爾': 3, 'tir': 3, '奈夫': 4, 'nef': 4,
+      '愛斯': 5, 'eth': 5, '伊蘇': 6, 'ith': 6, '塔爾': 7, 'tal': 7, '拉爾': 8, 'ral': 8,
+      '歐特': 9, 'ort': 9, '書爾': 10, 'thul': 10, '安姆': 11, 'amn': 11, '索爾': 12, 'sol': 12,
+      '夏': 13, 'shael': 13, '多爾': 14, 'dol': 14, '海爾': 15, 'hel': 15, '埃歐': 16, 'io': 16,
+      '盧姆': 17, 'lum': 17, '科': 18, 'ko': 18, '法爾': 19, 'fal': 19, '藍姆': 20, 'lem': 20,
+      '普爾': 21, 'pul': 21, '烏姆': 22, 'um': 22, '馬爾': 23, 'mal': 23, '伊斯特': 24, 'ist': 24,
+      '古爾': 25, 'gul': 25, '伐克斯': 26, 'vex': 26, '歐姆': 27, 'ohm': 27, '羅': 28, 'lo': 28,
+      '瑟': 29, 'sur': 29, '貝': 30, 'ber': 30, '喬': 31, 'jah': 31, '查姆': 32, 'cham': 32,
+      '薩德': 33, 'zod': 33,
+    };
 
-    // ── 珠寶 / 彩虹刻面 (Jewel) ──
-    if (slot === 'jewel' || n.includes('珠寶') || n.includes('刻面') || n.includes('facet')) {
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          <polygon points="24,4 42,14 42,34 24,44 6,34 6,14" fill="#3b0764" stroke="#c084fc" strokeWidth="1.5" />
-          <polygon points="24,10 36,17 36,31 24,38 12,31 12,17" fill="#581c87" stroke="#f472b6" strokeWidth="1" />
-          <circle cx="24" cy="24" r="4" fill="#e879f9" />
-          <line x1="24" y1="4" x2="24" y2="44" stroke="#e879f9" strokeWidth="0.8" opacity="0.5" />
-          <line x1="6" y1="14" x2="42" y2="34" stroke="#e879f9" strokeWidth="0.8" opacity="0.5" />
-          <line x1="6" y1="34" x2="42" y2="14" stroke="#e879f9" strokeWidth="0.8" opacity="0.5" />
-        </svg>
-      );
-    }
-
-    // ── 護身符 (Charms) ──
-    if (slot === 'charm' || n.includes('護身符') || n.includes('毀滅') || n.includes('火炬') || n.includes('破免') || n.includes('charm')) {
-      if (n.includes('火炬') || n.includes('torch')) {
-        // 地獄火炬 Torch
-        return (
-          <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-            <path d="M20,38 L28,38 L26,44 L22,44 Z" fill="#78350f" />
-            <path d="M18,18 L30,18 L26,38 L22,38 Z" fill="#b45309" stroke="#d97706" strokeWidth="1" />
-            {/* 火焰 */}
-            <path d="M24,4 C27,10 34,12 32,18 C30,22 26,20 24,18 C22,20 18,22 16,18 C14,12 21,10 24,4 Z" fill="#ef4444" />
-            <path d="M24,8 C25,12 29,13 28,17 C27,19 25,18 24,17 C23,18 21,19 20,17 C19,13 23,12 24,8 Z" fill="#f59e0b" />
-            <circle cx="24" cy="15" r="2" fill="#fef08a" />
-          </svg>
-        );
+    let targetRuneNum = runeNumber;
+    if (targetRuneNum === undefined && (rarity === 'rune' || n.includes('符文') || n.includes('rune'))) {
+      for (const [key, num] of Object.entries(runeMap)) {
+        if (n.includes(key)) {
+          targetRuneNum = num;
+          break;
+        }
       }
-      if (n.includes('毀滅') || n.includes('anni')) {
-        // 毀滅小符
-        return (
-          <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-            <rect x="15" y="10" width="18" height="28" rx="2" fill="#18181b" stroke="#a855f7" strokeWidth="1.5" />
-            <circle cx="24" cy="20" r="5" fill="#7e22ce" stroke="#d8b4fe" strokeWidth="1" />
-            <path d="M21,27 L27,27 L25,32 L23,32 Z" fill="#c084fc" />
-          </svg>
-        );
-      }
-      // 超大護身符 / 破免石板
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          <rect x="16" y="6" width="16" height="36" rx="3" fill="#292524" stroke="#ca8a04" strokeWidth="1.5" />
-          <line x1="20" y1="12" x2="28" y2="12" stroke="#eab308" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="20" y1="18" x2="28" y2="18" stroke="#ca8a04" strokeWidth="1" strokeLinecap="round" />
-          <line x1="20" y1="24" x2="28" y2="24" stroke="#ca8a04" strokeWidth="1" strokeLinecap="round" />
-          <line x1="20" y1="30" x2="28" y2="30" stroke="#ca8a04" strokeWidth="1" strokeLinecap="round" />
-          <line x1="20" y1="36" x2="28" y2="36" stroke="#ca8a04" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      );
+    }
+    if (targetRuneNum !== undefined && targetRuneNum >= 1 && targetRuneNum <= 33) {
+      return `${baseUrl}images/items/runes/r${String(targetRuneNum).padStart(2, '0')}.png`;
     }
 
-    // ── 戒指 (Ring) ──
-    if (slot === 'ring' || n.includes('戒指') || n.includes('ring') || n.includes('喬丹') || n.includes('烏鴉') || n.includes('婚戒')) {
-      const gemColor = n.includes('喬丹') ? '#38bdf8' : n.includes('烏鴉') ? '#e0f2fe' : n.includes('婚戒') ? '#ef4444' : '#f59e0b';
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          <ellipse cx="24" cy="27" rx="14" ry="12" stroke="#d97706" strokeWidth="3" fill="none" />
-          <ellipse cx="24" cy="27" rx="11" ry="9" stroke="#78350f" strokeWidth="1" fill="#1c1917" />
-          {/* 寶石底座與戒面寶石 */}
-          <polygon points="20,12 28,12 26,17 22,17" fill="#d97706" />
-          <polygon points="21,7 27,7 29,12 24,15 19,12" fill={gemColor} stroke="#ffffff" strokeWidth="0.8" />
-        </svg>
-      );
+    // ── 特殊道具、聖物、精華、方塊、藥劑 ──
+    if (n.includes('方塊') || n.includes('cube') || n.includes('horadric')) {
+      return `${baseUrl}images/items/props/horadric_cube.gif`;
+    }
+    if (n.includes('赦免') || n.includes('洗點') || n.includes('token') || n.includes('absolution')) {
+      return `${baseUrl}images/items/props/token_of_absolution.jpg`;
+    }
+    if (n.includes('精華') || n.includes('essence')) {
+      return `${baseUrl}images/items/props/essences.png`;
+    }
+    if (n.includes('鑰匙') || n.includes('恐懼之鑰') || n.includes('憎恨之鑰') || n.includes('毀滅之鑰') || n.includes('key of')) {
+      return `${baseUrl}images/items/props/uber_key.gif`;
+    }
+    if (n.includes('角') || n.includes('暗黑破壞神之角') || n.includes('horn')) {
+      return `${baseUrl}images/items/props/diablo_horn.gif`;
+    }
+    if (n.includes('眼') || n.includes('巴爾之眼') || n.includes('baal\'s eye')) {
+      return `${baseUrl}images/items/props/baal_eye.gif`;
+    }
+    if (n.includes('腦') || n.includes('墨菲斯托之腦') || n.includes('mephisto\'s brain')) {
+      return `${baseUrl}images/items/props/mephisto_brain.gif`;
+    }
+    if (n.includes('紅寶石') || n.includes('ruby')) {
+      return `${baseUrl}images/items/props/perfect_ruby.gif`;
+    }
+    if (n.includes('藍寶石') || n.includes('sapphire')) {
+      return `${baseUrl}images/items/props/perfect_sapphire.gif`;
+    }
+    if (n.includes('黃寶石') || n.includes('topaz')) {
+      return `${baseUrl}images/items/props/perfect_topaz.gif`;
+    }
+    if (n.includes('綠寶石') || n.includes('emerald')) {
+      return `${baseUrl}images/items/props/perfect_emerald.gif`;
+    }
+    if (n.includes('鑽石') || n.includes('diamond')) {
+      return `${baseUrl}images/items/props/perfect_diamond.gif`;
+    }
+    if (n.includes('紫寶石') || n.includes('amethyst')) {
+      return `${baseUrl}images/items/props/perfect_amethyst.gif`;
+    }
+    if (n.includes('骷髏') || n.includes('skull')) {
+      return `${baseUrl}images/items/props/perfect_skull.gif`;
+    }
+    if (n.includes('全面恢復') || n.includes('大紫') || n.includes('rejuvenation')) {
+      return `${baseUrl}images/items/props/full_rejuvenation.gif`;
+    }
+    if (n.includes('生命藥劑') || n.includes('大紅') || n.includes('healing')) {
+      return `${baseUrl}images/items/props/super_healing.gif`;
+    }
+    if (n.includes('法力藥劑') || n.includes('大藍') || n.includes('mana potion')) {
+      return `${baseUrl}images/items/props/super_mana.gif`;
     }
 
-    // ── 項鍊 (Amulet) ──
-    if (slot === 'amulet' || n.includes('項鍊') || n.includes('amulet') || n.includes('馬拉') || n.includes('大君') || n.includes('萬花筒')) {
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          {/* 金項圈弧線 */}
-          <path d="M12,10 Q24,28 36,10" stroke="#d97706" strokeWidth="2" fill="none" strokeLinecap="round" />
-          <circle cx="24" cy="23" r="2" fill="#f59e0b" />
-          {/* 墜飾 */}
-          <polygon points="24,24 31,31 24,40 17,31" fill="#b45309" stroke="#fbbf24" strokeWidth="1.5" />
-          <circle cx="24" cy="32" r="3" fill="#38bdf8" stroke="#ffffff" strokeWidth="0.6" />
-        </svg>
-      );
+    // ── 護身符與珠寶 ──
+    if (n.includes('毀滅') || n.includes('anni') || n.includes('annihilus')) {
+      return `${baseUrl}images/items/charms/anni.gif`;
+    }
+    if (n.includes('火炬') || n.includes('torch') || n.includes('hellfire')) {
+      return `${baseUrl}images/items/charms/torch.jpg`;
+    }
+    if (n.includes('破免') || n.includes('碎焰') || n.includes('破火') || n.includes('折雷') || n.includes('破電') || n.includes('寒骨') || n.includes('破冰') || n.includes('腐毒') || n.includes('破毒') || n.includes('破滅') || n.includes('黑結晶') || n.includes('破物') || n.includes('基德') || n.includes('gheed') || n.includes('超大護身符') || n.includes('技能板')) {
+      return `${baseUrl}images/items/charms/gheeds.gif`;
+    }
+    if (n.includes('彩虹刻面') || n.includes('facet') || n.includes('rainbow')) {
+      if (n.includes('冰') || n.includes('cold')) return `${baseUrl}images/items/jewels/cold.gif`;
+      if (n.includes('火') || n.includes('fire')) return `${baseUrl}images/items/jewels/fire.gif`;
+      if (n.includes('毒') || n.includes('poison')) return `${baseUrl}images/items/jewels/poison.gif`;
+      return `${baseUrl}images/items/jewels/lightning.gif`;
+    }
+    if (slot === 'jewel' || rarity === 'gem') {
+      return `${baseUrl}images/items/jewels/lightning.gif`;
     }
 
-    // ── 頭盔 (Helm) ──
-    if (slot === 'helm' || n.includes('頭盔') || n.includes('冠') || n.includes('面甲') || n.includes('軍帽') || n.includes('獅鷲') || n.includes('shako') || n.includes('diadem')) {
-      if (n.includes('軍帽') || n.includes('shako')) {
-        // 經典綠軍帽
-        return (
-          <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-            <path d="M12,28 C12,14 36,14 36,28 L38,34 L10,34 Z" fill="#15803d" stroke="#22c55e" strokeWidth="1.5" />
-            <path d="M8,34 L40,34 L36,38 L12,38 Z" fill="#166534" stroke="#22c55e" strokeWidth="1" />
-            <ellipse cx="24" cy="22" rx="4" ry="3" fill="#14532d" />
-          </svg>
-        );
-      }
-      if (n.includes('獅鷲') || n.includes('diadem') || n.includes('王冠') || n.includes('crown')) {
-        // 金色寶石皇冠/三叉冠
-        return (
-          <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-            <path d="M10,34 L10,20 L16,26 L24,12 L32,26 L38,20 L38,34 Z" fill="#b45309" stroke="#fbbf24" strokeWidth="1.5" />
-            <circle cx="24" cy="14" r="2.5" fill="#38bdf8" />
-            <circle cx="10" cy="20" r="1.5" fill="#ef4444" />
-            <circle cx="38" cy="20" r="1.5" fill="#ef4444" />
-            <rect x="12" y="30" width="24" height="4" fill="#78350f" />
-          </svg>
-        );
-      }
-      // 重盔十字面甲
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          <path d="M14,18 C14,10 34,10 34,18 L36,36 L30,42 L18,42 L12,36 Z" fill="#3f3f46" stroke="#a1a1aa" strokeWidth="1.5" />
-          {/* 面甲十字縫 */}
-          <line x1="16" y1="24" x2="32" y2="24" stroke="#18181b" strokeWidth="3" />
-          <line x1="24" y1="20" x2="24" y2="34" stroke="#18181b" strokeWidth="2.5" />
-          <path d="M18,12 Q24,6 30,12" stroke="#d97706" strokeWidth="1.5" fill="none" />
-        </svg>
-      );
+    // ── 經典暗金裝備 (Uniques) ──
+    if (n.includes('軍帽') || n.includes('諧角之冠') || n.includes('harlequin') || n.includes('shako')) {
+      return `${baseUrl}images/items/uniques/harlequin_crest.gif`;
+    }
+    if (n.includes('喬丹') || n.includes('stone of jordan') || n.includes('soj')) {
+      return `${baseUrl}images/items/uniques/the_stone_of_jordan.gif`;
+    }
+    if (n.includes('烏鴉之霜') || n.includes('raven frost')) {
+      return `${baseUrl}images/items/uniques/raven_frost.gif`;
+    }
+    if (n.includes('布爾凱索') || n.includes('bul-kathos') || n.includes('wedding band')) {
+      return `${baseUrl}images/items/uniques/bul_kathos_wedding_band.gif`;
+    }
+    if (n.includes('馬拉') || n.includes('mara') || n.includes('kaleidoscope')) {
+      return `${baseUrl}images/items/uniques/maras_kaleidoscope.gif`;
+    }
+    if (n.includes('大君') || n.includes('highlord')) {
+      return `${baseUrl}images/items/uniques/highlords_wrath.gif`;
+    }
+    if (n.includes('年紀之冠') || n.includes('crown of ages') || n.includes('coa')) {
+      return `${baseUrl}images/items/uniques/crown_of_ages.gif`;
+    }
+    if (n.includes('夜翼') || n.includes('nightwing')) {
+      return `${baseUrl}images/items/uniques/nightwings_veil.gif`;
+    }
+    if (n.includes('巨骷髏') || n.includes('giant skull')) {
+      return `${baseUrl}images/items/uniques/giant_skull.gif`;
+    }
+    if (n.includes('暴風之盾') || n.includes('stormshield')) {
+      return `${baseUrl}images/items/uniques/stormshield.gif`;
+    }
+    if (n.includes('飾金盾') || n.includes('撒卡蘭姆') || n.includes('zakarum')) {
+      return `${baseUrl}images/items/uniques/herald_of_zakarum.gif`;
+    }
+    if (n.includes('蛛網') || n.includes('arachnid')) {
+      return `${baseUrl}images/items/uniques/arachnid_mesh.gif`;
+    }
+    if (n.includes('雷神') || n.includes('thundergod')) {
+      return `${baseUrl}images/items/uniques/thundergods_vigor.gif`;
+    }
+    if (n.includes('戰旅') || n.includes('戰爭旅者') || n.includes('war traveler')) {
+      return `${baseUrl}images/items/uniques/war_traveler.gif`;
+    }
+    if (n.includes('蝕肉') || n.includes('gore rider')) {
+      return `${baseUrl}images/items/uniques/gore_rider.gif`;
+    }
+    if (n.includes('法師之拳') || n.includes('magefist')) {
+      return `${baseUrl}images/items/uniques/magefist.gif`;
+    }
+    if (n.includes('獅鷲') || n.includes('格利風') || n.includes('griffon')) {
+      return `${baseUrl}images/items/bases/diadem.gif`;
+    }
+    if (n.includes('眼球') || n.includes('oculus')) {
+      return `${baseUrl}images/items/bases/the_oculus.gif`;
+    }
+    if (n.includes('泰坦') || n.includes('titan')) {
+      return `${baseUrl}images/items/bases/titans_revenge.gif`;
+    }
+    if (n.includes('亞瑞特') || n.includes('arreat')) {
+      return `${baseUrl}images/items/bases/arreats_face.gif`;
+    }
+    if (n.includes('巴特克') || n.includes('bartuc')) {
+      return `${baseUrl}images/items/bases/bartucs_cutthroat.gif`;
+    }
+    if (n.includes('侏儒') || n.includes('homunculus')) {
+      return `${baseUrl}images/items/bases/homunculus.gif`;
+    }
+    if (n.includes('死亡之網') || n.includes('破隱') || n.includes('death\'s web')) {
+      return `${baseUrl}images/items/bases/bonewand.gif`;
+    }
+    if (n.includes('安達利爾') || n.includes('andariel')) {
+      return `${baseUrl}images/items/bases/demonhead.gif`;
     }
 
-    // ── 盾牌 (Shield) ──
-    if (slot === 'shield' || n.includes('盾') || n.includes('shield') || n.includes('統治者') || n.includes('飾金') || n.includes('撒卡蘭姆')) {
-      const isPaladinShield = n.includes('撒卡蘭姆') || n.includes('飾金') || n.includes('神聖');
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          <path d="M12,10 L36,10 L36,24 C36,34 24,42 24,42 C24,42 12,34 12,24 Z" fill="#27272a" stroke={colorConfig.accent} strokeWidth="2" />
-          {isPaladinShield ? (
-            // 聖騎士金色十字
-            <>
-              <line x1="24" y1="14" x2="24" y2="34" stroke="#fbbf24" strokeWidth="3" strokeLinecap="round" />
-              <line x1="17" y1="20" x2="31" y2="20" stroke="#fbbf24" strokeWidth="3" strokeLinecap="round" />
-            </>
-          ) : (
-            // 暴風/統治者符文徽章
-            <>
-              <circle cx="24" cy="22" r="7" stroke="#71717a" strokeWidth="1.5" fill="#18181b" />
-              <circle cx="24" cy="22" r="3" fill="#38bdf8" />
-            </>
-          )}
-        </svg>
-      );
+    // ── 套裝裝備 (Sets) ──
+    if (n.includes('塔拉夏') || n.includes('tal rasha')) {
+      if (n.includes('護甲') || n.includes('守護') || n.includes('漆甲') || n.includes('guard')) return `${baseUrl}images/items/sets/talrashas_guardianship.gif`;
+      if (n.includes('面甲') || n.includes('頭盔') || n.includes('crest')) return `${baseUrl}images/items/sets/talrashas_horadric_crest.gif`;
+      if (n.includes('腰帶') || n.includes('織帶') || n.includes('cloth')) return `${baseUrl}images/items/sets/talrashas_fine_spun_cloth.gif`;
+      if (n.includes('法杖') || n.includes('渦流水晶') || n.includes('eye')) return `${baseUrl}images/items/sets/talrashas_lidless_eye.gif`;
+      return `${baseUrl}images/items/sets/amu2.gif`;
+    }
+    if (n.includes('不朽之王') || n.includes('immortal king')) {
+      if (n.includes('靈魂牢籠') || n.includes('神聖鎧甲') || n.includes('cage') || slot === 'chest') return `${baseUrl}images/items/sets/immortal_kings_soul_cage.gif`;
+      if (n.includes('意志') || n.includes('復仇者頭盔') || n.includes('will') || slot === 'helm') return `${baseUrl}images/items/sets/immortal_kings_will.gif`;
+      if (n.includes('碎石者') || n.includes('食人魔之錘') || n.includes('crusher') || slot === 'weapon') return `${baseUrl}images/items/sets/immortal_kings_stone_crusher.gif`;
+      if (n.includes('熔爐') || n.includes('手套') || n.includes('forge') || slot === 'gloves') return `${baseUrl}images/items/sets/immortal_kings_forge.gif`;
+      if (n.includes('步態') || n.includes('鞋') || n.includes('pillar') || slot === 'boots') return `${baseUrl}images/items/sets/immortal_kings_pillar.gif`;
+      return `${baseUrl}images/items/sets/immortal_kings_detail.gif`;
+    }
+    if (n.includes('吉永') || n.includes('guillaume')) {
+      return `${baseUrl}images/items/bases/greathelm.gif`;
     }
 
-    // ── 衣服 / 鎧甲 (Armor) ──
-    if (slot === 'armor' || n.includes('甲') || n.includes('衣服') || n.includes('armor') || n.includes('謎團') || n.includes('剛毅') || n.includes('執政官') || n.includes('法袍')) {
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          {/* 胸甲輪廓 */}
-          <path d="M16,8 L20,14 L28,14 L32,8 L40,16 L36,26 L34,40 L14,40 L12,26 L8,16 Z" fill="#27272a" stroke={colorConfig.accent} strokeWidth="1.5" />
-          {/* 護心鏡與線條 */}
-          <path d="M20,16 L28,16 L26,28 L22,28 Z" fill="#3f3f46" stroke="#71717a" strokeWidth="1" />
-          <line x1="14" y1="34" x2="34" y2="34" stroke="#71717a" strokeWidth="1" />
-          <circle cx="24" cy="22" r="2" fill={colorConfig.accent} />
-        </svg>
-      );
+    // ── 符文之語底材與武器防具 (Bases & Runewords) ──
+    if (n.includes('悔恨') || n.includes('幻化之刃') || n.includes('phase blade') || n.includes('grief')) {
+      return `${baseUrl}images/items/bases/phase_blade.gif`;
+    }
+    if (n.includes('水晶劍') || n.includes('crystal sword') || (n.includes('精神') && (slot === 'weapon' || n.includes('劍')))) {
+      return `${baseUrl}images/items/bases/crystalsword.gif`;
+    }
+    if (n.includes('連枷') || n.includes('flail') || n.includes('橡樹之心') || n.includes('hoto')) {
+      return `${baseUrl}images/items/bases/flail.gif`;
+    }
+    if (n.includes('統治者大盾') || n.includes('monarch') || (n.includes('精神') && (slot === 'shield' || n.includes('盾')))) {
+      return `${baseUrl}images/items/bases/monarch.gif`;
+    }
+    if (n.includes('執政官') || n.includes('archon plate') || n.includes('謎團') || n.includes('剛毅') || n.includes('enigma') || n.includes('fortitude')) {
+      return `${baseUrl}images/items/bases/archon_plate.gif`;
+    }
+    if (n.includes('法師鎧甲') || n.includes('mage plate') || n.includes('輕型裝甲')) {
+      return `${baseUrl}images/items/bases/lightplate.gif`;
+    }
+    if (n.includes('狂戰士之斧') || n.includes('berserker axe') || n.includes('野獸') || n.includes('末日')) {
+      return `${baseUrl}images/items/bases/berserker_axe.gif`;
+    }
+    if (n.includes('巨神之刃') || n.includes('colossus blade') || n.includes('最後希望')) {
+      return `${baseUrl}images/items/bases/colossus_blade.gif`;
+    }
+    if (n.includes('銳利之斧') || n.includes('thresher') || n.includes('無限') || n.includes('驕傲') || n.includes('巨長斧')) {
+      return `${baseUrl}images/items/bases/thresher.gif`;
+    }
+    if (n.includes('九頭蛇弓') || n.includes('hydra bow') || n.includes('信心') || n.includes('長弓')) {
+      return `${baseUrl}images/items/bases/hydra_bow.gif`;
+    }
+    if (n.includes('神聖小盾') || n.includes('sacred targe') || n.includes('流亡')) {
+      return `${baseUrl}images/items/bases/sacred_targe.gif`;
+    }
+    if (n.includes('權冠') || n.includes('diadem') || n.includes('三重冠')) {
+      return `${baseUrl}images/items/bases/diadem.gif`;
     }
 
-    // ── 手套 (Gloves) ──
-    if (slot === 'gloves' || n.includes('手套') || n.includes('gloves') || n.includes('法拳') || n.includes('卓古拉')) {
-      const flame = n.includes('法拳') || n.includes('magefist');
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          <path d="M14,18 L18,10 L22,12 L26,8 L30,11 L34,14 L34,36 L14,36 Z" fill="#3f3f46" stroke={colorConfig.accent} strokeWidth="1.5" />
-          {flame ? (
-            <path d="M20,24 Q24,16 26,22 Q28,18 30,26 Z" fill="#f97316" />
-          ) : (
-            <line x1="16" y1="30" x2="32" y2="30" stroke="#71717a" strokeWidth="1.5" />
-          )}
-        </svg>
-      );
+    // ── 依裝備部位槽位回退 (Slot Based Fallbacks) ──
+    switch (slot) {
+      case 'helm':
+        return `${baseUrl}images/items/bases/crown.gif`;
+      case 'chest':
+        return `${baseUrl}images/items/bases/breastplate.gif`;
+      case 'weapon':
+      case 'mainHand':
+        return `${baseUrl}images/items/bases/crystalsword.gif`;
+      case 'shield':
+      case 'offHand':
+        return `${baseUrl}images/items/bases/monarch.gif`;
+      case 'gloves':
+        return `${baseUrl}images/items/uniques/magefist.gif`;
+      case 'boots':
+        return `${baseUrl}images/items/uniques/war_traveler.gif`;
+      case 'belt':
+        return `${baseUrl}images/items/uniques/arachnid_mesh.gif`;
+      case 'ring':
+      case 'ring1':
+      case 'ring2':
+        return `${baseUrl}images/items/uniques/the_stone_of_jordan.gif`;
+      case 'amulet':
+        return `${baseUrl}images/items/uniques/maras_kaleidoscope.gif`;
+      case 'charm':
+        return `${baseUrl}images/items/charms/anni.gif`;
+      default:
+        return `${baseUrl}images/items/uniques/harlequin_crest.gif`;
     }
-
-    // ── 靴子 (Boots) ──
-    if (slot === 'boots' || n.includes('靴') || n.includes('鞋') || n.includes('boots') || n.includes('旅者') || n.includes('蝕肉')) {
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          <path d="M16,8 L28,8 L28,26 L38,32 L38,40 L14,40 L14,14 Z" fill="#3f3f46" stroke={colorConfig.accent} strokeWidth="1.5" />
-          <line x1="14" y1="36" x2="38" y2="36" stroke="#71717a" strokeWidth="1.5" />
-          <path d="M16,14 L28,14" stroke="#71717a" strokeWidth="1" />
-          <circle cx="22" cy="26" r="2" fill={colorConfig.accent} />
-        </svg>
-      );
-    }
-
-    // ── 腰帶 (Belt) ──
-    if (slot === 'belt' || n.includes('腰帶') || n.includes('束帶') || n.includes('belt') || n.includes('蛛網') || n.includes('雷神')) {
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          <rect x="6" y="16" width="36" height="16" rx="3" fill="#27272a" stroke="#71717a" strokeWidth="1.5" />
-          <rect x="18" y="13" width="12" height="22" rx="2" fill="#b45309" stroke="#fbbf24" strokeWidth="1.5" />
-          <rect x="22" y="17" width="4" height="14" fill="#18181b" />
-          <circle cx="11" cy="24" r="2" fill={colorConfig.accent} />
-          <circle cx="37" cy="24" r="2" fill={colorConfig.accent} />
-        </svg>
-      );
-    }
-
-    // ── 武器：連枷 / 釘頭槌 (Flail / Mace) ──
-    if (n.includes('連枷') || n.includes('flail') || n.includes('橡樹') || n.includes('釘頭槌')) {
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          {/* 木柄 */}
-          <line x1="10" y1="38" x2="26" y2="22" stroke="#78350f" strokeWidth="3" strokeLinecap="round" />
-          {/* 鎖鏈 */}
-          <path d="M26,22 Q32,20 34,14" stroke="#a1a1aa" strokeWidth="1.5" fill="none" strokeDasharray="2 1" />
-          {/* 帶刺流星鐵球 */}
-          <circle cx="36" cy="12" r="6" fill="#3f3f46" stroke="#fbbf24" strokeWidth="1.5" />
-          <line x1="36" y1="4" x2="36" y2="8" stroke="#fbbf24" strokeWidth="1.5" />
-          <line x1="42" y1="12" x2="46" y2="12" stroke="#fbbf24" strokeWidth="1.5" />
-        </svg>
-      );
-    }
-
-    // ── 武器：弓 / 十字弓 (Bow / Crossbow) ──
-    if (n.includes('弓') || n.includes('bow') || n.includes('弩') || n.includes('crossbow') || n.includes('信心') || n.includes('風之力')) {
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          <path d="M12,6 Q36,24 12,42" stroke="#b45309" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-          <line x1="12" y1="6" x2="12" y2="42" stroke="#e2e8f0" strokeWidth="1" strokeDasharray="1 1" />
-          {/* 箭矢 */}
-          <line x1="8" y1="24" x2="38" y2="24" stroke="#d97706" strokeWidth="1.5" />
-          <polygon points="38,24 32,21 34,24 32,27" fill="#fbbf24" />
-        </svg>
-      );
-    }
-
-    // ── 武器：標槍 (Javelin) ──
-    if (n.includes('標槍') || n.includes('javelin') || n.includes('泰坦') || n.includes('雷霆')) {
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          <line x1="8" y1="40" x2="38" y2="10" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" />
-          <polygon points="42,6 34,10 38,14" fill="#38bdf8" stroke="#ffffff" strokeWidth="0.8" />
-          {/* 閃電符紋 */}
-          <path d="M22,26 L26,22 L24,24 L28,20" stroke="#facc15" strokeWidth="1.5" fill="none" />
-        </svg>
-      );
-    }
-
-    // ── 武器：法杖 / 短杖 (Staff / Wand) ──
-    if (n.includes('杖') || n.includes('wand') || n.includes('staff') || n.includes('死亡之網') || n.includes('次元')) {
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          <line x1="10" y1="40" x2="32" y2="16" stroke="#78350f" strokeWidth="2.5" strokeLinecap="round" />
-          <circle cx="36" cy="12" r="5" fill="#38bdf8" stroke="#ffffff" strokeWidth="1.5" />
-          <path d="M30,18 Q36,6 42,12" stroke="#d97706" strokeWidth="1.5" fill="none" />
-        </svg>
-      );
-    }
-
-    // ── 武器：劍 / 悔恨 / 幻化之刃 / 水晶劍 (Sword / Blade) ──
-    if (slot === 'weapon' || n.includes('劍') || n.includes('blade') || n.includes('sword') || n.includes('悔恨') || n.includes('精神') || n.includes('武器')) {
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          {/* 劍刃 */}
-          <path d="M14,34 L34,14 L38,10 L34,6 L30,10 L10,30 Z" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="1" />
-          {/* 劍脊 */}
-          <line x1="12" y1="32" x2="34" y2="10" stroke="#64748b" strokeWidth="1" />
-          {/* 十字護手 */}
-          <line x1="8" y1="28" x2="16" y2="36" stroke="#d97706" strokeWidth="3" strokeLinecap="round" />
-          {/* 劍柄與劍首 */}
-          <line x1="10" y1="34" x2="6" y2="38" stroke="#78350f" strokeWidth="2.5" />
-          <circle cx="5" cy="39" r="2" fill="#fbbf24" />
-        </svg>
-      );
-    }
-
-    // ── 鑰匙 (Keys) ──
-    if (n.includes('鑰匙') || n.includes('key')) {
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          <circle cx="16" cy="18" r="8" stroke="#fbbf24" strokeWidth="2" fill="#78350f" />
-          <circle cx="16" cy="18" r="4" fill="#18181b" />
-          <line x1="22" y1="24" x2="38" y2="40" stroke="#fbbf24" strokeWidth="3" strokeLinecap="round" />
-          <line x1="32" y1="34" x2="36" y2="30" stroke="#fbbf24" strokeWidth="2.5" strokeLinecap="round" />
-          <line x1="36" y1="38" x2="40" y2="34" stroke="#fbbf24" strokeWidth="2.5" strokeLinecap="round" />
-        </svg>
-      );
-    }
-
-    // ── 精華 (Essence) ──
-    if (n.includes('精華') || n.includes('essence') || n.includes('赦免') || n.includes('token')) {
-      const essenceColor = n.includes('扭曲') ? '#38bdf8' : n.includes('苦痛') ? '#facc15' : n.includes('充沛') ? '#ef4444' : '#10b981';
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          <circle cx="24" cy="24" r="14" fill="#18181b" stroke={essenceColor} strokeWidth="2" />
-          <circle cx="24" cy="24" r="9" fill={essenceColor} opacity="0.4" />
-          <circle cx="22" cy="20" r="4" fill="#ffffff" opacity="0.8" />
-          <path d="M16,30 Q24,36 32,30" stroke={essenceColor} strokeWidth="1.5" fill="none" />
-        </svg>
-      );
-    }
-
-    // ── 藥水 (Potions) ──
-    if (n.includes('藥劑') || n.includes('藥水') || n.includes('potion')) {
-      const potColor = n.includes('融冰') ? '#38bdf8' : n.includes('解毒') ? '#22c55e' : '#a855f7';
-      return (
-        <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-          <rect x="21" y="8" width="6" height="6" fill="#78350f" />
-          <path d="M19,14 L29,14 L36,36 C36,40 32,42 24,42 C16,42 12,40 12,36 Z" fill="#1c1917" stroke="#94a3b8" strokeWidth="1.5" />
-          <path d="M14,24 Q24,28 34,24 L34,36 C34,39 30,40 24,40 C18,40 14,39 14,36 Z" fill={potColor} />
-          <ellipse cx="20" cy="30" rx="2" ry="4" fill="#ffffff" opacity="0.5" />
-        </svg>
-      );
-    }
-
-    // ── 預設通用聖物 / 寶箱圖示 ──
-    return (
-      <svg viewBox="0 0 48 48" className="w-full h-full p-1" fill="none">
-        <polygon points="24,6 40,18 40,36 24,44 8,36 8,18" fill="#27272a" stroke={colorConfig.accent} strokeWidth="1.5" />
-        <circle cx="24" cy="24" r="6" fill="#71717a" stroke="#ffffff" strokeWidth="1" />
-        <line x1="24" y1="6" x2="24" y2="44" stroke={colorConfig.accent} strokeWidth="1" opacity="0.4" />
-      </svg>
-    );
   };
+
+  const imageSrc = resolveActualImagePath();
 
   return (
     <div
-      className={`relative ${containerSize} rounded-xl flex items-center justify-center shrink-0 transition-all select-none overflow-hidden ${
-        showBorder ? `border ${colorConfig.border} shadow-lg ${colorConfig.glow} bg-gradient-to-br ${colorConfig.bg}` : ''
+      className={`relative flex items-center justify-center rounded transition-all duration-200 select-none overflow-hidden ${containerSize} ${
+        showBorder ? `border ${colorConfig.border} ${colorConfig.bg} ${colorConfig.glow} shadow-sm` : ''
       } ${className}`}
-      title={name ? `${name} ${baseItem ? `(${baseItem})` : ''}` : undefined}
+      title={name || nameEn || baseItem}
     >
-      {renderItemArt()}
+      {/* 像素暗黑背景網格質感 */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70 pointer-events-none" />
+
+      {/* 遊戲真實貼圖 */}
+      {!imgError ? (
+        <img
+          src={imageSrc}
+          alt={name || nameEn || 'Item'}
+          className="relative z-10 max-w-full max-h-full object-contain p-0.5 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] [image-rendering:pixelated] transition-transform duration-200 hover:scale-110"
+          loading="lazy"
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        /* 降級標籤 (極少情況) */
+        <span className="relative z-10 font-bold font-serif text-[10px] text-amber-300/80 uppercase">
+          {name ? name.slice(0, 2) : 'D2'}
+        </span>
+      )}
     </div>
   );
 };
