@@ -39,6 +39,8 @@ export interface BaseItem {
   minAc?: number; maxAc?: number; block?: number;
   minDam?: number; maxDam?: number; twoHanded?: boolean; minDam2h?: number; maxDam2h?: number;
   strBonus?: number; dexBonus?: number; speed?: number; sockets?: number;
+  tier?: 'normal' | 'exceptional' | 'elite';
+  width?: number; height?: number; oneOrTwoHanded?: boolean; invFile?: string;
 }
 
 export interface Gem { code: string; nameEn: string; name?: string; weapon: Modifier[]; armor: Modifier[]; shield: Modifier[] }

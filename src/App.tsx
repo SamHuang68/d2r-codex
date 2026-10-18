@@ -26,7 +26,7 @@ import { CharacterGuide } from './components/codex/CharacterGuide';
 import { PropCompendium } from './components/codex/PropCompendium';
 import { RUNEWORDS_DATA } from './data/runewords';
 import { normalizeItemQuery } from './utils/itemQueryNormalizer';
-import { ArmorySimulator } from './components/simulator/ArmorySimulator';
+import { SimulatorV2 } from './components/simulator/v2/SimulatorV2';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('overview');
@@ -222,10 +222,7 @@ export const App: React.FC = () => {
             </div>
 
             {plannerSubMode === 'armory' ? (
-              <ArmorySimulator 
-                initialClass={selectedInitialClass} 
-                onNavigateItem={handleItemOrRunewordNavigate}
-              />
+              <SimulatorV2 initialClass={selectedInitialClass} />
             ) : (
               <BuildPlanner 
                 onNavigateToSkills={(cls) => {

@@ -10,11 +10,12 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
 const { computeCharacter, resolveModifier, gameData, itemFromUnique, itemFromRuneword } = E;
+const Cat = await import(pathToFileURL(out).href);
 const rd = (n) => JSON.parse(fs.readFileSync(`src/data/game/${n}.json`, 'utf8'));
 
 let pass = 0; const t = (name, fn) => { try { fn(); pass++; console.log('  ✓', name); } catch (e) { console.error('  ✗', name, '\n   ', e.message); process.exitCode = 1; } };
@@ -171,3 +172,32 @@ t('每個出現過的 stat 都有 itemstatcost 定義或為引擎已知偽 stat'
 });
 
 console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
+
+// ── 目錄與描述 ──
+{
+  const { getCatalog, describeModifiers } = E;
+  const cat = getCatalog();
+  console.log('【目錄與文字描述】');
+  t('目錄：每個項目都有部位與群組；暗金＋套裝＋符文之語＋基礎皆有', () => {
+    for (const k of ['unique', 'set', 'runeword', 'base']) assert.ok(cat.some((e) => e.kind === k), k);
+    assert.ok(cat.every((e) => e.slot && e.group));
+    console.log('    目錄筆數', cat.length, JSON.stringify(Object.fromEntries(['unique', 'set', 'runeword', 'base'].map((k) => [k, cat.filter((e) => e.kind === k).length]))));
+  });
+  t('目錄：符文之語皆找得到合格底材（不可有遺漏）', () => {
+    const rw = rd('runewords'); const got = new Set(cat.filter((e) => e.kind === 'runeword').map((e) => e.nameEn + e.id));
+    const miss = rw.filter((r) => !cat.some((e) => e.id === `runeword:${r.id}`)).map((r) => r.nameEn);
+    assert.equal(miss.length, 0, miss.join(','));
+  });
+  t('描述：軍帽每一行都能產生繁中文字，且無未知項', () => {
+    const h = cat.find((e) => e.nameEn === 'Harlequin Crest');
+    const lines = describeModifiers(h.mods, 1);
+    console.log('    ', lines.map((l) => l.text).join(' | '));
+    assert.ok(lines.every((l) => l.known));
+  });
+  t('描述：全部暗金／套裝／符文之語，無法描述的 modifier 比例（僅統計，供追蹤）', () => {
+    let total = 0, unknown = 0;
+    for (const e of cat.filter((x) => x.kind !== 'base')) for (const l of describeModifiers(e.mods, 1)) { total++; if (!l.known) unknown++; }
+    console.log(`    描述覆蓋 ${total - unknown}/${total}（未知 ${unknown}）`);
+    assert.ok(unknown / total < 0.15, `未知比例過高 ${unknown}/${total}`);
+  });
+}
