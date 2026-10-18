@@ -1,8 +1,6 @@
 import React from 'react';
 import { CharacterAttributes, CalculatedCombatStats } from '../../types/simulator';
 import { 
-  Plus, 
-  Minus, 
   RotateCcw, 
   Shield, 
   Flame, 
@@ -107,143 +105,61 @@ export const StatsScreen: React.FC<StatsScreenProps> = ({
         </button>
       </div>
 
-      {/* ── 1:1 遊戲四維屬性分配區 (不用加減框，點擊原生按鈕) ── */}
+      {/* ── 1:1 遊戲四維屬性分配區 (原生金色加點按鈕，不用加減框，點擊+1/Shift+5) ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-sanctuary-900/60 p-4 rounded-2xl border border-sanctuary-800">
-        {/* 力量 (Strength) */}
-        <div className="bg-sanctuary-950/80 p-3.5 rounded-xl border border-sanctuary-800 flex items-center justify-between gap-3">
-          <div>
-            <div className="text-xs font-mono text-sanctuary-400 font-semibold">力量 (STRENGTH)</div>
-            <div className="flex items-baseline gap-2 mt-0.5">
-              <span className="text-2xl font-mono font-bold text-blue-300">
-                {combatStats.totalStr}
-              </span>
-              <span className="text-[10px] font-mono text-sanctuary-500">
-                (基礎 {attributes.baseStr + attributes.allocatedStr} + 裝備 +{combatStats.totalStr - (attributes.baseStr + attributes.allocatedStr)})
-              </span>
+        {[
+          { key: 'str' as const, label: '力量 (STRENGTH)', total: combatStats.totalStr, base: attributes.baseStr + attributes.allocatedStr },
+          { key: 'dex' as const, label: '敏捷 (DEXTERITY)', total: combatStats.totalDex, base: attributes.baseDex + attributes.allocatedDex },
+          { key: 'vit' as const, label: '體力 (VITALITY)', total: combatStats.totalVit, base: attributes.baseVit + attributes.allocatedVit },
+          { key: 'ene' as const, label: '精力 (ENERGY)', total: combatStats.totalEne, base: attributes.baseEne + attributes.allocatedEne },
+        ].map(({ key, label, total, base }) => {
+          const gearBonus = total - base;
+          const hasPoints = unallocatedPoints > 0;
+
+          return (
+            <div
+              key={key}
+              className="bg-sanctuary-950/90 p-4 rounded-2xl border border-sanctuary-800 flex items-center justify-between gap-3 shadow-inner hover:border-sanctuary-700 transition-colors"
+            >
+              <div>
+                <div className="text-xs font-mono text-sanctuary-400 font-semibold uppercase tracking-wider">
+                  {label}
+                </div>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className="text-3xl font-mono font-bold text-amber-100 tracking-wide">
+                    {total}
+                  </span>
+                  <span className="text-[11px] font-mono text-sanctuary-400">
+                    (基礎 {base} {gearBonus > 0 ? <span className="text-blue-400">+ 裝備 {gearBonus}</span> : ''})
+                  </span>
+                </div>
+              </div>
+
+              {/* 原生暗黑經典金色浮雕加點按鈕 (Gold Embossed Button) */}
+              <button
+                type="button"
+                onClick={(e) => onAddStatPoint(key, e.shiftKey ? 5 : 1)}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  onRemoveStatPoint(key, e.shiftKey ? 5 : 1);
+                }}
+                disabled={!hasPoints}
+                title="點擊 +1 點 | 按住 Shift + 點擊 +5 點 | 右鍵單擊 -1 點"
+                className={`relative w-10 h-10 rounded-lg flex items-center justify-center transition-all select-none active:scale-95 ${
+                  hasPoints
+                    ? 'bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 border-2 border-amber-200/90 shadow-[inset_0_1px_2px_rgba(255,255,255,0.8),0_4px_8px_rgba(0,0,0,0.8)] cursor-pointer hover:brightness-110 animate-pulse ring-2 ring-amber-400/60'
+                    : 'bg-stone-850 border border-stone-750 opacity-40 cursor-not-allowed text-stone-500 shadow-inner'
+                }`}
+              >
+                {/* 經典暗黑二金屬十字雕痕 */}
+                <div className="relative flex items-center justify-center pointer-events-none">
+                  <div className={`w-4 h-1.5 rounded-sm shadow-sm ${hasPoints ? 'bg-stone-950' : 'bg-stone-600'}`} />
+                  <div className={`w-1.5 h-4 rounded-sm shadow-sm absolute ${hasPoints ? 'bg-stone-950' : 'bg-stone-600'}`} />
+                </div>
+              </button>
             </div>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => onRemoveStatPoint('str', 1)}
-              disabled={attributes.allocatedStr <= 0}
-              className="w-7 h-7 rounded-lg bg-sanctuary-850 hover:bg-sanctuary-750 text-sanctuary-300 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
-              title="扣除 1 點"
-            >
-              <Minus className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={(e) => onAddStatPoint('str', e.shiftKey ? 5 : 1)}
-              disabled={unallocatedPoints <= 0}
-              className="w-8 h-8 rounded-lg bg-d2-fire text-sanctuary-950 hover:bg-amber-400 font-bold disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors shadow-md shadow-d2-fire/20"
-              title="點擊 +1 / 按住 Shift + 點擊 +5"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* 敏捷 (Dexterity) */}
-        <div className="bg-sanctuary-950/80 p-3.5 rounded-xl border border-sanctuary-800 flex items-center justify-between gap-3">
-          <div>
-            <div className="text-xs font-mono text-sanctuary-400 font-semibold">敏捷 (DEXTERITY)</div>
-            <div className="flex items-baseline gap-2 mt-0.5">
-              <span className="text-2xl font-mono font-bold text-blue-300">
-                {combatStats.totalDex}
-              </span>
-              <span className="text-[10px] font-mono text-sanctuary-500">
-                (基礎 {attributes.baseDex + attributes.allocatedDex} + 裝備 +{combatStats.totalDex - (attributes.baseDex + attributes.allocatedDex)})
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => onRemoveStatPoint('dex', 1)}
-              disabled={attributes.allocatedDex <= 0}
-              className="w-7 h-7 rounded-lg bg-sanctuary-850 hover:bg-sanctuary-750 text-sanctuary-300 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
-              title="扣除 1 點"
-            >
-              <Minus className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={(e) => onAddStatPoint('dex', e.shiftKey ? 5 : 1)}
-              disabled={unallocatedPoints <= 0}
-              className="w-8 h-8 rounded-lg bg-d2-fire text-sanctuary-950 hover:bg-amber-400 font-bold disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors shadow-md shadow-d2-fire/20"
-              title="點擊 +1 / 按住 Shift + 點擊 +5"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* 體力 (Vitality) */}
-        <div className="bg-sanctuary-950/80 p-3.5 rounded-xl border border-sanctuary-800 flex items-center justify-between gap-3">
-          <div>
-            <div className="text-xs font-mono text-sanctuary-400 font-semibold">體力 (VITALITY)</div>
-            <div className="flex items-baseline gap-2 mt-0.5">
-              <span className="text-2xl font-mono font-bold text-blue-300">
-                {combatStats.totalVit}
-              </span>
-              <span className="text-[10px] font-mono text-sanctuary-500">
-                (基礎 {attributes.baseVit + attributes.allocatedVit} + 裝備 +{combatStats.totalVit - (attributes.baseVit + attributes.allocatedVit)})
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => onRemoveStatPoint('vit', 1)}
-              disabled={attributes.allocatedVit <= 0}
-              className="w-7 h-7 rounded-lg bg-sanctuary-850 hover:bg-sanctuary-750 text-sanctuary-300 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
-              title="扣除 1 點"
-            >
-              <Minus className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={(e) => onAddStatPoint('vit', e.shiftKey ? 5 : 1)}
-              disabled={unallocatedPoints <= 0}
-              className="w-8 h-8 rounded-lg bg-d2-fire text-sanctuary-950 hover:bg-amber-400 font-bold disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors shadow-md shadow-d2-fire/20"
-              title="點擊 +1 / 按住 Shift + 點擊 +5"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* 精力 (Energy) */}
-        <div className="bg-sanctuary-950/80 p-3.5 rounded-xl border border-sanctuary-800 flex items-center justify-between gap-3">
-          <div>
-            <div className="text-xs font-mono text-sanctuary-400 font-semibold">精力 (ENERGY)</div>
-            <div className="flex items-baseline gap-2 mt-0.5">
-              <span className="text-2xl font-mono font-bold text-blue-300">
-                {combatStats.totalEne}
-              </span>
-              <span className="text-[10px] font-mono text-sanctuary-500">
-                (基礎 {attributes.baseEne + attributes.allocatedEne} + 裝備 +{combatStats.totalEne - (attributes.baseEne + attributes.allocatedEne)})
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => onRemoveStatPoint('ene', 1)}
-              disabled={attributes.allocatedEne <= 0}
-              className="w-7 h-7 rounded-lg bg-sanctuary-850 hover:bg-sanctuary-750 text-sanctuary-300 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
-              title="扣除 1 點"
-            >
-              <Minus className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={(e) => onAddStatPoint('ene', e.shiftKey ? 5 : 1)}
-              disabled={unallocatedPoints <= 0}
-              className="w-8 h-8 rounded-lg bg-d2-fire text-sanctuary-950 hover:bg-amber-400 font-bold disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors shadow-md shadow-d2-fire/20"
-              title="點擊 +1 / 按住 Shift + 點擊 +5"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+          );
+        })}
       </div>
 
       {/* ── 核心戰鬥產出面板 (生命/法力/傷害/防禦/格擋) ── */}
