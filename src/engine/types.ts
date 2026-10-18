@@ -41,11 +41,14 @@ export interface BaseItem {
   strBonus?: number; dexBonus?: number; speed?: number; sockets?: number;
 }
 
+export interface Gem { code: string; nameEn: string; name?: string; weapon: Modifier[]; armor: Modifier[]; shield: Modifier[] }
+
 export interface GameData {
   charstats: CharStats[];
   properties: Record<string, PropertyDef>;
   stats: Record<string, StatDef>;
   bases: BaseItem[];
+  gems: Gem[];
 }
 
 /** 單條屬性（已解析成遊戲內部 stat） */
@@ -63,6 +66,8 @@ export interface EquippedItem {
   slot: string;
   baseCode: string;
   mods: Modifier[];
+  /** 鑲嵌物（寶石／符文／珠寶的 code）。符文之語的符文也計入（截圖：精神之劍含 Ort／Thul／Tal／Amn 的武器效果） */
+  sockets?: string[];
   ethereal?: boolean;
   /** 該物品屬性取值：0=全取下限、1=全取上限（預設 1） */
   roll?: number;
@@ -71,6 +76,11 @@ export interface EquippedItem {
   /** 物品等級需求（暗金／套裝／符文之語） */
   requiredLevel?: number;
   name?: string;
+}
+
+export interface QuestBonuses {
+  /** 生命藥水（第三幕「金鳥」，每難度 +20 最大生命，永久；來源：社群共識，尚待遊戲內驗證） */
+  lifePotions?: number;
 }
 
 export type Difficulty = 'normal' | 'nightmare' | 'hell';
@@ -84,6 +94,8 @@ export interface CharacterInput {
   difficulty?: Difficulty;
   /** 已完成的安亞抗性卷軸數（每難度 +10，預設＝目前難度序號+1 之全數） */
   anyaScrolls?: number;
+  /** 任務永久加成。未提供＝全部視為 0（不臆測）；UI 應讓使用者勾選 */
+  quests?: QuestBonuses;
   /** 額外屬性來源（技能、光環、戰吼等）— 引擎之外計算後注入 */
   extraStats?: StatEntry[];
 }

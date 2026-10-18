@@ -14,7 +14,8 @@ const q = (n: number) => n / 4; // charstats 的「每點」數值以 1/4 為單
 function perLevelAdd(data: GameData, stat: string, value: number, level: number): { target: string; add: number } | undefined {
   const d = data.stats[stat];
   if (!d || !d.op || ![2, 3, 4].includes(d.op) || !d.op_stat1) return undefined;
-  return { target: d.op_stat1, add: (value * level) / 2 ** (d.op_param ?? 0) };
+  // 遊戲逐件取整：Lv67 軍帽 12/8×67＝100.5 → 提示框顯示 +100（截圖驗證）
+  return { target: d.op_stat1, add: Math.floor((value * level) / 2 ** (d.op_param ?? 0)) };
 }
 
 interface ItemCalc { item: EquippedItem; entries: StatEntry[] }
@@ -27,9 +28,17 @@ export function computeCharacter(data: GameData, input: CharacterInput): Charact
   const baseByCode = new Map(data.bases.map((b) => [b.code, b]));
 
   // 1. 展開所有 modifier → stat 條目
+  const gemByCode = new Map(data.gems.map((g) => [g.code, g]));
   const calcs: ItemCalc[] = input.items.map((item) => {
     const entries: StatEntry[] = [];
-    for (const m of item.mods) {
+    const base = baseByCode.get(item.baseCode);
+    const cat: 'weapon' | 'shield' | 'armor' = base?.kind === 'weapon' ? 'weapon' : base?.ancestors.includes('shld') ? 'shield' : 'armor';
+    const socketMods = (item.sockets ?? []).flatMap((c) => {
+      const g = gemByCode.get(c);
+      if (!g) { unhandled.push({ slot: item.slot, code: c, reason: `未知鑲嵌物 ${c}` }); return []; }
+      return g[cat];
+    });
+    for (const m of [...item.mods, ...socketMods]) {
       const r = resolveModifier(m, data.properties, item.roll ?? 1);
       if (r.unresolved) unhandled.push({ slot: item.slot, code: m.code, reason: r.unresolved });
       else if (r.note && r.note.startsWith('未明確')) unhandled.push({ slot: item.slot, code: m.code, reason: r.note });
@@ -77,7 +86,8 @@ export function computeCharacter(data: GameData, input: CharacterInput): Charact
   const startLife = cs.hpadd + cs.vit; // charstats：起始生命＝hpadd＋起始體力（與 7 職業公開數值一致）
   const baseLife = startLife + q(cs.LifePerLevel) * (level - 1) + q(cs.LifePerVitality) * (hard.vit - cs.vit);
   const iml = bag.item_maxhp_percent ?? 0;
-  const life = Math.floor((baseLife + (bag.maxhp ?? 0)) * (1 + iml / 100) + perLevelLife.hp + q(cs.LifePerVitality) * softBonus('vitality'));
+  const questLife = (input.quests?.lifePotions ?? 0) * 20;
+  const life = Math.floor((baseLife + (bag.maxhp ?? 0) + questLife) * (1 + iml / 100) + perLevelLife.hp + q(cs.LifePerVitality) * softBonus('vitality'));
 
   const startMana = cs.int; // 起始法力＝起始精力
   const baseMana = startMana + q(cs.ManaPerLevel) * (level - 1) + q(cs.ManaPerMagic) * (hard.ene - cs.int);

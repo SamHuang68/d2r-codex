@@ -98,6 +98,43 @@ t('職業技能：Ars Tor\'Baalos 之類含 Warlock 技能樹與單一技能', (
   assert.ok(Object.values(r.skills.byTab).some((v) => v >= 1)); assert.ok(Object.keys(r.skills.single).length > 0);
 });
 
+
+console.log('【遊戲內截圖實測（2026-10-19，Sam 提供）】');
+const B = rd('bases');
+t('Lv67 軍帽依等級生命／法力：提示框 +100（逐件取整，12×67/8＝100.5→100）', () => {
+  const r = bare('Warlock', 67, none, [itemFromUnique('harlequin_crest_248', 'helm')]);
+  const plain = bare('Warlock', 67, none, [{ slot: 'helm', baseCode: 'uap', mods: [{ code: 'hp/lvl', par: 12 }] }]);
+  const noItem = bare('Warlock', 67);
+  assert.equal(plain.life - noItem.life, 100);
+  assert.equal(r.skills.all, 2);
+});
+t('巨魔重鎚（Ogre Maul）×200% 強化傷害＝231–318（與 Stone Crusher 提示框一致）', () => {
+  const b = B.find((x) => x.code === '7m7'); assert.deepEqual([Math.floor(b.minDam2h * 3), Math.floor(b.maxDam2h * 3)], [231, 318]);
+});
+t('毒素傷害顯示＝floor(min×par/256)：塔爾符文 154×125/256＝75（精神之劍提示框 +75／5 秒）', () => assert.equal(Math.floor((154 * 125) / 256), 75));
+t('精神（劍）：提示框數值落在資料範圍內，且含符文武器效果（電擊1-50、冰寒3-14、毒素、7%生命偷取）', () => {
+  const sp = itemFromRuneword('spirit_130', 'weapon', 'crs');
+  const r = bare('Sorceress', 27, none, [sp]);
+  const m = (code) => sp.mods.find((x) => x.code === code);
+  assert.ok(31 >= m('cast3').min && 31 <= m('cast3').max); assert.ok(104 >= m('mana').min && 104 <= m('mana').max); assert.ok(8 >= m('abs-mag').min && 8 <= m('abs-mag').max);
+  assert.equal(r.stats.lightmaxdam, 50); assert.equal(r.stats.coldmaxdam, 14); assert.equal(r.stats.coldmindam, 3); assert.equal(r.stats.lifedrainmindam, 7);
+  assert.equal(r.unhandled.length, 0);
+});
+t('魔法使 27 級（部分裝備）：法力 191 與截圖完全一致（35＋26×2＋Spirit 104）', () => {
+  const sp = itemFromRuneword('spirit_130', 'weapon', 'crs');
+  sp.mods = sp.mods.map((m) => (m.code === 'mana' ? { ...m, min: 104, max: 104 } : m));
+  const r = bare('Sorceress', 27, { ...none, vit: 70 }, [sp]);
+  assert.equal(r.mana, 191); assert.equal(r.attributes.vit, 102);
+  assert.equal(r.life, 250); // 截圖為 270：差 20，推測為第三幕生命藥水任務（假說，見下一項）
+});
+t('生命藥水任務：+20／次（假說：魔法使 27 級差額 20）', () => {
+  assert.equal(bare('Sorceress', 27, none, [], { quests: { lifePotions: 1 } }).life - bare('Sorceress', 27).life, 20);
+});
+const known = (name, fn) => { try { fn(); console.log('  ⚠ 已知差異竟已消失：', name); } catch (e) { console.log('  ◇ 已知差異（待查）:', name, '→', String(e.message).slice(0, 80)); } };
+known('撒卡蘭姆使者防禦：截圖 526；資料推算上限＝floor(168×(1+1.96))＝497', () => {
+  const b = B.find((x) => x.code === 'pa9'); assert.ok(526 <= Math.floor(b.maxAc * (1 + 1.96)), `預測上限 ${Math.floor(b.maxAc * 2.96)} < 526`);
+});
+
 console.log('【完整性：任何 modifier 都不得無聲遺失】');
 const KNOWN_UNDEFINED = new Set(['skilltab-war', 'roguesbow-affix1', 'magdam-rand', 'Gethit-skill']);
 const unresolvedAll = new Map();

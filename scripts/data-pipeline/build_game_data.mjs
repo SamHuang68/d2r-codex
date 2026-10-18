@@ -109,6 +109,24 @@ miscBases.forEach((r) => {
 });
 const baseByCode = new Map(bases.map((b) => [b.code, b]));
 
+
+// --- 寶石／符文（鑲嵌效果：武器／頭甲身甲／盾牌三類）---
+const gemMods = (r, pre) => {
+  const out = [];
+  for (let i = 1; i <= 3; i++) {
+    const code = r[`${pre}${i}Code`]; if (!code) continue;
+    const m = { code };
+    if (r[`${pre}${i}Param`] !== undefined) m.par = num(r[`${pre}${i}Param`]);
+    if (r[`${pre}${i}Min`] !== undefined) m.min = num(r[`${pre}${i}Min`]);
+    if (r[`${pre}${i}Max`] !== undefined) m.max = num(r[`${pre}${i}Max`]);
+    out.push(m);
+  }
+  return track(out);
+};
+const gems = tsv('gems.txt').filter((r) => r.code).map((r) => ({
+  code: r.code, nameEn: r.name, name: zh(r.code) ?? zh(r.name), weapon: gemMods(r, 'weaponMod'), armor: gemMods(r, 'helmMod'), shield: gemMods(r, 'shieldMod'),
+}));
+
 // --- 暗金 ---
 const uniques = [];
 for (const r of tsv('uniqueitems.txt')) {
@@ -215,10 +233,10 @@ const uiCategories = tsv('itemuicategories.txt').map((r) => ({ name: r.Name, isE
 
 fs.mkdirSync(outDir, { recursive: true });
 const meta = { generator: 'scripts/data-pipeline/build_game_data.mjs', gameVersion, source: 'D2R local CASC (excel + zhTW strings)', generatedAt: new Date().toISOString().slice(0, 10),
-  counts: { bases: bases.length, uniques: uniques.length, sets: sets.length, setItems: setItems.length, runewords: runewords.length, skills: skills.length } };
+  counts: { bases: bases.length, uniques: uniques.length, gems: gems.length, sets: sets.length, setItems: setItems.length, runewords: runewords.length, skills: skills.length } };
 const write = (n, d) => fs.writeFileSync(path.join(outDir, n), JSON.stringify(d));
 write('meta.json', meta); write('itemtypes.json', itemtypes); write('bases.json', bases); write('uniques.json', uniques);
-write('sets.json', sets); write('setItems.json', setItems); write('runewords.json', runewords);
+write('gems.json', gems); write('sets.json', sets); write('setItems.json', setItems); write('runewords.json', runewords);
 write('properties.json', properties); write('stats.json', stats); write('statStrings.zhTW.json', statStrings);
 write('charstats.json', charstats); write('skills.json', skills); write('inventory.json', inventory); write('uiCategories.json', uiCategories);
 

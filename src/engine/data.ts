@@ -5,17 +5,19 @@ import bases from '../data/game/bases.json';
 import uniques from '../data/game/uniques.json';
 import setItems from '../data/game/setItems.json';
 import runewords from '../data/game/runewords.json';
-import type { BaseItem, CharStats, EquippedItem, GameData, Modifier, PropertyDef, StatDef } from './types';
+import gems from '../data/game/gems.json';
+import type { BaseItem, CharStats, EquippedItem, GameData, Gem, Modifier, PropertyDef, StatDef } from './types';
 
 export const gameData: GameData = {
   charstats: charstats as unknown as CharStats[],
   properties: properties as unknown as Record<string, PropertyDef>,
   stats: stats as unknown as Record<string, StatDef>,
   bases: bases as unknown as BaseItem[],
+  gems: gems as unknown as Gem[],
 };
 
 interface UniqueRow { id: string; code: string; levelReq?: number; mods: Modifier[]; name: string }
-interface RunewordRow { id: string; levelReq?: number; mods: Modifier[]; name: string }
+interface RunewordRow { id: string; levelReq?: number; mods: Modifier[]; name: string; runes: string[] }
 
 /** 由暗金 id 建立穿戴物（屬性取上限） */
 export function itemFromUnique(id: string, slot: string, opts: Partial<EquippedItem> = {}): EquippedItem {
@@ -32,5 +34,5 @@ export function itemFromSet(id: string, slot: string, opts: Partial<EquippedItem
 export function itemFromRuneword(id: string, slot: string, baseCode: string, opts: Partial<EquippedItem> = {}): EquippedItem {
   const r = (runewords as unknown as RunewordRow[]).find((x) => x.id === id);
   if (!r) throw new Error(`找不到符文之語 ${id}`);
-  return { slot, baseCode, mods: r.mods, name: r.name, ...opts };
+  return { slot, baseCode, mods: r.mods, sockets: r.runes, name: r.name, ...opts };
 }
