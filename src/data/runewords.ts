@@ -1,4 +1,4 @@
-import { RunewordData } from '../types';
+import type { RunewordData } from '../types';
 
 export const RUNEWORDS_DATA: RunewordData[] = [
   {

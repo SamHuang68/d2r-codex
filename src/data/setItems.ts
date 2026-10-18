@@ -1,4 +1,4 @@
-import { SetItemCollection } from '../types';
+import type { SetItemCollection } from '../types';
 
 export const SET_ITEMS_DATA: SetItemCollection[] = [
   {

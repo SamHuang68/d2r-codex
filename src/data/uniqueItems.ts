@@ -1,4 +1,4 @@
-import { UniqueItemData } from '../types';
+import type { UniqueItemData } from '../types';
 
 export const UNIQUE_ITEMS_DATA: UniqueItemData[] = [
   // ── 頭盔 (Helms) ──
