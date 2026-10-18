@@ -130,6 +130,11 @@ t('魔法使 27 級（部分裝備）：法力 191 與截圖完全一致（35＋
 t('生命藥水任務：+20／次（假說：魔法使 27 級差額 20）', () => {
   assert.equal(bare('Sorceress', 27, none, [], { quests: { lifePotions: 1 } }).life - bare('Sorceress', 27).life, 20);
 });
+t('魔法使 27 級「無裝備」截圖（Normal）：生命 226、法力 87、耐力 170、防禦 6、抗性 0 全部吻合；生命＝206＋生命藥水 20', () => {
+  const r = bare('Sorceress', 27, { str: 60, dex: 0, vit: 70, ene: 0 }, [], { difficulty: 'normal', anyaScrolls: 0, quests: { lifePotions: 1 } });
+  assert.deepEqual([r.life, r.mana, r.stamina, r.defense, r.resist.fire], [226, 87, 170, 6, 0]);
+  assert.deepEqual([r.attributes.str, r.attributes.dex, r.attributes.vit, r.attributes.ene], [70, 25, 80, 35]);
+});
 const known = (name, fn) => { try { fn(); console.log('  ⚠ 已知差異竟已消失：', name); } catch (e) { console.log('  ◇ 已知差異（待查）:', name, '→', String(e.message).slice(0, 80)); } };
 known('撒卡蘭姆使者防禦：截圖 526；資料推算上限＝floor(168×(1+1.96))＝497', () => {
   const b = B.find((x) => x.code === 'pa9'); assert.ok(526 <= Math.floor(b.maxAc * (1 + 1.96)), `預測上限 ${Math.floor(b.maxAc * 2.96)} < 526`);
