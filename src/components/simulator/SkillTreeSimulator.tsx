@@ -255,10 +255,10 @@ export const SkillTreeSimulator: React.FC<SkillTreeSimulatorProps> = ({
                 <div className="flex gap-2 pt-1">
                   <button
                     onClick={handleMaxAllSynergies}
-                    className="flex-1 py-2 px-3 rounded-xl bg-d2-gold hover:bg-amber-400 text-sanctuary-950 font-bold text-xs transition-all flex items-center justify-center gap-1.5 shadow-md shadow-d2-gold/20"
+                    className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-400 via-d2-gold to-amber-500 hover:brightness-110 text-sanctuary-950 font-bold text-xs transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-amber-900/30 active:scale-95"
                   >
                     <Zap className="w-4 h-4 text-sanctuary-950 fill-current" />
-                    <span>⚡ 一鍵點滿所有協同技能</span>
+                    <span>★ 核心功能：【⚡ 一鍵點滿相關協同加成 (Max All)】</span>
                   </button>
                   <button
                     onClick={handleResetSynergies}
