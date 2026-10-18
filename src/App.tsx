@@ -25,6 +25,7 @@ import { BuildPlanner } from './components/vault/BuildPlanner';
 import { CharacterGuide } from './components/codex/CharacterGuide';
 import { PropCompendium } from './components/codex/PropCompendium';
 import { RUNEWORDS_DATA } from './data/runewords';
+import { ArmorySimulator } from './components/simulator/ArmorySimulator';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('overview');
@@ -32,6 +33,7 @@ export const App: React.FC = () => {
   const [selectedInitialClass, setSelectedInitialClass] = useState<string>('魔法使');
   const [targetQuery, setTargetQuery] = useState<string>('');
   const [targetRuneNumber, setTargetRuneNumber] = useState<number | undefined>();
+  const [plannerSubMode, setPlannerSubMode] = useState<'armory' | 'notes'>('armory');
 
   // Global hotkey 'Q' or '/' to open search modal
   useEffect(() => {
@@ -184,13 +186,47 @@ export const App: React.FC = () => {
         {activeTab === 'uber' && <UberBossGuide />}
         {activeTab === 'grail' && <HolyGrailTracker />}
         {activeTab === 'planner' && (
-          <BuildPlanner 
-            onNavigateToSkills={(cls) => {
-              setSelectedInitialClass(cls);
-              handleNavigate('skills');
-            }}
-            onNavigateItem={handleItemOrRunewordNavigate}
-          />
+          <div className="space-y-4">
+            <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 flex items-center justify-between">
+              <div className="flex items-center gap-2 bg-sanctuary-950/80 p-1.5 rounded-2xl border border-sanctuary-800">
+                <button
+                  onClick={() => setPlannerSubMode('armory')}
+                  className={`px-4 py-1.5 rounded-xl text-xs font-diablo transition-all ${
+                    plannerSubMode === 'armory'
+                      ? 'bg-gradient-to-r from-d2-unique to-amber-600 text-sanctuary-950 font-bold shadow-md'
+                      : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-900'
+                  }`}
+                >
+                  🎮 1:1 全息配裝模擬器
+                </button>
+                <button
+                  onClick={() => setPlannerSubMode('notes')}
+                  className={`px-4 py-1.5 rounded-xl text-xs font-diablo transition-all ${
+                    plannerSubMode === 'notes'
+                      ? 'bg-gradient-to-r from-d2-unique to-amber-600 text-sanctuary-950 font-bold shadow-md'
+                      : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-900'
+                  }`}
+                >
+                  📋 傳統流派筆記清單
+                </button>
+              </div>
+            </div>
+
+            {plannerSubMode === 'armory' ? (
+              <ArmorySimulator 
+                initialClass={selectedInitialClass} 
+                onNavigateItem={handleItemOrRunewordNavigate}
+              />
+            ) : (
+              <BuildPlanner 
+                onNavigateToSkills={(cls) => {
+                  setSelectedInitialClass(cls);
+                  handleNavigate('skills');
+                }}
+                onNavigateItem={handleItemOrRunewordNavigate}
+              />
+            )}
+          </div>
         )}
       </main>
 

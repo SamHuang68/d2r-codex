@@ -6,7 +6,6 @@ import {
   Layers, 
   Compass, 
   Trophy, 
-  Wrench, 
   Search, 
   Sword, 
   MapPin, 
@@ -45,7 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'breakpoints', label: '機制斷點', icon: <Compass className="w-3.5 h-3.5 text-d2-fire" /> },
     { id: 'areas', label: '場景恐區', icon: <MapPin className="w-3.5 h-3.5 text-d2-fire" /> },
     { id: 'grail', label: '聖杯打寶', icon: <Trophy className="w-3.5 h-3.5 text-d2-gold" /> },
-    { id: 'planner', label: '配裝工坊', icon: <Wrench className="w-3.5 h-3.5 text-sanctuary-300" /> },
+    { id: 'planner', label: '配裝模擬', icon: <Sword className="w-3.5 h-3.5 text-d2-unique" /> },
   ];
 
   return (
