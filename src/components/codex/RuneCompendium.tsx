@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RUNES_DATA } from '../../data/runes';
 import { RUNEWORDS_DATA } from '../../data/runewords';
+import { ItemIcon } from '../common/ItemIcon';
 import { Layers, ArrowRight, Sparkles, Flame } from 'lucide-react';
 
 export interface RuneCompendiumProps {
@@ -114,10 +115,14 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
               <div className="space-y-3">
                 {/* Header */}
                 <div className="flex items-center justify-between pb-2 border-b border-sanctuary-850">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-d2-rune/20 border border-d2-rune/40 flex items-center justify-center font-mono font-bold text-d2-rune text-sm shadow-inner">
-                      {rune.number}#
-                    </div>
+                  <div className="flex items-center gap-3">
+                    <ItemIcon
+                      runeNumber={rune.number}
+                      name={rune.name}
+                      nameEn={rune.nameEn}
+                      rarity="rune"
+                      size="md"
+                    />
                     <div>
                       <h3 className="font-diablo text-base font-bold text-d2-rune flex items-center gap-1.5">
                         {rune.name}

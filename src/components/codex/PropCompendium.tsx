@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   GEMS_DATA, 
   UBER_KEYS_ORGANS_DATA, 
@@ -6,6 +6,7 @@ import {
   COMBAT_POTIONS_DATA, 
   CHARMS_JEWELS_DATA
 } from '../../data/props';
+import { ItemIcon } from '../common/ItemIcon';
 import { 
   Gem, 
   Key, 
@@ -15,7 +16,6 @@ import {
   ArrowRight, 
   ShieldAlert, 
   Flame, 
-  Skull, 
   Search,
   CheckCircle2
 } from 'lucide-react';
@@ -215,10 +215,8 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                 <div>
                   {/* Gem Title Header */}
                   <div className="flex items-center justify-between pb-3 border-b border-sanctuary-850">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-d2-magic/15 border border-d2-magic/40 flex items-center justify-center text-d2-magic shadow-inner">
-                        <Gem className="w-5 h-5" />
-                      </div>
+                    <div className="flex items-center gap-3">
+                      <ItemIcon name={gem.name} nameEn={gem.nameEn} rarity="gem" size="md" />
                       <div>
                         <h3 className="font-diablo text-base font-bold text-sanctuary-100">
                           {gem.name}
@@ -318,10 +316,8 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
               >
                 <div>
                   <div className="flex items-center justify-between pb-3 border-b border-sanctuary-850">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-d2-fire/15 border border-d2-fire/40 flex items-center justify-center text-d2-fire shadow-inner">
-                        {item.type === 'key' ? <Key className="w-5 h-5" /> : <Skull className="w-5 h-5" />}
-                      </div>
+                    <div className="flex items-center gap-3">
+                      <ItemIcon name={item.name} nameEn={item.nameEn} rarity="prop" size="md" />
                       <div>
                         <h3 className="font-diablo text-base font-bold text-sanctuary-100">
                           {item.name}
@@ -368,17 +364,20 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
       {activeCategory === 'essences' && (
         <div className="space-y-6">
           <div className="bg-sanctuary-900/70 p-6 rounded-2xl border border-sanctuary-800 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-d2-gold/15 border border-d2-gold/30 text-xs text-d2-gold font-bold">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>無限自由洗點神器</span>
+            <div className="flex items-center gap-4">
+              <ItemIcon name="赦免徽章" nameEn="Token of Absolution" rarity="unique" size="xl" />
+              <div className="space-y-1.5">
+                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-d2-gold/15 border border-d2-gold/30 text-xs text-d2-gold font-bold">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>無限自由洗點神器</span>
+                </div>
+                <h3 className="font-diablo text-2xl font-bold text-sanctuary-100">
+                  赦免徽章 (Token of Absolution)
+                </h3>
+                <p className="text-xs text-sanctuary-300 max-w-xl leading-relaxed">
+                  在地獄難度擊殺第一至第五幕大 Boss 收集四色精華，於赫拉迪姆方塊中融合即可獲得「赦免徽章」。右鍵使用即可完全重置當前角色所有屬性點與技能樹，隨心轉型！
+                </p>
               </div>
-              <h3 className="font-diablo text-2xl font-bold text-sanctuary-100">
-                赦免徽章 (Token of Absolution)
-              </h3>
-              <p className="text-xs text-sanctuary-300 max-w-2xl leading-relaxed">
-                在地獄難度擊殺第一至第五幕大 Boss 收集四色精華，於赫拉迪姆方塊中融合即可獲得「赦免徽章」。右鍵使用即可完全重置當前角色所有屬性點與技能樹，隨心轉型！
-              </p>
             </div>
 
             <div className="p-4 rounded-2xl bg-sanctuary-950 border border-d2-gold/40 shadow-glow-gold/10 text-center shrink-0 w-full md:w-64">
@@ -400,20 +399,25 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                 className="p-5 rounded-2xl bg-sanctuary-950 border border-sanctuary-850 hover:border-sanctuary-700 shadow-xl flex flex-col justify-between space-y-4"
               >
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span 
-                      className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm"
-                      style={{ backgroundColor: ess.colorHex }}
-                    />
-                    <span className="text-xs font-mono text-sanctuary-400 font-bold">
-                      Act {ess.act} 精華
-                    </span>
-                  </div>
-                  <h4 className="font-diablo text-base font-bold text-sanctuary-100">
-                    {ess.name}
-                  </h4>
-                  <div className="text-[11px] text-sanctuary-400 font-mono italic mb-3">
-                    {ess.nameEn}
+                  <div className="flex items-center gap-3 mb-2">
+                    <ItemIcon name={ess.name} nameEn={ess.nameEn} rarity="prop" size="md" />
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span 
+                          className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm"
+                          style={{ backgroundColor: ess.colorHex }}
+                        />
+                        <span className="text-[10px] font-mono text-sanctuary-400 font-bold">
+                          Act {ess.act} 精華
+                        </span>
+                      </div>
+                      <h4 className="font-diablo text-base font-bold text-sanctuary-100">
+                        {ess.name}
+                      </h4>
+                      <div className="text-[11px] text-sanctuary-400 font-mono italic">
+                        {ess.nameEn}
+                      </div>
+                    </div>
                   </div>
 
                   <div className="space-y-1.5 text-xs text-sanctuary-300">
@@ -451,12 +455,15 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
               >
                 <div>
                   <div className="flex items-start justify-between gap-2 pb-3 border-b border-sanctuary-850">
-                    <div>
-                      <h3 className="font-diablo text-base font-bold text-d2-unique">
-                        {pot.name}
-                      </h3>
-                      <div className="text-[11px] text-sanctuary-400 font-mono italic">
-                        {pot.nameEn}
+                    <div className="flex items-center gap-3">
+                      <ItemIcon name={pot.name} nameEn={pot.nameEn} rarity="prop" size="md" />
+                      <div>
+                        <h3 className="font-diablo text-base font-bold text-d2-unique">
+                          {pot.name}
+                        </h3>
+                        <div className="text-[11px] text-sanctuary-400 font-mono italic">
+                          {pot.nameEn}
+                        </div>
                       </div>
                     </div>
                     <span className="text-[10px] px-2 py-0.5 rounded bg-sanctuary-900 border border-sanctuary-800 text-sanctuary-300 font-medium">
@@ -513,15 +520,26 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
               >
                 <div>
                   <div className="flex items-center justify-between pb-2 border-b border-sanctuary-850">
-                    <h4 className="font-diablo text-sm font-bold text-d2-unique">
-                      {charm.name}
-                    </h4>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold bg-d2-gold/20 text-d2-gold border border-d2-gold/40">
+                    <div className="flex items-center gap-2.5">
+                      <ItemIcon 
+                        name={charm.name} 
+                        nameEn={charm.nameEn} 
+                        slot={charm.slot === 'jewel' ? 'jewel' : 'charm'} 
+                        rarity="unique" 
+                        size="md" 
+                      />
+                      <div>
+                        <h4 className="font-diablo text-sm font-bold text-d2-unique">
+                          {charm.name}
+                        </h4>
+                        <div className="text-[11px] text-sanctuary-400 font-mono italic">
+                          {charm.nameEn}
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold bg-d2-gold/20 text-d2-gold border border-d2-gold/40 shrink-0">
                       階級 {charm.tradeValueTier}
                     </span>
-                  </div>
-                  <div className="text-[11px] text-sanctuary-400 font-mono italic mb-3">
-                    {charm.nameEn}
                   </div>
 
                   <div className="space-y-1.5 text-xs text-d2-magic">
@@ -547,3 +565,4 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
     </div>
   );
 };
+

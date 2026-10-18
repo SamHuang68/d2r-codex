@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { VALUATION_ITEMS_DATA } from '../../data/affixes';
+import { ItemIcon } from '../common/ItemIcon';
 import { 
   Gem, 
   Sparkles, 
@@ -274,22 +275,31 @@ export const ValuationGuide: React.FC = () => {
                   <div className="space-y-4">
                     {/* Header */}
                     <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold ${rarityBadge}`}>
-                            {isMagic ? '藍色魔法極品' : '亮黃稀有極品'}
-                          </span>
-                          <span className="text-xs font-mono text-sanctuary-400">
-                            {item.itemType}
-                          </span>
-                        </div>
-                        <h3 className={`text-xl sm:text-2xl font-bold ${rarityColor} group-hover:brightness-125 transition-all`}>
-                          {item.name}
-                        </h3>
+                      <div className="flex items-start gap-3.5">
+                        <ItemIcon
+                          name={item.name}
+                          nameEn={item.nameEn}
+                          baseItem={item.itemType}
+                          rarity={item.category === 'magic' ? 'magic' : 'rare'}
+                          size="lg"
+                        />
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold ${rarityBadge}`}>
+                              {isMagic ? '藍色魔法極品' : '亮黃稀有極品'}
+                            </span>
+                            <span className="text-xs font-mono text-sanctuary-400">
+                              {item.itemType}
+                            </span>
+                          </div>
+                          <h3 className={`text-xl sm:text-2xl font-bold ${rarityColor} group-hover:brightness-125 transition-all`}>
+                            {item.name}
+                          </h3>
                         <div className="text-xs font-mono text-sanctuary-400 mt-0.5">
                           {item.nameEn}
                         </div>
                       </div>
+                    </div>
                     </div>
 
                     {/* Market Value Badge */}

@@ -3,6 +3,7 @@ import { UNIQUE_ITEMS_DATA } from '../../data/uniqueItems';
 import { SET_ITEMS_DATA } from '../../data/setItems';
 import { HolyGrailState } from '../../types';
 import { loadHolyGrailState, saveHolyGrailState, exportAllUserData, importUserData } from '../../utils/storage';
+import { ItemIcon } from '../common/ItemIcon';
 import { Trophy, CheckCircle2, Circle, Download, Upload, Sparkles } from 'lucide-react';
 
 const TC87_IDENTIFIERS = [
@@ -379,6 +380,14 @@ export const HolyGrailTracker: React.FC = () => {
                     <Circle className={`w-5 h-5 ${item.isTC87 ? 'text-amber-400/60' : 'text-sanctuary-600'}`} />
                   )}
                 </div>
+
+                <ItemIcon
+                  name={item.name}
+                  nameEn={item.nameEn}
+                  slot={item.slot}
+                  rarity={item.isSet ? 'set' : 'unique'}
+                  size="sm"
+                />
 
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5 flex-wrap">

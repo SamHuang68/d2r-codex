@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { UNIQUE_ITEMS_DATA } from '../../data/uniqueItems';
 import { SET_ITEMS_DATA } from '../../data/setItems';
 import { ItemTooltip } from '../common/ItemTooltip';
+import { ItemIcon } from '../common/ItemIcon';
 import { Sword, Search, Shield, Sparkles, X } from 'lucide-react';
 import { GearSlot } from '../../types';
 
@@ -202,12 +203,21 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                     {set.pieces.map((piece) => (
                       <div
                         key={piece.id}
-                        className="p-3 rounded-lg bg-sanctuary-900/60 border border-sanctuary-800 text-xs"
+                        className="p-3 rounded-lg bg-sanctuary-900/60 border border-sanctuary-800 text-xs flex gap-3 items-start"
                       >
-                        <div className="font-diablo font-bold text-d2-set text-sm">
-                          {piece.name}
-                        </div>
-                        <div className="text-[11px] text-sanctuary-400 mb-2 font-medium">
+                        <ItemIcon
+                          name={piece.name}
+                          nameEn={piece.nameEn}
+                          baseItem={piece.baseItem}
+                          slot={piece.slot}
+                          rarity="set"
+                          size="md"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="font-diablo font-bold text-d2-set text-sm">
+                            {piece.name}
+                          </div>
+                          <div className="text-[11px] text-sanctuary-400 mb-2 font-medium">
                           {onNavigateToBase ? (
                             <button
                               type="button"
@@ -227,6 +237,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                           {piece.attributes.map((attr, i) => (
                             <div key={i}>• {attr}</div>
                           ))}
+                        </div>
                         </div>
                       </div>
                     ))}

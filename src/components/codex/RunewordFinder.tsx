@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { RUNEWORDS_DATA } from '../../data/runewords';
+import { ItemIcon } from '../common/ItemIcon';
 import { Search, Sparkles, Filter, X } from 'lucide-react';
 
 export interface RunewordFinderProps {
@@ -238,16 +239,24 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               <div>
                 {/* Header: Title & Runes Badges */}
                 <div className="flex items-start justify-between gap-3 pb-3 border-b border-sanctuary-850">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-diablo text-lg font-bold text-d2-unique group-hover:text-amber-300 transition-colors">
-                        {rw.name}
-                      </h3>
-                      <span className="text-xs text-sanctuary-400 font-mono italic">
-                        {rw.nameEn}
-                      </span>
-                    </div>
-                    <div className="text-xs text-sanctuary-300 mt-1 flex items-center gap-1.5 flex-wrap">
+                  <div className="flex items-start gap-3">
+                    <ItemIcon
+                      name={rw.name}
+                      nameEn={rw.nameEn}
+                      baseItem={rw.allowedBases[0]}
+                      rarity="runeword"
+                      size="md"
+                    />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-diablo text-lg font-bold text-d2-unique group-hover:text-amber-300 transition-colors">
+                          {rw.name}
+                        </h3>
+                        <span className="text-xs text-sanctuary-400 font-mono italic">
+                          {rw.nameEn}
+                        </span>
+                      </div>
+                      <div className="text-xs text-sanctuary-300 mt-1 flex items-center gap-1.5 flex-wrap">
                       <span>需求等級: <strong className="text-sanctuary-100">{rw.requiredLevel}</strong> • {rw.sockets} 孔</span>
                       <span>(</span>
                       {rw.allowedBases.map((base, bIdx) => (
@@ -269,6 +278,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                       <span>)</span>
                     </div>
                   </div>
+                </div>
 
                   {/* Badges */}
                   <div className="flex flex-col items-end gap-1 shrink-0">
@@ -296,9 +306,10 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                         e.stopPropagation();
                         onNavigateToRune?.(rw.runeNumbers[i]);
                       }}
-                      className="group/rune px-2 py-0.5 text-xs font-mono font-bold rounded bg-d2-rune/15 hover:bg-d2-rune/30 text-d2-rune hover:text-white border border-d2-rune/30 hover:border-d2-rune transition-all hover:scale-105 cursor-pointer shadow-sm flex items-center gap-1"
+                      className="group/rune px-2 py-1 text-xs font-mono font-bold rounded-lg bg-d2-rune/15 hover:bg-d2-rune/30 text-d2-rune hover:text-white border border-d2-rune/30 hover:border-d2-rune transition-all hover:scale-105 cursor-pointer shadow-sm flex items-center gap-1.5"
                       title={`點擊跳轉查看 ${rw.runeNumbers[i]}號 符文詳細屬性與方塊合成`}
                     >
+                      <ItemIcon runeNumber={rw.runeNumbers[i]} size="xs" showBorder={false} />
                       <span>{rw.runeNumbers[i]}# {r}</span>
                       <span className="text-[9px] opacity-0 group-hover/rune:opacity-100 transition-opacity">↗</span>
                     </button>

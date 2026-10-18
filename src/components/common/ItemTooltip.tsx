@@ -1,5 +1,6 @@
 import React from 'react';
 import { ItemRarity } from '../../types';
+import { ItemIcon } from './ItemIcon';
 
 interface ItemTooltipProps {
   title: string;
@@ -74,6 +75,17 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
         boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.8), inset 0 0 12px rgba(0, 0, 0, 0.6)'
       }}
     >
+      {/* Item Icon */}
+      <div className="flex justify-center mb-3">
+        <ItemIcon
+          name={title}
+          nameEn={titleEn}
+          baseItem={baseItem}
+          rarity={rarity}
+          size="lg"
+        />
+      </div>
+
       {/* Title */}
       <div className={`font-diablo text-base md:text-lg font-bold tracking-wide ${getTitleColor()}`}>
         {title}

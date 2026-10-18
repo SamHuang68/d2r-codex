@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CatalogItem, EquippedSlots } from '../../types/simulator';
 import { GearSlot } from '../../types';
+import { ItemIcon } from '../common/ItemIcon';
 import { 
   Shield, 
   Sword, 
@@ -105,7 +106,7 @@ export const PaperDoll: React.FC<PaperDollProps> = ({
         onMouseLeave={() => setHoveredItem(null)}
       >
         {item ? (
-          <div className="w-full h-full p-2 flex flex-col items-center justify-between text-center relative">
+          <div className="w-full h-full p-1.5 flex flex-col items-center justify-between text-center relative overflow-hidden">
             {/* 卸除按鈕 */}
             <button
               onClick={(e) => {
@@ -114,32 +115,31 @@ export const PaperDoll: React.FC<PaperDollProps> = ({
                 setHoveredItem(null);
               }}
               title="卸下裝備"
-              className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-d2-blood text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20 shadow"
+              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-d2-blood text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20 shadow"
             >
               <X className="w-3 h-3" />
             </button>
 
+            {/* 裝備圖示 */}
+            <div className="my-auto">
+              <ItemIcon
+                name={item.name}
+                nameEn={item.nameEn}
+                baseItem={item.baseItem}
+                slot={item.slot}
+                rarity={item.itemType}
+                size={sizeClass.includes('w-28') ? 'md' : 'sm'}
+                showBorder={false}
+              />
+            </div>
+
             {/* 裝備品級色彩外框標記 */}
-            <div className="w-full truncate text-[11px] font-diablo font-bold mt-1 text-d2-gold group-hover:text-amber-300">
+            <div className="w-full truncate text-[10px] font-diablo font-bold text-d2-gold group-hover:text-amber-300 leading-tight">
               {item.name}
             </div>
 
-            <div className="text-[9px] font-mono text-sanctuary-400 truncate max-w-full">
+            <div className="text-[8px] font-mono text-sanctuary-400 truncate max-w-full">
               {item.baseItem}
-            </div>
-
-            {/* 裝備屬性徽章 */}
-            <div className="flex gap-1 flex-wrap justify-center mt-1">
-              {item.stats.fcr && (
-                <span className="text-[8px] font-mono px-1 rounded bg-sanctuary-800 text-d2-unique">
-                  +{item.stats.fcr}% FCR
-                </span>
-              )}
-              {item.stats.allSkills && (
-                <span className="text-[8px] font-mono px-1 rounded bg-sanctuary-800 text-d2-gold">
-                  +{item.stats.allSkills} 技
-                </span>
-              )}
             </div>
           </div>
         ) : (
@@ -274,7 +274,15 @@ export const PaperDoll: React.FC<PaperDollProps> = ({
                 }}
                 onMouseLeave={() => setHoveredItem(null)}
               >
-                <Sparkles className="w-3 h-3 text-d2-gold" />
+                <ItemIcon 
+                  name={charm.name} 
+                  nameEn={charm.nameEn} 
+                  baseItem={charm.baseItem} 
+                  slot="charm" 
+                  rarity="charm" 
+                  size="xs" 
+                  showBorder={false} 
+                />
                 <span className="font-diablo text-xs text-d2-gold truncate max-w-[120px]">
                   {charm.name}
                 </span>
@@ -300,6 +308,16 @@ export const PaperDoll: React.FC<PaperDollProps> = ({
           style={{ top: `${hoveredItem.y}px`, left: `${hoveredItem.x}px` }}
           className="fixed z-50 pointer-events-none bg-black/95 border-2 border-d2-gold/70 rounded-xl p-4 shadow-2xl max-w-xs space-y-2 text-center text-xs animate-fade-in"
         >
+          <div className="flex justify-center mb-1">
+            <ItemIcon
+              name={hoveredItem.item.name}
+              nameEn={hoveredItem.item.nameEn}
+              baseItem={hoveredItem.item.baseItem}
+              slot={hoveredItem.item.slot}
+              rarity={hoveredItem.item.itemType}
+              size="md"
+            />
+          </div>
           <div className="font-diablo text-base font-bold text-d2-gold">
             {hoveredItem.item.name}
           </div>

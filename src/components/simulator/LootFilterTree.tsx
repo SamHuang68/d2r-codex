@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { CatalogItem } from '../../types/simulator';
+import { ItemIcon } from '../common/ItemIcon';
 import { 
   Shield, 
   Sword, 
@@ -183,6 +184,14 @@ export const LootFilterTree: React.FC<LootFilterTreeProps> = ({
                                   {/* 左側拖曳圖標與裝備名稱 */}
                                   <div className="flex items-center gap-2.5 min-w-0">
                                     <GripVertical className="w-4 h-4 text-sanctuary-600 group-hover:text-d2-gold shrink-0 transition-colors" />
+                                    <ItemIcon
+                                      name={item.name}
+                                      nameEn={item.nameEn}
+                                      baseItem={item.baseItem}
+                                      slot={item.slot}
+                                      rarity={item.itemType}
+                                      size="sm"
+                                    />
 
                                     <div className="min-w-0">
                                       <div className="flex items-center gap-1.5 flex-wrap">

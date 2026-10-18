@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { BASE_ITEMS_DATA, BaseItemData } from '../../data/bases';
+import { ItemIcon } from '../common/ItemIcon';
 import { 
   ShieldAlert, 
   Search, 
@@ -161,15 +162,24 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
             {/* 卡片頭部 */}
             <div className="space-y-2">
               <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-diablo font-bold text-sanctuary-100 group-hover:text-d2-socket transition-colors">
-                      {item.name}
-                    </h3>
-                    <span className="text-xs font-mono text-sanctuary-400">
-                      {item.nameEn}
-                    </span>
-                  </div>
+                <div className="flex items-start gap-3">
+                  <ItemIcon
+                    name={item.name}
+                    nameEn={item.nameEn}
+                    baseItem={item.name}
+                    slot={item.category === '防具鎧甲' ? 'armor' : item.category === '盾牌' ? 'shield' : 'weapon'}
+                    rarity="normal"
+                    size="md"
+                  />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-diablo font-bold text-sanctuary-100 group-hover:text-d2-socket transition-colors">
+                        {item.name}
+                      </h3>
+                      <span className="text-xs font-mono text-sanctuary-400">
+                        {item.nameEn}
+                      </span>
+                    </div>
                   <div className="flex items-center gap-2 text-[11px] font-mono text-sanctuary-400 mt-0.5">
                     <span className="px-1.5 py-0.2 rounded bg-sanctuary-800 text-sanctuary-300">
                       {item.category} · {item.itemType}
@@ -179,6 +189,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
                     </span>
                   </div>
                 </div>
+              </div>
 
                 {/* 最大孔數徽章 */}
                 <div className="px-2.5 py-1 rounded-xl bg-sanctuary-800/90 border border-sanctuary-700 text-d2-socket font-mono text-xs font-bold shrink-0">
