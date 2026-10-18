@@ -3,11 +3,32 @@ import { UNIQUE_ITEMS_DATA } from '../../data/uniqueItems';
 import { SET_ITEMS_DATA } from '../../data/setItems';
 import { HolyGrailState } from '../../types';
 import { loadHolyGrailState, saveHolyGrailState, exportAllUserData, importUserData } from '../../utils/storage';
-import { Trophy, CheckCircle2, Circle, Download, Upload } from 'lucide-react';
+import { Trophy, CheckCircle2, Circle, Download, Upload, Sparkles } from 'lucide-react';
+
+const TC87_IDENTIFIERS = [
+  "tyraels_might",
+  "templars_might",
+  "windforce",
+  "deaths_web",
+  "griffons_eye",
+  "deaths_fathom",
+  "shadow_dancer",
+  "mang_songs_lesson",
+  "astreons_iron_ward",
+  "the_grandfather",
+  "crown_of_ages",
+  "executioners_justice",
+  "deathcleaver",
+  "stormspire",
+  "steel_pillar",
+  "cranial_basher",
+  "earth_shifter",
+  "the_reapers_toll"
+];
 
 export const HolyGrailTracker: React.FC = () => {
   const [grailState, setGrailState] = useState<HolyGrailState>(loadHolyGrailState());
-  const [filterMode, setFilterMode] = useState<'all' | 'missing' | 'obtained'>('all');
+  const [filterMode, setFilterMode] = useState<'all' | 'missing' | 'obtained' | 'tc87'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Collect all grail items
@@ -19,17 +40,28 @@ export const HolyGrailTracker: React.FC = () => {
       category: string;
       slot: string;
       isSet: boolean;
+      isTC87: boolean;
     }[] = [];
 
     // Unique Items
     UNIQUE_ITEMS_DATA.forEach((item) => {
+      const isTC87 = TC87_IDENTIFIERS.includes(item.id) || 
+        item.name.includes("泰瑞爾") || 
+        item.name.includes("風之力") || 
+        item.name.includes("死亡之網") || 
+        item.name.includes("格利風") || 
+        item.name.includes("次元碎片") || 
+        item.name.includes("年紀之冠") || 
+        item.name.includes("祖父");
+
       list.push({
         id: item.id,
         name: item.name,
         nameEn: item.nameEn,
         category: item.baseItem,
         slot: item.slot,
-        isSet: false
+        isSet: false,
+        isTC87
       });
     });
 
@@ -42,7 +74,8 @@ export const HolyGrailTracker: React.FC = () => {
           nameEn: piece.nameEn,
           category: piece.baseItem,
           slot: piece.slot,
-          isSet: true
+          isSet: true,
+          isTC87: false
         });
       });
     });
@@ -85,6 +118,44 @@ export const HolyGrailTracker: React.FC = () => {
   const ethCount = Object.keys(grailState.etherealItemIds).length;
   const progressPercent = totalCount > 0 ? ((obtainedCount / totalCount) * 100).toFixed(1) : '0';
 
+  // TC87 Stats
+  const tc87Items = useMemo(() => allGrailItems.filter(i => i.isTC87), [allGrailItems]);
+  const tc87Obtained = useMemo(() => tc87Items.filter(i => Boolean(grailState.obtainedItemIds[i.id])).length, [tc87Items, grailState]);
+
+  // Slot Breakdown Stats
+  const slotStats = useMemo(() => {
+    const slots = [
+      { id: 'weapon', label: '武器類' },
+      { id: 'armor', label: '衣服護甲' },
+      { id: 'helm', label: '頭部頭盔' },
+      { id: 'shield', label: '盾牌類' },
+      { id: 'jewelry', label: '首飾護符' },
+      { id: 'set', label: '綠色套裝' },
+    ];
+
+    return slots.map(slot => {
+      let filtered = allGrailItems;
+      if (slot.id === 'set') {
+        filtered = allGrailItems.filter(i => i.isSet);
+      } else if (slot.id === 'jewelry') {
+        filtered = allGrailItems.filter(i => !i.isSet && ['ring', 'amulet', 'charm', 'jewel'].includes(i.slot));
+      } else {
+        filtered = allGrailItems.filter(i => !i.isSet && i.slot === slot.id);
+      }
+
+      const total = filtered.length;
+      const obtained = filtered.filter(i => Boolean(grailState.obtainedItemIds[i.id])).length;
+      const pct = total > 0 ? Math.round((obtained / total) * 100) : 0;
+
+      return {
+        ...slot,
+        total,
+        obtained,
+        pct
+      };
+    });
+  }, [allGrailItems, grailState]);
+
   // Filter items
   const displayedItems = useMemo(() => {
     return allGrailItems.filter((item) => {
@@ -92,6 +163,7 @@ export const HolyGrailTracker: React.FC = () => {
 
       if (filterMode === 'missing' && isObtained) return false;
       if (filterMode === 'obtained' && !isObtained) return false;
+      if (filterMode === 'tc87' && !item.isTC87) return false;
 
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
@@ -137,29 +209,32 @@ export const HolyGrailTracker: React.FC = () => {
   };
 
   return (
-    <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 animate-fade-in">
       {/* Header */}
-      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-sanctuary-800 pb-6">
         <div>
-          <h2 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-gold flex items-center gap-2">
-            <Trophy className="w-6 h-6 text-d2-gold" />
-            <span>暗黑聖杯挑戰進度追蹤 (Holy Grail Tracker)</span>
-          </h2>
-          <p className="text-xs sm:text-sm text-sanctuary-400 mt-1">
-            以純本地無痕方式紀錄遊戲內全數暗金與套裝裝備掉落收集，挑戰 100% 圓滿收藏！
+          <div className="flex items-center gap-2 text-d2-gold text-xs font-mono tracking-widest uppercase">
+            <Trophy className="w-4 h-4 text-d2-gold animate-pulse" />
+            Diablo II: Resurrected Holy Grail Checklist
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
+            暗黑聖杯挑戰進度追蹤 (Holy Grail Tracker)
+          </h1>
+          <p className="text-xs sm:text-sm text-sanctuary-400 mt-1 max-w-2xl">
+            純本地無痕紀錄遊戲內全數暗金與成套套裝掉落，挑戰 100% 圓滿收藏！支援 TC87 殿堂神物專屬篩選與分類進度分析。
           </p>
         </div>
 
         {/* Export / Import Buttons */}
-        <div className="flex items-center gap-2 self-start md:self-auto text-xs">
+        <div className="flex items-center gap-2 self-start md:self-auto text-xs shrink-0">
           <button
             onClick={handleExport}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-sanctuary-300 hover:text-white transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-sanctuary-300 hover:text-white transition-colors shadow-sm"
           >
             <Download className="w-3.5 h-3.5" />
             <span>匯出備份 JSON</span>
           </button>
-          <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-sanctuary-300 hover:text-white cursor-pointer transition-colors">
+          <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-sanctuary-300 hover:text-white cursor-pointer transition-colors shadow-sm">
             <Upload className="w-3.5 h-3.5" />
             <span>匯入進度</span>
             <input type="file" accept=".json" onChange={handleImport} className="hidden" />
@@ -167,71 +242,108 @@ export const HolyGrailTracker: React.FC = () => {
         </div>
       </div>
 
-      {/* Progress Dashboard */}
-      <div className="p-6 rounded-2xl bg-sanctuary-950 border border-sanctuary-800 shadow-2xl mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+      {/* Main Progress Dashboard */}
+      <div className="p-6 rounded-3xl bg-sanctuary-950 border border-sanctuary-800 shadow-2xl space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="text-xs text-sanctuary-400 font-medium">總體聖杯收集完成率</div>
-            <div className="font-diablo text-3xl font-black text-d2-gold mt-1">
-              {progressPercent}%
+            <div className="font-diablo text-4xl font-black text-d2-gold mt-1 flex items-baseline gap-2">
+              <span>{progressPercent}%</span>
+              <span className="text-xs font-mono font-normal text-sanctuary-500">
+                ({obtainedCount} / {totalCount} 件)
+              </span>
             </div>
           </div>
-          <div className="flex items-center gap-4 text-xs font-mono">
-            <div className="text-center p-2 rounded-lg bg-sanctuary-900 border border-sanctuary-800">
-              <div className="text-sanctuary-400 text-[11px]">已收獲裝備</div>
-              <div className="text-d2-set font-bold text-sm mt-0.5">{obtainedCount} / {totalCount}</div>
+
+          <div className="flex items-center gap-3 text-xs font-mono">
+            <div className="text-center px-3 py-2 rounded-xl bg-sanctuary-900/80 border border-sanctuary-800">
+              <div className="text-sanctuary-400 text-[10px]">TC87 殿堂級神物</div>
+              <div className="text-amber-400 font-bold text-sm mt-0.5">{tc87Obtained} / {tc87Items.length}</div>
             </div>
-            <div className="text-center p-2 rounded-lg bg-sanctuary-900 border border-sanctuary-800">
-              <div className="text-sanctuary-400 text-[11px]">尚缺件數</div>
+            <div className="text-center px-3 py-2 rounded-xl bg-sanctuary-900/80 border border-sanctuary-800">
+              <div className="text-sanctuary-400 text-[10px]">尚缺件數</div>
               <div className="text-d2-fire font-bold text-sm mt-0.5">{totalCount - obtainedCount} 件</div>
             </div>
-            <div className="text-center p-2 rounded-lg bg-sanctuary-900 border border-sanctuary-800">
-              <div className="text-sanctuary-400 text-[11px]">無形 (ETH)</div>
-              <div className="text-sanctuary-200 font-bold text-sm mt-0.5">{ethCount} 件</div>
+            <div className="text-center px-3 py-2 rounded-xl bg-sanctuary-900/80 border border-sanctuary-800">
+              <div className="text-sanctuary-400 text-[10px]">無形 (ETH) 收藏</div>
+              <div className="text-cyan-400 font-bold text-sm mt-0.5">{ethCount} 件</div>
             </div>
           </div>
         </div>
 
-        {/* Progress Bar */}
+        {/* Global Progress Bar */}
         <div className="w-full h-3 rounded-full bg-sanctuary-900 overflow-hidden border border-sanctuary-800">
           <div
             className="h-full bg-gradient-to-r from-d2-fire via-d2-gold to-d2-set transition-all duration-500 rounded-full"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
+
+        {/* Category Breakdown Progress Mini-Cards */}
+        <div className="pt-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+          {slotStats.map((slot) => (
+            <div
+              key={slot.id}
+              className="bg-sanctuary-900/50 p-2.5 rounded-xl border border-sanctuary-800/80 space-y-1.5"
+            >
+              <div className="flex justify-between items-center text-[11px] font-mono">
+                <span className="text-sanctuary-300 font-medium">{slot.label}</span>
+                <span className="text-d2-gold font-bold">{slot.pct}%</span>
+              </div>
+              <div className="w-full h-1.5 bg-sanctuary-950 rounded-full overflow-hidden border border-sanctuary-800">
+                <div
+                  className="h-full bg-d2-gold/80 transition-all duration-300"
+                  style={{ width: `${slot.pct}%` }}
+                />
+              </div>
+              <div className="text-[10px] text-sanctuary-500 font-mono text-right">
+                {slot.obtained}/{slot.total}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="搜尋聖杯清單裝備名稱..."
-          className="w-full sm:w-72 bg-sanctuary-950 border border-sanctuary-800 rounded-lg px-3 py-2 text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none"
+          placeholder="搜尋聖杯清單裝備名稱、英文或底材..."
+          className="w-full sm:w-80 bg-sanctuary-950 border border-sanctuary-800 rounded-xl px-4 py-2 text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-gold"
         />
 
-        <div className="flex items-center gap-1.5 p-1 rounded-lg bg-sanctuary-900 border border-sanctuary-800 self-stretch sm:self-auto text-xs justify-center">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-sanctuary-900 border border-sanctuary-800 self-stretch sm:self-auto text-xs justify-center flex-wrap">
           <button
             onClick={() => setFilterMode('all')}
-            className={`px-3 py-1 rounded-md font-medium transition-colors ${
-              filterMode === 'all' ? 'bg-sanctuary-800 text-d2-gold' : 'text-sanctuary-400'
+            className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
+              filterMode === 'all' ? 'bg-sanctuary-800 text-d2-gold font-bold shadow' : 'text-sanctuary-400 hover:text-white'
             }`}
           >
             全部 ({allGrailItems.length})
           </button>
           <button
+            onClick={() => setFilterMode('tc87')}
+            className={`px-3 py-1.5 rounded-lg font-medium transition-colors flex items-center gap-1 ${
+              filterMode === 'tc87' ? 'bg-amber-400 text-sanctuary-950 font-bold shadow' : 'text-amber-400 hover:text-amber-300'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>TC87 殿堂 ({tc87Items.length})</span>
+          </button>
+          <button
             onClick={() => setFilterMode('missing')}
-            className={`px-3 py-1 rounded-md font-medium transition-colors ${
-              filterMode === 'missing' ? 'bg-sanctuary-800 text-d2-fire' : 'text-sanctuary-400'
+            className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
+              filterMode === 'missing' ? 'bg-sanctuary-800 text-d2-fire font-bold shadow' : 'text-sanctuary-400 hover:text-white'
             }`}
           >
             未獲得 ({totalCount - obtainedCount})
           </button>
           <button
             onClick={() => setFilterMode('obtained')}
-            className={`px-3 py-1 rounded-md font-medium transition-colors ${
-              filterMode === 'obtained' ? 'bg-sanctuary-800 text-d2-set' : 'text-sanctuary-400'
+            className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
+              filterMode === 'obtained' ? 'bg-sanctuary-800 text-d2-set font-bold shadow' : 'text-sanctuary-400 hover:text-white'
             }`}
           >
             已收集 ({obtainedCount})
@@ -248,41 +360,60 @@ export const HolyGrailTracker: React.FC = () => {
           return (
             <div
               key={item.id}
-              className={`p-3.5 rounded-xl border transition-all duration-150 flex items-center justify-between gap-3 ${
+              className={`p-3.5 rounded-2xl border transition-all duration-150 flex items-center justify-between gap-3 ${
                 isObtained
-                  ? 'bg-sanctuary-900/60 border-d2-set/30 shadow-sm'
-                  : 'bg-sanctuary-950 border-sanctuary-800/80 opacity-70 hover:opacity-100'
+                  ? 'bg-sanctuary-900/80 border-d2-set/50 shadow-md ring-1 ring-d2-set/20'
+                  : item.isTC87
+                  ? 'bg-sanctuary-950 border-amber-500/40 opacity-80 hover:opacity-100 hover:border-amber-400'
+                  : 'bg-sanctuary-950 border-sanctuary-800/80 opacity-60 hover:opacity-100'
               }`}
             >
               <div
                 onClick={() => toggleObtained(item.id)}
                 className="flex items-center gap-3 cursor-pointer min-w-0 flex-1"
               >
-                {isObtained ? (
-                  <CheckCircle2 className="w-5 h-5 text-d2-set shrink-0" />
-                ) : (
-                  <Circle className="w-5 h-5 text-sanctuary-600 shrink-0" />
-                )}
+                <div className="shrink-0">
+                  {isObtained ? (
+                    <CheckCircle2 className="w-5 h-5 text-d2-set" />
+                  ) : (
+                    <Circle className={`w-5 h-5 ${item.isTC87 ? 'text-amber-400/60' : 'text-sanctuary-600'}`} />
+                  )}
+                </div>
+
                 <div className="min-w-0">
-                  <div className={`font-bold text-xs truncate ${
-                    item.isSet ? 'text-d2-set' : 'text-d2-unique'
-                  } ${isObtained ? '' : 'line-through text-sanctuary-400'}`}>
-                    {item.name}
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span
+                      className={`font-diablo font-bold text-sm truncate ${
+                        item.isSet
+                          ? 'text-d2-set'
+                          : item.isTC87
+                          ? 'text-amber-300'
+                          : 'text-d2-unique'
+                      }`}
+                    >
+                      {item.name}
+                    </span>
+                    {item.isTC87 && (
+                      <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-amber-950 text-amber-300 border border-amber-700">
+                        TC87
+                      </span>
+                    )}
                   </div>
-                  <div className="text-[11px] text-sanctuary-400 truncate">
-                    {item.category} • <span className="text-sanctuary-500 font-mono">{item.nameEn}</span>
+                  <div className="text-[10px] font-mono text-sanctuary-400 truncate">
+                    {item.nameEn} • {item.category}
                   </div>
                 </div>
               </div>
 
-              {/* ETH Pill */}
+              {/* ETH checkbox toggle */}
               <button
+                type="button"
                 onClick={() => toggleEthereal(item.id)}
-                title="標記是否打到無形 (Ethereal) 版本"
-                className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border transition-colors shrink-0 ${
+                title="標記是否打到無形 (ETH) 版本"
+                className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold border transition-colors shrink-0 ${
                   isEth
-                    ? 'bg-sanctuary-750 text-white border-sanctuary-600 shadow'
-                    : 'bg-sanctuary-900 text-sanctuary-600 border-sanctuary-800 hover:text-sanctuary-400'
+                    ? 'bg-cyan-950 text-cyan-300 border-cyan-500 shadow-sm'
+                    : 'bg-sanctuary-900 text-sanctuary-500 border-sanctuary-800 hover:text-sanctuary-300'
                 }`}
               >
                 ETH

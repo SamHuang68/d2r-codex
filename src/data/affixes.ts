@@ -154,5 +154,79 @@ export const VALUATION_ITEMS_DATA: ValuationItem[] = [
     description: "極端純法傷害的極限突破頭具！鑲嵌 2 顆 5/5 彩虹刻面後，能提供高達 +3 技能、20% FCR、+10% 技能傷害與 -10% 敵抗性，傷害直接超越格利風！",
     farmingSources: "地獄賭博與大怪掉落藍色頭飾，在第五幕拉蘇克處打孔（藍裝打孔有 50% 機率出 2 孔）。",
     keyRule: "必須在拉蘇克打孔成功出 2 孔才值錢！若只打出 1 孔則價值暴跌。"
+  },
+  {
+    id: "tri_res_boots",
+    category: "boots",
+    name: "百抗高跑 FHR 極品亮黃三抗鞋",
+    nameEn: "Godly Tri-Res Rare Boots",
+    itemType: "輕型金屬靴 / 鯊皮靴 / 飛龍皮靴 (Boots)",
+    rarity: "rare",
+    idealStats: [
+      "+30% 跑步/步行速度 (FRW 滿變)",
+      "+10% 快速打擊恢復 (FHR 滿變)",
+      "抗火 +35-40%",
+      "抗電 +35-40%",
+      "抗毒 / 抗寒 +35-40%",
+      "+25% 較低毒素持續時間 (PLR) 或 打寶率 (MF)"
+    ],
+    estimatedValue: "總抗 110+ 滿跑 FHR 頂級三抗鞋身價 50-100+ 顆貝符文！",
+    description: "全遊戲抗性最極致的腳部神器！在缺少抗性的謎團配裝中，一雙三抗鞋能直接拉滿火抗與電抗，免去背包佔用大量護身符的困擾，競標市場永遠的神。",
+    farmingSources: "地獄賭博、瘸子議會成員、牛關小怪掉落亮黃靴子。",
+    keyRule: "三抗總和低於 80% 價值偏低；火抗 + 電抗 + (毒或寒) 總和突破 100% 且帶 30FRW 方可稱天價神鞋！"
+  },
+  {
+    id: "crafted_caster_amulet_2_20",
+    category: "amulet",
+    name: "2/20 極品手工施法項鍊",
+    nameEn: "Crafted Caster Amulet (+2 Skill / 20 FCR)",
+    itemType: "項鍊 (Amulet)",
+    rarity: "rare",
+    idealStats: [
+      "+2 職業全技能等級 (聖騎士 / 法師 / 死靈 / 術士)",
+      "+20% 快速施法速度 (FCR 手工固化 5-10% + 隨機詞綴 10%)",
+      "+20-30 力量 或 +15-20 敏捷",
+      "+40-60 生命 或 +80-110 法力",
+      "全抗性 +15-20%"
+    ],
+    estimatedValue: "頂級大極品 2/20/30力/20全抗身價 80-200 顆貝符文！",
+    description: "打破傳送與施法幀數臨界點的神物！暗金馬拉的萬花筒只有 2 技能與 30 全抗，而手工 2/20 項鍊提供了全遊戲唯二能湊齊 125 FCR 或 200 FCR 的關鍵拼圖。",
+    farmingSources: "方塊手工藝：魔法項鍊 (ilvl 90+) + 8號拉爾 (Ral) + 完美紫水晶 + 珠寶 (Jewel)。",
+    keyRule: "角色等級需達 93 級賭博出的項鍊才能穩定合成出 +2 職業技能！必須突破 15-20% FCR 才能超越馬拉。"
+  },
+  {
+    id: "fools_eth_rep_claw",
+    category: "weapon",
+    name: "愚人之自修快速極品巨鷹爪",
+    nameEn: "Fool's Eth Rep Greater Talons",
+    itemType: "巨鷹爪 / 符文爪 (Claw)",
+    rarity: "rare",
+    idealStats: [
+      "愚人詞綴 (Fool's: 隨等級大幅增加攻擊準確率與最大傷害)",
+      "+40% 攻擊速度 (IAS 滿變)",
+      "+2 刺客技能 / +3 雷光守衛 / +3 武器格擋",
+      "無形 (Ethereal 基礎增傷 50%)",
+      "自動修復耐久度 (Replenish Durability 33秒回1)"
+    ],
+    estimatedValue: "PvP 刺客至尊神兵！身價超越數百顆貝符文！",
+    description: "全暗黑世界最昂貴的近戰爪類武器之一！無形提升巨額基礎物理面板，自動修復保證永久不壞，愚人詞綴給予幾千點額外命中率，是刺客內戰與天梯對抗的終極殺手鐧。",
+    farmingSources: "地獄牛關、恰西注入、恐怖領域黃色爪。",
+    keyRule: "必須是『無形 (Eth)』且同時帶有『自修 (Rep)』！若無自修則耐久打光即報廢。"
+  },
+  {
+    id: "ruby_jewel_of_fervor_40_15",
+    category: "jewel",
+    name: "40增傷 / 15攻速 極品紅電寶珠 (40/15)",
+    nameEn: "Ruby Jewel of Fervor (40% ED / 15% IAS)",
+    itemType: "珠寶 (Jewel)",
+    rarity: "magic",
+    idealStats: [
+      "+40% 增強傷害 (Enhanced Damage, Ruby 滿變)",
+      "+15% 增加攻擊速度 (IAS, Fervor 滿變)"
+    ],
+    estimatedValue: "滿變單顆身價 15-25 顆貝符文！",
+    description: "物理弓馬風之力、巨魔巢穴盾牌、吉永之臉與各類頂級物理武器的最佳鑲嵌物。同時兼顧拉滿最高攻速檔位與百分比物理輸出爆發。",
+    farmingSources: "惡夢第三章後至地獄全圖掉落的魔法珠寶。",
+    keyRule: "ED (30-40%) 與 IAS (15%) 同時存在即為高價；未滿變 38/15 或 35/15 亦有極高價值。"
   }
 ];
