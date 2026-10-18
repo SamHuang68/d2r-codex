@@ -23,6 +23,7 @@ export const LootFilterTree: React.FC<LootFilterTreeProps> = ({
   onEquipItem,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [hoveredItem, setHoveredItem] = useState<{ item: CatalogItem; x: number; y: number } | null>(null);
   const [expandedTier1, setExpandedTier1] = useState<Record<string, boolean>>({
     armor: true,
     weapon: true,
@@ -34,6 +35,15 @@ export const LootFilterTree: React.FC<LootFilterTreeProps> = ({
     'weapon_菁英 (Elite)': true,
     'jewelry_傳奇聖物護身符': true,
   });
+
+  const toggleAll = (expand: boolean) => {
+    setExpandedTier1({ armor: expand, weapon: expand, jewelry: expand });
+    setExpandedTier2(prev => {
+      const next = { ...prev };
+      Object.keys(next).forEach(k => { next[k] = expand; });
+      return next;
+    });
+  };
 
   const toggleTier1 = (key: string) => {
     setExpandedTier1(prev => ({ ...prev, [key]: !prev[key] }));
@@ -99,16 +109,35 @@ export const LootFilterTree: React.FC<LootFilterTreeProps> = ({
           </p>
         </div>
 
-        {/* 搜尋欄 */}
-        <div className="relative w-full sm:w-64">
-          <Search className="w-4 h-4 text-sanctuary-500 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="搜尋神裝 (如 謎團、軍帽、40/15)..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-sanctuary-900 border border-sanctuary-750 rounded-xl text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-gold"
-          />
+        {/* 搜尋欄與控制開關 */}
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="relative w-full sm:w-64">
+            <Search className="w-4 h-4 text-sanctuary-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="搜尋裝備 (如 謎團、軍帽、40/15)..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 bg-sanctuary-900 border border-sanctuary-750 rounded-xl text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-gold"
+            />
+          </div>
+
+          <div className="flex items-center gap-1 shrink-0">
+            <button
+              onClick={() => toggleAll(true)}
+              className="px-2 py-2 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-800 text-xs font-mono text-sanctuary-300 border border-sanctuary-750"
+              title="全部展開"
+            >
+              展開
+            </button>
+            <button
+              onClick={() => toggleAll(false)}
+              className="px-2 py-2 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-800 text-xs font-mono text-sanctuary-400 border border-sanctuary-750"
+              title="全部折疊"
+            >
+              折疊
+            </button>
+          </div>
         </div>
       </div>
 
@@ -161,7 +190,7 @@ export const LootFilterTree: React.FC<LootFilterTreeProps> = ({
                           </span>
                         </button>
 
-                        {/* 第三層：具體裝備卡片 (帶圖示、可拖曳、一鍵穿戴) */}
+                        {/* 第三層：具體裝備卡片 (帶真實圖示、可拖曳、一鍵穿戴、懸浮預覽) */}
                         {isT2Open && (
                           <div className="p-2.5 grid grid-cols-1 gap-2">
                             {groupItems.map(item => {
@@ -179,6 +208,11 @@ export const LootFilterTree: React.FC<LootFilterTreeProps> = ({
                                   onDragStart={(e) => {
                                     e.dataTransfer.setData('application/json', JSON.stringify(item));
                                   }}
+                                  onMouseEnter={(e) => {
+                                    const rect = e.currentTarget.getBoundingClientRect();
+                                    setHoveredItem({ item, x: rect.right + 10, y: rect.top });
+                                  }}
+                                  onMouseLeave={() => setHoveredItem(null)}
                                   className="group bg-sanctuary-900/70 hover:bg-sanctuary-850 p-3 rounded-xl border border-sanctuary-800 hover:border-d2-gold/60 transition-all flex items-center justify-between gap-3 cursor-grab active:cursor-grabbing shadow-sm"
                                 >
                                   {/* 左側拖曳圖標與裝備名稱 */}
@@ -190,7 +224,9 @@ export const LootFilterTree: React.FC<LootFilterTreeProps> = ({
                                       baseItem={item.baseItem}
                                       slot={item.slot}
                                       rarity={item.itemType}
+                                      imageUrl={item.imageUrl}
                                       size="sm"
+                                      showBorder={false}
                                     />
 
                                     <div className="min-w-0">
@@ -220,7 +256,7 @@ export const LootFilterTree: React.FC<LootFilterTreeProps> = ({
 
                                     <button
                                       onClick={() => onEquipItem(item)}
-                                      className="px-2.5 py-1.5 rounded-lg bg-sanctuary-800 hover:bg-d2-gold hover:text-sanctuary-950 text-xs font-mono font-bold text-sanctuary-200 transition-colors border border-sanctuary-700 flex items-center gap-1"
+                                      className="px-2.5 py-1.5 rounded-lg bg-sanctuary-800 hover:bg-d2-gold hover:text-sanctuary-950 text-xs font-mono font-bold text-sanctuary-200 transition-colors border border-sanctuary-700 flex items-center gap-1 shadow-sm active:scale-95"
                                       title="點擊穿戴到對應裝備槽位"
                                     >
                                       <span>穿戴</span>
@@ -241,6 +277,44 @@ export const LootFilterTree: React.FC<LootFilterTreeProps> = ({
           );
         })}
       </div>
+
+      {/* 浮動 D2R 原生暗黑懸浮窗 (Item Tooltip) */}
+      {hoveredItem && (
+        <div
+          style={{ top: `${hoveredItem.y}px`, left: `${hoveredItem.x}px` }}
+          className="fixed z-50 pointer-events-none bg-black/95 border-2 border-d2-gold/80 rounded-2xl p-4 shadow-2xl max-w-xs space-y-2 text-center text-xs animate-fade-in ring-1 ring-amber-500/30"
+        >
+          <div className="flex justify-center mb-1">
+            <ItemIcon
+              name={hoveredItem.item.name}
+              nameEn={hoveredItem.item.nameEn}
+              baseItem={hoveredItem.item.baseItem}
+              slot={hoveredItem.item.slot}
+              rarity={hoveredItem.item.itemType}
+              imageUrl={hoveredItem.item.imageUrl}
+              size="md"
+            />
+          </div>
+          <div className="font-diablo text-base font-bold text-d2-gold">
+            {hoveredItem.item.name}
+          </div>
+          <div className="text-[11px] font-mono text-sanctuary-400">
+            {hoveredItem.item.nameEn} • {hoveredItem.item.baseItem}
+          </div>
+          {hoveredItem.item.requiredLevel > 1 && (
+            <div className="text-[11px] font-mono text-d2-blood font-bold">
+              需要等級: {hoveredItem.item.requiredLevel}
+            </div>
+          )}
+          <div className="border-t border-sanctuary-800 pt-2 space-y-1 text-left">
+            {hoveredItem.item.attributes.map((attr, aIdx) => (
+              <div key={aIdx} className="text-blue-300 text-[11px] leading-tight font-sans">
+                {attr}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
