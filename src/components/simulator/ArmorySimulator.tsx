@@ -12,6 +12,7 @@ import { PaperDoll } from './PaperDoll';
 import { StatsScreen } from './StatsScreen';
 import { LootFilterTree } from './LootFilterTree';
 import { SkillTreeSimulator } from './SkillTreeSimulator';
+import { CombatStatusBar } from './CombatStatusBar';
 import { 
   Swords, 
   RotateCcw, 
@@ -75,23 +76,33 @@ export const ArmorySimulator: React.FC<ArmorySimulatorProps> = ({
   // 4. 裝備槽位狀態
   const [equipped, setEquipped] = useState<EquippedSlots>(() => {
     // 預設給予聖騎士經典配裝
-    const findItem = (idOrName: string) => allCatalogItems.find(i => i.id === idOrName || i.name.includes(idOrName));
+    const findItem = (idOrName: string) => {
+      const clean = idOrName.toLowerCase().replace(/^(unique_|rw_|set_)/, '');
+      return allCatalogItems.find(i => 
+        i.id === idOrName || 
+        i.id === clean || 
+        i.id === `unique_${clean}` || 
+        i.id === `rw_${clean}` || 
+        i.name.includes(idOrName) || 
+        i.nameEn.toLowerCase().includes(clean)
+      );
+    };
     return {
-      helm: findItem("rw_flickering_flame") || findItem("unique_harlequin_crest") || allCatalogItems[0],
-      amulet: findItem("unique_maras_kaleidoscope"),
-      weapon1: findItem("rw_heart_of_the_oak"),
-      shield1: findItem("unique_herald_of_zakarum") || findItem("rw_spirit"),
-      weapon2: findItem("rw_call_to_arms"),
-      shield2: findItem("rw_spirit"),
-      armor: findItem("rw_enigma"),
-      gloves: findItem("unique_magefist"),
-      belt: findItem("unique_arachnid_mesh"),
-      ring1: findItem("unique_stone_of_jordan"),
-      ring2: findItem("unique_raven_frost") || findItem("unique_bul_kathos_wedding_band"),
-      boots: findItem("unique_war_traveler"),
+      helm: findItem("harlequin_crest") || findItem("flickering_flame") || allCatalogItems[0],
+      amulet: findItem("mara's_kaleidoscope") || findItem("maras_kaleidoscope"),
+      weapon1: findItem("heart_of_the_oak"),
+      shield1: findItem("herald_of_zakarum") || findItem("spirit"),
+      weapon2: findItem("call_to_arms"),
+      shield2: findItem("spirit"),
+      armor: findItem("enigma"),
+      gloves: findItem("magefist"),
+      belt: findItem("arachnid_mesh"),
+      ring1: findItem("stone_of_jordan"),
+      ring2: findItem("raven_frost"),
+      boots: findItem("war_traveler"),
       charms: [
-        findItem("charm_anni"),
-        findItem("charm_torch_paladin") || findItem("charm_torch_sorc"),
+        findItem("charm_annihilus"),
+        findItem("charm_torch"),
         findItem("charm_skiller_gc_x4")
       ].filter(Boolean) as CatalogItem[]
     };
@@ -123,7 +134,17 @@ export const ArmorySimulator: React.FC<ArmorySimulatorProps> = ({
   // 7. 切換職業時的預設配置載入
   const handleSelectClass = (clsName: string) => {
     setCharacterClass(clsName);
-    const findItem = (idOrName: string) => allCatalogItems.find(i => i.id === idOrName || i.name.includes(idOrName));
+    const findItem = (idOrName: string) => {
+      const clean = idOrName.toLowerCase().replace(/^(unique_|rw_|set_)/, '');
+      return allCatalogItems.find(i => 
+        i.id === idOrName || 
+        i.id === clean || 
+        i.id === `unique_${clean}` || 
+        i.id === `rw_${clean}` || 
+        i.name.includes(idOrName) || 
+        i.nameEn.toLowerCase().includes(clean)
+      );
+    };
 
     if (clsName === "魔法使") {
       setSkillPoints({ blizzard: 20, glacial_spike: 20, ice_blast: 20, cold_mastery: 20, teleport: 1, static_field: 1 });
@@ -339,17 +360,22 @@ export const ArmorySimulator: React.FC<ArmorySimulatorProps> = ({
 
   return (
     <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-      {/* 頂部全景控制列：職業切換、等級調整、流派預設 */}
-      <div className="bg-sanctuary-950/90 backdrop-blur-md rounded-3xl border border-sanctuary-800 p-4 sm:p-5 shadow-2xl flex flex-col xl:flex-row items-center justify-between gap-4">
-        {/* 左側：職業選單與等級調整 */}
+      {/* 頂部全景控制列：對齊 ASCII 規範 */}
+      <div className="bg-sanctuary-950/95 backdrop-blur-md rounded-3xl border-2 border-sanctuary-800 p-4 sm:p-5 shadow-2xl flex flex-col xl:flex-row items-center justify-between gap-4">
+        {/* 左側：主標題與職業選單 */}
         <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-d2-fire to-sanctuary-900 flex items-center justify-center p-0.5 shadow-glow-gold">
               <Swords className="w-4 h-4 text-sanctuary-100" />
             </div>
-            <span className="font-diablo text-lg font-bold text-sanctuary-100 tracking-wide">
-              全息模擬器
-            </span>
+            <div>
+              <span className="font-diablo text-base sm:text-lg font-bold text-d2-gold tracking-wide">
+                SANCTUARY CODEX • 獄火重生全息配裝模擬器
+              </span>
+              <span className="hidden sm:inline-block text-[11px] font-mono text-sanctuary-400 ml-2">
+                (D2R Armory & Build Simulator)
+              </span>
+            </div>
           </div>
 
           {/* 職業快速膠囊選擇 */}
@@ -368,30 +394,42 @@ export const ArmorySimulator: React.FC<ArmorySimulatorProps> = ({
               </button>
             ))}
           </div>
-
-          {/* 等級輸入 */}
-          <div className="flex items-center gap-2 bg-sanctuary-900/80 px-3 py-1.5 rounded-xl border border-sanctuary-800 text-xs">
-            <span className="text-sanctuary-400 font-mono">等級 Lv:</span>
-            <input
-              type="number"
-              min={1}
-              max={99}
-              value={level}
-              onChange={(e) => setLevel(Math.max(1, Math.min(99, parseInt(e.target.value) || 1)))}
-              className="w-12 bg-sanctuary-950 border border-sanctuary-700 rounded text-center text-d2-gold font-bold font-mono focus:outline-none focus:border-d2-unique"
-            />
-          </div>
         </div>
 
-        {/* 右側：快速分享與一鍵全空 */}
-        <div className="flex items-center gap-2.5 w-full xl:w-auto justify-end">
+        {/* 右側：等級、剩餘點數、分享與重置 */}
+        <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-end">
+          {/* 等級與剩餘點數指示器 (對齊 ASCII) */}
+          <div className="flex items-center gap-2 bg-sanctuary-900/90 px-3.5 py-1.5 rounded-2xl border border-sanctuary-800">
+            <span className="text-xs font-mono text-sanctuary-400">等級:</span>
+            <div className="flex items-center gap-1 bg-sanctuary-950 px-2 py-0.5 rounded-lg border border-sanctuary-700">
+              <span className="text-xs font-mono font-bold text-d2-unique">Lv</span>
+              <input
+                type="number"
+                min={1}
+                max={99}
+                value={level}
+                onChange={(e) => setLevel(Math.max(1, Math.min(99, parseInt(e.target.value) || 1)))}
+                className="w-10 bg-transparent text-center text-xs text-d2-gold font-bold font-mono focus:outline-none"
+              />
+            </div>
+
+            <span className="text-xs font-mono text-sanctuary-400 ml-1">剩餘點數:</span>
+            <div className={`px-2.5 py-0.5 rounded-lg border font-mono font-bold text-xs ${
+              unallocatedPoints > 0 
+                ? 'bg-amber-950/40 border-amber-600/60 text-d2-gold shadow-glow-gold' 
+                : 'bg-sanctuary-950 border-sanctuary-800 text-sanctuary-500'
+            }`}>
+              [ {unallocatedPoints} ]
+            </div>
+          </div>
+
           <button
             onClick={handleShareBuild}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-sanctuary-900 hover:bg-sanctuary-800 text-d2-gold border border-d2-gold/30 hover:border-d2-gold rounded-xl text-xs font-diablo transition-all shadow-md active:scale-95"
             title="複製此套裝備與屬性數值摘要"
           >
             <Share2 className="w-3.5 h-3.5" />
-            <span>分享配裝</span>
+            <span>分享</span>
           </button>
           <button
             onClick={() => setEquipped({ charms: [] })}
@@ -399,7 +437,7 @@ export const ArmorySimulator: React.FC<ArmorySimulatorProps> = ({
             title="清空身上全部裝備"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>卸除全部</span>
+            <span>清空</span>
           </button>
         </div>
       </div>
@@ -408,7 +446,6 @@ export const ArmorySimulator: React.FC<ArmorySimulatorProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* 左半邊 50% (lg:col-span-6): 1:1 遊戲裝備頁畫面 */}
         <div className="lg:col-span-6 space-y-4">
-          {/* 紙娃娃主畫面 */}
           <PaperDoll
             equipped={equipped}
             onEquipItem={handleEquipItem}
@@ -420,42 +457,42 @@ export const ArmorySimulator: React.FC<ArmorySimulatorProps> = ({
 
         {/* 右半邊 50% (lg:col-span-6): 3 個 Tab 標籤切換 */}
         <div className="lg:col-span-6 space-y-4">
-          {/* 3 大分頁切換列 */}
-          <div className="grid grid-cols-3 gap-2 p-1.5 bg-sanctuary-950/90 rounded-2xl border border-sanctuary-800 shadow-xl">
+          {/* 3 大分頁切換列 (對齊 ASCII) */}
+          <div className="grid grid-cols-3 gap-2 p-1.5 bg-sanctuary-950/90 rounded-2xl border-2 border-sanctuary-800 shadow-xl">
             <button
               onClick={() => setActiveTab('stats')}
-              className={`flex items-center justify-center gap-2 py-3 px-2 rounded-xl font-diablo text-sm transition-all duration-200 ${
+              className={`flex items-center justify-center gap-1.5 py-3 px-2 rounded-xl font-diablo text-xs sm:text-sm transition-all duration-200 ${
                 activeTab === 'stats'
                   ? 'bg-gradient-to-r from-d2-unique to-amber-600 text-sanctuary-950 font-bold shadow-lg shadow-amber-900/30 ring-1 ring-amber-300/40'
                   : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-900/60'
               }`}
             >
               <Activity className="w-4 h-4 shrink-0" />
-              <span>Tab 1 屬性配點頁</span>
+              <span>⚔️ Tab 1: 遊戲屬性頁</span>
             </button>
 
             <button
               onClick={() => setActiveTab('loot_tree')}
-              className={`flex items-center justify-center gap-2 py-3 px-2 rounded-xl font-diablo text-sm transition-all duration-200 ${
+              className={`flex items-center justify-center gap-1.5 py-3 px-2 rounded-xl font-diablo text-xs sm:text-sm transition-all duration-200 ${
                 activeTab === 'loot_tree'
                   ? 'bg-gradient-to-r from-d2-unique to-amber-600 text-sanctuary-950 font-bold shadow-lg shadow-amber-900/30 ring-1 ring-amber-300/40'
                   : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-900/60'
               }`}
             >
               <Layers className="w-4 h-4 shrink-0" />
-              <span>Tab 2 拾取樹狀選擇</span>
+              <span>📦 Tab 2: 樹狀裝備庫</span>
             </button>
 
             <button
               onClick={() => setActiveTab('skills')}
-              className={`flex items-center justify-center gap-2 py-3 px-2 rounded-xl font-diablo text-sm transition-all duration-200 ${
+              className={`flex items-center justify-center gap-1.5 py-3 px-2 rounded-xl font-diablo text-xs sm:text-sm transition-all duration-200 ${
                 activeTab === 'skills'
                   ? 'bg-gradient-to-r from-d2-unique to-amber-600 text-sanctuary-950 font-bold shadow-lg shadow-amber-900/30 ring-1 ring-amber-300/40'
                   : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-900/60'
               }`}
             >
               <Zap className="w-4 h-4 shrink-0" />
-              <span>Tab 3 技能樹協同頁</span>
+              <span>⚡ Tab 3: 技能樹</span>
             </button>
           </div>
 
@@ -497,6 +534,12 @@ export const ArmorySimulator: React.FC<ArmorySimulatorProps> = ({
           </div>
         </div>
       </div>
+
+      {/* 底部狀態即時連動條 (100% 寬度橫跨，對齊 ASCII 規範) */}
+      <CombatStatusBar
+        combatStats={combatStats}
+        characterClass={characterClass}
+      />
     </div>
   );
 };

@@ -136,7 +136,7 @@ export function calculateCombatStats(
   // 格擋率計算公式: Block% = min(75, floor( (盾牌總格擋率 * (Dex - 15)) / (Level * 2) ))
   let chanceToBlock = 0;
   if (equipped.shield1) {
-    const shieldTotalBlock = Math.min(75, gearBlockChance + holyShieldBlockBonus);
+    const shieldTotalBlock = gearBlockChance + holyShieldBlockBonus;
     if (shieldTotalBlock > 0 && totalDex > 15) {
       chanceToBlock = Math.min(75, Math.floor((shieldTotalBlock * (totalDex - 15)) / (level * 2)));
     }

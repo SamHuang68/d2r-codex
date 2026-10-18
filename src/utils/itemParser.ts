@@ -3,6 +3,7 @@ import { RUNEWORDS_DATA } from '../data/runewords';
 import { SET_ITEMS_DATA } from '../data/setItems';
 import { CatalogItem, SimulatorItemStats } from '../types/simulator';
 import { GearSlot } from '../types';
+import { resolveItemImagePath } from './itemImageResolver';
 
 /**
  * 從字串屬性陣列中精確解析出數值屬性
@@ -27,26 +28,38 @@ export function parseItemAttributes(attrs: string[]): SimulatorItemStats {
     const eneMatch = attr.match(/\+?(\d+)\s*精力/);
     if (eneMatch) stats.energy = (stats.energy || 0) + parseInt(eneMatch[1], 10);
 
-    // 生命
-    const lifeMatch = attr.match(/\+?(\d+)\s*(?:點)?生命/);
+    // 依角色等級縮放屬性 [X * clvl] (如軍帽生命/法力、謎團力量等)
+    const clvlMatch = attr.match(/\[(\d+(?:\.\d+)?)\s*\*\s*clvl\]/i);
+    if (clvlMatch) {
+      const mult = parseFloat(clvlMatch[1]);
+      const valueAt90 = Math.round(mult * 90);
+      if (attr.includes('生命')) stats.life = (stats.life || 0) + valueAt90;
+      if (attr.includes('法力')) stats.mana = (stats.mana || 0) + valueAt90;
+      if (attr.includes('力量')) stats.strength = (stats.strength || 0) + valueAt90;
+      if (attr.includes('敏捷')) stats.dexterity = (stats.dexterity || 0) + valueAt90;
+      if (attr.includes('體力')) stats.vitality = (stats.vitality || 0) + valueAt90;
+    }
+
+    // 生命 (固定點數)
+    const lifeMatch = attr.match(/\+(\d+)\s*(?:點)?生命(?!\s*\(依|\s*\[)/);
     if (lifeMatch && !attr.includes('%')) {
       stats.life = (stats.life || 0) + parseInt(lifeMatch[1], 10);
     }
 
     // 生命 %
-    const lifePctMatch = attr.match(/\+?(\d+)%\s*(?:最大)?生命/);
+    const lifePctMatch = attr.match(/(?:生命上限提高|生命上限增加|增加生命上限)\s*(\d+)%/i) || attr.match(/\+(\d+)%\s*(?:最大)?生命/i);
     if (lifePctMatch) {
       stats.lifePercent = (stats.lifePercent || 0) + parseInt(lifePctMatch[1], 10);
     }
 
-    // 法力
-    const manaMatch = attr.match(/\+?(\d+)\s*(?:點)?法力/);
+    // 法力 (固定點數)
+    const manaMatch = attr.match(/\+(\d+)\s*(?:點)?法力(?!\s*\(依|\s*\[)/);
     if (manaMatch && !attr.includes('%')) {
       stats.mana = (stats.mana || 0) + parseInt(manaMatch[1], 10);
     }
 
-    // 法力 %
-    const manaPctMatch = attr.match(/(?:增加法力上限|法力上限|\+)?\s*(\d+)%\s*法力/);
+    // 法力 % (如喬丹之石 25%、橡樹之心 15%)
+    const manaPctMatch = attr.match(/(?:法力上限提高|法力上限增加|增加法力上限)\s*(\d+)%/i) || attr.match(/\+(\d+)%\s*(?:最大)?法力/i);
     if (manaPctMatch) {
       stats.manaPercent = (stats.manaPercent || 0) + parseInt(manaPctMatch[1], 10);
     }
@@ -90,10 +103,15 @@ export function parseItemAttributes(attrs: string[]): SimulatorItemStats {
       stats.fbr = (stats.fbr || 0) + parseInt(fbrMatch[1], 10);
     }
 
-    // 格擋率
-    const blockMatch = attr.match(/\+?(\d+)%\s*(?:增加)?格擋機率/);
-    if (blockMatch) {
-      stats.blockChance = (stats.blockChance || 0) + parseInt(blockMatch[1], 10);
+    // 格擋率 (支援：格擋機率：82%、格擋機率提高 30%)
+    const blockMatch = attr.match(/(?:格擋機率[：:]|\+)?\s*(\d+)%\s*(?:增加|提高)?(?:格擋機率)?/);
+    if (blockMatch && (attr.includes('格擋機率') || attr.includes('格擋'))) {
+      const val = parseInt(blockMatch[1], 10);
+      if (attr.includes('提高') || attr.includes('增加') || attr.includes('+')) {
+        stats.blockChance = (stats.blockChance || 0) + val;
+      } else {
+        stats.blockChance = Math.max(stats.blockChance || 0, val);
+      }
     }
 
     // 全抗性
@@ -144,10 +162,11 @@ export function parseItemAttributes(attrs: string[]): SimulatorItemStats {
       stats.cannotBeFrozen = true;
     }
 
-    // 防禦值
-    const defMatch = attr.match(/\+(\d+)\s*防禦/);
+    // 防禦值 (支援：防禦：422-507、+750-775 防禦、+120 防禦)
+    const defMatch = attr.match(/(?:防禦[：:]|\+)\s*(?:(\d+)-)?(\d+)\s*(?:點)?防禦?/);
     if (defMatch && !attr.includes('%')) {
-      stats.defense = (stats.defense || 0) + parseInt(defMatch[1], 10);
+      const defVal = parseInt(defMatch[2] || defMatch[1], 10);
+      stats.defense = Math.max(stats.defense || 0, defVal);
     }
   });
 
@@ -226,6 +245,13 @@ export function buildCatalogItems(): CatalogItem[] {
       requiredLevel: u.requiredLevel,
       requiredStr: u.requiredStr,
       requiredDex: u.requiredDex,
+      imageUrl: u.imageUrl || resolveItemImagePath({
+        name: u.name,
+        nameEn: u.nameEn,
+        baseItem: u.baseItem,
+        slot: u.slot,
+        rarity: 'unique'
+      }),
       attributes: u.attributes,
       stats,
     });
@@ -250,6 +276,15 @@ export function buildCatalogItems(): CatalogItem[] {
       stats.blockChance = (stats.blockChance || 0) + 60;
     }
 
+    const rwBase = rw.recommendedBases || rw.allowedBases[0] || '符文底材';
+    const rwImg = resolveItemImagePath({
+      name: rw.name,
+      nameEn: rw.nameEn,
+      baseItem: rwBase,
+      slot,
+      rarity: 'runeword'
+    });
+
     items.push({
       id: `rw_${rw.id}`,
       name: `【符文語】${rw.name}`,
@@ -258,8 +293,9 @@ export function buildCatalogItems(): CatalogItem[] {
       itemType: 'runeword',
       categoryTier1: getCategoryTier1(slot),
       categoryTier2: rw.requiredLevel >= 60 ? '菁英 (Elite)' : '卓越 (Exceptional)',
-      baseItem: rw.recommendedBases || rw.allowedBases[0] || '符文底材',
+      baseItem: rwBase,
       requiredLevel: rw.requiredLevel,
+      imageUrl: rwImg,
       attributes: rw.attributes,
       stats,
     });
@@ -279,6 +315,13 @@ export function buildCatalogItems(): CatalogItem[] {
         categoryTier2: getCategoryTier2(piece.baseItem, piece.requiredLevel),
         baseItem: piece.baseItem,
         requiredLevel: piece.requiredLevel,
+        imageUrl: piece.imageUrl || resolveItemImagePath({
+          name: piece.name,
+          nameEn: piece.nameEn,
+          baseItem: piece.baseItem,
+          slot: piece.slot,
+          rarity: 'set'
+        }),
         attributes: piece.attributes,
         stats,
       });
@@ -394,6 +437,18 @@ export function buildCatalogItems(): CatalogItem[] {
       }
     }
   ];
+
+  holyCharms.forEach((charm) => {
+    if (!charm.imageUrl) {
+      charm.imageUrl = resolveItemImagePath({
+        name: charm.name,
+        nameEn: charm.nameEn,
+        baseItem: charm.baseItem,
+        slot: 'charm',
+        rarity: 'charm'
+      });
+    }
+  });
 
   items.push(...holyCharms);
 

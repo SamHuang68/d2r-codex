@@ -57,6 +57,7 @@ export interface CatalogItem {
   requiredLevel: number;
   requiredStr?: number;
   requiredDex?: number;
+  imageUrl?: string;
   attributes: string[];
   stats: SimulatorItemStats;
   iconType?: string;
