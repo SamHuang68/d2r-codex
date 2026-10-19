@@ -235,7 +235,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
         {/* 左半：裝備頁 */}
-        <div className="border border-sanctuary-600 bg-sanctuary-900 p-3">
+        <div className="min-w-0 border border-sanctuary-600 bg-sanctuary-900 p-3">
           <div className="text-d2-gold text-sm font-semibold mb-2">裝備欄</div>
           <PaperDollV2 engineClass={cls.en} equipped={equipped} charms={charms} swap={swap} onSwap={setSwap} dragging={dragging}
             canDrop={canDrop} onDropItem={place} onRemoveCharm={(i) => setCharms((c) => c.filter((_, j) => j !== i))}
@@ -263,7 +263,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
         </div>
 
         {/* 右半：三個 tab */}
-        <div className="border border-sanctuary-600 bg-sanctuary-900">
+        <div className="min-w-0 border border-sanctuary-600 bg-sanctuary-900">
           <div className="flex" role="tablist">
             {([['stats', '屬性頁'], ['gear', '樹狀裝備庫'], ['skills', '技能樹']] as [TabKey, string][]).map(([k, label]) => (
               <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}

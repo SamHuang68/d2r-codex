@@ -68,6 +68,16 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
   const cell = ((row.gridBoxWidth as number) || 29) * SCALE;
   const packed = packCharms(charms);
   const [hover, setHover] = React.useState<string | null>(null);
+  // 手機窄螢幕：以縮放保持遊戲座標不變（不產生橫向捲動）
+  const wrapRef = React.useRef<HTMLDivElement>(null);
+  const [scale, setScale] = React.useState(1);
+  React.useEffect(() => {
+    const el = wrapRef.current; if (!el) return;
+    const update = () => setScale(Math.min(1, el.clientWidth / 480));
+    update();
+    const ro = new ResizeObserver(update); ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const dropHandlers = (target: DollSlot | 'charms') => ({
     onDragOver: (e: React.DragEvent) => { if (dragging && canDrop(target, dragging) === null) { e.preventDefault(); setHover(target); } else if (dragging) { e.preventDefault(); setHover(target); } },
@@ -82,7 +92,8 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
   };
 
   return (
-    <div className="relative mx-auto bg-sanctuary-800 border border-sanctuary-600 select-none" style={{ width: 480, height: 662, maxWidth: '100%' }} aria-label="裝備欄">
+    <div ref={wrapRef} className="w-full min-w-0 mx-auto" style={{ maxWidth: 480, height: 662 * scale }}>
+    <div className="relative bg-sanctuary-800 border border-sanctuary-600 select-none origin-top-left" style={{ width: 480, height: 662, transform: `scale(${scale})` }} aria-label="裝備欄">
       <div className="absolute top-1 left-2 flex gap-1 z-10">
         {(['I', 'II'] as const).map((s) => (
           <button key={s} type="button" onClick={() => onSwap(s)} className={`px-3 text-xs border ${swap === s ? 'border-d2-gold text-d2-gold' : 'border-sanctuary-600 text-sanctuary-400'}`}>{s}</button>
@@ -134,6 +145,7 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
       ))}
       <div className="absolute right-4 bottom-4 w-14 h-14 border border-sanctuary-600 text-[11px] text-sanctuary-500 flex items-center justify-center">方塊</div>
       <div className="absolute left-2 bottom-3 text-[11px] text-sanctuary-500">護身符只有放在背包內才生效（遊戲規則）</div>
+    </div>
     </div>
   );
 };
