@@ -74,14 +74,15 @@ export const MagicArt: React.FC<Props> = ({ src, alt, box, fill, onError }) => {
         <clipPath id={`c${uid}`}><rect x={x} y={y} width={w} height={h} /></clipPath>
         {band && (
           <>
-            <filter id={`f${uid}`} x="-5%" y="-5%" width="110%" height="110%" colorInterpolationFilters="sRGB"><feGaussianBlur stdDeviation="8" /></filter>
+            <filter id={`f${uid}`} x="-5%" y="-5%" width="110%" height="110%" colorInterpolationFilters="sRGB"><feGaussianBlur stdDeviation="11" /></filter>
             <linearGradient id={`d${uid}`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stopColor="#080604" stopOpacity="0" />
-              <stop offset="1" stopColor="#080604" stopOpacity=".8" />
+              <stop offset="0.35" stopColor="#080604" stopOpacity=".55" />
+              <stop offset="1" stopColor="#080604" stopOpacity=".94" />
             </linearGradient>
             <linearGradient id={`m${uid}`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stopColor="#000" />
-              <stop offset=".3" stopColor="#fff" />
+              <stop offset=".18" stopColor="#fff" />
               <stop offset="1" stopColor="#fff" />
             </linearGradient>
             <mask id={`k${uid}`} maskUnits="userSpaceOnUse" x={x} y={by} width={w} height={bh}>
