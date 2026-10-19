@@ -82,6 +82,8 @@ export function resolveItemImagePath({
   slot = SLOT_ALIAS.get(String(slot)) ?? slot;
   const base = baseUrl ? (baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`) : '';
   const n = `${name} ${nameEn} ${baseItem}`.toLowerCase();
+  const isWeaponSlot = slot === 'weapon' || slot === 'mainHand';
+  const isArmorSlot = slot === 'armor' || slot === 'chest';
 
   // ──────────────────────────────────────────────
   // 1. 符文解析 (1-33# Runes)
@@ -165,7 +167,7 @@ export function resolveItemImagePath({
   if (n.includes('精華') || n.includes('essence')) {
     return `${base}images/items/props/essences.png`;
   }
-  if (n.includes('之鑰') || n.includes('鑰匙') || n.includes('key of') || n.includes('uber key')) {
+  if ((!isWeaponSlot && n.includes('之鑰')) || n.includes('鑰匙') || n.includes('key of') || n.includes('uber key')) {
     return `${base}images/items/props/uber_key.gif`;
   }
   if (n.includes('巴爾之眼') || n.includes('baal\'s eye') || n.includes('baals eye')) {
@@ -208,7 +210,7 @@ export function resolveItemImagePath({
   if (n.includes('地獄火炬') || n.includes('hellfire torch') || (n.includes('火炬') && !n.includes('艾羅') && !n.includes('iro'))) {
     return `${base}images/items/charms/torch.jpg`;
   }
-  if (n.includes('基德') || n.includes('gheed')) {
+  if ((n.includes('基德') || n.includes('gheed')) && slot !== 'belt') {
     return `${base}images/items/charms/gheeds.gif`;
   }
   if (n.includes('破免') || n.includes('碎焰') || n.includes('破火') || n.includes('flame rift') ||
@@ -548,6 +550,8 @@ export function resolveItemImagePath({
   if (n.includes('貝恩') || n.includes('bane\'s') || n.includes('banes')) {
     if (n.includes('風帽') || n.includes('hood') || slot === 'helm') return `${base}images/items/bases/demonhead.gif`;
     if (n.includes('法袍') || n.includes('robe') || slot === 'armor' || slot === 'chest') return `${base}images/items/bases/leather.gif`;
+    if (slot === 'belt') return `${base}images/items/bases/belt.gif`;
+    if (isWeaponSlot) return `${base}images/items/bases/grimwand.gif`;
     return `${base}images/items/bases/demonhead.gif`;
   }
 
@@ -555,6 +559,9 @@ export function resolveItemImagePath({
   if (n.includes('赫拉森') || n.includes('horazon')) {
     if (n.includes('冠冕') || n.includes('diadem') || slot === 'helm') return `${base}images/items/bases/diadem.gif`;
     if (n.includes('裹屍布') || n.includes('shroud') || slot === 'armor' || slot === 'chest') return `${base}images/items/bases/leather.gif`;
+    if (slot === 'gloves') return `${base}images/items/bases/leathergloves.gif`;
+    if (slot === 'boots') return `${base}images/items/bases/leatherboots.gif`;
+    if (isWeaponSlot) return `${base}images/items/bases/grimwand.gif`;
     return `${base}images/items/bases/demonhead.gif`;
   }
 
@@ -581,7 +588,7 @@ export function resolveItemImagePath({
   if (n.includes('矮人之星') || n.includes('矮人') || n.includes('dwarf star')) {
     return `${base}images/items/uniques/ring4.gif`;
   }
-  if (n.includes('鬼火投射者') || n.includes('鬼火') || n.includes('wisp projector')) {
+  if (n.includes('鬼火投射者') || (!isWeaponSlot && n.includes('鬼火')) || n.includes('wisp projector')) {
     return `${base}images/items/uniques/ring5.gif`;
   }
 
@@ -1231,7 +1238,7 @@ export function resolveItemImagePath({
   if (n.includes('流亡') || /\bexile\b/.test(n)) {
     return `${base}images/items/bases/sacred_targe.gif`;
   }
-  if (n.includes('馬賽克') || /\bmosaic\b/.test(n) || n.includes('混沌') || /\bchaos\b/.test(n)) {
+  if (n.includes('馬賽克') || /\bmosaic\b/.test(n) || (!isArmorSlot && (n.includes('混沌') || /\bchaos\b/.test(n)))) {
     return `${base}images/items/bases/claws.gif`;
   }
   if (n.includes('白骨') || (/\bwhite\b/.test(n) && (rarity === 'runeword' || !slot))) {
@@ -1319,7 +1326,7 @@ export function resolveItemImagePath({
   }
 
   // --- 盾牌 (Shields) ---
-  if (n.includes('神聖小盾') || n.includes('sacred targe') || n.includes('聖騎士') || n.includes('paladin shield') || n.includes('亞特瑪') || n.includes('庫拉斯特') || n.includes('撒卡蘭姆')) {
+  if ((n.includes('神聖小盾') || n.includes('sacred targe') || n.includes('聖騎士') || n.includes('paladin shield') || n.includes('亞特瑪') || n.includes('庫拉斯特') || n.includes('撒卡蘭姆')) && !isWeaponSlot && !isArmorSlot) {
     return `${base}images/items/bases/sacred_targe.gif`;
   }
   if (n.includes('統治者大盾') || n.includes('monarch')) {
@@ -1335,7 +1342,7 @@ export function resolveItemImagePath({
     return `${base}images/items/bases/demonhead.gif`;
   }
   if (n.includes('魔典') || n.includes('tome') || n.includes('grimoire')) {
-    return `${base}images/items/bases/demonhead.gif`;
+    return `${base}images/items/bases/${isWeaponSlot ? 'grimwand' : 'demonhead'}.gif`;
   }
   if (n.includes('盾牌') || n.includes('shield') || slot === 'shield' || slot === 'offHand') {
     return `${base}images/items/bases/monarch.gif`;
@@ -1357,7 +1364,7 @@ export function resolveItemImagePath({
   if (n.includes('鎖子甲') || n.includes('chain mail') || n.includes('mesh armor') || n.includes('羅瑟戰甲') || n.includes('russet armor')) {
     return `${base}images/items/bases/chainmail.gif`;
   }
-  if (n.includes('海妖') || n.includes('kraken shell') || n.includes('鋼絲絨') || n.includes('wire fleece') || n.includes('哥德') || n.includes('gothic plate')) {
+  if (n.includes('海妖') || n.includes('kraken shell') || n.includes('鋼絲絨') || n.includes('wire fleece') || (!isWeaponSlot && n.includes('哥德')) || n.includes('gothic plate')) {
     return `${base}images/items/bases/gothicplate.gif`;
   }
   if (n.includes('胸甲') || n.includes('breast plate') || n.includes('cuirass') || n.includes('護胸甲')) {
