@@ -15,7 +15,12 @@ interface Props {
   onAutoReq: () => void;
   onAllVit: () => void;
   onReset: () => void;
-  mainSkill?: { name: string; level: number; text: string } | null;
+  mainSkill?: { name: string; level: number; text: string; targetText?: string } | null;
+  targetRes: number;
+  onTargetRes: (n: number) => void;
+  buffs: { id: string; name: string; level: number; alwaysOn: boolean; on: boolean; source: string; lines: { supported: boolean; text: string }[] }[];
+  onToggleBuff: (id: string) => void;
+  enemyReduction: Partial<Record<string, number>>;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US');
@@ -51,7 +56,7 @@ const Row: React.FC<{ label: string; value: string; tone?: string; title?: strin
   </div>
 );
 
-export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc, remaining, needStr, needDex, onAdd, onAutoReq, onAllVit, onReset, mainSkill }) => {
+export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc, remaining, needStr, needDex, onAdd, onAutoReq, onAllVit, onReset, mainSkill, targetRes, onTargetRes, buffs, onToggleBuff, enemyReduction }) => {
   const [more, setMore] = useState(false);
   const a = result.attributes;
   const unmet: Record<string, boolean> = { str: a.str < needStr, dex: a.dex < needDex };
@@ -109,7 +114,8 @@ export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc
         {/* 右：結果欄位 */}
         <div className="space-y-1.5">
           <Row label="攻擊傷害（武器，未含技能）" value={wd ? `${fmt(wd.min)}–${fmt(wd.max)}` : '—'} tone="t-set" />
-          {mainSkill && <Row label={`主力技能：${mainSkill.name}${mainSkill.level ? ` Lv${mainSkill.level}` : ''}`} value={mainSkill.text} tone="t-set" title="遊戲技能表值（含協同）；未含專精、敵人抗性、光環與武器" />}
+          {mainSkill && <Row label={`主力技能：${mainSkill.name}${mainSkill.level ? ` Lv${mainSkill.level}` : ''}`} value={mainSkill.text} tone="t-set" title="遊戲技能表值（含協同、專精）；未含武器與傷害加成" />}
+          {mainSkill?.targetText && <Row label="　" value={mainSkill.targetText} tone="t-gold" />}
           <Row label="防禦" value={fmt(result.defense)} />
           <Row label="耐力" value={`${fmt(result.stamina)} / ${fmt(result.stamina)}`} tone="t-magic" />
           <Row label="生命" value={`${fmt(result.life)} / ${fmt(result.life)}`} tone="t-magic" />
@@ -128,6 +134,34 @@ export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc
               未達需求：{result.requirementsUnmet.map((u) => `${u.slot} 需 ${u.need}`).join('；')}
             </div>
           )}
+        </div>
+      </div>
+
+      <div className="mt-5">
+        <div className="t-gold text-sm tracking-[.2em] mb-2" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>戰鬥條件</div>
+        <div className="d2-row" style={{ flexWrap: 'wrap' }}>
+          <label className="d2-field">目標抗性
+            <select className="d2-select" value={[0, 25, 50, 75, 100].includes(targetRes) ? targetRes : 'custom'} onChange={(e) => { if (e.target.value !== 'custom') onTargetRes(Number(e.target.value)); }} aria-label="目標抗性預設">
+              {[0, 25, 50, 75, 100].map((n) => <option key={n} value={n}>{n === 100 ? '100（免疫）' : `${n}%`}</option>)}
+              <option value="custom">自訂</option>
+            </select>
+            <input type="number" className="d2-input" style={{ width: 70 }} min={-100} max={100} value={targetRes} onChange={(e) => onTargetRes(Math.max(-100, Math.min(100, Number(e.target.value) || 0)))} aria-label="目標抗性數值" />%
+          </label>
+          <span className="d2-sub">只影響主力技能的元素傷害；穿透（專精、衝擊光環、裝備）會先降低抗性{Object.keys(enemyReduction).length > 0 ? `（光環降低敵人抗性：${Object.entries(enemyReduction).map(([k, v]) => `${k} ${v}%`).join('、')}）` : ''}。</span>
+        </div>
+        <div className="mt-2 space-y-1.5">
+          {buffs.length === 0 && <div className="d2-sub">目前沒有可用的增益／光環。投入光環或戰吼技能，或裝備提供光環（如無限）後會出現在這裡。</div>}
+          {buffs.map((b) => (
+            <div key={b.id} className="d2-row" style={{ alignItems: 'flex-start' }}>
+              <label className="flex items-start gap-3 cursor-pointer min-w-0 flex-1">
+                <input type="checkbox" className="d2-check mt-0.5" checked={b.on} disabled={b.alwaysOn} onChange={() => onToggleBuff(b.id)} aria-label={`啟用 ${b.name}`} />
+                <span className="min-w-0">
+                  <span className="t-gold">{b.name}</span><span className="t-dim text-xs ml-2">Lv {b.level}　{b.source}{b.alwaysOn ? '（恆啟用）' : ''}</span>
+                  {b.lines.map((l, i) => <span key={i} className={`block text-xs ${l.supported ? 't-magic' : 't-dim'}`}>{l.text}</span>)}
+                </span>
+              </label>
+            </div>
+          ))}
         </div>
       </div>
 
