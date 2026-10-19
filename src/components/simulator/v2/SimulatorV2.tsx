@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { computeCharacter } from '../../../engine/character';
 import { gameData } from '../../../engine/data';
-import { ENGINE_CLASS_BY_CODE, SLOT_ZH, toEquipped, withBase, type CatalogEntry } from '../../../engine/catalog';
+import { ENGINE_CLASS_BY_CODE, SLOT_ZH, toEquipped, withBase, type CatalogEntry, type Group } from '../../../engine/catalog';
 import { autoAllocate } from '../../../engine/alloc';
 import { buildEngineItem } from '../../../engine/build';
 import { resolvePreset } from '../../../data/presetResolver';
@@ -15,6 +15,7 @@ import { describeEntry } from '../../../engine/describe';
 import { PaperDollV2, canFitCharm } from './PaperDollV2';
 import { AttributesTab } from './AttributesTab';
 import { GearTreeTab } from './GearTreeTab';
+import { GearPicker } from './GearPicker';
 import { SocketEditor } from './SocketEditor';
 import './d2skin.css';
 import { DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type Quests, type TabKey } from './types';
@@ -52,6 +53,8 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const [tab, setTab] = useState<TabKey>('stats');
   const [selected, setSelected] = useState<DollSlot | null>(null);
   const [dragging, setDragging] = useState<CatalogEntry | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerJump, setPickerJump] = useState<{ group: Group; seq: number } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [skillPoints, setSkillPoints] = useState<Record<string, number>>({});
   const [activeSkillId, setActiveSkillId] = useState<string>('');
@@ -319,7 +322,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
         <div className="d2-panel min-w-0">
           <div className="d2-tabs" role="tablist">
             {([['stats', '屬性頁'], ['gear', '樹狀裝備庫'], ['skills', '技能樹']] as [TabKey, string][]).map(([k, label]) => (
-              <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className="d2-tab">{label}</button>
+              <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => { setTab(k); if (k === 'gear') setPickerOpen(true); }} className="d2-tab">{label}</button>
             ))}
           </div>
           <div className="d2-panel-body">
@@ -329,7 +332,10 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
                 targetRes={targetRes} onTargetRes={setTargetRes} buffs={buffPanel} onToggleBuff={(id) => setBuffsOn((m) => ({ ...m, [id]: !m[id] }))}
                 enemyReduction={applied.enemyResReduction} />
             )}
-            {tab === 'gear' && <GearTreeTab level={level} engineClassCode={cls.code} onEquip={equip} onDragStart={setDragging} />}
+            {tab === 'gear' && (
+              <GearTreeTab open={pickerOpen} onClose={() => setPickerOpen(false)}
+                onOpen={(g) => { setPickerOpen(true); if (g) setPickerJump((j) => ({ group: g, seq: (j?.seq ?? 0) + 1 })); }} />
+            )}
             {tab === 'skills' && (
               <SkillTreeV2 classCode={cls.code} level={level} skillPoints={skillPoints} onUpdateSkillPoints={setSkillPoints}
                 activeSkillId={activeSkillId} onSetActiveSkillId={setActiveSkillId} bonuses={skillBonuses}
@@ -357,6 +363,9 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
           <div className="d2-orb is-mana" title="法力"><b>{result.mana.toLocaleString()}</b><span>法力</span></div>
         </div>
       </div>
+
+      <GearPicker open={pickerOpen} onClose={() => setPickerOpen(false)} level={level} engineClassCode={cls.code}
+        onEquip={equip} onDragStart={setDragging} jump={pickerJump} />
     </section>
   );
 };
