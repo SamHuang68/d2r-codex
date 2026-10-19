@@ -104,7 +104,9 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
           >
             {eq ? (
               <div className="flex flex-col items-center justify-center w-full h-full overflow-hidden p-0.5">
-                <ItemIcon name={eq.entry.name} nameEn={eq.entry.nameEn} baseItem={eq.entry.baseNameEn} slot={eq.entry.slot} rarity={rarityOf(eq.entry)} size={b.h > 150 ? 'xl' : b.h > 70 ? 'lg' : 'md'} showBorder={false} />
+                <div className="flex-1 min-h-0 w-full">
+                  <ItemIcon name={eq.entry.name} nameEn={eq.entry.nameEn} baseItem={eq.entry.baseNameEn} slot={eq.entry.slot} rarity={rarityOf(eq.entry)} fit="fill" showBorder={false} />
+                </div>
                 {b.h > 60 && <span className={`mt-0.5 text-center leading-tight text-[11px] ${eq.entry.kind === 'set' ? 'text-d2-set' : eq.entry.kind === 'unique' ? 'text-d2-unique' : eq.entry.kind === 'runeword' ? 'text-d2-unique' : 'text-sanctuary-200'}`}>{eq.entry.name}{eq.ethereal ? '（無形）' : ''}</span>}
               </div>
             ) : (
@@ -127,7 +129,7 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
         <div key={`${p.entry.id}-${i}`} className="absolute border border-d2-magic bg-sanctuary-900/90 flex items-center justify-center cursor-pointer"
           style={{ left: gridL + p.x * cell, top: gridT + p.y * cell, width: cell * (p.entry.width || 1), height: cell * (p.entry.height || 1) }}
           title={`${p.entry.name}（點擊卸下）`} onClick={() => onRemoveCharm(i)}>
-          <ItemIcon name={p.entry.name} nameEn={p.entry.nameEn} baseItem={p.entry.baseNameEn} slot="charm" rarity={rarityOf(p.entry)} size="md" showBorder={false} />
+          <ItemIcon name={p.entry.name} nameEn={p.entry.nameEn} baseItem={p.entry.baseNameEn} slot="charm" rarity={rarityOf(p.entry)} fit="fill" showBorder={false} />
         </div>
       ))}
       <div className="absolute right-4 bottom-4 w-14 h-14 border border-sanctuary-600 text-[11px] text-sanctuary-500 flex items-center justify-center">方塊</div>
