@@ -204,6 +204,11 @@ const statCols = ['Stat', '*ID', 'Signed', 'Send Bits', 'Save Bits', 'Save Add',
   'descpriority', 'descfunc', 'descval', 'descstrpos', 'descstrneg', 'descstr2', 'dgrp', 'dgrpfunc', 'dgrpval', 'dgrpstrpos', 'dgrpstrneg', 'dgrpstr2'];
 const stats = {};
 const usedStats = new Set(Object.values(properties).flatMap((p) => p.parts.map((x) => x.stat).filter(Boolean)));
+for (const r of tsv('skills.txt')) {
+  if (!r.charclass) continue;
+  for (let i = 1; i <= 6; i++) if (r[`aurastat${i}`]) usedStats.add(r[`aurastat${i}`]);
+  for (let i = 1; i <= 14; i++) if (r[`passivestat${i}`]) usedStats.add(r[`passivestat${i}`]);
+}
 for (const s of tsv('itemstatcost.txt')) {
   if (!usedStats.has(s.Stat) && !(s.op)) continue; // 保留被引用者與有 op（衍生屬性）者
   const o = {}; for (const c of statCols) if (s[c] !== undefined) o[c.replace(/\s+/g, '_').replace('*', '')] = num(s[c]);
@@ -220,12 +225,41 @@ const charstats = tsv('charstats.txt').filter((r) => r.class && r.class !== 'Exp
 });
 const skillRows = tsv('skills.txt').filter((r) => r.skill);
 const skillDesc = new Map(tsv('skilldesc.txt').map((r) => [r.skilldesc, r]));
-const skills = skillRows.map((r) => {
+const lev = (r, pre) => [1, 2, 3, 4, 5].map((i) => num(r[`${pre}${i}`]) ?? 0);
+const hasDamage = (r) => !!(r.EType || r.MinDam || r.MaxDam || r.SrcDam);
+const skills = skillRows.filter((r) => r.charclass && skillDesc.get(r.skilldesc)?.SkillPage).map((r) => {
   const d = skillDesc.get(r.skilldesc);
-  const nameKey = d?.['str name'];
-  return { id: num(r['*Id']), nameEn: r.skill, charClass: r.charclass, reqLevel: num(r.reqlevel), tree: d?.SkillPage, row: d?.SkillRow, col: d?.SkillColumn,
-    name: nameKey ? zh(nameKey) : undefined, nameKey };
+  const params = {};
+  for (let i = 1; i <= 20; i++) if (r[`Param${i}`] !== undefined) params[i] = num(r[`Param${i}`]);
+  const sk = {
+    id: slug(r.skill), gameId: num(r['*Id']), nameEn: r.skill, name: d['str name'] ? zh(d['str name']) : undefined,
+    charClass: r.charclass, page: num(d.SkillPage), row: num(d.SkillRow), col: num(d.SkillColumn),
+    reqLevel: num(r.reqlevel) ?? 1, maxLvl: num(r.maxlvl) ?? 20,
+    prereq: [r.reqskill1, r.reqskill2, r.reqskill3].filter(Boolean),
+    desc: zh(d['str long']) ?? zh(d['str short']) ?? undefined, alt: zh(d['str alt']) ?? undefined,
+    mana: { base: num(r.mana) ?? 0, perLvl: num(r.lvlmana) ?? 0, shift: num(r.manashift) ?? 0, min: num(r.minmana) ?? 0 },
+    passive: r.passive === '1' ? true : undefined, aura: r.aura === '1' ? true : undefined, summon: r.summon ? true : undefined,
+    params,
+  };
+  const unq = (v) => (v === undefined ? v : String(v).replace(/^"|"$/g, ''));
+  const auraStats = []; for (let i = 1; i <= 6; i++) if (r[`aurastat${i}`]) auraStats.push({ stat: r[`aurastat${i}`], calc: unq(r[`aurastatcalc${i}`]) });
+  const passiveStats = []; for (let i = 1; i <= 14; i++) if (r[`passivestat${i}`]) passiveStats.push({ stat: r[`passivestat${i}`], calc: unq(r[`passivecalc${i}`]) });
+  if (auraStats.length) { sk.auraStats = auraStats; sk.auraState = r.aurastate; sk.auraTargetState = r.auratargetstate; sk.auraLen = r.auralencalc; }
+  if (passiveStats.length) sk.passiveStats = passiveStats;
+  if (hasDamage(r)) {
+    sk.hitShift = num(r.HitShift) ?? 0;
+    if (r.EType) sk.elem = { type: r.EType, min: { b: num(r.EMin) ?? 0, lv: lev(r, 'EMinLev') }, max: { b: num(r.EMax) ?? 0, lv: lev(r, 'EMaxLev') }, syn: r.EDmgSymPerCalc };
+    if (r.MinDam || r.MaxDam) sk.phys = { min: { b: num(r.MinDam) ?? 0, lv: lev(r, 'MinLevDam') }, max: { b: num(r.MaxDam) ?? 0, lv: lev(r, 'MaxLevDam') }, syn: r.DmgSymPerCalc };
+    if (r.SrcDam) sk.srcDam = num(r.SrcDam);
+  }
+  return sk;
 });
+const skillByName = new Set(skills.map((x) => x.nameEn));
+const badPrereq = skills.flatMap((x) => x.prereq.filter((n) => !skillByName.has(n)).map((n) => `${x.nameEn}->${n}`));
+const CLASS_PREFIX = { ama: 'Am', sor: 'So', nec: 'Ne', pal: 'Pa', bar: 'Ba', dru: 'Dr', ass: 'As', war: 'Wa' };
+const skillTabs = {};
+for (const [code, pre] of Object.entries(CLASS_PREFIX)) skillTabs[code] = [1, 2, 3].map((i) => zh(`SkillCategory${pre}${i}`) ?? null);
+console.log('skills(UI):', skills.length, 'bad prereq:', badPrereq.length, badPrereq.slice(0, 5).join(','), '| tabs missing:', Object.values(skillTabs).flat().filter((x) => !x).length);
 
 // --- 版面：inventory.txt、UI 類別（拾取篩選器結構）---
 const inventory = tsv('inventory.txt').map((r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, num(v)])));
@@ -238,7 +272,7 @@ const write = (n, d) => fs.writeFileSync(path.join(outDir, n), JSON.stringify(d)
 write('meta.json', meta); write('itemtypes.json', itemtypes); write('bases.json', bases); write('uniques.json', uniques);
 write('gems.json', gems); write('sets.json', sets); write('setItems.json', setItems); write('runewords.json', runewords);
 write('properties.json', properties); write('stats.json', stats); write('statStrings.zhTW.json', statStrings);
-write('charstats.json', charstats); write('skills.json', skills); write('inventory.json', inventory); write('uiCategories.json', uiCategories);
+write('charstats.json', charstats); write('skills.json', skills); write('skillTabs.json', skillTabs); write('inventory.json', inventory); write('uiCategories.json', uiCategories);
 
 console.log(JSON.stringify(meta.counts));
 console.log('missing property defs:', missingProps.length, missingProps.slice(0, 20).join(','));

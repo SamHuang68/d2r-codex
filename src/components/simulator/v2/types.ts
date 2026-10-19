@@ -26,5 +26,5 @@ export const DOLL_SLOT_ZH: Record<DollSlot, string> = {
 
 export type TabKey = 'stats' | 'gear' | 'skills';
 export type Difficulty = 'normal' | 'nightmare' | 'hell';
-export interface Quests { lifePotions: number; anya: number; lamEsen: number }
+export interface Quests { lifePotions: number; anya: number; lamEsen: number; skillPts: number }
 export interface Alloc { str: number; dex: number; vit: number; ene: number }

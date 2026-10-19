@@ -9,6 +9,9 @@ import { SIM_PRESETS } from '../../../data/simulatorPresets';
 import { describeModifiers } from '../../../engine/describe';
 import type { EquippedItem } from '../../../engine/types';
 import { SkillTreeV2 } from './SkillTreeV2';
+import { auraEffects, damageText, effectiveLevel, passiveMods, skillById, skillDamage, skillLevelsFrom, skillPointBudget, targetDamageText, type DamageOptions, type GameSkill, type SkillBonuses } from '../../../engine/skills';
+import { applyBuffs, buffCandidates } from '../../../engine/buffs';
+import { describeEntry } from '../../../engine/describe';
 import { PaperDollV2, canFitCharm } from './PaperDollV2';
 import { AttributesTab } from './AttributesTab';
 import { GearTreeTab } from './GearTreeTab';
@@ -40,7 +43,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const [cls, setCls] = useState(CLASSES.find((c) => c.zh === initialClass) ?? CLASSES[1]);
   const [level, setLevel] = useState(90);
   const [difficulty, setDifficulty] = useState<Difficulty>('hell');
-  const [quests, setQuests] = useState<Quests>({ lifePotions: 3, anya: 3, lamEsen: 3 }) // 預設地獄、三難度任務皆完成；可調整;
+  const [quests, setQuests] = useState<Quests>({ lifePotions: 3, anya: 3, lamEsen: 3, skillPts: 3 }) // 預設地獄、三難度任務皆完成；可調整;
   const [alloc, setAlloc] = useState<Alloc>(ZERO);
   const [equipped, setEquipped] = useState<EquippedMap>({});
   const [charms, setCharms] = useState<CatalogEntry[]>([]);
@@ -52,6 +55,8 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const [toast, setToast] = useState<string | null>(null);
   const [skillPoints, setSkillPoints] = useState<Record<string, number>>({});
   const [activeSkillId, setActiveSkillId] = useState<string>('');
+  const [buffsOn, setBuffsOn] = useState<Record<string, boolean>>({});
+  const [targetRes, setTargetRes] = useState(0);
 
   const say = (m: string) => { setToast(m); window.setTimeout(() => setToast((t) => (t === m ? null : t)), 3500); };
 
@@ -71,9 +76,20 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     return out;
   }, [equipped, charms, swap, rollMax]);
 
-  const result = useMemo(() => computeCharacter(gameData, {
+  const baseInput = useMemo(() => ({
     className: cls.en, level, allocated: alloc, items: engineItems, difficulty, anyaScrolls: quests.anya, quests: { lifePotions: quests.lifePotions },
   }), [cls, level, alloc, engineItems, difficulty, quests]);
+  const baseResult = useMemo(() => computeCharacter(gameData, baseInput), [baseInput]);
+
+  const skillBonuses: SkillBonuses = useMemo(() => ({
+    all: baseResult.skills.all, byClass: baseResult.skills.byClass[cls.en] ?? 0, byTab: baseResult.skills.byTab, single: baseResult.skills.single,
+  }), [baseResult, cls]);
+
+  // 增益／光環：候選（裝備光環恆啟用；裝備給的外職業技能與本職業光環可勾選）
+  const candidates = useMemo(() => buffCandidates(cls.code, skillPoints, skillBonuses, baseResult.stats), [cls, skillPoints, skillBonuses, baseResult]);
+  const activeBuffs = useMemo(() => candidates.filter((c) => c.alwaysOn || buffsOn[c.skill.id]), [candidates, buffsOn]);
+  const applied = useMemo(() => applyBuffs(activeBuffs), [activeBuffs]);
+  const result = useMemo(() => computeCharacter(gameData, { ...baseInput, extraStats: applied.self }), [baseInput, applied]);
 
   const totalPoints = (level - 1) * 5 + quests.lamEsen * 5;
   const used = alloc.str + alloc.dex + alloc.vit + alloc.ene;
@@ -136,7 +152,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const unequip = (slot: DollSlot) => { setEquipped((m) => { const n = { ...m }; delete n[slot]; return n; }); setSelected(null); };
 
   const selectClass = (c: typeof CLASSES[number]) => {
-    setCls(c); setAlloc(ZERO); setSkillPoints({}); setActiveSkillId('');
+    setCls(c); setAlloc(ZERO); setSkillPoints({}); setActiveSkillId(''); setBuffsOn({});
     const dropped: string[] = [];
     setEquipped((m) => {
       const n: EquippedMap = {};
@@ -173,7 +189,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     const p = SIM_PRESETS.find((x) => x.id === id); if (!p) return;
     const c = CLASSES.find((x) => x.code === p.classCode)!;
     const r = resolvePreset(p);
-    setCls(c); setLevel(p.level); setDifficulty('hell'); setQuests({ lifePotions: 3, anya: 3, lamEsen: 3 }); setSkillPoints({}); setActiveSkillId('');
+    setCls(c); setLevel(p.level); setDifficulty('hell'); setQuests({ lifePotions: 3, anya: 3, lamEsen: 3, skillPts: 3 }); setSkillPoints({}); setActiveSkillId(''); setBuffsOn({});
     setEquipped(r.equipped); setCharms(r.charms); setSwap('I'); setSelected(null);
     // 以新狀態配點
     const items: EquippedItem[] = [];
@@ -191,7 +207,35 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const clearAll = () => { setEquipped({}); setCharms([]); setAlloc(ZERO); setSelected(null); };
 
   const selEq = selected ? equipped[selected] : undefined;
-  const skillsBonus = result.skills.all + (result.skills.byClass[cls.en] ?? 0);
+  // 專精、穿透、目標抗性 → 技能傷害選項
+  const mods = useMemo(() => passiveMods(skillPoints, skillBonuses), [skillPoints, skillBonuses]);
+  const damageOpts = (sk: GameSkill): DamageOptions => {
+    const el = sk.elem?.type as 'fire' | 'cold' | 'ltng' | 'pois' | 'mag' | undefined;
+    if (!el) return {};
+    return {
+      masteryPct: (mods.mastery[el] ?? 0) + (result.stats[`passive_${el}_mastery`] ?? 0),
+      pierce: (mods.pierce[el] ?? 0) + (result.stats[`passive_${el}_pierce`] ?? 0) + (applied.enemyResReduction[el] ?? 0),
+      targetRes,
+    };
+  };
+  // 主力技能的傷害（遊戲技能表值，含協同與專精；未含武器、傷害加成、敵人其他減傷）
+  const mainSkill = useMemo(() => {
+    const sk = activeSkillId ? skillById(activeSkillId) : undefined;
+    if (!sk) return null;
+    const hard = skillPoints[sk.id] ?? 0; const lvl = effectiveLevel(sk, hard, skillBonuses);
+    const d = skillDamage(sk, lvl, skillLevelsFrom(skillPoints, skillBonuses), damageOpts(sk));
+    return { name: sk.name ?? sk.nameEn, level: lvl, text: damageText(d) ?? (hard > 0 ? '此技能沒有傷害欄位' : '尚未投入技能點'), targetText: targetDamageText(d) };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSkillId, skillPoints, skillBonuses, mods, result, applied, targetRes]);
+
+  const skillBudget = skillPointBudget(level, quests.skillPts);
+  const skillUsed = Object.values(skillPoints).reduce((a2, b2) => a2 + b2, 0);
+
+  const buffPanel = candidates.map((c) => ({
+    id: c.skill.id, name: c.skill.name ?? c.skill.nameEn, level: c.level, alwaysOn: c.alwaysOn, on: c.alwaysOn || !!buffsOn[c.skill.id],
+    source: c.source === 'item-aura' ? '裝備光環' : c.source === 'item-skill' ? '裝備提供' : '本職業',
+    lines: auraEffects(c.skill, c.level),
+  })).map((b2) => ({ ...b2, lines: b2.lines.map((l) => ({ supported: l.supported, text: l.supported && l.value !== undefined ? (describeEntry({ stat: l.stat, value: l.value }, level) ?? `${l.stat} ${l.value}`) : `${l.stat}（公式未支援，未計入）` })) }));
 
   return (
     <section className="d2sim space-y-4" aria-label="配裝模擬器">
@@ -228,6 +272,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
             <NumSelect label="生命藥水" value={quests.lifePotions} max={3} onChange={(n) => setQuests((q) => ({ ...q, lifePotions: n }))} title="第三幕「金鳥」，每難度 +20 最大生命" />
             <NumSelect label="安亞卷軸" value={quests.anya} max={3} onChange={(n) => setQuests((q) => ({ ...q, anya: n }))} title="第五幕，每難度 +10 全抗" />
             <NumSelect label="拉姆艾森之書" value={quests.lamEsen} max={3} onChange={(n) => setQuests((q) => ({ ...q, lamEsen: n }))} title="第三幕，每難度 +5 屬性點" />
+            <NumSelect label="技能點任務" value={quests.skillPts} max={3} onChange={(n) => setQuests((q) => ({ ...q, skillPts: n }))} title="魔物巢穴 1、拉瑪達 1、伊祖爾 2，每難度共 +4 技能點（社群共識，未於遊戲內核對）" />
             <label className="d2-field" title="裝備詞綴範圍值取上限或下限">屬性取值
               <select value={rollMax ? 'max' : 'min'} onChange={(e) => setRollMax(e.target.value === 'max')} className="d2-select">
                 <option value="max">上限</option><option value="min">下限</option>
@@ -280,12 +325,15 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
           <div className="d2-panel-body">
             {tab === 'stats' && (
               <AttributesTab className={cls.zh} level={level} result={result} alloc={alloc} remaining={remaining} needStr={needStr} needDex={needDex}
-                onAdd={onAdd} onAutoReq={onAutoReq} onAllVit={onAllVit} onReset={() => setAlloc(ZERO)} />
+                onAdd={onAdd} onAutoReq={onAutoReq} onAllVit={onAllVit} onReset={() => setAlloc(ZERO)} mainSkill={mainSkill}
+                targetRes={targetRes} onTargetRes={setTargetRes} buffs={buffPanel} onToggleBuff={(id) => setBuffsOn((m) => ({ ...m, [id]: !m[id] }))}
+                enemyReduction={applied.enemyResReduction} />
             )}
             {tab === 'gear' && <GearTreeTab level={level} engineClassCode={cls.code} onEquip={equip} onDragStart={setDragging} />}
             {tab === 'skills' && (
-              <SkillTreeV2 className={cls.zh} level={level} skillPoints={skillPoints} onUpdateSkillPoints={setSkillPoints}
-                activeSkillId={activeSkillId} onSetActiveSkillId={setActiveSkillId} allSkillsBonus={skillsBonus} />
+              <SkillTreeV2 classCode={cls.code} level={level} skillPoints={skillPoints} onUpdateSkillPoints={setSkillPoints}
+                activeSkillId={activeSkillId} onSetActiveSkillId={setActiveSkillId} bonuses={skillBonuses}
+                damageOpts={damageOpts} budget={skillBudget} used={skillUsed} />
             )}
           </div>
         </div>
@@ -304,7 +352,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
               </span>
             </div>
             {result.weaponDamage && <div className="d2-stat"><span className="k">武器傷害</span><span className="v">{result.weaponDamage.min}–{result.weaponDamage.max}</span></div>}
-            <div className="d2-sub w-full text-center">未計入：光環／戰吼／BO／變身／技能傷害</div>
+            <div className="d2-sub w-full text-center">光環與戰吼只計 lnXY 公式；變身、衰減類光環未計入</div>
           </div>
           <div className="d2-orb is-mana" title="法力"><b>{result.mana.toLocaleString()}</b><span>法力</span></div>
         </div>
