@@ -157,6 +157,10 @@ export function resolveItemImagePath({
   if (n.includes('完美寶石') || n.includes('perfect gem')) {
     return `${base}images/items/props/perfect_amethyst.gif`;
   }
+  // 四種精華各有獨立圖（過去共用一張 4 合 1 的格子截圖）
+  if (n.includes('痛苦精華') || n.includes('essence of suffering')) return 'https://static.d2r.world/img/items/misc/twisted_essence_of_suffering.jpg';
+  if (n.includes('恐懼精華') || n.includes('essence of terror')) return 'https://static.d2r.world/img/items/misc/burning_essence_of_terror.jpg';
+  if (n.includes('毀滅精華') || n.includes('essence of destruction')) return 'https://static.d2r.world/img/items/misc/festering_essence_of_destruction.jpg';
   if (n.includes('精華') || n.includes('essence')) {
     return `${base}images/items/props/essences.png`;
   }

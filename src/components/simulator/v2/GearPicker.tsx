@@ -47,12 +47,29 @@ const useWide = () => {
   return wide;
 };
 
+/** 窄螢幕底部抽屜要讓出左側導覽欄：側欄寬度會隨「收合」變動（176 ↔ 48），需即時量測；<1024px 側欄隱藏時為 0 */
+const useSideNavWidth = () => {
+  const [w, setW] = useState(0);
+  useEffect(() => {
+    const el = document.querySelector('aside');
+    if (!el) { setW(0); return; }
+    const measure = () => setW(getComputedStyle(el).display === 'none' ? 0 : Math.round(el.getBoundingClientRect().width));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    window.addEventListener('resize', measure);
+    return () => { ro.disconnect(); window.removeEventListener('resize', measure); };
+  }, []);
+  return w;
+};
+
 const Chip: React.FC<{ on: boolean; label: string; onClick: () => void }> = ({ on, label, onClick }) => (
   <button type="button" aria-pressed={on} onClick={onClick} className={`d2-chip ${on ? 'is-on' : ''}`}>{label}</button>
 );
 
 export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassCode, onEquip, onDragStart, jump }) => {
   const wide = useWide();
+  const sideW = useSideNavWidth();
   const [rarity, setRarity] = useState<Record<Rarity, boolean>>({ unique: true, set: true, runeword: true, base: false });
   const [tiers, setTiers] = useState<Record<Tier, boolean>>({ normal: true, exceptional: true, elite: true });
   const [onlyMyClass, setOnlyMyClass] = useState(true);
@@ -146,7 +163,9 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
   const rarityText = RARITIES.filter((r) => rarity[r]).map((r) => RARITY_ZH[r]).join('・') || '未選';
   const tierText = TIERS.filter((t) => tiers[t]).map((t) => TIER_ZH[t]).join('・') || '未選';
 
-  const floatStyle: React.CSSProperties = wide && pos ? { left: pos.x, top: pos.y, width: WIDTH, height: minimized ? 'auto' : 'min(72vh, 680px)' } : {};
+  const floatStyle: React.CSSProperties = wide
+    ? (pos ? { left: pos.x, top: pos.y, width: WIDTH, height: minimized ? 'auto' : 'min(72vh, 680px)' } : {})
+    : { left: sideW };
 
   return (
     <>
