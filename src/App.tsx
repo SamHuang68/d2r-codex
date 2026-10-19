@@ -27,15 +27,32 @@ import { CharacterGuide } from './components/codex/CharacterGuide';
 import { PropCompendium } from './components/codex/PropCompendium';
 import { RUNEWORDS_DATA } from './data/runewords';
 import { normalizeItemQuery } from './utils/itemQueryNormalizer';
-import { ArmorySimulator } from './components/simulator/ArmorySimulator';
+import { SimulatorV2 } from './components/simulator/v2/SimulatorV2';
+
+const KNOWN_TABS = ['overview', 'characters', 'skills', 'runewords', 'items', 'props', 'bases', 'quests', 'mercenaries', 'valuation', 'uber', 'runes', 'cube', 'breakpoints', 'areas', 'grail', 'planner'];
+/** 網址 #planner 可直接開啟對應分頁（例如配裝模擬器） */
+const tabFromHash = (): string => {
+  const h = typeof window !== 'undefined' ? window.location.hash.replace(/^#/, '') : '';
+  return KNOWN_TABS.includes(h) ? h : 'overview';
+};
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [activeTab, setActiveTab] = useState<string>(tabFromHash);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [selectedInitialClass, setSelectedInitialClass] = useState<string>('魔法使');
   const [targetQuery, setTargetQuery] = useState<string>('');
   const [targetRuneNumber, setTargetRuneNumber] = useState<number | undefined>();
   const [plannerSubMode, setPlannerSubMode] = useState<'armory' | 'notes'>('armory');
+
+  // 分頁與網址 hash 同步，方便直接連結與重新整理後停留原頁
+  useEffect(() => {
+    if (window.location.hash.replace(/^#/, '') !== activeTab) window.history.replaceState(null, '', `#${activeTab}`);
+  }, [activeTab]);
+  useEffect(() => {
+    const onHash = () => setActiveTab(tabFromHash());
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
 
   // Global hotkey 'Q' or '/' to open search modal
   useEffect(() => {
@@ -226,10 +243,7 @@ export const App: React.FC = () => {
             </div>
 
             {plannerSubMode === 'armory' ? (
-              <ArmorySimulator 
-                initialClass={selectedInitialClass} 
-                onNavigateItem={handleItemOrRunewordNavigate}
-              />
+              <SimulatorV2 initialClass={selectedInitialClass} />
             ) : (
               <BuildPlanner 
                 onNavigateToSkills={(cls) => {
