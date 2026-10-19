@@ -25,7 +25,10 @@ export function describeEntry(e: StatEntry, level = 90): string | undefined {
     const v = Math.floor((e.value * level) / 2 ** (d0.op_param ?? 0));
     const target = d0.op_stat1;
     const nm: Record<string, string> = { maxhp: '生命', maxmana: '法力', strength: '力量', dexterity: '敏捷', vitality: '體能', energy: '能量', armorclass: '防禦', tohit: '準確率', maxdamage: '最大傷害' };
-    return `+${v} ${nm[target] ?? target}（依角色等級 ${level}）`;
+    if (nm[target]) return `+${v} ${nm[target]}（依角色等級 ${level}）`;
+    // 其他目標屬性（例如尋獲魔法物品）：套用該屬性自己的描述範本
+    const tpl = statDefs[target]?.descstrpos ? strs[statDefs[target].descstrpos as string] : undefined;
+    return tpl ? `${fmt(tpl, v)}（依角色等級 ${level}）` : `+${v} ${target}（依角色等級 ${level}）`;
   }
   if (e.stat === 'item_allskills') return `${e.value >= 0 ? '+' : ''}${e.value} 所有技能`;
   if (e.stat === 'item_addclassskills') return `${e.value >= 0 ? '+' : ''}${e.value} ${CLASS_ZH_BY_INDEX[Number(e.param)] ?? CLASS_INDEX[Number(e.param)] ?? ''}技能等級`;
