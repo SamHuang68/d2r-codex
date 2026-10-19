@@ -220,10 +220,27 @@ assertEqual(
   'Key of Destruction must resolve to existing uber_key.gif'
 );
 
+// 痛苦／恐懼／毀滅精華各自有圖（過去三者共用一張 4 合 1 的格子截圖 essences.png）
 assertEqual(
   resolveItemImagePath({ name: '痛苦精華', nameEn: 'Twisted Essence of Suffering' }),
+  'https://static.d2r.world/img/items/misc/twisted_essence_of_suffering.jpg',
+  'Twisted Essence of Suffering must resolve to its own image'
+);
+assertEqual(
+  resolveItemImagePath({ name: '燃燒的恐懼精華', nameEn: 'Burning Essence of Terror' }),
+  'https://static.d2r.world/img/items/misc/burning_essence_of_terror.jpg',
+  'Burning Essence of Terror must resolve to its own image'
+);
+assertEqual(
+  resolveItemImagePath({ name: '潰爛的毀滅精華', nameEn: 'Festering Essence of Destruction' }),
+  'https://static.d2r.world/img/items/misc/festering_essence_of_destruction.jpg',
+  'Festering Essence of Destruction must resolve to its own image'
+);
+// 沒有專屬圖的精華（憎恨精華遠端圖庫 404）與泛稱仍使用 essences.png
+assertEqual(
+  resolveItemImagePath({ name: '充能的憎恨精華', nameEn: 'Charged Essence of Hatred' }),
   'images/items/props/essences.png',
-  'Twisted Essence of Suffering must resolve to existing essences.png'
+  'Charged Essence of Hatred must resolve to existing essences.png'
 );
 
 assertFileExists('images/items/props/horadric_cube.gif', 'Props: horadric_cube.gif');
