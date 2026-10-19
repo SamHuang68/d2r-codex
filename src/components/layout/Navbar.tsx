@@ -1,20 +1,6 @@
 import React from 'react';
-import { 
-  Flame, 
-  Sparkles, 
-  BookOpen, 
-  Layers, 
-  Compass, 
-  Trophy, 
-  Search, 
-  Sword, 
-  MapPin, 
-  Users, 
-  Gem, 
-  Skull,
-  ShieldAlert,
-  FlaskConical
-} from 'lucide-react';
+import { Flame, Search } from 'lucide-react';
+import { NAV_GROUPS, ALL_NAV_MODULES } from './navConfig';
 
 interface NavbarProps {
   activeTab: string;
@@ -22,36 +8,14 @@ interface NavbarProps {
   onOpenSearch: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-  activeTab,
-  setActiveTab,
-  onOpenSearch,
-}) => {
-  const navItems = [
-    { id: 'overview', label: '主頁展演', icon: <Flame className="w-3.5 h-3.5" /> },
-    { id: 'characters', label: '角色寶典', icon: <Users className="w-3.5 h-3.5 text-d2-fire" /> },
-    { id: 'skills', label: '技能寶典', icon: <Sparkles className="w-3.5 h-3.5 text-d2-gold" /> },
-    { id: 'runewords', label: '符文之語', icon: <Sparkles className="w-3.5 h-3.5 text-d2-unique" /> },
-    { id: 'items', label: '裝備寶典', icon: <Sword className="w-3.5 h-3.5 text-d2-unique" /> },
-    { id: 'props', label: '道具聖物', icon: <FlaskConical className="w-3.5 h-3.5 text-d2-magic" /> },
-    { id: 'bases', label: '底材寶典', icon: <ShieldAlert className="w-3.5 h-3.5 text-d2-socket" /> },
-    { id: 'quests', label: '任務事件', icon: <Compass className="w-3.5 h-3.5 text-d2-gold" /> },
-    { id: 'mercenaries', label: '傭兵寶典', icon: <Users className="w-3.5 h-3.5 text-d2-gold" /> },
-    { id: 'valuation', label: '鑑寶估價', icon: <Gem className="w-3.5 h-3.5 text-d2-magic" /> },
-    { id: 'uber', label: '紅門六王', icon: <Skull className="w-3.5 h-3.5 text-d2-fire" /> },
-    { id: 'runes', label: '符文寶庫', icon: <Layers className="w-3.5 h-3.5 text-d2-rune" /> },
-    { id: 'cube', label: '方塊工坊', icon: <BookOpen className="w-3.5 h-3.5 text-d2-magic" /> },
-    { id: 'breakpoints', label: '機制斷點', icon: <Compass className="w-3.5 h-3.5 text-d2-fire" /> },
-    { id: 'areas', label: '場景恐區', icon: <MapPin className="w-3.5 h-3.5 text-d2-fire" /> },
-    { id: 'grail', label: '聖杯打寶', icon: <Trophy className="w-3.5 h-3.5 text-d2-gold" /> },
-    { id: 'planner', label: '配裝模擬', icon: <Sword className="w-3.5 h-3.5 text-d2-unique" /> },
-  ];
+/** 頂部列：品牌、目前所在頁、搜尋；桌面版的完整分頁導覽由 SideNav 提供 */
+export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenSearch }) => {
+  const current = ALL_NAV_MODULES.find((m) => m.id === activeTab);
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-sanctuary-950/90 backdrop-blur-md border-b border-sanctuary-800/80 transition-all duration-200">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-        {/* Brand Logo */}
-        <div 
+    <header className="sticky top-0 z-40 w-full bg-sanctuary-950/90 backdrop-blur-md border-b border-sanctuary-800/80">
+      <div className="px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
+        <div
           onClick={() => setActiveTab('overview')}
           className="flex items-center gap-2.5 cursor-pointer group shrink-0"
         >
@@ -64,36 +28,22 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="font-diablo text-sm md:text-base font-bold tracking-wider text-sanctuary-100 group-hover:text-d2-unique transition-colors">
               SANCTUARY CODEX
             </div>
-            <div className="text-[9px] text-d2-unique/80 font-mono tracking-widest uppercase">
+            <div className="hidden sm:block text-[9px] text-d2-unique/80 font-mono tracking-widest uppercase">
               暗黑II：獄火重生 全資料庫
             </div>
           </div>
         </div>
 
-        {/* Center Nav tabs - Desktop */}
-        <nav className="hidden lg:flex items-center gap-1 overflow-x-auto py-1 scrollbar-none">
-          {navItems.map((item) => {
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 whitespace-nowrap shrink-0 ${
-                  isActive
-                    ? 'bg-sanctuary-800 text-d2-unique shadow-sm border border-sanctuary-700 font-bold'
-                    : 'text-sanctuary-300 hover:text-sanctuary-100 hover:bg-sanctuary-900/60'
-                }`}
-              >
-                <span>{item.icon}</span>
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
-        </nav>
+        {current && (
+          <div className="hidden md:flex items-center gap-2 text-sm text-sanctuary-300 min-w-0">
+            <span className="text-sanctuary-600">/</span>
+            {current.icon}
+            <span className="font-bold text-d2-unique truncate">{current.label}</span>
+            <span className="hidden xl:inline text-xs text-sanctuary-500 truncate">{current.desc}</span>
+          </div>
+        )}
 
-        {/* Right side Actions */}
-        <div className="flex items-center gap-2 shrink-0">
-          {/* Quick Search Button */}
+        <div className="flex items-center gap-2 shrink-0 ml-auto">
           <button
             onClick={onOpenSearch}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-sanctuary-300 hover:text-sanctuary-100 text-xs transition-colors shadow-inner"
@@ -110,3 +60,44 @@ export const Navbar: React.FC<NavbarProps> = ({
     </header>
   );
 };
+
+/** 桌面側邊導覽：5 組、17 個分頁全部常駐可見 */
+export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) => void }> = ({
+  activeTab,
+  setActiveTab,
+}) => (
+  <aside className="hidden lg:block w-56 shrink-0 border-r border-sanctuary-800/80 bg-sanctuary-950/60">
+    <nav className="sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-y-auto no-scrollbar py-3 px-3 space-y-3">
+      {NAV_GROUPS.map((group) => (
+        <div key={group.category}>
+          <div className="px-2 mb-1.5 text-[10px] font-mono font-bold tracking-widest text-sanctuary-500 uppercase">
+            {group.category}
+          </div>
+          <div className="space-y-0.5">
+            {group.items.map((item) => {
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveTab(item.id);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  title={item.desc}
+                  className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-sm text-left transition-colors border ${
+                    isActive
+                      ? 'bg-sanctuary-800 text-d2-unique border-d2-unique/40 font-bold'
+                      : 'text-sanctuary-300 border-transparent hover:text-sanctuary-100 hover:bg-sanctuary-900'
+                  }`}
+                >
+                  <span className="shrink-0">{item.icon}</span>
+                  <span className="truncate">{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </nav>
+  </aside>
+);

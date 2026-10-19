@@ -2,6 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { RUNEWORDS_DATA } from '../../data/runewords';
 import { cleanSearchQuery, normalizeItemQuery } from '../../utils/itemQueryNormalizer';
 import { ItemIcon } from '../common/ItemIcon';
+import { BASE_ITEMS_DATA } from '../../data/bases';
+import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
+import { PageHeader } from '../common/PageHeader';
 import { Search, Sparkles, Filter, X } from 'lucide-react';
 
 export interface RunewordFinderProps {
@@ -21,6 +24,36 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
   const [selectedTag, setSelectedTag] = useState<string>('all');
   const [onlyLadder, setOnlyLadder] = useState<boolean>(false);
   const [onlyDLC, setOnlyDLC] = useState<boolean>(false);
+  const [group, setGroup] = useState<string>('all');
+  const [visibleCount, setVisibleCount] = useState<number>(24);
+
+  // 以可鑲嵌底材分組的大圖分類磚（與下方底材下拉並行運作）
+  const GROUPS: { id: string; label: string; match: (b: string[]) => boolean; rep: string }[] = [
+    { id: 'all', label: '全部符文之語', match: () => true, rep: 'Archon Plate' },
+    { id: 'armor', label: '護甲', match: (b) => b.some((x) => x.includes('護甲')), rep: 'Archon Plate' },
+    { id: 'helm', label: '頭盔', match: (b) => b.some((x) => x.includes('頭盔')), rep: 'Shako' },
+    { id: 'shield', label: '盾牌', match: (b) => b.some((x) => x.includes('盾牌')), rep: 'Monarch' },
+    { id: 'melee', label: '近戰武器', match: (b) => b.some((x) => /近戰武器|^武器$|刀劍|斧|釘鎚|重槌|權杖|短棒/.test(x)), rep: 'Phase Blade' },
+    { id: 'bow', label: '弓或弩', match: (b) => b.some((x) => x.includes('弓')), rep: 'Hydra Bow' },
+    { id: 'staff', label: '法杖・魔杖', match: (b) => b.some((x) => /法杖|魔杖/.test(x)), rep: 'Archon Staff' },
+    { id: 'polearm', label: '長柄・長矛', match: (b) => b.some((x) => /長柄|長矛/.test(x)), rep: 'Thresher' },
+    { id: 'claw', label: '爪・匕首', match: (b) => b.some((x) => /爪|拳刃|匕首/.test(x)), rep: 'Runic Talons' },
+  ];
+  const baseImg = (nameEn: string) => {
+    const b = BASE_ITEMS_DATA.find((i) => i.nameEn === nameEn);
+    return { name: b?.name, nameEn: b?.nameEn, baseItem: b?.name, rarity: 'normal' as const, imageUrl: b?.imageUrl };
+  };
+  const repFor = (bases: string[]) => {
+    const g = GROUPS.find((x) => x.id !== 'all' && x.match(bases));
+    return baseImg(g ? g.rep : 'Phase Blade');
+  };
+  const groupTiles: CategoryTile[] = GROUPS.map((g) => ({
+    id: g.id,
+    label: g.label,
+    count: RUNEWORDS_DATA.filter((rw) => g.match(rw.allowedBases)).length,
+    tone: g.id === 'all' ? 'neutral' : 'rune',
+    icon: baseImg(g.rep),
+  }));
 
   // Sync initialQuery when prop changes
   React.useEffect(() => {
@@ -66,6 +99,10 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
         }
       }
 
+      // 分類磚
+      const g = GROUPS.find((x) => x.id === group);
+      if (g && !g.match(rw.allowedBases)) return false;
+
       // Sockets
       if (selectedSockets !== 'all' && rw.sockets !== selectedSockets) {
         return false;
@@ -93,7 +130,9 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
 
       return true;
     });
-  }, [searchQuery, selectedSockets, selectedBase, selectedTag, onlyLadder, onlyDLC]);
+  }, [searchQuery, selectedSockets, selectedBase, selectedTag, onlyLadder, onlyDLC, group]);
+
+  React.useEffect(() => { setVisibleCount(24); }, [searchQuery, selectedSockets, selectedBase, selectedTag, onlyLadder, onlyDLC, group]);
 
   const resetFilters = () => {
     setSearchQuery('');
@@ -102,26 +141,30 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
     setSelectedTag('all');
     setOnlyLadder(false);
     setOnlyDLC(false);
+    setGroup('all');
   };
 
   return (
     <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h2 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-unique flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-d2-unique" />
-              <span>符文之語全能檢索手冊</span>
-            </h2>
-            <p className="text-xs sm:text-sm text-sanctuary-400 mt-1">
-              包含全經典、天梯限定及最新《術士軍臨》DLC 符文之語，支援按底材孔數與關鍵屬性即時交叉篩選。
-            </p>
-          </div>
-          <div className="text-xs text-sanctuary-400 font-mono self-start md:self-auto px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800">
+      <PageHeader
+        icon={<Sparkles className="w-6 h-6" />}
+        title="符文之語全能檢索手冊"
+        desc="包含全經典、天梯限定及最新《術士軍臨》DLC 符文之語，支援按底材孔數與關鍵屬性即時交叉篩選。"
+        right={
+          <div className="text-xs text-sanctuary-400 font-mono self-start px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800">
             已收錄 <span className="text-d2-unique font-bold">{RUNEWORDS_DATA.length}</span> 組 • 篩選符合 <span className="text-d2-set font-bold">{filteredRunewords.length}</span> 組
           </div>
-        </div>
+        }
+      />
+
+      <div className="mb-5">
+        <CategoryTiles
+          tiles={groupTiles}
+          activeId={group}
+          onSelect={setGroup}
+          iconSize="lg"
+          className="grid-cols-3 sm:grid-cols-5 xl:grid-cols-9"
+        />
       </div>
 
       {/* Filter Toolbar */}
@@ -240,8 +283,8 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
           查無符合目前條件的符文之語，請嘗試放寬篩選條件。
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredRunewords.map((rw) => (
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+          {filteredRunewords.slice(0, visibleCount).map((rw) => (
             <div
               key={rw.id}
               className="bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-unique/50 rounded-xl p-5 shadow-lg transition-all duration-200 flex flex-col justify-between group"
@@ -251,12 +294,10 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                 <div className="flex items-start justify-between gap-3 pb-3 border-b border-sanctuary-850">
                   <div className="flex items-start gap-3">
                     <ItemIcon
-                      name={rw.name}
-                      nameEn={rw.nameEn}
-                      baseItem={rw.allowedBases[0]}
+                      {...repFor(rw.allowedBases)}
                       rarity="runeword"
-                      size="md"
-                      imageUrl={rw.imageUrl}
+                      size="lg"
+                      imageUrl={rw.imageUrl || repFor(rw.allowedBases).imageUrl}
                     />
                     <div>
                       <div className="flex items-center gap-2">
@@ -307,8 +348,8 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                 </div>
 
                 {/* Rune Sequence */}
-                <div className="py-2.5 flex items-center gap-1.5 flex-wrap">
-                  <span className="text-xs text-sanctuary-400 font-semibold mr-1">鑲嵌順序:</span>
+                <div className="py-3 flex items-end gap-2 flex-wrap">
+                  <span className="text-xs text-sanctuary-400 font-semibold mr-1 self-center">鑲嵌順序:</span>
                   {rw.runes.map((r, i) => (
                     <button
                       key={i}
@@ -317,12 +358,13 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                         e.stopPropagation();
                         onNavigateToRune?.(rw.runeNumbers[i]);
                       }}
-                      className="group/rune px-2 py-1 text-xs font-mono font-bold rounded-lg bg-d2-rune/15 hover:bg-d2-rune/30 text-d2-rune hover:text-white border border-d2-rune/30 hover:border-d2-rune transition-all hover:scale-105 cursor-pointer shadow-sm flex items-center gap-1.5"
+                      className="group/rune flex flex-col items-center gap-1 px-2 pt-2 pb-1.5 rounded-lg bg-d2-rune/10 hover:bg-d2-rune/25 border border-d2-rune/30 hover:border-d2-rune transition-all hover:scale-105 cursor-pointer min-w-[64px]"
                       title={`點擊跳轉查看 ${rw.runeNumbers[i]}號 符文詳細屬性與方塊合成`}
                     >
-                      <ItemIcon runeNumber={rw.runeNumbers[i]} size="xs" showBorder={false} />
-                      <span>{rw.runeNumbers[i]}# {r}</span>
-                      <span className="text-[9px] opacity-0 group-hover/rune:opacity-100 transition-opacity">↗</span>
+                      <ItemIcon runeNumber={rw.runeNumbers[i]} size="sm" showBorder={false} />
+                      <span className="text-[11px] font-mono font-bold text-d2-rune group-hover/rune:text-white leading-none">
+                        {rw.runeNumbers[i]}# {r}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -362,6 +404,16 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               </div>
             </div>
           ))}
+        </div>
+      )}
+      {filteredRunewords.length > visibleCount && (
+        <div className="text-center mt-6">
+          <button
+            onClick={() => setVisibleCount((c) => c + 24)}
+            className="px-6 py-2.5 rounded-xl bg-sanctuary-900 border border-sanctuary-700 hover:border-d2-unique text-sm text-sanctuary-200"
+          >
+            顯示更多（已顯示 {visibleCount} / {filteredRunewords.length} 組）
+          </button>
         </div>
       )}
     </div>

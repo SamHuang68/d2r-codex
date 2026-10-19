@@ -102,13 +102,13 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
                             className="px-2.5 py-1 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-800 border border-d2-rune/40 hover:border-d2-rune text-xs text-d2-rune hover:text-white font-mono font-medium transition-all cursor-pointer shadow-sm flex items-center gap-1.5 group/rune"
                             title={`點擊查看 ${runeNum}# 符文詳細屬性與升級配方`}
                           >
-                            <ItemIcon runeNumber={runeNum} size="xs" showBorder={false} />
+                            <ItemIcon runeNumber={runeNum} size="sm" showBorder={false} />
                             <span>{inp}</span>
                             <span className="text-[9px] opacity-60 group-hover/rune:opacity-100">↗</span>
                           </button>
                         ) : (
                           <span className="px-2.5 py-1 rounded-lg bg-sanctuary-900 border border-sanctuary-750 text-xs text-sanctuary-200 font-medium flex items-center gap-1.5">
-                            <ItemIcon name={inp} size="xs" showBorder={false} />
+                            <ItemIcon name={inp} size="sm" showBorder={false} />
                             <span>{inp}</span>
                           </span>
                         )}
@@ -124,7 +124,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
                   <ArrowRight className="w-4 h-4 text-d2-unique shrink-0" />
                   <span>轉化產出：</span>
                   <div className="flex items-center gap-1.5">
-                    <ItemIcon name={recipe.output} size="xs" showBorder={false} />
+                    <ItemIcon name={recipe.output} size="sm" showBorder={false} />
                     <span className="text-d2-unique font-bold">{recipe.output}</span>
                   </div>
                 </div>

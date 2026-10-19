@@ -3,20 +3,12 @@ import {
   Flame, 
   Sparkles, 
   Sword, 
-  BookOpen, 
-  Compass, 
-  Trophy, 
-  MapPin, 
-  ShieldAlert, 
   Users, 
-  FlaskConical,
   Menu,
   X,
-  Gem,
-  Skull,
-  Layers,
-  Wrench
 } from 'lucide-react';
+
+import { NAV_GROUPS } from './navConfig';
 
 interface MobileNavProps {
   activeTab: string;
@@ -40,45 +32,8 @@ export const MobileNav: React.FC<MobileNavProps> = ({
     { id: 'items', label: '裝備', icon: <Sword className="w-5 h-5 text-d2-unique" /> },
   ];
 
-  // 全站 17 大功能完整分類模組
-  const allModules = [
-    {
-      category: '英雄與加點',
-      items: [
-        { id: 'characters', label: '英雄寶典', icon: <Users className="w-4 h-4 text-d2-fire" />, desc: '8大職業屬性與Meta流派' },
-        { id: 'skills', label: '全技能樹', icon: <Sparkles className="w-4 h-4 text-d2-gold" />, desc: '6x3 遊戲畫布與協同矩陣' },
-        { id: 'planner', label: '配裝工坊', icon: <Wrench className="w-4 h-4 text-sanctuary-300" />, desc: '全身 10 部位配裝試算' },
-      ]
-    },
-    {
-      category: '神兵與基底',
-      items: [
-        { id: 'runewords', label: '符文之語', icon: <Sparkles className="w-4 h-4 text-d2-unique" />, desc: '全天梯符文之語速查' },
-        { id: 'items', label: '暗金套裝', icon: <Sword className="w-4 h-4 text-d2-unique" />, desc: '暗金神裝與綠色全套' },
-        { id: 'bases', label: '底材寶典', icon: <ShieldAlert className="w-4 h-4 text-d2-socket" />, desc: '打孔、超強與力量敏捷要求' },
-        { id: 'runes', label: '符文寶庫', icon: <Layers className="w-4 h-4 text-d2-rune" />, desc: '1~33號符文掉落與鑲嵌' },
-      ]
-    },
-    {
-      category: '聖物與方塊工藝',
-      items: [
-        { id: 'props', label: '道具聖物', icon: <FlaskConical className="w-4 h-4 text-d2-magic" />, desc: '寶石、鑰匙、精華與藥劑' },
-        { id: 'cube', label: '方塊工坊', icon: <BookOpen className="w-4 h-4 text-d2-magic" />, desc: '打孔、升級、手工裝配方' },
-        { id: 'valuation', label: '鑑寶估價', icon: <Gem className="w-4 h-4 text-d2-fire" />, desc: '極品詞綴與線上估價器' },
-      ]
-    },
-    {
-      category: '戰役、機制與終局',
-      items: [
-        { id: 'quests', label: '任務世界事件', icon: <Compass className="w-4 h-4 text-d2-gold" />, desc: '永久獎勵任務與事件圖說' },
-        { id: 'breakpoints', label: '機制斷點', icon: <Compass className="w-4 h-4 text-d2-fire" />, desc: 'FCR/FHR/FBR與滿格擋試算' },
-        { id: 'areas', label: '場景恐區', icon: <MapPin className="w-4 h-4 text-d2-fire" />, desc: '85 級場景與恐怖領域' },
-        { id: 'uber', label: '紅門六王', icon: <Skull className="w-4 h-4 text-d2-fire" />, desc: '火炬地獄崔斯特姆流水線' },
-        { id: 'mercenaries', label: '傭兵寶典', icon: <Users className="w-4 h-4 text-d2-gold" />, desc: '四大傭兵光環與終極神裝' },
-        { id: 'grail', label: '聖杯打寶', icon: <Trophy className="w-4 h-4 text-d2-gold" />, desc: 'TC87 殿堂與全裝備打寶打勾' },
-      ]
-    }
-  ];
+  // 全站 17 大功能完整分類模組（與桌面側邊欄共用同一份設定）
+  const allModules = NAV_GROUPS;
 
   const handleSelectTab = (tabId: string) => {
     setActiveTab(tabId);

@@ -129,7 +129,7 @@ export const PaperDoll: React.FC<PaperDollProps> = ({
             </button>
 
             {/* 裝備真實立繪貼圖 */}
-            <div className="my-auto drop-shadow-md">
+            <div className="flex-1 min-h-0 w-full drop-shadow-md">
               <ItemIcon
                 name={item.name}
                 nameEn={item.nameEn}
@@ -137,7 +137,7 @@ export const PaperDoll: React.FC<PaperDollProps> = ({
                 slot={item.slot}
                 rarity={item.itemType}
                 imageUrl={item.imageUrl}
-                size={widthHeightClass.includes('h-36') ? 'lg' : widthHeightClass.includes('w-20') ? 'md' : 'sm'}
+                fit="fill"
                 showBorder={false}
               />
             </div>
@@ -208,10 +208,10 @@ export const PaperDoll: React.FC<PaperDollProps> = ({
       <div className="max-w-md mx-auto w-full py-2 space-y-3">
         {/* Row 1: 頭盔 Helm (居中) + 右側項鍊 Amulet */}
         <div className="relative flex items-center justify-center">
-          <div className="w-24 h-24">
+          <div className="w-24 h-24 sm:w-28 sm:h-28">
             {renderSlot('helm', '頭盔 Helm', 'w-full h-full', 'helm')}
           </div>
-          <div className="absolute right-4 sm:right-10 top-2 w-16 h-16">
+          <div className="absolute right-0 sm:right-6 top-2 w-16 h-16 sm:w-20 sm:h-20">
             {renderSlot('amulet', '項鍊 Amulet', 'w-full h-full', 'amulet')}
           </div>
         </div>
@@ -219,7 +219,7 @@ export const PaperDoll: React.FC<PaperDollProps> = ({
         {/* Row 2: 主手武器 (I/II) + 胸甲護甲 Armor + 副手盾牌 (I/II) */}
         <div className="flex items-center justify-center gap-3 sm:gap-4">
           {/* 主手武器 */}
-          <div className="w-24 h-36">
+          <div className="w-24 h-40 sm:w-28 sm:h-44">
             {renderSlot(
               activeWeaponSlot,
               `主手 [${weaponSwap}]`,
@@ -229,12 +229,12 @@ export const PaperDoll: React.FC<PaperDollProps> = ({
           </div>
 
           {/* 軀幹護甲 */}
-          <div className="w-28 h-36">
+          <div className="w-28 h-40 sm:w-32 sm:h-44">
             {renderSlot('armor', '護甲 Armor', 'w-full h-full', 'armor')}
           </div>
 
           {/* 副手盾牌 */}
-          <div className="w-24 h-36">
+          <div className="w-24 h-40 sm:w-28 sm:h-44">
             {renderSlot(
               activeShieldSlot,
               `副手 [${weaponSwap}]`,
@@ -247,27 +247,27 @@ export const PaperDoll: React.FC<PaperDollProps> = ({
         {/* Row 3: 左手套 + 腰帶 + 右靴子 (兩側夾左戒指與右戒指) */}
         <div className="flex items-center justify-center gap-2 sm:gap-3">
           {/* 手套 Gloves */}
-          <div className="w-20 h-20">
+          <div className="w-[72px] h-[72px] sm:w-24 sm:h-24">
             {renderSlot('gloves', '手套 Gloves', 'w-full h-full', 'gloves')}
           </div>
 
           {/* 左戒指 Ring 1 */}
-          <div className="w-14 h-14">
+          <div className="w-[52px] h-[52px] sm:w-16 sm:h-16">
             {renderSlot('ring1', '左戒指', 'w-full h-full', 'ring')}
           </div>
 
           {/* 腰帶 Belt */}
-          <div className="w-24 h-14">
+          <div className="w-[72px] h-[52px] sm:w-24 sm:h-16">
             {renderSlot('belt', '腰帶 Belt', 'w-full h-full', 'belt')}
           </div>
 
           {/* 右戒指 Ring 2 */}
-          <div className="w-14 h-14">
+          <div className="w-[52px] h-[52px] sm:w-16 sm:h-16">
             {renderSlot('ring2', '右戒指', 'w-full h-full', 'ring')}
           </div>
 
           {/* 靴子 Boots */}
-          <div className="w-20 h-20">
+          <div className="w-[72px] h-[72px] sm:w-24 sm:h-24">
             {renderSlot('boots', '靴子 Boots', 'w-full h-full', 'boots')}
           </div>
         </div>
@@ -311,7 +311,7 @@ export const PaperDoll: React.FC<PaperDollProps> = ({
                   slot="charm" 
                   rarity="charm" 
                   imageUrl={charm.imageUrl}
-                  size="xs" 
+                  size="sm" 
                   showBorder={false} 
                 />
                 <span className="font-diablo text-xs text-d2-gold truncate max-w-[130px]">
@@ -348,7 +348,7 @@ export const PaperDoll: React.FC<PaperDollProps> = ({
               slot={hoveredItem.item.slot}
               rarity={hoveredItem.item.itemType}
               imageUrl={hoveredItem.item.imageUrl}
-              size="md"
+              size="lg"
             />
           </div>
           <div className="font-diablo text-base font-bold text-d2-gold">
