@@ -62,6 +62,12 @@ export function evalCalc(src: string, ctx: CalcContext): number {
       if (id === 'lvl') { if (ctx.lvl === undefined) throw new CalcError('缺少 lvl'); return ctx.lvl; }
       if (id === 'blvl') { if (ctx.blvl === undefined) throw new CalcError('缺少 blvl'); return ctx.blvl; }
       if (id === 'clvl') { if (ctx.clvl === undefined) throw new CalcError('缺少 clvl'); return ctx.clvl; }
+      const ln = /^ln(\d)(\d)$/.exec(id); // lnXY：以 parX 為 1 級值、parY 為每級增量（Might 40＋10/級、火焰專精 30＋7/級）
+      if (ln) {
+        if (ctx.lvl === undefined) throw new CalcError('缺少 lvl');
+        const g = (n: number) => { const v = ctx.params[n]; const x = typeof v === 'number' ? v : v === undefined || v === '' ? NaN : Number(v); if (Number.isNaN(x)) throw new CalcError(`未定義 par${n}`); return x; };
+        return g(Number(ln[1])) + g(Number(ln[2])) * (ctx.lvl - 1);
+      }
       const m = /^par(\d+)$/.exec(id);
       if (m) { const v = ctx.params[Number(m[1])]; const n = typeof v === 'number' ? v : v === undefined || v === '' ? NaN : Number(v); if (Number.isNaN(n)) throw new CalcError(`未定義 ${id}`); return n; }
       throw new CalcError(`不認得的識別字 ${id}`);

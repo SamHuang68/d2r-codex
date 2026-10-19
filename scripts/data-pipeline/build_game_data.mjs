@@ -204,6 +204,11 @@ const statCols = ['Stat', '*ID', 'Signed', 'Send Bits', 'Save Bits', 'Save Add',
   'descpriority', 'descfunc', 'descval', 'descstrpos', 'descstrneg', 'descstr2', 'dgrp', 'dgrpfunc', 'dgrpval', 'dgrpstrpos', 'dgrpstrneg', 'dgrpstr2'];
 const stats = {};
 const usedStats = new Set(Object.values(properties).flatMap((p) => p.parts.map((x) => x.stat).filter(Boolean)));
+for (const r of tsv('skills.txt')) {
+  if (!r.charclass) continue;
+  for (let i = 1; i <= 6; i++) if (r[`aurastat${i}`]) usedStats.add(r[`aurastat${i}`]);
+  for (let i = 1; i <= 14; i++) if (r[`passivestat${i}`]) usedStats.add(r[`passivestat${i}`]);
+}
 for (const s of tsv('itemstatcost.txt')) {
   if (!usedStats.has(s.Stat) && !(s.op)) continue; // 保留被引用者與有 op（衍生屬性）者
   const o = {}; for (const c of statCols) if (s[c] !== undefined) o[c.replace(/\s+/g, '_').replace('*', '')] = num(s[c]);
@@ -236,6 +241,11 @@ const skills = skillRows.filter((r) => r.charclass && skillDesc.get(r.skilldesc)
     passive: r.passive === '1' ? true : undefined, aura: r.aura === '1' ? true : undefined, summon: r.summon ? true : undefined,
     params,
   };
+  const unq = (v) => (v === undefined ? v : String(v).replace(/^"|"$/g, ''));
+  const auraStats = []; for (let i = 1; i <= 6; i++) if (r[`aurastat${i}`]) auraStats.push({ stat: r[`aurastat${i}`], calc: unq(r[`aurastatcalc${i}`]) });
+  const passiveStats = []; for (let i = 1; i <= 14; i++) if (r[`passivestat${i}`]) passiveStats.push({ stat: r[`passivestat${i}`], calc: unq(r[`passivecalc${i}`]) });
+  if (auraStats.length) { sk.auraStats = auraStats; sk.auraState = r.aurastate; sk.auraTargetState = r.auratargetstate; sk.auraLen = r.auralencalc; }
+  if (passiveStats.length) sk.passiveStats = passiveStats;
   if (hasDamage(r)) {
     sk.hitShift = num(r.HitShift) ?? 0;
     if (r.EType) sk.elem = { type: r.EType, min: { b: num(r.EMin) ?? 0, lv: lev(r, 'EMinLev') }, max: { b: num(r.EMax) ?? 0, lv: lev(r, 'EMaxLev') }, syn: r.EDmgSymPerCalc };

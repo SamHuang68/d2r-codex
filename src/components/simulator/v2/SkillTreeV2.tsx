@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Crosshair, Flame, Shield, Skull, Snowflake, Sparkles, Sword, Zap, Lock } from 'lucide-react';
 import {
   CLASS_CODE_ZH, GAME_SKILLS, damageText, effectiveLevel, manaCost, skillByName, skillDamage, skillLevelsFrom, synergySources, synergyTargets, treesOf,
-  type GameSkill, type SkillBonuses,
+  targetDamageText, type DamageOptions, type GameSkill, type SkillBonuses,
 } from '../../../engine/skills';
 
 /** 技能樹頁：資料全部來自遊戲技能表（樹名、格位、前置、說明、傷害與協同公式）。 */
@@ -15,6 +15,11 @@ export interface SkillTreeV2Props {
   onSetActiveSkillId: (id: string) => void;
   /** 來自裝備的技能加成（全技能、職業、技能樹、單一技能） */
   bonuses: SkillBonuses;
+  /** 專精、穿透與目標抗性（由上層依裝備與光環算出） */
+  damageOpts: (s: GameSkill) => DamageOptions;
+  /** 技能點預算與已用 */
+  budget: number;
+  used: number;
 }
 
 const ROW_LEVELS = [1, 6, 12, 18, 24, 30];
@@ -33,7 +38,7 @@ function SkillGlyph({ skill }: { skill: GameSkill }) {
   return <Crosshair className={`${cls} t-dim`} />;
 }
 
-export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skillPoints, onUpdateSkillPoints, activeSkillId, onSetActiveSkillId, bonuses }) => {
+export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skillPoints, onUpdateSkillPoints, activeSkillId, onSetActiveSkillId, bonuses, damageOpts, budget, used }) => {
   const trees = useMemo(() => treesOf(classCode), [classCode]);
   const [treeIdx, setTreeIdx] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -59,9 +64,10 @@ export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skil
   const totalInvested = Object.values(skillPoints).reduce((a, b) => a + b, 0);
   const levels = useMemo(() => skillLevelsFrom(skillPoints, bonuses), [skillPoints, bonuses]);
 
+  const remainingPts = budget - used;
   const add = (s: GameSkill, n = 1) => {
-    const cur = pts(s); if (cur >= s.maxLvl || !met(s)) return;
-    onUpdateSkillPoints({ ...skillPoints, [s.id]: Math.min(s.maxLvl, cur + n) });
+    const cur = pts(s); if (cur >= s.maxLvl || !met(s) || remainingPts <= 0) return;
+    onUpdateSkillPoints({ ...skillPoints, [s.id]: Math.min(s.maxLvl, cur + Math.min(n, remainingPts)) });
   };
   const remove = (s: GameSkill, n = 1) => {
     const cur = pts(s); if (cur <= 0) return;
@@ -118,7 +124,8 @@ export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skil
 
   const invested = selected ? pts(selected) : 0;
   const effective = selected ? effectiveLevel(selected, invested, bonuses) : 0;
-  const dmg = selected ? damageText(skillDamage(selected, effective, levels)) : undefined;
+  const dmgRes = selected ? skillDamage(selected, effective, levels, damageOpts(selected)) : undefined;
+  const dmg = damageText(dmgRes); const dmgTarget = targetDamageText(dmgRes);
   const mana = selected && effective > 0 ? manaCost(selected, effective) : undefined;
   const softBonus = effective > 0 ? effective - invested : 0;
 
@@ -192,14 +199,15 @@ export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skil
               {(dmg || mana !== undefined) && (
                 <div className="d2-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 2 }}>
                   {dmg && <div className="flex justify-between gap-2"><span className="k">傷害（表值）</span><span className="v t-set" style={{ fontSize: 14 }}>{dmg}</span></div>}
+                  {dmgTarget && <div className="flex justify-between gap-2"><span className="k">　</span><span className="v t-gold" style={{ fontSize: 14 }}>{dmgTarget}</span></div>}
                   {mana !== undefined && <div className="flex justify-between gap-2"><span className="k">魔力消耗</span><span className="v t-cold" style={{ fontSize: 14 }}>{mana}</span></div>}
-                  <div className="d2-sub">未含專精、敵人抗性、光環與武器；協同只計硬點（遊戲規則）。</div>
+                  <div className="d2-sub">含協同與元素專精；未含武器與傷害加成。協同只計硬點（遊戲規則）；專精與協同相乘為假設。</div>
                 </div>
               )}
               <div className="flex flex-wrap gap-2">
                 <button type="button" className="d2-btn is-quiet" onClick={() => remove(selected)} disabled={invested <= 0} aria-label="減 1 點">－</button>
-                <button type="button" className="d2-btn flex-1" onClick={() => add(selected)} disabled={invested >= selected.maxLvl || !met(selected)} aria-label="加 1 點" style={{ whiteSpace: 'nowrap' }}>＋ 加點</button>
-                <button type="button" className="d2-btn" onClick={() => add(selected, selected.maxLvl)} disabled={invested >= selected.maxLvl || !met(selected)} style={{ whiteSpace: 'nowrap' }}>MAX</button>
+                <button type="button" className="d2-btn flex-1" onClick={() => add(selected)} disabled={invested >= selected.maxLvl || !met(selected) || remainingPts <= 0} aria-label="加 1 點" style={{ whiteSpace: 'nowrap' }}>＋ 加點</button>
+                <button type="button" className="d2-btn" onClick={() => add(selected, selected.maxLvl)} disabled={invested >= selected.maxLvl || !met(selected) || remainingPts <= 0} style={{ whiteSpace: 'nowrap' }}>MAX</button>
                 <button type="button" className={`d2-btn ${activeSkillId === selected.id ? '' : 'is-quiet'}`} onClick={() => onSetActiveSkillId(selected.id)} title="標記為主力技能（屬性頁會顯示其傷害）" style={{ whiteSpace: 'nowrap' }}>{activeSkillId === selected.id ? '★ 主力' : '設為主力'}</button>
               </div>
 
@@ -234,7 +242,7 @@ export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skil
                 )}
                 {targets.length > 0 && <div className="d2-sub">本技能同時為 {targets.map((x) => x.name ?? x.nameEn).join('、')} 增傷。</div>}
               </div>
-              <div className="d2-sub">已投入技能點合計 {totalInvested}；遊戲的技能點上限（{level - 1} 點＋任務獎勵）尚未強制檢查。{CLASS_CODE_ZH[classCode]}。</div>
+              <div className="d2-sub" style={{ color: remainingPts < 0 ? 'var(--bad)' : undefined }}>已投入 {totalInvested}／可用 {budget} 點（等級−1＋任務）{remainingPts < 0 ? `，超出 ${-remainingPts} 點（一鍵點滿協同不受預算限制）` : `，剩餘 ${remainingPts} 點`}。{CLASS_CODE_ZH[classCode]}。</div>
             </>
           ) : (
             <div className="d2-sub text-center py-10">請在左側點選技能</div>
