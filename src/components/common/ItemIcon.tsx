@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { GearSlot, ItemRarity } from '../../types';
 import { resolveItemImagePath } from '../../utils/itemImageResolver';
 import { MagicArt, artBoxOf } from './MagicArt';
@@ -38,8 +38,9 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
   imageUrl,
   noGuess = false,
 }) => {
-  const [imgError, setImgError] = useState(false);
-  const [smooth, setSmooth] = useState(false);
+  // 以「失敗／已平滑的圖片網址」記錄狀態：換圖時不需要 effect 重置，也不會在換圖的那一次 render 閃出舊的失敗狀態
+  const [failedSrc, setFailedSrc] = useState('');
+  const [smoothSrc, setSmoothSrc] = useState('');
   const n = `${name} ${nameEn} ${baseItem}`.toLowerCase();
   const envBase = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || './';
   const baseUrl = envBase.endsWith('/') ? envBase : `${envBase}/`;
@@ -123,10 +124,12 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
     imageUrl,
   });
 
-  // 換圖（例如同一槽位換裝、符文之語換底材）時重置載入失敗與平滑縮放狀態，避免前一張圖的失敗狀態卡住新圖
-  useEffect(() => { setImgError(false); setSmooth(false); }, [imageSrc]);
+  const imgError = failedSrc === imageSrc;
+  const smooth = smoothSrc === imageSrc;
+  const setImgError = (_failed: boolean) => setFailedSrc(imageSrc);
+  const setSmooth = (_on: boolean) => setSmoothSrc(imageSrc);
 
-  // 只有 /img/items/magic/（暗金、套裝）的圖是 2:1 畫布且底部帶有站名浮水印；
+  // 只有 /img/items/magic/（暗金、套裝）的圖是 1:2（寬:高）畫布且底部帶有站名浮水印；
   // base/、misc/ 與本機圖都沒有浮水印，必須完整顯示（不裁切、保留長寬比）
   const isMagicRemote = /static\.d2r\.world\/img\/items\/magic\//.test(imageSrc);
   const isRemote = /^https?:/.test(imageSrc);
@@ -195,7 +198,7 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
         )
       ) : (
         <span className="relative z-10 font-bold font-serif text-amber-300/80 uppercase" style={{ fontSize: fill ? 11 : Math.max(10, px / 4) }}>
-          ◇
+          <span aria-hidden>◇</span>
         </span>
       )}
     </div>

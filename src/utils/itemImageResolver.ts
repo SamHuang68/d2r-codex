@@ -61,6 +61,9 @@ const RUNE_LOOKUP: Record<string, number> = {
  * @param params 物品屬性參數（名稱、英文名、底材、槽位、稀有度、符文編號、基本路徑、直接圖片連結）
  * @returns 完整的相對或絕對立繪路徑
  */
+/** 引擎目錄的槽位用 head / body / neck，此處的規則比對 helm / armor / amulet，先統一詞彙 */
+const SLOT_ALIAS = new Map<string, string>([['head', 'helm'], ['body', 'armor'], ['neck', 'amulet']]);
+
 export function resolveItemImagePath({
   name = '',
   nameEn = '',
@@ -76,8 +79,6 @@ export function resolveItemImagePath({
     return imageUrl.trim();
   }
 
-  // 引擎目錄的槽位用 head / body / neck，此處的規則比對 helm / armor / amulet，先統一詞彙
-  const SLOT_ALIAS = new Map<string, string>([['head', 'helm'], ['body', 'armor'], ['neck', 'amulet']]);
   slot = SLOT_ALIAS.get(String(slot)) ?? slot;
   const base = baseUrl ? (baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`) : '';
   const n = `${name} ${nameEn} ${baseItem}`.toLowerCase();

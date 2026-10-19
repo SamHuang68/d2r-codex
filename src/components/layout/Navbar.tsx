@@ -89,7 +89,6 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
           type="button"
           onClick={toggle}
           aria-label={collapsed ? '展開側邊欄' : '收合側邊欄'}
-          aria-expanded={!collapsed}
           title={collapsed ? '展開側邊欄' : '收合側邊欄'}
           className={`mb-1 w-full flex items-center rounded-md h-7 text-[11px] text-sanctuary-400 hover:text-sanctuary-100 hover:bg-sanctuary-900 border border-transparent transition-colors ${collapsed ? 'justify-center' : 'gap-2 px-2'}`}
         >

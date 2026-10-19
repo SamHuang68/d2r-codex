@@ -16,8 +16,9 @@ type Box = [number, number, number, number];
 const BOXES = boxes as unknown as Record<string, Box>;
 const CW = 196;
 const CH = 392;
-/** 浮水印區帶起點（實測約 76.8%，保守取 74%） */
+/** 浮水印區帶：實測約 76.8%～93.1%。漸層從 74% 開始淡入；物品底部未超過 77% 時不含浮水印，不做濾鏡 */
 const WM_TOP = 0.74;
+const WM_START = 0.77;
 
 export const artBoxOf = (src: string): Box | undefined => BOXES[src.slice(src.lastIndexOf('/') + 1)];
 
@@ -29,7 +30,12 @@ function useSeen<T extends Element>(ref: React.RefObject<T>, rootMargin = '240px
     const el = ref.current;
     if (!el) return;
     if (typeof IntersectionObserver === 'undefined') { setSeen(true); return; }
-    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { setSeen(true); io.disconnect(); } }, { rootMargin });
+    // rootMargin 只對 root 本身生效：在裝備庫這類可捲動容器內，必須以最近的可捲動祖先為 root，預載距離才有作用
+    let root: Element | null = null;
+    for (let p = el.parentElement; p; p = p.parentElement) {
+      if (/(auto|scroll)/.test(getComputedStyle(p).overflowY)) { root = p; break; }
+    }
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { setSeen(true); io.disconnect(); } }, { root, rootMargin });
     io.observe(el);
     return () => io.disconnect();
   }, [seen, ref, rootMargin]);
@@ -51,13 +57,14 @@ export const MagicArt: React.FC<Props> = ({ src, alt, box, fill, onError }) => {
   const uid = useId().replace(/:/g, '');
   const [nx0, ny0, nx1, ny1] = box;
   const x = nx0 * CW; const y = ny0 * CH; const w = (nx1 - nx0) * CW; const h = (ny1 - ny0) * CH;
-  const band = ny1 > WM_TOP;
+  const band = ny1 > WM_START;
   const by = Math.max(y, WM_TOP * CH); const bh = y + h - by;
 
   return (
     <svg
       ref={ref}
       viewBox={`${x} ${y} ${w} ${h}`}
+      style={fill ? undefined : { aspectRatio: `${w} / ${h}` }}
       preserveAspectRatio="xMidYMid meet"
       role="img"
       aria-label={alt}
@@ -67,7 +74,7 @@ export const MagicArt: React.FC<Props> = ({ src, alt, box, fill, onError }) => {
         <clipPath id={`c${uid}`}><rect x={x} y={y} width={w} height={h} /></clipPath>
         {band && (
           <>
-            <filter id={`f${uid}`} x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="8" /></filter>
+            <filter id={`f${uid}`} x="-5%" y="-5%" width="110%" height="110%" colorInterpolationFilters="sRGB"><feGaussianBlur stdDeviation="8" /></filter>
             <linearGradient id={`d${uid}`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stopColor="#080604" stopOpacity="0" />
               <stop offset="1" stopColor="#080604" stopOpacity=".8" />

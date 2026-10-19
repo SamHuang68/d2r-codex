@@ -48,9 +48,10 @@ const useWide = () => {
 };
 
 /** 窄螢幕底部抽屜要讓出左側導覽欄：側欄寬度會隨「收合」變動（176 ↔ 48），需即時量測；<1024px 側欄隱藏時為 0 */
-const useSideNavWidth = () => {
+const useSideNavWidth = (enabled: boolean) => {
   const [w, setW] = useState(0);
   useEffect(() => {
+    if (!enabled) return;
     const el = document.querySelector('aside');
     if (!el) { setW(0); return; }
     const measure = () => setW(getComputedStyle(el).display === 'none' ? 0 : Math.round(el.getBoundingClientRect().width));
@@ -59,7 +60,7 @@ const useSideNavWidth = () => {
     ro.observe(el);
     window.addEventListener('resize', measure);
     return () => { ro.disconnect(); window.removeEventListener('resize', measure); };
-  }, []);
+  }, [enabled]);
   return w;
 };
 
@@ -69,7 +70,7 @@ const Chip: React.FC<{ on: boolean; label: string; onClick: () => void }> = ({ o
 
 export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassCode, onEquip, onDragStart, jump }) => {
   const wide = useWide();
-  const sideW = useSideNavWidth();
+  const sideW = useSideNavWidth(!wide);
   const [rarity, setRarity] = useState<Record<Rarity, boolean>>({ unique: true, set: true, runeword: true, base: false });
   const [tiers, setTiers] = useState<Record<Tier, boolean>>({ normal: true, exceptional: true, elite: true });
   const [onlyMyClass, setOnlyMyClass] = useState(true);
