@@ -1,0 +1,329 @@
+/*
+ * 配裝模擬器視覺語彙：仿暗黑破壞神 II 獄火重生的石材面板、舊金邊框、古銅按鈕與黑底提示框。
+ * 只作用在 .d2sim 底下，不影響站上其他頁面。
+ */
+.d2sim {
+  --bg: #0a0806;
+  --stone-1: #16120e;
+  --stone-2: #1f1a14;
+  --stone-3: #2c251c;
+  --iron: #4d4435;
+  --iron-dark: #2a241a;
+  --gold: #c9b277;
+  --gold-dim: #8c7948;
+  --gold-bright: #f1da8c;
+  --text: #e4dbc4;
+  --dim: #9a8f77;
+  --faint: #6b6350;
+  --unique: #c7b377;
+  --set: #46e046;
+  --magic: #8585ff;
+  --rare: #ffff70;
+  --craft: #ffa64d;
+  --bad: #ff5e50;
+  --fire: #ff7a55;
+  --cold: #6cc8ff;
+  --lightning: #ffe35a;
+  --poison: #62e06f;
+  --noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .8  0 0 0 0 .72  0 0 0 0 .55  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  color: var(--text);
+  font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.d2sim *, .d2sim *::before, .d2sim *::after { box-sizing: border-box; }
+
+/* ── 面板：石材底＋雙層舊金邊框＋四角裝飾 ── */
+.d2sim .d2-panel {
+  position: relative;
+  background:
+    var(--noise),
+    radial-gradient(120% 80% at 50% 0%, #2a231a 0%, transparent 60%),
+    linear-gradient(180deg, var(--stone-2), var(--stone-1));
+  border: 1px solid #000;
+  box-shadow:
+    inset 0 0 0 1px var(--iron),
+    inset 0 0 0 3px #0b0907,
+    inset 0 0 0 4px #5a4c2f,
+    0 14px 34px -12px rgba(0, 0, 0, .85);
+}
+.d2sim .d2-panel::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  pointer-events: none;
+  --c: var(--gold);
+  background:
+    linear-gradient(var(--c), var(--c)) top left / 16px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) top left / 2px 16px no-repeat,
+    linear-gradient(var(--c), var(--c)) top right / 16px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) top right / 2px 16px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom left / 16px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom left / 2px 16px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom right / 16px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom right / 2px 16px no-repeat;
+  opacity: .75;
+}
+.d2sim .d2-panel-body { padding: 14px 16px 16px; }
+
+/* ── 標題列 ── */
+.d2sim .d2-title {
+  position: relative;
+  text-align: center;
+  padding: 11px 16px 10px;
+  font-family: "Cinzel", "Noto Serif TC", "PMingLiU", serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: .32em;
+  color: var(--gold);
+  text-shadow: 0 1px 0 #000, 0 0 12px rgba(201, 178, 119, .25);
+}
+.d2sim .d2-title::after {
+  content: "";
+  position: absolute;
+  left: 8%; right: 8%; bottom: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim) 20%, var(--gold) 50%, var(--gold-dim) 80%, transparent);
+}
+.d2sim .d2-sub { font-size: 12px; color: var(--dim); }
+
+/* ── 分頁（仿技能頁） ── */
+.d2sim .d2-tabs { display: flex; gap: 4px; padding: 8px 12px 0; }
+.d2sim .d2-tab {
+  flex: 1;
+  padding: 9px 6px;
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: .12em;
+  color: var(--dim);
+  background: linear-gradient(180deg, #17130e, #0f0c09);
+  border: 1px solid #000;
+  box-shadow: inset 0 0 0 1px var(--iron-dark);
+  cursor: pointer;
+  transition: color .15s, box-shadow .15s;
+}
+.d2sim .d2-tab:hover { color: var(--text); }
+.d2sim .d2-tab[aria-selected="true"] {
+  color: var(--gold-bright);
+  background: linear-gradient(180deg, #2f271b, #1b1610);
+  box-shadow: inset 0 0 0 1px var(--gold-dim), inset 0 -2px 0 var(--gold), 0 0 14px -4px rgba(201, 178, 119, .5);
+  text-shadow: 0 1px 0 #000;
+}
+
+/* ── 按鈕（古銅斜面） ── */
+.d2sim .d2-btn {
+  font: inherit;
+  font-size: 13px;
+  letter-spacing: .06em;
+  color: var(--gold-bright);
+  padding: 5px 13px;
+  background: linear-gradient(180deg, #5d4824 0%, #3a2b14 55%, #2c200f 100%);
+  border: 1px solid #000;
+  box-shadow: inset 0 1px 0 rgba(255, 232, 160, .35), inset 0 -1px 0 rgba(0, 0, 0, .65), 0 1px 0 rgba(255, 255, 255, .04);
+  text-shadow: 0 1px 0 #000;
+  cursor: pointer;
+  transition: filter .12s, transform .05s;
+}
+.d2sim .d2-btn:hover:not(:disabled) { filter: brightness(1.2); }
+.d2sim .d2-btn:active:not(:disabled) { transform: translateY(1px); }
+.d2sim .d2-btn:disabled { opacity: .35; cursor: not-allowed; }
+.d2sim .d2-btn.is-quiet {
+  color: var(--text);
+  background: linear-gradient(180deg, #2e2619, #1a150e);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), inset 0 -1px 0 rgba(0, 0, 0, .6);
+}
+.d2sim .d2-btn.is-danger { color: #ffb4a8; background: linear-gradient(180deg, #5a2218, #331009); }
+.d2sim .d2-plus {
+  width: 40px;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--gold-bright);
+  background: linear-gradient(180deg, #6a2a1c 0%, #3d1a10 60%, #2a1109 100%);
+  border: 1px solid #000;
+  box-shadow: inset 0 1px 0 rgba(255, 190, 140, .35), inset 0 0 0 2px #1a0d08, inset 0 0 0 3px #7b5a2a;
+  cursor: pointer;
+}
+.d2sim .d2-plus:hover:not(:disabled) { filter: brightness(1.25); }
+.d2sim .d2-plus:disabled { opacity: .3; cursor: not-allowed; }
+
+/* ── 凹槽（槽位、數值欄） ── */
+.d2sim .d2-well {
+  background: radial-gradient(120% 120% at 50% 0%, #15110c, #0a0806);
+  box-shadow: inset 0 0 14px #000, inset 0 0 0 1px #2e271c, 0 0 0 1px #000;
+}
+.d2sim .d2-slot {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    var(--noise),
+    radial-gradient(100% 100% at 50% 40%, #181410 0%, #0a0806 100%);
+  box-shadow: inset 0 0 16px #000, inset 0 0 0 1px #2e271c, 0 0 0 1px #000;
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+.d2sim .d2-slot:hover { box-shadow: inset 0 0 16px #000, inset 0 0 0 1px var(--gold-dim), 0 0 0 1px #000; }
+.d2sim .d2-slot.is-selected { box-shadow: inset 0 0 18px #000, inset 0 0 0 2px var(--gold), 0 0 14px rgba(201, 178, 119, .35); }
+.d2sim .d2-slot.is-unmet { box-shadow: inset 0 0 18px rgba(120, 0, 0, .55), inset 0 0 0 2px #a82a20; }
+.d2sim .d2-slot.is-valid { box-shadow: inset 0 0 16px #000, inset 0 0 0 1px var(--gold), 0 0 10px rgba(201, 178, 119, .4); }
+.d2sim .d2-slot.is-over-ok { box-shadow: inset 0 0 16px #000, inset 0 0 0 2px #6fe06f, 0 0 16px rgba(111, 224, 111, .5); }
+.d2sim .d2-slot.is-over-bad { box-shadow: inset 0 0 16px #000, inset 0 0 0 2px #ff5e50, 0 0 16px rgba(255, 94, 80, .5); }
+.d2sim .d2-slot-name { font-size: 11px; line-height: 1.15; text-align: center; padding: 2px 3px; text-shadow: 0 1px 0 #000, 0 0 4px #000; }
+.d2sim .d2-slot-empty { font-size: 11px; color: var(--faint); letter-spacing: .1em; }
+
+/* ── 資料列（角色頁風格） ── */
+.d2sim .d2-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  background: linear-gradient(180deg, #120f0b, #0d0a07);
+  box-shadow: inset 0 0 0 1px #2a241a, inset 0 0 10px rgba(0, 0, 0, .7);
+}
+.d2sim .d2-row .k { color: var(--dim); font-size: 13px; }
+.d2sim .d2-row .v { font-weight: 600; font-size: 15px; }
+.d2sim .d2-row.is-attr .k { color: var(--text); font-size: 15px; letter-spacing: .12em; }
+.d2sim .d2-row.is-attr .v { font-size: 20px; color: var(--magic); }
+.d2sim .d2-row.is-attr .v.is-bad { color: var(--bad); }
+
+/* ── 表單 ── */
+.d2sim .d2-input, .d2sim .d2-select {
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  padding: 4px 8px;
+  background: #0c0a07;
+  border: 1px solid #000;
+  box-shadow: inset 0 0 8px #000, inset 0 0 0 1px #3a3022;
+}
+.d2sim .d2-input:focus, .d2sim .d2-select:focus { outline: none; box-shadow: inset 0 0 8px #000, inset 0 0 0 1px var(--gold); }
+.d2sim .d2-select { padding-right: 4px; }
+.d2sim .d2-field { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--dim); letter-spacing: .06em; }
+
+.d2sim .d2-check {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  margin: 0;
+  background: #0c0a07;
+  border: 1px solid #000;
+  box-shadow: inset 0 0 6px #000, inset 0 0 0 1px var(--gold-dim);
+  cursor: pointer;
+  position: relative;
+  flex: none;
+}
+.d2sim .d2-check:checked { background: linear-gradient(180deg, #5d4824, #33260f); }
+.d2sim .d2-check:checked::after {
+  content: "";
+  position: absolute; left: 5px; top: 1px; width: 5px; height: 10px;
+  border: solid var(--gold-bright); border-width: 0 2px 2px 0; transform: rotate(40deg);
+}
+.d2sim .d2-check:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* ── 篩選樹節點（仿拾取篩選器） ── */
+.d2sim .d2-node {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 8px 10px;
+  font: inherit; text-align: left; color: var(--text);
+  background: linear-gradient(180deg, #1d1812, #12100b);
+  border: 1px solid #000;
+  box-shadow: inset 0 0 0 1px #2e271c, inset 0 1px 0 rgba(255, 255, 255, .05);
+  cursor: pointer;
+}
+.d2sim .d2-node:hover { box-shadow: inset 0 0 0 1px var(--gold-dim); }
+.d2sim .d2-node .n { margin-left: auto; font-size: 12px; color: var(--dim); }
+.d2sim .d2-node .chev {
+  display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 22px;
+  color: var(--gold-bright); font-size: 11px;
+  background: linear-gradient(180deg, #5d4824, #33260f);
+  box-shadow: inset 0 1px 0 rgba(255, 232, 160, .3), inset 0 0 0 1px #000;
+}
+.d2sim .d2-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 8px;
+  background: linear-gradient(180deg, #17130e, #0f0c09);
+  box-shadow: inset 0 0 0 1px #2a241a;
+  cursor: grab;
+}
+.d2sim .d2-item:hover { box-shadow: inset 0 0 0 1px var(--gold-dim), 0 0 12px -4px rgba(201, 178, 119, .4); }
+.d2sim .d2-item:active { cursor: grabbing; }
+
+/* ── 提示框（黑底置中、顏色分行，仿遊戲） ── */
+.d2sim .d2-tip {
+  background: rgba(0, 0, 0, .94);
+  border: 1px solid #3a3224;
+  box-shadow: 0 0 0 1px #000, 0 8px 24px rgba(0, 0, 0, .7);
+  padding: 10px 14px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.d2sim .d2-tip .nm { font-weight: 700; font-size: 16px; letter-spacing: .04em; }
+.d2sim .d2-tip .base { color: var(--dim); }
+.d2sim .d2-tip .mod { color: var(--magic); }
+.d2sim .d2-tip .mod.is-unknown { color: var(--bad); }
+.d2sim .d2-tip .hint { color: var(--faint); font-size: 12px; }
+
+/* ── 稀有度色 ── */
+.d2sim .t-unique, .d2sim .t-runeword { color: var(--unique); }
+.d2sim .t-set { color: var(--set); }
+.d2sim .t-magic { color: var(--magic); }
+.d2sim .t-rare { color: var(--rare); }
+.d2sim .t-base { color: var(--text); }
+.d2sim .t-dim { color: var(--dim); }
+.d2sim .t-gold { color: var(--gold); }
+.d2sim .t-bad { color: var(--bad); }
+.d2sim .t-fire { color: var(--fire); } .d2sim .t-cold { color: var(--cold); }
+.d2sim .t-lightning { color: var(--lightning); } .d2sim .t-poison { color: var(--poison); }
+
+/* ── 頂部列 ── */
+.d2sim .d2-class {
+  padding: 6px 14px; font: inherit; font-size: 14px; letter-spacing: .14em; color: var(--dim);
+  background: linear-gradient(180deg, #17130e, #0f0c09);
+  border: 1px solid #000; box-shadow: inset 0 0 0 1px var(--iron-dark); cursor: pointer;
+}
+.d2sim .d2-class:hover { color: var(--text); }
+.d2sim .d2-class[aria-selected="true"] {
+  color: var(--gold-bright);
+  background: linear-gradient(180deg, #3a2f1c, #1d1710);
+  box-shadow: inset 0 0 0 1px var(--gold), 0 0 12px -3px rgba(201, 178, 119, .55);
+}
+
+/* ── 底部：生命／法力球＋摘要 ── */
+.d2sim .d2-orb {
+  position: relative; flex: none; width: 76px; height: 76px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  box-shadow: inset 0 0 0 2px #000, inset 0 0 0 4px #6b5833, inset 0 -14px 22px rgba(0, 0, 0, .55), 0 0 22px -4px var(--glow);
+  text-shadow: 0 1px 2px #000;
+}
+.d2sim .d2-orb b { font-size: 19px; line-height: 1; color: #fff; }
+.d2sim .d2-orb span { font-size: 10px; letter-spacing: .2em; color: rgba(255, 255, 255, .75); margin-top: 3px; }
+.d2sim .d2-orb.is-life { --glow: rgba(220, 40, 30, .6); background: radial-gradient(circle at 35% 30%, #ff6a58 0%, #b3180f 45%, #4a0905 100%); }
+.d2sim .d2-orb.is-mana { --glow: rgba(60, 90, 255, .6); background: radial-gradient(circle at 35% 30%, #7d95ff 0%, #2437b8 45%, #0a1046 100%); }
+.d2sim .d2-stat { display: flex; flex-direction: column; align-items: center; min-width: 64px; }
+.d2sim .d2-stat .k { font-size: 11px; letter-spacing: .18em; color: var(--dim); }
+.d2sim .d2-stat .v { font-size: 18px; font-weight: 700; color: var(--gold-bright); }
+
+/* 提示 */
+.d2sim .d2-toast {
+  background: linear-gradient(180deg, #3a1410, #240b08);
+  border: 1px solid #000;
+  box-shadow: inset 0 0 0 1px #8a2a20;
+  color: #ffd2c8;
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
+/*
+ * 相容層：技能樹頁沿用舊元件（以 Tailwind 的藍灰色系撰寫），在此把它的底色、框線與文字
+ * 轉成同一組石材色，讓整頁色調一致。僅作用於 .d2sim 內。
+ */
+.d2sim .d2-compat [class*="bg-sanctuary-950"], .d2sim .d2-compat [class*="bg-sanctuary-900"] { background-color: #0f0c09 !important; }
+.d2sim .d2-compat [class*="bg-sanctuary-850"], .d2sim .d2-compat [class*="bg-sanctuary-800"] { background-color: #19150f !important; }
+.d2sim .d2-compat [class*="bg-sanctuary-750"], .d2sim .d2-compat [class*="bg-sanctuary-700"] { background-color: #241e16 !important; }
+.d2sim .d2-compat [class*="border-sanctuary"] { border-color: #3d3425 !important; }
+.d2sim .d2-compat [class*="text-sanctuary-100"], .d2sim .d2-compat [class*="text-sanctuary-200"] { color: var(--text) !important; }
+.d2sim .d2-compat [class*="text-sanctuary-300"], .d2sim .d2-compat [class*="text-sanctuary-400"], .d2sim .d2-compat [class*="text-sanctuary-500"] { color: var(--dim) !important; }
+.d2sim .d2-compat { border-radius: 0; }
+.d2sim .d2-compat * { border-radius: 2px; }

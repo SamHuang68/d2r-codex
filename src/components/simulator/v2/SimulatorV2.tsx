@@ -13,6 +13,7 @@ import { PaperDollV2, canFitCharm } from './PaperDollV2';
 import { AttributesTab } from './AttributesTab';
 import { GearTreeTab } from './GearTreeTab';
 import { SocketEditor } from './SocketEditor';
+import './d2skin.css';
 import { DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type Quests, type TabKey } from './types';
 
 const CLASSES: { zh: string; en: string; code: string }[] = [
@@ -27,9 +28,9 @@ const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
 export interface SimulatorV2Props { initialClass?: string }
 
 const NumSelect: React.FC<{ label: string; value: number; max: number; onChange: (n: number) => void; title?: string }> = ({ label, value, max, onChange, title }) => (
-  <label className="inline-flex items-center gap-1 text-xs text-sanctuary-300" title={title}>
+  <label className="d2-field" title={title}>
     {label}
-    <select value={value} onChange={(e) => onChange(Number(e.target.value))} className="bg-sanctuary-950 border border-sanctuary-600 text-sanctuary-100 px-1 py-0.5">
+    <select value={value} onChange={(e) => onChange(Number(e.target.value))} className="d2-select">
       {Array.from({ length: max + 1 }, (_, i) => <option key={i} value={i}>{i}</option>)}
     </select>
   </label>
@@ -193,106 +194,122 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const skillsBonus = result.skills.all + (result.skills.byClass[cls.en] ?? 0);
 
   return (
-    <section className="space-y-3" aria-label="配裝模擬器">
+    <section className="d2sim space-y-4" aria-label="配裝模擬器">
       {/* 頂部列 */}
-      <div className="border border-sanctuary-600 bg-sanctuary-900 p-3 flex flex-wrap items-center gap-x-4 gap-y-2">
-        <div className="flex flex-wrap gap-1" role="tablist" aria-label="職業">
-          {CLASSES.map((c) => (
-            <button key={c.code} type="button" role="tab" aria-selected={c.code === cls.code} onClick={() => selectClass(c)}
-              className={`px-2.5 py-1 text-sm border ${c.code === cls.code ? 'border-d2-gold text-d2-gold' : 'border-sanctuary-600 text-sanctuary-300 hover:text-sanctuary-100'}`}>{c.zh}</button>
-          ))}
+      <div className="d2-panel">
+        <div className="d2-panel-body space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="職業">
+              {CLASSES.map((c) => (
+                <button key={c.code} type="button" role="tab" aria-selected={c.code === cls.code} onClick={() => selectClass(c)} className="d2-class">{c.zh}</button>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="d2-field">範本
+                <select value="" onChange={(e) => { if (e.target.value) loadPreset(e.target.value); }} className="d2-select" aria-label="載入配裝範本">
+                  <option value="">載入…</option>
+                  {SIM_PRESETS.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </select>
+              </label>
+              <button type="button" onClick={share} className="d2-btn is-quiet">分享</button>
+              <button type="button" onClick={clearAll} className="d2-btn is-danger">清空</button>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2" style={{ borderTop: '1px solid #2e271c', paddingTop: 10 }}>
+            <label className="d2-field">等級
+              <input type="number" min={1} max={99} value={level} onChange={(e) => setLevel(Math.max(1, Math.min(99, Number(e.target.value) || 1)))} className="d2-input" style={{ width: 62 }} />
+            </label>
+            <label className="d2-field">難度
+              <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as Difficulty)} className="d2-select">
+                {(Object.keys(DIFF_ZH) as Difficulty[]).map((d) => <option key={d} value={d}>{DIFF_ZH[d]}</option>)}
+              </select>
+            </label>
+            <span className="d2-sub" style={{ letterSpacing: '.2em' }}>任務</span>
+            <NumSelect label="生命藥水" value={quests.lifePotions} max={3} onChange={(n) => setQuests((q) => ({ ...q, lifePotions: n }))} title="第三幕「金鳥」，每難度 +20 最大生命" />
+            <NumSelect label="安亞卷軸" value={quests.anya} max={3} onChange={(n) => setQuests((q) => ({ ...q, anya: n }))} title="第五幕，每難度 +10 全抗" />
+            <NumSelect label="拉姆艾森之書" value={quests.lamEsen} max={3} onChange={(n) => setQuests((q) => ({ ...q, lamEsen: n }))} title="第三幕，每難度 +5 屬性點" />
+            <label className="d2-field" title="裝備詞綴範圍值取上限或下限">屬性取值
+              <select value={rollMax ? 'max' : 'min'} onChange={(e) => setRollMax(e.target.value === 'max')} className="d2-select">
+                <option value="max">上限</option><option value="min">下限</option>
+              </select>
+            </label>
+            <span className="flex-1" />
+            <span className="d2-field">剩餘屬性點 <b style={{ color: remaining ? 'var(--bad)' : 'var(--gold-bright)', fontSize: 16 }}>{remaining}</b></span>
+          </div>
         </div>
-        <label className="text-xs text-sanctuary-300 inline-flex items-center gap-1">等級
-          <input type="number" min={1} max={99} value={level} onChange={(e) => setLevel(Math.max(1, Math.min(99, Number(e.target.value) || 1)))} className="w-14 bg-sanctuary-950 border border-sanctuary-600 text-sanctuary-100 px-1 py-0.5" />
-        </label>
-        <label className="text-xs text-sanctuary-300 inline-flex items-center gap-1">難度
-          <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as Difficulty)} className="bg-sanctuary-950 border border-sanctuary-600 text-sanctuary-100 px-1 py-0.5">
-            {(Object.keys(DIFF_ZH) as Difficulty[]).map((d) => <option key={d} value={d}>{DIFF_ZH[d]}</option>)}
-          </select>
-        </label>
-        <span className="text-xs text-sanctuary-400">任務：</span>
-        <NumSelect label="生命藥水" value={quests.lifePotions} max={3} onChange={(n) => setQuests((q) => ({ ...q, lifePotions: n }))} title="第三幕「金鳥」，每難度 +20 最大生命" />
-        <NumSelect label="安亞卷軸" value={quests.anya} max={3} onChange={(n) => setQuests((q) => ({ ...q, anya: n }))} title="第五幕，每難度 +10 全抗" />
-        <NumSelect label="拉姆艾森之書" value={quests.lamEsen} max={3} onChange={(n) => setQuests((q) => ({ ...q, lamEsen: n }))} title="第三幕，每難度 +5 屬性點" />
-        <label className="text-xs text-sanctuary-300 inline-flex items-center gap-1" title="裝備詞綴範圍值取上限或下限">屬性取值
-          <select value={rollMax ? 'max' : 'min'} onChange={(e) => setRollMax(e.target.value === 'max')} className="bg-sanctuary-950 border border-sanctuary-600 text-sanctuary-100 px-1 py-0.5">
-            <option value="max">上限</option><option value="min">下限</option>
-          </select>
-        </label>
-        <div className="flex-1" />
-        <label className="text-xs text-sanctuary-300 inline-flex items-center gap-1">範本
-          <select value="" onChange={(e) => { if (e.target.value) loadPreset(e.target.value); }} className="bg-sanctuary-950 border border-sanctuary-600 text-sanctuary-100 px-1 py-0.5" aria-label="載入配裝範本">
-            <option value="">載入…</option>
-            {SIM_PRESETS.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-          </select>
-        </label>
-        <span className="text-xs text-sanctuary-300">剩餘屬性點 <b className={remaining ? 'text-red-400' : 'text-d2-gold'}>{remaining}</b></span>
-        <button type="button" onClick={share} className="text-xs border border-sanctuary-600 px-2 py-1 text-sanctuary-200 hover:bg-sanctuary-700">分享</button>
-        <button type="button" onClick={clearAll} className="text-xs border border-sanctuary-600 px-2 py-1 text-sanctuary-200 hover:bg-sanctuary-700">清空</button>
       </div>
 
-      {toast && <div role="status" className="border border-red-500/60 bg-red-950/40 text-red-200 text-sm px-3 py-2">{toast}</div>}
+      {toast && <div role="status" className="d2-toast">{toast}</div>}
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
-        {/* 左半：裝備頁 */}
-        <div className="min-w-0 border border-sanctuary-600 bg-sanctuary-900 p-3">
-          <div className="text-d2-gold text-sm font-semibold mb-2">裝備欄</div>
-          <PaperDollV2 engineClass={cls.en} equipped={equipped} charms={charms} swap={swap} onSwap={setSwap} dragging={dragging}
-            canDrop={canDrop} onDropItem={place} onRemoveCharm={(i) => setCharms((c) => c.filter((_, j) => j !== i))}
-            selected={selected} onSelect={setSelected} unmet={unmetSlots} />
-          {selEq && selected && (
-            <div className="mt-3 border border-sanctuary-600 bg-sanctuary-950 p-3 text-sm">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className={selEq.entry.kind === 'set' ? 'text-d2-set' : 'text-d2-unique'}>{selEq.entry.name}<span className="ml-2 text-xs text-sanctuary-500">{selEq.entry.nameEn}</span></div>
-                  <div className="text-xs text-sanctuary-400">{selEq.entry.baseName}{selEq.entry.levelReq ? ` · 需求 Lv${selEq.entry.levelReq}` : ''}{selEq.entry.setName ? ` · ${selEq.entry.setName}` : ''}</div>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        {/* 左半：物品欄 */}
+        <div className="d2-panel min-w-0">
+          <div className="d2-title">物 品 欄</div>
+          <div className="d2-panel-body">
+            <PaperDollV2 engineClass={cls.en} equipped={equipped} charms={charms} swap={swap} onSwap={setSwap} dragging={dragging}
+              canDrop={canDrop} onDropItem={place} onRemoveCharm={(i) => setCharms((c) => c.filter((_, j) => j !== i))}
+              selected={selected} onSelect={setSelected} unmet={unmetSlots} />
+            {selEq && selected && (
+              <div className="mt-4">
+                <div className="d2-tip">
+                  <div className={`nm ${selEq.entry.kind === 'set' ? 't-set' : 't-unique'}`}>{selEq.entry.name}</div>
+                  <div className="base">{selEq.entry.baseName}{selEq.ethereal ? '（無形）' : ''}</div>
+                  {selEq.entry.levelReq ? <div className="base">需要等級：{selEq.entry.levelReq}</div> : null}
+                  {describeModifiers(selEq.entry.mods, rollMax ? 1 : 0, level).map((l, i) => <div key={i} className={`mod ${l.known ? '' : 'is-unknown'}`}>{l.text}</div>)}
+                  {selEq.entry.setName && <div className="t-set">{selEq.entry.setName}</div>}
                 </div>
-                <div className="flex gap-2 shrink-0">
+                <div className="flex flex-wrap items-center justify-center gap-4 mt-2">
                   {(selEq.entry.group === 'armor' || selEq.entry.group === 'weapon') && (
-                    <label className="text-xs text-sanctuary-300 inline-flex items-center gap-1"><input type="checkbox" checked={!!selEq.ethereal} onChange={(e) => setEquipped((m) => ({ ...m, [selected]: { ...m[selected]!, ethereal: e.target.checked } }))} />無形</label>
+                    <label className="d2-field"><input type="checkbox" className="d2-check" checked={!!selEq.ethereal} onChange={(e) => setEquipped((m) => ({ ...m, [selected]: { ...m[selected]!, ethereal: e.target.checked } }))} />無形</label>
                   )}
-                  <button type="button" onClick={() => unequip(selected)} className="text-xs border border-red-500/60 text-red-300 px-2 py-0.5 hover:bg-red-500/10">卸下</button>
+                  <button type="button" onClick={() => unequip(selected)} className="d2-btn is-danger">卸下</button>
                 </div>
+                <SocketEditor eq={selEq} level={level} onChange={(patch) => patchEquipped(selected, patch)} onChangeBase={(code) => changeBase(selected, code)} />
               </div>
-              <ul className="mt-2 text-xs space-y-0.5 text-d2-magic">
-                {describeModifiers(selEq.entry.mods, rollMax ? 1 : 0, level).map((l, i) => <li key={i} className={l.known ? '' : 'text-red-400'}>{l.text}</li>)}
-              </ul>
-              <SocketEditor eq={selEq} level={level} onChange={(patch) => patchEquipped(selected, patch)} onChangeBase={(code) => changeBase(selected, code)} />
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* 右半：三個 tab */}
-        <div className="min-w-0 border border-sanctuary-600 bg-sanctuary-900">
-          <div className="flex" role="tablist">
+        <div className="d2-panel min-w-0">
+          <div className="d2-tabs" role="tablist">
             {([['stats', '屬性頁'], ['gear', '樹狀裝備庫'], ['skills', '技能樹']] as [TabKey, string][]).map(([k, label]) => (
-              <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
-                className={`flex-1 py-2.5 text-sm border-b ${tab === k ? 'border-d2-gold text-d2-gold bg-sanctuary-800' : 'border-sanctuary-600 text-sanctuary-400 hover:text-sanctuary-100'}`}>{label}</button>
+              <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className="d2-tab">{label}</button>
             ))}
           </div>
-          <div className="p-3">
+          <div className="d2-panel-body">
             {tab === 'stats' && (
               <AttributesTab className={cls.zh} level={level} result={result} alloc={alloc} remaining={remaining} needStr={needStr} needDex={needDex}
                 onAdd={onAdd} onAutoReq={onAutoReq} onAllVit={onAllVit} onReset={() => setAlloc(ZERO)} />
             )}
             {tab === 'gear' && <GearTreeTab level={level} engineClassCode={cls.code} onEquip={equip} onDragStart={setDragging} />}
             {tab === 'skills' && (
-              <SkillTreeSimulator className={cls.zh} skillPoints={skillPoints} onUpdateSkillPoints={setSkillPoints}
-                activeSkillId={activeSkillId} onSetActiveSkillId={setActiveSkillId} allSkillsBonus={skillsBonus} />
+              <div className="d2-compat">
+                <SkillTreeSimulator className={cls.zh} skillPoints={skillPoints} onUpdateSkillPoints={setSkillPoints}
+                  activeSkillId={activeSkillId} onSetActiveSkillId={setActiveSkillId} allSkillsBonus={skillsBonus} />
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* 底部即時摘要 */}
-      <div className="border border-sanctuary-600 bg-sanctuary-900 px-4 py-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-sanctuary-300" aria-live="polite">
-        <span>生命 <b className="text-d2-gold">{result.life.toLocaleString()}</b></span>
-        <span>法力 <b className="text-d2-gold">{result.mana.toLocaleString()}</b></span>
-        <span>防禦 <b className="text-d2-gold">{result.defense.toLocaleString()}</b></span>
-        <span>格擋 <b className="text-d2-gold">{result.blockChance}%</b></span>
-        <span>抗性 <b className="text-d2-gold">{result.resist.fire}/{result.resist.cold}/{result.resist.lightning}/{result.resist.poison}</b></span>
-        {result.weaponDamage && <span>武器傷害 <b className="text-d2-gold">{result.weaponDamage.min}–{result.weaponDamage.max}</b></span>}
-        <span className="text-sanctuary-500">未計入：光環／戰吼／BO／變身／技能傷害</span>
+      {/* 底部：生命球／摘要／法力球 */}
+      <div className="d2-panel" aria-live="polite">
+        <div className="d2-panel-body flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+          <div className="d2-orb is-life" title="生命"><b>{result.life.toLocaleString()}</b><span>生命</span></div>
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 flex-1 min-w-[220px]">
+            <div className="d2-stat"><span className="k">防禦</span><span className="v">{result.defense.toLocaleString()}</span></div>
+            <div className="d2-stat"><span className="k">格擋</span><span className="v">{result.blockChance}%</span></div>
+            <div className="d2-stat"><span className="k">抗性</span>
+              <span className="v" style={{ fontSize: 15 }}>
+                <span className="t-fire">{result.resist.fire}</span> / <span className="t-cold">{result.resist.cold}</span> / <span className="t-lightning">{result.resist.lightning}</span> / <span className="t-poison">{result.resist.poison}</span>
+              </span>
+            </div>
+            {result.weaponDamage && <div className="d2-stat"><span className="k">武器傷害</span><span className="v">{result.weaponDamage.min}–{result.weaponDamage.max}</span></div>}
+            <div className="d2-sub w-full text-center">未計入：光環／戰吼／BO／變身／技能傷害</div>
+          </div>
+          <div className="d2-orb is-mana" title="法力"><b>{result.mana.toLocaleString()}</b><span>法力</span></div>
+        </div>
       </div>
     </section>
   );

@@ -194,6 +194,11 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
     console.log('    ', lines.map((l) => l.text).join(' | '));
     assert.ok(lines.every((l) => l.known));
   });
+  t('描述：任何文字都不得出現原始屬性代碼（item_／_perlevel）', () => {
+    const bad = [];
+    for (const e of cat.filter((x) => x.kind !== 'base')) for (const l of describeModifiers(e.mods, 1, 90)) if (l.known && /item_|_perlevel|[a-z]{4,}_[a-z]/.test(l.text)) bad.push(e.nameEn + ': ' + l.text);
+    assert.equal(bad.length, 0, bad.slice(0, 5).join(' | '));
+  });
   t('描述：全部暗金／套裝／符文之語，無法描述的 modifier 比例（僅統計，供追蹤）', () => {
     let total = 0, unknown = 0;
     for (const e of cat.filter((x) => x.kind !== 'base')) for (const l of describeModifiers(e.mods, 1)) { total++; if (!l.known) unknown++; }

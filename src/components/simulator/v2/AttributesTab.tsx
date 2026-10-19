@@ -17,11 +17,9 @@ interface Props {
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US');
-const pct = (n?: number) => (n ? `${n}%` : '0%');
 
-const ATTRS: { key: keyof Alloc; label: string; res: 'str' | 'dex' | 'vit' | 'ene' }[] = [
-  { key: 'str', label: '力量', res: 'str' }, { key: 'dex', label: '敏捷', res: 'dex' },
-  { key: 'vit', label: '體能', res: 'vit' }, { key: 'ene', label: '能量', res: 'ene' },
+const ATTRS: { key: keyof Alloc; label: string }[] = [
+  { key: 'str', label: '力量' }, { key: 'dex', label: '敏捷' }, { key: 'vit', label: '體能' }, { key: 'ene', label: '能量' },
 ];
 
 const MORE: { label: string; stat: string; suffix?: string }[] = [
@@ -44,14 +42,21 @@ const MORE: { label: string; stat: string; suffix?: string }[] = [
   { label: '無法凍結', stat: 'item_cannotbefrozen' },
 ];
 
+const Row: React.FC<{ label: string; value: string; tone?: string; title?: string }> = ({ label, value, tone, title }) => (
+  <div className="d2-row" title={title}>
+    <span className="k">{label}</span>
+    <span className={`v ${tone ?? ''}`}>{value}</span>
+  </div>
+);
+
 export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc, remaining, needStr, needDex, onAdd, onAutoReq, onAllVit, onReset }) => {
   const [more, setMore] = useState(false);
   const a = result.attributes;
-  const unmetKey: Record<string, boolean> = { str: a.str < needStr, dex: a.dex < needDex };
+  const unmet: Record<string, boolean> = { str: a.str < needStr, dex: a.dex < needDex };
   const res = result.resist; const raw = result.rawResist; const mx = result.maxResist;
   const resRows: [string, number, number, number, string][] = [
-    ['火焰抗性', res.fire, raw.fire, mx.fire, 'text-d2-fire'], ['電擊抗性', res.lightning, raw.lightning, mx.lightning, 'text-d2-lightning'],
-    ['冰寒抗性', res.cold, raw.cold, mx.cold, 'text-d2-cold'], ['毒素抗性', res.poison, raw.poison, mx.poison, 'text-d2-poison'],
+    ['火焰抗性', res.fire, raw.fire, mx.fire, 't-fire'], ['電擊抗性', res.lightning, raw.lightning, mx.lightning, 't-lightning'],
+    ['冰寒抗性', res.cold, raw.cold, mx.cold, 't-cold'], ['毒素抗性', res.poison, raw.poison, mx.poison, 't-poison'],
   ];
   const wd = result.weaponDamage;
   const s = result.stats;
@@ -64,84 +69,76 @@ export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc
 
   return (
     <div>
-      <div className="flex flex-wrap gap-2 mb-3 text-xs">
-        <button type="button" onClick={onAutoReq} className="px-2 py-1 border border-d2-gold/50 text-d2-gold hover:bg-d2-gold/10">一鍵滿足裝備需求</button>
-        <button type="button" onClick={onAllVit} className="px-2 py-1 border border-d2-gold/50 text-d2-gold hover:bg-d2-gold/10">剩餘全灌體能</button>
-        <button type="button" onClick={onReset} className="px-2 py-1 border border-sanctuary-600 text-sanctuary-300 hover:bg-sanctuary-700">重置配點</button>
-        <span className="text-sanctuary-400 self-center">點擊 ＋1，Shift ＋5；右鍵／Alt 點擊 −1（Shift −5）</span>
+      <div className="d2-title" style={{ fontSize: 13, padding: '2px 0 12px', marginBottom: 12 }}>
+        {className}　<span style={{ fontFamily: 'Cinzel, serif', letterSpacing: '.1em' }}>LV {level}</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_1.3fr] gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_1.35fr] gap-4">
+        {/* 左：四屬性＋加點 */}
         <div className="space-y-2">
-          {ATTRS.map(({ key, label, res: rk }) => {
-            const bad = unmetKey[key] ?? false;
-            const gear = a[rk] - (/* 起始＋配點由引擎總和反推 */ a[rk]) ;
-            void gear;
+          {ATTRS.map(({ key, label }) => {
+            const bad = unmet[key] ?? false;
             return (
               <div key={key} className="flex gap-2 items-stretch">
-                <div className="flex-1 flex justify-between items-center border border-sanctuary-600 bg-sanctuary-950 px-3 py-2">
-                  <span className="text-sanctuary-200">{label}</span>
-                  <b className={`tabular-nums text-lg ${bad ? 'text-red-400' : 'text-d2-magic'}`} title={bad ? '未達裝備需求' : undefined}>{a[rk]}</b>
+                <div className="d2-row is-attr flex-1">
+                  <span className="k">{label}</span>
+                  <span className={`v ${bad ? 'is-bad' : ''}`} title={bad ? '未達裝備需求' : undefined}>{a[key]}</span>
                 </div>
                 <button
-                  type="button" aria-label={`${label} 加點`}
+                  type="button" className="d2-plus" aria-label={`${label} 加點`}
                   disabled={remaining <= 0}
                   onClick={(e) => (e.altKey ? onAdd(key, e.shiftKey ? -5 : -1) : onAdd(key, e.shiftKey ? 5 : 1))}
                   onContextMenu={(e) => { e.preventDefault(); onAdd(key, e.shiftKey ? -5 : -1); }}
-                  className="w-10 border border-d2-gold bg-d2-gold/10 text-d2-gold text-xl hover:bg-d2-gold/20 disabled:opacity-30"
                 >＋</button>
               </div>
             );
           })}
-          <div className={`text-center border border-sanctuary-600 py-2 ${remaining > 0 ? 'text-red-400' : 'text-sanctuary-400'}`}>
+          <div className="d2-row" style={{ justifyContent: 'center', color: remaining > 0 ? 'var(--bad)' : 'var(--dim)' }}>
             {remaining > 0 ? `還有 ${remaining} 點屬性點數` : '屬性點已分配完畢'}
           </div>
-          <div className="text-xs text-sanctuary-500">{className} · Lv {level} · 配點：力 {alloc.str} 敏 {alloc.dex} 體 {alloc.vit} 能 {alloc.ene}</div>
+          <div className="flex flex-wrap gap-2 pt-1">
+            <button type="button" onClick={onAutoReq} className="d2-btn">一鍵滿足裝備需求</button>
+            <button type="button" onClick={onAllVit} className="d2-btn">剩餘全灌體能</button>
+            <button type="button" onClick={onReset} className="d2-btn is-quiet">重置配點</button>
+          </div>
+          <div className="d2-sub">點擊 ＋1，Shift ＋5；右鍵或 Alt 點擊 −1（Shift −5）。配點：力 {alloc.str}　敏 {alloc.dex}　體 {alloc.vit}　能 {alloc.ene}</div>
         </div>
 
+        {/* 右：結果欄位 */}
         <div className="space-y-1.5">
-          <Row label="攻擊傷害（武器，未含技能）" value={wd ? `${fmt(wd.min)}–${fmt(wd.max)}` : '—'} tone="text-d2-set" />
+          <Row label="攻擊傷害（武器，未含技能）" value={wd ? `${fmt(wd.min)}–${fmt(wd.max)}` : '—'} tone="t-set" />
           <Row label="防禦" value={fmt(result.defense)} />
-          <Row label="耐力" value={`${fmt(result.stamina)} / ${fmt(result.stamina)}`} tone="text-d2-magic" />
-          <Row label="生命" value={`${fmt(result.life)} / ${fmt(result.life)}`} tone="text-d2-magic" />
-          <Row label="法力" value={`${fmt(result.mana)} / ${fmt(result.mana)}`} tone="text-d2-magic" />
+          <Row label="耐力" value={`${fmt(result.stamina)} / ${fmt(result.stamina)}`} tone="t-magic" />
+          <Row label="生命" value={`${fmt(result.life)} / ${fmt(result.life)}`} tone="t-magic" />
+          <Row label="法力" value={`${fmt(result.mana)} / ${fmt(result.mana)}`} tone="t-magic" />
           <Row label="格擋機率" value={`${result.blockChance}%`} />
           <div className="grid grid-cols-2 gap-1.5 pt-1">
             {resRows.map(([n, v, r, m, c]) => (
-              <div key={n} className="flex justify-between border border-sanctuary-600 bg-sanctuary-950 px-2 py-1" title={`未截斷 ${r}%，上限 ${m}%`}>
-                <span className={c}>{n}</span><b className={v < 0 ? 'text-red-400' : v >= m ? 'text-d2-set' : 'text-sanctuary-100'}>{v}%</b>
+              <div key={n} className="d2-row" title={`未截斷 ${r}%，上限 ${m}%`}>
+                <span className={`k ${c}`}>{n}</span>
+                <span className={`v ${v < 0 ? 't-bad' : v >= m ? 't-set' : ''}`}>{v}%</span>
               </div>
             ))}
           </div>
           {result.requirementsUnmet.length > 0 && (
-            <div className="text-xs text-red-400 border border-red-500/40 p-2">
+            <div className="d2-toast" style={{ fontSize: 12 }}>
               未達需求：{result.requirementsUnmet.map((u) => `${u.slot} 需 ${u.need}`).join('；')}
             </div>
           )}
         </div>
       </div>
 
-      <button type="button" onClick={() => setMore((v) => !v)} className="mt-4 text-sm text-d2-gold" aria-expanded={more}>
-        {more ? '▼' : '▶'} 更多數值（遊戲角色頁沒有，模擬器獨有）
+      <button type="button" onClick={() => setMore((v) => !v)} className="mt-5 t-gold text-sm tracking-wider" aria-expanded={more} style={{ background: 'none', border: 0, cursor: 'pointer' }}>
+        {more ? '▼' : '▶'} 更多數值　<span className="t-dim">（遊戲角色頁沒有，模擬器獨有）</span>
       </button>
       {more && (
         <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-          {moreRows.length === 0 && <div className="text-sanctuary-500 text-sm">目前沒有這類加成</div>}
+          {moreRows.length === 0 && <div className="t-dim text-sm">目前沒有這類加成</div>}
           {moreRows.map((m) => <Row key={m.stat} label={m.label} value={`${m.v}${m.suffix ?? ''}`} />)}
-          {skillRows.length > 0 && <div className="sm:col-span-2 border border-sanctuary-600 bg-sanctuary-950 px-2 py-1 text-sm"><span className="text-sanctuary-300">技能加成：</span>{skillRows.join('、')}</div>}
-          <div className="sm:col-span-2 text-xs text-sanctuary-500">
-            FCR/FHR 斷點影格、技能傷害、光環／戰吼／BO／變身尚未實作，數值不含這些來源。
-          </div>
+          {skillRows.length > 0 && <div className="sm:col-span-2 d2-row text-sm"><span className="k">技能加成</span><span className="t-magic text-right">{skillRows.join('、')}</span></div>}
+          <div className="sm:col-span-2 d2-sub">FCR／FHR 斷點影格、技能傷害、光環／戰吼／BO／變身尚未實作，數值不含這些來源。</div>
         </div>
       )}
     </div>
   );
 };
-
-const Row: React.FC<{ label: string; value: string; tone?: string }> = ({ label, value, tone }) => (
-  <div className="flex justify-between items-center border border-sanctuary-600 bg-sanctuary-950 px-3 py-1.5">
-    <span className="text-sanctuary-300 text-sm">{label}</span>
-    <b className={`tabular-nums ${tone ?? 'text-sanctuary-100'}`}>{value}</b>
-  </div>
-);
-void pct;
