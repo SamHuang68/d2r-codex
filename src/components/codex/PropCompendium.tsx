@@ -7,6 +7,7 @@ import {
   CHARMS_JEWELS_DATA
 } from '../../data/props';
 import { ItemIcon } from '../common/ItemIcon';
+import { UNIQUE_ITEMS_DATA } from '../../data/uniqueItems';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
 import { 
@@ -26,6 +27,13 @@ export interface PropCompendiumProps {
   onNavigateToCube?: () => void;
   onNavigateToRunewords?: (rwName: string) => void;
 }
+
+/** 護身符／珠寶頁的圖：裂口護身符用資料頁已有的彩色圖（RotW 為 Renewed 版），彩虹刻面用單顆圖 */
+const charmImage = (nameEn: string): string | undefined => {
+  if (nameEn === 'Rainbow Facet') return 'https://static.d2r.world/img/items/misc/rainbow_facet.jpg';
+  return UNIQUE_ITEMS_DATA.find((u) => u.nameEn === `Renewed ${nameEn}`)?.imageUrl
+    ?? UNIQUE_ITEMS_DATA.find((u) => u.nameEn === nameEn)?.imageUrl;
+};
 
 export const PropCompendium: React.FC<PropCompendiumProps> = ({
   onNavigateToRunes,
@@ -507,6 +515,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                         name={charm.name} 
                         nameEn={charm.nameEn} 
                         slot={charm.slot === 'jewel' ? 'jewel' : 'charm'} 
+                        imageUrl={charmImage(charm.nameEn)}
                         rarity="unique" 
                         size="lg" 
                       />

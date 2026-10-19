@@ -2,6 +2,7 @@ import React from 'react';
 import inventory from '../../../data/game/inventory.json';
 import type { CatalogEntry } from '../../../engine/catalog';
 import { ItemIcon } from '../../common/ItemIcon';
+import { imageForEntry } from '../../../utils/catalogImage';
 import { DOLL_SLOT_ZH, type DollSlot, type EquippedMap } from './types';
 
 interface InvRow { class: string; [k: string]: string | number }
@@ -129,7 +130,7 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
               {eq ? (
                 <div className="flex flex-col items-center justify-center w-full h-full overflow-hidden p-1">
                   <div className="flex-1 min-h-0 w-full" style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,.8))' }}>
-                    <ItemIcon name={eq.entry.name} nameEn={eq.entry.nameEn} baseItem={eq.entry.baseNameEn} slot={eq.entry.slot} rarity={rarityOf(eq.entry)} fit="fill" showBorder={false} />
+                    <ItemIcon name={eq.entry.name} nameEn={eq.entry.nameEn} baseItem={eq.entry.baseNameEn} slot={eq.entry.slot} rarity={rarityOf(eq.entry)} imageUrl={imageForEntry(eq.entry)} noGuess fit="fill" showBorder={false} />
                   </div>
                   {b.h > 60 && <span className={`d2-slot-name ${toneOf(eq.entry)}`}>{eq.entry.name}{eq.ethereal ? '（無形）' : ''}</span>}
                 </div>
@@ -155,7 +156,7 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
             style={{ left: gridL + p.x * cell + 1, top: gridT + p.y * cell + 1, width: cell * (p.entry.width || 1) - 2, height: cell * (p.entry.height || 1) - 2,
               background: 'rgba(30, 30, 80, .35)', boxShadow: 'inset 0 0 0 1px #5a5ad0, inset 0 0 10px rgba(80,80,255,.25)' }}
             title={`${p.entry.name}（點擊卸下）`} onClick={() => onRemoveCharm(i)}>
-            <ItemIcon name={p.entry.name} nameEn={p.entry.nameEn} baseItem={p.entry.baseNameEn} slot="charm" rarity={rarityOf(p.entry)} fit="fill" showBorder={false} />
+            <ItemIcon name={p.entry.name} nameEn={p.entry.nameEn} baseItem={p.entry.baseNameEn} slot="charm" rarity={rarityOf(p.entry)} imageUrl={imageForEntry(p.entry)} noGuess fit="fill" showBorder={false} />
           </div>
         ))}
         <div className="absolute d2-well flex items-center justify-center t-dim" style={{ right: 20, bottom: 20, width: 60, height: 60, fontSize: 12, letterSpacing: '.2em' }}>方塊</div>

@@ -76,6 +76,8 @@ export function resolveItemImagePath({
     return imageUrl.trim();
   }
 
+  // 引擎目錄的槽位用 head / body / neck，此處的規則比對 helm / armor / amulet，先統一詞彙
+  slot = ({ head: 'helm', body: 'armor', neck: 'amulet' } as Record<string, string>)[slot] ?? slot;
   const base = baseUrl ? (baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`) : '';
   const n = `${name} ${nameEn} ${baseItem}`.toLowerCase();
 
@@ -83,7 +85,7 @@ export function resolveItemImagePath({
   // 1. 符文解析 (1-33# Runes)
   // ──────────────────────────────────────────────
   let targetRuneNum = runeNumber;
-  if (targetRuneNum === undefined && (rarity === 'rune' || n.includes('符文') || n.includes('rune'))) {
+  if (targetRuneNum === undefined && (rarity === 'rune' || /^[^\s]{1,6}符文$/.test(name.trim()) || /^[a-z']+ rune$/i.test(nameEn.trim()))) {
     const numMatch = n.match(/(\d{1,2})\s*(?:#|號|rune)/);
     if (numMatch) {
       const parsed = parseInt(numMatch[1], 10);
@@ -136,6 +138,23 @@ export function resolveItemImagePath({
   }
   if (n.includes('完美骷髏') || n.includes('perfect skull')) {
     return `${base}images/items/props/perfect_skull.gif`;
+  }
+  // 城鎮傳送之書／卷軸（必須先於後面的「魔典 / tome」規則，否則會被當成死靈頭骨）
+  if (n.includes('城鎮傳送之書') || n.includes('傳送之書') || n.includes('town portal book') || n.includes('tp書') || n.includes('tp 書')) {
+    return 'https://static.d2r.world/img/items/misc/town_portal_book.jpg';
+  }
+  if (n.includes('城鎮傳送卷軸') || n.includes('town portal scroll')) {
+    return 'https://static.d2r.world/img/items/misc/town_portal_scroll.jpg';
+  }
+  // 寶石通稱（方塊配方的輸入／輸出）：碎裂、瑕疵、任意完美寶石
+  if (n.includes('碎裂寶石') || n.includes('chipped gem')) {
+    return 'https://static.d2r.world/img/items/misc/chipped_amethyst.jpg';
+  }
+  if (n.includes('瑕疵寶石') || n.includes('flawed gem')) {
+    return 'https://static.d2r.world/img/items/misc/flawed_amethyst.jpg';
+  }
+  if (n.includes('完美寶石') || n.includes('perfect gem')) {
+    return `${base}images/items/props/perfect_amethyst.gif`;
   }
   if (n.includes('精華') || n.includes('essence')) {
     return `${base}images/items/props/essences.png`;
@@ -209,7 +228,7 @@ export function resolveItemImagePath({
     if (n.includes('毒') || n.includes('poison')) return `${base}images/items/jewels/poison.gif`;
     return `${base}images/items/jewels/lightning.gif`;
   }
-  if (slot === 'jewel' || rarity === 'gem' || n.includes('珠寶') || /\bjewel\b/.test(n)) {
+  if (slot === 'jewel' || rarity === 'gem' || n.replace(/珠寶匠/g, '').includes('珠寶') || /\bjewel\b/.test(n.replace(/jeweler'?s?/g, ''))) {
     return `${base}images/items/jewels/lightning.gif`;
   }
 
@@ -1412,6 +1431,11 @@ export function resolveItemImagePath({
   }
 
   // ──────────────────────────────────────────────
+  // 防具通稱（方塊配方描述的不是特定物品）
+  if (n.includes('防具') || /\barmor\b/.test(n)) {
+    return `${base}images/items/bases/breastplate.gif`;
+  }
+
   // 8. 槽位保險底線回退 (Slot-based Safe Fallbacks)
   // ──────────────────────────────────────────────
   switch (slot) {
@@ -1443,6 +1467,7 @@ export function resolveItemImagePath({
     case 'jewel':
       return `${base}images/items/jewels/lightning.gif`;
     default:
-      return `${base}images/items/bases/crystalsword.gif`;
+      // 無法判斷時不猜圖（過去一律回水晶劍，造成大量錯圖）；空字串讓 ItemIcon 顯示文字佔位
+      return '';
   }
 }

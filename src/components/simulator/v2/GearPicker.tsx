@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getCatalog, CLASS_ZH, GROUP_ZH, RARITY_ZH, SLOT_ZH, TIER_ZH, type CatalogEntry, type Group, type Rarity, type Tier } from '../../../engine/catalog';
 import { describeModifiers } from '../../../engine/describe';
 import { ItemIcon } from '../../common/ItemIcon';
+import { imageForEntry } from '../../../utils/catalogImage';
 
 interface Props {
   open: boolean;
@@ -230,7 +231,7 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
                         onDragEnd={() => { onDragStart(null); setDragSource(false); }}
                       >
                         <div className="d2-well shrink-0" style={{ width: 56, height: 56 }}>
-                          <ItemIcon name={e.name} nameEn={e.nameEn} baseItem={e.baseNameEn} slot={e.slot} rarity={iconRarity(e)} fit="fill" showBorder={false} />
+                          <ItemIcon name={e.name} nameEn={e.nameEn} baseItem={e.baseNameEn} slot={e.slot} rarity={iconRarity(e)} imageUrl={imageForEntry(e)} noGuess fit="fill" showBorder={false} />
                         </div>
                         <div className="min-w-0 flex-1 cursor-pointer" onClick={() => setDetail(detail === e.id ? null : e.id)}>
                           <div className={`truncate font-semibold ${tone(e.kind)}`}>{e.name}</div>
