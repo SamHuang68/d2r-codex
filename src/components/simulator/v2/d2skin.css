@@ -361,3 +361,70 @@
 .d2sim .d2-skill .star { position: absolute; right: 2px; top: 0; font-size: 12px; color: var(--gold-bright); text-shadow: 0 1px 0 #000; }
 .d2sim .d2-bar { height: 8px; background: #0a0806; box-shadow: inset 0 0 0 1px #2e271c; }
 .d2sim .d2-bar > i { display: block; height: 100%; background: linear-gradient(180deg, #45d6ea, #1f8d9f); }
+
+/* ── 裝備庫浮動視窗（只顯示當前層）── */
+.d2sim .d2-float {
+  position: fixed; z-index: 45;
+  display: flex; flex-direction: column;
+  width: 440px; max-width: calc(100vw - 16px);
+  background: var(--noise), linear-gradient(180deg, var(--stone-2), var(--stone-1));
+  border: 1px solid #000;
+  box-shadow: inset 0 0 0 1px var(--iron), inset 0 0 0 3px #0b0907, inset 0 0 0 4px #5a4c2f, 0 18px 44px -8px rgba(0, 0, 0, .9);
+  transition: opacity .15s;
+}
+.d2sim .d2-float.is-dragging { opacity: .4; }
+.d2sim .d2-float-title {
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+  background: linear-gradient(180deg, #2c251c, #1a150f);
+  border-bottom: 1px solid #000; box-shadow: inset 0 -1px 0 #3a3224;
+  cursor: grab; user-select: none; touch-action: none;
+}
+.d2sim .d2-float-title:active { cursor: grabbing; }
+.d2sim .d2-float-name { font-family: "Noto Serif TC", "PMingLiU", serif; font-weight: 700; letter-spacing: .3em; color: var(--gold-bright); }
+.d2sim .d2-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 28px; padding: 0 8px;
+  font: inherit; font-size: 14px; color: var(--gold-bright); cursor: pointer;
+  background: linear-gradient(180deg, #5d4824, #33260f);
+  border: 1px solid #000; box-shadow: inset 0 1px 0 rgba(255, 232, 160, .3), inset 0 0 0 1px #000;
+}
+.d2sim .d2-icon-btn:hover:not(:disabled) { filter: brightness(1.2); }
+.d2sim .d2-icon-btn:disabled { opacity: .3; cursor: not-allowed; }
+.d2sim .d2-float-tools { padding: 8px 10px 6px; display: grid; gap: 6px; }
+.d2sim .d2-filter-toggle {
+  display: flex; align-items: center; gap: 8px; width: 100%; padding: 5px 8px; font: inherit; font-size: 12px; text-align: left;
+  color: var(--dim); background: #120f0b; border: 1px solid #000; box-shadow: inset 0 0 0 1px #2a241a; cursor: pointer;
+}
+.d2sim .d2-filter-toggle:hover { color: var(--text); }
+.d2sim .d2-filter-sum { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--faint); }
+.d2sim .d2-filter-box { display: grid; gap: 6px; padding: 8px; background: #120f0b; box-shadow: inset 0 0 0 1px #2a241a; }
+.d2sim .d2-filter-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.d2sim .d2-filter-row .k { width: 44px; font-size: 12px; color: var(--dim); }
+.d2sim .d2-chip {
+  padding: 3px 10px; font: inherit; font-size: 12px; color: var(--dim); cursor: pointer;
+  background: linear-gradient(180deg, #1d1812, #12100b); border: 1px solid #000; box-shadow: inset 0 0 0 1px #2e271c;
+}
+.d2sim .d2-chip.is-on { color: var(--gold-bright); background: linear-gradient(180deg, #5d4824, #33260f); box-shadow: inset 0 1px 0 rgba(255, 232, 160, .3), inset 0 0 0 1px #000; }
+.d2sim .d2-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 6px 10px; font-size: 13px; border-block: 1px solid #000; background: #100d09; }
+.d2sim .d2-crumb { font: inherit; padding: 2px 4px; color: var(--dim); background: none; border: 0; cursor: pointer; }
+.d2sim .d2-crumb:hover { color: var(--gold-bright); text-decoration: underline; }
+.d2sim .d2-crumb.is-here { color: var(--gold-bright); font-weight: 700; }
+.d2sim .d2-crumbs-n { margin-left: auto; font-size: 12px; color: var(--dim); }
+.d2sim .d2-float-body { flex: 1; min-height: 0; overflow-y: auto; padding: 8px 10px; overscroll-behavior: contain; }
+.d2sim .d2-float-foot { padding: 5px 10px; font-size: 11px; color: var(--faint); border-top: 1px solid #000; background: #100d09; }
+.d2sim .d2-empty { padding: 18px 10px; text-align: center; font-size: 13px; color: var(--dim); }
+.d2sim .d2-node.is-all { border-color: #5a4c2f; color: var(--gold-bright); }
+.d2sim .d2-float-spacer { height: 46vh; }
+
+/* 窄螢幕：改成底部抽屜（平板在 lg 以上無底部導覽列；手機要讓出底部導覽列） */
+@media (max-width: 1279px) {
+  .d2sim .d2-float { left: 0; right: 0; top: auto; bottom: 0; width: auto; max-width: none; height: 46vh; }
+  .d2sim .d2-float.is-min { height: auto; }
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+  /* 讓出桌面左側導覽欄（w-56 = 224px） */
+  .d2sim .d2-float { left: 224px; }
+}
+@media (max-width: 1023px) {
+  .d2sim .d2-float { bottom: calc(62px + env(safe-area-inset-bottom, 0px)); }
+  .d2sim .d2-float-spacer { height: calc(46vh + 62px); }
+}
