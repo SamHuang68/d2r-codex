@@ -77,7 +77,8 @@ export function resolveItemImagePath({
   }
 
   // 引擎目錄的槽位用 head / body / neck，此處的規則比對 helm / armor / amulet，先統一詞彙
-  slot = ({ head: 'helm', body: 'armor', neck: 'amulet' } as Record<string, string>)[slot] ?? slot;
+  const SLOT_ALIAS = new Map<string, string>([['head', 'helm'], ['body', 'armor'], ['neck', 'amulet']]);
+  slot = SLOT_ALIAS.get(String(slot)) ?? slot;
   const base = baseUrl ? (baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`) : '';
   const n = `${name} ${nameEn} ${baseItem}`.toLowerCase();
 
@@ -140,10 +141,10 @@ export function resolveItemImagePath({
     return `${base}images/items/props/perfect_skull.gif`;
   }
   // 城鎮傳送之書／卷軸（必須先於後面的「魔典 / tome」規則，否則會被當成死靈頭骨）
-  if (n.includes('城鎮傳送之書') || n.includes('傳送之書') || n.includes('town portal book') || n.includes('tp書') || n.includes('tp 書')) {
+  if (n.includes('城鎮傳送之書') || n.includes('傳送之書') || n.includes('town portal book') || n.includes('tome of town portal') || n.includes('tp書') || n.includes('tp 書')) {
     return 'https://static.d2r.world/img/items/misc/town_portal_book.jpg';
   }
-  if (n.includes('城鎮傳送卷軸') || n.includes('town portal scroll')) {
+  if (n.includes('城鎮傳送卷軸') || n.includes('town portal scroll') || n.includes('scroll of town portal')) {
     return 'https://static.d2r.world/img/items/misc/town_portal_scroll.jpg';
   }
   // 寶石通稱（方塊配方的輸入／輸出）：碎裂、瑕疵、任意完美寶石
@@ -228,7 +229,7 @@ export function resolveItemImagePath({
     if (n.includes('毒') || n.includes('poison')) return `${base}images/items/jewels/poison.gif`;
     return `${base}images/items/jewels/lightning.gif`;
   }
-  if (slot === 'jewel' || rarity === 'gem' || n.replace(/珠寶匠/g, '').includes('珠寶') || /\bjewel\b/.test(n.replace(/jeweler'?s?/g, ''))) {
+  if (slot === 'jewel' || rarity === 'gem' || n.replace(/珠寶匠/g, '').includes('珠寶') || /\bjewel\b/.test(n)) {
     return `${base}images/items/jewels/lightning.gif`;
   }
 
@@ -1434,6 +1435,10 @@ export function resolveItemImagePath({
   // 防具通稱（方塊配方描述的不是特定物品）
   if (n.includes('防具') || /\barmor\b/.test(n)) {
     return `${base}images/items/bases/breastplate.gif`;
+  }
+  // 武器通稱（與防具對稱）
+  if (n.includes('武器') || /\bweapon\b/.test(n)) {
+    return `${base}images/items/bases/crystalsword.gif`;
   }
 
   // 8. 槽位保險底線回退 (Slot-based Safe Fallbacks)

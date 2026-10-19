@@ -73,10 +73,9 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
 }) => {
   const [collapsed, setCollapsed] = React.useState<boolean>(readCollapsed);
   const toggle = () => {
-    setCollapsed((c) => {
-      try { window.localStorage.setItem(COLLAPSE_KEY, c ? '0' : '1'); } catch { /* 無痕或封鎖時略過 */ }
-      return !c;
-    });
+    const next = !collapsed;
+    setCollapsed(next);
+    try { window.localStorage.setItem(COLLAPSE_KEY, next ? '1' : '0'); } catch { /* 無痕或封鎖時略過 */ }
   };
 
   return (
@@ -85,13 +84,22 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
         aria-label="全站分頁"
         className={`sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-y-auto no-scrollbar py-1.5 ${collapsed ? 'px-1.5' : 'px-2'}`}
       >
+
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={collapsed ? '展開側邊欄' : '收合側邊欄'}
+          aria-expanded={!collapsed}
+          title={collapsed ? '展開側邊欄' : '收合側邊欄'}
+          className={`mb-1 w-full flex items-center rounded-md h-7 text-[11px] text-sanctuary-400 hover:text-sanctuary-100 hover:bg-sanctuary-900 border border-transparent transition-colors ${collapsed ? 'justify-center' : 'gap-2 px-2'}`}
+        >
+          {collapsed ? <ChevronsRight className="w-4 h-4" /> : (<><ChevronsLeft className="w-4 h-4" /><span>收合側邊欄</span></>)}
+        </button>
         {NAV_GROUPS.map((group, gi) => (
-          <div key={group.category} className={gi === 0 ? '' : collapsed ? 'mt-1.5 pt-1.5 border-t border-sanctuary-800/70' : 'mt-2'}>
-            {!collapsed && (
-              <div className="px-2 mb-0.5 text-[10px] leading-4 font-mono font-bold tracking-widest text-sanctuary-500 uppercase">
-                {group.category}
-              </div>
-            )}
+          <div key={group.category} role="group" aria-label={group.category} className={gi === 0 ? '' : collapsed ? 'mt-1.5 pt-1.5 border-t border-sanctuary-800/70' : 'mt-2'}>
+            <div className={collapsed ? 'sr-only' : 'px-2 mb-0.5 text-[10px] leading-4 font-mono font-bold tracking-widest text-sanctuary-400 uppercase'}>
+              {group.category}
+            </div>
             <div>
               {group.items.map((item) => {
                 const isActive = activeTab === item.id;
@@ -122,15 +130,6 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
           </div>
         ))}
 
-        <button
-          type="button"
-          onClick={toggle}
-          aria-label={collapsed ? '展開側邊欄' : '收合側邊欄'}
-          title={collapsed ? '展開側邊欄' : '收合側邊欄'}
-          className={`mt-2 w-full flex items-center rounded-md h-7 text-[11px] text-sanctuary-500 hover:text-sanctuary-200 hover:bg-sanctuary-900 border border-transparent transition-colors ${collapsed ? 'justify-center' : 'gap-2 px-2'}`}
-        >
-          {collapsed ? <ChevronsRight className="w-4 h-4" /> : (<><ChevronsLeft className="w-4 h-4" /><span>收合</span></>)}
-        </button>
       </nav>
     </aside>
   );

@@ -189,6 +189,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                   titleEn={item.nameEn}
                   baseItem={item.baseItem}
                   baseItemEn={item.baseItemEn}
+                  slot={item.slot}
                   rarity="unique"
                   requiredLevel={item.requiredLevel}
                   requiredStr={item.requiredStr}

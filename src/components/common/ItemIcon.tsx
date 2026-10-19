@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GearSlot, ItemRarity } from '../../types';
 import { resolveItemImagePath } from '../../utils/itemImageResolver';
+
+/** 暗金／套裝圖中，物品不會延伸到浮水印區的部位（遊戲格高 ≤2～3）：可安全裁到 74% 以放大物品 */
+const SHORT_SLOTS = new Set(['helm', 'head', 'gloves', 'boots', 'belt', 'amulet', 'neck', 'ring', 'ring1', 'ring2']);
 
 export interface ItemIconProps {
   name?: string;
@@ -122,10 +125,14 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
     imageUrl,
   });
 
+  // 換圖（例如同一槽位換裝、符文之語換底材）時重置載入失敗與平滑縮放狀態，避免前一張圖的失敗狀態卡住新圖
+  useEffect(() => { setImgError(false); setSmooth(false); }, [imageSrc]);
+
   // 只有 /img/items/magic/（暗金、套裝）的圖是 2:1 畫布且底部帶有站名浮水印；
   // base/、misc/ 與本機圖都沒有浮水印，必須完整顯示（不裁切、保留長寬比）
   const isMagicRemote = /static\.d2r\.world\/img\/items\/magic\//.test(imageSrc);
   const isRemote = /^https?:/.test(imageSrc);
+  const shortArt = SHORT_SLOTS.has(String(slot));
   const fill = fit === 'fill';
   const boxStyle: React.CSSProperties = fill
     ? {}
@@ -143,7 +150,22 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70 pointer-events-none" />
 
       {!imgError && imageSrc ? (
-        isMagicRemote ? (
+        isMagicRemote && shortArt ? (
+          // 矮物品（頭盔、手套、靴子、腰帶、戒指、項鍊）：圖只佔畫布上方約 74%，浮水印在 77% 以下，
+          // 直接裁到 74%（196:290）既不切到物品也不露出浮水印，且圖比完整畫布更大
+          <div className="relative z-10 overflow-hidden max-w-full max-h-full" style={{ height: '100%', aspectRatio: '196 / 290' }}>
+            <img
+              src={imageSrc}
+              alt={alt}
+              className="absolute top-0 left-0 w-full h-auto drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+              loading="lazy"
+              referrerPolicy="no-referrer"
+              onError={() => setImgError(true)}
+            />
+          </div>
+        ) : isMagicRemote ? (
+          // 高物品（武器、盾、護身符、未知部位）：完整顯示，不切下端；
+          // 浮水印區帶以模糊遮罩淡化（小尺寸字樣本來就看不清，省略遮罩以降低繪製成本）
           <div className="relative z-10 overflow-hidden max-w-full max-h-full" style={{ height: '100%', aspectRatio: '1 / 2' }}>
             <img
               src={imageSrc}
@@ -153,19 +175,20 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
               referrerPolicy="no-referrer"
               onError={() => setImgError(true)}
             />
-            {/* 浮水印位於底部約 25%（y≈75%–95%）：以模糊遮罩淡化字樣，物品輪廓仍保留，不再硬裁掉 4 格高物品的下端 */}
-            <div
-              aria-hidden
-              className="absolute inset-x-0 bottom-0 pointer-events-none"
-              style={{
-                height: '31%',
-                backdropFilter: 'blur(9px)',
-                WebkitBackdropFilter: 'blur(9px)',
-                background: 'linear-gradient(to bottom, transparent, rgba(8,6,4,.78))',
-                WebkitMaskImage: 'linear-gradient(to bottom, transparent, #000 22%)',
-                maskImage: 'linear-gradient(to bottom, transparent, #000 22%)',
-              }}
-            />
+            {(fill || px >= 96) && (
+              <div
+                aria-hidden
+                className="absolute inset-x-0 bottom-0 pointer-events-none"
+                style={{
+                  height: '31%',
+                  backdropFilter: 'blur(9px)',
+                  WebkitBackdropFilter: 'blur(9px)',
+                  background: 'linear-gradient(to bottom, transparent, rgba(8,6,4,.78))',
+                  WebkitMaskImage: 'linear-gradient(to bottom, transparent, #000 22%)',
+                  maskImage: 'linear-gradient(to bottom, transparent, #000 22%)',
+                }}
+              />
+            )}
           </div>
         ) : (
           <img
@@ -187,7 +210,7 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
           />
         )
       ) : (
-        <span className="relative z-10 font-bold font-serif text-amber-300/80 uppercase" style={{ fontSize: Math.max(10, px / 4) }}>
+        <span className="relative z-10 font-bold font-serif text-amber-300/80 uppercase" style={{ fontSize: fill ? 11 : Math.max(10, px / 4) }}>
           {name ? name.replace(/[【】]|符文語/g, '').slice(0, 2) || 'D2' : 'D2'}
         </span>
       )}

@@ -21,6 +21,8 @@ interface ItemTooltipProps {
   /** stack：圖在上（預設）；row：圖在左、文字在右，適合清單卡 */
   layout?: 'stack' | 'row';
   badges?: string[];
+  /** 部位（影響暗金圖的裁切方式） */
+  slot?: string;
 }
 
 export const ItemTooltip: React.FC<ItemTooltipProps> = ({
@@ -41,6 +43,7 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
   imageUrl,
   layout = 'stack',
   badges,
+  slot,
 }) => {
   // Title color according to rarity
   const getTitleColor = () => {
@@ -177,6 +180,7 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
       name={title}
       nameEn={titleEn}
       baseItem={baseItem}
+      slot={slot}
       rarity={rarity}
       size="xl"
       imageUrl={imageUrl}
