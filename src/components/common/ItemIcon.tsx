@@ -10,6 +10,8 @@ export interface ItemIconProps {
   rarity?: ItemRarity | 'unique' | 'set' | 'runeword' | 'rune' | 'charm' | 'gem' | 'prop' | 'rare' | 'magic' | 'crafted';
   runeNumber?: number;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  /** natural：依高度縮放、寬度依原圖比例；fill：填滿父層（裝備欄位用），皆保留長寬比 */
+  fit?: 'natural' | 'fill';
   className?: string;
   showBorder?: boolean;
   imageUrl?: string;
@@ -27,25 +29,22 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
   rarity = 'unique',
   runeNumber,
   size = 'md',
+  fit = 'natural',
   className = '',
   showBorder = true,
   imageUrl,
 }) => {
   const [imgError, setImgError] = useState(false);
+  const [smooth, setSmooth] = useState(false);
   const n = `${name} ${nameEn} ${baseItem}`.toLowerCase();
   const envBase = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || './';
   const baseUrl = envBase.endsWith('/') ? envBase : `${envBase}/`;
 
-  // 1. 決定尺寸類別
-  const sizeMap = {
-    xs: 'w-5 h-5 min-w-[20px] min-h-[20px]',
-    sm: 'w-7 h-7 min-w-[28px] min-h-[28px]',
-    md: 'w-10 h-10 min-w-[40px] min-h-[40px]',
-    lg: 'w-14 h-14 min-w-[56px] min-h-[56px]',
-    xl: 'w-20 h-20 min-w-[80px] min-h-[80px]',
-  };
-
-  const containerSize = sizeMap[size] || sizeMap.md;
+  // 1. 決定尺寸（依高度，寬度依圖片原始比例，不拉伸）
+  const heightMap: Record<string, number> = { xs: 36, sm: 56, md: 96, lg: 128, xl: 176 };
+  const px = heightMap[size] ?? heightMap.md;
+  // d2r.world 遠端圖為 196x392，底部約 14% 帶有站名浮水印：以 196:290 的比例裁掉該區帶（不變形）
+  const REMOTE_RATIO = 196 / 290;
 
   // 2. 決定稀有度光暈色彩
   const getColors = () => {
@@ -122,29 +121,59 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
     imageUrl,
   });
 
+  const isRemoteWatermarked = /static\.d2r\.world/.test(imageSrc) && !/\/misc\//.test(imageSrc);
+  const fill = fit === 'fill';
+  const boxStyle: React.CSSProperties = fill
+    ? {}
+    : { height: px, minWidth: Math.round(px * 0.6) };
+  const alt = name || nameEn || 'Item';
+
   return (
     <div
-      className={`relative flex items-center justify-center rounded transition-all duration-200 select-none overflow-hidden ${containerSize} ${
-        showBorder ? `border ${colorConfig.border} ${colorConfig.bg} ${colorConfig.glow} shadow-sm` : ''
-      } ${className}`}
-      title={name || nameEn || baseItem}
+      className={`relative flex items-center justify-center rounded transition-all duration-200 select-none overflow-hidden ${
+        fill ? 'w-full h-full' : 'shrink-0'
+      } ${showBorder ? `border ${colorConfig.border} ${colorConfig.bg} ${colorConfig.glow} shadow-sm` : ''} ${className}`}
+      style={boxStyle}
+      title={alt}
     >
-      {/* 像素暗黑背景網格質感 */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70 pointer-events-none" />
 
-      {/* 遊戲真實貼圖 */}
       {!imgError ? (
-        <img
-          src={imageSrc}
-          alt={name || nameEn || 'Item'}
-          className="relative z-10 max-w-full max-h-full object-contain p-0.5 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] [image-rendering:pixelated] transition-transform duration-200 hover:scale-110"
-          loading="lazy"
-          onError={() => setImgError(true)}
-        />
+        isRemoteWatermarked ? (
+          <div
+            className="relative z-10 overflow-hidden max-w-full max-h-full"
+            style={{ height: '100%', aspectRatio: String(REMOTE_RATIO) }}
+          >
+            <img
+              src={imageSrc}
+              alt={alt}
+              className="absolute top-0 left-0 w-full h-auto drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+              loading="lazy"
+              referrerPolicy="no-referrer"
+              onError={() => setImgError(true)}
+            />
+          </div>
+        ) : (
+          <img
+            src={imageSrc}
+            alt={alt}
+            onLoad={(e) => {
+              // 小尺寸本機 sprite 放大超過 2.5 倍時改用平滑縮放，避免大面積馬賽克
+              const el = e.currentTarget;
+              if (!fill && el.naturalHeight > 0 && px / el.naturalHeight > 2.5) setSmooth(true);
+            }}
+            className={`relative z-10 object-contain p-1 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] ${
+              smooth ? '' : '[image-rendering:pixelated]'
+            } ${
+              fill ? 'w-full h-full' : 'h-full w-auto max-w-full'
+            }`}
+            loading="lazy"
+            onError={() => setImgError(true)}
+          />
+        )
       ) : (
-        /* 降級標籤 (極少情況) */
-        <span className="relative z-10 font-bold font-serif text-[10px] text-amber-300/80 uppercase">
-          {name ? name.slice(0, 2) : 'D2'}
+        <span className="relative z-10 font-bold font-serif text-amber-300/80 uppercase" style={{ fontSize: Math.max(10, px / 4) }}>
+          {name ? name.replace(/[【】]|符文語/g, '').slice(0, 2) || 'D2' : 'D2'}
         </span>
       )}
     </div>

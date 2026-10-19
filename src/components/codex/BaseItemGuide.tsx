@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { BASE_ITEMS_DATA, BaseItemData } from '../../data/bases';
 import { ItemIcon } from '../common/ItemIcon';
+import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
+import { PageHeader } from '../common/PageHeader';
 import { 
   ShieldAlert, 
   Search, 
@@ -33,12 +35,31 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
     }
   }, [initialQuery]);
 
-  const categories = ["全部", "單手武器", "雙手武器", "防具鎧甲", "盾牌"];
+  const [selectedTier, setSelectedTier] = useState<string>("全部");
+  const [visibleCount, setVisibleCount] = useState<number>(48);
+
+  const hasDmg = (v?: string) => !!v && v !== '-';
+  const isShield = (i: BaseItemData) => i.category === 'armor' && i.name.includes('盾');
+  // 資料的 category 為 weapon / armor；單手、雙手與盾牌依傷害欄位與名稱判斷
+  const matchCategory = (i: BaseItemData, cat: string) => {
+    switch (cat) {
+      case '單手武器': return i.category === 'weapon' && hasDmg(i.damage1h);
+      case '雙手武器': return i.category === 'weapon' && hasDmg(i.damage2h);
+      case '防具鎧甲': return i.category === 'armor' && !isShield(i);
+      case '盾牌': return isShield(i);
+      default: return true;
+    }
+  };
+
+  const tierOptions = ["全部", "普通", "進階", "精華"];
 
   const filteredItems = useMemo(() => {
     return BASE_ITEMS_DATA.filter((item: BaseItemData) => {
       // 分類篩選
-      if (selectedCategory !== "全部" && item.category !== selectedCategory) {
+      if (!matchCategory(item, selectedCategory)) {
+        return false;
+      }
+      if (selectedTier !== "全部" && item.qualityTier !== selectedTier) {
         return false;
       }
       // 無形篩選
@@ -62,53 +83,70 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
       }
       return true;
     });
-  }, [selectedCategory, searchQuery, filterEthOnly, filterSuperiorOnly]);
+  }, [selectedCategory, selectedTier, searchQuery, filterEthOnly, filterSuperiorOnly]);
+
+  React.useEffect(() => { setVisibleCount(48); }, [selectedCategory, selectedTier, searchQuery, filterEthOnly, filterSuperiorOnly]);
+
+  const pick = (cat: string, nameEn: string) =>
+    BASE_ITEMS_DATA.find((i) => matchCategory(i, cat) && i.nameEn === nameEn) ||
+    BASE_ITEMS_DATA.find((i) => matchCategory(i, cat));
+  const tileSrc = (cat: string, nameEn: string): CategoryTile['icon'] => {
+    const i = pick(cat, nameEn);
+    return { name: i?.name, nameEn: i?.nameEn, baseItem: i?.name, rarity: 'normal', imageUrl: i?.imageUrl };
+  };
+  const tiles: CategoryTile[] = [
+    { id: '全部', label: '全部底材', sub: '武器・防具', count: BASE_ITEMS_DATA.length, icon: tileSrc('防具鎧甲', 'Archon Plate'), tone: 'neutral' },
+    { id: '單手武器', label: '單手武器', count: BASE_ITEMS_DATA.filter((i) => matchCategory(i, '單手武器')).length, icon: tileSrc('單手武器', 'Phase Blade'), tone: 'unique' },
+    { id: '雙手武器', label: '雙手武器', count: BASE_ITEMS_DATA.filter((i) => matchCategory(i, '雙手武器')).length, icon: tileSrc('雙手武器', 'Colossus Blade'), tone: 'unique' },
+    { id: '防具鎧甲', label: '防具鎧甲', count: BASE_ITEMS_DATA.filter((i) => matchCategory(i, '防具鎧甲')).length, icon: tileSrc('防具鎧甲', 'Archon Plate'), tone: 'magic' },
+    { id: '盾牌', label: '盾牌', count: BASE_ITEMS_DATA.filter((i) => matchCategory(i, '盾牌')).length, icon: tileSrc('盾牌', 'Monarch'), tone: 'rare' },
+  ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
-      {/* 標題與說明 */}
-      <div className="border-b border-sanctuary-800 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-d2-socket text-xs font-mono tracking-widest uppercase">
-            <ShieldAlert className="w-4 h-4 text-d2-socket animate-pulse" />
-            Endgame Runeword Bases & Socketing Codex
+      <PageHeader
+        icon={<ShieldAlert className="w-6 h-6" />}
+        tone="text-d2-socket"
+        title="頂級符文之語底材與打孔寶典"
+        desc="收錄悔恨幻化之刃、法師鎧甲謎團、無形銳利無限、神聖小盾精神等全職業 S 級畢業底材，提供 WSM 攻速、最大孔數、拉蘇克固定打孔機制與打寶估價戰術解析。"
+        right={
+          <div className="flex items-center gap-3 bg-sanctuary-900/80 p-2.5 rounded-2xl border border-sanctuary-800 shrink-0 self-start">
+            <div className="text-right px-3 border-r border-sanctuary-800">
+              <div className="text-[10px] text-sanctuary-400 font-mono">收錄經典底材</div>
+              <div className="text-xl font-bold font-mono text-d2-socket">{BASE_ITEMS_DATA.length} 款</div>
+            </div>
+            <div className="text-right px-3">
+              <div className="text-[10px] text-sanctuary-400 font-mono">符合條件</div>
+              <div className="text-xl font-bold font-mono text-d2-gold">{filteredItems.length} 款</div>
+            </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            頂級符文之語底材與打孔寶典
-          </h1>
-          <p className="text-sanctuary-400 text-sm mt-1 max-w-3xl">
-            收錄悔恨幻化之刃、法師鎧甲謎團、無形銳利無限、神聖小盾精神等全職業 S 級畢業底材，提供 WSM 攻速、最大孔數、拉蘇克固定打孔機制與打寶估價戰術解析。
-          </p>
-        </div>
+        }
+      />
 
-        {/* 統計指標 */}
-        <div className="flex items-center gap-3 bg-sanctuary-900/80 p-2.5 rounded-2xl border border-sanctuary-800 shrink-0">
-          <div className="text-right px-3 border-r border-sanctuary-800">
-            <div className="text-[10px] text-sanctuary-400 font-mono">收錄經典底材</div>
-            <div className="text-xl font-bold font-mono text-d2-socket">{BASE_ITEMS_DATA.length} 款</div>
-          </div>
-          <div className="text-right px-3">
-            <div className="text-[10px] text-sanctuary-400 font-mono">符合條件</div>
-            <div className="text-xl font-bold font-mono text-d2-gold">{filteredItems.length} 款</div>
-          </div>
-        </div>
-      </div>
+      {/* 大圖分類磚 */}
+      <CategoryTiles
+        tiles={tiles}
+        activeId={selectedCategory}
+        onSelect={setSelectedCategory}
+        iconSize="lg"
+        className="grid-cols-2 sm:grid-cols-3 lg:grid-cols-5"
+      />
 
       {/* 篩選與搜尋列 */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-        {/* 分類按鈕 */}
-        <div className="flex items-center gap-1.5 bg-sanctuary-900/80 p-1.5 rounded-2xl border border-sanctuary-800 overflow-x-auto scrollbar-thin">
-          {categories.map((cat) => (
+        {/* 品階按鈕 */}
+        <div className="flex items-center gap-1.5 bg-sanctuary-900/80 p-1.5 rounded-2xl border border-sanctuary-800 overflow-x-auto no-scrollbar">
+          {tierOptions.map((t) => (
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
+              key={t}
+              onClick={() => setSelectedTier(t)}
               className={`px-4 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap ${
-                selectedCategory === cat
+                selectedTier === t
                   ? 'bg-d2-socket text-sanctuary-950 font-bold shadow-md shadow-d2-socket/20'
                   : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-800/60'
               }`}
             >
-              {cat}
+              {t === '全部' ? '全部品階' : `${t}品階`}
             </button>
           ))}
         </div>
@@ -154,7 +192,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
 
       {/* 底材卡片列表 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredItems.map((item) => (
+        {filteredItems.slice(0, visibleCount).map((item) => (
           <div
             key={item.id}
             className="bg-sanctuary-900/80 border border-sanctuary-800 rounded-2xl p-5 flex flex-col justify-between hover:border-sanctuary-700 transition-all duration-200 space-y-4 group shadow-xl"
@@ -167,9 +205,9 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
                     name={item.name}
                     nameEn={item.nameEn}
                     baseItem={item.name}
-                    slot={item.category === '防具鎧甲' ? 'armor' : item.category === '盾牌' ? 'shield' : 'weapon'}
+                    slot={isShield(item) ? 'shield' : item.category === 'armor' ? 'armor' : 'weapon'}
                     rarity="normal"
-                    size="md"
+                    size="lg"
                     imageUrl={item.imageUrl}
                   />
                   <div>
@@ -183,9 +221,9 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
                     </div>
                   <div className="flex items-center gap-2 text-[11px] font-mono text-sanctuary-400 mt-0.5">
                     <span className="px-1.5 py-0.2 rounded bg-sanctuary-800 text-sanctuary-300">
-                      {item.category} · {item.itemType}
+                      {item.category === 'weapon' ? '武器' : '防具'} · {item.itemType}
                     </span>
-                    <span className="px-1.5 py-0.2 rounded bg-d2-gold/10 text-d2-gold border border-d2-gold/20">
+                    <span className="px-1.5 py-0.2 rounded bg-d2-gold/10 text-d2-gold border border-d2-gold/20 whitespace-nowrap">
                       {item.qualityTier}品階
                     </span>
                   </div>
@@ -291,6 +329,17 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
           </div>
         ))}
       </div>
+
+      {filteredItems.length > visibleCount && (
+        <div className="text-center">
+          <button
+            onClick={() => setVisibleCount((c) => c + 48)}
+            className="px-6 py-2.5 rounded-xl bg-sanctuary-900 border border-sanctuary-700 hover:border-d2-socket text-sm text-sanctuary-200"
+          >
+            顯示更多（已顯示 {visibleCount} / {filteredItems.length} 款）
+          </button>
+        </div>
+      )}
 
       {filteredItems.length === 0 && (
         <div className="text-center py-16 bg-sanctuary-900/40 rounded-2xl border border-sanctuary-800 space-y-3">

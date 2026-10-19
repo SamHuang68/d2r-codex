@@ -6,6 +6,8 @@ import { ItemTooltip } from '../common/ItemTooltip';
 import { ItemIcon } from '../common/ItemIcon';
 import { Sword, Search, Shield, Sparkles, X } from 'lucide-react';
 import { GearSlot } from '../../types';
+import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
+import { PageHeader } from '../common/PageHeader';
 
 export interface ItemCompendiumProps {
   initialQuery?: string;
@@ -18,7 +20,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
 }) => {
   const [activeCategory, setActiveCategory] = useState<'all' | GearSlot | 'sets'>('all');
   const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState<number>(36);
 
   // Sync initialQuery when prop changes
   React.useEffect(() => {
@@ -28,20 +30,43 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     }
   }, [initialQuery]);
 
-  const categories = [
-    { id: 'all', label: '全部裝備' },
-    { id: 'helm', label: '頭盔 (Helms)' },
-    { id: 'weapon', label: '武器 (Weapons)' },
-    { id: 'armor', label: '衣服 (Armor)' },
-    { id: 'shield', label: '盾牌 (Shields)' },
-    { id: 'gloves', label: '手套 (Gloves)' },
-    { id: 'boots', label: '靴子 (Boots)' },
-    { id: 'belt', label: '腰帶 (Belts)' },
-    { id: 'ring', label: '戒指 (Rings)' },
-    { id: 'amulet', label: '項鍊 (Amulets)' },
-    { id: 'charm', label: '護身符 (Charms)' },
-    { id: 'jewel', label: '暗金珠寶 (Jewels)' },
-    { id: 'sets', label: '成套裝備 (Sets)' },
+  const catDefs: { id: string; label: string; rep: string; tone: CategoryTile['tone'] }[] = [
+    { id: 'all', label: '全部裝備', rep: "Tyrael's Might", tone: 'neutral' },
+    { id: 'helm', label: '頭盔', rep: "Harlequin Crest", tone: 'unique' },
+    { id: 'weapon', label: '武器', rep: "Windforce", tone: 'unique' },
+    { id: 'armor', label: '衣服', rep: "Skin of the Vipermagi", tone: 'unique' },
+    { id: 'shield', label: '盾牌', rep: "Stormshield", tone: 'unique' },
+    { id: 'gloves', label: '手套', rep: "Dracul's Grasp", tone: 'unique' },
+    { id: 'boots', label: '靴子', rep: "War Traveler", tone: 'unique' },
+    { id: 'belt', label: '腰帶', rep: "Arachnid Mesh", tone: 'unique' },
+    { id: 'ring', label: '戒指', rep: "Stone of Jordan", tone: 'unique' },
+    { id: 'amulet', label: '項鍊', rep: "Mara's Kaleidoscope", tone: 'unique' },
+    { id: 'charm', label: '護身符', rep: "Annihilus", tone: 'unique' },
+    { id: 'jewel', label: '暗金珠寶', rep: "Rainbow Facet", tone: 'unique' },
+  ];
+  const tiles: CategoryTile[] = [
+    ...catDefs.map((c) => {
+      const pool = c.id === 'all' ? UNIQUE_ITEMS_DATA : UNIQUE_ITEMS_DATA.filter((u) => u.slot === c.id);
+      const rep = pool.find((u) => u.nameEn === c.rep) || pool[0];
+      return {
+        id: c.id,
+        label: c.label,
+        count: pool.length,
+        tone: c.tone,
+        icon: { name: rep?.name, nameEn: rep?.nameEn, baseItem: rep?.baseItem, slot: rep?.slot, rarity: 'unique' as const, imageUrl: rep?.imageUrl },
+      };
+    }),
+    (() => {
+      const rep = SET_ITEMS_DATA[0]?.pieces[0];
+      return {
+        id: 'sets',
+        label: '成套裝備',
+        sub: '綠色套裝',
+        count: SET_ITEMS_DATA.length,
+        tone: 'set' as const,
+        icon: { name: rep?.name, nameEn: rep?.nameEn, baseItem: rep?.baseItem, slot: rep?.slot, rarity: 'set' as const, imageUrl: rep?.imageUrl },
+      };
+    })(),
   ];
 
   // Filtered Uniques
@@ -100,22 +125,30 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     });
   }, [activeCategory, searchQuery]);
 
+  React.useEffect(() => { setVisibleCount(36); }, [activeCategory, searchQuery]);
+
   return (
     <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Title */}
-      <div className="mb-6">
-        <h2 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-unique flex items-center gap-2">
-          <Sword className="w-6 h-6 text-d2-unique" />
-          <span>裝備寶典 (暗金與套裝全覽)</span>
-        </h2>
-        <p className="text-xs sm:text-sm text-sanctuary-400 mt-1">
-          收錄暗黑破壞神二代各部位指標性暗金裝備與知名全套套裝，包含屬性浮動範圍與完整套裝效果。
-        </p>
-      </div>
+      <PageHeader
+        icon={<Sword className="w-6 h-6" />}
+        title="裝備寶典 (暗金與套裝全覽)"
+        desc="收錄暗黑破壞神二代各部位指標性暗金裝備與知名全套套裝，包含屬性浮動範圍與完整套裝效果。"
+        right={
+          <div className="text-xs text-sanctuary-400 font-mono px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800 self-start">
+            暗金 <span className="text-d2-unique font-bold">{filteredUniques.length}</span> ・ 套裝 <span className="text-d2-set font-bold">{filteredSets.length}</span>
+          </div>
+        }
+      />
 
-      {/* Category Tabs & Search Bar */}
       <div className="space-y-4 mb-8">
-        {/* Search */}
+        <CategoryTiles
+          tiles={tiles}
+          activeId={activeCategory}
+          onSelect={(id) => setActiveCategory(id as 'all' | GearSlot | 'sets')}
+          iconSize="lg"
+          className="grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7"
+        />
+
         <div className="relative">
           <Search className="w-4 h-4 text-sanctuary-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -123,7 +156,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="搜尋暗金或套裝名稱、底材或屬性 (例如：軍帽、獅鷲、塔拉夏、SOJ...)"
-            className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-4 py-2 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
+            className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-4 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
           />
           {searchQuery && (
             <button
@@ -133,26 +166,6 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
               <X className="w-4 h-4" />
             </button>
           )}
-        </div>
-
-        {/* Categories Bar */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 no-scrollbar">
-          {categories.map((cat) => {
-            const isActive = activeCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.id as any)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium shrink-0 transition-colors border ${
-                  isActive
-                    ? 'bg-sanctuary-800 text-d2-unique border-d2-unique/50'
-                    : 'bg-sanctuary-950 text-sanctuary-400 border-sanctuary-800 hover:text-sanctuary-200'
-                }`}
-              >
-                {cat.label}
-              </button>
-            );
-          })}
         </div>
       </div>
 
@@ -167,31 +180,43 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                 獨特暗金裝備 ({filteredUniques.length})
               </h3>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredUniques.map((item) => (
-                <div
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+              {filteredUniques.slice(0, visibleCount).map((item) => (
+                <ItemTooltip
                   key={item.id}
-                  onClick={() => setSelectedItemId(selectedItemId === item.id ? null : item.id)}
-                  className="cursor-pointer"
-                >
-                  <ItemTooltip
-                    title={item.name}
-                    titleEn={item.nameEn}
-                    baseItem={item.baseItem}
-                    baseItemEn={item.baseItemEn}
-                    rarity="unique"
-                    requiredLevel={item.requiredLevel}
-                    requiredStr={item.requiredStr}
-                    requiredDex={item.requiredDex}
-                    attributes={item.attributes}
-                    flavorText={item.flavorText}
-                    onNavigateToBase={onNavigateToBase}
-                    imageUrl={item.imageUrl}
-                    className="h-full hover:border-d2-unique hover:scale-[1.01]"
-                  />
-                </div>
+                  layout="row"
+                  title={item.name}
+                  titleEn={item.nameEn}
+                  baseItem={item.baseItem}
+                  baseItemEn={item.baseItemEn}
+                  rarity="unique"
+                  requiredLevel={item.requiredLevel}
+                  requiredStr={item.requiredStr}
+                  requiredDex={item.requiredDex}
+                  attributes={item.attributes}
+                  flavorText={item.flavorText}
+                  onNavigateToBase={onNavigateToBase}
+                  imageUrl={item.imageUrl}
+                  badges={[
+                    ...(item.grade ? [({ normal: '普通', exceptional: '擴展', elite: '精華' } as Record<string, string>)[item.grade] || item.grade] : []),
+                    ...(item.classOnly ? [`${item.classOnly}專用`] : []),
+                    ...(item.ladderOnly ? ['天梯限定'] : []),
+                    ...(item.isNewDLC ? ['RotW DLC'] : []),
+                  ]}
+                  className="h-full hover:border-d2-unique"
+                />
               ))}
             </div>
+            {filteredUniques.length > visibleCount && (
+              <div className="text-center mt-5">
+                <button
+                  onClick={() => setVisibleCount((c) => c + 36)}
+                  className="px-6 py-2.5 rounded-xl bg-sanctuary-900 border border-sanctuary-700 hover:border-d2-unique text-sm text-sanctuary-200"
+                >
+                  顯示更多（已顯示 {visibleCount} / {filteredUniques.length} 件）
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -223,7 +248,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                   </div>
 
                   {/* Set Pieces Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                     {set.pieces.map((piece) => (
                       <div
                         key={piece.id}
@@ -235,7 +260,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                           baseItem={piece.baseItem}
                           slot={piece.slot}
                           rarity="set"
-                          size="md"
+                          size="lg"
                           imageUrl={piece.imageUrl}
                         />
                         <div className="flex-1 min-w-0">

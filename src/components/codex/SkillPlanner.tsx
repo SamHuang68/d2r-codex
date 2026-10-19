@@ -309,7 +309,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
       {/* 視圖切換、技能樹分頁與搜尋列 */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         {/* 三大技能樹切換按鈕 */}
-        <div className="flex items-center gap-2 bg-sanctuary-900/80 p-1.5 rounded-2xl border border-sanctuary-800 shrink-0 overflow-x-auto">
+        <div className="flex items-center gap-2 bg-sanctuary-900/80 p-1.5 rounded-2xl border border-sanctuary-800 shrink-0 max-w-full overflow-x-auto">
           {currentClassData.trees.map((tree, idx) => {
             const isActive = activeTreeIndex === idx && !searchQuery.trim();
             const points = treePoints[idx];
@@ -341,7 +341,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
         </div>
 
         {/* 模式切換與搜尋 */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* 視圖切換器 (遊戲樹狀模式 vs 詳細卡片模式) */}
           <div className="flex items-center bg-sanctuary-900 p-1 rounded-xl border border-sanctuary-800 shrink-0">
             <button
