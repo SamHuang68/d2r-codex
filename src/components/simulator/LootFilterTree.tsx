@@ -292,7 +292,7 @@ export const LootFilterTree: React.FC<LootFilterTreeProps> = ({
               slot={hoveredItem.item.slot}
               rarity={hoveredItem.item.itemType}
               imageUrl={hoveredItem.item.imageUrl}
-              size="md"
+              size="lg"
             />
           </div>
           <div className="font-diablo text-base font-bold text-d2-gold">

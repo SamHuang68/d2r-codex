@@ -42,6 +42,7 @@ export const HolyGrailTracker: React.FC = () => {
       slot: string;
       isSet: boolean;
       isTC87: boolean;
+      imageUrl?: string;
     }[] = [];
 
     // Unique Items
@@ -62,7 +63,8 @@ export const HolyGrailTracker: React.FC = () => {
         category: item.baseItem,
         slot: item.slot,
         isSet: false,
-        isTC87
+        isTC87,
+        imageUrl: item.imageUrl,
       });
     });
 
@@ -76,7 +78,8 @@ export const HolyGrailTracker: React.FC = () => {
           category: piece.baseItem,
           slot: piece.slot,
           isSet: true,
-          isTC87: false
+          isTC87: false,
+          imageUrl: piece.imageUrl,
         });
       });
     });
@@ -386,6 +389,7 @@ export const HolyGrailTracker: React.FC = () => {
                   nameEn={item.nameEn}
                   slot={item.slot}
                   rarity={item.isSet ? 'set' : 'unique'}
+                  imageUrl={item.imageUrl}
                   size="sm"
                 />
 

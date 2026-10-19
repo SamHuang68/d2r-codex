@@ -9,7 +9,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
   const [showVideoModal, setShowVideoModal] = useState(false);
 
   return (
-    <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28 border-b border-sanctuary-800">
+    <section className="relative overflow-hidden pt-8 pb-10 md:pt-10 md:pb-12 border-b border-sanctuary-800">
       {/* Background Decorative Layer */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-d2-fire/10 rounded-full blur-[140px] opacity-60" />
@@ -19,26 +19,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Top Announcement Pill */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sanctuary-900 border border-d2-unique/30 text-xs text-d2-unique mb-6 shadow-glow-gold/40 animate-pulse">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sanctuary-900 border border-d2-unique/30 text-xs text-d2-unique mb-4 shadow-glow-gold/40">
           <Sparkles className="w-3.5 h-3.5" />
           <span className="font-semibold tracking-wide">DLC《術士軍臨》REIGN OF THE WARLOCK 全新收錄</span>
           <span className="text-sanctuary-400 font-mono">v2.6+</span>
         </div>
 
         {/* Hero Title */}
-        <h1 className="font-diablo text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-wider text-sanctuary-100 max-w-4xl mx-auto leading-tight md:leading-none">
-          聖休亞瑞的命運，<br />
+        <h1 className="font-diablo text-3xl sm:text-5xl lg:text-5xl font-extrabold tracking-wider text-sanctuary-100 max-w-4xl mx-auto leading-tight">
+          聖休亞瑞的命運，
           <span className="bg-gradient-to-r from-d2-unique via-amber-200 to-d2-fire bg-clip-text text-transparent drop-shadow-sm">
             由你執掌
           </span>
         </h1>
 
-        <p className="mt-6 text-base sm:text-lg text-sanctuary-300 max-w-2xl mx-auto font-sans leading-relaxed">
+        <p className="mt-4 text-sm sm:text-base text-sanctuary-300 max-w-2xl mx-auto font-sans leading-relaxed">
           歷久不衰的動作角色扮演傳奇。打造專屬於你的極速查裝工具、符文之語配裝矩陣、FCR/FHR 幀數斷點計算機與聖杯打寶挑戰追蹤器。
         </p>
 
         {/* Action CTAs */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
           <button
             onClick={() => onNavigateTab('skills')}
             className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-d2-gold to-amber-500 hover:from-amber-400 hover:to-d2-gold text-sanctuary-950 font-bold text-sm tracking-wide shadow-glow-gold transition-all duration-200 hover:scale-[1.02]"
@@ -79,7 +79,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
         </div>
 
         {/* Feature Stat Matrix */}
-        <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto pt-8 border-t border-sanctuary-800/60">
+        <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto pt-6 border-t border-sanctuary-800/60">
           <div className="p-4 rounded-xl bg-sanctuary-900/50 border border-sanctuary-800">
             <div className="font-diablo text-2xl font-bold text-d2-gold">21 系樹</div>
             <div className="text-xs text-sanctuary-400 mt-1">7大職業全技能 110點模擬器</div>
@@ -99,7 +99,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
         </div>
 
         {/* Platforms Badges */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4 text-xs text-sanctuary-400">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs text-sanctuary-400">
           <span className="text-sanctuary-500 uppercase tracking-widest font-mono text-[11px]">支援平台:</span>
           <span className="px-2.5 py-1 rounded bg-sanctuary-900/80 border border-sanctuary-800">PC (Battle.net & Steam)</span>
           <span className="px-2.5 py-1 rounded bg-sanctuary-900/80 border border-sanctuary-800">PlayStation 5 | PS4</span>

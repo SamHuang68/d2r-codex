@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar } from './components/layout/Navbar';
+import { Navbar, SideNav } from './components/layout/Navbar';
 import { MobileNav } from './components/layout/MobileNav';
 import { Footer } from './components/layout/Footer';
 import { SearchModal } from './components/layout/SearchModal';
 
 import { HeroSection } from './components/portal/HeroSection';
+import { CategoryGrid } from './components/portal/CategoryGrid';
 import { ClassShowcase } from './components/portal/ClassShowcase';
 import { DLCReign } from './components/portal/DLCReign';
 
@@ -110,11 +111,14 @@ export const App: React.FC = () => {
         onOpenSearch={() => setIsSearchOpen(true)}
       />
 
+      <div className="flex-1 flex min-w-0">
+      <SideNav activeTab={activeTab} setActiveTab={(t) => handleNavigate(t)} />
       {/* Main Content Area */}
-      <main className="flex-1 pb-16 lg:pb-0">
+      <main className="flex-1 min-w-0 pb-16 lg:pb-0">
         {activeTab === 'overview' && (
           <div>
             <HeroSection onNavigateTab={(tab) => handleNavigate(tab)} />
+            <CategoryGrid onNavigateTab={(tab) => handleNavigate(tab)} />
             <ClassShowcase 
               onCheckBreakpoints={handleCheckClassBreakpoints}
               onExploreSkills={(cls) => {
@@ -238,6 +242,7 @@ export const App: React.FC = () => {
           </div>
         )}
       </main>
+      </div>
 
       {/* Search Modal */}
       <SearchModal

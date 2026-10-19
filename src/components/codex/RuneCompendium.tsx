@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { RUNES_DATA } from '../../data/runes';
 import { RUNEWORDS_DATA } from '../../data/runewords';
 import { ItemIcon } from '../common/ItemIcon';
+import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
+import { PageHeader } from '../common/PageHeader';
 import { Layers, ArrowRight, Sparkles, Flame } from 'lucide-react';
 
 export interface RuneCompendiumProps {
@@ -31,6 +33,17 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
     }
   }, [targetRuneNumber]);
 
+  const rep = (n: number) => {
+    const r = RUNES_DATA.find((x) => x.number === n);
+    return { runeNumber: n, name: r?.name, nameEn: r?.nameEn, rarity: 'rune' as const };
+  };
+  const tierTiles: CategoryTile[] = [
+    { id: 'all', label: '全部符文', sub: '1-33#', count: RUNES_DATA.length, icon: rep(30), tone: 'rune' },
+    { id: 'low', label: '低階符文', sub: '1-10#', count: RUNES_DATA.filter((r) => r.number <= 10).length, icon: rep(5), tone: 'rune' },
+    { id: 'mid', label: '中階符文', sub: '11-21#', count: RUNES_DATA.filter((r) => r.number >= 11 && r.number <= 21).length, icon: rep(15), tone: 'rune' },
+    { id: 'high', label: '高階神符', sub: '22-33#', count: RUNES_DATA.filter((r) => r.number >= 22).length, icon: rep(33), tone: 'unique' },
+  ];
+
   const filteredRunes = RUNES_DATA.filter((r) => {
     if (tierFilter === 'low') return r.number <= 10;
     if (tierFilter === 'mid') return r.number >= 11 && r.number <= 21;
@@ -40,53 +53,39 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
 
   return (
     <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-      {/* Title */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sanctuary-800 pb-6">
-        <div>
-          <h2 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-rune flex items-center gap-2">
-            <Layers className="w-6 h-6 text-d2-rune" />
-            <span>33 枚符文全典藏與熱門符文語互聯</span>
-          </h2>
-          <p className="text-xs sm:text-sm text-sanctuary-400 mt-1">
-            從 1# 艾爾 (El) 到 33# 薩德 (Zod)，完整收錄鑲嵌屬性、方塊升級公式，並支援點擊「相關符文之語」直達組成細節。
-          </p>
-        </div>
+      <PageHeader
+        icon={<Layers className="w-6 h-6" />}
+        tone="text-d2-rune"
+        title="33 枚符文全典藏與熱門符文語互聯"
+        desc="從 1# 艾爾 (El) 到 33# 薩德 (Zod)，完整收錄鑲嵌屬性、方塊升級公式，並支援點擊「相關符文之語」直達組成細節。"
+      />
 
-        {/* Tier filter buttons */}
-        <div className="flex items-center gap-1.5 p-1 rounded-lg bg-sanctuary-900 border border-sanctuary-800 self-start md:self-auto text-xs">
+      {/* 階層大圖分類磚（全部 / 低階 / 中階 / 高階神符） */}
+      <CategoryTiles
+        tiles={tierTiles}
+        activeId={tierFilter}
+        onSelect={(id) => setTierFilter(id as 'all' | 'low' | 'mid' | 'high')}
+        iconSize="lg"
+        className="grid-cols-2 sm:grid-cols-4"
+      />
+
+      {/* 33 枚符文快速跳轉牆 */}
+      <div className="flex flex-wrap gap-1.5 p-3 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800">
+        {RUNES_DATA.map((r) => (
           <button
-            onClick={() => setTierFilter('all')}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
-              tierFilter === 'all' ? 'bg-sanctuary-800 text-d2-rune font-bold' : 'text-sanctuary-400 hover:text-white'
-            }`}
+            key={r.number}
+            type="button"
+            title={`${r.number}# ${r.name} (${r.nameEn})`}
+            onClick={() => {
+              setTierFilter(r.number <= 10 ? 'low' : r.number <= 21 ? 'mid' : 'high');
+              setTimeout(() => document.getElementById(`rune-${r.number}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
+            }}
+            className="flex flex-col items-center px-1.5 pt-1.5 pb-1 rounded-lg border border-sanctuary-800 hover:border-d2-rune bg-sanctuary-950 transition-colors"
           >
-            全部 (1-33#)
+            <ItemIcon runeNumber={r.number} name={r.name} nameEn={r.nameEn} rarity="rune" size="xs" showBorder={false} />
+            <span className="text-[10px] font-mono text-d2-rune leading-none mt-1">{r.number}#</span>
           </button>
-          <button
-            onClick={() => setTierFilter('low')}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
-              tierFilter === 'low' ? 'bg-sanctuary-800 text-d2-rune font-bold' : 'text-sanctuary-400 hover:text-white'
-            }`}
-          >
-            低階 (1-10#)
-          </button>
-          <button
-            onClick={() => setTierFilter('mid')}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
-              tierFilter === 'mid' ? 'bg-sanctuary-800 text-d2-rune font-bold' : 'text-sanctuary-400 hover:text-white'
-            }`}
-          >
-            中階 (11-21#)
-          </button>
-          <button
-            onClick={() => setTierFilter('high')}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
-              tierFilter === 'high' ? 'bg-sanctuary-800 text-d2-rune font-bold' : 'text-sanctuary-400 hover:text-white'
-            }`}
-          >
-            高階神符 (22-33#)
-          </button>
-        </div>
+        ))}
       </div>
 
       {/* Runes Grid */}
@@ -121,7 +120,7 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                       name={rune.name}
                       nameEn={rune.nameEn}
                       rarity="rune"
-                      size="md"
+                      size="lg"
                     />
                     <div>
                       <h3 className="font-diablo text-base font-bold text-d2-rune flex items-center gap-1.5">

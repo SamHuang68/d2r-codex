@@ -195,10 +195,10 @@ export function resolveItemImagePath({
     return `${base}images/items/charms/gheeds.gif`;
   }
   if (n.includes('大型護身符') || n.includes('large charm')) {
-    return `${base}images/items/charms/large_charm.gif`;
+    return 'https://static.d2r.world/img/items/misc/charm_medium.jpg';
   }
   if (n.includes('小護身符') || n.includes('small charm') || slot === 'charm' && (n.includes('小') || n.includes('small'))) {
-    return `${base}images/items/charms/small_charm.gif`;
+    return 'https://static.d2r.world/img/items/misc/charm_small.jpg';
   }
   if (n.includes('超大護身符') || n.includes('技能板') || n.includes('grand charm') || slot === 'charm') {
     return `${base}images/items/charms/gheeds.gif`;

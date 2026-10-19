@@ -7,9 +7,10 @@ import {
   CHARMS_JEWELS_DATA
 } from '../../data/props';
 import { ItemIcon } from '../common/ItemIcon';
+import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
+import { PageHeader } from '../common/PageHeader';
 import { 
   Gem, 
-  Key, 
   Sparkles, 
   FlaskConical, 
   Layers, 
@@ -46,6 +47,14 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
     { id: 'skull', label: '骷髏 (Skull)' },
   ];
 
+  const propTiles: CategoryTile[] = [
+    { id: 'gems', label: '完美寶石與工藝', count: GEMS_DATA.length, tone: 'magic', icon: { name: '完美紫寶石', nameEn: 'Perfect Amethyst', rarity: 'prop' } },
+    { id: 'keys', label: '六王鑰匙與器官', count: UBER_KEYS_ORGANS_DATA.length, tone: 'rune', icon: { name: '恐懼之鑰', nameEn: 'Key of Terror', rarity: 'prop' } },
+    { id: 'essences', label: '四大精華與洗點徽章', count: ESSENCES_DATA.length, tone: 'unique', icon: { name: '精華', nameEn: 'Essence', rarity: 'prop' } },
+    { id: 'potions', label: '戰鬥藥劑與黑科技', count: COMBAT_POTIONS_DATA.length, tone: 'rare', icon: { name: '全面恢復藥劑', nameEn: 'Full Rejuvenation Potion', rarity: 'prop' } },
+    { id: 'charms', label: '破免板與頂級珠寶', count: CHARMS_JEWELS_DATA.length, tone: 'set', icon: { name: '地獄火炬', nameEn: 'Hellfire Torch', rarity: 'unique' } },
+  ];
+
   const filteredGems = GEMS_DATA.filter((g) => {
     if (selectedGemType !== 'all' && g.type !== selectedGemType) return false;
     if (gemSearchQuery.trim()) {
@@ -64,23 +73,13 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
 
   return (
     <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 animate-fade-in">
-      {/* Header */}
-      <div className="border-b border-sanctuary-800 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-d2-magic text-xs font-mono tracking-widest uppercase">
-            <FlaskConical className="w-4 h-4 text-d2-magic animate-pulse" />
-            Consumables, Gems, Keys & Artifacts Codex
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            道具、寶石與戰鬥聖物全典藏
-          </h1>
-          <p className="text-sanctuary-400 text-sm mt-1 max-w-3xl">
-            收錄七大完美寶石鑲嵌與手工工藝、崔斯特姆紅門鑰匙與六王器官、四大魔神精華與洗點徽章，以及解毒/解凍抗性黑科技藥劑。
-          </p>
-        </div>
-
-        {/* Global Quick Jumps */}
-        <div className="flex items-center gap-2">
+      <PageHeader
+        icon={<FlaskConical className="w-6 h-6" />}
+        tone="text-d2-magic"
+        title="道具、寶石與戰鬥聖物全典藏"
+        desc="收錄七大完美寶石鑲嵌與手工工藝、崔斯特姆紅門鑰匙與六王器官、四大魔神精華與洗點徽章，以及解毒/解凍抗性黑科技藥劑。"
+        right={
+          <div className="flex items-center gap-2 flex-wrap self-start">
           {onNavigateToCube && (
             <button
               onClick={onNavigateToCube}
@@ -108,35 +107,18 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
               <span>符文之語速查</span>
             </button>
           )}
-        </div>
-      </div>
+          </div>
+        }
+      />
 
-      {/* Category Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-sanctuary-850 no-scrollbar">
-        {[
-          { id: 'gems', label: '完美寶石與工藝', icon: <Gem className="w-4 h-4 text-d2-magic" /> },
-          { id: 'keys', label: '六王鑰匙與器官', icon: <Key className="w-4 h-4 text-d2-fire" /> },
-          { id: 'essences', label: '四大精華與洗點徽章', icon: <Sparkles className="w-4 h-4 text-d2-gold" /> },
-          { id: 'potions', label: '戰鬥藥劑與黑科技', icon: <FlaskConical className="w-4 h-4 text-d2-unique" /> },
-          { id: 'charms', label: '破免板與頂級珠寶', icon: <ShieldAlert className="w-4 h-4 text-d2-set" /> },
-        ].map((tab) => {
-          const isActive = activeCategory === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveCategory(tab.id as any)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0 border ${
-                isActive
-                  ? 'bg-sanctuary-800 text-d2-unique border-d2-unique/60 shadow-md shadow-d2-unique/10 font-bold'
-                  : 'bg-sanctuary-950/80 text-sanctuary-400 border-sanctuary-800 hover:text-sanctuary-200'
-              }`}
-            >
-              <span>{tab.icon}</span>
-              <span>{tab.label}</span>
-            </button>
-          );
-        })}
-      </div>
+      {/* 大圖分類磚 */}
+      <CategoryTiles
+        tiles={propTiles}
+        activeId={activeCategory}
+        onSelect={(id) => setActiveCategory(id as typeof activeCategory)}
+        iconSize="lg"
+        className="grid-cols-2 sm:grid-cols-3 lg:grid-cols-5"
+      />
 
       {/* ── TAB 1: 完美寶石系統 ── */}
       {activeCategory === 'gems' && (
@@ -216,7 +198,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                   {/* Gem Title Header */}
                   <div className="flex items-center justify-between pb-3 border-b border-sanctuary-850">
                     <div className="flex items-center gap-3">
-                      <ItemIcon name={gem.name} nameEn={gem.nameEn} rarity="gem" size="md" />
+                      <ItemIcon name={gem.name} nameEn={gem.nameEn} rarity="gem" size="lg" />
                       <div>
                         <h3 className="font-diablo text-base font-bold text-sanctuary-100">
                           {gem.name}
@@ -317,7 +299,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                 <div>
                   <div className="flex items-center justify-between pb-3 border-b border-sanctuary-850">
                     <div className="flex items-center gap-3">
-                      <ItemIcon name={item.name} nameEn={item.nameEn} rarity="prop" size="md" />
+                      <ItemIcon name={item.name} nameEn={item.nameEn} rarity="prop" size="lg" />
                       <div>
                         <h3 className="font-diablo text-base font-bold text-sanctuary-100">
                           {item.name}
@@ -400,7 +382,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
               >
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    <ItemIcon name={ess.name} nameEn={ess.nameEn} rarity="prop" size="md" />
+                    <ItemIcon name={ess.name} nameEn={ess.nameEn} rarity="prop" size="lg" />
                     <div>
                       <div className="flex items-center gap-1.5">
                         <span 
@@ -456,7 +438,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                 <div>
                   <div className="flex items-start justify-between gap-2 pb-3 border-b border-sanctuary-850">
                     <div className="flex items-center gap-3">
-                      <ItemIcon name={pot.name} nameEn={pot.nameEn} rarity="prop" size="md" />
+                      <ItemIcon name={pot.name} nameEn={pot.nameEn} rarity="prop" size="lg" />
                       <div>
                         <h3 className="font-diablo text-base font-bold text-d2-unique">
                           {pot.name}
@@ -526,7 +508,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                         nameEn={charm.nameEn} 
                         slot={charm.slot === 'jewel' ? 'jewel' : 'charm'} 
                         rarity="unique" 
-                        size="md" 
+                        size="lg" 
                       />
                       <div>
                         <h4 className="font-diablo text-sm font-bold text-d2-unique">

@@ -18,6 +18,9 @@ interface ItemTooltipProps {
   className?: string;
   onNavigateToBase?: (baseName: string) => void;
   imageUrl?: string;
+  /** stack：圖在上（預設）；row：圖在左、文字在右，適合清單卡 */
+  layout?: 'stack' | 'row';
+  badges?: string[];
 }
 
 export const ItemTooltip: React.FC<ItemTooltipProps> = ({
@@ -36,6 +39,8 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
   className = '',
   onNavigateToBase,
   imageUrl,
+  layout = 'stack',
+  badges,
 }) => {
   // Title color according to rarity
   const getTitleColor = () => {
@@ -70,27 +75,11 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
     }
   };
 
-  return (
-    <div
-      className={`bg-sanctuary-950/95 backdrop-blur-md border ${getBorderColor()} rounded p-4 text-center text-sm font-sans max-w-sm w-full transition-all duration-200 select-none ${className}`}
-      style={{
-        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.8), inset 0 0 12px rgba(0, 0, 0, 0.6)'
-      }}
-    >
-      {/* Item Icon */}
-      <div className="flex justify-center mb-3">
-        <ItemIcon
-          name={title}
-          nameEn={titleEn}
-          baseItem={baseItem}
-          rarity={rarity}
-          size="lg"
-          imageUrl={imageUrl}
-        />
-      </div>
+  const row = layout === 'row';
 
-      {/* Title */}
-      <div className={`font-diablo text-base md:text-lg font-bold tracking-wide ${getTitleColor()}`}>
+  const header = (
+    <>
+      <div className={`font-diablo text-lg md:text-xl font-bold tracking-wide leading-tight ${getTitleColor()}`}>
         {title}
       </div>
       {titleEn && (
@@ -99,9 +88,8 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
         </div>
       )}
 
-      {/* Base Item */}
       {baseItem && (
-        <div className="text-xs text-sanctuary-300 font-medium pb-2 border-b border-sanctuary-800">
+        <div className={`text-xs text-sanctuary-300 font-medium pb-2 border-b border-sanctuary-800 ${row ? '' : ''}`}>
           {onNavigateToBase ? (
             <button
               type="button"
@@ -124,7 +112,16 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
         </div>
       )}
 
-      {/* Requirements */}
+      {badges && badges.length > 0 && (
+        <div className={`flex flex-wrap gap-1 pt-1.5 ${row ? '' : 'justify-center'}`}>
+          {badges.map((b) => (
+            <span key={b} className="text-[10px] px-1.5 py-0.5 rounded bg-sanctuary-900 text-sanctuary-300 border border-sanctuary-800 font-mono">
+              {b}
+            </span>
+          ))}
+        </div>
+      )}
+
       <div className="text-xs text-sanctuary-400 py-1 space-x-2">
         {requiredLevel !== undefined && requiredLevel > 0 && (
           <span>需求等級: <strong className="text-sanctuary-200">{requiredLevel}</strong></span>
@@ -137,7 +134,6 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
         )}
       </div>
 
-      {/* Attributes */}
       <div className="space-y-1 text-xs text-d2-magic font-sans text-left mt-2 border-t border-sanctuary-800/80 pt-2">
         {attributes.map((attr, idx) => (
           <div key={idx} className="leading-snug">
@@ -146,7 +142,6 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
         ))}
       </div>
 
-      {/* Set Bonuses (if applicable) */}
       {setBonuses && setBonuses.length > 0 && (
         <div className="mt-3 pt-2 border-t border-d2-set/30 text-left text-xs space-y-1">
           <div className="text-d2-set font-semibold">部分套裝獎勵:</div>
@@ -169,11 +164,44 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
         </div>
       )}
 
-      {/* Flavor Text */}
       {flavorText && (
         <div className="mt-3 pt-2 border-t border-sanctuary-800 text-[11px] text-sanctuary-400 italic text-left">
           "{flavorText}"
         </div>
+      )}
+    </>
+  );
+
+  const icon = (
+    <ItemIcon
+      name={title}
+      nameEn={titleEn}
+      baseItem={baseItem}
+      rarity={rarity}
+      size="xl"
+      imageUrl={imageUrl}
+    />
+  );
+
+  return (
+    <div
+      className={`bg-sanctuary-950/95 backdrop-blur-md border ${getBorderColor()} rounded-lg p-4 text-sm font-sans w-full transition-all duration-200 select-none ${
+        row ? 'flex gap-4 items-start text-left' : 'text-center max-w-sm'
+      } ${className}`}
+      style={{
+        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.8), inset 0 0 12px rgba(0, 0, 0, 0.6)'
+      }}
+    >
+      {row ? (
+        <>
+          <div className="shrink-0">{icon}</div>
+          <div className="min-w-0 flex-1">{header}</div>
+        </>
+      ) : (
+        <>
+          <div className="flex justify-center mb-3">{icon}</div>
+          {header}
+        </>
       )}
     </div>
   );
