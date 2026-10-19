@@ -8,7 +8,7 @@ import { resolvePreset } from '../../../data/presetResolver';
 import { SIM_PRESETS } from '../../../data/simulatorPresets';
 import { describeModifiers } from '../../../engine/describe';
 import type { EquippedItem } from '../../../engine/types';
-import { SkillTreeSimulator } from './../SkillTreeSimulator';
+import { SkillTreeV2 } from './SkillTreeV2';
 import { PaperDollV2, canFitCharm } from './PaperDollV2';
 import { AttributesTab } from './AttributesTab';
 import { GearTreeTab } from './GearTreeTab';
@@ -284,10 +284,8 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
             )}
             {tab === 'gear' && <GearTreeTab level={level} engineClassCode={cls.code} onEquip={equip} onDragStart={setDragging} />}
             {tab === 'skills' && (
-              <div className="d2-compat">
-                <SkillTreeSimulator className={cls.zh} skillPoints={skillPoints} onUpdateSkillPoints={setSkillPoints}
-                  activeSkillId={activeSkillId} onSetActiveSkillId={setActiveSkillId} allSkillsBonus={skillsBonus} />
-              </div>
+              <SkillTreeV2 className={cls.zh} level={level} skillPoints={skillPoints} onUpdateSkillPoints={setSkillPoints}
+                activeSkillId={activeSkillId} onSetActiveSkillId={setActiveSkillId} allSkillsBonus={skillsBonus} />
             )}
           </div>
         </div>

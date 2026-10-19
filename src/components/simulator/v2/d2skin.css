@@ -315,15 +315,49 @@
   font-size: 14px;
 }
 
-/*
- * 相容層：技能樹頁沿用舊元件（以 Tailwind 的藍灰色系撰寫），在此把它的底色、框線與文字
- * 轉成同一組石材色，讓整頁色調一致。僅作用於 .d2sim 內。
- */
-.d2sim .d2-compat [class*="bg-sanctuary-950"], .d2sim .d2-compat [class*="bg-sanctuary-900"] { background-color: #0f0c09 !important; }
-.d2sim .d2-compat [class*="bg-sanctuary-850"], .d2sim .d2-compat [class*="bg-sanctuary-800"] { background-color: #19150f !important; }
-.d2sim .d2-compat [class*="bg-sanctuary-750"], .d2sim .d2-compat [class*="bg-sanctuary-700"] { background-color: #241e16 !important; }
-.d2sim .d2-compat [class*="border-sanctuary"] { border-color: #3d3425 !important; }
-.d2sim .d2-compat [class*="text-sanctuary-100"], .d2sim .d2-compat [class*="text-sanctuary-200"] { color: var(--text) !important; }
-.d2sim .d2-compat [class*="text-sanctuary-300"], .d2sim .d2-compat [class*="text-sanctuary-400"], .d2sim .d2-compat [class*="text-sanctuary-500"] { color: var(--dim) !important; }
-.d2sim .d2-compat { border-radius: 0; }
-.d2sim .d2-compat * { border-radius: 2px; }
+/* ── 技能樹 ── */
+.d2sim .d2-skillboard {
+  position: relative;
+  aspect-ratio: 3 / 6;
+  width: 100%;
+  background:
+    var(--noise),
+    radial-gradient(90% 60% at 50% 20%, #261f16 0%, #0d0a07 100%);
+  box-shadow: inset 0 0 22px #000, inset 0 0 0 1px #2e271c, 0 0 0 1px #000;
+}
+.d2sim .d2-skillboard .rowmark {
+  position: absolute; left: 6px; line-height: 12px;
+  font-family: "Cinzel", serif; font-size: 10px; letter-spacing: .08em; color: var(--faint);
+}
+.d2sim .d2-skill {
+  position: relative;
+  width: 100%; aspect-ratio: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 3px;
+  font: inherit; color: var(--text);
+  background:
+    var(--noise),
+    radial-gradient(100% 100% at 50% 30%, #1d1812, #0b0906);
+  border: 1px solid #000;
+  box-shadow: inset 0 0 12px #000, inset 0 0 0 1px #3a3123, inset 0 1px 0 rgba(255, 235, 170, .08);
+  cursor: pointer;
+  transition: box-shadow .15s, transform .12s, filter .15s;
+}
+.d2sim .d2-skill:hover { box-shadow: inset 0 0 12px #000, inset 0 0 0 1px var(--gold-dim); transform: translateY(-1px); }
+.d2sim .d2-skill.is-points { box-shadow: inset 0 0 12px #000, inset 0 0 0 1px var(--gold-dim), 0 0 10px -2px rgba(201, 178, 119, .35); }
+.d2sim .d2-skill.is-max { box-shadow: inset 0 0 12px #000, inset 0 0 0 2px var(--gold), 0 0 14px -2px rgba(241, 218, 140, .55); }
+.d2sim .d2-skill.is-selected { box-shadow: inset 0 0 12px #000, inset 0 0 0 2px var(--gold-bright), 0 0 18px rgba(241, 218, 140, .55); }
+.d2sim .d2-skill.is-synergy { box-shadow: inset 0 0 12px #000, inset 0 0 0 2px #45d6ea, 0 0 16px rgba(69, 214, 234, .55); }
+.d2sim .d2-skill.is-locked { filter: grayscale(.9) brightness(.7); cursor: not-allowed; }
+.d2sim .d2-skill .nm { font-size: 11px; line-height: 1.15; text-align: center; margin-top: 3px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 1px 0 #000; }
+.d2sim .d2-skill .cnt {
+  position: absolute; right: -2px; bottom: -2px; min-width: 22px; padding: 0 4px;
+  font-size: 11px; font-weight: 700; text-align: center; line-height: 18px;
+  color: var(--dim); background: #000; border: 1px solid #3a3123;
+}
+.d2sim .d2-skill.is-points .cnt { color: var(--gold-bright); border-color: var(--gold-dim); }
+.d2sim .d2-skill.is-max .cnt { color: #1a1306; background: linear-gradient(180deg, #f1da8c, #c9b277); border-color: #000; }
+.d2sim .d2-skill .syn { position: absolute; left: -3px; top: -3px; width: 16px; height: 16px; font-size: 10px; line-height: 14px; text-align: center; color: #7fe9f7; background: #06141a; border: 1px solid #2d8c99; }
+.d2sim .d2-skill .star { position: absolute; right: 2px; top: 0; font-size: 12px; color: var(--gold-bright); text-shadow: 0 1px 0 #000; }
+.d2sim .d2-bar { height: 8px; background: #0a0806; box-shadow: inset 0 0 0 1px #2e271c; }
+.d2sim .d2-bar > i { display: block; height: 100%; background: linear-gradient(180deg, #45d6ea, #1f8d9f); }
