@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { VALUATION_ITEMS_DATA } from '../../data/affixes';
+import { SectionHead } from '../common/TreeIndex';
 import { ItemIcon } from '../common/ItemIcon';
 import { 
   Gem, 
@@ -14,6 +15,20 @@ import {
   ShieldCheck,
   HelpCircle
 } from 'lucide-react';
+
+/** 天價神物的部位分類（依序分段顯示） */
+const VAL_CATS = [
+  { id: 'all', label: '全部神物' },
+  { id: 'shield', label: '盾牌 (JMoD)' },
+  { id: 'charm', label: '護身符 (板子)' },
+  { id: 'helm', label: '頭飾/權冠' },
+  { id: 'ring', label: '戒指' },
+  { id: 'gloves', label: '手套' },
+  { id: 'boots', label: '鞋子 (三抗鞋)' },
+  { id: 'amulet', label: '項鍊 (2/20)' },
+  { id: 'weapon', label: '武器 (自修爪)' },
+  { id: 'jewel', label: '珠寶 (40/15)' },
+];
 
 export const ValuationGuide: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'showcase' | 'appraiser'>('showcase');
@@ -220,18 +235,7 @@ export const ValuationGuide: React.FC = () => {
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
             {/* Category Pills */}
             <div className="flex items-center gap-1.5 flex-wrap overflow-x-auto">
-              {[
-                { id: 'all', label: '全部神物' },
-                { id: 'shield', label: '盾牌 (JMoD)' },
-                { id: 'charm', label: '護身符 (板子)' },
-                { id: 'helm', label: '頭飾/權冠' },
-                { id: 'ring', label: '戒指' },
-                { id: 'gloves', label: '手套' },
-                { id: 'boots', label: '鞋子 (三抗鞋)' },
-                { id: 'amulet', label: '項鍊 (2/20)' },
-                { id: 'weapon', label: '武器 (自修爪)' },
-                { id: 'jewel', label: '珠寶 (40/15)' },
-              ].map((cat) => (
+              {VAL_CATS.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
@@ -260,8 +264,15 @@ export const ValuationGuide: React.FC = () => {
           </div>
 
           {/* Valuation Cards Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredItems.map((item) => {
+          <div className="space-y-9">
+            {VAL_CATS.filter((c) => c.id !== 'all').map((cat) => {
+              const rows = filteredItems.filter((i) => i.category === cat.id);
+              if (rows.length === 0) return null;
+              return (
+                <section key={cat.id} id={`val-${cat.id}`} aria-label={cat.label} className="scroll-mt-20">
+                  <SectionHead title={cat.label} count={rows.length} tone="unique" />
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {rows.map((item) => {
               const isMagic = item.rarity === 'magic';
               const rarityBorder = isMagic ? 'border-d2-magic/40 hover:border-d2-magic' : 'border-d2-rare/40 hover:border-d2-rare';
               const rarityColor = isMagic ? 'text-d2-magic' : 'text-d2-rare';
@@ -352,6 +363,10 @@ export const ValuationGuide: React.FC = () => {
                     </div>
                   </div>
                 </div>
+              );
+            })}
+                  </div>
+                </section>
               );
             })}
           </div>

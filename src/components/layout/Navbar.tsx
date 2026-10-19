@@ -79,10 +79,10 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
   };
 
   return (
-    <aside className={`hidden lg:block shrink-0 border-r border-sanctuary-800/80 bg-sanctuary-950/60 transition-[width] duration-150 ${collapsed ? 'w-12' : 'w-44'}`}>
+    <aside className={`hidden lg:block shrink-0 border-r border-sanctuary-800/80 bg-sanctuary-950/60 transition-[width] duration-150 ${collapsed ? 'w-10' : 'w-32'}`}>
       <nav
         aria-label="全站分頁"
-        className={`sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-y-auto no-scrollbar py-1.5 ${collapsed ? 'px-1.5' : 'px-2'}`}
+        className={`sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-y-auto no-scrollbar py-1 px-1`}
       >
 
         <button
@@ -90,13 +90,13 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
           onClick={toggle}
           aria-label={collapsed ? '展開側邊欄' : '收合側邊欄'}
           title={collapsed ? '展開側邊欄' : '收合側邊欄'}
-          className={`mb-1 w-full flex items-center rounded-md h-7 text-[11px] text-sanctuary-400 hover:text-sanctuary-100 hover:bg-sanctuary-900 border border-transparent transition-colors ${collapsed ? 'justify-center' : 'gap-2 px-2'}`}
+          className={`mb-0.5 w-full flex items-center rounded-md h-6 text-[11px] text-sanctuary-400 hover:text-sanctuary-100 hover:bg-sanctuary-900 border border-transparent transition-colors ${collapsed ? 'justify-center' : 'gap-1.5 px-1.5'}`}
         >
           {collapsed ? <ChevronsRight className="w-4 h-4" /> : (<><ChevronsLeft className="w-4 h-4" /><span>收合側邊欄</span></>)}
         </button>
         {NAV_GROUPS.map((group, gi) => (
-          <div key={group.category} role="group" aria-label={group.category} className={gi === 0 ? '' : collapsed ? 'mt-1.5 pt-1.5 border-t border-sanctuary-800/70' : 'mt-2'}>
-            <div className={collapsed ? 'sr-only' : 'px-2 mb-0.5 text-[10px] leading-4 font-mono font-bold tracking-widest text-sanctuary-400 uppercase'}>
+          <div key={group.category} role="group" aria-label={group.category} className={gi === 0 ? '' : collapsed ? 'mt-1 pt-1 border-t border-sanctuary-800/70' : 'mt-1.5'}>
+            <div className={collapsed ? 'sr-only' : 'px-1.5 text-[10px] leading-4 font-mono font-bold tracking-wider text-sanctuary-400 uppercase'}>
               {group.category}
             </div>
             <div>
@@ -113,7 +113,7 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
                     aria-label={item.label}
                     aria-current={isActive ? 'page' : undefined}
                     className={`w-full flex items-center rounded-md text-[13px] leading-5 text-left transition-colors border ${
-                      collapsed ? 'justify-center h-8' : 'gap-2 px-2 py-1'
+                      collapsed ? 'justify-center h-7' : 'gap-1.5 px-1.5 py-[3px]'
                     } ${
                       isActive
                         ? 'bg-sanctuary-800 text-d2-unique border-d2-unique/40 font-bold'

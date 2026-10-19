@@ -1,329 +1,444 @@
 import React, { useState, useMemo } from 'react';
-import { UNIQUE_ITEMS_DATA } from '../../data/uniqueItems';
-import { SET_ITEMS_DATA } from '../../data/setItems';
 import { cleanSearchQuery, normalizeItemQuery } from '../../utils/itemQueryNormalizer';
 import { ItemTooltip } from '../common/ItemTooltip';
 import { ItemIcon } from '../common/ItemIcon';
-import { Sword, Search, Shield, Sparkles, X } from 'lucide-react';
-import { GearSlot } from '../../types';
+import { Sword, Search, X } from 'lucide-react';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
+import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, crumbsOf, useDirectory } from '../common/TreeIndex';
+import type { SetItemCollection, UniqueItemData } from '../../types';
+import { TIER_LABEL, DEFAULT_TIER, TreeNode, buildTree, recount, findNode, leavesOf, inNode, relPath } from '../../utils/equipTaxonomy';
+import { ITEM_TREE_DEFS, CHARM_LABEL, U_ENTRIES, S_ENTRIES, UEntry, SEntry } from '../../utils/itemIndex';
 
 export interface ItemCompendiumProps {
   initialQuery?: string;
   onNavigateToBase?: (baseName: string) => void;
 }
 
+/** 分類磚的代表圖（以去掉品階後的相對路徑查；該節點內沒有這件時，改用節點內最高等級者） */
+const REP_BY_REL: Record<string, string> = {
+  u: "Tyrael's Might", armor: "Tyrael's Might", weapon: 'Windforce',
+  'armor/head': 'Harlequin Crest', 'armor/body': 'Skin of the Vipermagi', 'armor/shield': 'Stormshield',
+  'armor/gloves': "Dracul's Grasp", 'armor/boots': 'War Traveler', 'armor/belt': 'Arachnid Mesh',
+  'u/jewelry': 'The Stone of Jordan', 'u/jewelry/ring': 'The Stone of Jordan', 'u/jewelry/amulet': "Mara's Kaleidoscope",
+  'u/jewelry/charm': 'Annihilus', 'u/jewelry/jewel': 'Rainbow Facet',
+};
+const relOf = (id: string) => id.replace(/^u\/(normal|exceptional|elite)(\/|$)/, (_m, _t, tail) => (tail ? '' : 'u'));
+
+const matchUnique = (item: UniqueItemData, q: string) => {
+  const norm = normalizeItemQuery(q);
+  if (norm && norm.type === 'unique' && item.id === norm.id) return true;
+  return cleanSearchQuery(q).some((term) => {
+    const t = term.toLowerCase().trim();
+    const matchName = item.name.toLowerCase().includes(t) || item.nameEn.toLowerCase().includes(t) ||
+      (item.nameClassic && item.nameClassic.toLowerCase().includes(t));
+    const matchBase = item.baseItem.toLowerCase().includes(t) || (item.baseItemEn ? item.baseItemEn.toLowerCase().includes(t) : false);
+    const matchAttr = item.attributes.some((a) => a.toLowerCase().includes(t));
+    return matchName || matchBase || matchAttr;
+  });
+};
+
+const matchSet = (set: SetItemCollection, q: string) => {
+  const norm = normalizeItemQuery(q);
+  if (norm && norm.type === 'set' && (set.id === norm.id || set.pieces.some((p) => p.id === norm.id))) return true;
+  return cleanSearchQuery(q).some((term) => {
+    const t = term.toLowerCase().trim();
+    const matchSetName = set.name.toLowerCase().includes(t) || set.nameEn.toLowerCase().includes(t);
+    const matchPieces = set.pieces.some((p) =>
+      p.name.toLowerCase().includes(t) || p.nameEn.toLowerCase().includes(t) ||
+      (p.nameClassic && p.nameClassic.toLowerCase().includes(t)) || p.attributes.some((a) => a.toLowerCase().includes(t)));
+    return matchSetName || matchPieces;
+  });
+};
+
+
+
 export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   initialQuery = '',
   onNavigateToBase,
 }) => {
-  const [activeCategory, setActiveCategory] = useState<'all' | GearSlot | 'sets'>('all');
+  const [sel, setSel] = useState<string>(`u/${DEFAULT_TIER}`);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [visibleCount, setVisibleCount] = useState<number>(36);
 
   // Sync initialQuery when prop changes
   React.useEffect(() => {
     if (initialQuery !== undefined && initialQuery !== '') {
       setSearchQuery(initialQuery);
-      setActiveCategory('all');
+      setSel('all');
     }
   }, [initialQuery]);
 
-  const catDefs: { id: string; label: string; rep: string; tone: CategoryTile['tone'] }[] = [
-    { id: 'all', label: '全部裝備', rep: "Tyrael's Might", tone: 'neutral' },
-    { id: 'helm', label: '頭盔', rep: "Harlequin Crest", tone: 'unique' },
-    { id: 'weapon', label: '武器', rep: "Windforce", tone: 'unique' },
-    { id: 'armor', label: '衣服', rep: "Skin of the Vipermagi", tone: 'unique' },
-    { id: 'shield', label: '盾牌', rep: "Stormshield", tone: 'unique' },
-    { id: 'gloves', label: '手套', rep: "Dracul's Grasp", tone: 'unique' },
-    { id: 'boots', label: '靴子', rep: "War Traveler", tone: 'unique' },
-    { id: 'belt', label: '腰帶', rep: "Arachnid Mesh", tone: 'unique' },
-    { id: 'ring', label: '戒指', rep: "Stone of Jordan", tone: 'unique' },
-    { id: 'amulet', label: '項鍊', rep: "Mara's Kaleidoscope", tone: 'unique' },
-    { id: 'charm', label: '護身符', rep: "Annihilus", tone: 'unique' },
-    { id: 'jewel', label: '暗金珠寶', rep: "Rainbow Facet", tone: 'unique' },
-  ];
-  const tiles: CategoryTile[] = [
-    ...catDefs.map((c) => {
-      const pool = c.id === 'all' ? UNIQUE_ITEMS_DATA : UNIQUE_ITEMS_DATA.filter((u) => u.slot === c.id);
-      const rep = pool.find((u) => u.nameEn === c.rep) || pool[0];
-      return {
-        id: c.id,
-        label: c.label,
-        count: pool.length,
-        tone: c.tone,
-        icon: { name: rep?.name, nameEn: rep?.nameEn, baseItem: rep?.baseItem, slot: rep?.slot, rarity: 'unique' as const, imageUrl: rep?.imageUrl },
-      };
-    }),
-    (() => {
-      const rep = SET_ITEMS_DATA[0]?.pieces[0];
-      return {
-        id: 'sets',
-        label: '成套裝備',
-        sub: '綠色套裝',
-        count: SET_ITEMS_DATA.length,
-        tone: 'set' as const,
-        icon: { name: rep?.name, nameEn: rep?.nameEn, baseItem: rep?.baseItem, slot: rep?.slot, rarity: 'set' as const, imageUrl: rep?.imageUrl },
-      };
-    })(),
-  ];
+  const q = searchQuery.trim();
+  const dir = useDirectory(sel, q);
+  const uList = useMemo(() => (q ? U_ENTRIES.filter((e) => matchUnique(e.item, q)) : U_ENTRIES), [q]);
+  const sList = useMemo(() => (q ? S_ENTRIES.filter((e) => matchSet(e.set, q)) : S_ENTRIES), [q]);
 
-  // Filtered Uniques
-  const filteredUniques = useMemo(() => {
-    if (activeCategory === 'sets') return [];
-    return UNIQUE_ITEMS_DATA.filter((item) => {
-      if (activeCategory !== 'all' && item.slot !== activeCategory) {
-        return false;
-      }
-      if (searchQuery.trim()) {
-        const norm = normalizeItemQuery(searchQuery);
-        if (norm && norm.type === 'unique' && item.id === norm.id) {
-          return true;
-        }
-        const queryTerms = cleanSearchQuery(searchQuery);
-        const matchesQuery = queryTerms.some((term) => {
-          const q = term.toLowerCase().trim();
-          const matchName = item.name.toLowerCase().includes(q) || 
-                            item.nameEn.toLowerCase().includes(q) ||
-                            (item.nameClassic && item.nameClassic.toLowerCase().includes(q));
-          const matchBase = item.baseItem.toLowerCase().includes(q) || 
-                            (item.baseItemEn ? item.baseItemEn.toLowerCase().includes(q) : false);
-          const matchAttr = item.attributes.some((a) => a.toLowerCase().includes(q));
-          return matchName || matchBase || matchAttr;
-        });
-        if (!matchesQuery) return false;
-      }
-      return true;
-    });
-  }, [activeCategory, searchQuery]);
+  // 樹的結構固定（依全部資料），數量隨搜尋即時變動
+  const baseTree = useMemo(() => {
+    const counts = new Map<string, number>();
+    U_ENTRIES.forEach((e) => counts.set(e.leaf, (counts.get(e.leaf) ?? 0) + 1));
+    S_ENTRIES.forEach((e) => counts.set(e.leaf, (counts.get(e.leaf) ?? 0) + 1));
+    return buildTree(ITEM_TREE_DEFS, counts);
+  }, []);
+  const tree = useMemo(() => {
+    if (!q) return baseTree;
+    const counts = new Map<string, number>();
+    uList.forEach((e) => counts.set(e.leaf, (counts.get(e.leaf) ?? 0) + 1));
+    sList.forEach((e) => counts.set(e.leaf, (counts.get(e.leaf) ?? 0) + 1));
+    return recount(baseTree, counts);
+  }, [q, baseTree, uList, sList]);
 
-  // Filtered Sets
-  const filteredSets = useMemo(() => {
-    if (activeCategory !== 'all' && activeCategory !== 'sets') return [];
-    return SET_ITEMS_DATA.filter((set) => {
-      if (searchQuery.trim()) {
-        const norm = normalizeItemQuery(searchQuery);
-        if (norm && norm.type === 'set' && (set.id === norm.id || set.pieces.some(p => p.id === norm.id))) {
-          return true;
-        }
-        const queryTerms = cleanSearchQuery(searchQuery);
-        const matchesQuery = queryTerms.some((term) => {
-          const q = term.toLowerCase().trim();
-          const matchSetName = set.name.toLowerCase().includes(q) || set.nameEn.toLowerCase().includes(q);
-          const matchPieces = set.pieces.some(
-            (p) => p.name.toLowerCase().includes(q) || 
-                   p.nameEn.toLowerCase().includes(q) || 
-                   (p.nameClassic && p.nameClassic.toLowerCase().includes(q)) ||
-                   p.attributes.some(a => a.toLowerCase().includes(q))
-          );
-          return matchSetName || matchPieces;
-        });
-        if (!matchesQuery) return false;
-      }
-      return true;
-    });
-  }, [activeCategory, searchQuery]);
+  const root: TreeNode = useMemo(
+    () => ({ id: 'all', label: '全部裝備', count: tree.reduce((s, n) => s + n.count, 0), children: tree }),
+    [tree],
+  );
+  const node = sel === 'all' ? root : findNode(tree, sel) ?? root;
+  const isSetBranch = node.id === 's' || node.id.startsWith('s/');
 
-  React.useEffect(() => { setVisibleCount(36); }, [activeCategory, searchQuery]);
+  // 目前節點底下的內容
+  const uHere = useMemo(() => uList.filter((e) => inNode(e.leaf, node.id)), [uList, node.id]);
+  const sHere = useMemo(() => sList.filter((e) => inNode(e.leaf, node.id)), [sList, node.id]);
+  const leaves = useMemo(() => leavesOf(node).filter((l) => l.count > 0), [node]);
+  const isLeaf = !node.children;
+  const total = uHere.length + sHere.length;
+  const dirMode = dir.isDir(isLeaf, total);
+
+  // 分類磚的代表圖
+  const repIcon = (n: TreeNode): CategoryTile['icon'] => {
+    if (n.id === 's' || n.id.startsWith('s/')) {
+      const s = S_ENTRIES.find((e) => inNode(e.leaf, n.id))?.set;
+      const p = s?.pieces.find((x) => x.imageUrl) ?? s?.pieces[0];
+      return { name: p?.name, nameEn: p?.nameEn, baseItem: p?.baseItem, slot: p?.slot, rarity: 'set', imageUrl: p?.imageUrl };
+    }
+    const pool = U_ENTRIES.filter((e) => inNode(e.leaf, n.id) && e.item.imageUrl);
+    const want = REP_BY_REL[relOf(n.id)];
+    const rep = (want && pool.find((e) => e.item.nameEn === want)) ||
+      [...pool].sort((a, b) => b.item.requiredLevel - a.item.requiredLevel)[0] || U_ENTRIES.find((e) => inNode(e.leaf, n.id));
+    const it = rep?.item;
+    return { name: it?.name, nameEn: it?.nameEn, baseItem: it?.baseItem, slot: it?.slot, rarity: 'unique', imageUrl: it?.imageUrl };
+  };
+  // 最上層只有「暗金／套裝」兩顆磚太空曠，直接展開成第二層（品階、飾品、職業套裝、通用套裝）
+  const tileNodes = node.id === 'all' ? tree.flatMap((t) => t.children ?? []) : node.children ?? [];
+  const tiles: CategoryTile[] = tileNodes.map((c) => ({
+    id: c.id,
+    label: c.label,
+    sub: c.en,
+    count: c.count,
+    tone: c.id === 's' || c.id.startsWith('s/') ? 'set' : 'unique',
+    icon: repIcon(c),
+  }));
+
+  const labelPath = (leafId: string) => relPath(tree, leafId, node.id);
+
+  const crumbs = crumbsOf('全部裝備', tree, sel);
+  const go = (id: string) => setSel(id);
+
+  const flashCls = (id: string) => (dir.flash === id ? 'ring-2 ring-d2-unique rounded-xl transition-shadow' : '');
+
+  const uniqueCard = (e: UEntry) => {
+    const item = e.item;
+    const aid = `item-${item.id}`;
+    return (
+      <div key={item.id} id={aid} className={`scroll-mt-20 ${flashCls(aid)}`}>
+        <ItemTooltip
+          layout="row"
+          title={item.name}
+          titleEn={item.nameEn}
+          baseItem={item.baseItem}
+          baseItemEn={item.baseItemEn}
+          rarity="unique"
+          requiredLevel={item.requiredLevel}
+          requiredStr={item.requiredStr}
+          requiredDex={item.requiredDex}
+          attributes={item.attributes}
+          flavorText={item.flavorText}
+          onNavigateToBase={onNavigateToBase}
+          imageUrl={item.imageUrl}
+          badges={[
+            ...(item.grade ? [TIER_LABEL[item.grade] || item.grade] : []),
+            ...(item.classOnly ? [`${item.classOnly}專用`] : []),
+            ...(item.ladderOnly ? ['天梯限定'] : []),
+            ...(item.isNewDLC ? ['RotW DLC'] : []),
+          ]}
+          className="h-full hover:border-d2-unique"
+        />
+      </div>
+    );
+  };
+
+  /** 目錄模式的單件：小圖 + 名稱 + 需求等級，點了進入該分類並捲到該件 */
+  const uniqueChip = (e: UEntry) => {
+    const item = e.item;
+    return (
+      <DirChip
+        key={item.id}
+        icon={<ItemIcon name={item.name} nameEn={item.nameEn} baseItem={item.baseItem} slot={item.slot} rarity="unique" size="sm" imageUrl={item.imageUrl} showBorder={false} />}
+        title={item.name}
+        sub={`Lv${item.requiredLevel} · ${item.baseItem}${item.classOnly ? ` · ${item.classOnly}` : ''}`}
+        hint={`${item.name}（${item.nameEn}）｜${item.baseItem}`}
+        onClick={() => dir.jump(`item-${item.id}`, e.leaf, go)}
+      />
+    );
+  };
+
+  const setChip = (r: SEntry) => {
+    const p = r.set.pieces.find((x) => x.imageUrl) ?? r.set.pieces[0];
+    return (
+      <DirChip
+        key={r.set.id}
+        tone="set"
+        icon={<ItemIcon name={p?.name} nameEn={p?.nameEn} baseItem={p?.baseItem} slot={p?.slot} rarity="set" size="sm" imageUrl={p?.imageUrl} showBorder={false} />}
+        title={r.set.name}
+        sub={`${r.set.pieces.length} 件 · Lv${r.minLv} 起${r.set.class ? ` · ${r.set.class}` : ''}`}
+        hint={`${r.set.name}（${r.set.nameEn}）`}
+        onClick={() => dir.jump(`set-${r.set.id}`, r.leaf, go)}
+      />
+    );
+  };
+
+  const setCard = (set: SetItemCollection) => (
+    <div key={set.id} id={`set-${set.id}`} className={`bg-sanctuary-950 border border-d2-set/30 rounded-xl p-4 sm:p-5 shadow-xl scroll-mt-20 ${dir.flash === `set-${set.id}` ? 'ring-2 ring-d2-set' : ''}`}>
+      {/* Set Header */}
+      <div className="border-b border-sanctuary-800 pb-3 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h4 className="font-diablo text-xl font-bold text-d2-set">{set.name}</h4>
+          <div className="text-xs text-sanctuary-400 font-mono italic">
+            {set.nameEn} • {set.pieces.length} 件套裝{set.class ? ` • ${set.class}專用` : ''}
+          </div>
+        </div>
+      </div>
+
+      {/* Set Pieces Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-4">
+        {set.pieces.map((piece) => (
+          <div key={piece.id} className="p-3 rounded-lg bg-sanctuary-900/60 border border-sanctuary-800 text-xs flex gap-3 items-start">
+            <ItemIcon
+              name={piece.name}
+              nameEn={piece.nameEn}
+              baseItem={piece.baseItem}
+              slot={piece.slot}
+              rarity="set"
+              size="lg"
+              imageUrl={piece.imageUrl}
+            />
+            <div className="flex-1 min-w-0">
+              <div className="font-diablo font-bold text-d2-set text-sm">{piece.name}</div>
+              <div className="text-[11px] text-sanctuary-400 mb-2 font-medium">
+                {onNavigateToBase ? (
+                  <button
+                    type="button"
+                    onClick={() => onNavigateToBase(piece.baseItem)}
+                    className="hover:text-d2-socket hover:underline cursor-pointer transition-colors inline-flex items-center gap-0.5"
+                    title={`點擊查看【${piece.baseItem}】符文底材指南`}
+                  >
+                    <span>{piece.baseItem}</span>
+                    <span className="text-[9px] text-d2-socket">↗</span>
+                  </button>
+                ) : (
+                  <span>{piece.baseItem}</span>
+                )}{' '}
+                (需求等級: {piece.requiredLevel})
+              </div>
+              <div className="space-y-0.5 text-d2-magic">
+                {piece.attributes.map((attr, i) => (
+                  <div key={i}>• {attr}</div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Set Bonuses Footer */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 rounded-lg bg-sanctuary-900 border border-sanctuary-800 text-xs">
+        <div>
+          <div className="text-d2-set font-bold mb-1">部分套裝加成效果:</div>
+          {set.partialBonuses.map((pb, idx) => (
+            <div key={idx} className="text-sanctuary-300">({pb.count} 件) {pb.bonus}</div>
+          ))}
+        </div>
+        <div>
+          <div className="text-d2-set font-bold mb-1">完整全套套裝加成:</div>
+          {set.fullBonuses.map((fb, idx) => (
+            <div key={idx} className="text-d2-set font-medium">• {fb}</div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const LIST_GRID = 'grid grid-cols-1 xl:grid-cols-2 gap-4';
+  const CHIP_GRID = 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2';
+
+  /** 一個葉節點的暗金段落：目錄模式只列名稱小圖；詳細模式列完整卡片（護身符再依尺寸分段） */
+  const uniqueSection = (leaf: TreeNode) => {
+    const rows = uHere.filter((e) => e.leaf === leaf.id);
+    if (rows.length === 0) return null;
+    const secs: { key: string; label: string; rows: UEntry[] }[] = [];
+    for (const e of rows) {
+      let sec = secs.find((x) => x.key === e.sec);
+      if (!sec) {
+        sec = { key: e.sec, label: CHARM_LABEL[e.sec] ?? '', rows: [] };
+        secs.push(sec);
+      }
+      sec.rows.push(e);
+    }
+    const showSecHeads = secs.some((x) => x.label);
+    return (
+      <section key={leaf.id} id={`sec-${leaf.id}`} aria-label={leaf.label} className="mb-9 scroll-mt-20">
+        <SectionHead
+          title={isLeaf ? leaf.label : labelPath(leaf.id)}
+          sub={leaf.en}
+          count={rows.length}
+          tone="unique"
+          onOpen={isLeaf ? undefined : () => go(leaf.id)}
+          openLabel={`進入「${leaf.label}」`}
+        />
+        {!dirMode && showSecHeads && secs.length > 1 && (
+          <div className="flex flex-wrap items-center gap-1.5 mb-3 text-xs">
+            <span className="text-sanctuary-500">跳到：</span>
+            {secs.map((x) => (
+              <button
+                key={x.key}
+                type="button"
+                onClick={() => document.getElementById(`sec-${leaf.id}-${x.key}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                className="px-2.5 py-1 rounded-full bg-sanctuary-900 border border-sanctuary-700 text-sanctuary-200 hover:border-d2-unique"
+              >
+                {x.label} <span className="font-mono text-sanctuary-500">{x.rows.length}</span>
+              </button>
+            ))}
+          </div>
+        )}
+        {secs.map((x) => (
+          <div key={x.key} id={`sec-${leaf.id}-${x.key}`} className="mb-5 last:mb-0 scroll-mt-20">
+            {showSecHeads && x.label && (
+              <SectionHead title={x.label} count={x.rows.length} tone="unique" level={3} />
+            )}
+            <div className={dirMode ? CHIP_GRID : LIST_GRID}>{x.rows.map(dirMode ? uniqueChip : uniqueCard)}</div>
+          </div>
+        ))}
+      </section>
+    );
+  };
+
+  const setSection = (leaf: TreeNode) => {
+    const rows = sHere.filter((e) => e.leaf === leaf.id);
+    if (rows.length === 0) return null;
+    return (
+      <section key={leaf.id} id={`sec-${leaf.id}`} aria-label={leaf.label} className="mb-9 scroll-mt-20">
+        <SectionHead
+          title={isLeaf ? leaf.label : labelPath(leaf.id)}
+          count={rows.length}
+          tone="set"
+          onOpen={isLeaf ? undefined : () => go(leaf.id)}
+          openLabel={`進入「${leaf.label}」`}
+        />
+        {dirMode ? (
+          <div className={CHIP_GRID}>{rows.map(setChip)}</div>
+        ) : (
+          <>
+            {/* 套裝目錄：快速跳到該套裝 */}
+            {rows.length > 1 && (
+              <div className="flex flex-wrap items-center gap-1.5 mb-3 text-xs">
+                <span className="text-sanctuary-500">本段套裝：</span>
+                {rows.map((r) => (
+                  <button
+                    key={r.set.id}
+                    type="button"
+                    onClick={() => document.getElementById(`set-${r.set.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                    className="px-2.5 py-1 rounded-full bg-sanctuary-900 border border-sanctuary-700 text-d2-set hover:border-d2-set"
+                  >
+                    {r.set.name} <span className="font-mono text-sanctuary-500">Lv{r.minLv}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="space-y-6">{rows.map((r) => setCard(r.set))}</div>
+          </>
+        )}
+      </section>
+    );
+  };
 
   return (
-    <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-8 max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
       <PageHeader
         icon={<Sword className="w-6 h-6" />}
         title="裝備寶典 (暗金與套裝全覽)"
-        desc="收錄暗黑破壞神二代各部位指標性暗金裝備與知名全套套裝，包含屬性浮動範圍與完整套裝效果。"
+        desc="收錄暗黑破壞神二代各部位指標性暗金裝備與知名全套套裝，包含屬性浮動範圍與完整套裝效果。左側為分類索引，依「暗金／套裝 → 一般／進階／菁英 → 部位 → 類型」逐層整理，預設停在終局的菁英。"
         right={
           <div className="text-xs text-sanctuary-400 font-mono px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800 self-start">
-            暗金 <span className="text-d2-unique font-bold">{filteredUniques.length}</span> ・ 套裝 <span className="text-d2-set font-bold">{filteredSets.length}</span>
+            暗金 <span className="text-d2-unique font-bold">{uHere.length}</span> ・ 套裝 <span className="text-d2-set font-bold">{sHere.length}</span>
           </div>
         }
       />
 
-      <div className="space-y-4 mb-8">
-        <CategoryTiles
-          tiles={tiles}
-          activeId={activeCategory}
-          onSelect={(id) => setActiveCategory(id as 'all' | GearSlot | 'sets')}
-          iconSize="lg"
-          className="grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7"
+      <div className="relative mb-5">
+        <Search className="w-4 h-4 text-sanctuary-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="搜尋暗金或套裝名稱、底材或屬性 (例如：軍帽、獅鷲、塔拉夏、SOJ...)；左側索引的數量會即時對應"
+          className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-4 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
         />
+        {searchQuery && (
+          <button onClick={() => setSearchQuery('')} aria-label="清除搜尋" className="absolute right-3 top-1/2 -translate-y-1/2 text-sanctuary-400 hover:text-white">
+            <X className="w-4 h-4" />
+          </button>
+        )}
+      </div>
 
-        <div className="relative">
-          <Search className="w-4 h-4 text-sanctuary-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="搜尋暗金或套裝名稱、底材或屬性 (例如：軍帽、獅鷲、塔拉夏、SOJ...)"
-            className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-4 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-sanctuary-400 hover:text-white"
-            >
-              <X className="w-4 h-4" />
-            </button>
+      <TreeIndex
+        title="裝備索引"
+        rootLabel="全部裝備"
+        rootCount={root.count}
+        nodes={tree}
+        activeId={node.id}
+        onSelect={go}
+        tone={isSetBranch ? 'set' : 'unique'}
+      >
+        <div className="space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <Crumbs crumbs={crumbs} onSelect={go} tone={isSetBranch ? 'set' : 'unique'} />
+            {!isLeaf && total > 0 && <ViewToggle dir={dirMode} onChange={dir.setView} />}
+          </div>
+
+          {tiles.length > 0 && (
+            <CategoryTiles
+              tiles={tiles}
+              activeId={null}
+              onSelect={go}
+              iconSize="lg"
+              className={
+                tiles.length <= 3 ? 'grid-cols-2 sm:grid-cols-3'
+                  : tiles.length === 4 ? 'grid-cols-2 sm:grid-cols-4'
+                  : tiles.length === 5 ? 'grid-cols-2 sm:grid-cols-3 xl:grid-cols-5'
+                  : 'grid-cols-2 sm:grid-cols-3 xl:grid-cols-6'
+              }
+            />
+          )}
+
+          {total === 0 ? (
+            <div className="p-12 text-center text-sanctuary-400 bg-sanctuary-900/40 rounded-xl border border-sanctuary-800 space-y-3">
+              <div>
+                {q && root.count > 0
+                  ? `「${node.label}」底下沒有符合「${q}」的裝備，但其他分類共有 ${root.count} 件符合，請看左側索引的數量。`
+                  : '查無符合目前條件的裝備，請更換分類或清除搜尋關鍵字。'}
+              </div>
+              {q && root.count > 0 && node.id !== 'all' && (
+                <button type="button" onClick={() => go('all')} className="px-4 py-2 rounded-lg bg-sanctuary-800 border border-sanctuary-700 text-sm text-sanctuary-100 hover:border-d2-unique">
+                  回到「全部裝備」
+                </button>
+              )}
+            </div>
+          ) : (
+            <div>
+              {leaves.map((l) => (l.id.startsWith('s/') ? setSection(l) : uniqueSection(l)))}
+            </div>
           )}
         </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="space-y-10">
-        {/* Unique Items Section */}
-        {filteredUniques.length > 0 && (
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="w-4 h-4 text-d2-unique" />
-              <h3 className="font-diablo text-lg font-bold text-d2-unique">
-                獨特暗金裝備 ({filteredUniques.length})
-              </h3>
-            </div>
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-              {filteredUniques.slice(0, visibleCount).map((item) => (
-                <ItemTooltip
-                  key={item.id}
-                  layout="row"
-                  title={item.name}
-                  titleEn={item.nameEn}
-                  baseItem={item.baseItem}
-                  baseItemEn={item.baseItemEn}
-                  rarity="unique"
-                  requiredLevel={item.requiredLevel}
-                  requiredStr={item.requiredStr}
-                  requiredDex={item.requiredDex}
-                  attributes={item.attributes}
-                  flavorText={item.flavorText}
-                  onNavigateToBase={onNavigateToBase}
-                  imageUrl={item.imageUrl}
-                  badges={[
-                    ...(item.grade ? [({ normal: '普通', exceptional: '擴展', elite: '精華' } as Record<string, string>)[item.grade] || item.grade] : []),
-                    ...(item.classOnly ? [`${item.classOnly}專用`] : []),
-                    ...(item.ladderOnly ? ['天梯限定'] : []),
-                    ...(item.isNewDLC ? ['RotW DLC'] : []),
-                  ]}
-                  className="h-full hover:border-d2-unique"
-                />
-              ))}
-            </div>
-            {filteredUniques.length > visibleCount && (
-              <div className="text-center mt-5">
-                <button
-                  onClick={() => setVisibleCount((c) => c + 36)}
-                  className="px-6 py-2.5 rounded-xl bg-sanctuary-900 border border-sanctuary-700 hover:border-d2-unique text-sm text-sanctuary-200"
-                >
-                  顯示更多（已顯示 {visibleCount} / {filteredUniques.length} 件）
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Set Items Section */}
-        {filteredSets.length > 0 && (
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Shield className="w-4 h-4 text-d2-set" />
-              <h3 className="font-diablo text-lg font-bold text-d2-set">
-                成套套裝裝備 ({filteredSets.length})
-              </h3>
-            </div>
-            <div className="space-y-8">
-              {filteredSets.map((set) => (
-                <div
-                  key={set.id}
-                  className="bg-sanctuary-950 border border-d2-set/30 rounded-xl p-5 shadow-xl"
-                >
-                  {/* Set Header */}
-                  <div className="border-b border-sanctuary-800 pb-3 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div>
-                      <h4 className="font-diablo text-xl font-bold text-d2-set">
-                        {set.name}
-                      </h4>
-                      <div className="text-xs text-sanctuary-400 font-mono italic">
-                        {set.nameEn} • {set.pieces.length} 件套裝
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Set Pieces Grid */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-                    {set.pieces.map((piece) => (
-                      <div
-                        key={piece.id}
-                        className="p-3 rounded-lg bg-sanctuary-900/60 border border-sanctuary-800 text-xs flex gap-3 items-start"
-                      >
-                        <ItemIcon
-                          name={piece.name}
-                          nameEn={piece.nameEn}
-                          baseItem={piece.baseItem}
-                          slot={piece.slot}
-                          rarity="set"
-                          size="lg"
-                          imageUrl={piece.imageUrl}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="font-diablo font-bold text-d2-set text-sm">
-                            {piece.name}
-                          </div>
-                          <div className="text-[11px] text-sanctuary-400 mb-2 font-medium">
-                          {onNavigateToBase ? (
-                            <button
-                              type="button"
-                              onClick={() => onNavigateToBase(piece.baseItem)}
-                              className="hover:text-d2-socket hover:underline cursor-pointer transition-colors inline-flex items-center gap-0.5"
-                              title={`點擊查看【${piece.baseItem}】符文底材指南`}
-                            >
-                              <span>{piece.baseItem}</span>
-                              <span className="text-[9px] text-d2-socket">↗</span>
-                            </button>
-                          ) : (
-                            <span>{piece.baseItem}</span>
-                          )}{' '}
-                          (需求等級: {piece.requiredLevel})
-                        </div>
-                        <div className="space-y-0.5 text-d2-magic">
-                          {piece.attributes.map((attr, i) => (
-                            <div key={i}>• {attr}</div>
-                          ))}
-                        </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Set Bonuses Footer */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 rounded-lg bg-sanctuary-900 border border-sanctuary-800 text-xs">
-                    <div>
-                      <div className="text-d2-set font-bold mb-1">部分套裝加成效果:</div>
-                      {set.partialBonuses.map((pb, idx) => (
-                        <div key={idx} className="text-sanctuary-300">
-                          ({pb.count} 件) {pb.bonus}
-                        </div>
-                      ))}
-                    </div>
-                    <div>
-                      <div className="text-d2-set font-bold mb-1">完整全套套裝加成:</div>
-                      {set.fullBonuses.map((fb, idx) => (
-                        <div key={idx} className="text-d2-set font-medium">
-                          • {fb}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {filteredUniques.length === 0 && filteredSets.length === 0 && (
-          <div className="p-12 text-center text-sanctuary-400 bg-sanctuary-900/40 rounded-xl border border-sanctuary-800">
-            查無符合目前條件的裝備，請更換分類或清除搜尋關鍵字。
-          </div>
-        )}
-      </div>
+      </TreeIndex>
     </div>
   );
 };
