@@ -5,6 +5,7 @@ import skills from '../data/game/skills.json';
 import { resolveModifier } from './modifiers';
 import type { Modifier, PropertyDef, StatDef, StatEntry } from './types';
 import { CLASS_INDEX } from './character';
+import { tabName } from './skills';
 
 const CLASS_ZH_BY_INDEX = ['亞馬遜', '魔法使', '死靈法師', '聖騎士', '野蠻人', '德魯伊', '刺客', '術士'];
 const props = properties as unknown as Record<string, PropertyDef>;
@@ -32,7 +33,10 @@ export function describeEntry(e: StatEntry, level = 90): string | undefined {
   }
   if (e.stat === 'item_allskills') return `${e.value >= 0 ? '+' : ''}${e.value} 所有技能`;
   if (e.stat === 'item_addclassskills') return `${e.value >= 0 ? '+' : ''}${e.value} ${CLASS_ZH_BY_INDEX[Number(e.param)] ?? CLASS_INDEX[Number(e.param)] ?? ''}技能等級`;
-  if (e.stat === 'item_addskill_tab') return `${e.value >= 0 ? '+' : ''}${e.value} ${CLASS_ZH_BY_INDEX[Math.floor(Number(e.param) / 3)] ?? ''}技能樹 #${Number(e.param) % 3 + 1}`;
+  if (e.stat === 'item_addskill_tab') {
+    const id = Number(e.param); const tn = tabName(id); const cn = CLASS_ZH_BY_INDEX[Math.floor(id / 3)] ?? '';
+    return `${e.value >= 0 ? '+' : ''}${e.value} ${tn ? `${tn}${/技能$|法術$/.test(tn) ? '' : '技能'}` : `技能樹 #${id % 3 + 1}`}（只限${cn}）`;
+  }
   if (e.stat === 'item_singleskill' || e.stat === 'item_nonclassskill') { const n = skillZh.get(String(e.param)) ?? String(e.param); return `${e.value >= 0 ? '+' : ''}${e.value} ${n}`; }
   if (e.stat === 'mindamage') return `+${e.value} 最小傷害`;
   if (e.stat === 'maxdamage') return `+${e.value} 最大傷害`;

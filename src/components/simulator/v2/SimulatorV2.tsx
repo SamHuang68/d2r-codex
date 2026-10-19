@@ -9,6 +9,7 @@ import { SIM_PRESETS } from '../../../data/simulatorPresets';
 import { describeModifiers } from '../../../engine/describe';
 import type { EquippedItem } from '../../../engine/types';
 import { SkillTreeV2 } from './SkillTreeV2';
+import { damageText, effectiveLevel, skillById, skillDamage, skillLevelsFrom, type SkillBonuses } from '../../../engine/skills';
 import { PaperDollV2, canFitCharm } from './PaperDollV2';
 import { AttributesTab } from './AttributesTab';
 import { GearTreeTab } from './GearTreeTab';
@@ -191,7 +192,17 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const clearAll = () => { setEquipped({}); setCharms([]); setAlloc(ZERO); setSelected(null); };
 
   const selEq = selected ? equipped[selected] : undefined;
-  const skillsBonus = result.skills.all + (result.skills.byClass[cls.en] ?? 0);
+  const skillBonuses: SkillBonuses = useMemo(() => ({
+    all: result.skills.all, byClass: result.skills.byClass[cls.en] ?? 0, byTab: result.skills.byTab, single: result.skills.single,
+  }), [result, cls]);
+  // 主力技能的傷害（遊戲技能表值，含協同；未含專精、抗性、光環、武器）
+  const mainSkill = useMemo(() => {
+    const sk = activeSkillId ? skillById(activeSkillId) : undefined;
+    if (!sk) return null;
+    const hard = skillPoints[sk.id] ?? 0;
+    const text = damageText(skillDamage(sk, effectiveLevel(sk, hard, skillBonuses), skillLevelsFrom(skillPoints, skillBonuses)));
+    return { name: sk.name ?? sk.nameEn, level: effectiveLevel(sk, hard, skillBonuses), text: text ?? (hard > 0 ? '此技能沒有傷害欄位' : '尚未投入技能點') };
+  }, [activeSkillId, skillPoints, skillBonuses]);
 
   return (
     <section className="d2sim space-y-4" aria-label="配裝模擬器">
@@ -280,12 +291,12 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
           <div className="d2-panel-body">
             {tab === 'stats' && (
               <AttributesTab className={cls.zh} level={level} result={result} alloc={alloc} remaining={remaining} needStr={needStr} needDex={needDex}
-                onAdd={onAdd} onAutoReq={onAutoReq} onAllVit={onAllVit} onReset={() => setAlloc(ZERO)} />
+                onAdd={onAdd} onAutoReq={onAutoReq} onAllVit={onAllVit} onReset={() => setAlloc(ZERO)} mainSkill={mainSkill} />
             )}
             {tab === 'gear' && <GearTreeTab level={level} engineClassCode={cls.code} onEquip={equip} onDragStart={setDragging} />}
             {tab === 'skills' && (
-              <SkillTreeV2 className={cls.zh} level={level} skillPoints={skillPoints} onUpdateSkillPoints={setSkillPoints}
-                activeSkillId={activeSkillId} onSetActiveSkillId={setActiveSkillId} allSkillsBonus={skillsBonus} />
+              <SkillTreeV2 classCode={cls.code} level={level} skillPoints={skillPoints} onUpdateSkillPoints={setSkillPoints}
+                activeSkillId={activeSkillId} onSetActiveSkillId={setActiveSkillId} bonuses={skillBonuses} />
             )}
           </div>
         </div>
@@ -304,7 +315,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
               </span>
             </div>
             {result.weaponDamage && <div className="d2-stat"><span className="k">武器傷害</span><span className="v">{result.weaponDamage.min}–{result.weaponDamage.max}</span></div>}
-            <div className="d2-sub w-full text-center">未計入：光環／戰吼／BO／變身／技能傷害</div>
+            <div className="d2-sub w-full text-center">未計入：光環／戰吼／BO／變身</div>
           </div>
           <div className="d2-orb is-mana" title="法力"><b>{result.mana.toLocaleString()}</b><span>法力</span></div>
         </div>

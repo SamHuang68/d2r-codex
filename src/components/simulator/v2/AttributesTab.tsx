@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { CharacterResult } from '../../../engine/types';
 import type { Alloc } from './types';
+import { skillByName, tabName } from '../../../engine/skills';
 
 interface Props {
   className: string;
@@ -14,6 +15,7 @@ interface Props {
   onAutoReq: () => void;
   onAllVit: () => void;
   onReset: () => void;
+  mainSkill?: { name: string; level: number; text: string } | null;
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US');
@@ -49,7 +51,7 @@ const Row: React.FC<{ label: string; value: string; tone?: string; title?: strin
   </div>
 );
 
-export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc, remaining, needStr, needDex, onAdd, onAutoReq, onAllVit, onReset }) => {
+export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc, remaining, needStr, needDex, onAdd, onAutoReq, onAllVit, onReset, mainSkill }) => {
   const [more, setMore] = useState(false);
   const a = result.attributes;
   const unmet: Record<string, boolean> = { str: a.str < needStr, dex: a.dex < needDex };
@@ -64,8 +66,8 @@ export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc
   const skillRows: string[] = [];
   if (result.skills.all) skillRows.push(`所有技能 +${result.skills.all}`);
   Object.entries(result.skills.byClass).forEach(([c, v]) => skillRows.push(`${c} 技能 +${v}`));
-  Object.entries(result.skills.byTab).forEach(([t, v]) => skillRows.push(`技能樹 #${t} +${v}`));
-  Object.entries(result.skills.single).forEach(([n, v]) => skillRows.push(`${n} +${v}`));
+  Object.entries(result.skills.byTab).forEach(([t, v]) => skillRows.push(`${tabName(Number(t)) ?? `技能樹 #${t}`} +${v}`));
+  Object.entries(result.skills.single).forEach(([n, v]) => skillRows.push(`${skillByName(n)?.name ?? n} +${v}`));
 
   return (
     <div>
@@ -107,6 +109,7 @@ export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc
         {/* 右：結果欄位 */}
         <div className="space-y-1.5">
           <Row label="攻擊傷害（武器，未含技能）" value={wd ? `${fmt(wd.min)}–${fmt(wd.max)}` : '—'} tone="t-set" />
+          {mainSkill && <Row label={`主力技能：${mainSkill.name}${mainSkill.level ? ` Lv${mainSkill.level}` : ''}`} value={mainSkill.text} tone="t-set" title="遊戲技能表值（含協同）；未含專精、敵人抗性、光環與武器" />}
           <Row label="防禦" value={fmt(result.defense)} />
           <Row label="耐力" value={`${fmt(result.stamina)} / ${fmt(result.stamina)}`} tone="t-magic" />
           <Row label="生命" value={`${fmt(result.life)} / ${fmt(result.life)}`} tone="t-magic" />
@@ -136,7 +139,7 @@ export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc
           {moreRows.length === 0 && <div className="t-dim text-sm">目前沒有這類加成</div>}
           {moreRows.map((m) => <Row key={m.stat} label={m.label} value={`${m.v}${m.suffix ?? ''}`} />)}
           {skillRows.length > 0 && <div className="sm:col-span-2 d2-row text-sm"><span className="k">技能加成</span><span className="t-magic text-right">{skillRows.join('、')}</span></div>}
-          <div className="sm:col-span-2 d2-sub">FCR／FHR 斷點影格、技能傷害、光環／戰吼／BO／變身尚未實作，數值不含這些來源。</div>
+          <div className="sm:col-span-2 d2-sub">FCR／FHR 斷點影格、光環／戰吼／BO／變身、元素專精尚未實作，數值不含這些來源。</div>
         </div>
       )}
     </div>

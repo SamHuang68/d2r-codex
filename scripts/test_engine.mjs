@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -256,4 +256,69 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
       if (p.blockTarget) assert.ok(res.blockChance >= 75 || alloc.dex > 0);
     });
   }
+}
+
+// ── 技能（遊戲技能表）──
+{
+  const { GAME_SKILLS, treesOf, skillByName, skillDamage, manaCost, synergySources, effectiveLevel, tabName, tabId, evalCalc, bracketValue, CLASS_CODES } = E;
+  console.log('【技能：由遊戲技能表建立】');
+  t('計算式求值：四則、par、skill()、min/max', () => {
+    const ctx = { params: { 8: 5 }, lvl: 10, blvl: 8, skill: (n) => (n === 'A' ? { lvl: 3, blvl: 2 } : undefined) };
+    assert.equal(evalCalc("(skill('A'.blvl)+skill('A'.lvl))*par8", ctx), 25);
+    assert.equal(evalCalc('min(lvl,5)+max(1,2)*3', ctx), 11);
+    assert.throws(() => evalCalc("skill('Zzz'.lvl)", ctx)); assert.throws(() => evalCalc('foo+1', ctx));
+  });
+  t('8 職業×3 樹×10 招，格位不重複，前置技能都存在且在同一職業', () => {
+    for (const c of CLASS_CODES) {
+      const trees = treesOf(c); assert.equal(trees.length, 3);
+      for (const tr of trees) { assert.equal(tr.skills.length, 10, `${c}/${tr.page}`); assert.ok(tr.name && !/技能樹 \d/.test(tr.name), `${c} 樹名`);
+        assert.equal(new Set(tr.skills.map((x) => `${x.row},${x.col}`)).size, 10); }
+    }
+    for (const s of GAME_SKILLS) for (const p of s.prereq) { const q = skillByName(p); assert.ok(q && q.charClass === s.charClass, `${s.nameEn}←${p}`); }
+  });
+  t('樹名與內容一致：術士（左→右）混沌、邪異、惡魔；魔法使 冰寒、閃電、火焰（寒冰彈在冰寒）', () => {
+    assert.deepEqual(treesOf('war').map((x) => x.name), ['混沌', '邪異', '惡魔']); assert.deepEqual(treesOf('sor').map((x) => x.name), ['冰寒法術', '閃電法術', '火焰法術']);
+    const nm = (c, i) => treesOf(c)[i].skills.map((x) => x.nameEn);
+    assert.ok(nm('war', 0).includes('Miasma Bolt') && nm('war', 2).includes('Summon Goatman') && nm('sor', 0).includes('Blizzard') && nm('sor', 2).includes('Fire Bolt') && nm('pal', 2).includes('Smite') && nm('ama', 2).includes('Magic Arrow'));
+  });
+  t('裝備「技能樹」編號：撒卡蘭姆使者的 skilltab 9 ＝ 遊戲提示框「戰鬥技能（只限聖騎士）」；描述文字與截圖一致', () => {
+    assert.equal(tabName(9), '戰鬥技能'); assert.equal(tabId('pal', 1), 9); assert.equal(tabName(tabId('sor', 1)), '火焰法術'); assert.equal(tabName(tabId('war', 3)), '混沌');
+    const { describeModifiers } = E; const h = E.getCatalog().find((x) => x.nameEn === 'Herald of Zakarum');
+    assert.ok(describeModifiers(h.mods, 1, 90).some((l) => l.text === '+2 戰鬥技能（只限聖騎士）'), describeModifiers(h.mods, 1, 90).map((l) => l.text).join('|'));
+  });
+  t('所有技能的傷害協同計算式都能求值（不得出現無法計算）', () => {
+    const bad = [];
+    for (const s of GAME_SKILLS) { const r = synergySources(s, {}); const syn = s.elem?.syn ?? s.phys?.syn; if (syn && Number.isNaN(r.totalPct)) bad.push(s.nameEn); }
+    assert.deepEqual(bad, []);
+  });
+  // 術士傷害表（DiabloBytes，第三方單一來源；與遊戲表推導值逐級比對）
+  const TBL = {
+    'Miasma Bolt': ['1-2 2-3 3-4 4-5 5-6 6-7 7-8 8-9 9-10 10-11 11-12 12-13 13-14 14-15 15-16 16-17 17-19 19-21 20-23 22-25'],
+    'Ring of Fire': ['6-10 12-17 18-24 24-31 30-38 36-45 42-52 48-59 56-68 64-77 72-86 80-95 88-104 96-113 104-122 112-131 122-142 132-153 142-164 152-175'],
+    'Flame Wave': ['13-17 21-26 29-35 37-44 45-53 53-62 61-71 69-80 81-94 93-108 105-122 117-136 129-150 141-164 153-178 165-192 182-210 199-228 216-246 233-264'],
+    'Abyss': ['20-40 23-44 26-48 29-52 32-56 35-60 38-64 41-68 47-76 53-84 59-92 65-100 71-108 77-116 83-124 89-132 98-144 107-156 116-168 125-180'],
+  };
+  for (const [name, [row]] of Object.entries(TBL)) {
+    t(`${name} 第 1–20 級傷害與遊戲表推導值一致（無協同）`, () => {
+      const sk = skillByName(name); const got = [];
+      for (let L = 1; L <= 20; L++) { const d = skillDamage(sk, L, {}); got.push(`${d.min}-${d.max}`); }
+      assert.equal(got.join(' '), row);
+    });
+  }
+  t('Miasma Chain 傷害表（第 1、8、9、20 級）與魔力消耗（Miasma Bolt 第 1 級 2、第 20 級 11.5）', () => {
+    const ch = skillByName('Miasma Chains'); const f = (L) => { const d = skillDamage(ch, L, {}); return `${d.min}-${d.max}`; };
+    assert.deepEqual([f(1), f(8), f(9), f(20)], ['6-9', '20-23', '23-26', '56-59']);
+    const mb = skillByName('Miasma Bolt'); assert.deepEqual([manaCost(mb, 1), manaCost(mb, 20)], [2, 11.5]);
+  });
+  t('協同：暴風雪（冰彈／冰風暴／冰尖柱各 20 點）＝ +300%，傷害依此放大', () => {
+    const bl = skillByName('Blizzard'); const pts = { ice_bolt: 20, ice_blast: 20, glacial_spike: 20, blizzard: 20 };
+    const r = synergySources(bl, pts); assert.equal(r.totalPct, 300); assert.equal(r.sources.length, 3);
+    const lv = {}; for (const s of GAME_SKILLS) if (pts[s.id]) lv[s.nameEn] = { lvl: pts[s.id], blvl: pts[s.id] };
+    const base = skillDamage(bl, 20, {}); const withSyn = skillDamage(bl, 20, lv);
+    assert.equal(withSyn.min, Math.floor(bracketValue(bl.elem.min, 20) * 4)); assert.ok(withSyn.min > base.min * 3.9);
+  });
+  t('有效等級：只有至少 1 點硬點才吃裝備加成；協同不吃軟點', () => {
+    const bl = skillByName('Blizzard'); const b = { all: 2, byClass: 1, byTab: { [tabId('sor', 3)]: 3 }, single: {} };
+    assert.equal(effectiveLevel(bl, 0, b), 0); assert.equal(effectiveLevel(bl, 10, b), 16);
+  });
 }

@@ -12,9 +12,10 @@
    - d2data（blizzhackers/d2data，同版號）作為獨立來源逐欄比對。
 
 ## 輸出
-meta、itemtypes、bases（武器／防具／misc）、uniques、sets、setItems、runewords、properties（modifier→stat 對映）、stats（itemstatcost 子集）、statStrings.zhTW（描述模板）、charstats、skills（名稱／歸屬／格位，無數值）、inventory（紙娃娃座標）、uiCategories（拾取篩選器類別樹）。
+meta、itemtypes、bases（武器／防具／misc）、uniques、sets、setItems、runewords、properties（modifier→stat 對映）、stats（itemstatcost 子集）、statStrings.zhTW（描述模板）、charstats、skills（240 招：繁中名稱與說明、樹／列／欄格位、前置、等級上限、魔力與傷害欄位、協同計算式）、skillTabs（技能樹繁中名稱）、inventory（紙娃娃座標）、uiCategories（拾取篩選器類別樹）。
 
 ## 已知限制
 - `skilltab-war`、`roguesbow-affix1`、`magdam-rand`、`Gethit-skill` 在 properties.txt 無定義（4 件暗金），`Crafted *` 為 Rift 製作範本；皆標示於稽核輸出，不當作一般暗金。
-- 技能傷害、synergy 公式尚未納入（S2/S6）。
+- 技能傷害與協同以 skills.txt 的欄位與計算式為準（src/engine/calc.ts 求值），已與術士 5 招 1–20 級的公開傷害表逐級比對一致；專精、抗性、光環與武器傷害尚未納入。
+- SkillCategory 字串編號與 SkillPage 的對應：舊 7 職業相反（4−頁碼）、術士相同，已以技能內容核對並寫入 engine/skills.ts。
 - modifier 的文字描述（descfunc 渲染）尚未實作（S5 提示框）。
