@@ -420,10 +420,6 @@
   .d2sim .d2-float { left: 0; right: 0; top: auto; bottom: 0; width: auto; max-width: none; height: 46vh; }
   .d2sim .d2-float.is-min { height: auto; }
 }
-@media (min-width: 1024px) and (max-width: 1279px) {
-  /* 讓出桌面左側導覽欄（w-56 = 224px） */
-  .d2sim .d2-float { left: 224px; }
-}
 @media (max-width: 1023px) {
   .d2sim .d2-float { bottom: calc(62px + env(safe-area-inset-bottom, 0px)); }
   .d2sim .d2-float-spacer { height: calc(46vh + 62px); }

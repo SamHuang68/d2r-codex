@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { GearSlot, ItemRarity } from '../../types';
 import { resolveItemImagePath } from '../../utils/itemImageResolver';
+import { MagicArt, artBoxOf } from './MagicArt';
 
 export interface ItemIconProps {
   name?: string;
@@ -15,6 +16,8 @@ export interface ItemIconProps {
   className?: string;
   showBorder?: boolean;
   imageUrl?: string;
+  /** true：沒有 imageUrl 時不用名稱關鍵字猜圖，直接顯示文字佔位（模擬器目錄用，避免錯圖） */
+  noGuess?: boolean;
 }
 
 /**
@@ -33,9 +36,11 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
   className = '',
   showBorder = true,
   imageUrl,
+  noGuess = false,
 }) => {
-  const [imgError, setImgError] = useState(false);
-  const [smooth, setSmooth] = useState(false);
+  // 以「失敗／已平滑的圖片網址」記錄狀態：換圖時不需要 effect 重置，也不會在換圖的那一次 render 閃出舊的失敗狀態
+  const [failedSrc, setFailedSrc] = useState('');
+  const [smoothSrc, setSmoothSrc] = useState('');
   const n = `${name} ${nameEn} ${baseItem}`.toLowerCase();
   const envBase = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || './';
   const baseUrl = envBase.endsWith('/') ? envBase : `${envBase}/`;
@@ -43,8 +48,6 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
   // 1. 決定尺寸（依高度，寬度依圖片原始比例，不拉伸）
   const heightMap: Record<string, number> = { xs: 36, sm: 56, md: 96, lg: 128, xl: 176 };
   const px = heightMap[size] ?? heightMap.md;
-  // d2r.world 遠端圖為 196x392，底部約 14% 帶有站名浮水印：以 196:290 的比例裁掉該區帶（不變形）
-  const REMOTE_RATIO = 196 / 290;
 
   // 2. 決定稀有度光暈色彩
   const getColors = () => {
@@ -110,7 +113,7 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
   const colorConfig = getColors();
 
   // 3. 呼叫專屬模組解析真實遊戲立繪圖片路徑
-  const imageSrc = resolveItemImagePath({
+  const imageSrc = noGuess && !(imageUrl && imageUrl.trim()) ? '' : resolveItemImagePath({
     name,
     nameEn,
     baseItem,
@@ -121,11 +124,20 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
     imageUrl,
   });
 
-  const isRemoteWatermarked = /static\.d2r\.world/.test(imageSrc) && !/\/misc\//.test(imageSrc);
+  const imgError = failedSrc === imageSrc;
+  const smooth = smoothSrc === imageSrc;
+  const setImgError = (_failed: boolean) => setFailedSrc(imageSrc);
+  const setSmooth = (_on: boolean) => setSmoothSrc(imageSrc);
+
+  // 只有 /img/items/magic/（暗金、套裝）的圖是 1:2（寬:高）畫布且底部帶有站名浮水印；
+  // base/、misc/ 與本機圖都沒有浮水印，必須完整顯示（不裁切、保留長寬比）
+  const isMagicRemote = /static\.d2r\.world\/img\/items\/magic\//.test(imageSrc);
+  const isRemote = /^https?:/.test(imageSrc);
+  const artBox = isMagicRemote ? artBoxOf(imageSrc) : undefined;
   const fill = fit === 'fill';
   const boxStyle: React.CSSProperties = fill
     ? {}
-    : { height: px, minWidth: Math.round(px * 0.6) };
+    : { height: px, minWidth: Math.round(px * 0.6), maxWidth: `min(100%, ${px}px)` };
   const alt = name || nameEn || 'Item';
 
   return (
@@ -138,32 +150,45 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
     >
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70 pointer-events-none" />
 
-      {!imgError ? (
-        isRemoteWatermarked ? (
-          <div
-            className="relative z-10 overflow-hidden max-w-full max-h-full"
-            style={{ height: '100%', aspectRatio: String(REMOTE_RATIO) }}
-          >
+      {!imgError && imageSrc ? (
+        isMagicRemote && artBox ? (
+          <MagicArt src={imageSrc} alt={alt} box={artBox} fill={fill} onError={() => setImgError(true)} />
+        ) : isMagicRemote ? (
+          // 沒有預先算好的物品範圍（資料新增的圖）：完整顯示整張 1:2 畫布，底部以模糊遮罩淡化浮水印
+          <div className="relative z-10 overflow-hidden max-w-full max-h-full" style={{ height: '100%', aspectRatio: '1 / 2' }}>
             <img
               src={imageSrc}
               alt={alt}
-              className="absolute top-0 left-0 w-full h-auto drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+              className="w-full h-full object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
               loading="lazy"
               referrerPolicy="no-referrer"
               onError={() => setImgError(true)}
+            />
+            <div
+              aria-hidden
+              className="absolute inset-x-0 bottom-0 pointer-events-none"
+              style={{
+                height: '31%',
+                backdropFilter: 'blur(9px)',
+                WebkitBackdropFilter: 'blur(9px)',
+                background: 'linear-gradient(to bottom, transparent, rgba(8,6,4,.78))',
+                WebkitMaskImage: 'linear-gradient(to bottom, transparent, #000 22%)',
+                maskImage: 'linear-gradient(to bottom, transparent, #000 22%)',
+              }}
             />
           </div>
         ) : (
           <img
             src={imageSrc}
             alt={alt}
+            referrerPolicy={isRemote ? 'no-referrer' : undefined}
             onLoad={(e) => {
               // 小尺寸本機 sprite 放大超過 2.5 倍時改用平滑縮放，避免大面積馬賽克
               const el = e.currentTarget;
-              if (!fill && el.naturalHeight > 0 && px / el.naturalHeight > 2.5) setSmooth(true);
+              if (!isRemote && !fill && el.naturalHeight > 0 && px / el.naturalHeight > 2.5) setSmooth(true);
             }}
             className={`relative z-10 object-contain p-1 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] ${
-              smooth ? '' : '[image-rendering:pixelated]'
+              isRemote || smooth ? '' : '[image-rendering:pixelated]'
             } ${
               fill ? 'w-full h-full' : 'h-full w-auto max-w-full'
             }`}
@@ -172,8 +197,8 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
           />
         )
       ) : (
-        <span className="relative z-10 font-bold font-serif text-amber-300/80 uppercase" style={{ fontSize: Math.max(10, px / 4) }}>
-          {name ? name.replace(/[【】]|符文語/g, '').slice(0, 2) || 'D2' : 'D2'}
+        <span className="relative z-10 font-bold font-serif text-amber-300/80 uppercase" style={{ fontSize: fill ? 11 : Math.max(10, px / 4) }}>
+          <span aria-hidden>◇</span>
         </span>
       )}
     </div>

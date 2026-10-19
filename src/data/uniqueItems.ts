@@ -3080,7 +3080,7 @@ export const UNIQUE_ITEMS_DATA: UniqueItemData[] = [
       "+(1-148) 生命 （依角色等級而定） [1.5 * clvl]",
       "受到的物理傷害降低 5-10%"
     ],
-    "imageUrl": "https://static.d2r.world/img/items/magic/ars_aldiablolos.jpg"
+    "imageUrl": "https://static.d2r.world/img/items/magic/ars_torbaalos.jpg"
   },
   {
     "id": "ars_dul_mephistos",

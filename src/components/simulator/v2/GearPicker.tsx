@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getCatalog, CLASS_ZH, GROUP_ZH, RARITY_ZH, SLOT_ZH, TIER_ZH, type CatalogEntry, type Group, type Rarity, type Tier } from '../../../engine/catalog';
 import { describeModifiers } from '../../../engine/describe';
 import { ItemIcon } from '../../common/ItemIcon';
+import { imageForEntry } from '../../../utils/catalogImage';
 
 interface Props {
   open: boolean;
@@ -46,12 +47,30 @@ const useWide = () => {
   return wide;
 };
 
+/** 窄螢幕底部抽屜要讓出左側導覽欄：側欄寬度會隨「收合」變動（176 ↔ 48），需即時量測；<1024px 側欄隱藏時為 0 */
+const useSideNavWidth = (enabled: boolean) => {
+  const [w, setW] = useState(0);
+  useEffect(() => {
+    if (!enabled) return;
+    const el = document.querySelector('aside');
+    if (!el) { setW(0); return; }
+    const measure = () => setW(getComputedStyle(el).display === 'none' ? 0 : Math.round(el.getBoundingClientRect().width));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    window.addEventListener('resize', measure);
+    return () => { ro.disconnect(); window.removeEventListener('resize', measure); };
+  }, [enabled]);
+  return w;
+};
+
 const Chip: React.FC<{ on: boolean; label: string; onClick: () => void }> = ({ on, label, onClick }) => (
   <button type="button" aria-pressed={on} onClick={onClick} className={`d2-chip ${on ? 'is-on' : ''}`}>{label}</button>
 );
 
 export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassCode, onEquip, onDragStart, jump }) => {
   const wide = useWide();
+  const sideW = useSideNavWidth(!wide);
   const [rarity, setRarity] = useState<Record<Rarity, boolean>>({ unique: true, set: true, runeword: true, base: false });
   const [tiers, setTiers] = useState<Record<Tier, boolean>>({ normal: true, exceptional: true, elite: true });
   const [onlyMyClass, setOnlyMyClass] = useState(true);
@@ -145,7 +164,9 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
   const rarityText = RARITIES.filter((r) => rarity[r]).map((r) => RARITY_ZH[r]).join('・') || '未選';
   const tierText = TIERS.filter((t) => tiers[t]).map((t) => TIER_ZH[t]).join('・') || '未選';
 
-  const floatStyle: React.CSSProperties = wide && pos ? { left: pos.x, top: pos.y, width: WIDTH, height: minimized ? 'auto' : 'min(72vh, 680px)' } : {};
+  const floatStyle: React.CSSProperties = wide
+    ? (pos ? { left: pos.x, top: pos.y, width: WIDTH, height: minimized ? 'auto' : 'min(72vh, 680px)' } : {})
+    : { left: sideW };
 
   return (
     <>
@@ -230,7 +251,7 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
                         onDragEnd={() => { onDragStart(null); setDragSource(false); }}
                       >
                         <div className="d2-well shrink-0" style={{ width: 56, height: 56 }}>
-                          <ItemIcon name={e.name} nameEn={e.nameEn} baseItem={e.baseNameEn} slot={e.slot} rarity={iconRarity(e)} fit="fill" showBorder={false} />
+                          <ItemIcon name={e.name} nameEn={e.nameEn} baseItem={e.baseNameEn} slot={e.slot} rarity={iconRarity(e)} imageUrl={imageForEntry(e)} noGuess fit="fill" showBorder={false} />
                         </div>
                         <div className="min-w-0 flex-1 cursor-pointer" onClick={() => setDetail(detail === e.id ? null : e.id)}>
                           <div className={`truncate font-semibold ${tone(e.kind)}`}>{e.name}</div>

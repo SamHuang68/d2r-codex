@@ -186,7 +186,7 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
   return (
     <div
       className={`bg-sanctuary-950/95 backdrop-blur-md border ${getBorderColor()} rounded-lg p-4 text-sm font-sans w-full transition-all duration-200 select-none ${
-        row ? 'flex gap-4 items-start text-left' : 'text-center max-w-sm'
+        row ? 'flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:items-start text-left' : 'text-center max-w-sm'
       } ${className}`}
       style={{
         boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.8), inset 0 0 12px rgba(0, 0, 0, 0.6)'
@@ -194,8 +194,9 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
     >
       {row ? (
         <>
-          <div className="shrink-0">{icon}</div>
-          <div className="min-w-0 flex-1">{header}</div>
+          {/* 手機：圖在上、文字在下（單欄寬度不夠左右並排）；≥640px 左右並排，圖寬最多佔 42% */}
+          <div className="shrink-0 sm:max-w-[42%]">{icon}</div>
+          <div className="min-w-0 w-full sm:w-auto sm:flex-1">{header}</div>
         </>
       ) : (
         <>

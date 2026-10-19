@@ -152,7 +152,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
         </div>
 
         {/* 快速開關與搜尋 */}
-        <div className="flex items-center gap-2 flex-1 max-w-xl">
+        <div className="flex flex-wrap items-center gap-2 flex-1 max-w-xl">
           <button
             onClick={() => setFilterEthOnly(!filterEthOnly)}
             className={`px-3 py-2 rounded-xl text-xs font-mono transition-all border flex items-center gap-1.5 shrink-0 ${
@@ -177,7 +177,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
             超強 15%ED 尊貴
           </button>
 
-          <div className="relative flex-1">
+          <div className="relative flex-1 min-w-[180px]">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-sanctuary-500" />
             <input
               type="text"
@@ -199,40 +199,37 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
           >
             {/* 卡片頭部 */}
             <div className="space-y-2">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex items-start gap-3">
-                  <ItemIcon
-                    name={item.name}
-                    nameEn={item.nameEn}
-                    baseItem={item.name}
-                    slot={isShield(item) ? 'shield' : item.category === 'armor' ? 'armor' : 'weapon'}
-                    rarity="normal"
-                    size="lg"
-                    imageUrl={item.imageUrl}
-                  />
+              <div className="flex items-start gap-3">
+                <ItemIcon
+                  name={item.name}
+                  nameEn={item.nameEn}
+                  baseItem={item.name}
+                  slot={isShield(item) ? 'shield' : item.category === 'armor' ? 'armor' : 'weapon'}
+                  rarity="normal"
+                  size="lg"
+                  imageUrl={item.imageUrl}
+                />
+                <div className="min-w-0 flex-1 space-y-1.5">
                   <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-lg font-diablo font-bold text-sanctuary-100 group-hover:text-d2-socket transition-colors">
-                        {item.name}
-                      </h3>
-                      <span className="text-xs font-mono text-sanctuary-400">
-                        {item.nameEn}
-                      </span>
+                    <h3 className="text-lg font-diablo font-bold text-sanctuary-100 group-hover:text-d2-socket transition-colors leading-tight break-words">
+                      {item.name}
+                    </h3>
+                    <div className="text-xs font-mono text-sanctuary-400 break-words">
+                      {item.nameEn}
                     </div>
-                  <div className="flex items-center gap-2 text-[11px] font-mono text-sanctuary-400 mt-0.5">
-                    <span className="px-1.5 py-0.2 rounded bg-sanctuary-800 text-sanctuary-300">
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-mono text-sanctuary-400">
+                    <span className="px-1.5 py-0.5 rounded bg-sanctuary-800 text-sanctuary-300">
                       {item.category === 'weapon' ? '武器' : '防具'} · {item.itemType}
                     </span>
-                    <span className="px-1.5 py-0.2 rounded bg-d2-gold/10 text-d2-gold border border-d2-gold/20 whitespace-nowrap">
+                    <span className="px-1.5 py-0.5 rounded bg-d2-gold/10 text-d2-gold border border-d2-gold/20 whitespace-nowrap">
                       {item.qualityTier}品階
                     </span>
+                    {/* 最大孔數徽章 */}
+                    <span className="px-2 py-0.5 rounded-lg bg-sanctuary-800/90 border border-sanctuary-700 text-d2-socket font-bold whitespace-nowrap">
+                      最多 {item.maxSockets} 孔
+                    </span>
                   </div>
-                </div>
-              </div>
-
-                {/* 最大孔數徽章 */}
-                <div className="px-2.5 py-1 rounded-xl bg-sanctuary-800/90 border border-sanctuary-700 text-d2-socket font-mono text-xs font-bold shrink-0">
-                  最多 {item.maxSockets} 孔
                 </div>
               </div>
 
