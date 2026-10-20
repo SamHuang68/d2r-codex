@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { categoryOfEntry, eligibleBases, getSocketables, socketCapacity, socketEffectMods, type CatalogEntry } from '../../../engine/catalog';
+import { categoryOfEntry, eligibleBases, getSocketables, socketCapacity, socketEffectMods, TIER_ZH, type CatalogEntry } from '../../../engine/catalog';
 import { gameData } from '../../../engine/data';
 import { describeModifiers } from '../../../engine/describe';
 import type { Equipped } from './types';
@@ -43,7 +43,7 @@ export const SocketEditor: React.FC<Props> = ({ eq, level, onChange, onChangeBas
       {entry.kind === 'runeword' && bases.length > 1 && (
         <label className="d2-field w-full">底材
           <select value={entry.baseCode} onChange={(e) => onChangeBase(e.target.value)} className="d2-select flex-1 min-w-0">
-            {bases.map((b) => <option key={b.code} value={b.code}>{b.name}（{b.nameEn}）{b.tier === 'elite' ? ' 精英' : b.tier === 'exceptional' ? ' 卓越' : ' 普通'}{b.class ? ' · 職業專屬' : ''} · 需求力量 {b.reqStr ?? 0}</option>)}
+            {bases.map((b) => <option key={b.code} value={b.code}>{b.name}（{b.nameEn}）{` ${TIER_ZH[b.tier ?? 'normal']}`}{b.class ? ' · 職業專屬' : ''} · 需求力量 {b.reqStr ?? 0}</option>)}
           </select>
         </label>
       )}

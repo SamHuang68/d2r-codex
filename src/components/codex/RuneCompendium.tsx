@@ -4,6 +4,7 @@ import { RUNEWORDS_DATA } from '../../data/runewords';
 import { ItemIcon } from '../common/ItemIcon';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
+import { SectionHead } from '../common/TreeIndex';
 import { Layers, ArrowRight, Sparkles, Flame } from 'lucide-react';
 
 export interface RuneCompendiumProps {
@@ -88,9 +89,20 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
         ))}
       </div>
 
-      {/* Runes Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {filteredRunes.map((rune) => {
+      {/* Runes：依階層分段（低階 → 中階 → 高階神符），每段有標題與數量 */}
+      <div className="space-y-9">
+        {([
+          { id: 'low', label: '低階符文', sub: '1–10#', test: (n: number) => n <= 10 },
+          { id: 'mid', label: '中階符文', sub: '11–21#', test: (n: number) => n >= 11 && n <= 21 },
+          { id: 'high', label: '高階神符', sub: '22–33#', test: (n: number) => n >= 22 },
+        ] as const).map((grp) => {
+          const rows = filteredRunes.filter((r) => grp.test(r.number));
+          if (rows.length === 0) return null;
+          return (
+            <section key={grp.id} id={`rune-tier-${grp.id}`} aria-label={grp.label} className="scroll-mt-20">
+              <SectionHead title={grp.label} sub={grp.sub} count={rows.length} tone="rune" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {rows.map((rune) => {
           const isHighRune = rune.number >= 22;
           const isTarget = targetRuneNumber === rune.number;
 
@@ -207,6 +219,10 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                 )}
               </div>
             </div>
+          );
+        })}
+              </div>
+            </section>
           );
         })}
       </div>

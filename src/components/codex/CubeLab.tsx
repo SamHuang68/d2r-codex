@@ -3,6 +3,7 @@ import { CUBE_RECIPES_DATA } from '../../data/cubeRecipes';
 import { ItemIcon } from '../common/ItemIcon';
 import { BookOpen, Plus, ArrowRight } from 'lucide-react';
 import { CubeRecipeData } from '../../types';
+import { SectionHead } from '../common/TreeIndex';
 
 export interface CubeLabProps {
   onNavigateToRune?: (runeNumber: number) => void;
@@ -62,9 +63,16 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
         </div>
       </div>
 
-      {/* Recipes Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filteredRecipes.map((recipe) => (
+      {/* Recipes Cards：依配方類別分段，每段有標題與數量 */}
+      <div className="space-y-9">
+        {categories.filter((c) => c.id !== 'all').map((cat) => {
+          const rows = filteredRecipes.filter((r) => r.category === cat.id);
+          if (rows.length === 0) return null;
+          return (
+            <section key={cat.id} id={`cube-${cat.id}`} aria-label={cat.label} className="scroll-mt-20">
+              <SectionHead title={cat.label} count={rows.length} tone="magic" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {rows.map((recipe) => (
           <div
             key={recipe.id}
             className="p-5 rounded-xl bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-magic/40 shadow-xl transition-all duration-150 flex flex-col justify-between"
@@ -139,6 +147,10 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
             )}
           </div>
         ))}
+              </div>
+            </section>
+          );
+        })}
       </div>
     </div>
   );

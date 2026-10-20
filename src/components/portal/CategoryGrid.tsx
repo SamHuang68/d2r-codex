@@ -8,7 +8,8 @@ import { RUNES_DATA } from '../../data/runes';
 import { NAV_GROUPS } from '../layout/navConfig';
 
 interface CategoryGridProps {
-  onNavigateTab: (tab: string) => void;
+  /** node：裝備寶典要停在的樹節點（暗金裝備磚 'u'、成套裝備磚 's'） */
+  onNavigateTab: (tab: string, node?: string) => void;
 }
 
 /** 首頁大圖分類格：裝備圖鑑用大尺寸物品圖，其餘 11 個分頁用分組入口卡，17 個分頁入口全數保留 */
@@ -50,7 +51,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({ onNavigateTab }) => 
         </div>
         <CategoryTiles
           tiles={gearTiles}
-          onSelect={(id) => onNavigateTab(id)}
+          onSelect={(id) => onNavigateTab(id, id === 'items' ? 'u' : id === 'sets' ? 's' : undefined)}
           iconSize="xl"
           className="grid-cols-2 sm:grid-cols-3 xl:grid-cols-6"
         />

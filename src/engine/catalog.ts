@@ -20,7 +20,7 @@ export const SLOT_ZH: Record<SlotKind, string> = {
   head: '頭盔', body: '護甲', shield: '盾牌', gloves: '手套', belt: '腰帶', boots: '鞋靴', neck: '項鍊', ring: '戒指', weapon: '武器', charm: '護身符',
 };
 export const GROUP_ZH: Record<Group, string> = { armor: '護甲', weapon: '武器', jewelry: '飾品' };
-export const TIER_ZH: Record<Tier, string> = { normal: '普通', exceptional: '卓越', elite: '精英' };
+export const TIER_ZH: Record<Tier, string> = { normal: '一般', exceptional: '進階', elite: '菁英' };
 export const RARITY_ZH: Record<Rarity, string> = { unique: '獨特', set: '套裝', runeword: '符文之語', base: '基礎' };
 
 export interface CatalogEntry {
