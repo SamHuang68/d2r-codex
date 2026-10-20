@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { MF_KIND_ZH, marginalUnique, mfSummary } from '../../../engine/magicFind';
 import type { CharacterResult } from '../../../engine/types';
 import type { Alloc } from './types';
 import { skillByName, tabName } from '../../../engine/skills';
@@ -114,6 +115,7 @@ export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc
   ];
   const wd = result.weaponDamage;
   const s = result.stats;
+  const mfRaw = s.item_magicbonus ?? 0;
   const moreRows = MORE.map((m) => ({ ...m, v: s[m.stat] ?? 0 })).filter((m) => m.v);
   const skillRows: string[] = [];
   if (result.skills.all) skillRows.push(`所有技能 +${result.skills.all}`);
@@ -209,6 +211,22 @@ export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc
           ))}
         </div>
       </div>
+
+      {mfRaw > 0 && (
+        <div className="mt-5" aria-label="尋寶效益">
+          <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>尋 寶 效 益</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+            <Row label="MF（裝備合計）" value={`${mfRaw}%`} tone="t-unique" title="裝備提供的魔法物品尋獲率（含依等級成長的部分）" />
+            {s.item_goldbonus ? <Row label="金幣掉落" value={`${s.item_goldbonus}%`} /> : null}
+            {mfSummary(mfRaw).filter((l) => l.kind !== 'magic').map((l) => (
+              <Row key={l.kind} label={`${MF_KIND_ZH[l.kind]}有效 MF`} value={`${Math.floor(l.effective)}%（掉落約 ×${l.multiplier.toFixed(2)}）`}
+                title="有效 MF ＝ MF×係數÷(MF＋係數)，係數：暗金 250、套裝 500、稀有 600；魔法物品沒有遞減" />
+            ))}
+            <Row label="魔法物品" value={`${mfRaw}%（無遞減）`} />
+          </div>
+          <div className="d2-sub mt-1">再加 1% MF 約讓暗金有效 MF +{marginalUnique(mfRaw).toFixed(2)}%：MF 越高，每點越不划算。公式為社群整理，沒有在遊戲內逐項實測；傭兵尚未模擬，不含傭兵提供的 MF。</div>
+        </div>
+      )}
 
       <button type="button" onClick={() => setMore((v) => !v)} className="mt-5 t-gold text-sm tracking-wider" aria-expanded={more} style={{ background: 'none', border: 0, cursor: 'pointer' }}>
         {more ? '▼' : '▶'} 更多數值　<span className="t-dim">（遊戲角色頁沒有，模擬器獨有）</span>

@@ -19,8 +19,10 @@ export interface PresetItem {
   socketCount?: number;
 }
 
-export type PresetTier = 'start' | 'bis';
-export const PRESET_TIER_ZH: Record<PresetTier, string> = { start: '入門', bis: '頂裝' };
+export type PresetTier = 'start' | 'bis' | 'mfEff' | 'mfMax';
+export const PRESET_TIER_ZH: Record<PresetTier, string> = { start: '入門', bis: '頂裝', mfEff: '效率 MF', mfMax: '極致 MF' };
+/** 流派裡明確寫出的兩檔；MF 兩檔由 deriveMf 依規則推導 */
+export type CoreTier = 'start' | 'bis';
 
 type ClassCode = 'ama' | 'sor' | 'nec' | 'pal' | 'bar' | 'dru' | 'ass' | 'war';
 type Items = Partial<Record<DollSlot, PresetItem>>;
@@ -56,6 +58,10 @@ export interface BuildDef {
   blockTarget?: number;
   start: Tier;
   bis: Tier;
+  /** 效率 MF：這些欄位保留頂裝的核心件，不換成 MF 件（例如傷害來源、+技能的專屬頭盔） */
+  mfKeep?: DollSlot[];
+  /** 極致 MF 是否保留頂裝的武器與盾（技能綁定武器類型時用，例如弓、標槍、爪） */
+  mfKeepWeapon?: boolean;
 }
 
 const n = (nameEn: string, baseNameEn?: string): PresetItem => (baseNameEn ? { nameEn, baseNameEn } : { nameEn });
@@ -76,14 +82,14 @@ const SHAKO_ENIGMA: Items = { head: n('Harlequin Crest'), body: n('Enigma', 'Dus
 export const BUILDS: BuildDef[] = [
   // ── 亞馬遜 ──
   {
-    id: 'ama-lightning-fury', name: '雷霆之怒標槍', classCode: 'ama', rest: 'vit',
+    id: 'ama-lightning-fury', name: '雷霆之怒標槍', classCode: 'ama', rest: 'vit', mfKeepWeapon: true,
     summary: '擲出標槍後在命中點爆開閃電。主點雷霆之怒與標槍協同技能，靠裝備加技能與攻速。',
     skill: { main: 'Lightning Fury' },
     start: { level: 85, items: { ...MELEE_START, head: n("Andariel's Visage"), body: n('Chains of Honor', 'Dusk Shroud'), weaponI: n('Thunderstroke'), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_START, notes: '標槍用雷霆（Thunderstroke），頭盔與盔甲先用較平價的選擇。' },
     bis: { level: 92, items: { ...MELEE_BIS, ...SHAKO_ENIGMA, weaponI: n("Titan's Revenge"), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_BIS, notes: '標槍用泰坦的復仇，搭配謎團與軍帽。' },
   },
   {
-    id: 'ama-strafe', name: '掃射弓亞馬遜', classCode: 'ama', rest: 'dex',
+    id: 'ama-strafe', name: '掃射弓亞馬遜', classCode: 'ama', rest: 'dex', mfKeep: ['body'], mfKeepWeapon: true,
     summary: '用弓連續掃射多個目標。依賴攻速與物理傷害，技能點集中在掃射與前置技能。',
     skill: { main: 'Strafe', extra: { 'Critical Strike': 1 }, fill: ['Critical Strike', 'Penetrate', 'Pierce', 'Valkyrie'] },
     start: { level: 85, items: { ...MELEE_START, head: n("Andariel's Visage"), body: n('Chains of Honor', 'Dusk Shroud'), weaponI: n('Faith', 'Grand Matron Bow') }, charms: CHARMS_START, notes: '先以信念（Faith）符文之語弓起步。' },
@@ -98,7 +104,7 @@ export const BUILDS: BuildDef[] = [
     bis: { level: 92, items: { ...CASTER_BIS, ...SHAKO_ENIGMA, weaponI: n('Fathom'), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_BIS, notes: '常見的冰暴風雪配置：軍帽＋謎團＋深淵。副手欄為戰爭召喚（CTA）＋精神盾。' },
   },
   {
-    id: 'sor-lightning', name: '閃電魔法使', classCode: 'sor', rest: 'vit',
+    id: 'sor-lightning', name: '閃電魔法使', classCode: 'sor', rest: 'vit', mfKeep: ['head'],
     summary: '連鎖閃電與閃電術，雷系單體與連鎖傷害，閃電專精提高傷害。頂裝以無限降低敵人電抗。',
     skill: { main: 'Chain Lightning', extra: { Teleport: 1, 'Lightning Mastery': 20 } },
     start: { level: 80, items: { ...CASTER_START, head: n("Griffon's Eye"), body: n('Skin of the Vipermagi'), ...SPIRIT_SET }, charms: CHARMS_START, notes: '格里芬之眼提高閃電傷害，先用精神劍盾。' },
@@ -158,14 +164,14 @@ export const BUILDS: BuildDef[] = [
   },
   // ── 德魯伊 ──
   {
-    id: 'dru-tornado', name: '龍捲風德魯伊', classCode: 'dru', rest: 'vit',
+    id: 'dru-tornado', name: '龍捲風德魯伊', classCode: 'dru', rest: 'vit', mfKeep: ['head'],
     summary: '龍捲風與颶風，風系範圍傷害。需要抗性與生命，靠加技能的裝備。',
     skill: { main: 'Tornado', extra: { 'Cyclone Armor': 1, Hurricane: 1, 'Oak Sage': 1 }, fill: ['Oak Sage'] },
     start: { level: 80, items: { ...CASTER_START, head: n("Jalal's Mane"), body: n('Skin of the Vipermagi'), weaponI: n('Heart of the Oak'), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_START, notes: '德魯伊頭飾加全技能，搭配橡樹之心。' },
     bis: { level: 92, items: { ...CASTER_BIS, head: n("Jalal's Mane"), body: n('Enigma', 'Dusk Shroud'), weaponI: n('Heart of the Oak'), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_BIS, notes: '加技能優先的施法配置。' },
   },
   {
-    id: 'dru-fire', name: '地裂火德魯伊', classCode: 'dru', rest: 'vit',
+    id: 'dru-fire', name: '地裂火德魯伊', classCode: 'dru', rest: 'vit', mfKeep: ['head'],
     summary: '地裂與火山，火系範圍傷害，靠火系的協同技能。',
     skill: { main: 'Eruption', extra: { 'Oak Sage': 1 }, fill: ['Armageddon', 'Molten Boulder'] },
     start: { level: 80, items: { ...CASTER_START, head: n("Jalal's Mane"), body: n('Skin of the Vipermagi'), weaponI: n('Heart of the Oak'), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_START, notes: '先用加技能的施法裝備。' },
@@ -180,7 +186,7 @@ export const BUILDS: BuildDef[] = [
     bis: { level: 92, items: { ...CASTER_BIS, ...SHAKO_ENIGMA, ...SPIRIT_SET }, charms: CHARMS_BIS, notes: '加技能優先；陷阱技能可再用「+陷阱技能」裝備提高。' },
   },
   {
-    id: 'ass-mosaic', name: '馬賽克武學刺客', classCode: 'ass', rest: 'vit',
+    id: 'ass-mosaic', name: '馬賽克武學刺客', classCode: 'ass', rest: 'vit', mfKeepWeapon: true,
     summary: '用武學連擊疊出馬賽克效果，靠爪與武學技能連續出招。',
     skill: { main: 'Royal Strike', extra: { 'Claw Mastery': 20, Fade: 1 }, fill: ['Tiger Strike', 'Cobra Strike', 'Claws of Thunder', 'Blades of Ice', 'Fists of Fire', 'Dragon Claw'] },
     start: { level: 85, items: { ...MELEE_START, head: n("Andariel's Visage"), body: n('Chains of Honor', 'Dusk Shroud'), weaponI: n('Mosaic') }, charms: CHARMS_START, notes: '馬賽克為爪類符文之語。' },
@@ -188,7 +194,33 @@ export const BUILDS: BuildDef[] = [
   },
 ];
 
-export const SIM_PRESETS: SimPreset[] = BUILDS.flatMap((b) => (['start', 'bis'] as PresetTier[]).map((t): SimPreset => ({
-  id: `${b.id}:${t}`, name: `${b.name}（${PRESET_TIER_ZH[t]}）`, classCode: b.classCode, level: b[t].level, items: b[t].items, charms: b[t].charms ?? [],
-  blockTarget: b.blockTarget, rest: b.rest, notes: b[t].notes, build: b.id, buildName: b.name, tier: t, skill: b.skill,
-})));
+// ── 尋寶（MF）檔位 ──
+// MF 數值來自遊戲資料（item_magicbonus，含依等級成長的部分），以 scripts/test_engine.mjs 逐一核對；
+// 掉落受 MF 遞減（見 engine/magicFind.ts）。這裡只決定「換哪些欄位」：
+//  - 效率：保留流派核心，只把頭、身、鞋、右戒指、護身符換成 MF 件，輸出幾乎不受影響
+//  - 極致：全身換成 MF 最高的可取得裝備，主手改為「阿里巴巴之刃」、副手「韻（Rhyme）」，不顧輸出與生存
+const MF_EFF: Items = { head: n('Harlequin Crest'), body: n('Enigma', 'Dusk Shroud'), boots: n('Wartraveler'), ring2: n('Nagelring') };
+const MF_MAX: Items = {
+  head: n('Harlequin Crest'), body: n("Skullder's Ire"), gloves: n('Chance Guards'), belt: n('Goldwrap'), boots: n('Wartraveler'),
+  ring1: n('Nagelring'), ring2: n('Nagelring'), weaponI: n('Blade of Ali Baba'), shieldI: n('Rhyme', 'Monarch'),
+};
+
+function deriveMf(b: BuildDef, mode: 'mfEff' | 'mfMax'): Tier {
+  const bis = b.bis;
+  const items: Items = { ...bis.items };
+  if (mode === 'mfEff') {
+    (Object.keys(MF_EFF) as DollSlot[]).forEach((k) => { if (!b.mfKeep?.includes(k)) items[k] = MF_EFF[k]; });
+    return { level: bis.level, items, charms: CHARMS_BIS, notes: `保留流派核心裝備${b.mfKeep?.length ? '（頭盔等核心欄位不換）' : ''}，把頭盔、護甲、鞋子、右戒指、護身符換成 MF 件。這是「兼顧擊殺速度」的折衷：輸出與施法／攻速斷點沒有模擬，實際清怪速度請自行評估。` };
+  }
+  (Object.keys(MF_MAX) as DollSlot[]).forEach((k) => { if (b.mfKeepWeapon && (k === 'weaponI' || k === 'shieldI')) return; items[k] = MF_MAX[k]; });
+  return { level: 95, items, charms: CHARMS_BIS, notes: `全身換成 MF 最高的件，不顧輸出與生存${b.mfKeepWeapon ? '；此流派的技能綁定武器類型，主手與副手保留頂裝的設定' : ''}。護甲需要 97 力量，屬性點會被需求吃掉，生命會偏低。` };
+}
+
+export const tierOf = (b: BuildDef, t: PresetTier): Tier => (t === 'mfEff' || t === 'mfMax' ? deriveMf(b, t) : b[t]);
+export const PRESET_TIERS: PresetTier[] = ['start', 'bis', 'mfEff', 'mfMax'];
+
+export const SIM_PRESETS: SimPreset[] = BUILDS.flatMap((b) => PRESET_TIERS.map((t): SimPreset => {
+  const x = tierOf(b, t);
+  return { id: `${b.id}:${t}`, name: `${b.name}（${PRESET_TIER_ZH[t]}）`, classCode: b.classCode, level: x.level, items: x.items, charms: x.charms ?? [],
+    blockTarget: b.blockTarget, rest: b.rest, notes: x.notes, build: b.id, buildName: b.name, tier: t, skill: b.skill };
+}));

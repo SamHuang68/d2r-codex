@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { BUILDS, PRESET_TIER_ZH, SIM_PRESETS, type PresetTier } from '../../../data/simulatorPresets';
-import { stateFromPreset } from '../../../data/presetState';
+import React, { useMemo, useState } from 'react';
+import { BUILDS, PRESET_TIER_ZH, SIM_PRESETS, tierOf, type PresetTier } from '../../../data/simulatorPresets';
+import { previewPreset, stateFromPreset } from '../../../data/presetState';
 import { ALL_PARTS, exportProfile, fromSavedData, loadProfiles, newProfile, parseProfile, storeProfiles, type ApplyParts, type SavedProfile, type SimSnapshot } from '../../../data/profileStore';
 import { CLASS_CODE_ZH, skillByName } from '../../../engine/skills';
+import { effectiveMf } from '../../../engine/magicFind';
 
 interface Props {
   classCode: string;
@@ -31,6 +32,12 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
   const none = !parts.gear && !parts.skills && !parts.character;
 
   const builds = BUILDS.filter((b) => b.classCode === classCode);
+  // 各檔位套用後的數值（只算一次，切換職業才重算）
+  const previews = useMemo(() => {
+    const m: Record<string, ReturnType<typeof previewPreset>> = {};
+    SIM_PRESETS.filter((p) => p.classCode === classCode && p.tier !== 'start').forEach((p) => { m[p.id] = previewPreset(p); });
+    return m;
+  }, [classCode]);
 
   const applyTemplate = (buildId: string, tier: PresetTier) => {
     const p = SIM_PRESETS.find((x) => x.build === buildId && x.tier === tier); if (!p) return;
@@ -104,19 +111,31 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
                       <span className="d2-sub">主力：{main?.name ?? b.skill.main}</span>
                     </div>
                     <div className="d2-sub" style={{ margin: '4px 0 8px' }}>{b.summary}</div>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="d2-sub" style={{ width: 36 }}>裝備</span>
                       {(['start', 'bis'] as PresetTier[]).map((t) => (
-                        <button key={t} type="button" className={`d2-btn ${t === 'bis' ? '' : 'is-quiet'}`} disabled={none} onClick={() => applyTemplate(b.id, t)} title={b[t].notes}>
-                          套用{PRESET_TIER_ZH[t]}（Lv{b[t].level}）
+                        <button key={t} type="button" className={`d2-btn ${t === 'bis' ? '' : 'is-quiet'}`} disabled={none} onClick={() => applyTemplate(b.id, t)} title={tierOf(b, t).notes}>
+                          套用{PRESET_TIER_ZH[t]}（Lv{tierOf(b, t).level}）
                         </button>
                       ))}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                      <span className="d2-sub" style={{ width: 36 }}>尋寶</span>
+                      {(['mfEff', 'mfMax'] as PresetTier[]).map((t) => {
+                        const pv = previews[`${b.id}:${t}`];
+                        return (
+                          <button key={t} type="button" className="d2-btn is-quiet" disabled={none} onClick={() => applyTemplate(b.id, t)} title={tierOf(b, t).notes}>
+                            {PRESET_TIER_ZH[t]}{pv ? `　MF ${pv.mf}%（暗金有效 ${Math.floor(effectiveMf(pv.mf, 'unique'))}%）・生命 ${pv.life.toLocaleString()}` : ''}
+                          </button>
+                        );
+                      })}
                     </div>
                   </li>
                 );
               })}
             </ul>
           )}
-          <div className="d2-sub mt-2">範本是社群常見組合的示意，數值由遊戲資料計算，未逐件與遊戲內比對。套用後可以直接調整再存成自己的 Profile。</div>
+          <div className="d2-sub mt-2">範本是社群常見組合的示意，數值由遊戲資料計算，未逐件與遊戲內比對。套用後可以直接調整再存成自己的 Profile。「尋寶」兩檔的 MF 與生命是套用後的計算值：效率檔保留流派核心、只換 MF 件；極致檔全身換最高 MF，輸出與生存都會下降。</div>
         </section>
 
         <section aria-label="我的 Profile" style={{ borderTop: '1px solid #2e271c', paddingTop: 12 }}>
