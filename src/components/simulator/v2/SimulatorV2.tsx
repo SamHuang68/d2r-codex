@@ -1,8 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { computeCharacter } from '../../../engine/character';
 import { gameData } from '../../../engine/data';
-import { ENGINE_CLASS_BY_CODE, SLOT_ZH, toEquipped, withBase, type CatalogEntry, type Group } from '../../../engine/catalog';
-import { buildEngineItem } from '../../../engine/build';
+import { withBase, type CatalogEntry, type Group } from '../../../engine/catalog';
 import { ALL_PARTS, type ApplyParts, type SimSnapshot } from '../../../data/profileStore';
 import type { EquippedItem } from '../../../engine/types';
 import { SkillTreeV2 } from './SkillTreeV2';
@@ -16,6 +15,8 @@ import { GearPicker } from './GearPicker';
 import { SocketEditor } from './SocketEditor';
 import { ProfilePanel } from './ProfilePanel';
 import { ItemTooltipBody } from './ItemTooltip';
+import { slotPlacementError } from './equipRules';
+import { engineItemsOf } from './engineItems';
 import './d2skin.css';
 import { DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type Quests, type TabKey } from './types';
 
@@ -66,20 +67,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const say = (m: string) => { setToast(m); window.setTimeout(() => setToast((t) => (t === m ? null : t)), 3500); };
 
   // ── 引擎輸入 ──
-  const engineItems: EquippedItem[] = useMemo(() => {
-    const out: EquippedItem[] = [];
-    const arm: DollSlot[] = swap === 'I' ? ['weaponI', 'shieldI'] : ['weaponII', 'shieldII'];
-    (Object.keys(equipped) as DollSlot[]).forEach((k) => {
-      if ((k === 'weaponI' || k === 'shieldI' || k === 'weaponII' || k === 'shieldII') && !arm.includes(k)) return;
-      const eq = equipped[k]; if (!eq) return;
-      const kind = DOLL_SLOT_KIND[k];
-      // 副手欄放武器（雙持）時，引擎槽位用 weapon2，不當作盾牌
-      const slot = kind === 'weapon' ? 'weapon' : kind === 'shield' ? (eq.entry.slot === 'weapon' ? 'weapon2' : 'shield') : k;
-      out.push(buildEngineItem(eq, slot, rollMax));
-    });
-    charms.forEach((c, i) => out.push(toEquipped(c, `charm${i}`, { roll: rollMax ? 1 : 0 })));
-    return out;
-  }, [equipped, charms, swap, rollMax]);
+  const engineItems: EquippedItem[] = useMemo(() => engineItemsOf(equipped, charms, swap, rollMax), [equipped, charms, swap, rollMax]);
 
   const baseInput = useMemo(() => ({
     className: cls.en, level, allocated: alloc, items: engineItems, difficulty, anyaScrolls: quests.anya, quests: { lifePotions: quests.lifePotions },
@@ -123,20 +111,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   };
   const canDrop = (target: DollSlot | 'charms', entry: CatalogEntry): string | null => {
     if (target === 'charms') return entry.slot !== 'charm' ? '只有護身符能放進背包' : canFitCharm(charms, entry) ? null : '背包空間不足';
-    const dualWield = entry.slot === 'weapon' && (target === 'shieldI' || target === 'shieldII') && (cls.en === 'Barbarian' || cls.en === 'Assassin');
-    if (dualWield) {
-      const main = equipped[target === 'shieldI' ? 'weaponI' : 'weaponII']?.entry;
-      if (entry.twoHanded) return '雙手武器不能放在副手欄';
-      if (main?.twoHanded) return '主手為雙手武器，副手欄不能放武器';
-      if (cls.en === 'Assassin' && !/^(h2h|h2h2)$/.test(baseByCode.get(entry.baseCode)?.type ?? '')) return '刺客雙持只能使用爪類武器';
-    } else if (DOLL_SLOT_KIND[target] !== entry.slot) return `「${entry.name}」是${SLOT_ZH[entry.slot]}，不能放在${DOLL_SLOT_ZH[target]}`;
-    if (entry.classCode && ENGINE_CLASS_BY_CODE[entry.classCode] !== cls.en) return `「${entry.name}」只有${CLASSES.find((c) => c.code === entry.classCode)?.zh}能使用`;
-    if (entry.slot === 'shield') {
-      const w = equipped[target === 'shieldI' ? 'weaponI' : 'weaponII']?.entry;
-      const wb = w && baseByCode.get(w.baseCode);
-      if (w?.twoHanded && !(wb?.oneOrTwoHanded && cls.en === 'Barbarian')) return '雙手武器無法搭配盾牌';
-    }
-    return null;
+    return slotPlacementError(target, entry, equipped, cls.en);
   };
   const place = (target: DollSlot | 'charms', entry: CatalogEntry) => {
     const err = canDrop(target, entry);

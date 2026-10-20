@@ -167,15 +167,15 @@ export const BUILDS: BuildDef[] = [
     id: 'dru-tornado', name: '龍捲風德魯伊', classCode: 'dru', rest: 'vit', mfKeep: ['head'],
     summary: '龍捲風與颶風，風系範圍傷害。需要抗性與生命，靠加技能的裝備。',
     skill: { main: 'Tornado', extra: { 'Cyclone Armor': 1, Hurricane: 1, 'Oak Sage': 1 }, fill: ['Oak Sage'] },
-    start: { level: 80, items: { ...CASTER_START, head: n("Jalal's Mane"), body: n('Skin of the Vipermagi'), weaponI: n('Heart of the Oak'), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_START, notes: '德魯伊頭飾加全技能，搭配橡樹之心。' },
-    bis: { level: 92, items: { ...CASTER_BIS, head: n("Jalal's Mane"), body: n('Enigma', 'Dusk Shroud'), weaponI: n('Heart of the Oak'), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_BIS, notes: '加技能優先的施法配置。' },
+    start: { level: 80, items: { ...CASTER_START, head: n("Jalal's Mane"), body: n('Skin of the Vipermagi'), weaponI: n('Heart of the Oak', 'Archon Staff') }, charms: CHARMS_START, notes: '德魯伊頭飾加全技能，搭配雙手法杖版的橡樹之心，副手不放盾（雙手武器不能搭配盾牌）。' },
+    bis: { level: 92, items: { ...CASTER_BIS, head: n("Jalal's Mane"), body: n('Enigma', 'Dusk Shroud'), weaponI: n('Heart of the Oak', 'Archon Staff') }, charms: CHARMS_BIS, notes: '加技能優先的施法配置；橡樹之心是雙手法杖，副手不放盾。' },
   },
   {
     id: 'dru-fire', name: '地裂火德魯伊', classCode: 'dru', rest: 'vit', mfKeep: ['head'],
     summary: '地裂與火山，火系範圍傷害，靠火系的協同技能。',
     skill: { main: 'Eruption', extra: { 'Oak Sage': 1 }, fill: ['Armageddon', 'Molten Boulder'] },
-    start: { level: 80, items: { ...CASTER_START, head: n("Jalal's Mane"), body: n('Skin of the Vipermagi'), weaponI: n('Heart of the Oak'), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_START, notes: '先用加技能的施法裝備。' },
-    bis: { level: 92, items: { ...CASTER_BIS, head: n("Jalal's Mane"), body: n('Enigma', 'Dusk Shroud'), weaponI: n('Heart of the Oak'), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_BIS, notes: '加技能優先的施法配置。' },
+    start: { level: 80, items: { ...CASTER_START, head: n("Jalal's Mane"), body: n('Skin of the Vipermagi'), weaponI: n('Heart of the Oak', 'Archon Staff') }, charms: CHARMS_START, notes: '先用加技能的施法裝備；橡樹之心是雙手法杖，副手不放盾。' },
+    bis: { level: 92, items: { ...CASTER_BIS, head: n("Jalal's Mane"), body: n('Enigma', 'Dusk Shroud'), weaponI: n('Heart of the Oak', 'Archon Staff') }, charms: CHARMS_BIS, notes: '加技能優先的施法配置；橡樹之心是雙手法杖，副手不放盾。' },
   },
   // ── 刺客 ──
   {
@@ -233,8 +233,8 @@ const TANK_EFF: Record<string, Items> = {
   'pal-zealot': { gloves: n("Horazon's Hold"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
   'bar-whirlwind': { gloves: n('Laying of Hands'), belt: n("Verdugo's Hearty Cord"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
   'bar-frenzy': { gloves: n("Horazon's Hold"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
-  'dru-tornado': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n("Aldur's Advance") },
-  'dru-fire': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n("Aldur's Advance") },
+  'dru-tornado': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n('Waterwalk') },
+  'dru-fire': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n('Waterwalk') },
   'ass-lightning-trap': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n("Aldur's Advance") },
   'ass-mosaic': { gloves: n("Horazon's Hold"), ring2: n('Dwarf Star'), boots: n('Tearhaunch') },
 };

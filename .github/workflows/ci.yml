@@ -1,0 +1,40 @@
+name: CI
+
+# 每個對 main 的 Pull Request 都跑：型別檢查與計算引擎測試。
+# 只負責「檢查」，不部署；部署仍由 deploy.yml 在推到 main 時執行。
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# 同一個 PR 又推了新提交時，取消還在跑的舊檢查
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: 型別檢查與引擎測試
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run lint
+
+      - name: Engine tests
+        run: npm run test:engine

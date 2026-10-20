@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/data/profileStore'; export * from './src/data/presetState';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -242,8 +242,7 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
   for (const p of SIM_PRESETS) {
     t(`範本「${p.name}」：所有物品與鑲嵌皆可解析、無未處理屬性、滿足需求`, () => {
       const r = resolvePreset(p); assert.deepEqual(r.errors, []);
-      const items = []; for (const [k, eq] of Object.entries(r.equipped)) { if (k.endsWith('II')) continue; items.push(buildEngineItem(eq, eq.entry.slot === 'weapon' ? (k.startsWith('shield') ? 'weapon2' : 'weapon') : eq.entry.slot === 'shield' ? 'shield' : k)); }
-      r.charms.forEach((c, i) => items.push(buildEngineItem({ entry: c }, 'charm' + i)));
+      const items = E.engineItemsOf(r.equipped, r.charms);
       const cs = gameData.charstats.find((c) => c.class === ENGINE_CLASS_BY_CODE[p.classCode]);
       const reqs = { str: Math.max(0, ...items.map((i) => gameData.bases.find((b) => b.code === i.baseCode)?.reqStr ?? 0)), dex: Math.max(0, ...items.map((i) => gameData.bases.find((b) => b.code === i.baseCode)?.reqDex ?? 0)) };
       const base = { className: cs.class, level: p.level, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } };
@@ -291,8 +290,7 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
     const { itemOwnStats, buildEngineItem: bei } = E;
     for (const id of ['sor-blizzard:bis', 'pal-hammerdin:bis', 'bar-whirlwind:bis', 'ama-lightning-fury:bis']) {
       const p = E.SIM_PRESETS.find((x) => x.id === id); const { snap } = stateFromPreset(p);
-      const items = []; for (const [k, eq] of Object.entries(snap.equipped)) { if (k.endsWith('II')) continue; items.push(bei(eq, eq.entry.slot === 'weapon' ? (k.startsWith('shield') ? 'weapon2' : 'weapon') : eq.entry.slot === 'shield' ? 'shield' : k, true)); }
-      snap.charms.forEach((c, i) => items.push(bei({ entry: c }, 'charm' + i, true)));
+      const items = E.engineItemsOf(snap.equipped, snap.charms);
       const res = E.computeCharacter(gameData, { className: E.ENGINE_CLASS_BY_CODE[p.classCode], level: p.level, allocated: snap.alloc, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } });
       const a = res.attributes; let sum = 0;
       for (const it of items) { const o = itemOwnStats(gameData, it, p.level, { str: a.str, dex: a.dex }); sum += o.defense ?? 0; }
@@ -349,9 +347,7 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
   t('平衡減傷：每個流派都滿足需求、全技能／職業／技能樹／單項技能加成與 FCR／IAS 都不低於頂裝，且有效生命不低於頂裝', () => {
     const { BUILDS, SIM_PRESETS, resolvePreset, buildEngineItem: bei, toEquipped, autoAllocate: aa, computeCharacter: cc2, survivalSummary } = E;
     const run = (p) => {
-      const r = resolvePreset(p); const items = [];
-      for (const [k, eq] of Object.entries(r.equipped)) { if (k.endsWith('II')) continue; items.push(bei(eq, eq.entry.slot === 'weapon' ? (k.startsWith('shield') ? 'weapon2' : 'weapon') : eq.entry.slot === 'shield' ? 'shield' : k, true)); }
-      r.charms.forEach((c, i) => items.push(bei({ entry: c }, 'charm' + i, true)));
+      const r = resolvePreset(p); const items = E.engineItemsOf(r.equipped, r.charms);
       const reqs = { str: Math.max(0, ...items.map((i) => gameData.bases.find((b) => b.code === i.baseCode)?.reqStr ?? 0)), dex: Math.max(0, ...items.map((i) => gameData.bases.find((b) => b.code === i.baseCode)?.reqDex ?? 0)) };
       const base = { className: E.ENGINE_CLASS_BY_CODE[p.classCode], level: p.level, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } };
       const alloc = aa(gameData, base, { totalPoints: (p.level - 1) * 5 + 15, blockTarget: p.blockTarget, rest: p.rest }, reqs);
@@ -380,6 +376,55 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
       if (!b.weaponBound) assert.ok(mx.ehpPhys > bis.ehpPhys && mx.ehpElem > bis.ehpElem, `${b.id} 兩項有效生命都應高於頂裝`);
       assert.ok(mx.minRes >= 75, `${b.id} 最低抗性 ${mx.minRes}`);
     }
+  });
+  t('範本合法性：每個範本的每個槽位都通過介面同一套裝備規則（槽位種類、職業專屬、雙手武器不配盾、雙持限制）', () => {
+    const { SIM_PRESETS, resolvePreset, equippedErrors } = E;
+    for (const p of SIM_PRESETS) {
+      const r = resolvePreset(p); assert.deepEqual(r.errors, [], p.id);
+      assert.deepEqual(equippedErrors(r.equipped, E.ENGINE_CLASS_BY_CODE[p.classCode]), [], `${p.id} 有不合法的裝備組合`);
+    }
+  });
+  t('裝備規則：雙手武器不能配盾、他職專屬不能穿、刺客雙持只能用爪、野蠻人可雙持（反向對照，確認規則真的會擋）', () => {
+    const { slotPlacementError, resolvePreset } = E;
+    const item = (nameEn, baseNameEn) => resolvePreset({ id: 't', name: 't', classCode: 'sor', level: 90, items: { head: { nameEn, baseNameEn } }, charms: [], notes: '', build: 't', buildName: 't', tier: 'bis', skill: { main: 'Blizzard' } }).equipped.head.entry;
+    const staff = item('Heart of the Oak', 'Archon Staff'); const spirit = item('Spirit', 'Monarch'); const claw = item('Mosaic'); const sword = item('Grief');
+    assert.equal(staff.twoHanded, true);
+    assert.match(slotPlacementError('shieldI', spirit, { weaponI: { entry: staff } }, 'Druid') ?? '', /雙手武器無法搭配盾牌/);
+    assert.equal(slotPlacementError('shieldI', spirit, { weaponI: { entry: sword } }, 'Paladin'), null);
+    assert.match(slotPlacementError('weaponI', item('Herald of Zakarum'), {}, 'Sorceress') ?? '', /是盾牌，不能放在/);
+    assert.match(slotPlacementError('head', item('Jalal\'s Mane'), {}, 'Sorceress') ?? '', /只有德魯伊能使用/);
+    assert.match(slotPlacementError('shieldI', sword, { weaponI: { entry: sword } }, 'Assassin') ?? '', /只能使用爪類武器/);
+    assert.equal(slotPlacementError('shieldI', claw, { weaponI: { entry: claw } }, 'Assassin'), null);
+    assert.equal(slotPlacementError('shieldI', sword, { weaponI: { entry: sword } }, 'Barbarian'), null);
+    assert.match(slotPlacementError('shieldI', sword, { weaponI: { entry: sword } }, 'Sorceress') ?? '', /是武器，不能放在/);
+  });
+  t('Profile 驗證：結構不對的匯入內容一律拒絕（不丟例外）；數值欄位夾進合理範圍；通過的內容還原時不會丟例外', () => {
+    const { parseProfile, fromSavedData, exportProfile, newProfile, SIM_PRESETS, stateFromPreset, skillByName } = E;
+    const snap = stateFromPreset(SIM_PRESETS.find((x) => x.id === 'sor-blizzard:bis')).snap;
+    const base = JSON.parse(exportProfile(newProfile('x', snap)));
+    const mut = (fn) => { const d = JSON.parse(JSON.stringify(base)); fn(d); return JSON.stringify(d); };
+    const reject = {
+      'charms 含 null': (d) => { d.data.charms = [null]; }, 'charms 不是陣列': (d) => { d.data.charms = 'x'; }, 'charms 太多': (d) => { d.data.charms = Array.from({ length: 41 }, () => ({ id: 'a' })); },
+      'equipped 值為 null': (d) => { d.data.equipped.head = null; }, 'equipped 值為字串': (d) => { d.data.equipped.head = 'abc'; }, 'equipped 缺 id': (d) => { d.data.equipped.head = { baseCode: 'x' }; },
+      'sockets 不是陣列': (d) => { d.data.equipped.head.sockets = 'x'; }, 'sockets 含非文字': (d) => { d.data.equipped.head.sockets = [1]; },
+      '未知槽位': (d) => { d.data.equipped.nonsense = { id: 'a' }; }, '職業代碼不存在': (d) => { d.data.classCode = 'zzz'; }, '職業代碼非字串': (d) => { d.data.classCode = 5; },
+      '技能點值為字串': (d) => { d.data.skillPoints = { magic_arrow: 'abc' }; }, '技能點不是物件': (d) => { d.data.skillPoints = [1]; }, '增益值非布林': (d) => { d.data.buffsOn = { a: 'yes' }; },
+    };
+    for (const [name, fn] of Object.entries(reject)) assert.equal(typeof parseProfile(mut(fn)), 'string', `應拒絕：${name}`);
+    const big = parseProfile(mut((d) => { d.data.skillPoints = { fire_bolt: 9999, ice_bolt: -5 }; d.data.level = 'abc'; d.data.alloc = { str: -5, dex: 1e9 }; d.data.targetRes = 999; d.name = '   '; }));
+    assert.equal(typeof big, 'object'); assert.equal(big.data.skillPoints.fire_bolt, skillByName('Fire Bolt').maxLvl); assert.equal(big.data.skillPoints.ice_bolt, undefined);
+    assert.equal(big.data.level, 90); assert.equal(big.data.alloc.str, 0); assert.equal(big.data.alloc.dex, 999); assert.equal(big.data.targetRes, 100); assert.equal(big.name, '匯入的 Profile');
+    assert.doesNotThrow(() => fromSavedData(big.data));
+    const html = parseProfile(mut((d) => { d.name = '<img src=x onerror=alert(1)>'; })); assert.equal(html.name, '<img src=x onerror=alert(1)>', '名稱原樣保留（畫面以文字顯示，不當 HTML）');
+  });
+  t('Profile 讀取：瀏覽器存檔中格式損壞的項目被略過並回報數量，其餘照常載入', () => {
+    const { loadProfiles, exportProfile, newProfile, SIM_PRESETS, stateFromPreset } = E;
+    const good = JSON.parse(exportProfile(newProfile('好的', stateFromPreset(SIM_PRESETS.find((x) => x.id === 'pal-hammerdin:bis')).snap)));
+    const withStore = (v, fn) => { const old = globalThis.window; globalThis.window = { localStorage: { getItem: () => v } }; try { return fn(); } finally { globalThis.window = old; } };
+    const r = withStore(JSON.stringify([good, { junk: 1 }, null, { ...good, data: { ...good.data, charms: [null] } }]), () => loadProfiles());
+    assert.equal(r.list.length, 1); assert.equal(r.rejected, 3); assert.equal(r.list[0].name, '好的');
+    assert.deepEqual(withStore('{壞掉', () => loadProfiles()), { list: [], rejected: 1 });
+    assert.deepEqual(withStore(null, () => loadProfiles()), { list: [], rejected: 0 });
   });
   t('Profile：存檔→還原往返後裝備（含換底材、鑲嵌、無形）、護身符、技能點、配點完全相同', () => {
     const p = E.SIM_PRESETS.find((x) => x.id === 'sor-blizzard:bis'); const { snap } = stateFromPreset(p);
