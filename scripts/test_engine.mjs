@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export * from './src/data/profileStore'; export * from './src/data/presetState';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/data/profileStore'; export * from './src/data/presetState';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -285,6 +285,23 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
       const { snap, notes } = stateFromPreset(p); assert.deepEqual(notes.filter((x) => !x.includes('技能點不足')), [], p.id);
       assert.equal(snap.alloc.str + snap.alloc.dex + snap.alloc.vit + snap.alloc.ene, (p.level - 1) * 5 + 15, p.id);
       assert.ok(Object.keys(snap.equipped).length >= 5 && Object.keys(snap.skillPoints).length >= 3, p.id);
+    }
+  });
+  t('物品提示框數值：逐件防禦加總＋敏捷/4＝整體防禦；主手武器傷害與整體計算一致', () => {
+    const { itemOwnStats, buildEngineItem: bei } = E;
+    for (const id of ['sor-blizzard:bis', 'pal-hammerdin:bis', 'bar-whirlwind:bis', 'ama-lightning-fury:bis']) {
+      const p = E.SIM_PRESETS.find((x) => x.id === id); const { snap } = stateFromPreset(p);
+      const items = []; for (const [k, eq] of Object.entries(snap.equipped)) { if (k.endsWith('II')) continue; items.push(bei(eq, eq.entry.slot === 'weapon' ? (k.startsWith('shield') ? 'weapon2' : 'weapon') : eq.entry.slot === 'shield' ? 'shield' : k, true)); }
+      snap.charms.forEach((c, i) => items.push(bei({ entry: c }, 'charm' + i, true)));
+      const res = E.computeCharacter(gameData, { className: E.ENGINE_CLASS_BY_CODE[p.classCode], level: p.level, allocated: snap.alloc, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } });
+      const a = res.attributes; let sum = 0;
+      for (const it of items) { const o = itemOwnStats(gameData, it, p.level, { str: a.str, dex: a.dex }); sum += o.defense ?? 0; }
+      assert.equal(sum + Math.floor(a.dex / 4), res.defense, `${id} 防禦`);
+      // 武器傷害：提示框只含該武器自身屬性（遊戲提示框同），整體計算還含其他裝備的固定傷害，所以只拿單件比對
+      const w = items.find((i) => i.slot === 'weapon');
+      if (w) { const solo = E.computeCharacter(gameData, { className: E.ENGINE_CLASS_BY_CODE[p.classCode], level: p.level, allocated: snap.alloc, items: [w], difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } });
+        const o = itemOwnStats(gameData, w, p.level, { str: solo.attributes.str, dex: solo.attributes.dex });
+        if (solo.weaponDamage) { assert.ok(o.damage, id); assert.equal(o.damage.min, solo.weaponDamage.min, `${id} 最小傷害`); assert.equal(o.damage.max, solo.weaponDamage.max, `${id} 最大傷害`); } }
     }
   });
   t('Profile：存檔→還原往返後裝備（含換底材、鑲嵌、無形）、護身符、技能點、配點完全相同', () => {

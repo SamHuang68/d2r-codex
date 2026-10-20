@@ -4,7 +4,6 @@ import { gameData } from '../../../engine/data';
 import { ENGINE_CLASS_BY_CODE, SLOT_ZH, toEquipped, withBase, type CatalogEntry, type Group } from '../../../engine/catalog';
 import { buildEngineItem } from '../../../engine/build';
 import { ALL_PARTS, type ApplyParts, type SimSnapshot } from '../../../data/profileStore';
-import { describeModifiers } from '../../../engine/describe';
 import type { EquippedItem } from '../../../engine/types';
 import { SkillTreeV2 } from './SkillTreeV2';
 import { auraEffects, damageText, effectiveLevel, passiveMods, skillById, skillDamage, skillLevelsFrom, skillPointBudget, targetDamageText, type DamageOptions, type GameSkill, type SkillBonuses } from '../../../engine/skills';
@@ -16,6 +15,7 @@ import { GearTreeTab } from './GearTreeTab';
 import { GearPicker } from './GearPicker';
 import { SocketEditor } from './SocketEditor';
 import { ProfilePanel } from './ProfilePanel';
+import { ItemTooltipBody } from './ItemTooltip';
 import './d2skin.css';
 import { DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type Quests, type TabKey } from './types';
 
@@ -216,6 +216,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const clearAll = () => { setEquipped({}); setCharms([]); setAlloc(ZERO); setSelected(null); };
 
   const selEq = selected ? equipped[selected] : undefined;
+  const tipAttrs = useMemo(() => ({ str: result.attributes.str, dex: result.attributes.dex }), [result.attributes.str, result.attributes.dex]);
   // 專精、穿透、目標抗性 → 技能傷害選項
   const mods = useMemo(() => passiveMods(skillPoints, skillBonuses), [skillPoints, skillBonuses]);
   const damageOpts = (sk: GameSkill): DamageOptions => {
@@ -299,16 +300,10 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
           <div className="d2-panel-body">
             <PaperDollV2 engineClass={cls.en} equipped={equipped} charms={charms} swap={swap} onSwap={setSwap} dragging={dragging}
               canDrop={canDrop} onDropItem={place} onRemoveCharm={(i) => setCharms((c) => c.filter((_, j) => j !== i))}
-              selected={selected} onSelect={setSelected} unmet={unmetSlots} />
+              selected={selected} onSelect={setSelected} unmet={unmetSlots} level={level} rollMax={rollMax} attrs={tipAttrs} />
             {selEq && selected && (
               <div className="mt-4">
-                <div className="d2-tip">
-                  <div className={`nm ${selEq.entry.kind === 'set' ? 't-set' : 't-unique'}`}>{selEq.entry.name}</div>
-                  <div className="base">{selEq.entry.baseName}{selEq.ethereal ? '（無形）' : ''}</div>
-                  {selEq.entry.levelReq ? <div className="base">需要等級：{selEq.entry.levelReq}</div> : null}
-                  {describeModifiers(selEq.entry.mods, rollMax ? 1 : 0, level).map((l, i) => <div key={i} className={`mod ${l.known ? '' : 'is-unknown'}`}>{l.text}</div>)}
-                  {selEq.entry.setName && <div className="t-set">{selEq.entry.setName}</div>}
-                </div>
+                <div className="d2-tip"><ItemTooltipBody eq={selEq} level={level} rollMax={rollMax} attrs={tipAttrs} /></div>
                 <div className="flex flex-wrap items-center justify-center gap-4 mt-2">
                   {(selEq.entry.group === 'armor' || selEq.entry.group === 'weapon') && (
                     <label className="d2-field"><input type="checkbox" className="d2-check" checked={!!selEq.ethereal} onChange={(e) => setEquipped((m) => ({ ...m, [selected]: { ...m[selected]!, ethereal: e.target.checked } }))} />無形</label>

@@ -3,7 +3,8 @@ import inventory from '../../../data/game/inventory.json';
 import type { CatalogEntry } from '../../../engine/catalog';
 import { ItemIcon } from '../../common/ItemIcon';
 import { imageForEntry } from '../../../utils/catalogImage';
-import { DOLL_SLOT_ZH, type DollSlot, type EquippedMap } from './types';
+import { FloatingItemTip } from './ItemTooltip';
+import { DOLL_SLOT_ZH, type DollSlot, type Equipped, type EquippedMap } from './types';
 
 interface InvRow { class: string; [k: string]: string | number }
 const INV = inventory as unknown as InvRow[];
@@ -38,6 +39,10 @@ interface Props {
   selected: DollSlot | null;
   onSelect: (slot: DollSlot | null) => void;
   unmet: Record<string, boolean>;
+  /** 物品提示框需要：角色等級、屬性取值方式、總力量／敏捷 */
+  level: number;
+  rollMax: boolean;
+  attrs: { str: number; dex: number };
 }
 
 const GRID_COLS = 10;
@@ -69,7 +74,7 @@ const SwapTabs: React.FC<{ swap: 'I' | 'II'; onSwap: (s: 'I' | 'II') => void; st
   </div>
 );
 
-export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, swap, onSwap, dragging, canDrop, onDropItem, onRemoveCharm, selected, onSelect, unmet }) => {
+export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, swap, onSwap, dragging, canDrop, onDropItem, onRemoveCharm, selected, onSelect, unmet, level, rollMax, attrs }) => {
   const row = INV.find((r) => r.class === engineClass) ?? INV.find((r) => r.class === 'Sorceress') ?? INV[0];
   const slots: { key: DollSlot; b: Box }[] = [
     { key: 'head', b: box(row, 'head') }, { key: 'neck', b: box(row, 'neck') }, { key: 'body', b: box(row, 'torso') },
@@ -81,9 +86,15 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
   const cell = ((row.gridBoxWidth as number) || 29) * SCALE;
   const packed = packCharms(charms);
   const [hover, setHover] = React.useState<string | null>(null);
+  // 游標停留的物品提示框：跟著游標；鍵盤聚焦時顯示在槽位旁
+  const [tip, setTip] = React.useState<{ eq: Equipped; at: { x: number; y: number } } | null>(null);
+  const showTip = (eq: Equipped | undefined, at: { x: number; y: number }) => { if (eq && !dragging) setTip({ eq, at }); else setTip(null); };
+  const hideTip = () => setTip(null);
+  React.useEffect(() => { if (dragging) setTip(null); }, [dragging]);
   // 手機窄螢幕：以縮放保持遊戲座標不變（不產生橫向捲動）
   const wrapRef = React.useRef<HTMLDivElement>(null);
   const [scale, setScale] = React.useState(1);
+  const tipHost = tip ? ((wrapRef.current?.closest('.d2sim') as HTMLElement | null) ?? null) : null;
   React.useLayoutEffect(() => {
     const el = wrapRef.current; if (!el) return;
     const update = () => setScale(Math.min(1, el.clientWidth / DOLL_W));
@@ -120,7 +131,13 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
             <div
               key={key}
               role="button" tabIndex={0}
-              title={eq ? `${eq.entry.name}（${eq.entry.nameEn}）` : DOLL_SLOT_ZH[key]}
+              aria-label={eq ? `${DOLL_SLOT_ZH[key]}：${eq.entry.name}` : DOLL_SLOT_ZH[key]}
+              title={eq ? undefined : DOLL_SLOT_ZH[key]}
+              onMouseEnter={(ev) => showTip(eq, { x: ev.clientX, y: ev.clientY })}
+              onMouseMove={(ev) => { if (eq) showTip(eq, { x: ev.clientX, y: ev.clientY }); }}
+              onMouseLeave={hideTip}
+              onFocus={(ev) => { const r = ev.currentTarget.getBoundingClientRect(); showTip(eq, { x: r.right - 8, y: r.top + 8 }); }}
+              onBlur={hideTip}
               onClick={() => onSelect(eq ? (isSel ? null : key) : null)}
               onKeyDown={(e) => { if (e.key === 'Enter') onSelect(eq ? key : null); }}
               {...dropHandlers(key)}
@@ -155,13 +172,18 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
           <div key={`${p.entry.id}-${i}`} className="absolute flex items-center justify-center cursor-pointer"
             style={{ left: gridL + p.x * cell + 1, top: gridT + p.y * cell + 1, width: cell * (p.entry.width || 1) - 2, height: cell * (p.entry.height || 1) - 2,
               background: 'rgba(30, 30, 80, .35)', boxShadow: 'inset 0 0 0 1px #5a5ad0, inset 0 0 10px rgba(80,80,255,.25)' }}
-            title={`${p.entry.name}（點擊卸下）`} onClick={() => onRemoveCharm(i)}>
+            aria-label={`${p.entry.name}（點擊卸下）`}
+            onMouseEnter={(ev) => showTip({ entry: p.entry }, { x: ev.clientX, y: ev.clientY })}
+            onMouseMove={(ev) => showTip({ entry: p.entry }, { x: ev.clientX, y: ev.clientY })}
+            onMouseLeave={hideTip}
+            onClick={() => { hideTip(); onRemoveCharm(i); }}>
             <ItemIcon name={p.entry.name} nameEn={p.entry.nameEn} baseItem={p.entry.baseNameEn} slot="charm" rarity={rarityOf(p.entry)} imageUrl={imageForEntry(p.entry)} noGuess fit="fill" showBorder={false} />
           </div>
         ))}
         <div className="absolute d2-well flex items-center justify-center t-dim" style={{ right: 20, bottom: 20, width: 60, height: 60, fontSize: 12, letterSpacing: '.2em' }}>方塊</div>
         <div className="absolute t-dim" style={{ left: 28, bottom: 14, fontSize: 11 }}>護身符只有放在背包內才生效（遊戲規則）</div>
       </div>
+      {tip && tipHost && <FloatingItemTip host={tipHost} at={tip.at} eq={tip.eq} level={level} rollMax={rollMax} attrs={attrs} />}
     </div>
   );
 };
