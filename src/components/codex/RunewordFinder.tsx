@@ -82,7 +82,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
     return Array.from(set);
   }, []);
 
-  // Filter logic（搜尋與篩選；分類由左側索引負責）
+  // Filter logic（搜尋與篩選；分類由分類索引負責）
   const filteredRunewords = useMemo(() => {
     return RUNEWORDS_DATA.filter((rw) => {
       // Search
@@ -146,6 +146,10 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
   }, [baseTree, filteredRunewords]);
   const root: TreeNode = useMemo(() => ({ id: 'all', label: '全部符文之語', count: filteredRunewords.length, children: tree }), [tree, filteredRunewords.length]);
   const node = sel === 'all' ? root : findNode(tree, sel) ?? root;
+  // 目前節點一筆都沒有、但別處有符合（搜尋或篩選的結果落在別的分類）時，自動放寬到全部
+  React.useEffect(() => {
+    if (node.id !== 'all' && node.count === 0 && root.count > 0) setSel('all');
+  }, [node.id, node.count, root.count]);
   const [selGroupId, selSockets] = node.id === 'all' ? ['', 0] : node.id.split('/');
   const selGroup = GROUPS.find((g) => g.id === selGroupId);
   const isLeaf = !!selSockets;
@@ -163,7 +167,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
     .map((n) => ({ n, rows: here.filter((rw) => rw.sockets === n) }))
     .filter((x) => x.rows.length > 0);
 
-  const tiles: CategoryTile[] = (node.children ?? []).map((c) => {
+  const tiles: CategoryTile[] = (node.children ?? []).filter((c) => c.count > 0).map((c) => {
     const g = GROUPS.find((x) => x.id === c.id.split('/')[0]);
     return {
       id: c.id,
@@ -317,9 +321,9 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
       <PageHeader
         icon={<Sparkles className="w-6 h-6" />}
         title="符文之語全能檢索手冊"
-        desc="包含全經典、天梯限定及最新《術士軍臨》DLC 符文之語，支援按底材孔數與關鍵屬性即時交叉篩選。左側依「底材類型 → 孔數」分層，每層內依需求等級排序。"
+        desc="包含全經典、天梯限定及最新《術士軍臨》DLC 符文之語，支援按底材孔數與關鍵屬性即時交叉篩選。依「底材類型 → 孔數」分層，每層內依需求等級排序。"
         right={
-          <div className="text-xs text-sanctuary-400 font-mono self-start px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800">
+          <div className="text-xs text-sanctuary-400 font-mono self-start shrink-0 whitespace-nowrap px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800">
             已收錄 <span className="text-d2-unique font-bold">{RUNEWORDS_DATA.length}</span> 組 • 篩選符合 <span className="text-d2-set font-bold">{filteredRunewords.length}</span> 組
           </div>
         }
@@ -456,7 +460,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
             <div className="p-12 text-center text-sanctuary-400 bg-sanctuary-900/40 rounded-xl border border-sanctuary-800 space-y-3">
               <div>
                 {root.count > 0 && node.id !== 'all'
-                  ? `「${node.label}」底下沒有符合目前條件的符文之語，其他分類共 ${root.count} 組符合，請看左側索引的數量。`
+                  ? `「${node.label}」底下沒有符合目前條件的符文之語，其他分類共 ${root.count} 組符合，請看分類索引的數量。`
                   : '查無符合目前條件的符文之語，請嘗試放寬篩選條件。'}
               </div>
               {root.count > 0 && node.id !== 'all' && (
@@ -467,7 +471,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
             </div>
           ) : (
             sections.map(({ n, rows }) => (
-              <section key={n} id={`sec-${selGroupId || 'all'}-${n}`} aria-label={`${n} 孔`} className="mb-9 scroll-mt-20">
+              <section key={n} id={`sec-${selGroupId || 'all'}-${n}`} className="mb-9 scroll-mt-20">
                 <SectionHead
                   title={`${n} 孔`}
                   sub={selGroup ? selGroup.label : undefined}

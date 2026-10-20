@@ -102,6 +102,10 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
   }, [baseTree, filtered]);
   const root: TreeNode = useMemo(() => ({ id: 'all', label: '全部底材', count: filtered.length, children: tree }), [tree, filtered.length]);
   const node = sel === 'all' ? root : findNode(tree, sel) ?? root;
+  // 目前節點一筆都沒有、但別處有符合（搜尋或篩選的結果落在別的分類）時，自動放寬到全部
+  React.useEffect(() => {
+    if (node.id !== 'all' && node.count === 0 && root.count > 0) setSel('all');
+  }, [node.id, node.count, root.count]);
 
   const here = useMemo(() => filtered.filter((e) => inNode(e.leaf, node.id)), [filtered, node.id]);
   const leaves = useMemo(() => leavesOf(node).filter((l) => l.count > 0), [node]);
@@ -118,7 +122,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
     const i = rep?.item;
     return { name: i?.name, nameEn: i?.nameEn, baseItem: i?.name, rarity: 'normal', imageUrl: i?.imageUrl };
   };
-  const tiles: CategoryTile[] = (node.children ?? []).map((c) => ({
+  const tiles: CategoryTile[] = (node.children ?? []).filter((c) => c.count > 0).map((c) => ({
     id: c.id, label: c.label, sub: c.en, count: c.count, tone: 'unique', icon: repIcon(c),
   }));
 
@@ -275,7 +279,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
     const rows = here.filter((e) => e.leaf === leaf.id);
     if (rows.length === 0) return null;
     return (
-      <section key={leaf.id} id={`sec-${leaf.id}`} aria-label={leaf.label} className="mb-9 scroll-mt-20">
+      <section key={leaf.id} id={`sec-${leaf.id}`} className="mb-9 scroll-mt-20">
         <SectionHead
           title={isLeaf ? leaf.label : labelPath(leaf.id)}
           sub={leaf.en}
@@ -305,7 +309,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
         icon={<ShieldAlert className="w-6 h-6" />}
         tone="text-d2-socket"
         title="頂級符文之語底材與打孔寶典"
-        desc="收錄悔恨幻化之刃、法師鎧甲謎團、無形銳利無限、神聖小盾精神等全職業 S 級畢業底材，提供 WSM 攻速、最大孔數、拉蘇克固定打孔機制與打寶估價戰術解析。左側依「一般／進階／菁英 → 部位 → 類型」分層，終局都停在菁英，所以預設就看菁英。"
+        desc="收錄悔恨幻化之刃、法師鎧甲謎團、無形銳利無限、神聖小盾精神等全職業 S 級畢業底材，提供 WSM 攻速、最大孔數、拉蘇克固定打孔機制與打寶估價戰術解析。依「一般／進階／菁英 → 部位 → 類型」分層，終局都停在菁英，所以預設就看菁英。"
         right={
           <div className="flex items-center gap-3 bg-sanctuary-900/80 p-2.5 rounded-2xl border border-sanctuary-800 shrink-0 self-start">
             <div className="text-right px-3 border-r border-sanctuary-800">
@@ -402,7 +406,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
               <HelpCircle className="w-10 h-10 text-sanctuary-600 mx-auto" />
               <h3 className="text-lg font-diablo text-sanctuary-300">未找到符合條件的底材</h3>
               <p className="text-xs text-sanctuary-500">
-                {root.count > 0 && node.id !== 'all' ? `「${node.label}」底下沒有符合的底材，其他分類共 ${root.count} 款符合，請看左側索引的數量。` : '請嘗試調整分類或清除搜尋關鍵字'}
+                {root.count > 0 && node.id !== 'all' ? `「${node.label}」底下沒有符合的底材，其他分類共 ${root.count} 款符合，請看分類索引的數量。` : '請嘗試調整分類或清除搜尋關鍵字'}
               </p>
               {root.count > 0 && node.id !== 'all' && (
                 <button type="button" onClick={() => go('all')} className="px-4 py-2 rounded-lg bg-sanctuary-800 border border-sanctuary-700 text-sm text-sanctuary-100 hover:border-d2-socket">

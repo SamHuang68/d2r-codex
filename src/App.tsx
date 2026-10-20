@@ -41,6 +41,8 @@ export const App: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [selectedInitialClass, setSelectedInitialClass] = useState<string>('魔法使');
   const [targetQuery, setTargetQuery] = useState<string>('');
+  /** 裝備寶典要停在的樹節點（首頁「成套裝備」磚傳 's'、「暗金裝備」磚傳 'u'）；沒有就用預設的暗金·菁英 */
+  const [itemsNode, setItemsNode] = useState<string | undefined>();
   const [targetRuneNumber, setTargetRuneNumber] = useState<number | undefined>();
   const [plannerSubMode, setPlannerSubMode] = useState<'armory' | 'notes'>('armory');
 
@@ -73,12 +75,12 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleNavigate = (tab: string, query?: string, runeNumber?: number) => {
+  const handleNavigate = (tab: string, query?: string, runeNumber?: number, node?: string) => {
     const effectiveTab = tab === 'sets' ? 'items' : tab;
     setActiveTab(effectiveTab);
-    if (query !== undefined) {
-      setTargetQuery(query);
-    }
+    // 沒帶搜尋字串的導覽（側欄、首頁磚）要清掉上一次跨頁帶來的搜尋字串，否則各清單頁會帶著舊關鍵字重新載入
+    setTargetQuery(query ?? '');
+    setItemsNode(node ?? (tab === 'sets' ? 's' : undefined));
     if (runeNumber !== undefined) {
       setTargetRuneNumber(runeNumber);
     }
@@ -135,7 +137,7 @@ export const App: React.FC = () => {
         {activeTab === 'overview' && (
           <div>
             <HeroSection onNavigateTab={(tab) => handleNavigate(tab)} />
-            <CategoryGrid onNavigateTab={(tab) => handleNavigate(tab)} />
+            <CategoryGrid onNavigateTab={(tab, node) => handleNavigate(tab, undefined, undefined, node)} />
             <ClassShowcase 
               onCheckBreakpoints={handleCheckClassBreakpoints}
               onExploreSkills={(cls) => {
@@ -177,6 +179,7 @@ export const App: React.FC = () => {
         {activeTab === 'items' && (
           <ItemCompendium 
             initialQuery={targetQuery}
+            initialNode={itemsNode}
             onNavigateToBase={(base) => handleNavigate('bases', base)}
           />
         )}
@@ -268,7 +271,7 @@ export const App: React.FC = () => {
       {/* Mobile Bottom Dock */}
       <MobileNav
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={(t) => handleNavigate(t)}
         onOpenSearch={() => setIsSearchOpen(true)}
       />
 

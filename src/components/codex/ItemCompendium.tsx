@@ -12,6 +12,8 @@ import { ITEM_TREE_DEFS, CHARM_LABEL, U_ENTRIES, S_ENTRIES, UEntry, SEntry } fro
 
 export interface ItemCompendiumProps {
   initialQuery?: string;
+  /** 一進頁面就停在的樹節點（例如首頁「成套裝備」磚傳 's'）；沒給就停在暗金·菁英 */
+  initialNode?: string;
   onNavigateToBase?: (baseName: string) => void;
 }
 
@@ -25,39 +27,43 @@ const REP_BY_REL: Record<string, string> = {
 };
 const relOf = (id: string) => id.replace(/^u\/(normal|exceptional|elite)(\/|$)/, (_m, _t, tail) => (tail ? '' : 'u'));
 
-const matchUnique = (item: UniqueItemData, q: string) => {
+/** 搜尋條件每個字串只需正規化一次：先算好別名比對與關鍵字，再回傳逐件比對的函式（避免每件都掃一次全資料） */
+const makeUniqueMatcher = (q: string) => {
   const norm = normalizeItemQuery(q);
-  if (norm && norm.type === 'unique' && item.id === norm.id) return true;
-  return cleanSearchQuery(q).some((term) => {
-    const t = term.toLowerCase().trim();
-    const matchName = item.name.toLowerCase().includes(t) || item.nameEn.toLowerCase().includes(t) ||
-      (item.nameClassic && item.nameClassic.toLowerCase().includes(t));
-    const matchBase = item.baseItem.toLowerCase().includes(t) || (item.baseItemEn ? item.baseItemEn.toLowerCase().includes(t) : false);
-    const matchAttr = item.attributes.some((a) => a.toLowerCase().includes(t));
-    return matchName || matchBase || matchAttr;
-  });
+  const terms = cleanSearchQuery(q).map((term) => term.toLowerCase().trim());
+  return (item: UniqueItemData) => {
+    if (norm && norm.type === 'unique' && item.id === norm.id) return true;
+    return terms.some((t) => {
+      const matchName = item.name.toLowerCase().includes(t) || item.nameEn.toLowerCase().includes(t) ||
+        (item.nameClassic && item.nameClassic.toLowerCase().includes(t));
+      const matchBase = item.baseItem.toLowerCase().includes(t) || (item.baseItemEn ? item.baseItemEn.toLowerCase().includes(t) : false);
+      const matchAttr = item.attributes.some((a) => a.toLowerCase().includes(t));
+      return matchName || matchBase || matchAttr;
+    });
+  };
 };
 
-const matchSet = (set: SetItemCollection, q: string) => {
+const makeSetMatcher = (q: string) => {
   const norm = normalizeItemQuery(q);
-  if (norm && norm.type === 'set' && (set.id === norm.id || set.pieces.some((p) => p.id === norm.id))) return true;
-  return cleanSearchQuery(q).some((term) => {
-    const t = term.toLowerCase().trim();
-    const matchSetName = set.name.toLowerCase().includes(t) || set.nameEn.toLowerCase().includes(t);
-    const matchPieces = set.pieces.some((p) =>
-      p.name.toLowerCase().includes(t) || p.nameEn.toLowerCase().includes(t) ||
-      (p.nameClassic && p.nameClassic.toLowerCase().includes(t)) || p.attributes.some((a) => a.toLowerCase().includes(t)));
-    return matchSetName || matchPieces;
-  });
+  const terms = cleanSearchQuery(q).map((term) => term.toLowerCase().trim());
+  return (set: SetItemCollection) => {
+    if (norm && norm.type === 'set' && (set.id === norm.id || set.pieces.some((p) => p.id === norm.id))) return true;
+    return terms.some((t) => {
+      const matchSetName = set.name.toLowerCase().includes(t) || set.nameEn.toLowerCase().includes(t);
+      const matchPieces = set.pieces.some((p) =>
+        p.name.toLowerCase().includes(t) || p.nameEn.toLowerCase().includes(t) ||
+        (p.nameClassic && p.nameClassic.toLowerCase().includes(t)) || p.attributes.some((a) => a.toLowerCase().includes(t)));
+      return matchSetName || matchPieces;
+    });
+  };
 };
-
-
 
 export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   initialQuery = '',
+  initialNode,
   onNavigateToBase,
 }) => {
-  const [sel, setSel] = useState<string>(`u/${DEFAULT_TIER}`);
+  const [sel, setSel] = useState<string>(initialNode ?? `u/${DEFAULT_TIER}`);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
 
   // Sync initialQuery when prop changes
@@ -70,8 +76,16 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
 
   const q = searchQuery.trim();
   const dir = useDirectory(sel, q);
-  const uList = useMemo(() => (q ? U_ENTRIES.filter((e) => matchUnique(e.item, q)) : U_ENTRIES), [q]);
-  const sList = useMemo(() => (q ? S_ENTRIES.filter((e) => matchSet(e.set, q)) : S_ENTRIES), [q]);
+  const uList = useMemo(() => {
+    if (!q) return U_ENTRIES;
+    const match = makeUniqueMatcher(q);
+    return U_ENTRIES.filter((e) => match(e.item));
+  }, [q]);
+  const sList = useMemo(() => {
+    if (!q) return S_ENTRIES;
+    const match = makeSetMatcher(q);
+    return S_ENTRIES.filter((e) => match(e.set));
+  }, [q]);
 
   // 樹的結構固定（依全部資料），數量隨搜尋即時變動
   const baseTree = useMemo(() => {
@@ -93,6 +107,10 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     [tree],
   );
   const node = sel === 'all' ? root : findNode(tree, sel) ?? root;
+  // 目前節點一筆都沒有、但別處有符合（例如在預設的菁英底下搜尋套裝名或戒指）時，自動放寬到全部，搜尋才不會死在預設節點
+  React.useEffect(() => {
+    if (node.id !== 'all' && node.count === 0 && root.count > 0) setSel('all');
+  }, [node.id, node.count, root.count]);
   const isSetBranch = node.id === 's' || node.id.startsWith('s/');
 
   // 目前節點底下的內容
@@ -119,7 +137,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   };
   // 最上層只有「暗金／套裝」兩顆磚太空曠，直接展開成第二層（品階、飾品、職業套裝、通用套裝）
   const tileNodes = node.id === 'all' ? tree.flatMap((t) => t.children ?? []) : node.children ?? [];
-  const tiles: CategoryTile[] = tileNodes.map((c) => ({
+  const tiles: CategoryTile[] = tileNodes.filter((c) => c.count > 0).map((c) => ({
     id: c.id,
     label: c.label,
     sub: c.en,
@@ -155,7 +173,8 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
           onNavigateToBase={onNavigateToBase}
           imageUrl={item.imageUrl}
           badges={[
-            ...(item.grade ? [TIER_LABEL[item.grade] || item.grade] : []),
+            // 飾品的 grade 只是資料裡的預設值，樹裡飾品不分品階，所以不顯示品階標籤
+            ...(item.grade && !e.leaf.startsWith('u/jewelry/') ? [TIER_LABEL[item.grade] || item.grade] : []),
             ...(item.classOnly ? [`${item.classOnly}專用`] : []),
             ...(item.ladderOnly ? ['天梯限定'] : []),
             ...(item.isNewDLC ? ['RotW DLC'] : []),
@@ -285,7 +304,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     }
     const showSecHeads = secs.some((x) => x.label);
     return (
-      <section key={leaf.id} id={`sec-${leaf.id}`} aria-label={leaf.label} className="mb-9 scroll-mt-20">
+      <section key={leaf.id} id={`sec-${leaf.id}`} className="mb-9 scroll-mt-20">
         <SectionHead
           title={isLeaf ? leaf.label : labelPath(leaf.id)}
           sub={leaf.en}
@@ -325,7 +344,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     const rows = sHere.filter((e) => e.leaf === leaf.id);
     if (rows.length === 0) return null;
     return (
-      <section key={leaf.id} id={`sec-${leaf.id}`} aria-label={leaf.label} className="mb-9 scroll-mt-20">
+      <section key={leaf.id} id={`sec-${leaf.id}`} className="mb-9 scroll-mt-20">
         <SectionHead
           title={isLeaf ? leaf.label : labelPath(leaf.id)}
           count={rows.length}
@@ -365,9 +384,9 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
       <PageHeader
         icon={<Sword className="w-6 h-6" />}
         title="裝備寶典 (暗金與套裝全覽)"
-        desc="收錄暗黑破壞神二代各部位指標性暗金裝備與知名全套套裝，包含屬性浮動範圍與完整套裝效果。左側為分類索引，依「暗金／套裝 → 一般／進階／菁英 → 部位 → 類型」逐層整理，預設停在終局的菁英。"
+        desc="收錄暗黑破壞神二代各部位指標性暗金裝備與知名全套套裝，包含屬性浮動範圍與完整套裝效果。依「暗金／套裝 → 一般／進階／菁英 → 部位 → 類型」逐層整理，預設停在終局的菁英。"
         right={
-          <div className="text-xs text-sanctuary-400 font-mono px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800 self-start">
+          <div className="text-xs text-sanctuary-400 font-mono px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800 self-start shrink-0 whitespace-nowrap">
             暗金 <span className="text-d2-unique font-bold">{uHere.length}</span> ・ 套裝 <span className="text-d2-set font-bold">{sHere.length}</span>
           </div>
         }
@@ -379,7 +398,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="搜尋暗金或套裝名稱、底材或屬性 (例如：軍帽、獅鷲、塔拉夏、SOJ...)；左側索引的數量會即時對應"
+          placeholder="搜尋暗金或套裝名稱、底材或屬性 (例如：軍帽、獅鷲、塔拉夏、SOJ...)；索引的數量會即時對應"
           className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-4 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
         />
         {searchQuery && (
@@ -423,7 +442,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             <div className="p-12 text-center text-sanctuary-400 bg-sanctuary-900/40 rounded-xl border border-sanctuary-800 space-y-3">
               <div>
                 {q && root.count > 0
-                  ? `「${node.label}」底下沒有符合「${q}」的裝備，但其他分類共有 ${root.count} 件符合，請看左側索引的數量。`
+                  ? `「${node.label}」底下沒有符合「${q}」的裝備，但其他分類共有 ${root.count} 件符合，請看分類索引的數量。`
                   : '查無符合目前條件的裝備，請更換分類或清除搜尋關鍵字。'}
               </div>
               {q && root.count > 0 && node.id !== 'all' && (

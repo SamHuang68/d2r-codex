@@ -47,7 +47,7 @@ const useWide = () => {
   return wide;
 };
 
-/** 窄螢幕底部抽屜要讓出左側導覽欄：側欄寬度會隨「收合」變動（176 ↔ 48），需即時量測；<1024px 側欄隱藏時為 0 */
+/** 窄螢幕底部抽屜要讓出左側導覽欄：側欄寬度會隨「收合」變動（128 ↔ 40），需即時量測；<1024px 側欄隱藏時為 0 */
 const useSideNavWidth = (enabled: boolean) => {
   const [w, setW] = useState(0);
   useEffect(() => {

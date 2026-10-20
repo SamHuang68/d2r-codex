@@ -29,7 +29,7 @@ export const EQUIP_DEFS: TaxDef[] = [
       { id: 'armor/body', label: '盔甲', en: 'Armor' },
       {
         id: 'armor/shield', label: '盾牌', children: [
-          { id: 'armor/shield/shie', label: '盾牌', en: 'Shield' },
+          { id: 'armor/shield/shie', label: '通用盾牌', en: 'Shield' },
           { id: 'armor/shield/ashd', label: '聖騎士盾牌', en: 'Auric Shield' },
           { id: 'armor/shield/head', label: '死靈法師首級', en: 'Voodoo Head' },
           { id: 'armor/shield/grim', label: '術士魔典', en: 'Grimoire' },

@@ -79,7 +79,7 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
   };
 
   return (
-    <aside className={`hidden lg:block shrink-0 border-r border-sanctuary-800/80 bg-sanctuary-950/60 transition-[width] duration-150 ${collapsed ? 'w-10' : 'w-32'}`}>
+    <aside aria-label="全站功能列" className={`hidden lg:block shrink-0 border-r border-sanctuary-800/80 bg-sanctuary-950/60 transition-[width] duration-150 ${collapsed ? 'w-10' : 'w-32'}`}>
       <nav
         aria-label="全站分頁"
         className={`sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-y-auto no-scrollbar py-1 px-1`}

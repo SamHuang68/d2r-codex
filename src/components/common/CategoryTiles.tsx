@@ -48,7 +48,7 @@ export const CategoryTiles: React.FC<CategoryTilesProps> = ({
           key={t.id}
           type="button"
           onClick={() => onSelect(t.id)}
-          aria-pressed={active}
+          aria-pressed={activeId == null ? undefined : active}
           className={`relative flex flex-col items-center justify-end gap-1.5 rounded-xl border px-2 pt-3 pb-2.5 text-center transition-all bg-gradient-to-b ${tone.glow} to-sanctuary-950 ${
             active ? 'border-d2-gold shadow-glow-gold' : `border-sanctuary-800 ${tone.border}`
           }`}

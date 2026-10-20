@@ -52,6 +52,7 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
   const [open, setOpen] = useState<Set<string>>(() => new Set(initialOpen === 'first' ? nodes.map((n) => n.id) : []));
   const [mobileOpen, setMobileOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const asideRef = useRef<HTMLElement>(null);
 
   // 選取（或由外部改變）節點時，確保它自己與祖先都展開（只在選取改變時，不會因搜尋重算數量而把使用者收合的節點又打開）
   const nodesRef = useRef(nodes);
@@ -74,10 +75,32 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
       return next;
     });
 
+  // 點到的控制項被換掉或收起（磚、麵包屑、目錄項目、手機索引）時，焦點會掉到 body；把它交給內容區，鍵盤使用者 Tab 才不會從頁首重來
+  const restoreFocus = () => {
+    if (typeof document === 'undefined') return;
+    const a = document.activeElement as HTMLElement | null;
+    if (!a || a === document.body || !a.isConnected || a.offsetParent === null) contentRef.current?.focus({ preventScroll: true });
+  };
+
   const select = (id: string) => {
     onSelect(id);
     setMobileOpen(false);
+    requestAnimationFrame(restoreFocus);
   };
+
+  // 選取節點改變（含從磚、麵包屑、目錄跳過來）時，把索引面板捲到目前節點，避免「你在這裡」落在可視範圍外
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => requestAnimationFrame(() => {
+      const box = asideRef.current;
+      const row = box?.querySelector<HTMLElement>('[role=tree] [aria-current="true"]');
+      if (!box || !row || box.scrollHeight <= box.clientHeight) return;
+      const b = box.getBoundingClientRect();
+      const r = row.getBoundingClientRect();
+      if (r.top < b.top) box.scrollTop -= b.top - r.top + 8;
+      else if (r.bottom > b.bottom) box.scrollTop += r.bottom - b.bottom + 8;
+    }));
+    return () => cancelAnimationFrame(raf);
+  }, [activeId]);
 
   // 節點改變時（不論從索引、麵包屑、分類磚或目錄點的），若內容區頂端已捲出畫面就帶回來，免得停在上一頁的中段
   const lastActive = useRef(activeId);
@@ -88,12 +111,14 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
     if (!el || typeof window === 'undefined') return;
     const top = el.getBoundingClientRect().top;
     if (top < 70) window.scrollTo({ top: Math.max(0, window.scrollY + top - 70), behavior: 'auto' });
+    restoreFocus();
   }, [activeId]);
 
   const crumbs = crumbsOf(rootLabel, nodes, activeId);
 
+  // 根（全部）是 level 1 的 treeitem，其下第一層為 level 2；每一層都包在 role=group 裡，符合 ARIA tree 的結構
   const renderNodes = (list: TreeNode[], depth: number): React.ReactNode => (
-    <ul role={depth === 0 ? undefined : 'group'} className="space-y-px">
+    <ul role="group" className="space-y-px">
       {list.map((n) => {
         const hasKids = !!n.children?.length;
         const expanded = hasKids && open.has(n.id);
@@ -102,8 +127,8 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
         return (
           <li key={n.id} role="treeitem" aria-level={depth + 1} aria-expanded={hasKids ? expanded : undefined} aria-selected={active}>
             <div
-              className={`flex items-stretch rounded-md border-l-2 ${active ? `${t.bar} ${t.bg}` : 'border-transparent hover:bg-sanctuary-800/60'} ${dim ? 'opacity-40' : ''}`}
-              style={{ paddingLeft: depth * 12 }}
+              className={`flex items-stretch rounded-md border-l-2 ${active ? `${t.bar} ${t.bg}` : 'border-transparent hover:bg-sanctuary-800/60'} ${dim ? 'opacity-50' : ''}`}
+              style={{ paddingLeft: (depth - 1) * 12 }}
             >
               {hasKids ? (
                 <button
@@ -125,11 +150,11 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
                 aria-current={active ? 'true' : undefined}
                 title={n.en ? `${n.label}（${n.en}）` : n.label}
                 className={`flex-1 min-w-0 flex items-center justify-between gap-2 py-1.5 pr-2 text-left text-[13px] ${
-                  active ? `${t.text} font-bold` : depth === 0 ? 'text-sanctuary-100 font-semibold' : 'text-sanctuary-300 hover:text-sanctuary-100'
+                  active ? `${t.text} font-bold` : depth === 1 ? 'text-sanctuary-100 font-semibold' : 'text-sanctuary-300 hover:text-sanctuary-100'
                 }`}
               >
                 <span className="truncate">{n.label}</span>
-                <span className={`shrink-0 text-[11px] font-mono tabular-nums ${active ? t.text : 'text-sanctuary-500'}`}>{n.count}</span>
+                <span className={`shrink-0 text-[11px] font-mono tabular-nums ${active ? t.text : 'text-sanctuary-400'}`}>{n.count}</span>
               </button>
             </div>
             {expanded && n.children && renderNodes(n.children, depth + 1)}
@@ -158,7 +183,10 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
           </button>
           <button
             type="button"
-            onClick={() => setOpen(new Set(initialOpen === 'first' ? nodes.map((n) => n.id) : pathTo(nodes, activeId).map((n) => n.id)))}
+            onClick={() => {
+              const trail = pathTo(nodes, activeId).map((n) => n.id);
+              setOpen(new Set(trail.length ? trail : initialOpen === 'first' ? nodes.map((n) => n.id) : []));
+            }}
             aria-label="全部收合"
             title="全部收合（只保留目前位置）"
             className="p-1 rounded text-sanctuary-400 hover:text-sanctuary-100 hover:bg-sanctuary-800"
@@ -167,26 +195,28 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
           </button>
         </div>
       </div>
-      <div role="tree" aria-label={title} className="p-1.5">
-        <button
-          type="button"
-          onClick={() => select('all')}
-          aria-current={activeId === 'all' ? 'true' : undefined}
-          className={`w-full flex items-center justify-between gap-2 rounded-md border-l-2 px-2 py-1.5 mb-1 text-left text-[13px] ${
-            activeId === 'all' ? `${t.bar} ${t.bg} ${t.text} font-bold` : 'border-transparent text-sanctuary-100 font-semibold hover:bg-sanctuary-800/60'
-          }`}
-        >
-          <span className="truncate">{rootLabel}</span>
-          <span className={`shrink-0 text-[11px] font-mono tabular-nums ${activeId === 'all' ? t.text : 'text-sanctuary-500'}`}>{rootCount}</span>
-        </button>
-        {renderNodes(nodes, 0)}
-      </div>
+      <ul role="tree" aria-label={title} className="p-1.5">
+        <li role="treeitem" aria-level={1} aria-expanded aria-selected={activeId === 'all'}>
+          <button
+            type="button"
+            onClick={() => select('all')}
+            aria-current={activeId === 'all' ? 'true' : undefined}
+            className={`w-full flex items-center justify-between gap-2 rounded-md border-l-2 px-2 py-1.5 mb-1 text-left text-[13px] ${
+              activeId === 'all' ? `${t.bar} ${t.bg} ${t.text} font-bold` : 'border-transparent text-sanctuary-100 font-semibold hover:bg-sanctuary-800/60'
+            }`}
+          >
+            <span className="truncate">{rootLabel}</span>
+            <span className={`shrink-0 text-[11px] font-mono tabular-nums ${activeId === 'all' ? t.text : 'text-sanctuary-400'}`}>{rootCount}</span>
+          </button>
+          {renderNodes(nodes, 1)}
+        </li>
+      </ul>
     </div>
   );
 
   return (
     <div className="lg:grid lg:grid-cols-[15.5rem_minmax(0,1fr)] lg:gap-6 items-start">
-      <aside className="mb-4 lg:mb-0 lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto no-scrollbar">
+      <aside ref={asideRef} aria-label={title} className="mb-4 lg:mb-0 lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto no-scrollbar">
         {/* 行動版：收合成一顆按鈕，顯示目前所在位置 */}
         <button
           type="button"
@@ -203,7 +233,7 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
         </button>
         <div className={`${mobileOpen ? 'block mt-2' : 'hidden'} lg:block`}>{panel}</div>
       </aside>
-      <div id={contentId} ref={contentRef} className="min-w-0 scroll-mt-16">{children}</div>
+      <div id={contentId} ref={contentRef} tabIndex={-1} className="min-w-0 scroll-mt-16 outline-none">{children}</div>
     </div>
   );
 };
@@ -238,21 +268,23 @@ export const SectionHead: React.FC<{
   shown?: number;
   tone?: IndexTone;
   level?: 2 | 3;
+  /** 實際輸出的標題標籤；預設分段標題為 h3、子段為 h4（頁面標題為 h2 的頁面）。頁面標題是 h1 時改傳 h2／h3 */
+  tag?: 'h2' | 'h3' | 'h4';
   onOpen?: () => void;
   openLabel?: string;
-}> = ({ id, title, sub, count, shown, tone = 'unique', level = 2, onOpen, openLabel = '查看全部' }) => {
-  const Tag = (level === 2 ? 'h3' : 'h4') as 'h3' | 'h4';
+}> = ({ id, title, sub, count, shown, tone = 'unique', level = 2, tag, onOpen, openLabel = '查看全部' }) => {
+  const Tag = tag ?? ((level === 2 ? 'h3' : 'h4') as 'h3' | 'h4');
   return (
     <div id={id} className={`flex items-baseline justify-between gap-3 border-b border-sanctuary-800 pb-1.5 mb-3 scroll-mt-20`}>
       <Tag className={`font-diablo font-bold min-w-0 ${level === 2 ? 'text-lg' : 'text-base'} ${TONE[tone].text}`}>
         {title}
-        {sub && <span className="ml-2 text-[11px] font-mono font-normal text-sanctuary-500">{sub}</span>}
+        {sub && <span className="ml-2 text-[11px] font-mono font-normal text-sanctuary-400">{sub}</span>}
         <span className="ml-2 text-xs font-mono font-normal text-sanctuary-400">
           {shown !== undefined && shown < count ? `${shown} / ${count}` : count}
         </span>
       </Tag>
       {onOpen && (
-        <button type="button" onClick={onOpen} className="shrink-0 text-xs text-sanctuary-300 hover:text-sanctuary-50 hover:underline">
+        <button type="button" onClick={onOpen} className="shrink-0 text-xs text-sanctuary-300 hover:text-white hover:underline">
           {openLabel} →
         </button>
       )}
@@ -273,11 +305,15 @@ export const DIR_THRESHOLD = 48;
  * resetKey：任何會讓顯示方式回到預設的條件（例如搜尋字串）。
  */
 export function useDirectory(sel: string, resetKey = '') {
-  const [view, setView] = useState<ViewMode>('auto');
+  // 顯示方式記下「是在哪個節點／條件下選的」；換節點或條件時直接在 render 當下回到 auto，
+  // 不會先用舊的「詳細」模式把新節點的幾百張卡畫出來再重畫一次
+  const [choice, setChoice] = useState<{ key: string; view: ViewMode }>({ key: '', view: 'auto' });
+  const key = `${sel}|${resetKey}`;
+  const view: ViewMode = choice.key === key ? choice.view : 'auto';
+  const setView = (v: ViewMode) => setChoice({ key, view: v });
   const [flash, setFlash] = useState('');
   const pending = useRef('');
 
-  useEffect(() => { setView('auto'); }, [sel, resetKey]);
   useEffect(() => {
     const id = pending.current;
     if (!id) return;
@@ -314,7 +350,7 @@ export const ViewToggle: React.FC<{ dir: boolean; onChange: (v: 'dir' | 'detail'
           type="button"
           onClick={() => onChange(k)}
           aria-pressed={on}
-          className={`px-3 py-1 rounded-md ${on ? 'bg-sanctuary-700 text-sanctuary-50 font-bold' : 'text-sanctuary-400 hover:text-sanctuary-100'}`}
+          className={`px-3 py-1 rounded-md ${on ? 'bg-sanctuary-700 text-sanctuary-100 font-bold' : 'text-sanctuary-400 hover:text-sanctuary-100'}`}
         >
           {label}
         </button>

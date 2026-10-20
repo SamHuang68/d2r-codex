@@ -202,6 +202,10 @@ export const HolyGrailTracker: React.FC = () => {
   }, [baseTree, displayedItems]);
   const root: TreeNode = useMemo(() => ({ id: 'all', label: '全部聖杯', count: displayedItems.length, children: tree }), [tree, displayedItems.length]);
   const node = sel === 'all' ? root : findNode(tree, sel) ?? root;
+  // 目前節點一筆都沒有、但別處有符合（搜尋或篩選的結果落在別的分類）時，自動放寬到全部
+  React.useEffect(() => {
+    if (node.id !== 'all' && node.count === 0 && root.count > 0) setSel('all');
+  }, [node.id, node.count, root.count]);
   const isLeaf = !node.children;
   const leaves = useMemo(() => leavesOf(node).filter((l) => l.count > 0), [node]);
   const progressOf = (nodeId: string) => {
@@ -386,7 +390,7 @@ export const HolyGrailTracker: React.FC = () => {
         </div>
       </div>
 
-      {/* Items Checklist：左側樹狀索引 + 依分類分段的清單 */}
+      {/* Items Checklist：樹狀索引 + 依分類分段的清單 */}
       <TreeIndex title="聖杯索引" rootLabel="全部聖杯" rootCount={root.count} nodes={tree} activeId={node.id} onSelect={setSel} tone="unique">
         <div className="space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -401,7 +405,7 @@ export const HolyGrailTracker: React.FC = () => {
             <div className="p-12 text-center text-sanctuary-400 bg-sanctuary-900/40 rounded-xl border border-sanctuary-800 space-y-3">
               <div>
                 {root.count > 0 && node.id !== 'all'
-                  ? `「${node.label}」底下沒有符合目前篩選的項目，其他分類共 ${root.count} 件符合，請看左側索引的數量。`
+                  ? `「${node.label}」底下沒有符合目前篩選的項目，其他分類共 ${root.count} 件符合，請看分類索引的數量。`
                   : '沒有符合目前條件的項目。'}
               </div>
               {root.count > 0 && node.id !== 'all' && (
@@ -423,12 +427,13 @@ export const HolyGrailTracker: React.FC = () => {
               });
               const isSetLeaf = leaf.id.startsWith('s/');
               return (
-                <section key={leaf.id} id={`sec-${leaf.id}`} aria-label={leaf.label} className="mb-8 scroll-mt-20">
+                <section key={leaf.id} id={`sec-${leaf.id}`} className="mb-8 scroll-mt-20">
                   <SectionHead
                     title={isLeaf ? leaf.label : relPath(tree, leaf.id, node.id)}
                     sub={`${prog.done}/${prog.total} 已收集`}
                     count={rows.length}
                     tone={isSetLeaf ? 'set' : 'unique'}
+                    tag="h2"
                     onOpen={isLeaf ? undefined : () => setSel(leaf.id)}
                     openLabel={`進入「${leaf.label}」`}
                   />
@@ -440,7 +445,7 @@ export const HolyGrailTracker: React.FC = () => {
                     return (
                       <div key={g.key || 'all'} className="mb-5 last:mb-0">
                         {g.key && gProg && (
-                          <SectionHead title={g.key} sub={`${gProg.done}/${gProg.total}`} count={g.rows.length} tone={isSetLeaf ? 'set' : 'unique'} level={3} />
+                          <SectionHead title={g.key} sub={`${gProg.done}/${gProg.total}`} count={g.rows.length} tone={isSetLeaf ? 'set' : 'unique'} level={3} tag="h3" />
                         )}
                         <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-3">
                           {g.rows.map((item) => {
