@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MF_KIND_ZH, marginalUnique, mfSummary } from '../../../engine/magicFind';
+import { PDR_CAP, survivalSummary } from '../../../engine/survival';
 import type { CharacterResult } from '../../../engine/types';
 import type { Alloc } from './types';
 import { skillByName, tabName } from '../../../engine/skills';
@@ -116,6 +117,7 @@ export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc
   const wd = result.weaponDamage;
   const s = result.stats;
   const mfRaw = s.item_magicbonus ?? 0;
+  const sv = survivalSummary(result);
   const moreRows = MORE.map((m) => ({ ...m, v: s[m.stat] ?? 0 })).filter((m) => m.v);
   const skillRows: string[] = [];
   if (result.skills.all) skillRows.push(`所有技能 +${result.skills.all}`);
@@ -210,6 +212,19 @@ export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="mt-5" aria-label="生存力">
+        <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>生 存 力</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+          <Row label="物理傷害減免" value={`${sv.pdr}%${sv.pdrRaw > PDR_CAP ? `（裝備 ${sv.pdrRaw}%，超出上限 ${PDR_CAP}% 的部分無效）` : sv.pdr >= PDR_CAP ? '（已達上限）' : ''}`} tone={sv.pdr >= PDR_CAP ? 't-unique' : ''} title="「受到的傷害降低 N%」，只對物理傷害，上限 50%" />
+          <Row label="固定傷害減免" value={`${sv.flatDr}`} title="Damage Reduced by N：每次受到的物理傷害先減掉這個數字" />
+          <Row label="魔法傷害減免" value={`${sv.magicDr}`} title="Magic Damage Reduced by N：每次受到的魔法傷害先減掉這個數字" />
+          <Row label="最低元素抗性" value={`${sv.minRes}%`} tone={sv.minRes < 75 ? 't-bad' : ''} title="四項元素抗性中最弱的一項（目前難度的懲罰已計入）" />
+          <Row label="有效生命（物理）" value={fmt(sv.ehpPhys)} title="生命 ÷ (1 − 物理傷害減免)" />
+          <Row label="有效生命（最弱元素）" value={fmt(sv.ehpElem)} title="生命 ÷ (1 − 最低元素抗性)" />
+        </div>
+        <div className="d2-sub mt-1">有效生命只把生命與百分比減傷合成一個數字，用來比較兩套配裝誰比較耐打；不含格擋、閃避、防禦、固定傷害減免、傭兵與回復，不是實際能吃幾下。物理減免上限 50%（Wowhead）；元素抗性上限 75%，最大抗性可提高到 95%（Maxroll）。</div>
       </div>
 
       {mfRaw > 0 && (

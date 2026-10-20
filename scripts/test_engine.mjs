@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/data/profileStore'; export * from './src/data/presetState';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/data/profileStore'; export * from './src/data/presetState';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -331,7 +331,54 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
       const bis = b.bis.items; const eff = E.tierOf(b, 'mfEff').items; const max = E.tierOf(b, 'mfMax').items;
       for (const k of ['gloves', 'belt', 'weaponI', 'shieldI', 'neck', 'ring1']) assert.deepEqual(eff[k], bis[k], `${b.id} 效率檔不應動 ${k}`);
       for (const k of b.mfKeep ?? []) assert.deepEqual(eff[k], bis[k], `${b.id} mfKeep ${k}`);
-      if (b.mfKeepWeapon) { assert.deepEqual(max.weaponI, bis.weaponI, b.id); assert.deepEqual(max.shieldI, bis.shieldI, b.id); } else assert.equal(max.weaponI.nameEn, 'Blade of Ali Baba');
+      if (b.weaponBound) { assert.deepEqual(max.weaponI, bis.weaponI, b.id); assert.deepEqual(max.shieldI, bis.shieldI, b.id); } else assert.equal(max.weaponI.nameEn, 'Blade of Ali Baba');
+    }
+  });
+  t('生存力：物理減免套 50% 上限，有效生命＝生命÷(1−減免)；抗性取最低一項', () => {
+    const { survivalSummary, PDR_CAP } = E;
+    assert.equal(PDR_CAP, 50);
+    const mk = (stats, resist, life = 1000) => ({ life, stats, resist, blockChance: 10 });
+    const a = survivalSummary(mk({ damageresist: 80 }, { fire: 75, cold: 60, lightning: 75, poison: 75 }));
+    assert.equal(a.pdr, 50); assert.equal(a.pdrRaw, 80); assert.equal(a.ehpPhys, 2000); assert.equal(a.minRes, 60); assert.equal(a.ehpElem, 2500);
+    const b = survivalSummary(mk({}, { fire: -30, cold: 0, lightning: 0, poison: 0 })); assert.equal(b.pdr, 0); assert.equal(b.ehpElem, 1000, '負抗性不讓有效生命低於生命');
+  });
+  t('減傷資料與社群公認值一致：暴風盾 35%、亡者之耳 15%、維爾杜戈 15%、哈利昆之冠 10%', () => {
+    const pdrOf = (nm) => { const e = E.getCatalog().find((x) => x.nameEn === nm && x.kind !== 'base'); const r = E.computeCharacter(gameData, { className: 'Paladin', level: 90, allocated: none, items: [E.buildEngineItem({ entry: e }, e.slot, true)] }); return r.stats.damageresist ?? 0; };
+    assert.equal(pdrOf('Stormshield'), 35); assert.equal(pdrOf('String of Ears'), 15); assert.equal(pdrOf("Verdugo's Hearty Cord"), 15); assert.equal(pdrOf('Harlequin Crest'), 10);
+  });
+  t('平衡減傷：每個流派都滿足需求、全技能／職業／技能樹／單項技能加成與 FCR／IAS 都不低於頂裝，且有效生命不低於頂裝', () => {
+    const { BUILDS, SIM_PRESETS, resolvePreset, buildEngineItem: bei, toEquipped, autoAllocate: aa, computeCharacter: cc2, survivalSummary } = E;
+    const run = (p) => {
+      const r = resolvePreset(p); const items = [];
+      for (const [k, eq] of Object.entries(r.equipped)) { if (k.endsWith('II')) continue; items.push(bei(eq, eq.entry.slot === 'weapon' ? (k.startsWith('shield') ? 'weapon2' : 'weapon') : eq.entry.slot === 'shield' ? 'shield' : k, true)); }
+      r.charms.forEach((c, i) => items.push(bei({ entry: c }, 'charm' + i, true)));
+      const reqs = { str: Math.max(0, ...items.map((i) => gameData.bases.find((b) => b.code === i.baseCode)?.reqStr ?? 0)), dex: Math.max(0, ...items.map((i) => gameData.bases.find((b) => b.code === i.baseCode)?.reqDex ?? 0)) };
+      const base = { className: E.ENGINE_CLASS_BY_CODE[p.classCode], level: p.level, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } };
+      const alloc = aa(gameData, base, { totalPoints: (p.level - 1) * 5 + 15, blockTarget: p.blockTarget, rest: p.rest }, reqs);
+      return cc2(gameData, { ...base, allocated: alloc });
+    };
+    for (const b of BUILDS) {
+      const bis = run(SIM_PRESETS.find((x) => x.id === `${b.id}:bis`)); const eff = run(SIM_PRESETS.find((x) => x.id === `${b.id}:tankEff`));
+      assert.deepEqual(eff.requirementsUnmet, [], b.id);
+      assert.ok(eff.skills.all >= bis.skills.all, `${b.id} 全技能`);
+      for (const [k, v] of Object.entries(bis.skills.byClass)) assert.ok((eff.skills.byClass[k] ?? 0) >= v, `${b.id} 職業技能`);
+      for (const [k, v] of Object.entries(bis.skills.byTab)) assert.ok((eff.skills.byTab[k] ?? 0) >= v, `${b.id} 技能樹`);
+      for (const [k, v] of Object.entries(bis.skills.single)) assert.ok((eff.skills.single[k] ?? 0) >= v, `${b.id} 單項技能 ${k}`);
+      assert.ok((eff.stats.item_fastercastrate ?? 0) >= (bis.stats.item_fastercastrate ?? 0), `${b.id} FCR`);
+      assert.ok((eff.stats.item_fasterattackrate ?? 0) >= (bis.stats.item_fasterattackrate ?? 0), `${b.id} IAS`);
+      const sb = survivalSummary(bis); const se = survivalSummary(eff);
+      assert.ok(se.ehpPhys >= sb.ehpPhys * 0.97 && se.ehpElem >= sb.ehpElem, `${b.id} 有效生命 ${se.ehpPhys}/${se.ehpElem} < ${sb.ehpPhys}/${sb.ehpElem}`);
+    }
+  });
+  t('極致減傷：未被武器綁定的流派物理減免達 50% 上限，每個流派有效生命（物理與元素的調和平均）都高於頂裝', () => {
+    const { previewPreset } = E;
+    for (const b of E.BUILDS) {
+      const bis = previewPreset(E.SIM_PRESETS.find((x) => x.id === `${b.id}:bis`)).survival; const mx = previewPreset(E.SIM_PRESETS.find((x) => x.id === `${b.id}:tankMax`)).survival;
+      if (!b.weaponBound) { assert.equal(mx.pdr, 50, `${b.id} 物理減免 ${mx.pdr}`); assert.equal(mx.block, 75, `${b.id} 格擋`); }
+      const harm = (x) => 2 / (1 / x.ehpPhys + 1 / x.ehpElem);
+      assert.ok(harm(mx) > harm(bis), `${b.id} 極致減傷 ${mx.ehpPhys}/${mx.ehpElem} 的調和平均未高於頂裝 ${bis.ehpPhys}/${bis.ehpElem}`);
+      if (!b.weaponBound) assert.ok(mx.ehpPhys > bis.ehpPhys && mx.ehpElem > bis.ehpElem, `${b.id} 兩項有效生命都應高於頂裝`);
+      assert.ok(mx.minRes >= 75, `${b.id} 最低抗性 ${mx.minRes}`);
     }
   });
   t('Profile：存檔→還原往返後裝備（含換底材、鑲嵌、無形）、護身符、技能點、配點完全相同', () => {

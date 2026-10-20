@@ -2,6 +2,7 @@ import { ENGINE_CLASS_BY_CODE, toEquipped, type CatalogEntry } from '../engine/c
 import { autoAllocate } from '../engine/alloc';
 import { buildEngineItem } from '../engine/build';
 import { computeCharacter } from '../engine/character';
+import { survivalSummary, type Survival } from '../engine/survival';
 import { gameData } from '../engine/data';
 import type { EquippedItem } from '../engine/types';
 import { planSkills } from '../engine/skillPlan';
@@ -42,9 +43,9 @@ export function stateFromPreset(p: SimPreset): { snap: SimSnapshot; notes: strin
   return { snap, notes };
 }
 
-/** 範本套用後的主要數值（卡片上顯示 MF、生命等，讓使用者先比較再套用）。不含光環、增益與技能加成的目標抗性 */
-export function previewPreset(p: SimPreset): { mf: number; gold: number; life: number; defense: number } {
+/** 範本套用後的主要數值（卡片上顯示 MF、生存力等，讓使用者先比較再套用）。不含光環、增益 */
+export function previewPreset(p: SimPreset): { mf: number; gold: number; life: number; defense: number; survival: Survival } {
   const { snap, items, className } = build(p);
   const r = computeCharacter(gameData, { className, level: p.level, allocated: snap.alloc, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } });
-  return { mf: r.stats.item_magicbonus ?? 0, gold: r.stats.item_goldbonus ?? 0, life: r.life, defense: r.defense };
+  return { mf: r.stats.item_magicbonus ?? 0, gold: r.stats.item_goldbonus ?? 0, life: r.life, defense: r.defense, survival: survivalSummary(r) };
 }

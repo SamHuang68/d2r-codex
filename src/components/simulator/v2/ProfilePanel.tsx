@@ -130,12 +130,23 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
                         );
                       })}
                     </div>
+                    <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                      <span className="d2-sub" style={{ width: 36 }}>減傷</span>
+                      {(['tankEff', 'tankMax'] as PresetTier[]).map((t) => {
+                        const pv = previews[`${b.id}:${t}`];
+                        return (
+                          <button key={t} type="button" className="d2-btn is-quiet" disabled={none} onClick={() => applyTemplate(b.id, t)} title={tierOf(b, t).notes}>
+                            {PRESET_TIER_ZH[t]}{pv ? `　物減 ${pv.survival.pdr}%・最低抗性 ${pv.survival.minRes}%・有效生命 ${pv.survival.ehpPhys.toLocaleString()}` : ''}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </li>
                 );
               })}
             </ul>
           )}
-          <div className="d2-sub mt-2">範本是社群常見組合的示意，數值由遊戲資料計算，未逐件與遊戲內比對。套用後可以直接調整再存成自己的 Profile。「尋寶」兩檔的 MF 與生命是套用後的計算值：效率檔保留流派核心、只換 MF 件；極致檔全身換最高 MF，輸出與生存都會下降。</div>
+          <div className="d2-sub mt-2">範本是社群常見組合的示意，數值由遊戲資料計算，未逐件與遊戲內比對。套用後可以直接調整再存成自己的 Profile。「尋寶」「減傷」各兩檔的數字是套用後的計算值：效率／平衡檔保留流派核心、只換少數欄位；極致檔全身換成該目標最高的組合，輸出會大幅下降。有效生命只把生命與百分比減傷合成一個數字，方便比較，不是實際能吃幾下。</div>
         </section>
 
         <section aria-label="我的 Profile" style={{ borderTop: '1px solid #2e271c', paddingTop: 12 }}>
