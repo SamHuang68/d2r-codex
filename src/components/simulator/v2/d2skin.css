@@ -424,3 +424,12 @@
   .d2sim .d2-float { bottom: calc(62px + env(safe-area-inset-bottom, 0px)); }
   .d2sim .d2-float-spacer { height: calc(46vh + 62px); }
 }
+
+/* 屬性總值直接輸入 */
+.d2sim .d2-attr-input {
+  width: 4.5em; text-align: right; font: inherit; font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums;
+  color: var(--magic); background: transparent; border: 0; border-bottom: 1px dashed transparent; padding: 0 2px; cursor: text;
+}
+.d2sim .d2-attr-input:hover { border-bottom-color: var(--gold-dim); }
+.d2sim .d2-attr-input:focus { outline: none; border-bottom: 1px solid var(--gold); background: rgba(201, 178, 119, .08); color: var(--gold-bright); }
+.d2sim .d2-attr-input.is-bad { color: var(--bad); }
