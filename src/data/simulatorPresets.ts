@@ -19,8 +19,8 @@ export interface PresetItem {
   socketCount?: number;
 }
 
-export type PresetTier = 'start' | 'bis' | 'mfEff' | 'mfMax';
-export const PRESET_TIER_ZH: Record<PresetTier, string> = { start: '入門', bis: '頂裝', mfEff: '效率 MF', mfMax: '極致 MF' };
+export type PresetTier = 'start' | 'bis' | 'mfEff' | 'mfMax' | 'tankEff' | 'tankMax';
+export const PRESET_TIER_ZH: Record<PresetTier, string> = { start: '入門', bis: '頂裝', mfEff: '效率 MF', mfMax: '極致 MF', tankEff: '平衡減傷', tankMax: '極致減傷' };
 /** 流派裡明確寫出的兩檔；MF 兩檔由 deriveMf 依規則推導 */
 export type CoreTier = 'start' | 'bis';
 
@@ -44,7 +44,7 @@ export interface SimPreset {
   skill: SkillSpec;
 }
 
-interface Tier { level: number; items: Items; charms?: PresetItem[]; notes: string }
+interface Tier { level: number; items: Items; charms?: PresetItem[]; notes: string; /** 此檔位自己的格擋目標（優先於流派的設定） */ blockTarget?: number }
 
 /** 一個流派：說明、技能規劃與兩個裝備檔位 */
 export interface BuildDef {
@@ -60,8 +60,8 @@ export interface BuildDef {
   bis: Tier;
   /** 效率 MF：這些欄位保留頂裝的核心件，不換成 MF 件（例如傷害來源、+技能的專屬頭盔） */
   mfKeep?: DollSlot[];
-  /** 極致 MF 是否保留頂裝的武器與盾（技能綁定武器類型時用，例如弓、標槍、爪） */
-  mfKeepWeapon?: boolean;
+  /** 極致 MF／極致減傷是否保留頂裝的武器與盾（技能綁定武器類型時用，例如弓、標槍、爪） */
+  weaponBound?: boolean;
 }
 
 const n = (nameEn: string, baseNameEn?: string): PresetItem => (baseNameEn ? { nameEn, baseNameEn } : { nameEn });
@@ -82,14 +82,14 @@ const SHAKO_ENIGMA: Items = { head: n('Harlequin Crest'), body: n('Enigma', 'Dus
 export const BUILDS: BuildDef[] = [
   // ── 亞馬遜 ──
   {
-    id: 'ama-lightning-fury', name: '雷霆之怒標槍', classCode: 'ama', rest: 'vit', mfKeepWeapon: true,
+    id: 'ama-lightning-fury', name: '雷霆之怒標槍', classCode: 'ama', rest: 'vit', weaponBound: true,
     summary: '擲出標槍後在命中點爆開閃電。主點雷霆之怒與標槍協同技能，靠裝備加技能與攻速。',
     skill: { main: 'Lightning Fury' },
     start: { level: 85, items: { ...MELEE_START, head: n("Andariel's Visage"), body: n('Chains of Honor', 'Dusk Shroud'), weaponI: n('Thunderstroke'), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_START, notes: '標槍用雷霆（Thunderstroke），頭盔與盔甲先用較平價的選擇。' },
     bis: { level: 92, items: { ...MELEE_BIS, ...SHAKO_ENIGMA, weaponI: n("Titan's Revenge"), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_BIS, notes: '標槍用泰坦的復仇，搭配謎團與軍帽。' },
   },
   {
-    id: 'ama-strafe', name: '掃射弓亞馬遜', classCode: 'ama', rest: 'dex', mfKeep: ['body'], mfKeepWeapon: true,
+    id: 'ama-strafe', name: '掃射弓亞馬遜', classCode: 'ama', rest: 'dex', mfKeep: ['body'], weaponBound: true,
     summary: '用弓連續掃射多個目標。依賴攻速與物理傷害，技能點集中在掃射與前置技能。',
     skill: { main: 'Strafe', extra: { 'Critical Strike': 1 }, fill: ['Critical Strike', 'Penetrate', 'Pierce', 'Valkyrie'] },
     start: { level: 85, items: { ...MELEE_START, head: n("Andariel's Visage"), body: n('Chains of Honor', 'Dusk Shroud'), weaponI: n('Faith', 'Grand Matron Bow') }, charms: CHARMS_START, notes: '先以信念（Faith）符文之語弓起步。' },
@@ -186,7 +186,7 @@ export const BUILDS: BuildDef[] = [
     bis: { level: 92, items: { ...CASTER_BIS, ...SHAKO_ENIGMA, ...SPIRIT_SET }, charms: CHARMS_BIS, notes: '加技能優先；陷阱技能可再用「+陷阱技能」裝備提高。' },
   },
   {
-    id: 'ass-mosaic', name: '馬賽克武學刺客', classCode: 'ass', rest: 'vit', mfKeepWeapon: true,
+    id: 'ass-mosaic', name: '馬賽克武學刺客', classCode: 'ass', rest: 'vit', weaponBound: true,
     summary: '用武學連擊疊出馬賽克效果，靠爪與武學技能連續出招。',
     skill: { main: 'Royal Strike', extra: { 'Claw Mastery': 20, Fade: 1 }, fill: ['Tiger Strike', 'Cobra Strike', 'Claws of Thunder', 'Blades of Ice', 'Fists of Fire', 'Dragon Claw'] },
     start: { level: 85, items: { ...MELEE_START, head: n("Andariel's Visage"), body: n('Chains of Honor', 'Dusk Shroud'), weaponI: n('Mosaic') }, charms: CHARMS_START, notes: '馬賽克為爪類符文之語。' },
@@ -212,15 +212,61 @@ function deriveMf(b: BuildDef, mode: 'mfEff' | 'mfMax'): Tier {
     (Object.keys(MF_EFF) as DollSlot[]).forEach((k) => { if (!b.mfKeep?.includes(k)) items[k] = MF_EFF[k]; });
     return { level: bis.level, items, charms: CHARMS_BIS, notes: `保留流派核心裝備${b.mfKeep?.length ? '（頭盔等核心欄位不換）' : ''}，把頭盔、護甲、鞋子、右戒指、護身符換成 MF 件。這是「兼顧擊殺速度」的折衷：輸出與施法／攻速斷點沒有模擬，實際清怪速度請自行評估。` };
   }
-  (Object.keys(MF_MAX) as DollSlot[]).forEach((k) => { if (b.mfKeepWeapon && (k === 'weaponI' || k === 'shieldI')) return; items[k] = MF_MAX[k]; });
-  return { level: 95, items, charms: CHARMS_BIS, notes: `全身換成 MF 最高的件，不顧輸出與生存${b.mfKeepWeapon ? '；此流派的技能綁定武器類型，主手與副手保留頂裝的設定' : ''}。護甲需要 97 力量，屬性點會被需求吃掉，生命會偏低。` };
+  (Object.keys(MF_MAX) as DollSlot[]).forEach((k) => { if (b.weaponBound && (k === 'weaponI' || k === 'shieldI')) return; items[k] = MF_MAX[k]; });
+  return { level: 95, items, charms: CHARMS_BIS, notes: `全身換成 MF 最高的件，不顧輸出與生存${b.weaponBound ? '；此流派的技能綁定武器類型，主手與副手保留頂裝的設定' : ''}。護甲需要 97 力量，屬性點會被需求吃掉，生命會偏低。` };
 }
 
-export const tierOf = (b: BuildDef, t: PresetTier): Tier => (t === 'mfEff' || t === 'mfMax' ? deriveMf(b, t) : b[t]);
-export const PRESET_TIERS: PresetTier[] = ['start', 'bis', 'mfEff', 'mfMax'];
+// ── 減傷檔位 ──
+// 平衡減傷：保留武器、盾、頭盔、護甲與施法／攻速來源，只換手套、腰帶、戒指、鞋子。每個流派的換法由 scripts/optimize_defense.mjs 依引擎數值搜尋，
+//   條件是全技能／本職業／技能樹／單項技能（含傳送術）加成、快速施法與攻擊速度都不低於頂裝，裝備需求要滿足；評分是「有效生命」（見 engine/survival.ts）。
+// 極致減傷：全身換成生存力最高的組合（同一套搜尋的結果，各職業收斂到幾乎相同的件），不顧輸出與技能：
+//   暴風盾（35% 物理減免、格擋）＋亡者之耳／維爾杜戈（15%）達到 50% 物理減免上限，護符與全抗件把四項抗性推到上限，守護天使再把最大抗性提高。
+const TANK_EFF: Record<string, Items> = {
+  'ama-lightning-fury': { gloves: n('Laying of Hands'), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'ama-strafe': { gloves: n('Bloodfist'), ring2: n('Dwarf Star'), boots: n('Tearhaunch') },
+  'sor-blizzard': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n('Tearhaunch') },
+  'sor-lightning': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n('Waterwalk') },
+  'sor-fire': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n("Aldur's Advance") },
+  'nec-bone-spear': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n('Tearhaunch') },
+  'nec-summoner': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n('Tearhaunch') },
+  'pal-hammerdin': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n('Waterwalk') },
+  'pal-zealot': { gloves: n("Horazon's Hold"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'bar-whirlwind': { gloves: n('Laying of Hands'), belt: n("Verdugo's Hearty Cord"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'bar-frenzy': { gloves: n("Horazon's Hold"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'dru-tornado': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n("Aldur's Advance") },
+  'dru-fire': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n("Aldur's Advance") },
+  'ass-lightning-trap': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n("Aldur's Advance") },
+  'ass-mosaic': { gloves: n("Horazon's Hold"), ring2: n('Dwarf Star'), boots: n('Tearhaunch') },
+};
+const TANK_MAX: Items = {
+  head: n("Natalya's Totem"), neck: n("Saracen's Chance"), body: n('Guardian Angel'), gloves: n("Horazon's Hold"), belt: n("Verdugo's Hearty Cord"),
+  ring1: n('Dwarf Star'), ring2: n('Dwarf Star'), boots: n('Waterwalk'), weaponI: n('Wizardspike'), shieldI: n('Stormshield'),
+};
+// 技能綁定武器的流派（弓、標槍、爪）：武器與盾保持不動，只在其餘欄位搜尋（scripts/optimize_defense.mjs --max）
+const TANK_MAX_BOUND: Record<string, Items> = {
+  'ama-lightning-fury': { head: n("Kira's Guardian"), neck: n('Nokozan Relic'), body: n('Shaftstop'), gloves: n("Horazon's Hold"), ring1: n('Dwarf Star'), ring2: n('Dwarf Star'), boots: n('Waterwalk') },
+  'ama-strafe': { head: n('Veil of Steel'), neck: n("Saracen's Chance"), gloves: n('Bloodfist'), ring1: n('Dwarf Star'), ring2: n('Dwarf Star'), boots: n('Waterwalk') },
+  'ass-mosaic': { head: n("Kira's Guardian"), neck: n('Metalgrid'), body: n('Shaftstop'), gloves: n("Horazon's Hold"), ring1: n('Dwarf Star'), ring2: n('Dwarf Star'), boots: n('Waterwalk') },
+};
+const CHARMS_TANK: PresetItem[] = [n('Annihilus'), n('Hellfire Torch')];
+
+function deriveTank(b: BuildDef, mode: 'tankEff' | 'tankMax'): Tier {
+  const bis = b.bis;
+  if (mode === 'tankEff') {
+    return { level: bis.level, items: { ...bis.items, ...(TANK_EFF[b.id] ?? {}) }, charms: bis.charms, notes: '保留武器、盾、頭盔、護甲與施法／攻速來源，只換手套、腰帶、戒指、鞋子；全技能、傳送術、快速施法、攻擊速度都不低於頂裝。換法由引擎數值搜尋得出，不是社群公認配裝。' };
+  }
+  if (b.weaponBound) {
+    return { level: bis.level, items: { ...bis.items, ...(TANK_MAX_BOUND[b.id] ?? {}) }, charms: CHARMS_TANK, notes: '此流派的技能綁定武器類型，主手與副手保留頂裝的設定，其餘欄位換成生存力最高的組合（不顧技能加成）；沒有暴風盾，物理減免達不到上限。' };
+  }
+  const items: Items = { ...bis.items, ...TANK_MAX };
+  return { level: bis.level, items, charms: CHARMS_TANK, blockTarget: 75, notes: '全身換成生存力最高的組合，不顧輸出與技能；武器為單手的「巫師之刺」（全抗 +75），副手暴風盾（35% 物理減免、格擋）。雙手武器不能搭配盾，所以此檔不用雙手武器。' };
+}
+
+export const tierOf = (b: BuildDef, t: PresetTier): Tier => (t === 'mfEff' || t === 'mfMax' ? deriveMf(b, t) : t === 'tankEff' || t === 'tankMax' ? deriveTank(b, t) : b[t]);
+export const PRESET_TIERS: PresetTier[] = ['start', 'bis', 'mfEff', 'mfMax', 'tankEff', 'tankMax'];
 
 export const SIM_PRESETS: SimPreset[] = BUILDS.flatMap((b) => PRESET_TIERS.map((t): SimPreset => {
   const x = tierOf(b, t);
   return { id: `${b.id}:${t}`, name: `${b.name}（${PRESET_TIER_ZH[t]}）`, classCode: b.classCode, level: x.level, items: x.items, charms: x.charms ?? [],
-    blockTarget: b.blockTarget, rest: b.rest, notes: x.notes, build: b.id, buildName: b.name, tier: t, skill: b.skill };
+    blockTarget: x.blockTarget ?? b.blockTarget, rest: b.rest, notes: x.notes, build: b.id, buildName: b.name, tier: t, skill: b.skill };
 }));
