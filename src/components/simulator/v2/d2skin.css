@@ -439,3 +439,11 @@
   border: 1px solid #3a3122; background: rgba(0, 0, 0, .28); padding: 10px 12px;
 }
 .d2sim .d2-build:hover { border-color: var(--gold-dim); }
+
+/* 物品提示框（跟遊戲一樣：游標停留時浮動顯示） */
+.d2sim .d2-tip .stat { color: var(--text); }
+.d2sim .d2-tip .stat b { font-weight: 600; }
+.d2sim .d2-tip .req { color: var(--dim); }
+.d2sim .d2-tip .req.is-bad { color: var(--bad); }
+.d2sim .d2-tip .sock { color: var(--magic); font-size: 13px; }
+.d2sim .d2-tip-float { position: fixed; z-index: 70; pointer-events: none; width: max-content; max-width: min(360px, calc(100vw - 16px)); min-width: 190px; }
