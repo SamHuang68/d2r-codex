@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export * from './src/data/profileStore'; export * from './src/data/presetState';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -209,7 +209,7 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
 
 // ── 鑲嵌與範本 ──
 {
-  const { getCatalog, getSocketables, socketCapacity, eligibleBases, withBase, buildEngineItem, autoAllocate, resolvePreset, SIM_PRESETS, computeCharacter: cc } = E;
+  const { ENGINE_CLASS_BY_CODE, getCatalog, getSocketables, socketCapacity, eligibleBases, withBase, buildEngineItem, autoAllocate, resolvePreset, SIM_PRESETS, computeCharacter: cc } = E;
   console.log('【鑲嵌與範本】');
   t('鑲嵌：寶石與符文依部位取得不同效果（塔爾：武器＝毒素傷害、護甲＝毒抗 30、盾牌＝毒抗 35）', () => {
     const sk = getSocketables().find((s) => s.nameEn === 'Tal Rune');
@@ -244,7 +244,7 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
       const r = resolvePreset(p); assert.deepEqual(r.errors, []);
       const items = []; for (const [k, eq] of Object.entries(r.equipped)) { if (k.endsWith('II')) continue; items.push(buildEngineItem(eq, eq.entry.slot === 'weapon' ? (k.startsWith('shield') ? 'weapon2' : 'weapon') : eq.entry.slot === 'shield' ? 'shield' : k)); }
       r.charms.forEach((c, i) => items.push(buildEngineItem({ entry: c }, 'charm' + i)));
-      const cs = gameData.charstats.find((c) => c.class === ({ sor: 'Sorceress', pal: 'Paladin', ass: 'Assassin', bar: 'Barbarian' })[p.classCode]);
+      const cs = gameData.charstats.find((c) => c.class === ENGINE_CLASS_BY_CODE[p.classCode]);
       const reqs = { str: Math.max(0, ...items.map((i) => gameData.bases.find((b) => b.code === i.baseCode)?.reqStr ?? 0)), dex: Math.max(0, ...items.map((i) => gameData.bases.find((b) => b.code === i.baseCode)?.reqDex ?? 0)) };
       const base = { className: cs.class, level: p.level, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } };
       const alloc = autoAllocate(gameData, base, { totalPoints: (p.level - 1) * 5 + 15, blockTarget: p.blockTarget, rest: p.rest }, reqs);
@@ -256,6 +256,56 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
       if (p.blockTarget) assert.ok(res.blockChance >= 75 || alloc.dex > 0);
     });
   }
+}
+
+// ── 流派範本與 Profile ──
+{
+  const { BUILDS, planSkills, stateFromPreset, toSavedData, fromSavedData, parseProfile, exportProfile, newProfile, skillByName, skillById } = E;
+  console.log('【流派範本與 Profile】');
+  t('流派：每個職業至少一個流派（術士除外），入門與頂裝都存在，主力技能名稱可在技能表找到', () => {
+    for (const c of ['ama', 'sor', 'nec', 'pal', 'bar', 'dru', 'ass']) assert.ok(BUILDS.some((b) => b.classCode === c), c);
+    for (const b of BUILDS) { assert.ok(b.start && b.bis, b.id); assert.ok(skillByName(b.skill.main), `${b.id} 主力技能「${b.skill.main}」`); assert.equal(skillByName(b.skill.main).charClass, b.classCode, b.id); }
+    assert.equal(new Set(BUILDS.map((b) => b.id)).size, BUILDS.length);
+  });
+  for (const b of BUILDS) {
+    t(`技能規劃「${b.name}」：不超過預算與滿級、前置齊全、等級足夠、沒有找不到的技能`, () => {
+      const lvl = b.bis.level; const plan = planSkills(b.classCode, lvl, b.skill, 3);
+      assert.ok(plan.used <= plan.budget, `${plan.used}/${plan.budget}`);
+      assert.equal(plan.points[plan.mainId], 20, '主力技能應點滿');
+      assert.deepEqual(plan.notes.filter((x) => x.includes('找不到') || x.includes('略過')), []);
+      for (const [id, v] of Object.entries(plan.points)) {
+        const sk = skillById(id); assert.ok(v >= 1 && v <= sk.maxLvl, `${sk.nameEn} ${v}/${sk.maxLvl}`); assert.ok(sk.reqLevel <= lvl, `${sk.nameEn} 需要等級 ${sk.reqLevel}`);
+        for (const pre of sk.prereq) { const ps = skillByName(pre); if (ps) assert.ok(plan.points[ps.id] > 0, `${sk.nameEn} 缺前置 ${pre}`); }
+      }
+      assert.equal(Object.values(plan.points).reduce((a, b2) => a + b2, 0), plan.used);
+    });
+  }
+  t('範本 → 狀態：裝備、技能點、配點齊備且無錯誤備註；總配點等於可用點數', () => {
+    for (const p of E.SIM_PRESETS) {
+      const { snap, notes } = stateFromPreset(p); assert.deepEqual(notes.filter((x) => !x.includes('技能點不足')), [], p.id);
+      assert.equal(snap.alloc.str + snap.alloc.dex + snap.alloc.vit + snap.alloc.ene, (p.level - 1) * 5 + 15, p.id);
+      assert.ok(Object.keys(snap.equipped).length >= 5 && Object.keys(snap.skillPoints).length >= 3, p.id);
+    }
+  });
+  t('Profile：存檔→還原往返後裝備（含換底材、鑲嵌、無形）、護身符、技能點、配點完全相同', () => {
+    const p = E.SIM_PRESETS.find((x) => x.id === 'sor-blizzard:bis'); const { snap } = stateFromPreset(p);
+    const withSock = { ...snap, equipped: { ...snap.equipped, head: { ...snap.equipped.head, ethereal: true } } };
+    const saved = toSavedData(withSock); const back = fromSavedData(JSON.parse(JSON.stringify(saved)));
+    assert.deepEqual(back.errors, []);
+    for (const k of Object.keys(snap.equipped)) { assert.equal(back.snap.equipped[k].entry.id, snap.equipped[k].entry.id, k); assert.equal(back.snap.equipped[k].entry.baseCode, snap.equipped[k].entry.baseCode, k); }
+    assert.equal(back.snap.equipped.head.ethereal, true);
+    assert.deepEqual(back.snap.charms.map((c) => c.id), snap.charms.map((c) => c.id));
+    assert.deepEqual(back.snap.skillPoints, snap.skillPoints); assert.deepEqual(back.snap.alloc, snap.alloc); assert.equal(back.snap.activeSkillId, snap.activeSkillId);
+  });
+  t('Profile：物品不存在時列為錯誤、不丟其他件；匯入拒絕格式不符的內容', () => {
+    const p = E.SIM_PRESETS.find((x) => x.id === 'sor-blizzard:bis'); const { snap } = stateFromPreset(p);
+    const saved = JSON.parse(JSON.stringify(toSavedData(snap))); saved.equipped.head.id = 'unique:不存在的物品';
+    const r = fromSavedData(saved); assert.equal(r.errors.length, 1); assert.ok(r.snap.equipped.body);
+    assert.equal(typeof parseProfile('{壞掉'), 'string'); assert.equal(typeof parseProfile('{"v":2}'), 'string'); assert.equal(typeof parseProfile('null'), 'string');
+    const ok = parseProfile(exportProfile(newProfile('測試', snap))); assert.equal(typeof ok, 'object'); assert.equal(ok.name, '測試'); assert.equal(ok.data.level, snap.level);
+    const evil = parseProfile(JSON.stringify({ v: 1, name: 'x', data: { classCode: 'sor', equipped: {}, level: 'abc', alloc: { str: -5 } } }));
+    assert.equal(evil.data.level, 90); assert.equal(evil.data.alloc.str, 0);
+  });
 }
 
 // ── 技能（遊戲技能表）──

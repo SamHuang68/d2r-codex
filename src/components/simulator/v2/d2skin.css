@@ -433,3 +433,9 @@
 .d2sim .d2-attr-input:hover { border-bottom-color: var(--gold-dim); }
 .d2sim .d2-attr-input:focus { outline: none; border-bottom: 1px solid var(--gold); background: rgba(201, 178, 119, .08); color: var(--gold-bright); }
 .d2sim .d2-attr-input.is-bad { color: var(--bad); }
+
+/* 流派與 Profile 面板 */
+.d2sim .d2-build {
+  border: 1px solid #3a3122; background: rgba(0, 0, 0, .28); padding: 10px 12px;
+}
+.d2sim .d2-build:hover { border-color: var(--gold-dim); }
