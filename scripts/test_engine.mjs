@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/data/profileStore'; export * from './src/data/presetState';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/data/profileStore'; export * from './src/data/presetState';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -302,6 +302,36 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
       if (w) { const solo = E.computeCharacter(gameData, { className: E.ENGINE_CLASS_BY_CODE[p.classCode], level: p.level, allocated: snap.alloc, items: [w], difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } });
         const o = itemOwnStats(gameData, w, p.level, { str: solo.attributes.str, dex: solo.attributes.dex });
         if (solo.weaponDamage) { assert.ok(o.damage, id); assert.equal(o.damage.min, solo.weaponDamage.min, `${id} 最小傷害`); assert.equal(o.damage.max, solo.weaponDamage.max, `${id} 最大傷害`); } }
+    }
+  });
+  t('MF 遞減公式：100% MF → 暗金 71、套裝 83、稀有 85（與社群表一致）；魔法物品無遞減；單調且邊際遞減', () => {
+    const { effectiveMf, mfSummary, marginalUnique } = E;
+    assert.equal(Math.floor(effectiveMf(100, 'unique')), 71); assert.equal(Math.floor(effectiveMf(100, 'set')), 83); assert.equal(Math.floor(effectiveMf(100, 'rare')), 85);
+    assert.equal(effectiveMf(300, 'magic'), 300); assert.equal(effectiveMf(0, 'unique'), 0);
+    assert.ok(effectiveMf(500, 'unique') < 250, '暗金有效 MF 永遠小於係數 250');
+    assert.ok(marginalUnique(100) > marginalUnique(300) && marginalUnique(300) > marginalUnique(600));
+    const sm = mfSummary(100); assert.equal(sm.length, 4); assert.ok(sm.every((l) => l.multiplier >= 1));
+  });
+  t('MF 數值與社群公認值一致：Wartraveler 50、Chance Guards 40、Nagelring 30、Gheed 40、Shako 50、Tarnhelm 50；Skullder 為每等級 1.25', () => {
+    const mfOf = (nm, lvl = 90) => { const e = E.getCatalog().find((x) => x.nameEn === nm && x.kind !== 'base'); const r = E.computeCharacter(gameData, { className: 'Paladin', level: lvl, allocated: none, items: [E.buildEngineItem({ entry: e }, e.slot, true)] }); return r.stats.item_magicbonus ?? 0; };
+    assert.equal(mfOf('Wartraveler'), 50); assert.equal(mfOf('Chance Guards'), 40); assert.equal(mfOf('Nagelring'), 30);
+    assert.equal(mfOf("Gheed's Fortune"), 40); assert.equal(mfOf('Harlequin Crest'), 50); assert.equal(mfOf('Tarnhelm'), 50);
+    assert.equal(mfOf("Skullder's Ire", 90), 112); assert.equal(mfOf("Skullder's Ire", 80), 100);
+  });
+  t('MF 檔位：每個流派 極致 ≥ 效率 ≥ 頂裝（MF 只增不減），極致 MF 至少 350', () => {
+    const { previewPreset } = E;
+    for (const b of E.BUILDS) {
+      const mf = (t) => previewPreset(E.SIM_PRESETS.find((x) => x.id === `${b.id}:${t}`)).mf;
+      const bis = mf('bis'); const eff = mf('mfEff'); const max = mf('mfMax');
+      assert.ok(eff >= bis, `${b.id} 效率 ${eff} < 頂裝 ${bis}`); assert.ok(max >= eff, `${b.id} 極致 ${max} < 效率 ${eff}`); assert.ok(max >= 350, `${b.id} 極致 ${max}`);
+    }
+  });
+  t('MF 檔位：效率檔只動指定欄位（保留核心件），極致檔在技能綁武器的流派保留武器', () => {
+    for (const b of E.BUILDS) {
+      const bis = b.bis.items; const eff = E.tierOf(b, 'mfEff').items; const max = E.tierOf(b, 'mfMax').items;
+      for (const k of ['gloves', 'belt', 'weaponI', 'shieldI', 'neck', 'ring1']) assert.deepEqual(eff[k], bis[k], `${b.id} 效率檔不應動 ${k}`);
+      for (const k of b.mfKeep ?? []) assert.deepEqual(eff[k], bis[k], `${b.id} mfKeep ${k}`);
+      if (b.mfKeepWeapon) { assert.deepEqual(max.weaponI, bis.weaponI, b.id); assert.deepEqual(max.shieldI, bis.shieldI, b.id); } else assert.equal(max.weaponI.nameEn, 'Blade of Ali Baba');
     }
   });
   t('Profile：存檔→還原往返後裝備（含換底材、鑲嵌、無形）、護身符、技能點、配點完全相同', () => {

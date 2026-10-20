@@ -1,6 +1,7 @@
 import { ENGINE_CLASS_BY_CODE, toEquipped, type CatalogEntry } from '../engine/catalog';
 import { autoAllocate } from '../engine/alloc';
 import { buildEngineItem } from '../engine/build';
+import { computeCharacter } from '../engine/character';
 import { gameData } from '../engine/data';
 import type { EquippedItem } from '../engine/types';
 import { planSkills } from '../engine/skillPlan';
@@ -12,7 +13,7 @@ import { DOLL_SLOT_KIND, type DollSlot } from '../components/simulator/v2/types'
 const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
 
 /** 流派範本 → 模擬器狀態：解析物品、依規則配屬性點、依技能規劃配技能點。找不到的項目與技能點不足都會列出 */
-export function stateFromPreset(p: SimPreset): { snap: SimSnapshot; notes: string[] } {
+function build(p: SimPreset): { snap: SimSnapshot; notes: string[]; items: EquippedItem[]; className: string } {
   const r = resolvePreset(p);
   const className = ENGINE_CLASS_BY_CODE[p.classCode];
   const items: EquippedItem[] = [];
@@ -32,6 +33,18 @@ export function stateFromPreset(p: SimPreset): { snap: SimSnapshot; notes: strin
       classCode: p.classCode, level: p.level, difficulty: 'hell', quests: { lifePotions: 3, anya: 3, lamEsen: 3, skillPts: 3 }, alloc,
       equipped: r.equipped, charms: r.charms, swap: 'I', skillPoints: plan.points, activeSkillId: plan.mainId, buffsOn: {}, targetRes: 0, rollMax: true,
     },
-    notes,
+    notes, items, className,
   };
+}
+
+export function stateFromPreset(p: SimPreset): { snap: SimSnapshot; notes: string[] } {
+  const { snap, notes } = build(p);
+  return { snap, notes };
+}
+
+/** 範本套用後的主要數值（卡片上顯示 MF、生命等，讓使用者先比較再套用）。不含光環、增益與技能加成的目標抗性 */
+export function previewPreset(p: SimPreset): { mf: number; gold: number; life: number; defense: number } {
+  const { snap, items, className } = build(p);
+  const r = computeCharacter(gameData, { className, level: p.level, allocated: snap.alloc, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } });
+  return { mf: r.stats.item_magicbonus ?? 0, gold: r.stats.item_goldbonus ?? 0, life: r.life, defense: r.defense };
 }
