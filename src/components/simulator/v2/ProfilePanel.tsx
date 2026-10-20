@@ -24,7 +24,8 @@ const PARTS: { key: keyof ApplyParts; label: string; hint: string }[] = [
 
 export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUndo, onUndo, say }) => {
   const [parts, setParts] = useState<ApplyParts>(ALL_PARTS);
-  const [profiles, setProfiles] = useState<SavedProfile[]>(() => loadProfiles());
+  const [stored] = useState(() => loadProfiles());
+  const [profiles, setProfiles] = useState<SavedProfile[]>(stored.list);
   const [name, setName] = useState('');
   const [importText, setImportText] = useState('');
   const [importOpen, setImportOpen] = useState(false);
@@ -163,6 +164,7 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
               <button type="button" className="d2-btn" disabled={!importText.trim()} onClick={doImport}>匯入這份 Profile</button>
             </div>
           )}
+          {stored.rejected > 0 && <div className="d2-sub mt-1" style={{ color: 'var(--bad)' }}>瀏覽器裡有 {stored.rejected} 份存檔格式損壞，已略過；下次儲存、刪除或匯入 Profile 時會一併清除。</div>}
           {profiles.length === 0 ? (
             <div className="d2-empty mt-2">還沒有儲存的 Profile。</div>
           ) : (

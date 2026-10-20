@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { computeCharacter } from '../../../engine/character';
 import { gameData } from '../../../engine/data';
-import { ENGINE_CLASS_BY_CODE, SLOT_ZH, toEquipped, withBase, type CatalogEntry, type Group } from '../../../engine/catalog';
+import { toEquipped, withBase, type CatalogEntry, type Group } from '../../../engine/catalog';
 import { buildEngineItem } from '../../../engine/build';
 import { ALL_PARTS, type ApplyParts, type SimSnapshot } from '../../../data/profileStore';
 import type { EquippedItem } from '../../../engine/types';
@@ -16,6 +16,7 @@ import { GearPicker } from './GearPicker';
 import { SocketEditor } from './SocketEditor';
 import { ProfilePanel } from './ProfilePanel';
 import { ItemTooltipBody } from './ItemTooltip';
+import { slotPlacementError } from './equipRules';
 import './d2skin.css';
 import { DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type Quests, type TabKey } from './types';
 
@@ -123,20 +124,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   };
   const canDrop = (target: DollSlot | 'charms', entry: CatalogEntry): string | null => {
     if (target === 'charms') return entry.slot !== 'charm' ? '只有護身符能放進背包' : canFitCharm(charms, entry) ? null : '背包空間不足';
-    const dualWield = entry.slot === 'weapon' && (target === 'shieldI' || target === 'shieldII') && (cls.en === 'Barbarian' || cls.en === 'Assassin');
-    if (dualWield) {
-      const main = equipped[target === 'shieldI' ? 'weaponI' : 'weaponII']?.entry;
-      if (entry.twoHanded) return '雙手武器不能放在副手欄';
-      if (main?.twoHanded) return '主手為雙手武器，副手欄不能放武器';
-      if (cls.en === 'Assassin' && !/^(h2h|h2h2)$/.test(baseByCode.get(entry.baseCode)?.type ?? '')) return '刺客雙持只能使用爪類武器';
-    } else if (DOLL_SLOT_KIND[target] !== entry.slot) return `「${entry.name}」是${SLOT_ZH[entry.slot]}，不能放在${DOLL_SLOT_ZH[target]}`;
-    if (entry.classCode && ENGINE_CLASS_BY_CODE[entry.classCode] !== cls.en) return `「${entry.name}」只有${CLASSES.find((c) => c.code === entry.classCode)?.zh}能使用`;
-    if (entry.slot === 'shield') {
-      const w = equipped[target === 'shieldI' ? 'weaponI' : 'weaponII']?.entry;
-      const wb = w && baseByCode.get(w.baseCode);
-      if (w?.twoHanded && !(wb?.oneOrTwoHanded && cls.en === 'Barbarian')) return '雙手武器無法搭配盾牌';
-    }
-    return null;
+    return slotPlacementError(target, entry, equipped, cls.en);
   };
   const place = (target: DollSlot | 'charms', entry: CatalogEntry) => {
     const err = canDrop(target, entry);

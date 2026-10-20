@@ -1,4 +1,5 @@
-import { findEntry, getSocketables, withBase, type CatalogEntry } from '../engine/catalog';
+import { CLASS_ZH, findEntry, getSocketables, withBase, type CatalogEntry } from '../engine/catalog';
+import { skillById } from '../engine/skills';
 import type { Alloc, Difficulty, DollSlot, Equipped, EquippedMap, Quests } from '../components/simulator/v2/types';
 
 /** 模擬器的完整狀態（畫面上的物件）；流派範本與自訂 Profile 都先轉成這個再套用 */
@@ -56,33 +57,74 @@ export function fromSavedData(d: SavedData): { snap: SimSnapshot; errors: string
   return { snap: { ...d, equipped, charms }, errors };
 }
 
-const num = (v: unknown, d: number) => (typeof v === 'number' && Number.isFinite(v) ? v : d);
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
+/** 數字欄位：不是數字就用預設值，是數字就四捨五入並夾進範圍（等級、屬性點這類單一數值不值得為此整份拒絕） */
+const int = (v: unknown, lo: number, hi: number, d: number) => (typeof v === 'number' && Number.isFinite(v) ? Math.max(lo, Math.min(hi, Math.round(v))) : d);
 
-/** 檢查存檔／匯入內容的結構，不信任外部文字 */
+const DOLL_SLOTS: DollSlot[] = ['head', 'neck', 'body', 'gloves', 'belt', 'ring1', 'ring2', 'boots', 'weaponI', 'shieldI', 'weaponII', 'shieldII'];
+const MAX_CHARMS = 40;
+
+/** 單件物品的結構檢查：結構不對（不是物品、鑲嵌欄位不是文字陣列）就回傳原因，不猜、不補 */
+function cleanItem(v: unknown, where: string): SavedItem | string {
+  if (!isObj(v) || typeof v.id !== 'string' || !v.id) return `${where}不是物品`;
+  if (v.baseCode !== undefined && typeof v.baseCode !== 'string') return `${where}的底材代碼不是文字`;
+  if (v.sockets !== undefined && !(Array.isArray(v.sockets) && v.sockets.length <= 6 && v.sockets.every((x) => typeof x === 'string'))) return `${where}的鑲嵌欄位不合法`;
+  return { id: v.id, baseCode: v.baseCode as string | undefined, ethereal: v.ethereal === true || undefined, sockets: v.sockets as string[] | undefined, socketCount: v.socketCount === undefined ? undefined : int(v.socketCount, 0, 6, 0) };
+}
+
+/** 檢查存檔／匯入內容的結構，不信任外部文字。結構不合就回傳原因（不會丟例外，也不會讓壞資料流進畫面） */
 function validate(raw: unknown): SavedProfile | string {
   if (!isObj(raw) || raw.v !== 1 || typeof raw.name !== 'string' || !isObj(raw.data)) return '格式不符：不是本模擬器匯出的 Profile';
   const d = raw.data;
-  if (typeof d.classCode !== 'string' || !isObj(d.equipped)) return '格式不符：缺少職業或裝備欄位';
+  if (typeof d.classCode !== 'string' || !(d.classCode in CLASS_ZH)) return `格式不符：不認得的職業「${String(d.classCode)}」`;
+  if (!isObj(d.equipped)) return '格式不符：缺少裝備欄位';
+
+  const equipped: SavedData['equipped'] = {};
+  for (const [slot, v] of Object.entries(d.equipped)) {
+    if (!DOLL_SLOTS.includes(slot as DollSlot)) return `格式不符：不認得的裝備欄位「${slot}」`;
+    const it = cleanItem(v, `裝備欄位「${slot}」`); if (typeof it === 'string') return `格式不符：${it}`;
+    equipped[slot as DollSlot] = it;
+  }
+  const charms: SavedItem[] = [];
+  if (d.charms !== undefined) {
+    if (!Array.isArray(d.charms) || d.charms.length > MAX_CHARMS) return '格式不符：護身符清單不合法';
+    for (const [i, v] of d.charms.entries()) { const it = cleanItem(v, `第 ${i + 1} 個護身符`); if (typeof it === 'string') return `格式不符：${it}`; charms.push(it); }
+  }
+  const skillPoints: Record<string, number> = {};
+  if (d.skillPoints !== undefined) {
+    if (!isObj(d.skillPoints)) return '格式不符：技能點不是物件';
+    for (const [id, v] of Object.entries(d.skillPoints)) {
+      if (typeof v !== 'number' || !Number.isFinite(v)) return `格式不符：技能「${id}」的點數不是數字`;
+      const pts = int(v, 0, skillById(id)?.maxLvl ?? 20, 0); if (pts > 0) skillPoints[id] = pts;
+    }
+  }
+  const buffsOn: Record<string, boolean> = {};
+  if (d.buffsOn !== undefined) {
+    if (!isObj(d.buffsOn)) return '格式不符：增益勾選不是物件';
+    for (const [id, v] of Object.entries(d.buffsOn)) { if (typeof v !== 'boolean') return `格式不符：增益「${id}」不是勾選值`; if (v) buffsOn[id] = true; }
+  }
   const q = isObj(d.quests) ? d.quests : {}; const a = isObj(d.alloc) ? d.alloc : {};
+  const name = raw.name.trim().slice(0, 40) || '匯入的 Profile';
   const clean: SavedData = {
-    classCode: d.classCode, level: Math.max(1, Math.min(99, num(d.level, 90))),
+    classCode: d.classCode, level: int(d.level, 1, 99, 90),
     difficulty: d.difficulty === 'normal' || d.difficulty === 'nightmare' ? d.difficulty : 'hell',
-    quests: { lifePotions: num(q.lifePotions, 3), anya: num(q.anya, 3), lamEsen: num(q.lamEsen, 3), skillPts: num(q.skillPts, 3) },
-    alloc: { str: Math.max(0, num(a.str, 0)), dex: Math.max(0, num(a.dex, 0)), vit: Math.max(0, num(a.vit, 0)), ene: Math.max(0, num(a.ene, 0)) },
-    equipped: d.equipped as SavedData['equipped'], charms: Array.isArray(d.charms) ? (d.charms as SavedItem[]) : [], swap: d.swap === 'II' ? 'II' : 'I',
-    skillPoints: isObj(d.skillPoints) ? (d.skillPoints as Record<string, number>) : {}, activeSkillId: typeof d.activeSkillId === 'string' ? d.activeSkillId : '',
-    buffsOn: isObj(d.buffsOn) ? (d.buffsOn as Record<string, boolean>) : {}, targetRes: num(d.targetRes, 0), rollMax: d.rollMax !== false,
+    quests: { lifePotions: int(q.lifePotions, 0, 3, 3), anya: int(q.anya, 0, 3, 3), lamEsen: int(q.lamEsen, 0, 3, 3), skillPts: int(q.skillPts, 0, 3, 3) },
+    alloc: { str: int(a.str, 0, 999, 0), dex: int(a.dex, 0, 999, 0), vit: int(a.vit, 0, 999, 0), ene: int(a.ene, 0, 999, 0) },
+    equipped, charms, swap: d.swap === 'II' ? 'II' : 'I', skillPoints, activeSkillId: typeof d.activeSkillId === 'string' ? d.activeSkillId : '',
+    buffsOn, targetRes: int(d.targetRes, -100, 100, 0), rollMax: d.rollMax !== false,
   };
-  return { v: 1, id: typeof raw.id === 'string' ? raw.id : '', name: raw.name.slice(0, 40), savedAt: num(raw.savedAt, Date.now()), data: clean };
+  return { v: 1, id: typeof raw.id === 'string' ? raw.id : '', name, savedAt: int(raw.savedAt, 0, Number.MAX_SAFE_INTEGER, Date.now()), data: clean };
 }
 
-export function loadProfiles(): SavedProfile[] {
+/** 讀出瀏覽器裡的 Profile。格式損壞的存檔不會顯示也不會被套用，但會回報數量，讓使用者知道有東西被略過 */
+export function loadProfiles(): { list: SavedProfile[]; rejected: number } {
   try {
     const arr = JSON.parse(window.localStorage.getItem(KEY) || '[]');
-    if (!Array.isArray(arr)) return [];
-    return arr.map(validate).filter((x): x is SavedProfile => typeof x !== 'string').sort((a, b) => b.savedAt - a.savedAt);
-  } catch { return []; }
+    if (!Array.isArray(arr)) return { list: [], rejected: 1 };
+    const results = arr.map(validate);
+    const list = results.filter((x): x is SavedProfile => typeof x !== 'string').sort((x, y) => y.savedAt - x.savedAt);
+    return { list, rejected: results.length - list.length };
+  } catch { return { list: [], rejected: 1 }; }
 }
 
 /** 寫入；失敗（無痕模式、容量滿）回傳 false，由呼叫端提示，不假裝已儲存 */
