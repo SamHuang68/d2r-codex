@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { CharacterResult } from '../../../engine/types';
 import type { Alloc } from './types';
 import { skillByName, tabName } from '../../../engine/skills';
@@ -12,6 +12,8 @@ interface Props {
   needStr: number;
   needDex: number;
   onAdd: (k: keyof Alloc, n: number) => void;
+  /** 直接設定配點（已限制在 0～可用點數內） */
+  onSet: (k: keyof Alloc, value: number) => void;
   onAutoReq: () => void;
   onAllVit: () => void;
   onReset: () => void;
@@ -56,7 +58,52 @@ const Row: React.FC<{ label: string; value: string; tone?: string; title?: strin
   </div>
 );
 
-export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc, remaining, needStr, needDex, onAdd, onAutoReq, onAllVit, onReset, mainSkill, targetRes, onTargetRes, buffs, onToggleBuff, enemyReduction }) => {
+
+/**
+ * 直接輸入屬性總值（遊戲角色頁顯示的那個數字）。
+ * 輸入 T → 配點 = T −（起始＋裝備＋技能加成）；低於基礎值或超過可用點數時自動夾住並提示。
+ * 操作：點擊自動全選、Enter／離開欄位套用、Esc 取消、↑↓ ±1（Shift ±10）。
+ */
+const AttrInput: React.FC<{ label: string; total: number; base: number; alloc: number; maxAlloc: number; bad: boolean; onCommit: (alloc: number) => void }> = ({ label, total, base, alloc, maxAlloc, bad, onCommit }) => {
+  const [text, setText] = useState(String(total));
+  const [focused, setFocused] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
+  useEffect(() => { if (!focused) setText(String(total)); }, [total, focused]);
+  useEffect(() => { if (!note) return; const t = window.setTimeout(() => setNote(null), 3500); return () => window.clearTimeout(t); }, [note]);
+
+  const commit = (raw: string) => {
+    const t = raw.trim();
+    if (!/^-?\d+$/.test(t)) { setText(String(total)); return; } // 不是整數：還原，不改配點
+    const n = Number(t);
+    const want = Math.round(n) - base; const next = Math.max(0, Math.min(maxAlloc, want));
+    if (want < 0) setNote(`最低 ${base}（起始＋裝備），已調整`);
+    else if (want > maxAlloc) setNote(`點數不足，最高 ${base + maxAlloc}，已調整`);
+    onCommit(next); setText(String(base + next));
+  };
+  const step = (d: number) => { const next = Math.max(0, Math.min(maxAlloc, alloc + d)); onCommit(next); setText(String(base + next)); };
+
+  return (
+    <div className="d2-row is-attr flex-1" style={{ position: 'relative' }}>
+      <span className="k">{label}</span>
+      <input
+        className={`d2-attr-input ${bad ? 'is-bad' : ''}`} inputMode="numeric" value={text} aria-label={`${label}（直接輸入總值）`}
+        title={`${bad ? '未達裝備需求。' : ''}起始＋裝備 ${base}，配點 ${alloc}。直接輸入想要的總值`}
+        onFocus={(e) => { setFocused(true); e.currentTarget.select(); }}
+        onBlur={(e) => { setFocused(false); commit(e.currentTarget.value); }}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') { commit(e.currentTarget.value); e.currentTarget.select(); }
+          else if (e.key === 'Escape') { setText(String(total)); e.currentTarget.blur(); }
+          else if (e.key === 'ArrowUp') { e.preventDefault(); step(e.shiftKey ? 10 : 1); }
+          else if (e.key === 'ArrowDown') { e.preventDefault(); step(e.shiftKey ? -10 : -1); }
+        }}
+      />
+      {note && <span role="status" className="d2-sub" style={{ position: 'absolute', right: 8, bottom: -16, color: 'var(--bad)', whiteSpace: 'nowrap', zIndex: 2 }}>{note}</span>}
+    </div>
+  );
+};
+
+export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc, remaining, needStr, needDex, onAdd, onSet, onAutoReq, onAllVit, onReset, mainSkill, targetRes, onTargetRes, buffs, onToggleBuff, enemyReduction }) => {
   const [more, setMore] = useState(false);
   const a = result.attributes;
   const unmet: Record<string, boolean> = { str: a.str < needStr, dex: a.dex < needDex };
@@ -87,13 +134,11 @@ export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc
             const bad = unmet[key] ?? false;
             return (
               <div key={key} className="flex gap-2 items-stretch">
-                <div className="d2-row is-attr flex-1">
-                  <span className="k">{label}</span>
-                  <span className={`v ${bad ? 'is-bad' : ''}`} title={bad ? '未達裝備需求' : undefined}>{a[key]}</span>
-                </div>
+                <AttrInput label={label} total={a[key]} base={a[key] - alloc[key]} alloc={alloc[key]} maxAlloc={alloc[key] + remaining} bad={bad} onCommit={(v) => onSet(key, v)} />
                 <button
                   type="button" className="d2-plus" aria-label={`${label} 加點`}
                   disabled={remaining <= 0}
+                  title="點擊 ＋1；Shift ＋5"
                   onClick={(e) => (e.altKey ? onAdd(key, e.shiftKey ? -5 : -1) : onAdd(key, e.shiftKey ? 5 : 1))}
                   onContextMenu={(e) => { e.preventDefault(); onAdd(key, e.shiftKey ? -5 : -1); }}
                 >＋</button>
@@ -108,7 +153,7 @@ export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc
             <button type="button" onClick={onAllVit} className="d2-btn">剩餘全灌體能</button>
             <button type="button" onClick={onReset} className="d2-btn is-quiet">重置配點</button>
           </div>
-          <div className="d2-sub">點擊 ＋1，Shift ＋5；右鍵或 Alt 點擊 −1（Shift −5）。配點：力 {alloc.str}　敏 {alloc.dex}　體 {alloc.vit}　能 {alloc.ene}</div>
+          <div className="d2-sub">直接點數字輸入總值（Enter 套用，↑↓ 微調，Shift ×10）；或點 ＋1／Shift ＋5，右鍵或 Alt 點擊 −1。配點：力 {alloc.str}　敏 {alloc.dex}　體 {alloc.vit}　能 {alloc.ene}</div>
         </div>
 
         {/* 右：結果欄位 */}

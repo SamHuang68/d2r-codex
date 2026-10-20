@@ -169,6 +169,10 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     const delta = n > 0 ? Math.min(n, remaining) : -Math.min(-n, a[k]);
     return { ...a, [k]: a[k] + delta };
   });
+  const onSet = (k: keyof Alloc, value: number) => setAlloc((a) => {
+    const avail = totalPoints - (a.str + a.dex + a.vit + a.ene) + a[k]; // 此屬性最多可用點數
+    return { ...a, [k]: Math.max(0, Math.min(avail, Math.round(value))) };
+  });
   const onAutoReq = () => setAlloc((a) => {
     const baseStr = result.attributes.str - a.str; const baseDex = result.attributes.dex - a.dex;
     let left = remaining;
@@ -328,7 +332,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
           <div className="d2-panel-body">
             {tab === 'stats' && (
               <AttributesTab className={cls.zh} level={level} result={result} alloc={alloc} remaining={remaining} needStr={needStr} needDex={needDex}
-                onAdd={onAdd} onAutoReq={onAutoReq} onAllVit={onAllVit} onReset={() => setAlloc(ZERO)} mainSkill={mainSkill}
+                onAdd={onAdd} onSet={onSet} onAutoReq={onAutoReq} onAllVit={onAllVit} onReset={() => setAlloc(ZERO)} mainSkill={mainSkill}
                 targetRes={targetRes} onTargetRes={setTargetRes} buffs={buffPanel} onToggleBuff={(id) => setBuffsOn((m) => ({ ...m, [id]: !m[id] }))}
                 enemyReduction={applied.enemyResReduction} />
             )}
