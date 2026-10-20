@@ -1,11 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { computeCharacter } from '../../../engine/character';
 import { gameData } from '../../../engine/data';
 import { ENGINE_CLASS_BY_CODE, SLOT_ZH, toEquipped, withBase, type CatalogEntry, type Group } from '../../../engine/catalog';
-import { autoAllocate } from '../../../engine/alloc';
 import { buildEngineItem } from '../../../engine/build';
-import { resolvePreset } from '../../../data/presetResolver';
-import { SIM_PRESETS } from '../../../data/simulatorPresets';
+import { ALL_PARTS, type ApplyParts, type SimSnapshot } from '../../../data/profileStore';
 import { describeModifiers } from '../../../engine/describe';
 import type { EquippedItem } from '../../../engine/types';
 import { SkillTreeV2 } from './SkillTreeV2';
@@ -17,6 +15,7 @@ import { AttributesTab } from './AttributesTab';
 import { GearTreeTab } from './GearTreeTab';
 import { GearPicker } from './GearPicker';
 import { SocketEditor } from './SocketEditor';
+import { ProfilePanel } from './ProfilePanel';
 import './d2skin.css';
 import { DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type Quests, type TabKey } from './types';
 
@@ -60,6 +59,9 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const [activeSkillId, setActiveSkillId] = useState<string>('');
   const [buffsOn, setBuffsOn] = useState<Record<string, boolean>>({});
   const [targetRes, setTargetRes] = useState(0);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const undoRef = useRef<SimSnapshot | null>(null);
+  const [canUndo, setCanUndo] = useState(false);
 
   const say = (m: string) => { setToast(m); window.setTimeout(() => setToast((t) => (t === m ? null : t)), 3500); };
 
@@ -192,25 +194,25 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const patchEquipped = (slot: DollSlot, patch: Partial<Equipped>) => setEquipped((m) => (m[slot] ? { ...m, [slot]: { ...m[slot]!, ...patch } } : m));
   const changeBase = (slot: DollSlot, baseCode: string) => setEquipped((m) => (m[slot] ? { ...m, [slot]: { ...m[slot]!, entry: withBase(m[slot]!.entry, baseCode) } } : m));
 
-  const loadPreset = (id: string) => {
-    const p = SIM_PRESETS.find((x) => x.id === id); if (!p) return;
-    const c = CLASSES.find((x) => x.code === p.classCode)!;
-    const r = resolvePreset(p);
-    setCls(c); setLevel(p.level); setDifficulty('hell'); setQuests({ lifePotions: 3, anya: 3, lamEsen: 3, skillPts: 3 }); setSkillPoints({}); setActiveSkillId(''); setBuffsOn({});
-    setEquipped(r.equipped); setCharms(r.charms); setSwap('I'); setSelected(null);
-    // 以新狀態配點
-    const items: EquippedItem[] = [];
-    (Object.keys(r.equipped) as DollSlot[]).forEach((k) => {
-      if (k === 'weaponII' || k === 'shieldII') return;
-      const eq = r.equipped[k]!; const kind = DOLL_SLOT_KIND[k];
-      items.push(buildEngineItem(eq, kind === 'weapon' ? 'weapon' : kind === 'shield' ? (eq.entry.slot === 'weapon' ? 'weapon2' : 'shield') : k, true));
-    });
-    r.charms.forEach((ch, i) => items.push(toEquipped(ch, `charm${i}`, { roll: 1 })));
-    const reqs = { str: Math.max(0, ...items.map((i) => baseByCode.get(i.baseCode)?.reqStr ?? 0)), dex: Math.max(0, ...items.map((i) => baseByCode.get(i.baseCode)?.reqDex ?? 0)) };
-    const total = (p.level - 1) * 5 + 15;
-    setAlloc(autoAllocate(gameData, { className: c.en, level: p.level, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } }, { totalPoints: total, blockTarget: p.blockTarget, rest: p.rest }, reqs));
-    if (r.errors.length) say(`範本有 ${r.errors.length} 項無法載入：${r.errors.join('；')}`); else say(`已載入範本：${p.name}`);
+  // ── 流派範本／自訂 Profile：擷取與套用完整狀態 ──
+  const capture = (): SimSnapshot => ({ classCode: cls.code, level, difficulty, quests, alloc, equipped, charms, swap, skillPoints, activeSkillId, buffsOn, targetRes, rollMax });
+  const applySnapshot = (snap: SimSnapshot, parts: ApplyParts, label: string, recordUndo = true) => {
+    const c = CLASSES.find((x) => x.code === snap.classCode); if (!c) { say(`找不到職業「${snap.classCode}」`); return; }
+    if (recordUndo) { undoRef.current = capture(); setCanUndo(true); }
+    const classChanged = c.code !== cls.code;
+    setCls(c); setSelected(null);
+    if (parts.gear) { setEquipped(snap.equipped); setCharms(snap.charms); setSwap(snap.swap); setRollMax(snap.rollMax); }
+    else if (classChanged) {
+      // 只套用其他範圍但職業不同：卸下他職專屬裝備
+      setEquipped((m) => { const n: EquippedMap = {}; (Object.keys(m) as DollSlot[]).forEach((k) => { const e = m[k]!; if (!e.entry.classCode || e.entry.classCode === c.code) n[k] = e; }); return n; });
+    }
+    if (parts.skills) { setSkillPoints(snap.skillPoints); setActiveSkillId(snap.activeSkillId); setBuffsOn(snap.buffsOn); }
+    else if (classChanged) { setSkillPoints({}); setActiveSkillId(''); setBuffsOn({}); }
+    if (parts.character) { setLevel(snap.level); setDifficulty(snap.difficulty); setQuests(snap.quests); setAlloc(snap.alloc); setTargetRes(snap.targetRes); }
+    else if (classChanged) setAlloc(ZERO);
+    say(`已套用：${label}`);
   };
+  const undoApply = () => { const prev = undoRef.current; if (!prev) return; undoRef.current = null; setCanUndo(false); applySnapshot(prev, ALL_PARTS, '上一次套用之前的狀態', false); };
   const clearAll = () => { setEquipped({}); setCharms([]); setAlloc(ZERO); setSelected(null); };
 
   const selEq = selected ? equipped[selected] : undefined;
@@ -256,12 +258,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <label className="d2-field">範本
-                <select value="" onChange={(e) => { if (e.target.value) loadPreset(e.target.value); }} className="d2-select" aria-label="載入配裝範本">
-                  <option value="">載入…</option>
-                  {SIM_PRESETS.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-                </select>
-              </label>
+              <button type="button" onClick={() => setProfileOpen((v) => !v)} aria-expanded={profileOpen} className="d2-btn" title="套用職業主流流派（入門／頂裝），或儲存、套用自己的配裝 Profile">流派與 Profile {profileOpen ? '▲' : '▼'}</button>
               <button type="button" onClick={share} className="d2-btn is-quiet">分享</button>
               <button type="button" onClick={clearAll} className="d2-btn is-danger">清空</button>
             </div>
@@ -290,6 +287,8 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
           </div>
         </div>
       </div>
+
+      {profileOpen && <ProfilePanel classCode={cls.code} capture={capture} apply={applySnapshot} canUndo={canUndo} onUndo={undoApply} say={say} />}
 
       {toast && <div role="status" className="d2-toast">{toast}</div>}
 
