@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { getCatalog, CLASS_ZH, GROUP_ZH, RARITY_ZH, SLOT_ZH, TIER_ZH, type CatalogEntry, type Group, type Rarity, type Tier } from '../../../engine/catalog';
+import { getCatalog, CLASS_ZH, RARITY_ZH, SLOT_ZH, TIER_ZH, type CatalogEntry, type Group, type Rarity, type Tier } from '../../../engine/catalog';
 import { describeModifiers } from '../../../engine/describe';
+import { gameData } from '../../../engine/data';
+import { EQUIP_DEFS, JEWELRY_DEF, leafOfBase, type TaxDef } from '../../../utils/equipTaxonomy';
 import { ItemIcon } from '../../common/ItemIcon';
 import { imageForEntry } from '../../../utils/catalogImage';
 
@@ -17,13 +19,38 @@ interface Props {
 
 const RARITIES: Rarity[] = ['unique', 'set', 'runeword', 'base'];
 const TIERS: Tier[] = ['normal', 'exceptional', 'elite'];
-const GROUPS: Group[] = ['armor', 'weapon', 'jewelry'];
 const KINDS = ['一般', '職業專屬'];
+const TIER_ORDER_ZH = ['一般', '進階', '菁英', '不分強度'];
 const NO_TIER = '不分強度';
 const MAX_LIST = 150;
 const WIDTH = 440;
 const TOP_MIN = 64;
 const POS_KEY = 'd2sim.gearPicker.pos';
+
+/** 種類層：沿用裝備寶典的分類（itemtypes → 部位 → 類型），不另維護第二份清單 */
+const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
+const TAX_LABEL = new Map<string, string>();
+const TAX_ORDER = new Map<string, number>();
+(() => {
+  let i = 0;
+  const walk = (d: TaxDef) => { TAX_LABEL.set(d.id, d.label); TAX_ORDER.set(d.id, i++); d.children?.forEach(walk); };
+  [...EQUIP_DEFS, JEWELRY_DEF].forEach(walk);
+})();
+const leafOf = (e: CatalogEntry): string => {
+  if (e.group === 'jewelry') return `jewelry/${e.slot}`;
+  const leaf = leafOfBase(baseByCode.get(e.baseCode));
+  if (leaf) return leaf;
+  return e.group === 'weapon' ? 'weapon/melee/swor' : 'armor/body';
+};
+/** 路徑片段：種類（1～3 層）→ 強度 → 一般／職業專屬 */
+const segsOf = (e: CatalogEntry): string[] => [...leafOf(e).split('/'), e.tier ? TIER_ZH[e.tier] : NO_TIER, e.classCode ? '職業專屬' : '一般'];
+const labelOfPath = (path: string[]): string => TAX_LABEL.get(path.join('/')) ?? path[path.length - 1];
+const orderOf = (path: string[], seg: string): number => {
+  const id = [...path, seg].join('/');
+  if (TAX_ORDER.has(id)) return TAX_ORDER.get(id)!;
+  const t = TIER_ORDER_ZH.indexOf(seg); if (t >= 0) return 1000 + t;
+  const k = KINDS.indexOf(seg); return 2000 + (k < 0 ? 0 : k);
+};
 
 const tone = (k: Rarity) => (k === 'set' ? 't-set' : k === 'unique' || k === 'runeword' ? 't-unique' : 't-base');
 const iconRarity = (e: CatalogEntry) => (e.kind === 'base' ? (e.slot === 'charm' ? 'charm' : 'prop') : e.kind === 'unique' ? 'unique' : e.kind);
@@ -96,24 +123,12 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
     return true;
   }), [all, rarity, tiers, q, onlyMyClass, engineClassCode]);
 
-  // 類別 → 強度 → 一般／職業專屬（與原樹狀分層一致）
-  const tree = useMemo(() => {
-    const out = new Map<string, CatalogEntry[]>();
-    for (const e of filtered) {
-      const tier = e.tier ? TIER_ZH[e.tier] : NO_TIER;
-      const k = `${e.group}|${tier}|${e.classCode ? '職業專屬' : '一般'}`;
-      (out.get(k) ?? out.set(k, []).get(k)!).push(e);
-    }
-    return out;
-  }, [filtered]);
+  // 種類（部位 → 類型）→ 強度 → 一般／職業專屬
+  const tree = useMemo(() => filtered.map((e) => ({ e, segs: segsOf(e) })), [filtered]);
   const sortList = (l: CatalogEntry[]) => [...l].sort((a, b) => (a.levelReq ?? 0) - (b.levelReq ?? 0) || a.name.localeCompare(b.name));
-  const entriesUnder = useCallback((prefix: string[]) => {
-    const p = prefix.join('|');
-    const out: CatalogEntry[] = [];
-    tree.forEach((v, k) => { if (!p || k === p || k.startsWith(`${p}|`)) out.push(...v); });
-    return out;
-  }, [tree]);
-  const countUnder = (prefix: string[]) => entriesUnder(prefix).length;
+  const underPath = useCallback((prefix: string[]) => tree.filter((t) => prefix.every((p, i) => t.segs[i] === p)), [tree]);
+  const entriesUnder = useCallback((prefix: string[]) => underPath(prefix).map((t) => t.e), [underPath]);
+  const countUnder = (prefix: string[]) => underPath(prefix).length;
 
   // 預設位置：靠右、頂部列下方；只在寬螢幕使用
   useEffect(() => {
@@ -153,13 +168,17 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
   if (!open) return null;
 
   const searching = q.length > 0;
-  const showList = searching || flat || path.length >= 3;
+  const here = underPath(path);
+  const levelOptions: { label: string; n: number; next: string[] }[] = (() => {
+    const m = new Map<string, number>();
+    here.forEach((t) => { const seg = t.segs[path.length]; if (seg !== undefined) m.set(seg, (m.get(seg) ?? 0) + 1); });
+    return [...m.entries()].sort((a, b) => orderOf(path, a[0]) - orderOf(path, b[0]))
+      .map(([seg, n]) => ({ label: labelOfPath([...path, seg]), n, next: [...path, seg] }));
+  })();
+  // 只有一個分支時不必多點一次：仍顯示，但「直接列出」放在最上面
+  const showList = searching || flat || (here.length > 0 && levelOptions.length === 0);
   const list = showList ? sortList(searching ? filtered : entriesUnder(path)) : [];
-  const levelOptions: { label: string; n: number; next: string[] }[] =
-    path.length === 0 ? GROUPS.map((g) => ({ label: GROUP_ZH[g], n: countUnder([g]), next: [g] }))
-    : path.length === 1 ? [...TIERS.map((t) => TIER_ZH[t]), NO_TIER].map((t) => ({ label: t, n: countUnder([path[0], t]), next: [path[0], t] }))
-    : KINDS.map((k) => ({ label: k, n: countUnder([path[0], path[1], k]), next: [path[0], path[1], k] }));
-  const crumbLabels = path.map((p, i) => (i === 0 ? GROUP_ZH[p as Group] ?? p : p));
+  const crumbLabels = path.map((_, i) => labelOfPath(path.slice(0, i + 1)));
   const goUp = () => { if (flat) { setFlat(false); return; } setPath((p) => p.slice(0, -1)); };
   const rarityText = RARITIES.filter((r) => rarity[r]).map((r) => RARITY_ZH[r]).join('・') || '未選';
   const tierText = TIERS.filter((t) => tiers[t]).map((t) => TIER_ZH[t]).join('・') || '未選';
