@@ -1,8 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { computeCharacter } from '../../../engine/character';
 import { gameData } from '../../../engine/data';
-import { toEquipped, withBase, type CatalogEntry, type Group } from '../../../engine/catalog';
-import { buildEngineItem } from '../../../engine/build';
+import { withBase, type CatalogEntry, type Group } from '../../../engine/catalog';
 import { ALL_PARTS, type ApplyParts, type SimSnapshot } from '../../../data/profileStore';
 import type { EquippedItem } from '../../../engine/types';
 import { SkillTreeV2 } from './SkillTreeV2';
@@ -17,6 +16,7 @@ import { SocketEditor } from './SocketEditor';
 import { ProfilePanel } from './ProfilePanel';
 import { ItemTooltipBody } from './ItemTooltip';
 import { slotPlacementError } from './equipRules';
+import { engineItemsOf } from './engineItems';
 import './d2skin.css';
 import { DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type Quests, type TabKey } from './types';
 
@@ -67,20 +67,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const say = (m: string) => { setToast(m); window.setTimeout(() => setToast((t) => (t === m ? null : t)), 3500); };
 
   // ── 引擎輸入 ──
-  const engineItems: EquippedItem[] = useMemo(() => {
-    const out: EquippedItem[] = [];
-    const arm: DollSlot[] = swap === 'I' ? ['weaponI', 'shieldI'] : ['weaponII', 'shieldII'];
-    (Object.keys(equipped) as DollSlot[]).forEach((k) => {
-      if ((k === 'weaponI' || k === 'shieldI' || k === 'weaponII' || k === 'shieldII') && !arm.includes(k)) return;
-      const eq = equipped[k]; if (!eq) return;
-      const kind = DOLL_SLOT_KIND[k];
-      // 副手欄放武器（雙持）時，引擎槽位用 weapon2，不當作盾牌
-      const slot = kind === 'weapon' ? 'weapon' : kind === 'shield' ? (eq.entry.slot === 'weapon' ? 'weapon2' : 'shield') : k;
-      out.push(buildEngineItem(eq, slot, rollMax));
-    });
-    charms.forEach((c, i) => out.push(toEquipped(c, `charm${i}`, { roll: rollMax ? 1 : 0 })));
-    return out;
-  }, [equipped, charms, swap, rollMax]);
+  const engineItems: EquippedItem[] = useMemo(() => engineItemsOf(equipped, charms, swap, rollMax), [equipped, charms, swap, rollMax]);
 
   const baseInput = useMemo(() => ({
     className: cls.en, level, allocated: alloc, items: engineItems, difficulty, anyaScrolls: quests.anya, quests: { lifePotions: quests.lifePotions },

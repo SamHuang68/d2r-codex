@@ -90,6 +90,8 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
   const [tip, setTip] = React.useState<{ eq: Equipped; at: { x: number; y: number } } | null>(null);
   const showTip = (eq: Equipped | undefined, at: { x: number; y: number }) => { if (eq && !dragging) setTip({ eq, at }); else setTip(null); };
   const hideTip = () => setTip(null);
+  // 手指點一下不顯示提示框（沒有「游標離開」事件，會一直停著）；點選槽位仍會在下方顯示同樣內容的詳情卡
+  const pointerOnly = (fn: (ev: React.PointerEvent<HTMLElement>) => void) => (ev: React.PointerEvent<HTMLElement>) => { if (ev.pointerType !== 'touch') fn(ev); };
   React.useEffect(() => { if (dragging) setTip(null); }, [dragging]);
   // 手機窄螢幕：以縮放保持遊戲座標不變（不產生橫向捲動）
   const wrapRef = React.useRef<HTMLDivElement>(null);
@@ -133,10 +135,10 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
               role="button" tabIndex={0}
               aria-label={eq ? `${DOLL_SLOT_ZH[key]}：${eq.entry.name}` : DOLL_SLOT_ZH[key]}
               title={eq ? undefined : DOLL_SLOT_ZH[key]}
-              onMouseEnter={(ev) => showTip(eq, { x: ev.clientX, y: ev.clientY })}
-              onMouseMove={(ev) => { if (eq) showTip(eq, { x: ev.clientX, y: ev.clientY }); }}
-              onMouseLeave={hideTip}
-              onFocus={(ev) => { const r = ev.currentTarget.getBoundingClientRect(); showTip(eq, { x: r.right - 8, y: r.top + 8 }); }}
+              onPointerEnter={pointerOnly((ev) => showTip(eq, { x: ev.clientX, y: ev.clientY }))}
+              onPointerMove={pointerOnly((ev) => { if (eq) showTip(eq, { x: ev.clientX, y: ev.clientY }); })}
+              onPointerLeave={hideTip}
+              onFocus={(ev) => { if (!ev.currentTarget.matches(':focus-visible')) return; const r = ev.currentTarget.getBoundingClientRect(); showTip(eq, { x: r.right - 8, y: r.top + 8 }); }}
               onBlur={hideTip}
               onClick={() => onSelect(eq ? (isSel ? null : key) : null)}
               onKeyDown={(e) => { if (e.key === 'Enter') onSelect(eq ? key : null); }}
@@ -173,9 +175,9 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
             style={{ left: gridL + p.x * cell + 1, top: gridT + p.y * cell + 1, width: cell * (p.entry.width || 1) - 2, height: cell * (p.entry.height || 1) - 2,
               background: 'rgba(30, 30, 80, .35)', boxShadow: 'inset 0 0 0 1px #5a5ad0, inset 0 0 10px rgba(80,80,255,.25)' }}
             aria-label={`${p.entry.name}（點擊卸下）`}
-            onMouseEnter={(ev) => showTip({ entry: p.entry }, { x: ev.clientX, y: ev.clientY })}
-            onMouseMove={(ev) => showTip({ entry: p.entry }, { x: ev.clientX, y: ev.clientY })}
-            onMouseLeave={hideTip}
+            onPointerEnter={pointerOnly((ev) => showTip({ entry: p.entry }, { x: ev.clientX, y: ev.clientY }))}
+            onPointerMove={pointerOnly((ev) => showTip({ entry: p.entry }, { x: ev.clientX, y: ev.clientY }))}
+            onPointerLeave={hideTip}
             onClick={() => { hideTip(); onRemoveCharm(i); }}>
             <ItemIcon name={p.entry.name} nameEn={p.entry.nameEn} baseItem={p.entry.baseNameEn} slot="charm" rarity={rarityOf(p.entry)} imageUrl={imageForEntry(p.entry)} noGuess fit="fill" showBorder={false} />
           </div>

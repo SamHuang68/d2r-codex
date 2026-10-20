@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BUILDS, PRESET_TIER_ZH, SIM_PRESETS, tierOf, type PresetTier } from '../../../data/simulatorPresets';
 import { previewPreset, stateFromPreset } from '../../../data/presetState';
 import { ALL_PARTS, exportProfile, fromSavedData, loadProfiles, newProfile, parseProfile, storeProfiles, type ApplyParts, type SavedProfile, type SimSnapshot } from '../../../data/profileStore';
@@ -33,11 +33,20 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
   const none = !parts.gear && !parts.skills && !parts.character;
 
   const builds = BUILDS.filter((b) => b.classCode === classCode);
-  // 各檔位套用後的數值（只算一次，切換職業才重算）
-  const previews = useMemo(() => {
-    const m: Record<string, ReturnType<typeof previewPreset>> = {};
-    SIM_PRESETS.filter((p) => p.classCode === classCode && p.tier !== 'start').forEach((p) => { m[p.id] = previewPreset(p); });
-    return m;
+  // 各檔位套用後的數值：一次算一個、算完讓出主執行緒，避免面板一打開就卡住（聖騎士 10 個範本約 0.4 秒）
+  const [previews, setPreviews] = useState<Record<string, ReturnType<typeof previewPreset>>>({});
+  useEffect(() => {
+    const todo = SIM_PRESETS.filter((p) => p.classCode === classCode);
+    let i = 0; let cancelled = false; let timer = 0;
+    setPreviews({});
+    const step = () => {
+      if (cancelled || i >= todo.length) return;
+      const p = todo[i++]; const pv = previewPreset(p);
+      setPreviews((m) => ({ ...m, [p.id]: pv }));
+      timer = window.setTimeout(step, 0);
+    };
+    timer = window.setTimeout(step, 0);
+    return () => { cancelled = true; window.clearTimeout(timer); };
   }, [classCode]);
 
   const applyTemplate = (buildId: string, tier: PresetTier) => {
@@ -119,6 +128,11 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
                           套用{PRESET_TIER_ZH[t]}（Lv{tierOf(b, t).level}）
                         </button>
                       ))}
+                      {(() => {
+                        const pv = previews[`${b.id}:bis`];
+                        if (!pv || pv.survival.minRes >= 75) return null;
+                        return <span className="d2-sub" style={{ color: 'var(--bad)' }} title="地獄難度有 −100 抗性懲罰；範本沒有針對抗性調整。「平衡減傷」只換手套、腰帶、戒指、鞋子，不降技能與施法／攻速，能補一部分">頂裝在地獄的最低抗性只有 {pv.survival.minRes}%，可試「平衡減傷」</span>;
+                      })()}
                     </div>
                     <div className="flex flex-wrap items-center gap-2 mt-1.5">
                       <span className="d2-sub" style={{ width: 36 }}>尋寶</span>

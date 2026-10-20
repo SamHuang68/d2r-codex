@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/components/simulator/v2/equipRules'; export * from './src/data/profileStore'; export * from './src/data/presetState';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -242,8 +242,7 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
   for (const p of SIM_PRESETS) {
     t(`範本「${p.name}」：所有物品與鑲嵌皆可解析、無未處理屬性、滿足需求`, () => {
       const r = resolvePreset(p); assert.deepEqual(r.errors, []);
-      const items = []; for (const [k, eq] of Object.entries(r.equipped)) { if (k.endsWith('II')) continue; items.push(buildEngineItem(eq, eq.entry.slot === 'weapon' ? (k.startsWith('shield') ? 'weapon2' : 'weapon') : eq.entry.slot === 'shield' ? 'shield' : k)); }
-      r.charms.forEach((c, i) => items.push(buildEngineItem({ entry: c }, 'charm' + i)));
+      const items = E.engineItemsOf(r.equipped, r.charms);
       const cs = gameData.charstats.find((c) => c.class === ENGINE_CLASS_BY_CODE[p.classCode]);
       const reqs = { str: Math.max(0, ...items.map((i) => gameData.bases.find((b) => b.code === i.baseCode)?.reqStr ?? 0)), dex: Math.max(0, ...items.map((i) => gameData.bases.find((b) => b.code === i.baseCode)?.reqDex ?? 0)) };
       const base = { className: cs.class, level: p.level, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } };
@@ -291,8 +290,7 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
     const { itemOwnStats, buildEngineItem: bei } = E;
     for (const id of ['sor-blizzard:bis', 'pal-hammerdin:bis', 'bar-whirlwind:bis', 'ama-lightning-fury:bis']) {
       const p = E.SIM_PRESETS.find((x) => x.id === id); const { snap } = stateFromPreset(p);
-      const items = []; for (const [k, eq] of Object.entries(snap.equipped)) { if (k.endsWith('II')) continue; items.push(bei(eq, eq.entry.slot === 'weapon' ? (k.startsWith('shield') ? 'weapon2' : 'weapon') : eq.entry.slot === 'shield' ? 'shield' : k, true)); }
-      snap.charms.forEach((c, i) => items.push(bei({ entry: c }, 'charm' + i, true)));
+      const items = E.engineItemsOf(snap.equipped, snap.charms);
       const res = E.computeCharacter(gameData, { className: E.ENGINE_CLASS_BY_CODE[p.classCode], level: p.level, allocated: snap.alloc, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } });
       const a = res.attributes; let sum = 0;
       for (const it of items) { const o = itemOwnStats(gameData, it, p.level, { str: a.str, dex: a.dex }); sum += o.defense ?? 0; }
@@ -349,9 +347,7 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
   t('平衡減傷：每個流派都滿足需求、全技能／職業／技能樹／單項技能加成與 FCR／IAS 都不低於頂裝，且有效生命不低於頂裝', () => {
     const { BUILDS, SIM_PRESETS, resolvePreset, buildEngineItem: bei, toEquipped, autoAllocate: aa, computeCharacter: cc2, survivalSummary } = E;
     const run = (p) => {
-      const r = resolvePreset(p); const items = [];
-      for (const [k, eq] of Object.entries(r.equipped)) { if (k.endsWith('II')) continue; items.push(bei(eq, eq.entry.slot === 'weapon' ? (k.startsWith('shield') ? 'weapon2' : 'weapon') : eq.entry.slot === 'shield' ? 'shield' : k, true)); }
-      r.charms.forEach((c, i) => items.push(bei({ entry: c }, 'charm' + i, true)));
+      const r = resolvePreset(p); const items = E.engineItemsOf(r.equipped, r.charms);
       const reqs = { str: Math.max(0, ...items.map((i) => gameData.bases.find((b) => b.code === i.baseCode)?.reqStr ?? 0)), dex: Math.max(0, ...items.map((i) => gameData.bases.find((b) => b.code === i.baseCode)?.reqDex ?? 0)) };
       const base = { className: E.ENGINE_CLASS_BY_CODE[p.classCode], level: p.level, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } };
       const alloc = aa(gameData, base, { totalPoints: (p.level - 1) * 5 + 15, blockTarget: p.blockTarget, rest: p.rest }, reqs);

@@ -1,6 +1,5 @@
-import { ENGINE_CLASS_BY_CODE, toEquipped, type CatalogEntry } from '../engine/catalog';
+import { ENGINE_CLASS_BY_CODE } from '../engine/catalog';
 import { autoAllocate } from '../engine/alloc';
-import { buildEngineItem } from '../engine/build';
 import { computeCharacter } from '../engine/character';
 import { survivalSummary, type Survival } from '../engine/survival';
 import { gameData } from '../engine/data';
@@ -9,7 +8,7 @@ import { planSkills } from '../engine/skillPlan';
 import { resolvePreset } from './presetResolver';
 import type { SimPreset } from './simulatorPresets';
 import type { SimSnapshot } from './profileStore';
-import { DOLL_SLOT_KIND, type DollSlot } from '../components/simulator/v2/types';
+import { engineItemsOf } from '../components/simulator/v2/engineItems';
 
 const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
 
@@ -17,13 +16,7 @@ const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
 function build(p: SimPreset): { snap: SimSnapshot; notes: string[]; items: EquippedItem[]; className: string } {
   const r = resolvePreset(p);
   const className = ENGINE_CLASS_BY_CODE[p.classCode];
-  const items: EquippedItem[] = [];
-  (Object.keys(r.equipped) as DollSlot[]).forEach((k) => {
-    if (k === 'weaponII' || k === 'shieldII') return;
-    const eq = r.equipped[k]!; const kind = DOLL_SLOT_KIND[k];
-    items.push(buildEngineItem(eq, kind === 'weapon' ? 'weapon' : kind === 'shield' ? (eq.entry.slot === 'weapon' ? 'weapon2' : 'shield') : k, true));
-  });
-  r.charms.forEach((ch: CatalogEntry, i: number) => items.push(toEquipped(ch, `charm${i}`, { roll: 1 })));
+  const items = engineItemsOf(r.equipped, r.charms, 'I', true);
   const reqs = { str: Math.max(0, ...items.map((i) => baseByCode.get(i.baseCode)?.reqStr ?? 0)), dex: Math.max(0, ...items.map((i) => baseByCode.get(i.baseCode)?.reqDex ?? 0)) };
   const alloc = autoAllocate(gameData, { className, level: p.level, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } },
     { totalPoints: (p.level - 1) * 5 + 15, blockTarget: p.blockTarget, rest: p.rest }, reqs);

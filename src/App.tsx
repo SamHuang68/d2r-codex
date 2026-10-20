@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Navbar, SideNav } from './components/layout/Navbar';
 import { MobileNav } from './components/layout/MobileNav';
 import { Footer } from './components/layout/Footer';
@@ -27,7 +27,8 @@ import { CharacterGuide } from './components/codex/CharacterGuide';
 import { PropCompendium } from './components/codex/PropCompendium';
 import { RUNEWORDS_DATA } from './data/runewords';
 import { normalizeItemQuery } from './utils/itemQueryNormalizer';
-import { SimulatorV2 } from './components/simulator/v2/SimulatorV2';
+// 配裝模擬器連同遊戲資料表很大，只在進入該頁時才載入，首頁不必等它
+const SimulatorV2 = lazy(() => import('./components/simulator/v2/SimulatorV2').then((m) => ({ default: m.SimulatorV2 })));
 
 const KNOWN_TABS = ['overview', 'characters', 'skills', 'runewords', 'items', 'props', 'bases', 'quests', 'mercenaries', 'valuation', 'uber', 'runes', 'cube', 'breakpoints', 'areas', 'grail', 'planner'];
 /** 網址 #planner 可直接開啟對應分頁（例如配裝模擬器） */
@@ -246,7 +247,9 @@ export const App: React.FC = () => {
             </div>
 
             {plannerSubMode === 'armory' ? (
-              <SimulatorV2 initialClass={selectedInitialClass} />
+              <Suspense fallback={<div className="p-8 text-center text-sanctuary-400" role="status">載入配裝模擬器…</div>}>
+                <SimulatorV2 initialClass={selectedInitialClass} />
+              </Suspense>
             ) : (
               <BuildPlanner 
                 onNavigateToSkills={(cls) => {
