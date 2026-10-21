@@ -1,10 +1,6 @@
 import React from 'react';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
-import { UNIQUE_ITEMS_DATA } from '../../data/uniqueItems';
-import { SET_ITEMS_DATA } from '../../data/setItems';
-import { BASE_ITEMS_DATA } from '../../data/bases';
-import { RUNEWORDS_DATA } from '../../data/runewords';
-import { RUNES_DATA } from '../../data/runes';
+import portalSummary from '../../data/codex/portalSummary.json';
 import { NAV_GROUPS } from '../layout/navConfig';
 
 interface CategoryGridProps {
@@ -14,20 +10,8 @@ interface CategoryGridProps {
 
 /** 首頁大圖分類格：裝備圖鑑用大尺寸物品圖，其餘 11 個分頁用分組入口卡，17 個分頁入口全數保留 */
 export const CategoryGrid: React.FC<CategoryGridProps> = ({ onNavigateTab }) => {
-  const uniq = (en: string) => UNIQUE_ITEMS_DATA.find((u) => u.nameEn === en) || UNIQUE_ITEMS_DATA[0];
-  const harlequin = uniq('Harlequin Crest');
-  const pb = BASE_ITEMS_DATA.find((b) => b.nameEn === 'Phase Blade') || BASE_ITEMS_DATA[0];
-  const setPiece = SET_ITEMS_DATA[0]?.pieces[0];
-  const base = BASE_ITEMS_DATA.find((b) => b.nameEn === 'Archon Plate') || BASE_ITEMS_DATA[0];
-
-  const gearTiles: CategoryTile[] = [
-    { id: 'items', label: '暗金裝備', sub: '暗金 Unique', count: UNIQUE_ITEMS_DATA.length, tone: 'unique', icon: { name: harlequin.name, nameEn: harlequin.nameEn, baseItem: harlequin.baseItem, rarity: 'unique', imageUrl: harlequin.imageUrl } },
-    { id: 'sets', label: '成套裝備', sub: '綠色套裝 Set', count: SET_ITEMS_DATA.length, tone: 'set', icon: { name: setPiece?.name, nameEn: setPiece?.nameEn, baseItem: setPiece?.baseItem, slot: setPiece?.slot, rarity: 'set', imageUrl: setPiece?.imageUrl } },
-    { id: 'runewords', label: '符文之語', sub: 'Runeword', count: RUNEWORDS_DATA.length, tone: 'unique', icon: { name: pb?.name, nameEn: pb?.nameEn, baseItem: pb?.name, rarity: 'runeword', imageUrl: pb?.imageUrl } },
-    { id: 'bases', label: '底材寶典', sub: '白色底材', count: BASE_ITEMS_DATA.length, tone: 'neutral', icon: { name: base.name, nameEn: base.nameEn, baseItem: base.name, rarity: 'normal', imageUrl: base.imageUrl } },
-    { id: 'runes', label: '符文寶庫', sub: '1-33# 符文', count: RUNES_DATA.length, tone: 'rune', size: 'lg', icon: { runeNumber: 30, name: '貝', nameEn: 'Ber', rarity: 'rune' } },
-    { id: 'props', label: '道具聖物', sub: '寶石・鑰匙・藥劑', tone: 'magic', size: 'lg', icon: { name: '完美紫寶石', nameEn: 'Perfect Amethyst', rarity: 'prop' } },
-  ];
+  // 各類筆數與代表物品圖示由 scripts/build_portal_summary.mjs 事先算好（首頁不必載入整份百科資料）
+  const gearTiles = portalSummary as unknown as CategoryTile[];
 
   // 非裝備類分頁：沿用導覽設定的圖示與說明，放大成入口卡
   const gearIds = new Set(['items', 'runewords', 'bases', 'runes', 'props', 'overview']);

@@ -2,31 +2,30 @@ import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Navbar, SideNav } from './components/layout/Navbar';
 import { MobileNav } from './components/layout/MobileNav';
 import { Footer } from './components/layout/Footer';
-import { SearchModal } from './components/layout/SearchModal';
 
 import { HeroSection } from './components/portal/HeroSection';
 import { CategoryGrid } from './components/portal/CategoryGrid';
 import { ClassShowcase } from './components/portal/ClassShowcase';
 import { DLCReign } from './components/portal/DLCReign';
 
-import { SkillPlanner } from './components/codex/SkillPlanner';
-import { RunewordFinder } from './components/codex/RunewordFinder';
-import { ItemCompendium } from './components/codex/ItemCompendium';
-import { BaseItemGuide } from './components/codex/BaseItemGuide';
-import { QuestGuide } from './components/codex/QuestGuide';
-import { RuneCompendium } from './components/codex/RuneCompendium';
-import { CubeLab } from './components/codex/CubeLab';
-import { BreakpointTable } from './components/codex/BreakpointTable';
-import { AreaGuide } from './components/codex/AreaGuide';
-import { MercenaryGuide } from './components/codex/MercenaryGuide';
-import { ValuationGuide } from './components/codex/ValuationGuide';
-import { UberBossGuide } from './components/codex/UberBossGuide';
-import { HolyGrailTracker } from './components/vault/HolyGrailTracker';
-import { BuildPlanner } from './components/vault/BuildPlanner';
-import { CharacterGuide } from './components/codex/CharacterGuide';
-import { PropCompendium } from './components/codex/PropCompendium';
-import { RUNEWORDS_DATA } from './data/runewords';
-import { normalizeItemQuery } from './utils/itemQueryNormalizer';
+// 百科各頁、搜尋面板連同它們用到的資料表（合計約 1.3 MB）都只在用到時才載入，首頁不必等它們
+const SkillPlanner = lazy(() => import('./components/codex/SkillPlanner').then((m) => ({ default: m.SkillPlanner })));
+const RunewordFinder = lazy(() => import('./components/codex/RunewordFinder').then((m) => ({ default: m.RunewordFinder })));
+const ItemCompendium = lazy(() => import('./components/codex/ItemCompendium').then((m) => ({ default: m.ItemCompendium })));
+const BaseItemGuide = lazy(() => import('./components/codex/BaseItemGuide').then((m) => ({ default: m.BaseItemGuide })));
+const QuestGuide = lazy(() => import('./components/codex/QuestGuide').then((m) => ({ default: m.QuestGuide })));
+const RuneCompendium = lazy(() => import('./components/codex/RuneCompendium').then((m) => ({ default: m.RuneCompendium })));
+const CubeLab = lazy(() => import('./components/codex/CubeLab').then((m) => ({ default: m.CubeLab })));
+const BreakpointTable = lazy(() => import('./components/codex/BreakpointTable').then((m) => ({ default: m.BreakpointTable })));
+const AreaGuide = lazy(() => import('./components/codex/AreaGuide').then((m) => ({ default: m.AreaGuide })));
+const MercenaryGuide = lazy(() => import('./components/codex/MercenaryGuide').then((m) => ({ default: m.MercenaryGuide })));
+const ValuationGuide = lazy(() => import('./components/codex/ValuationGuide').then((m) => ({ default: m.ValuationGuide })));
+const UberBossGuide = lazy(() => import('./components/codex/UberBossGuide').then((m) => ({ default: m.UberBossGuide })));
+const HolyGrailTracker = lazy(() => import('./components/vault/HolyGrailTracker').then((m) => ({ default: m.HolyGrailTracker })));
+const BuildPlanner = lazy(() => import('./components/vault/BuildPlanner').then((m) => ({ default: m.BuildPlanner })));
+const CharacterGuide = lazy(() => import('./components/codex/CharacterGuide').then((m) => ({ default: m.CharacterGuide })));
+const PropCompendium = lazy(() => import('./components/codex/PropCompendium').then((m) => ({ default: m.PropCompendium })));
+const SearchModal = lazy(() => import('./components/layout/SearchModal').then((m) => ({ default: m.SearchModal })));
 // 配裝模擬器連同遊戲資料表很大，只在進入該頁時才載入，首頁不必等它
 const SimulatorV2 = lazy(() => import('./components/simulator/v2/SimulatorV2').then((m) => ({ default: m.SimulatorV2 })));
 
@@ -40,6 +39,8 @@ const tabFromHash = (): string => {
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>(tabFromHash);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [searchLoaded, setSearchLoaded] = useState<boolean>(false);
+  useEffect(() => { if (isSearchOpen) setSearchLoaded(true); }, [isSearchOpen]);
   const [selectedInitialClass, setSelectedInitialClass] = useState<string>('魔法使');
   const [targetQuery, setTargetQuery] = useState<string>('');
   /** 裝備寶典要停在的樹節點（首頁「成套裝備」磚傳 's'、「暗金裝備」磚傳 'u'）；沒有就用預設的暗金·菁英 */
@@ -88,8 +89,10 @@ export const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleItemOrRunewordNavigate = (rawName: string) => {
+  const handleItemOrRunewordNavigate = async (rawName: string) => {
     const cleanName = rawName.replace(/[【】]/g, '').trim();
+    // 比對用的資料表很大，點了連結才載入
+    const [{ normalizeItemQuery }, { RUNEWORDS_DATA }] = await Promise.all([import('./utils/itemQueryNormalizer'), import('./data/runewords')]);
     const normalized = normalizeItemQuery(cleanName);
 
     if (normalized) {
@@ -135,6 +138,7 @@ export const App: React.FC = () => {
       <SideNav activeTab={activeTab} setActiveTab={(t) => handleNavigate(t)} />
       {/* Main Content Area */}
       <main className="flex-1 min-w-0 pb-16 lg:pb-0">
+        <Suspense fallback={<div className="p-8 text-center text-sanctuary-400" role="status">載入中…</div>}>
         {activeTab === 'overview' && (
           <div>
             <HeroSection onNavigateTab={(tab) => handleNavigate(tab)} />
@@ -261,15 +265,20 @@ export const App: React.FC = () => {
             )}
           </div>
         )}
+        </Suspense>
       </main>
       </div>
 
       {/* Search Modal */}
-      <SearchModal
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-        onSelectResult={handleSelectSearchResult}
-      />
+      {searchLoaded && (
+        <Suspense fallback={null}>
+          <SearchModal
+            isOpen={isSearchOpen}
+            onClose={() => setIsSearchOpen(false)}
+            onSelectResult={handleSelectSearchResult}
+          />
+        </Suspense>
+      )}
 
       {/* Mobile Bottom Dock */}
       <MobileNav

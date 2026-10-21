@@ -9,7 +9,7 @@
 // 環境變數：SMOKE_CHANNEL=chrome 使用系統安裝的 Chrome（CI 用）；沒設就用 Playwright 內建的 Chromium。
 //
 // 檢查內容：
-//  - 桌面視窗：首頁與各分頁（裝備寶典、符文之語、技能、底材、聖杯、斷點）有足夠內容；配裝模擬載入後能套用一套流派、物品欄出現裝備
+//  - 桌面視窗：首頁載入的 JS 不超過預算（百科資料不能綁在首頁）；百科各分頁都有足夠內容；按 Q 能打開搜尋面板；配裝模擬載入後能套用一套流派、物品欄出現裝備
 //  - 手機視窗（390 寬）：首頁與配裝模擬沒有橫向捲動
 //  - 全程不得有頁面例外（pageerror）與頁面自己的 console 錯誤；第三方資源（字型、遠端圖片）載入失敗不算
 import fs from 'node:fs';
@@ -31,7 +31,20 @@ const ROUTES = [
   { hash: '#bases', min: 1500, label: '底材寶典' },
   { hash: '#grail', min: 3000, label: '聖杯打寶' },
   { hash: '#breakpoints', min: 600, label: '機制斷點' },
+  // 百科各頁都是進頁面才載入的 lazy chunk，每一頁都要確認載得起來（門檻約為實測字數的一半）
+  { hash: '#characters', min: 600, label: '職業圖鑑' },
+  { hash: '#props', min: 1200, label: '道具聖物' },
+  { hash: '#quests', min: 700, label: '任務' },
+  { hash: '#mercenaries', min: 1000, label: '傭兵' },
+  { hash: '#valuation', min: 2500, label: '估價' },
+  { hash: '#uber', min: 900, label: '暗黑破壞神三兄弟' },
+  { hash: '#runes', min: 3000, label: '符文寶庫' },
+  { hash: '#cube', min: 3000, label: '赫拉迪克方塊' },
+  { hash: '#areas', min: 1600, label: '區域' },
 ];
+
+// 首頁（含 vendor）載入的 JS 位元組預算。百科資料與各頁是進頁面才載入，首頁不該再把它們帶進來（改版前首頁約 1.8 MB，改版後約 0.3 MB）
+const HOME_JS_BUDGET = 700 * 1024;
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2' };
 
@@ -79,11 +92,60 @@ async function runOnce(base, browser) {
     else if (!(await page.title()).includes('D2R')) failures.push(`[桌面] 首頁標題不對：${await page.title()}`);
     else if (!(await page.evaluate(() => document.body.innerText)).includes('遊戲資料版本')) failures.push('[桌面] 頁尾沒有顯示遊戲資料版本');
 
+    const homeJs = await page.evaluate(() => performance.getEntriesByType('resource').filter((r) => /\.js(\?|$)/.test(r.name)).reduce((a, r) => a + r.decodedBodySize, 0));
+    if (homeJs > HOME_JS_BUDGET) failures.push(`[桌面] 首頁載入了 ${(homeJs / 1024).toFixed(0)} kB 的 JS，超過 ${HOME_JS_BUDGET / 1024} kB 預算（百科資料可能又被綁回首頁）`);
+
     for (const r of ROUTES) {
       await page.evaluate((h) => { location.hash = h; }, r.hash);
       try { await page.waitForFunction((min) => document.body.innerText.length > min, r.min, { timeout: 10000 }); } catch { /* 下面會回報 */ }
       const n = await textLen(page);
       if (n <= r.min) failures.push(`[桌面] ${r.label}（${r.hash}）內容不足：${n} 字，要求超過 ${r.min}`);
+    }
+
+    // 跨頁連結（傭兵頁的物品名）：點了才載入比對用的資料表，再跳到對應分頁
+    await page.evaluate(() => { location.hash = '#mercenaries'; });
+    try {
+      const link = page.locator('button[title^="點擊查看【"], button[title^="點擊跳轉查看【"]').first();
+      await link.waitFor({ timeout: 10000 });
+      await link.click();
+      await page.waitForFunction(() => /^#(items|runewords|bases|runes|props)$/.test(location.hash), null, { timeout: 10000 });
+    } catch (e) {
+      failures.push(`[桌面] 傭兵頁的物品連結點了沒有跳轉到對應分頁：${String(e.message).split('\n')[0]}`);
+    }
+
+    // 改版後舊頁面載入不到舊 chunk：第一次載入分頁的 chunk 失敗時，應自動整頁重整一次並恢復（模擬：中止第一次 QuestGuide chunk 請求）
+    {
+      const ctx2 = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+      const p2 = await ctx2.newPage();
+      // 失敗當下那個「即將被重整掉」的頁面一定會丟出載入錯誤，不算；重整之後（第 2 次 load 起）出現的錯誤才算
+      let loads = 0; p2.on('load', () => { loads++; });
+      p2.on('pageerror', (e) => { if (loads >= 2) failures.push(`[桌面·重整後] 頁面例外：${e.message}`); });
+      let aborted = 0;
+      await p2.route(/\/assets\/QuestGuide-[^/]*\.js(\?.*)?$/, (route) => { if (aborted === 0) { aborted++; route.abort(); } else route.continue(); });
+      await p2.goto(withBust(), { waitUntil: 'load', timeout: 45000 });
+      try {
+        await p2.waitForFunction(() => document.body.innerText.length > 800, null, { timeout: 15000 });
+        await p2.evaluate(() => { window.__notReloaded = true; }); // 整頁重整後這個標記會消失
+        await p2.evaluate(() => { location.hash = '#quests'; });
+        await p2.waitForFunction(() => document.body.innerText.includes('全章節任務寶典'), null, { timeout: 20000 });
+        const reloaded = await p2.evaluate(() => window.__notReloaded !== true);
+        if (aborted !== 1) failures.push('[桌面] 模擬 chunk 載入失敗沒有觸發（測試本身有問題）');
+        else if (!reloaded) failures.push('[桌面] chunk 載入失敗後沒有整頁重整（頁面是怎麼恢復的？）');
+      } catch (e) {
+        failures.push(`[桌面] chunk 載入失敗後沒有自動重整並恢復：${String(e.message).split('\n')[0]}`);
+      }
+      await ctx2.close();
+    }
+
+    // 搜尋面板也是第一次按 Q 才載入的 lazy chunk
+    await page.evaluate(() => { location.hash = '#overview'; });
+    try {
+      await page.waitForFunction(() => document.body.innerText.length > 800, null, { timeout: 10000 });
+      await page.keyboard.press('q');
+      await page.waitForSelector('input[placeholder*="搜尋符文之語"]', { timeout: 10000 });
+      await page.keyboard.press('Escape');
+    } catch (e) {
+      failures.push(`[桌面] 按 Q 打不開搜尋面板：${String(e.message).split('\n')[0]}`);
     }
 
     // 配裝模擬：延遲載入的 chunk、引擎、遊戲資料都要在正式建置裡跑得起來（區塊標題是字距放大的「生 存 力」，所以比對允許空白）
@@ -136,4 +198,4 @@ try {
   local?.server.close();
 }
 if (failures.length) { console.error(`\n冒煙測試失敗（${base}）`); process.exit(1); }
-console.log(`冒煙測試通過（${base}）：首頁與 ${ROUTES.length} 個分頁有內容、配裝模擬可套用流派、手機版無橫向捲動、無頁面錯誤`);
+console.log(`冒煙測試通過（${base}）：首頁 JS 在預算內、${ROUTES.length} 個分頁有內容、跨頁物品連結可跳轉、chunk 載入失敗會自動重整、搜尋面板可開啟、配裝模擬可套用流派、手機版無橫向捲動、無頁面錯誤`);
