@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { MF_KIND_ZH, marginalUnique, mfSummary } from '../../../engine/magicFind';
 import { PDR_CAP, survivalSummary } from '../../../engine/survival';
+import { BREAKPOINTS, bpStatus, type BpKind } from '../../../engine/breakpoints';
 import type { CharacterResult } from '../../../engine/types';
 import type { Alloc } from './types';
 import { skillByName, tabName } from '../../../engine/skills';
 
 interface Props {
   className: string;
+  /** 職業代碼（斷點表依職業查） */
+  classCode: string;
   level: number;
   result: CharacterResult;
   alloc: Alloc;
@@ -52,6 +55,35 @@ const MORE: { label: string; stat: string; suffix?: string }[] = [
   { label: '生命回復／秒', stat: 'hpregen' },
   { label: '無法凍結', stat: 'item_cannotbefrozen' },
 ];
+
+const BP_ROWS: { kind: BpKind; label: string; stat: string; unit: string }[] = [
+  { kind: 'fcr', label: '快速施法 FCR', stat: 'item_fastercastrate', unit: '施法影格' },
+  { kind: 'fhr', label: '快速打擊恢復 FHR', stat: 'item_fastergethitrate', unit: '受擊恢復影格' },
+  { kind: 'fbr', label: '快速格擋 FBR', stat: 'item_fasterblockrate', unit: '格擋影格' },
+];
+
+/** 斷點：目前的百分比落在哪一格、下一格還差多少。同一職業有多種動作（武器、型態）時可切換 */
+const BreakpointRow: React.FC<{ kind: BpKind; label: string; unit: string; classCode: string; value: number }> = ({ kind, label, unit, classCode, value }) => {
+  const tables = BREAKPOINTS[kind][classCode];
+  const [pick, setPick] = useState('');
+  if (!tables) return null;
+  const table = tables.find((x) => x.id === pick) ?? tables[0];
+  const st = bpStatus(table, value);
+  return (
+    <div className="d2-row flex-wrap gap-y-1" title={table.inferredLast ? '最後一格的影格值來源頁面缺漏，依規律補上' : undefined}>
+      <span className="k">{label}</span>
+      <span className="v">
+        {value}%・{st.frames} {unit}
+        {st.next ? <span className="t-dim">　下一格 {st.next.threshold}%（還差 {st.next.missing}%，{st.next.frames} 影格）</span> : <span className="t-gold">　已達最高斷點</span>}
+      </span>
+      {tables.length > 1 && (
+        <select value={table.id} onChange={(e) => setPick(e.target.value)} className="d2-select w-full" aria-label={`${label}的動作種類`}>
+          {tables.map((x) => <option key={x.id} value={x.id}>{x.label}</option>)}
+        </select>
+      )}
+    </div>
+  );
+};
 
 const Row: React.FC<{ label: string; value: string; tone?: string; title?: string }> = ({ label, value, tone, title }) => (
   <div className="d2-row" title={title}>
@@ -105,7 +137,7 @@ const AttrInput: React.FC<{ label: string; total: number; base: number; alloc: n
   );
 };
 
-export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc, remaining, needStr, needDex, onAdd, onSet, onAutoReq, onAllVit, onReset, mainSkill, targetRes, onTargetRes, buffs, onToggleBuff, enemyReduction }) => {
+export const AttributesTab: React.FC<Props> = ({ className, classCode, level, result, alloc, remaining, needStr, needDex, onAdd, onSet, onAutoReq, onAllVit, onReset, mainSkill, targetRes, onTargetRes, buffs, onToggleBuff, enemyReduction }) => {
   const [more, setMore] = useState(false);
   const a = result.attributes;
   const unmet: Record<string, boolean> = { str: a.str < needStr, dex: a.dex < needDex };
@@ -213,6 +245,30 @@ export const AttributesTab: React.FC<Props> = ({ className, level, result, alloc
           ))}
         </div>
       </div>
+
+      {BREAKPOINTS.fcr[classCode] && (
+        <div className="mt-5" aria-label="斷點">
+          <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>斷 點</div>
+          <div className="grid grid-cols-1 gap-1.5">
+            {BP_ROWS.map((r) => <BreakpointRow key={`${classCode}-${r.kind}`} kind={r.kind} label={r.label} unit={r.unit} classCode={classCode} value={s[r.stat] ?? 0} />)}
+          </div>
+          <div className="d2-sub mt-1">斷點表來自社群整理（Maxroll 2026-02，主要斷點另與 DiabloBytes、PureDiablo 比對），不是遊戲資料表；實際影格還受武器與技能影響。只含裝備提供的百分比，不含技能或光環。</div>
+        </div>
+      )}
+
+      {result.sets.length > 0 && (
+        <div className="mt-5" aria-label="套裝">
+          <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>套 裝</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+            {result.sets.map((x) => (
+              <Row key={x.id} label={x.name ?? x.nameEn} tone={x.full ? 't-set' : ''}
+                value={`${x.count}／${x.size} 件${x.full ? '（全套）' : x.activePieces.length ? `・${x.activePieces.join('、')} 件加成生效` : ''}`}
+                title="件數以不同的套裝件計；滑過物品可看各件與套裝加成的內容" />
+            ))}
+          </div>
+          <div className="d2-sub mt-1">各件自己的加成以「第 N 組＝穿戴 N+1 件」計算（塔拉夏的審判項鍊 4 件才生效，與社群資料一致，其餘件未逐一核對）。</div>
+        </div>
+      )}
 
       <div className="mt-5" aria-label="生存力">
         <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>生 存 力</div>

@@ -23,8 +23,8 @@ const box = (row: InvRow, key: string): Box => ({
   h: (row[`${key}Height`] as number) * SCALE,
 });
 
-const rarityOf = (e: CatalogEntry) => (e.kind === 'base' ? (e.slot === 'charm' ? 'charm' : 'prop') : e.kind === 'unique' ? 'unique' : e.kind);
-const toneOf = (e: CatalogEntry) => (e.kind === 'set' ? 't-set' : e.kind === 'unique' || e.kind === 'runeword' ? 't-unique' : 't-base');
+const rarityOf = (e: CatalogEntry) => (e.custom ? 'magic' : e.kind === 'base' ? (e.slot === 'charm' ? 'charm' : 'prop') : e.kind === 'unique' ? 'unique' : e.kind);
+const toneOf = (e: CatalogEntry) => (e.custom ? 't-magic' : e.kind === 'set' ? 't-set' : e.kind === 'unique' || e.kind === 'runeword' ? 't-unique' : 't-base');
 
 interface Props {
   engineClass: string;
@@ -73,6 +73,9 @@ const SwapTabs: React.FC<{ swap: 'I' | 'II'; onSwap: (s: 'I' | 'II') => void; st
     ))}
   </div>
 );
+
+/** 物品欄裡同一套裝的件名（不同名才算不同件） */
+export const setNamesOf = (equipped: EquippedMap, setId?: string): string[] => (setId ? [...new Set((Object.values(equipped) as (Equipped | undefined)[]).filter((x): x is Equipped => !!x && x.entry.setId === setId).map((x) => x.entry.name))] : []);
 
 export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, swap, onSwap, dragging, canDrop, onDropItem, onRemoveCharm, selected, onSelect, unmet, level, rollMax, attrs }) => {
   const row = INV.find((r) => r.class === engineClass) ?? INV.find((r) => r.class === 'Sorceress') ?? INV[0];
@@ -185,7 +188,7 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
         <div className="absolute d2-well flex items-center justify-center t-dim" style={{ right: 20, bottom: 20, width: 60, height: 60, fontSize: 12, letterSpacing: '.2em' }}>方塊</div>
         <div className="absolute t-dim" style={{ left: 28, bottom: 14, fontSize: 11 }}>護身符只有放在背包內才生效（遊戲規則）</div>
       </div>
-      {tip && tipHost && <FloatingItemTip host={tipHost} at={tip.at} eq={tip.eq} level={level} rollMax={rollMax} attrs={attrs} />}
+      {tip && tipHost && <FloatingItemTip host={tipHost} at={tip.at} eq={tip.eq} level={level} rollMax={rollMax} attrs={attrs} equippedSetNames={setNamesOf(equipped, tip.eq.entry.setId)} />}
     </div>
   );
 };

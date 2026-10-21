@@ -44,6 +44,11 @@ export interface CatalogEntry {
   height: number;
   /** 套裝名稱（套裝件） */
   setName?: string;
+  /** 套裝 id 與此件自己的套裝加成（見 engine/types EquippedItem） */
+  setId?: string;
+  setBonus?: { pieces: number; mods: Modifier[] }[];
+  /** 自訂飾品（魔法／稀有的戒指、項鍊、護身符）：使用者組出來的詞綴，見 engine/customItem.ts */
+  custom?: import('./customItem').CustomItemDef;
 }
 
 const baseByCode = new Map<string, BaseItem>(gameData.bases.map((b) => [b.code, b]));
@@ -64,7 +69,15 @@ export function slotOfBase(b: BaseItem): SlotKind | undefined {
 }
 const groupOfSlot = (s: SlotKind): Group => (s === 'weapon' ? 'weapon' : s === 'neck' || s === 'ring' || s === 'charm' ? 'jewelry' : 'armor');
 
-interface Row { id: string; name: string; nameEn: string; code: string; levelReq?: number; mods: Modifier[]; crafted?: boolean; disabled?: boolean; setNameEn?: string }
+interface Row { id: string; name: string; nameEn: string; code: string; levelReq?: number; mods: Modifier[]; crafted?: boolean; disabled?: boolean; setNameEn?: string; set?: string; setBonusByCount?: (Modifier & { slot: number })[] }
+
+/** 資料的 aprop 第 N 組＝穿戴同套裝 N+1 件時生效（例：塔拉夏的審判項鍊第 3 組＝4 件，+10% 快速施法；兩個社群來源一致） */
+const bonusByPieces = (rows?: (Modifier & { slot: number })[]): { pieces: number; mods: Modifier[] }[] | undefined => {
+  if (!rows?.length) return undefined;
+  const m = new Map<number, Modifier[]>();
+  for (const { slot, ...mod } of rows) (m.get(slot + 1) ?? m.set(slot + 1, []).get(slot + 1)!).push(mod);
+  return [...m.entries()].sort((a, b) => a[0] - b[0]).map(([pieces, mods]) => ({ pieces, mods }));
+};
 
 function fromRow(r: Row, kind: Rarity, setName?: string): CatalogEntry | undefined {
   const b = baseByCode.get(r.code); if (!b) return undefined;
@@ -73,6 +86,7 @@ function fromRow(r: Row, kind: Rarity, setName?: string): CatalogEntry | undefin
     id: `${kind}:${r.id}`, kind, name: r.name, nameEn: r.nameEn, slot, group: groupOfSlot(slot), tier: b.tier as Tier | undefined,
     classCode: b.class, baseCode: b.code, baseName: b.name, baseNameEn: b.nameEn, levelReq: r.levelReq, mods: r.mods,
     twoHanded: b.twoHanded, width: b.width ?? 1, height: b.height ?? 1, setName,
+    ...(kind === 'set' ? { setId: r.set, setBonus: bonusByPieces(r.setBonusByCount) } : {}),
   };
 }
 
@@ -168,5 +182,5 @@ export function findEntry(id: string): CatalogEntry | undefined { return getCata
 
 /** 目錄項目 → 引擎穿戴物 */
 export function toEquipped(entry: CatalogEntry, slot: string, opts: Partial<EquippedItem> = {}): EquippedItem {
-  return { slot, baseCode: entry.baseCode, mods: entry.mods, sockets: entry.sockets, requiredLevel: entry.levelReq, name: entry.name, ...opts };
+  return { slot, baseCode: entry.baseCode, mods: entry.mods, sockets: entry.sockets, requiredLevel: entry.levelReq, name: entry.name, setId: entry.setId, setBonus: entry.setBonus, ...opts };
 }

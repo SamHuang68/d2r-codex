@@ -53,12 +53,23 @@ export interface BaseItem {
 
 export interface Gem { code: string; nameEn: string; name?: string; weapon: Modifier[]; armor: Modifier[]; shield: Modifier[] }
 
+/** 套裝：件數達標才生效的加成（partial，2～5 件）與全套加成（full） */
+export interface SetDef {
+  id: string; nameEn: string; name?: string;
+  /** 全套件數（遊戲資料中屬於此套裝且未停用的物品數） */
+  size: number;
+  partial: { pieces: number; mods: Modifier[] }[];
+  full: Modifier[];
+}
+
 export interface GameData {
   charstats: CharStats[];
   properties: Record<string, PropertyDef>;
   stats: Record<string, StatDef>;
   bases: BaseItem[];
   gems: Gem[];
+  /** 套裝加成資料；沒有提供時，套裝件只計算自身屬性 */
+  sets?: SetDef[];
 }
 
 /** 單條屬性（已解析成遊戲內部 stat） */
@@ -86,6 +97,10 @@ export interface EquippedItem {
   /** 物品等級需求（暗金／套裝／符文之語） */
   requiredLevel?: number;
   name?: string;
+  /** 套裝 id（遊戲資料 sets.json）；同套裝的件數會觸發套裝加成。件數以不同的 name 計，同一件穿兩次只算一件 */
+  setId?: string;
+  /** 此件自己的套裝加成：穿戴同套裝件數 ≥ pieces 時生效（資料的 aprop 第 N 組＝ N+1 件） */
+  setBonus?: { pieces: number; mods: Modifier[] }[];
 }
 
 export interface QuestBonuses {
@@ -124,6 +139,8 @@ export interface CharacterResult {
   requirementsUnmet: { slot: string; need: string }[];
   /** 其餘累加後的原始 stat（FCR、FHR、MF、吸血…），供 UI 顯示與後續引擎使用 */
   stats: Record<string, number>;
+  /** 目前穿戴的套裝：件數與已生效的加成件數門檻 */
+  sets: { id: string; nameEn: string; name?: string; count: number; size: number; activePieces: number[]; full: boolean }[];
   /** 未被引擎處理的 modifier（絕不可無聲丟棄） */
   unhandled: { slot: string; code: string; reason: string }[];
 }

@@ -248,7 +248,7 @@ export const App: React.FC = () => {
 
             {plannerSubMode === 'armory' ? (
               <Suspense fallback={<div className="p-8 text-center text-sanctuary-400" role="status">載入配裝模擬器…</div>}>
-                <SimulatorV2 initialClass={selectedInitialClass} />
+                <SimulatorV2 initialClass={selectedInitialClass} onNavigateItem={handleItemOrRunewordNavigate} onClassChange={setSelectedInitialClass} />
               </Suspense>
             ) : (
               <BuildPlanner 

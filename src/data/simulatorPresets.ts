@@ -194,6 +194,33 @@ export const BUILDS: BuildDef[] = [
   },
 ];
 
+// ── 頂裝的抗性修正 ──
+// 原本的頂裝沒有針對地獄難度（−100 抗性）調整，多數流派最低抗性只有 0～40%。這份修正由 scripts/optimize_defense.mjs --resist 產生：
+// 只動頭盔、項鍊、護甲、手套、腰帶、戒指、鞋子，不動武器與盾；全技能／職業／技能樹／單項技能（含傳送術）加成與攻擊速度不能比原本低，
+// 快速施法與快速打擊恢復的「影格數」不能比原本差（百分比可以降，只要停在同一個斷點，見 engine/breakpoints.ts）；目標是先推高最低抗性，再比有效生命。
+// 結果只改了手套、腰帶、戒指、鞋子，部分流派（例如魔法使、刺客）仍達不到 75%：要補滿得動頭盔、護甲、武器或盾，那就不是原本的流派了。
+const BIS_RESIST_FIX: Record<string, Items> = {
+  'ama-lightning-fury': { gloves: n('Laying of Hands'), belt: n('Credendum'), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'ama-strafe': { neck: n("Saracen's Chance"), body: n('Chains of Honor', 'Dusk Shroud'), gloves: n('Bloodfist'), belt: n("Gheed's Wager"), ring2: n('Manald Heal'), boots: n('Waterwalk') },
+  'sor-blizzard': { gloves: n('Bloodfist'), ring1: n("Bul Katho's Wedding Band"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'sor-lightning': { head: n('Crown of Ages'), ring1: n("Bul Katho's Wedding Band"), ring2: n('Manald Heal'), boots: n('Tearhaunch') },
+  'sor-fire': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Opalvein'), boots: n("Aldur's Advance") },
+  'nec-bone-spear': { gloves: n('Bloodfist'), ring1: n("Bul Katho's Wedding Band"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'nec-summoner': { gloves: n('Bloodfist'), ring1: n("Bul Katho's Wedding Band"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'pal-hammerdin': { ring1: n("Bul Katho's Wedding Band"), boots: n('Waterwalk') },
+  'pal-zealot': { gloves: n("Horazon's Hold"), belt: n("Gheed's Wager"), boots: n('Tearhaunch') },
+  'bar-whirlwind': { gloves: n('Laying of Hands'), belt: n('Credendum'), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'bar-frenzy': { gloves: n("Horazon's Hold"), belt: n("Gheed's Wager"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'dru-tornado': { gloves: n('Bloodfist'), ring1: n("Bul Katho's Wedding Band"), ring2: n('Opalvein'), boots: n('Waterwalk') },
+  'dru-fire': { gloves: n('Bloodfist'), ring1: n("Bul Katho's Wedding Band"), ring2: n('Opalvein'), boots: n('Waterwalk') },
+  'ass-lightning-trap': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Opalvein'), boots: n("Aldur's Advance") },
+  'ass-mosaic': { gloves: n("Horazon's Hold"), belt: n("Gheed's Wager"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+};
+BUILDS.forEach((b) => {
+  const fix = BIS_RESIST_FIX[b.id]; if (!fix) return;
+  b.bis = { ...b.bis, items: { ...b.bis.items, ...fix }, notes: `${b.bis.notes} 已依地獄難度的抗性調整手套、腰帶、戒指、鞋子（技能加成、攻速、施法與受擊恢復影格不降）。` };
+});
+
 // ── 尋寶（MF）檔位 ──
 // MF 數值來自遊戲資料（item_magicbonus，含依等級成長的部分），以 scripts/test_engine.mjs 逐一核對；
 // 掉落受 MF 遞減（見 engine/magicFind.ts）。這裡只決定「換哪些欄位」：
@@ -217,26 +244,15 @@ function deriveMf(b: BuildDef, mode: 'mfEff' | 'mfMax'): Tier {
 }
 
 // ── 減傷檔位 ──
-// 平衡減傷：保留武器、盾、頭盔、護甲與施法／攻速來源，只換手套、腰帶、戒指、鞋子。每個流派的換法由 scripts/optimize_defense.mjs 依引擎數值搜尋，
+// 平衡減傷：保留武器、盾、頭盔、護甲與施法／攻速來源，只換手套、腰帶、戒指、鞋子。每個流派的換法由 scripts/optimize_defense.mjs 依引擎數值搜尋（頂裝已先做過一次抗性修正，所以多數流派這一檔與頂裝相同）；
 //   條件是全技能／本職業／技能樹／單項技能（含傳送術）加成、快速施法與攻擊速度都不低於頂裝，裝備需求要滿足；評分是「有效生命」（見 engine/survival.ts）。
 // 極致減傷：全身換成生存力最高的組合（同一套搜尋的結果，各職業收斂到幾乎相同的件），不顧輸出與技能：
 //   暴風盾（35% 物理減免、格擋）＋亡者之耳／維爾杜戈（15%）達到 50% 物理減免上限，護符與全抗件把四項抗性推到上限，守護天使再把最大抗性提高。
 const TANK_EFF: Record<string, Items> = {
-  'ama-lightning-fury': { gloves: n('Laying of Hands'), ring2: n('Opalvein'), boots: n('Tearhaunch') },
-  'ama-strafe': { gloves: n('Bloodfist'), ring2: n('Dwarf Star'), boots: n('Tearhaunch') },
-  'sor-blizzard': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n('Tearhaunch') },
-  'sor-lightning': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n('Waterwalk') },
-  'sor-fire': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n("Aldur's Advance") },
-  'nec-bone-spear': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n('Tearhaunch') },
-  'nec-summoner': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n('Tearhaunch') },
-  'pal-hammerdin': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n('Waterwalk') },
-  'pal-zealot': { gloves: n("Horazon's Hold"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
-  'bar-whirlwind': { gloves: n('Laying of Hands'), belt: n("Verdugo's Hearty Cord"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
-  'bar-frenzy': { gloves: n("Horazon's Hold"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
-  'dru-tornado': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n('Waterwalk') },
-  'dru-fire': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n('Waterwalk') },
-  'ass-lightning-trap': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Dwarf Star'), boots: n("Aldur's Advance") },
-  'ass-mosaic': { gloves: n("Horazon's Hold"), ring2: n('Dwarf Star'), boots: n('Tearhaunch') },
+  'ama-lightning-fury': { belt: n("Verdugo's Hearty Cord") },
+  'pal-hammerdin': { ring2: n('Dwarf Star') },
+  'pal-zealot': { ring2: n('Dwarf Star') },
+  'bar-whirlwind': { belt: n("Verdugo's Hearty Cord") },
 };
 const TANK_MAX: Items = {
   head: n("Natalya's Totem"), neck: n("Saracen's Chance"), body: n('Guardian Angel'), gloves: n("Horazon's Hold"), belt: n("Verdugo's Hearty Cord"),
@@ -244,9 +260,9 @@ const TANK_MAX: Items = {
 };
 // 技能綁定武器的流派（弓、標槍、爪）：武器與盾保持不動，只在其餘欄位搜尋（scripts/optimize_defense.mjs --max）
 const TANK_MAX_BOUND: Record<string, Items> = {
-  'ama-lightning-fury': { head: n("Kira's Guardian"), neck: n('Nokozan Relic'), body: n('Shaftstop'), gloves: n("Horazon's Hold"), ring1: n('Dwarf Star'), ring2: n('Dwarf Star'), boots: n('Waterwalk') },
-  'ama-strafe': { head: n('Veil of Steel'), neck: n("Saracen's Chance"), gloves: n('Bloodfist'), ring1: n('Dwarf Star'), ring2: n('Dwarf Star'), boots: n('Waterwalk') },
-  'ass-mosaic': { head: n("Kira's Guardian"), neck: n('Metalgrid'), body: n('Shaftstop'), gloves: n("Horazon's Hold"), ring1: n('Dwarf Star'), ring2: n('Dwarf Star'), boots: n('Waterwalk') },
+  'ama-lightning-fury': { head: n('Vampiregaze'), neck: n('Metalgrid'), body: n('Shaftstop'), ring1: n('Dwarf Star') },
+  'ama-strafe': { neck: n("Mara's Kaleidoscope"), belt: n("Verdugo's Hearty Cord"), ring1: n('Dwarf Star'), ring2: n('Dwarf Star'), boots: n('Tearhaunch') },
+  'ass-mosaic': { head: n("Kira's Guardian"), neck: n("Saracen's Chance"), body: n('Shaftstop'), belt: n("Verdugo's Hearty Cord"), ring1: n('Dwarf Star'), ring2: n('Dwarf Star') },
 };
 const CHARMS_TANK: PresetItem[] = [n('Annihilus'), n('Hellfire Torch')];
 

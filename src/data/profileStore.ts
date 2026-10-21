@@ -1,5 +1,6 @@
 import { CLASS_ZH, findEntry, getSocketables, withBase, type CatalogEntry } from '../engine/catalog';
 import { skillById } from '../engine/skills';
+import { customEntry, validateCustomDef, type CustomItemDef } from '../engine/customItem';
 import type { Alloc, Difficulty, DollSlot, Equipped, EquippedMap, Quests } from '../components/simulator/v2/types';
 
 /** 模擬器的完整狀態（畫面上的物件）；流派範本與自訂 Profile 都先轉成這個再套用 */
@@ -23,23 +24,28 @@ export interface SimSnapshot {
 export interface ApplyParts { gear: boolean; skills: boolean; character: boolean }
 export const ALL_PARTS: ApplyParts = { gear: true, skills: true, character: true };
 
-interface SavedItem { id: string; baseCode?: string; ethereal?: boolean; sockets?: string[]; socketCount?: number }
+interface SavedItem { id: string; baseCode?: string; ethereal?: boolean; sockets?: string[]; socketCount?: number; /** 自訂飾品：整份定義存進去（目錄裡找不到它） */ custom?: CustomItemDef }
 type SavedData = Omit<SimSnapshot, 'equipped' | 'charms'> & { equipped: Partial<Record<DollSlot, SavedItem>>; charms: SavedItem[] };
 
 export interface SavedProfile { v: 1; id: string; name: string; savedAt: number; data: SavedData }
 
 const KEY = 'd2sim.profiles.v1';
 
-const saveItem = (eq: Equipped): SavedItem => ({ id: eq.entry.id, baseCode: eq.entry.baseCode, ethereal: eq.ethereal || undefined, sockets: eq.sockets?.length ? eq.sockets : undefined, socketCount: eq.socketCount });
+const saveItem = (eq: Equipped): SavedItem => ({ id: eq.entry.id, baseCode: eq.entry.baseCode, ethereal: eq.ethereal || undefined, sockets: eq.sockets?.length ? eq.sockets : undefined, socketCount: eq.socketCount, custom: eq.entry.custom });
 
 /** 畫面狀態 → 存檔：只存物品 id 與玩家的選擇，不存整份資料 */
 export function toSavedData(s: SimSnapshot): SavedData {
   const equipped: SavedData['equipped'] = {};
   (Object.keys(s.equipped) as DollSlot[]).forEach((k) => { const e = s.equipped[k]; if (e) equipped[k] = saveItem(e); });
-  return { ...s, equipped, charms: s.charms.map((c) => ({ id: c.id, baseCode: c.baseCode })) };
+  return { ...s, equipped, charms: s.charms.map((c) => ({ id: c.id, baseCode: c.baseCode, custom: c.custom })) };
 }
 
 function restoreItem(it: SavedItem, errors: string[]): Equipped | undefined {
+  if (it.custom) {
+    const e = customEntry(it.custom);
+    if (!e) { errors.push(`無法還原自訂物品「${it.custom.name}」`); return undefined; }
+    return { entry: e, ethereal: it.ethereal, sockets: undefined, socketCount: undefined };
+  }
   let entry = findEntry(it.id);
   if (!entry) { errors.push(`找不到物品「${it.id}」（遊戲資料版本可能不同）`); return undefined; }
   if (it.baseCode && it.baseCode !== entry.baseCode) entry = withBase(entry, it.baseCode);
@@ -69,7 +75,9 @@ function cleanItem(v: unknown, where: string): SavedItem | string {
   if (!isObj(v) || typeof v.id !== 'string' || !v.id) return `${where}不是物品`;
   if (v.baseCode !== undefined && typeof v.baseCode !== 'string') return `${where}的底材代碼不是文字`;
   if (v.sockets !== undefined && !(Array.isArray(v.sockets) && v.sockets.length <= 6 && v.sockets.every((x) => typeof x === 'string'))) return `${where}的鑲嵌欄位不合法`;
-  return { id: v.id, baseCode: v.baseCode as string | undefined, ethereal: v.ethereal === true || undefined, sockets: v.sockets as string[] | undefined, socketCount: v.socketCount === undefined ? undefined : int(v.socketCount, 0, 6, 0) };
+  let custom: CustomItemDef | undefined;
+  if (v.custom !== undefined) { const c = validateCustomDef(v.custom); if (typeof c === 'string') return `${where}：${c}`; custom = c; }
+  return { custom, id: v.id, baseCode: v.baseCode as string | undefined, ethereal: v.ethereal === true || undefined, sockets: v.sockets as string[] | undefined, socketCount: v.socketCount === undefined ? undefined : int(v.socketCount, 0, 6, 0) };
 }
 
 /** 檢查存檔／匯入內容的結構，不信任外部文字。結構不合就回傳原因（不會丟例外，也不會讓壞資料流進畫面） */
@@ -135,6 +143,21 @@ export function storeProfiles(list: SavedProfile[]): boolean {
 export const newProfile = (name: string, snap: SimSnapshot): SavedProfile => ({
   v: 1, id: `p${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, name: name.trim().slice(0, 40), savedAt: Date.now(), data: toSavedData(snap),
 });
+
+const DRAFT_KEY = 'd2sim.draft.v1';
+
+/** 自動暫存：離開配裝頁（例如跳去百科）再回來時還原目前的配裝。只存一份，下一次變更就覆蓋 */
+export function saveDraft(snap: SimSnapshot): void {
+  try { window.localStorage.setItem(DRAFT_KEY, JSON.stringify({ v: 1, name: '暫存', savedAt: Date.now(), data: toSavedData(snap) })); } catch { /* 無痕或容量滿時略過，不影響使用 */ }
+}
+
+/** 讀出暫存；結構不對（損壞或舊版）就當作沒有 */
+export function loadDraft(): SavedData | null {
+  try {
+    const raw = window.localStorage.getItem(DRAFT_KEY); if (!raw) return null;
+    const r = validate(JSON.parse(raw)); return typeof r === 'string' ? null : r.data;
+  } catch { return null; }
+}
 
 export const exportProfile = (p: SavedProfile): string => JSON.stringify({ ...p, id: '' });
 

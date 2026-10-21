@@ -11,7 +11,7 @@
 import { build } from 'esbuild'; import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path'; import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'def-')), 'e.mjs');
-await build({ stdin: { contents: "export * from './src/engine/catalog'; export * from './src/engine/data'; export * from './src/engine/build'; export * from './src/engine/index'; export * from './src/engine/alloc'; export * from './src/engine/skills'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets';", resolveDir: process.cwd(), loader: 'ts' }, bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' } });
+await build({ stdin: { contents: "export * from './src/engine/catalog'; export * from './src/engine/data'; export * from './src/engine/build'; export * from './src/engine/index'; export * from './src/engine/alloc'; export * from './src/engine/skills'; export * from './src/engine/breakpoints'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets';", resolveDir: process.cwd(), loader: 'ts' }, bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' } });
 const E = await import(pathToFileURL(out).href);
 
 const uniq = JSON.parse(fs.readFileSync('src/data/game/uniques.json', 'utf8')); const unspawn = new Set(uniq.filter((u) => u.spawnable === false).map((u) => u.nameEn));
@@ -37,7 +37,9 @@ function evalSet(b, level, items, charms, rest, blockTarget) {
   const harm = 2 / (1 / ephys + 1 / eelem);
   const unmet = r.requirementsUnmet.length;
   const score = harm + (r.stats.magic_damage_reduction ?? 0) * 8 + (r.stats.normal_damage_reduction ?? 0) * 10 - unmet * 5000;
-  return { score, skills: r.skills, life: r.life, pdr, ephys: Math.round(ephys), eelem: Math.round(eelem), minRes, bonus, fcr: r.stats.item_fastercastrate ?? 0, ias: r.stats.item_fasterattackrate ?? 0, mdr: r.stats.magic_damage_reduction ?? 0, unmet, block: r.blockChance, res: r.resist, defense: r.defense };
+  const tbl = (kind, id, cls) => E.BREAKPOINTS[kind][cls].find((x) => x.id === id) ?? E.BREAKPOINTS[kind][cls][0];
+  const fcrFrames = E.bpStatus(tbl('fcr', FCR_TABLE[b.id], b.classCode), r.stats.item_fastercastrate ?? 0).frames; const fhrFrames = E.bpStatus(tbl('fhr', FHR_TABLE[b.id], b.classCode), r.stats.item_fastergethitrate ?? 0).frames;
+  return { fcrFrames, fhrFrames, score: RESIST ? (HARM_ONLY ? score : Math.min(minRes, 75) * 1e6 + harm) : score, skills: r.skills, life: r.life, pdr, ephys: Math.round(ephys), eelem: Math.round(eelem), minRes, bonus, fcr: r.stats.item_fastercastrate ?? 0, ias: r.stats.item_fasterattackrate ?? 0, mdr: r.stats.magic_damage_reduction ?? 0, unmet, block: r.blockChance, res: r.resist, defense: r.defense };
 }
 
 function pools(b, level) {
@@ -56,6 +58,15 @@ function pools(b, level) {
 }
 
 const MAX = process.argv.includes('--max');
+// --resist：修正頂裝在地獄的抗性。可以動頭、項鍊、護甲、手套、腰帶、戒指、鞋，不動武器與盾；
+//   技能加成、攻擊速度不能低於頂裝，快速施法與快速打擊恢復的「影格數」不能比頂裝差（百分比可以降，只要停在同一個斷點）；
+//   目標：先把最低抗性推到 75%，再比有效生命。
+const RESIST = process.argv.includes('--resist') || process.argv.includes('--relaxed');
+// --relaxed：條件同 --resist，但評分用有效生命（物理與元素的調和平均），不強推抗性到 75%，避免為了抗性犧牲太多物理減免
+const HARM_ONLY = process.argv.includes('--relaxed');
+// 各流派用哪一張斷點表（沒列的用該職業第一張）
+const FCR_TABLE = { 'ama-lightning-fury': 'other', 'ama-strafe': 'bow', 'sor-lightning': 'lightning' };
+const FHR_TABLE = { 'dru-tornado': 'other', 'dru-fire': 'other' };
 const only = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const result = {};
 for (const b of E.BUILDS) {
@@ -71,7 +82,7 @@ for (const b of E.BUILDS) {
   let cur = { ...items }; let best = baseline;
   // 技能加成一項都不能少（含傳送術等單項技能）：全技能、本職業、各技能樹、單項技能都不低於頂裝
   const skillsOk = (a, base) => a.all >= base.all && Object.entries(base.byClass).every(([k, v]) => (a.byClass[k] ?? 0) >= v) && Object.entries(base.byTab).every(([k, v]) => (a.byTab[k] ?? 0) >= v) && Object.entries(base.single).every(([k, v]) => (a.single[k] ?? 0) >= v);
-  const ok = (ev) => MAX ? ev.unmet === 0 : ev.unmet === 0 && ev.bonus >= baseline.bonus && ev.fcr >= baseline.fcr && ev.ias >= baseline.ias && skillsOk(ev.skills, baseline.skills);
+  const ok = (ev) => RESIST ? ev.unmet === 0 && ev.bonus >= baseline.bonus && ev.ias >= baseline.ias && ev.fcrFrames <= baseline.fcrFrames && ev.fhrFrames <= baseline.fhrFrames && skillsOk(ev.skills, baseline.skills) : MAX ? ev.unmet === 0 : ev.unmet === 0 && ev.bonus >= baseline.bonus && ev.fcr >= baseline.fcr && ev.ias >= baseline.ias && skillsOk(ev.skills, baseline.skills);
   for (let pass = 0; pass < 3; pass++) {
     let improved = false;
     for (const sl of FREE) {
