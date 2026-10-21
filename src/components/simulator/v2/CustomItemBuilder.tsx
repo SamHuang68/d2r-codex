@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { CatalogEntry } from '../../../engine/catalog';
+import type { ItemCheck } from '../../../data/codex/customItemCheck';
 import { CUSTOM_AFFIXES, CUSTOM_BASES, MAX_CUSTOM_AFFIXES, MAX_CUSTOM_NAME, customEntry, validateCustomDef, type CustomAffix, type CustomItemDef } from '../../../engine/customItem';
 import { describeModifiers } from '../../../engine/describe';
 
@@ -22,9 +23,40 @@ const storeLibrary = (list: CustomItemDef[]): boolean => { try { window.localSto
 
 const linesOf = (def: CustomItemDef, level: number) => describeModifiers(def.affixes.map((a) => ({ code: a.code, min: a.value, max: a.value })), 1, level).map((l) => l.text);
 
+const KIND_ZH = { prefix: '前綴', suffix: '後綴', auto: '自動' } as const;
+const QUALITY_ZH = { magic: '魔法', rare: '稀有' } as const;
+const fmtRange = ([lo, hi]: [number, number]) => (lo === hi ? `${lo}` : `${lo}–${hi}`);
+
+/** 「遊戲內檢查」：對照遊戲魔法詞綴表，說明這組詞綴能不能長在這種飾品上（只是參考，不擋穿戴與儲存） */
+const GameCheck: React.FC<{ check: ItemCheck; level: number }> = ({ check, level }) => {
+  const label = (code: string, value: number) => describeModifiers([{ code, min: value, max: value }], 1, level)[0]?.text ?? code;
+  return (
+    <div className="d2-tip" aria-label="遊戲內檢查" style={{ textAlign: 'left' }}>
+      <div className="nm t-gold">遊戲內檢查（參考）</div>
+      {check.fit && (
+        <div className="mod t-set">
+          可以長出來：{QUALITY_ZH[check.fit.quality]}品質{check.fit.quality === 'rare' ? '才行' : '即可'}，物品等級 ≥ {check.fit.minIlvl}{check.fit.maxIlvl ? `（且 ≤ ${check.fit.maxIlvl}）` : ''}；用到 {check.fit.rows.map((r) => `${r.name}（${KIND_ZH[r.kind]}）`).join('、')}
+        </div>
+      )}
+      {check.conflict && <div className="mod t-bad">湊不成一件：{check.conflict}</div>}
+      {check.undecided && <div className="mod t-rare">組合太多，沒有判定。</div>}
+      {check.lines.map((l, i) => {
+        const text = label(l.code, l.value);
+        if (l.verdict === 'ok') {
+          const names = [...new Set(l.rows.map((r) => r.name))];
+          return <div key={i} className="mod">符合：{text}　<span className="t-dim">可由 {names.slice(0, 3).join('、')}{names.length > 3 ? ' 等' : ''} 骰出，物品等級 ≥ {Math.min(...l.rows.map((r) => r.level))}</span></div>;
+        }
+        if (l.verdict === 'value') return <div key={i} className="mod t-bad">數值超出：{text}　<span className="t-dim">這種飾品上這個屬性只能骰到 {l.ranges.map(fmtRange).join('、')}</span></div>;
+        return <div key={i} className="mod t-bad">不會出現：{text}　<span className="t-dim">這種飾品在遊戲詞綴表裡沒有這條屬性</span></div>;
+      })}
+      <div className="hint">不含底材的詞綴等級加成與其他來源的屬性（暗金、套裝、工藝等）；沒有在遊戲內逐項核對。</div>
+    </div>
+  );
+};
+
 /**
  * 自訂飾品：魔法／稀有的戒指、項鍊、護身符的詞綴是隨機的，遊戲資料裡沒有現成物品可選，所以讓使用者自己組。
- * 詞綴從清單選、數值自填；數值上限只是防呆，模擬器不驗證能不能在遊戲裡骰出來。
+ * 詞綴從清單選、數值自填；數值上限只是防呆。「遊戲內檢查」會對照遊戲詞綴表提示能不能長出來，但只是參考，不擋穿戴與儲存。
  */
 export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
   const [baseCode, setBaseCode] = useState('cm1');
@@ -44,6 +76,16 @@ export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
   const clean = typeof check === 'string' ? undefined : check;
   const lines = clean ? linesOf(clean, level) : [];
 
+  // 詞綴表較大，背景載入（不拖慢配裝頁首次顯示）；載入失敗就不顯示檢查
+  const [checker, setChecker] = useState<typeof import('../../../data/codex/customItemCheck') | null>(null);
+  useEffect(() => {
+    let alive = true;
+    import('../../../data/codex/customItemCheck').then((m) => { if (alive) setChecker(m); }).catch(() => undefined);
+    return () => { alive = false; };
+  }, []);
+  const cleanKey = clean ? JSON.stringify([clean.baseCode, clean.affixes]) : '';
+  const gameCheck = useMemo(() => (checker && clean && clean.affixes.length ? checker.checkCustomItem(clean) : undefined), [checker, cleanKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const setAffix = (i: number, patch: Partial<CustomAffix>) => setAffixes((l) => l.map((a, k) => (k === i ? { ...a, ...patch } : a)));
   const equip = (d: CustomItemDef) => { const e = customEntry(d); if (e) onEquip(e); else say('無法建立這件自訂飾品'); };
   const save = () => {
@@ -59,7 +101,7 @@ export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
     <section aria-label="自訂飾品" className="d2-panel" style={{ marginTop: 12 }}>
       <div className="d2-title">自 訂 飾 品</div>
       <div className="d2-panel-body space-y-3">
-        <div className="d2-sub">魔法或稀有的戒指、項鍊、護身符，詞綴是隨機的，遊戲資料裡沒有現成物品可選，所以由你自己組。詞綴從清單選、數值自己填；數值上限只是防呆，<b>模擬器不驗證能不能在遊戲裡骰出來</b>。</div>
+        <div className="d2-sub">魔法或稀有的戒指、項鍊、護身符，詞綴是隨機的，遊戲資料裡沒有現成物品可選，所以由你自己組。詞綴從清單選、數值自己填；數值上限只是防呆。下方的「遊戲內檢查」會對照遊戲的詞綴表，提示這組詞綴能不能長出來，<b>只是參考，不會擋下穿戴或儲存</b>。</div>
         <div className="flex flex-wrap items-center gap-2">
           <label className="d2-field">種類
             <select value={baseCode} onChange={(e) => setBaseCode(e.target.value)} className="d2-select" aria-label="自訂飾品種類">
@@ -90,6 +132,7 @@ export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
             {lines.length === 0 && <div className="hint">還沒有詞綴</div>}
           </div>
         )}
+        {gameCheck && <GameCheck check={gameCheck} level={level} />}
         {typeof check === 'string' && <div className="d2-sub" style={{ color: 'var(--bad)' }}>{check}</div>}
         <div className="flex flex-wrap items-center gap-2">
           <button type="button" className="d2-btn" disabled={!clean} onClick={() => clean && equip(clean)}>穿戴</button>

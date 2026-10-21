@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -1265,5 +1265,68 @@ console.log('【詞綴寶典（magicprefix／magicsuffix／automagic）】');
     assert.equal(new Set(codes).size, codes.length);
     for (const c of ['ring', 'amul', 'scha', 'mcha', 'lcha', 'jewl', 'tors', 'swor', 'staf', 'wand', 'orb', 'abow']) assert.ok(codes.includes(c), c);
     for (const c of codes) assert.ok(affixesFor(c).length > 0, `${c} 沒有任何詞綴`);
+  });
+}
+
+console.log('【自訂飾品的遊戲內檢查（對照魔法詞綴表）】');
+{
+  const { checkCustomItem, statKey, CUSTOM_BASE_TYPE, CUSTOM_BASES, CUSTOM_AFFIXES, describeModifiers } = E;
+  const chk = (baseCode, ...affixes) => checkCustomItem({ baseCode, affixes: affixes.map(([code, value]) => ({ code, value })) });
+  t('底材對照：戒指＝ring、項鍊＝amul、小／大／特大護身符＝scha／mcha／lcha；每個自訂底材都有對照', () => {
+    assert.deepEqual(['rin', 'amu', 'cm1', 'cm2', 'cm3'].map((c) => CUSTOM_BASE_TYPE[c]), ['ring', 'amul', 'scha', 'mcha', 'lcha']);
+    for (const b of CUSTOM_BASES) assert.ok(CUSTOM_BASE_TYPE[b.code], b.code);
+  });
+  t('屬性比對用遊戲屬性而不是代碼字串：施法速度 cast1／cast2／cast3 是同一個屬性，職業技能各自不同', () => {
+    assert.equal(statKey('cast1'), statKey('cast2')); assert.equal(statKey('cast2'), statKey('cast3'));
+    assert.equal(statKey('swing1'), statKey('swing3')); assert.equal(statKey('move2'), statKey('move3'));
+    assert.notEqual(statKey('ama'), statKey('sor')); assert.notEqual(statKey('block'), statKey('block2'));
+  });
+  t('戒指 +10% 施法速度：資料表的詞綴是「學徒之」只有 10，物品等級 ≥ 5；+11 超出、+30 生命要老虎之（物品等級 ≥ 51）', () => {
+    const r = chk('rin', ['cast2', 10]);
+    assert.equal(r.lines[0].verdict, 'ok'); assert.deepEqual(r.lines[0].ranges, [[10, 10]]);
+    assert.equal(r.fit.quality, 'magic'); assert.equal(r.fit.minIlvl, 5);
+    const bad = chk('rin', ['cast2', 11]); assert.equal(bad.lines[0].verdict, 'value'); assert.equal(bad.fit, undefined);
+    const hp = chk('rin', ['hp', 30]); assert.equal(hp.fit.minIlvl, 51); assert.equal(hp.fit.rows[0].nameEn, 'of the Tiger');
+  });
+  t('戒指生命各階範圍（1–40）合併成一段；41 超出', () => {
+    assert.deepEqual(chk('rin', ['hp', 1]).lines[0].ranges, [[1, 40]]);
+    assert.equal(chk('rin', ['hp', 41]).lines[0].verdict, 'value');
+  });
+  t('這種飾品沒有的屬性：戒指沒有全技能、攻擊速度；護身符沒有職業技能', () => {
+    assert.equal(chk('rin', ['allskills', 1]).lines[0].verdict, 'absent');
+    assert.equal(chk('rin', ['swing2', 10]).lines[0].verdict, 'absent');
+    assert.equal(chk('cm1', ['ama', 1]).lines[0].verdict, 'absent');
+    assert.equal(chk('amu', ['ama', 1]).lines[0].verdict, 'ok');
+  });
+  t('個數上限：魔法最多 1 前綴＋1 後綴；稀有戒指可以三抗，護身符不行', () => {
+    const ring = chk('rin', ['res-fire', 30], ['res-cold', 30], ['res-ltng', 30]);
+    assert.equal(ring.fit.quality, 'rare'); assert.equal(ring.fit.rows.length, 3); assert.equal(ring.fit.minIlvl, 18);
+    const charm = chk('cm2', ['res-fire', 11], ['res-cold', 11]);
+    assert.equal(charm.fit, undefined); assert.match(charm.conflict, /護身符只會是魔法品質/);
+    const eight = chk('amu', ...['hp', 'mana', 'str', 'dex', 'enr', 'res-fire', 'res-cold', 'res-ltng'].map((c) => [c, 10]));
+    assert.equal(eight.fit, undefined); assert.match(eight.conflict, /個數超過上限|詞綴個數超過上限/);
+  });
+  t('單一詞綴與兩條能湊成一件的組合：特大護身符 +40 生命要 77 級；項鍊 +1 亞馬遜技能＋30% 魔法物品要 36 級', () => {
+    const c = chk('cm3', ['hp', 40]); assert.equal(c.fit.minIlvl, 77); assert.equal(c.fit.quality, 'magic');
+    const a = chk('amu', ['ama', 1], ['mag%', 30]); assert.equal(a.fit.quality, 'magic'); assert.equal(a.fit.minIlvl, 36);
+    assert.deepEqual(a.fit.rows.map((r) => r.kind).sort(), ['prefix', 'suffix']);
+  });
+  t('測試用的範例「幸運小符」（+7% 魔法物品、+20 生命、+5% 全抗）在遊戲裡湊不出來：需要 2 個後綴', () => {
+    const r = chk('cm1', ['mag%', 7], ['hp', 20], ['res-all', 5]);
+    assert.ok(r.lines.every((l) => l.verdict === 'ok')); assert.equal(r.fit, undefined); assert.match(r.conflict, /後綴/);
+  });
+  t('沒有詞綴時只回傳空的逐條結果；任何一條超出或不存在時不做組合判定', () => {
+    const e = chk('rin'); assert.deepEqual(e.lines, []); assert.equal(e.fit, undefined); assert.equal(e.conflict, undefined);
+    const m = chk('rin', ['hp', 30], ['allskills', 1]); assert.equal(m.fit, undefined); assert.equal(m.conflict, undefined);
+  });
+  t('術士職業技能可以選：自訂詞綴清單含 war，描述為術士技能', () => {
+    assert.ok(CUSTOM_AFFIXES.some((a) => a.code === 'war'));
+    assert.match(describeModifiers([{ code: 'war', min: 1, max: 1 }], 1, 90)[0].text, /術士/);
+  });
+  t('所有自訂詞綴代碼、每種底材都能跑完檢查（不丟例外、不超出搜尋上限），單次檢查 50 ms 內', () => {
+    for (const b of CUSTOM_BASES) for (const a of CUSTOM_AFFIXES) {
+      const t0 = performance.now(); const r = chk(b.code, [a.code, 1]);
+      assert.ok(['ok', 'absent', 'value'].includes(r.lines[0].verdict)); assert.ok(!r.undecided); assert.ok(performance.now() - t0 < 50, `${b.code} ${a.code}`);
+    }
   });
 }

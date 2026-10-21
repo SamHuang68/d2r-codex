@@ -4,7 +4,8 @@ import type { Modifier } from './types';
 /**
  * 自訂飾品：魔法／稀有的戒指、項鍊、護身符。它們的詞綴是隨機的，遊戲資料表沒有「某個物品」可選，所以由使用者自己組。
  * 詞綴只從下面的清單選（每一項都是引擎看得懂、能計入數值的屬性代碼），數值上限只是防呆，
- * 不是遊戲裡各種飾品實際能骰到的範圍；數值由使用者自己負責，模擬器不驗證能不能在遊戲中出現。
+ * 不是遊戲裡各種飾品實際能骰到的範圍；這裡不擋、也不驗證能不能在遊戲中出現，
+ * 能不能長出來由 data/codex/customItemCheck.ts 對照遊戲詞綴表提示（只是參考，建構器背景載入）。
  */
 export interface CustomAffix { code: string; value: number }
 export interface CustomItemDef {
@@ -25,7 +26,7 @@ export const CUSTOM_AFFIXES: { code: string; max: number }[] = [
   { code: 'res-fire', max: 75 }, { code: 'res-cold', max: 75 }, { code: 'res-ltng', max: 75 }, { code: 'res-pois', max: 75 }, { code: 'res-all', max: 60 },
   { code: 'mag%', max: 200 }, { code: 'gold%', max: 400 },
   { code: 'cast2', max: 60 }, { code: 'swing2', max: 60 }, { code: 'balance2', max: 60 }, { code: 'block2', max: 60 }, { code: 'move2', max: 60 },
-  { code: 'allskills', max: 5 }, { code: 'ama', max: 3 }, { code: 'sor', max: 3 }, { code: 'nec', max: 3 }, { code: 'pal', max: 3 }, { code: 'bar', max: 3 }, { code: 'dru', max: 3 }, { code: 'ass', max: 3 },
+  { code: 'allskills', max: 5 }, { code: 'ama', max: 3 }, { code: 'sor', max: 3 }, { code: 'nec', max: 3 }, { code: 'pal', max: 3 }, { code: 'bar', max: 3 }, { code: 'dru', max: 3 }, { code: 'ass', max: 3 }, { code: 'war', max: 3 },
   { code: 'ac', max: 500 }, { code: 'ac%', max: 300 }, { code: 'dmg%', max: 300 }, { code: 'att', max: 500 }, { code: 'att%', max: 300 },
   { code: 'dmg-min', max: 100 }, { code: 'dmg-max', max: 200 },
   { code: 'lifesteal', max: 30 }, { code: 'manasteal', max: 30 }, { code: 'red-dmg', max: 50 }, { code: 'red-mag', max: 50 }, { code: 'red-dmg%', max: 50 },
