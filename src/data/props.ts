@@ -252,11 +252,11 @@ export const UBER_KEYS_ORGANS_DATA: UberKeyOrganData[] = [
     type: "organ",
     dropSource: "莉莉絲 (Lilith / 超級安達利爾)",
     dropRate: "100% 必定掉落",
-    location: "小紅門：苦痛熔爐 (Matron's Den)",
+    location: "小紅門：魔母巢穴 (Matron's Den)",
     act: 5,
     description: "散發著刺鼻惡臭與高壓電能的魔神大腦組織，跳動著無盡的憎恨邪念。",
     usageFormula: "在第五幕哈洛加斯將【墨菲斯托的大腦 + 巴爾的眼睛 + 暗黑破壞神之角】一同放入方塊合成，永久開啟【終極超級崔斯特姆紅門】！",
-    tacticalTips: "苦痛熔爐地圖巨大，充斥女妖與狂暴女槍手。莉莉絲物理攻擊極為恐怖，毒素傷害瞬間扣血見底，務必常駐「偷取生命 (Life Tap)」並喝解毒藥劑提升抗性上限。"
+    tacticalTips: "魔母巢穴地圖巨大，充斥女妖與狂暴女槍手。莉莉絲物理攻擊極為恐怖，毒素傷害瞬間扣血見底，務必常駐「偷取生命 (Life Tap)」並喝解毒藥劑提升抗性上限。"
   },
   {
     id: "baals_eye",
@@ -278,7 +278,7 @@ export const UBER_KEYS_ORGANS_DATA: UberKeyOrganData[] = [
     type: "organ",
     dropSource: "超級衣卒爾 (Uber Izual)",
     dropRate: "100% 必定掉落",
-    location: "小紅門：苦難熔爐 (Furnace of Pain)",
+    location: "小紅門：苦痛熔爐 (Furnace of Pain)",
     act: 5,
     description: "粗壯且焦黑的恐懼巨角，曾生長於恐懼之王暗黑破壞神的額頭。",
     usageFormula: "終極六王紅門合成材料之一。",

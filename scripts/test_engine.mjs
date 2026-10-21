@@ -1548,3 +1548,24 @@ console.log('【方塊配方：手寫文字對照遊戲 cubemain.txt】');
     assert.ok(CUBE_RECIPES_DATA.find((x) => x.id === 'uber_tristram_portals').output.includes('魔母巢穴'));
   });
 }
+
+console.log('【小紅門三處地圖名稱：遊戲字串「魔母巢穴／遺忘沙漠／苦痛熔爐」】');
+{
+  const { UBER_KEYS_ORGANS_DATA } = E;
+  const areas = rd('areas');
+  const run = (n) => areas.find((a) => a.nameEn === `Pandemonium Run ${n}`);
+  const EN = ["Matron's Den", 'Forgotten Sands', 'Furnace of Pain'];
+  t('器官條目的掉落地點：中文名等於遊戲場景名稱，且與括號內的英文名對得上（墨菲斯托的大腦＝魔母巢穴、巴爾的眼睛＝遺忘沙漠、暗黑破壞神之角＝苦痛熔爐）', () => {
+    assert.deepEqual([1, 2, 3].map((n) => run(n).name), ['魔母巢穴', '遺忘沙漠', '苦痛熔爐']);
+    const organ = (id) => UBER_KEYS_ORGANS_DATA.find((x) => x.id === id);
+    [['mephistos_brain', 1], ['baals_eye', 2], ['diablos_horn', 3]].forEach(([id, n]) => {
+      assert.equal(organ(id).location, `小紅門：${run(n).name} (${EN[n - 1]})`, id);
+    });
+    assert.ok(organ('mephistos_brain').tacticalTips.startsWith('魔母巢穴'));
+  });
+  t('原始碼（遊戲資料檔除外）不再出現小紅門地圖的錯誤寫法「苦難熔爐」「女先知巢穴」', () => {
+    const hits = [];
+    const walk = (d) => { for (const f of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, f.name); if (f.isDirectory()) { if (p.split(path.sep).join('/').endsWith('src/data/game')) continue; walk(p); } else if (/\.(ts|tsx|json)$/.test(f.name) && /苦難熔爐|女先知/.test(fs.readFileSync(p, 'utf8'))) hits.push(p); } };
+    walk('src'); assert.deepEqual(hits, [], '請用遊戲字串：魔母巢穴／遺忘沙漠／苦痛熔爐');
+  });
+}

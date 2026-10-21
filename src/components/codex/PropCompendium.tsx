@@ -279,7 +279,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
               <div className="p-3 rounded-xl bg-sanctuary-950 border border-sanctuary-800">
                 <div className="text-d2-fire font-bold mb-1">【步驟二：開啟 3 個小紅門】</div>
                 <p className="text-sanctuary-300 font-sans text-[11px]">
-                  在 A5 哈洛加斯分 3 次放入方塊合成，分別開啟苦痛熔爐、遺忘沙漠、苦難熔爐。
+                  在 A5 哈洛加斯分 3 次放入方塊合成，分別開啟魔母巢穴、遺忘沙漠、苦痛熔爐。
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-sanctuary-950 border border-sanctuary-800">
