@@ -8,6 +8,7 @@ import { imageForEntry } from '../utils/catalogImage';
 import { baseByCode, classOnlyOf, gearSlotOf, overlay, slug, uniqueId } from './codex/common';
 import { itemAttributes, scaledRequirements } from './codex/itemLines';
 import type { Modifier } from '../engine/types';
+import { uniqueBaseAc } from '../engine/referenceOverrides';
 
 interface Row { id: string; gameId: number; nameEn: string; nameEnUS?: string; name: string; code: string; baseName: string; levelReq?: number; level?: number; spawnable?: boolean; crafted?: boolean; mods: Modifier[] }
 const rows = uniquesJson as unknown as Row[];
@@ -35,7 +36,7 @@ export const UNIQUE_ITEMS_DATA: UniqueItemData[] = rows.filter(included).map((r)
     requiredStr: scaledRequirements(base, r.mods).str || undefined,
     requiredDex: scaledRequirements(base, r.mods).dex || undefined,
     ladderOnly: false,
-    attributes: itemAttributes(base, r.mods, { levelReq: r.levelReq, staticLines: o?.staticLines, extraLines: o?.extraLines, dropMods: o?.dropMods }),
+    attributes: itemAttributes(base, r.mods, { levelReq: r.levelReq, staticLines: o?.staticLines, extraLines: o?.extraLines, dropMods: o?.dropMods, baseAc: uniqueBaseAc(r.id) }),
     imageUrl: o?.imageUrl ?? (imageForEntry({ id: `unique:${r.id}`, kind: 'unique', baseCode: r.code }) || undefined),
     grade: base?.tier ?? 'normal',
     classOnly: base ? classOnlyOf(base) : null,

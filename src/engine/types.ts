@@ -94,6 +94,8 @@ export interface EquippedItem {
   roll?: number;
   /** 底材防禦取值（0..1，預設 1） */
   defRoll?: number;
+  /** 底材防禦範圍的覆寫（min, max）：只給與遊戲資料表不一致、改採參考網站數值的暗金，見 engine/referenceOverrides.ts */
+  baseAc?: [number, number];
   /** 物品等級需求（暗金／套裝／符文之語） */
   requiredLevel?: number;
   name?: string;

@@ -2,6 +2,7 @@ import uniques from '../data/game/uniques.json';
 import setItems from '../data/game/setItems.json';
 import runewords from '../data/game/runewords.json';
 import { gameData } from './data';
+import { uniqueBaseAc } from './referenceOverrides';
 import { slotOfBase, type SlotKind, type Rarity, type Tier, type Group } from './slots';
 // 部位、職業名稱等輕量對照表在 slots.ts（百科頁只要這些，不該為此載入暗金與符文之語的整份資料）；這裡原樣轉出，既有的匯入不用改
 export * from './slots';
@@ -34,6 +35,8 @@ export interface CatalogEntry {
   setBonus?: { pieces: number; mods: Modifier[] }[];
   /** 自訂飾品（魔法／稀有的戒指、項鍊、護身符）：使用者組出來的詞綴，見 engine/customItem.ts */
   custom?: import('./customItem').CustomItemDef;
+  /** 底材防禦範圍覆寫（只有與遊戲資料表不一致、改採參考網站數值的暗金），見 engine/referenceOverrides.ts */
+  baseAc?: [number, number];
 }
 
 const baseByCode = new Map<string, BaseItem>(gameData.bases.map((b) => [b.code, b]));
@@ -58,6 +61,7 @@ function fromRow(r: Row, kind: Rarity, setName?: string): CatalogEntry | undefin
     classCode: b.class, baseCode: b.code, baseName: b.name, baseNameEn: b.nameEn, levelReq: r.levelReq, mods: r.mods,
     twoHanded: b.twoHanded, width: b.width ?? 1, height: b.height ?? 1, setName,
     ...(kind === 'set' ? { setId: r.set, setBonus: bonusByPieces(r.setBonusByCount) } : {}),
+    ...(kind === 'unique' && uniqueBaseAc(r.id) ? { baseAc: uniqueBaseAc(r.id) } : {}),
   };
 }
 
@@ -153,5 +157,5 @@ export function findEntry(id: string): CatalogEntry | undefined { return getCata
 
 /** 目錄項目 → 引擎穿戴物 */
 export function toEquipped(entry: CatalogEntry, slot: string, opts: Partial<EquippedItem> = {}): EquippedItem {
-  return { slot, baseCode: entry.baseCode, mods: entry.mods, sockets: entry.sockets, requiredLevel: entry.levelReq, name: entry.name, setId: entry.setId, setBonus: entry.setBonus, ...opts };
+  return { slot, baseCode: entry.baseCode, mods: entry.mods, sockets: entry.sockets, requiredLevel: entry.levelReq, name: entry.name, setId: entry.setId, setBonus: entry.setBonus, ...(entry.baseAc ? { baseAc: entry.baseAc } : {}), ...opts };
 }
