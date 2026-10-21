@@ -10,6 +10,8 @@
 3. 產生：`D2R_BUILD=<遊戲版本> node scripts/data-pipeline/build_game_data.mjs <輸出根目錄> src/data/game`
 4. 稽核：`node scripts/data-pipeline/audit_game_data.mjs src/data/game [d2data/json 路徑]`
    - d2data（blizzhackers/d2data，同版號）作為獨立來源逐欄比對。
+5. 與百科頁舊資料（`src/data/*.ts`）的差異（唯讀，百科頁改用遊戲資料前後都可重跑）：`node scripts/data-pipeline/diff_legacy_vs_game.mjs <輸出資料夾>`
+   - 輸出 `diff.json`（逐筆明細與「舊 id → 遊戲 id」對照）與 `appendix.md`；需要 `node_modules`（用 esbuild 打包舊資料與 `src/engine`）。
 
 ## 輸出
 meta、itemtypes、bases（武器／防具／misc）、uniques、sets、setItems、runewords、properties（modifier→stat 對映）、stats（itemstatcost 子集）、statStrings.zhTW（描述模板）、charstats、skills（240 招：繁中名稱與說明、樹／列／欄格位、前置、等級上限、魔力與傷害欄位、協同計算式）、skillTabs（技能樹繁中名稱）、inventory（紙娃娃座標）、uiCategories（拾取篩選器類別樹）。
