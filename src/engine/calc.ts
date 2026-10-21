@@ -15,6 +15,8 @@ export interface CalcContext {
   clvl?: number;
   /** 其他技能：名稱 → {lvl, blvl} */
   skill: (name: string) => { lvl: number; blvl: number } | undefined;
+  /** 其他技能的 parN（skill('名稱'.par8)、skill('名稱'.ln12) 用） */
+  skillParams?: (name: string) => Record<number, number | string | undefined> | undefined;
 }
 
 type Tok = { t: 'num'; v: number } | { t: 'id'; v: string } | { t: 'str'; v: string } | { t: 'op'; v: string };
@@ -44,7 +46,8 @@ export function evalCalc(src: string, ctx: CalcContext): number {
     if (!t) throw new CalcError('運算式不完整');
     if (t.t === 'num') return t.v;
     if (t.t === 'op') {
-      if (t.v === '(') { const v = expr(); need(')'); return v; }
+      // 遊戲表有一條字串缺右括號（Fire Wall）；只在運算式已到結尾時容忍，其餘仍視為語法錯誤
+      if (t.v === '(') { const v = expr(); if (p >= toks.length) return v; need(')'); return v; }
       if (t.v === '-') return -unary();
       if (t.v === '+') return unary();
       throw new CalcError(`意外的 ${t.v}`);
@@ -56,6 +59,10 @@ export function evalCalc(src: string, ctx: CalcContext): number {
         const f = toks[p++]; if (!f || f.t !== 'id') throw new CalcError('skill() 需要欄位'); need(')');
         const sk = ctx.skill(n.v); if (!sk) throw new CalcError(`未知技能 ${n.v}`);
         if (f.v === 'lvl') return sk.lvl; if (f.v === 'blvl') return sk.blvl;
+        const pr = ctx.skillParams?.(n.v);
+        const num = (k: number) => { const v = pr?.[k]; const x = typeof v === 'number' ? v : v === undefined || v === '' ? NaN : Number(v); if (Number.isNaN(x)) throw new CalcError(`技能 ${n.v} 未定義 par${k}`); return x; };
+        const pm = /^par(\d+)$/.exec(f.v); if (pm) return num(Number(pm[1]));
+        const lm = /^ln(\d)(\d)$/.exec(f.v); if (lm) return num(Number(lm[1])) + num(Number(lm[2])) * (sk.lvl - 1);
         throw new CalcError(`不支援的技能欄位 ${f.v}`);
       }
       if (id === 'min' || id === 'max') { need('('); const a = expr(); need(','); const b = expr(); need(')'); return id === 'min' ? Math.min(a, b) : Math.max(a, b); }
@@ -68,7 +75,7 @@ export function evalCalc(src: string, ctx: CalcContext): number {
         const g = (n: number) => { const v = ctx.params[n]; const x = typeof v === 'number' ? v : v === undefined || v === '' ? NaN : Number(v); if (Number.isNaN(x)) throw new CalcError(`未定義 par${n}`); return x; };
         return g(Number(ln[1])) + g(Number(ln[2])) * (ctx.lvl - 1);
       }
-      const m = /^par(\d+)$/.exec(id);
+      const m = /^pa(?:r)?(\d+)$/.exec(id); // pa10 是遊戲表對 par10 的簡寫（Hex Bane）
       if (m) { const v = ctx.params[Number(m[1])]; const n = typeof v === 'number' ? v : v === undefined || v === '' ? NaN : Number(v); if (Number.isNaN(n)) throw new CalcError(`未定義 ${id}`); return n; }
       throw new CalcError(`不認得的識別字 ${id}`);
     }

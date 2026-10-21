@@ -5,7 +5,7 @@ import { CalcError, evalCalc, referencedSkills } from './calc';
 /** 遊戲技能表（skills.txt＋skilldesc.txt，3.3.93847）。 */
 export interface Bracket { b: number; lv: number[] }
 export interface GameSkill {
-  id: string; gameId: number; nameEn: string; name?: string; charClass: string;
+  id: string; gameId: number; nameEn: string; /** 遊戲內的英文顯示名（nameEn 是 skills.txt 的內部名） */ nameEnUS?: string; name?: string; charClass: string;
   page: number; row: number; col: number; reqLevel: number; maxLvl: number; prereq: string[];
   desc?: string; alt?: string;
   mana: { base: number; perLvl: number; shift: number; min: number };
@@ -75,7 +75,7 @@ export interface SkillLevels { [nameEn: string]: { lvl: number; blvl: number } }
 
 function synPercent(syn: string | undefined, s: GameSkill, levels: SkillLevels): number {
   if (!syn) return 0;
-  try { return evalCalc(syn, { params: s.params, lvl: levels[s.nameEn]?.lvl, blvl: levels[s.nameEn]?.blvl, skill: (n) => levels[n] ?? { lvl: 0, blvl: 0 } }); } catch (e) { if (e instanceof CalcError) return NaN; throw e; }
+  try { return evalCalc(syn, { params: s.params, lvl: levels[s.nameEn]?.lvl, blvl: levels[s.nameEn]?.blvl, skill: (n) => levels[n] ?? { lvl: 0, blvl: 0 }, skillParams: (n) => byName.get(n)?.params }); } catch (e) { if (e instanceof CalcError) return NaN; throw e; }
 }
 
 export interface DamageOptions {
@@ -169,7 +169,7 @@ export interface EffectLine { stat: string; value?: number; supported: boolean }
 function evalLines(lines: StatLine[] | undefined, s: GameSkill, lvl: number): EffectLine[] {
   return (lines ?? []).map((l) => {
     if (!l.calc) return { stat: l.stat, supported: false };
-    try { return { stat: l.stat, value: evalCalc(l.calc, { params: s.params, lvl, blvl: lvl, skill: () => ({ lvl: 0, blvl: 0 }) }), supported: true }; } catch (e) { if (e instanceof CalcError) return { stat: l.stat, supported: false }; throw e; }
+    try { return { stat: l.stat, value: evalCalc(l.calc, { params: s.params, lvl, blvl: lvl, skill: () => ({ lvl: 0, blvl: 0 }), skillParams: (n) => byName.get(n)?.params }), supported: true }; } catch (e) { if (e instanceof CalcError) return { stat: l.stat, supported: false }; throw e; }
   });
 }
 export const auraEffects = (s: GameSkill, lvl: number) => evalLines(s.auraStats, s, lvl);

@@ -25,8 +25,17 @@ const pick = (m: Modifier, roll: number, which: 'min' | 'max' | 'roll'): number 
  *  func 1/2/3/8=直接加值；5/6/7=一般傷害最小／最大／%；10=技能樹；11=觸發技能；12/22=單一技能；
  *  14=插槽；15/16=傷害下限／上限；17=依等級（值＝par）；21/36=職業或元素技能；其餘見 NON_STAT_FUNCS。
  */
+const lowerCache = new WeakMap<object, Map<string, PropertyDef>>();
+/** 遊戲表偶有大小寫不一致的屬性代碼（例如 Gethit-skill 對 gethit-skill）；遊戲內不分大小寫，這裡比照 */
+function propertyOf(props: Record<string, PropertyDef>, code: string): PropertyDef | undefined {
+  if (props[code]) return props[code];
+  let m = lowerCache.get(props);
+  if (!m) { m = new Map(Object.entries(props).map(([k, v]) => [k.toLowerCase(), v])); lowerCache.set(props, m); }
+  return m.get(code.toLowerCase());
+}
+
 export function resolveModifier(m: Modifier, props: Record<string, PropertyDef>, roll = 1): ResolveResult {
-  const def = props[m.code];
+  const def = propertyOf(props, m.code);
   if (!def) return { entries: [], unresolved: `未定義屬性 ${m.code}` };
   const v = pick(m, roll, 'roll');
   const entries: StatEntry[] = [];
