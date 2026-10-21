@@ -8,7 +8,7 @@ interface CategoryGridProps {
   onNavigateTab: (tab: string, node?: string) => void;
 }
 
-/** 首頁大圖分類格：裝備圖鑑用大尺寸物品圖，其餘 11 個分頁用分組入口卡，17 個分頁入口全數保留 */
+/** 首頁大圖分類格：裝備圖鑑用大尺寸物品圖，其餘 12 個分頁用分組入口卡，18 個分頁入口全數保留 */
 export const CategoryGrid: React.FC<CategoryGridProps> = ({ onNavigateTab }) => {
   // 各類筆數與代表物品圖示由 scripts/build_portal_summary.mjs 事先算好（首頁不必載入整份百科資料）
   const gearTiles = portalSummary as unknown as CategoryTile[];
