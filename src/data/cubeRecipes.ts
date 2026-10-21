@@ -102,7 +102,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     title: "施法者手工戒指 (Caster Ring)",
     titleEn: "Crafted Caster Ring",
     inputs: ["1x 魔法戒指 (藍色)", "1x Amn (11#)", "1x 完美紫寶石", "1x 任意珠寶"],
-    output: "手工施法戒指 (附帶 +1-5 生命、法力回充 +4-10%、+10-20 法力，有機會出 10 FCR)",
+    output: "手工施法戒指 (附帶 +1-5 能量、法力回充 +4-10%、+10-20 法力，有機會出 10 FCR)",
     notes: "適合彌補法力抗性或衝刺 105/200 FCR 斷點。"
   },
   {
@@ -111,7 +111,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     title: "打擊力量擊退手套 (Hit Power Gloves)",
     titleEn: "Crafted Hit Power Gloves",
     inputs: ["1x 魔法鎖鏈手套/重裝手套/吸魂手套", "1x Ort (9#)", "1x 完美藍寶石", "1x 任意珠寶"],
-    output: "手工打擊手套 (固定自帶擊退 Knockback、被擊中時 5% 施展霜之新星)",
+    output: "手工打擊手套 (固定自帶擊退 Knockback、攻擊者反傷 3-7、被擊中時 5% 機率施展等級 4 冰霜新星)",
     notes: "物理弓馬的最愛，免於被近戰怪包圍。"
   },
 
@@ -142,27 +142,27 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
   {
     id: "repair_weapon",
     category: "repair",
-    title: "完全修理武器並補充充能 (免金幣)",
-    titleEn: "Fully Repair and Recharge Weapon",
-    inputs: ["1x Ral (8#)", "1x 損壞的武器"],
-    output: "耐久度全滿且聚氣技能次數全補滿的武器",
-    notes: "無形 (Ethereal) 裝備無法透過此配方修復耐久。"
+    title: "完全修理武器 (免金幣)",
+    titleEn: "Fully Repair Weapon",
+    inputs: ["1x Ort (9#)", "1x 損壞的武器"],
+    output: "耐久度全滿的武器",
+    notes: "無形 (Ethereal) 裝備無法透過此配方修復耐久。要連聚氣技能次數一起補滿，請用下方「武器快速修復與聚氣充能」（再加 1 顆碎裂寶石）。"
   },
   {
     id: "repair_armor",
     category: "repair",
-    title: "完全修理防具並補充充能 (免金幣)",
-    titleEn: "Fully Repair and Recharge Armor",
-    inputs: ["1x Ort (9#)", "1x 損壞的防具"],
-    output: "耐久度全滿且聚氣技能次數全補滿的防具",
-    notes: "修理高額維修費的符文之語（如剛毅、謎團）時省錢妙招。"
+    title: "完全修理防具 (免金幣)",
+    titleEn: "Fully Repair Armor",
+    inputs: ["1x Ral (8#)", "1x 損壞的防具"],
+    output: "耐久度全滿的防具",
+    notes: "修理高額維修費的符文之語（如剛毅、謎團）時省錢妙招。無形裝備無法修復耐久。要連聚氣技能次數一起補滿，請用下方「防具快速修復與聚氣充能」（再加 1 顆瑕疵寶石）。"
   },
   {
     id: "reroll_grand_charm",
     category: "misc",
     title: "重置魔法超大護身符 (洗技能板)",
     titleEn: "Reroll Magic Grand Charm",
-    inputs: ["3x 任意完美寶石 (Perfect Gems)", "1x 魔法超大護身符 (ilvl 85+)"],
+    inputs: ["3x 任意完美寶石 (Perfect Gems)", "1x 魔法超大護身符 (遊戲配方接受任何魔法物品；洗板建議 ilvl 85+)"],
     output: "隨機重新生成屬性的魔法超大護身符",
     notes: "使用巴爾、迪亞布羅、尼拉塞克掉落的 91+ 級護身符，有機會洗出 +1 技能 +45 生命的夢幻神板！"
   },
@@ -239,7 +239,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
       "1x 憎恨之鑰 (Key of Hate - 召喚者掉落)",
       "1x 毀滅之鑰 (Key of Destruction - 尼拉塞克掉落)"
     ],
-    output: "於地獄難度第 5 章城鎮開啟：女先知巢穴、遺忘沙漠或苦痛熔爐隨機一道紅門",
+    output: "於地獄難度第 5 章城鎮開啟：魔母巢穴、遺忘沙漠或苦痛熔爐隨機一道紅門",
     notes: "收集『墨菲斯托的大腦 + 巴爾的眼睛 + 迪亞布羅的角』三樣器官，再次放入方塊轉化，即可開啟通往【超級崔斯特姆 (Uber Tristram)】的終極紅門，擊殺三大魔神取得【地獄火炬 (Hellfire Torch)】！"
   },
   {

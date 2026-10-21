@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries'; export { TIER_LABEL, TIER_META } from './src/utils/equipTaxonomy'; export { TIER_QUALITY_ZH } from './src/data/codex/common';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries'; export { TIER_LABEL, TIER_META } from './src/utils/equipTaxonomy'; export { TIER_QUALITY_ZH } from './src/data/codex/common'; export { CUBE_RECIPES_DATA } from './src/data/cubeRecipes'; export { GEMS_DATA as PROPS_GEMS_DATA, UBER_KEYS_ORGANS_DATA } from './src/data/props';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -1442,5 +1442,109 @@ console.log('【底材級別用字：遊戲字串的「普通／卓越／精英�
     const hits = [];
     const walk = (d) => { for (const f of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, f.name); if (f.isDirectory()) { if (p.split(path.sep).join('/').endsWith('src/data/game')) continue; walk(p); } else if (/\.(ts|tsx|json)$/.test(f.name)) { const s = fs.readFileSync(p, 'utf8'); if (/進階|菁英/.test(s)) hits.push(p); } } };
     walk('src'); assert.deepEqual(hits, [], '請改用遊戲字串的「普通／卓越／精英」');
+  });
+}
+
+console.log('【方塊配方：手寫文字對照遊戲 cubemain.txt】');
+{
+  const { CUBE_RECIPES_DATA, PROPS_GEMS_DATA, UBER_KEYS_ORGANS_DATA, CODEX_OVERLAY } = E;
+  const cube = rd('cube');
+  const byRow = (n, desc) => { const r = cube.find((x) => x.row === n); assert.ok(r, `cubemain 第 ${n} 列不存在或未啟用`); assert.match(r.description, desc, `cubemain 第 ${n} 列不是預期的配方（資料表更新後列號可能位移）`); return r; };
+
+  // 遊戲側：輸入欄 → 材料記號（符文、寶石、珠寶）與數量；物品類型條件（"weap,nor,nos"…）不比對
+  const add = (m, k, q) => m.set(k, (m.get(k) ?? 0) + q);
+  const GEM_LETTER = { v: '紫', r: '紅', b: '藍', y: '黃', g: '綠', w: '鑽' };
+  const gameTokens = (r) => {
+    const m = new Map();
+    for (const raw of r.inputs) {
+      const [code, ...flags] = raw.replace(/"/g, '').split(',');
+      const q = Number((flags.find((f) => f.startsWith('qty=')) ?? 'qty=1').slice(4));
+      let x;
+      if ((x = /^r(\d\d)$/.exec(code))) add(m, `符文${Number(x[1])}`, q);
+      else if ((x = /^g([cfslzp])([vrbywg])$/.exec(code))) add(m, `${{ c: '碎裂', f: '瑕疵', s: '標準', l: '無瑕', z: '無瑕', p: '完美' }[x[1]]}${GEM_LETTER[x[2]]}`, q);
+      else if (code === 'skz') add(m, '完美骷髏', q);
+      else if (code === 'gem0') add(m, '碎裂任意', q);
+      else if (code === 'gem1') add(m, '瑕疵任意', q);
+      else if (code === 'jew') add(m, '珠寶', q);
+    }
+    return m;
+  };
+  // 手寫側：「1x Ral (8#)」「17# 盧姆」「完美紫寶石／水晶」「碎裂寶石」「3顆 完美骷髏」「任意珠寶」
+  const ZH_GEM = { 紫: '紫', 紅: '紅', 藍: '藍', 黃: '黃', 綠: '綠', 鑽石: '鑽' };
+  const textTokens = (s) => {
+    const m = new Map();
+    const q = Number((/^(\d+)(?:x|顆)/.exec(s.trim()) ?? [0, 1])[1]);
+    for (const x of s.matchAll(/(\d+)#/g)) add(m, `符文${Number(x[1])}`, 1);
+    const g = /(無瑕疵?|瑕疵|碎裂|完美)?(紫|紅|藍|黃|綠)(?:寶石|水晶)|(無瑕疵?|瑕疵|碎裂|完美)?(鑽石)/.exec(s);
+    if (g) { const quality = (g[1] ?? g[3]) ?? '標準'; add(m, `${quality.replace('無瑕疵', '無瑕')}${ZH_GEM[g[2] ?? g[4]]}`, q); }
+    if (/完美骷髏/.test(s)) add(m, '完美骷髏', q);
+    if (/碎裂寶石/.test(s) && !g) add(m, '碎裂任意', q);
+    if (/瑕疵寶石/.test(s) && !g) add(m, '瑕疵任意', q);
+    if (/珠寶/.test(s)) add(m, '珠寶', q);
+    return m;
+  };
+  const merge = (list) => { const m = new Map(); for (const x of list) for (const [k, v] of x) add(m, k, v); return m; };
+  const show = (m) => [...m.entries()].sort().map(([k, v]) => `${k}×${v}`).join(' ');
+
+  // 方塊工坊（cubeRecipes.ts）每一筆的材料 ＝ 遊戲對應那一列的材料
+  const MAP = {
+    socket_weapon: [126, /Normal Weapon -> Socketed Weapon/], socket_armor: [125, /Normal Torso Armor -> Socketed Torso Armor/], socket_helm: [127, /Normal Helm -> Socketed Helm/], socket_shield: [128, /Normal Shield -> Socketed Shield/],
+    upgrade_unique_weapon_norm_to_excep: [131, /Normal Unique Weapon -> Exceptional Unique Weapon/], upgrade_unique_weapon_excep_to_elite: [133, /Exceptional Unique Weapon -> Elite Unique Weapon/],
+    upgrade_unique_armor_norm_to_excep: [132, /Normal Unique Armor -> Exceptional Unique Armor/], upgrade_unique_armor_excep_to_elite: [134, /Exceptional Unique Armor -> Elite Unique Armor/],
+    upgrade_rare_weapon_norm_to_excep: [135, /Normal Rare Weapon -> Exceptional Rare Weapon/], upgrade_rare_weapon_excep_to_elite: [137, /Exceptional Rare Weapon -> Elite Rare Weapon/],
+    upgrade_rare_armor_norm_to_excep: [136, /Normal Rare Armor -> Exceptional Rare Armor/], upgrade_rare_armor_excep_to_elite: [138, /Exceptional Rare Armor -> Elite Rare Armor/],
+    craft_caster_amulet: [90, /Caster Amulet/], craft_blood_gloves: [77, /Blood Gloves/], craft_caster_ring: [91, /Caster Ring/], craft_hit_power_gloves: [68, /Hit Power Gloves/], craft_caster_belt: [87, /Caster Belt/], craft_blood_ring: [82, /Blood Ring/],
+    repair_weapon: [139, /Fully Repaired Weapon/], repair_armor: [140, /Fully Repaired Armor/], repair_weapon_recharge: [141, /Repaired and Recharged Weapon/], repair_armor_recharge: [142, /Repaired and Recharged Armor/],
+    unsocket_item: [143, /Clear Sockets/], reroll_rare_item: [63, /Low Quality Rare/],
+  };
+  t('方塊工坊的材料逐筆等於遊戲配方：符文編號、寶石種類與品質、珠寶、骷髏數量（修理配方的武器是 Ort、防具是 Ral）', () => {
+    for (const [id, [n, desc]] of Object.entries(MAP)) {
+      const rec = CUBE_RECIPES_DATA.find((x) => x.id === id); assert.ok(rec, id);
+      assert.equal(show(merge(rec.inputs.map(textTokens))), show(gameTokens(byRow(n, desc))), `${id}（cubemain 第 ${n} 列）`);
+    }
+    const ids = CUBE_RECIPES_DATA.map((x) => x.id);
+    assert.ok(['repair_weapon', 'repair_armor'].every((i) => ids.includes(i)));
+  });
+  t('手工配方的輸出屬性範圍與遊戲相同，且用字對（施法戒指是 +1-5 能量、血腥戒指是 +1-5 力量）', () => {
+    const CRAFT = { craft_caster_amulet: 90, craft_blood_gloves: 77, craft_caster_ring: 91, craft_hit_power_gloves: 68, craft_caster_belt: 87, craft_blood_ring: 82 };
+    for (const [id, n] of Object.entries(CRAFT)) {
+      const rec = CUBE_RECIPES_DATA.find((x) => x.id === id);
+      for (const m of cube.find((x) => x.row === n).mods) if (m.code !== 'gethit-skill' && m.min !== m.max) assert.ok(rec.output.includes(`${m.min}-${m.max}`), `${id} 缺 ${m.code} ${m.min}-${m.max}`);
+    }
+    const ring = CUBE_RECIPES_DATA.find((x) => x.id === 'craft_caster_ring').output;
+    assert.ok(ring.includes('+1-5 能量') && !ring.includes('+1-5 生命'));
+    assert.ok(CUBE_RECIPES_DATA.find((x) => x.id === 'craft_blood_ring').output.includes('+1-5 力量'));
+  });
+  t('重骰與等級公式：重骰稀有 ilvl＝0.4×玩家等級＋0.4×原物品；手工配方 0.5＋0.5；重骰魔法物品維持原物品等級（資料表百分比欄）', () => {
+    const r = byRow(63, /Low Quality Rare/); assert.deepEqual([r.plvl, r.ilvl], [40, 40]);
+    assert.ok(CUBE_RECIPES_DATA.find((x) => x.id === 'reroll_rare_item').output.includes('0.4 * clvl + 0.4 * 原 ilvl'));
+    for (const n of [90, 77, 91, 68, 87, 82]) { const c = cube.find((x) => x.row === n); assert.deepEqual([c.plvl, c.ilvl], [50, 50], String(n)); }
+    assert.equal(byRow(62, /Re-rolled Magic Item/).ilvl, 100);
+  });
+  t('符文升級配方（符文寶庫）：每一階的數量與寶石都等於遊戲配方（1~32 號符文）', () => {
+    const runes = CODEX_OVERLAY.runes;
+    for (let n = 1; n <= 32; n++) {
+      const out = `r${String(n + 1).padStart(2, '0')}`;
+      const game = cube.filter((x) => x.output === out && x.inputs.some((i) => i.replace(/"/g, '').startsWith(`r${String(n).padStart(2, '0')}`)));
+      assert.equal(game.length, 1, `遊戲沒有唯一的 ${n} → ${n + 1} 配方`);
+      const text = runes[n].cubeRecipe; const m = /^(\d)x \w+(?: \+ 1x (.+))? -> 1x \w+$/.exec(text); assert.ok(m, text);
+      const hand = new Map([[`符文${n}`, Number(m[1])]]);
+      if (m[2]) for (const [k, v] of textTokens(m[2])) add(hand, k, v);
+      assert.equal(show(hand), show(gameTokens(game[0])), `${n} 號：${text}`);
+    }
+  });
+  t('道具頁（props.ts）的升級與打孔配方：卓越→精英的暗金武器用綠寶石、防具用鑽石，材料等於遊戲；骷髏加孔要 3 顆；紅門三處地圖用遊戲名稱', () => {
+    const gem = (id) => PROPS_GEMS_DATA.find((g) => g.id === id);
+    const line = (g, re) => { const l = gem(g).craftingUses.find((x) => re.test(x)); assert.ok(l, `${g} 沒有 ${re}`); return l; };
+    assert.equal(show(textTokens(line('gem_perfect_emerald', /暗金武器/))), show(gameTokens(byRow(133, /Exceptional Unique Weapon -> Elite Unique Weapon/))));
+    assert.equal(show(textTokens(line('gem_perfect_diamond', /暗金防具/))), show(gameTokens(byRow(134, /Exceptional Unique Armor -> Elite Unique Armor/))));
+    for (const [g, n, d] of [['gem_perfect_amethyst', 126, /Socketed Weapon/], ['gem_perfect_topaz', 125, /Socketed Torso Armor/], ['gem_perfect_ruby', 128, /Socketed Shield/], ['gem_perfect_sapphire', 127, /Socketed Helm/]]) {
+      assert.equal(show(textTokens(line(g, /打孔配方/))), show(gameTokens(byRow(n, d))), g);
+    }
+    const sk = line('gem_perfect_skull', /增添 1 孔/); assert.ok(sk.includes('3顆 完美骷髏') && sk.includes('喬丹之石'));
+    assert.equal(show(textTokens('3顆 完美骷髏')), show(gameTokens(byRow(65, /Add 1 Socket to Rare Item/))).replace(/ ?珠寶×\d/, ''));
+    const keys = UBER_KEYS_ORGANS_DATA.filter((k) => /隨機開啟/.test(k.usageFormula ?? ''));
+    assert.ok(keys.length >= 1); for (const k of keys) { assert.ok(['魔母巢穴', '遺忘沙漠', '苦痛熔爐'].every((x) => k.usageFormula.includes(x)) && !k.usageFormula.includes('苦難熔爐')); }
+    assert.ok(CUBE_RECIPES_DATA.find((x) => x.id === 'uber_tristram_portals').output.includes('魔母巢穴'));
   });
 }

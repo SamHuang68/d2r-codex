@@ -244,6 +244,15 @@ for (const r of expRows) {
 }
 const experience = expRows.map((r) => num(r.Amazon));
 if (experience.length !== 100 || experience.some((v, i) => i > 0 && !(v > experience[i - 1]))) throw new Error('experience.txt 不是 0~99 級的遞增表');
+// --- 赫拉迪姆方塊配方（cubemain.txt）：只收啟用的列。網站的方塊工坊、道具頁等是手寫文字，這份資料用來在測試裡逐項對照，網站本身不載入 ---
+// row＝資料表裡的列號（含標題列，從 2 開始）；inputs＝input 1～7 的原始內容（例如 r08＝符文、gpv＝完美紫寶石、"weap,nor,nos"＝無孔普通武器；
+// qty＝數量）；lvl／plvl／ilvl＝輸出物品等級的固定值、玩家等級百分比、輸入物品等級百分比；mods＝輸出的固定屬性（手工配方用）。
+const cube = tsv('cubemain.txt').map((r, i) => ({ r, row: i + 2 })).filter(({ r }) => r.enabled === '1').map(({ r, row }) => ({
+  row, description: (r.description ?? '').trim(),
+  inputs: [1, 2, 3, 4, 5, 6, 7].map((k) => r[`input ${k}`]).filter(Boolean), output: r.output,
+  lvl: num(r.lvl), plvl: num(r.plvl), ilvl: num(r.ilvl),
+  mods: [1, 2, 3, 4, 5].filter((k) => r[`mod ${k}`]).map((k) => ({ code: r[`mod ${k}`], par: num(r[`mod ${k} param`]), min: num(r[`mod ${k} min`]), max: num(r[`mod ${k} max`]) })),
+}));
 // --- properties（modifier → stat 對映）、itemstatcost（子集）---
 const propRows = tsv('properties.txt');
 const properties = {};
@@ -419,7 +428,7 @@ const write = (n, d) => fs.writeFileSync(path.join(outDir, n), JSON.stringify(d)
 write('meta.json', meta); write('itemtypes.json', itemtypes); write('bases.json', bases); write('uniques.json', uniques);
 write('gems.json', gems); write('sets.json', sets); write('setItems.json', setItems); write('runewords.json', runewords);
 write('properties.json', properties); write('stats.json', stats); write('statStrings.zhTW.json', statStrings);
-write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns); write('hireling.json', hireling); write('summons.json', summonMonsters); write('monsters.json', monsters); write('areas.json', areas); write('affixes.json', affixes); write('shrines.json', shrines); write('experience.json', experience);
+write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns); write('hireling.json', hireling); write('summons.json', summonMonsters); write('monsters.json', monsters); write('areas.json', areas); write('affixes.json', affixes); write('shrines.json', shrines); write('experience.json', experience); write('cube.json', cube);
 
 console.log(JSON.stringify(meta.counts));
 console.log('missing property defs:', missingProps.length, missingProps.slice(0, 20).join(','));
