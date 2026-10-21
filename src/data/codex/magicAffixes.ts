@@ -33,7 +33,8 @@ export interface Affix {
   mods: Modifier[]; itypes: string[]; etypes: string[];
 }
 
-export const AFFIXES = affixesJson as unknown as Affix[];
+/** 遊戲字串表沒有中文名的 7 個詞綴（of Shadows、of Despair、of Nightmares、of Ember、of Cinders、of Flames、of Inferno）改顯示英文名，名稱欄位永遠有值 */
+export const AFFIXES: Affix[] = (affixesJson as unknown as (Omit<Affix, 'name'> & { name?: string })[]).map((a) => ({ ...a, name: a.name ?? a.nameEn }));
 export const AFFIX_KIND_ZH: Record<AffixKind, string> = { prefix: '前綴', suffix: '後綴', auto: '自動詞綴' };
 export const AFFIX_KINDS: AffixKind[] = ['prefix', 'suffix', 'auto'];
 

@@ -22,7 +22,7 @@ import { normalizeItemQuery, cleanSearchQuery } from './itemQueryNormalizer';
 
 export interface SearchResultItem {
   id: string;
-  type: 'runeword' | 'unique' | 'set' | 'rune' | 'cube' | 'area' | 'mercenary' | 'valuation' | 'uber' | 'skill' | 'base' | 'quest' | 'prop' | 'character';
+  type: 'runeword' | 'unique' | 'set' | 'rune' | 'cube' | 'area' | 'mercenary' | 'valuation' | 'uber' | 'skill' | 'base' | 'quest' | 'prop' | 'character' | 'monster' | 'affix' | 'shrine' | 'exp';
   title: string;
   titleEn: string;
   category: string;

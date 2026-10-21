@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Landmark, Search } from 'lucide-react';
 import { PageHeader } from '../common/PageHeader';
 import { SHRINES, SHRINE_TYPES, SHRINE_TYPE_ZH, durationSeconds, shrineSummary, type Shrine, type ShrineType } from '../../data/codex/shrines';
@@ -45,9 +45,11 @@ const ShrineCard: React.FC<{ s: Shrine }> = ({ s }) => {
   );
 };
 
-export const ShrineCompendium: React.FC = () => {
+export const ShrineCompendium: React.FC<{ initialQuery?: string }> = ({ initialQuery }) => {
   const [type, setType] = useState<ShrineType | 'all'>('all');
-  const [q, setQ] = useState('');
+  const [q, setQ] = useState(initialQuery ?? '');
+  // 從全域搜尋點進來時帶入聖壇名稱（同一頁再搜一次也要更新）
+  useEffect(() => { if (initialQuery !== undefined) setQ(initialQuery); }, [initialQuery]);
   const list = useMemo(() => {
     const t = q.trim().toLowerCase();
     return SHRINES.filter((s) => (type === 'all' || s.type === type) && (!t || s.name.toLowerCase().includes(t) || s.nameEn.toLowerCase().includes(t) || shrineSummary(s).toLowerCase().includes(t)));

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Search, Tag } from 'lucide-react';
 import { PageHeader } from '../common/PageHeader';
 import {
@@ -58,11 +58,13 @@ const AffixRow: React.FC<{ a: Affix; share?: number; onGroup: (g: number) => voi
   );
 };
 
-export const AffixCompendium: React.FC = () => {
+export const AffixCompendium: React.FC<{ initialQuery?: string }> = ({ initialQuery }) => {
   const [kind, setKind] = useState<AffixKind | 'all'>('all');
   const [type, setType] = useState('');
   const [ilvlText, setIlvlText] = useState('');
-  const [q, setQ] = useState('');
+  const [q, setQ] = useState(initialQuery ?? '');
+  // 從全域搜尋點進來時帶入詞綴名稱（同一頁再搜一次也要更新）
+  useEffect(() => { if (initialQuery !== undefined) setQ(initialQuery); }, [initialQuery]);
   const [rareOnly, setRareOnly] = useState(false);
   const [hideNegative, setHideNegative] = useState(false);
   const [group, setGroup] = useState<number | null>(null);

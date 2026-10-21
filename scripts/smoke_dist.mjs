@@ -241,6 +241,19 @@ async function runOnce(base, browser) {
     } catch (e) {
       failures.push(`[桌面] 按 Q 打不開搜尋面板：${String(e.message).split('\n')[0]}`);
     }
+    // 全域搜尋也要找得到怪物（輸入之後才動態載入的第二批資料）：點結果會跳到怪物圖鑑，並把名稱帶進該頁的搜尋框
+    try {
+      await page.keyboard.press('q');
+      const box = page.locator('input[placeholder*="搜尋符文之語"]');
+      await box.waitFor({ timeout: 10000 });
+      await box.fill('安達莉爾');
+      const hit = page.getByText('怪物圖鑑 ·').first();
+      await hit.waitFor({ timeout: 10000 });
+      await hit.click();
+      await page.waitForFunction(() => location.hash === '#monsters' && [...document.querySelectorAll('input[type=search]')].some((i) => i.value === '安達莉爾'), null, { timeout: 10000 });
+    } catch (e) {
+      failures.push(`[桌面] 全域搜尋找不到怪物或點了沒有跳到怪物圖鑑：${String(e.message).split('\n')[0]}`);
+    }
 
     // 配裝模擬：延遲載入的 chunk、引擎、遊戲資料都要在正式建置裡跑得起來（區塊標題是字距放大的「生 存 力」，所以比對允許空白）
     await page.evaluate(() => { location.hash = '#planner'; });
