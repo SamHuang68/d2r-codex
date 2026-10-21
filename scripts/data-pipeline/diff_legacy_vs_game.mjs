@@ -4,80 +4,17 @@
 // 判定原則：遊戲表為準；英文名以正規化後比對，其次中文名，再其次拼寫相近。「關鍵數值」只比 STAT_DEFS 列出的類別。
 // 用法：node scripts/data-pipeline/diff_legacy_vs_game.mjs [輸出資料夾=legacy_vs_game_diff_out]
 // 輸出：diff.json（逐筆明細，含舊 id → 遊戲 id 對照）、appendix.md（可讀清單）；終端機印出摘要。
-import { build } from 'esbuild';
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { cnt, loadGame, loadLegacy, matchLists, norm, SKILL_ALIASES, zhn } from './lib/legacy_match.mjs';
 
+// 用法：node scripts/data-pipeline/diff_legacy_vs_game.mjs [輸出資料夾] [舊資料根目錄=目前工作目錄]
+// 舊資料已從主樹移除後，以 git archive 取出：git archive e5b3f02 src/data src/types | tar -x -C <dir>，再把 <dir> 當第二個參數。
 const outDir = process.argv[2] || 'legacy_vs_game_diff_out';
 fs.mkdirSync(outDir, { recursive: true });
-
-const bundle = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2legacy-')), 'legacy.mjs');
-await build({
-  stdin: {
-    contents: [
-      "export { SKILLS_DATA } from './src/data/skills';",
-      "export { SYNERGY_RELATIONS } from './src/data/skills/synergies';",
-      "export { SKILL_GRID_LAYOUT } from './src/data/skills/layout';",
-      "export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems';",
-      "export { SET_ITEMS_DATA } from './src/data/setItems';",
-      "export { BASE_ITEMS_DATA } from './src/data/bases';",
-      "export { RUNEWORDS_DATA } from './src/data/runewords';",
-      "export { RUNES_DATA } from './src/data/runes';",
-      "export * from './src/engine/skills';",
-      "export { describeModifiers } from './src/engine/describe';",
-    ].join('\n'),
-    resolveDir: process.cwd(), loader: 'ts',
-  },
-  bundle: true, platform: 'node', format: 'esm', outfile: bundle, logLevel: 'error', loader: { '.json': 'json' },
-});
-const L = await import(pathToFileURL(bundle).href);
-const G = (n) => JSON.parse(fs.readFileSync(`src/data/game/${n}.json`, 'utf8'));
+const L = await loadLegacy(process.argv[3] || process.cwd());
+const G = loadGame;
 const gUniques = G('uniques'), gSetItems = G('setItems'), gSets = G('sets'), gRunewords = G('runewords'), gBases = G('bases');
-
-// ───────── 共用小工具 ─────────
-const norm = (s) => String(s ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
-const zhn = (s) => String(s ?? '').replace(/[（(][^）)]*[）)]/g, '').replace(/[\s·・]/g, '');
-const cnt = (a, f) => a.reduce((m, x) => ((m[f(x)] = (m[f(x)] || 0) + 1), m), {});
-const lev = (a, b) => {
-  const dp = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
-  for (let j = 1; j <= b.length; j++) dp[0][j] = j;
-  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
-  return dp[a.length][b.length];
-};
-
-/**
- * 配對兩份清單：1) 英文名正規化後相同 2) 中文名相同 3) 拼寫相近（唯一最佳且距離 ≤ max(3, 長度 25%)）。
- * 回傳 pairs[{o, n, how}]、oldOnly、newOnly。同名多筆時依序一一配對。
- */
-function matchLists(oldArr, newArr, { oldEn = (x) => x.nameEn, newEn = (x) => x.nameEn, oldZh = (x) => x.name, newZh = (x) => x.name, sameGroup = () => true, prefer = () => false } = {}) {
-  const pairs = []; const usedN = new Set(); const usedO = new Set();
-  const pass = (keyO, keyN, how) => {
-    const idx = new Map();
-    newArr.forEach((n, i) => { if (usedN.has(i)) return; const k = keyN(n); if (!k) return; (idx.get(k) || idx.set(k, []).get(k)).push(i); });
-    oldArr.forEach((o, i) => {
-      if (usedO.has(i)) return; const k = keyO(o); const c = idx.get(k); if (!c) return;
-      const ok = c.filter((x) => !usedN.has(x) && sameGroup(o, newArr[x])); const j = ok.find((x) => prefer(o, newArr[x])) ?? ok[0]; if (j === undefined) return;
-      usedO.add(i); usedN.add(j); pairs.push({ o, n: newArr[j], how });
-    });
-  };
-  pass((o) => norm(oldEn(o)), (n) => norm(newEn(n)), 'nameEn');
-  pass((o) => zhn(oldZh(o)), (n) => zhn(newZh(n)), 'zh');
-  const restO = oldArr.map((o, i) => i).filter((i) => !usedO.has(i)); const restN = newArr.map((n, i) => i).filter((i) => !usedN.has(i));
-  const best = (fromArr, toArr, fromIdx, toIdx, fe, te) => fromIdx.map((i) => {
-    const a = norm(fe(fromArr[i])); let bd = 99, bj = -1, tie = false;
-    for (const j of toIdx) { if (!sameGroup(...(fromArr === oldArr ? [fromArr[i], toArr[j]] : [toArr[j], fromArr[i]]))) continue; const d = lev(a, norm(te(toArr[j]))); if (d < bd) { bd = d; bj = j; tie = false; } else if (d === bd) tie = true; }
-    return { i, j: bj, d: bd, tie, lim: Math.max(3, Math.floor(a.length * 0.25)) };
-  });
-  const fwd = best(oldArr, newArr, restO, restN, oldEn, newEn); const bwd = best(newArr, oldArr, restN, restO, newEn, oldEn);
-  for (const f of fwd) {
-    if (f.j < 0 || f.tie || f.d > f.lim) continue; const b = bwd.find((x) => x.i === f.j);
-    if (!b || b.j !== f.i || b.tie) continue;
-    usedO.add(f.i); usedN.add(f.j); pairs.push({ o: oldArr[f.i], n: newArr[f.j], how: 'spelling' });
-  }
-  return { pairs, oldOnly: oldArr.filter((_, i) => !usedO.has(i)), newOnly: newArr.filter((_, i) => !usedN.has(i)) };
-}
 
 // ───────── 關鍵數值：舊屬性文字 ↔ 遊戲 modifier ─────────
 const RNG = '(-?\\d+(?:\\.\\d+)?)(?:-(-?\\d+(?:\\.\\d+)?))?';
@@ -323,12 +260,6 @@ const presence = (arr, fields) => Object.fromEntries(fields.map((f) => [f, arr.f
   const classCode = Object.fromEntries(Object.entries(CLASS_CODE_ZH).map(([k, v]) => [v, k]));
   const flat = SKILLS_DATA.flatMap((c) => c.trees.map((t, ti) => t.skills.map((s) => ({ ...s, _class: c.characterClass, _cc: classCode[c.characterClass], _treeIdx: ti }))).flat());
   const byNorm = new Map(GAME_SKILLS.map((s) => [`${s.charClass}:${norm(s.nameEn)}`, s]));
-  // skills.txt 的內部英文名與公開英文名不同的技能（舊資料用公開名）。屬人工對照，已逐項靠需求等級、樹與格位交叉核對，列入報告待覆核
-  const SKILL_ALIASES = {
-    Decoy: 'Dopplezon', 'Sword Mastery': 'Blade Mastery', Fissure: 'Eruption', 'Poison Creeper': 'Plague Poppy', 'Carrion Vine': 'Cycle of Life',
-    'Solar Creeper': 'Vines', 'Summon Dire Wolf': 'Summon Fenris', 'Burst of Speed': 'Quickness', 'Fire Blast': 'Fire Trauma', 'Shock Web': 'Shock Field',
-    'Wake of Fire': 'Wake of Fire Sentry', 'Wake of Inferno': 'Inferno Sentry',
-  };
   const pairs = []; const oldOnly = [];
   for (const s of flat) {
     let g = byNorm.get(`${s._cc}:${norm(s.nameEn)}`); let how = 'nameEn';
