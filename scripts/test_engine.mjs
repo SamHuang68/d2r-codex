@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -1367,5 +1367,48 @@ console.log('【聖壇（shrines.txt）與經驗值表（experience.txt）】');
     assert.equal(progressOf(EXP[50]).level, 50); assert.equal(progressOf(EXP[50] - 1).level, 49);
     const p = progressOf(EXP[80] + 1000); assert.equal(p.level, 80); assert.equal(p.into, 1000); assert.equal(p.into + p.remaining, expForLevel(81)); assert.equal(p.toMax, EXP[99] - EXP[80] - 1000);
     const m = progressOf(EXP[99] + 5); assert.equal(m.level, 99); assert.equal(m.remaining, 0); assert.equal(m.fraction, 1); assert.equal(m.toMax, 0);
+  });
+}
+
+console.log('【傭兵寶典的資料表數值（與頁面敘述不同處的依據）】');
+{
+  const { HIRELINGS, mercBaseAt, hirelingMinLevel, MERCENARIES_DATA, skillByName, auraEffects, skillEffectText } = E;
+  const descs = (act, diff) => HIRELINGS.filter((h) => h.act === act && h.difficulty === diff).map((h) => h.desc);
+  t('傭兵寶典的四個分頁（第 1、2、3、5 幕）在資料表裡都有對應的類型，三個難度都雇得到', () => {
+    assert.deepEqual(MERCENARIES_DATA.map((m) => m.act).sort(), [1, 2, 3, 5]);
+    for (const m of MERCENARIES_DATA) for (const d of [1, 2, 3]) assert.ok(descs(m.act, d).length > 0, `第 ${m.act} 幕難度 ${d}`);
+  });
+  t('第二幕：普通只有祈禱、反抗、精準祝福；惡夢與地獄都是六種（再加荊棘、神聖冰凍、力量）——頁面註記的依據', () => {
+    const six = ['祈禱', '反抗', '精準祝福', '荊棘', '神聖冰凍', '力量'];
+    assert.deepEqual(descs(2, 1).sort(), ['反抗', '祈禱', '精準祝福'].sort());
+    assert.deepEqual(descs(2, 2).sort(), [...six].sort()); assert.deepEqual(descs(2, 3).sort(), [...six].sort());
+  });
+  t('第三幕冰寒型的技能是冰川之槍、寒冰甲、寒冰球，各難度各檢查點都沒有暴風雪——頁面註記的依據', () => {
+    const cold = HIRELINGS.filter((h) => h.act === 3 && h.desc === '冰寒');
+    assert.equal(cold.length, 3);
+    for (const h of cold) for (const r of h.rows) assert.deepEqual(r.skills.map((s) => s.nameEn).sort(), ['Chilling Armor', 'Glacial Spike', 'Ice Blast']);
+  });
+  t('各類型從最低等級到 99 級都算得出數值：生命、傷害不遞減，技能等級不遞減，沒有 NaN', () => {
+    for (const h of HIRELINGS) {
+      let prev;
+      for (let lv = hirelingMinLevel(h); lv <= 99; lv += 7) {
+        const b = mercBaseAt(h, lv);
+        for (const v of [b.life, b.defense, b.ar, b.str, b.dex, b.damage.min, b.damage.max, ...Object.values(b.resist), ...b.skills.flatMap((s) => [s.level, s.chance])]) assert.ok(Number.isFinite(v), `${h.id} ${lv}`);
+        assert.ok(b.damage.max >= b.damage.min && b.skills.length >= 1);
+        if (prev) { assert.ok(b.life >= prev.life, `${h.id} ${lv} 生命`); b.skills.forEach((s, i) => assert.ok(s.level >= prev.skills[i].level, `${h.id} ${lv} 技能`)); }
+        prev = b;
+      }
+    }
+  });
+  t('傭兵光環的每一行效果都有說法（沒有未翻譯的屬性代碼）：生命回復與反傷照原值註明單位未驗證，其他動作速度是百分比', () => {
+    assert.equal(skillEffectText('hitpoints', 5376), '生命回復：5376（資料表原值，單位未驗證）');
+    assert.equal(skillEffectText('thorns_percent', 1210), '反傷：1210（資料表原值，單位未驗證）');
+    assert.equal(skillEffectText('other_animrate', -53), '其他動作速度：-53%');
+    let n = 0;
+    for (const h of HIRELINGS) for (const s of mercBaseAt(h, hirelingMinLevel(h)).skills.filter((x) => x.mode === 1)) {
+      const sk = skillByName(s.nameEn); assert.ok(sk && sk.auraStats, s.nameEn);
+      for (const l of auraEffects(sk, s.level)) { n++; assert.ok(l.supported && l.value !== undefined, `${s.nameEn} ${l.stat} 公式未支援`); assert.ok(skillEffectText(l.stat, l.value, 85), `${s.nameEn} ${l.stat}`); }
+    }
+    assert.ok(n >= 6);
   });
 }

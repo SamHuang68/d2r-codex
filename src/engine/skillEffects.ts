@@ -27,7 +27,10 @@ const SKILL_STAT_LABEL: Record<string, string> = {
   skill_armor_percent: '防禦',
   curse_resistance: '詛咒持續時間降低',
   skill_handofathena: '敵人遠程攻擊減慢至',
+  other_animrate: '其他動作速度',
 };
+/** 遊戲屬性表沒有中文描述、數值單位也沒有可核對來源的光環屬性：照資料表原值列出並註明，不猜換算 */
+const RAW_STAT_LABEL: Record<string, string> = { hitpoints: '生命回復', thorns_percent: '反傷' };
 
 const PERCENT_NO_SIGN = new Set(['passive_dodge', 'passive_avoid', 'passive_evade', 'passive_critical_strike', 'passive_mastery_melee_crit', 'passive_mastery_throw_crit', 'skill_pierce', 'passive_mastery_noconsume', 'passive_weaponblock', 'curse_resistance', 'skill_handofathena']);
 
@@ -35,6 +38,8 @@ const PERCENT_NO_SIGN = new Set(['passive_dodge', 'passive_avoid', 'passive_evad
 export function skillEffectText(stat: string, value: number, level = 90): string | undefined {
   const d = describeEntry({ stat, value }, level);
   if (d) return d;
+  const raw = RAW_STAT_LABEL[stat];
+  if (raw) return `${raw}：${value}（資料表原值，單位未驗證）`;
   const label = SKILL_STAT_LABEL[stat];
   if (!label) return undefined;
   return PERCENT_NO_SIGN.has(stat) ? `${label}：${value}%` : `${label}：${value > 0 ? '+' : ''}${value}%`;

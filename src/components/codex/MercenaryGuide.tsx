@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MERCENARIES_DATA } from '../../data/mercenaries';
+import { MercenaryStats } from './MercenaryStats';
 import { 
   Users, 
   ShieldCheck, 
@@ -180,6 +181,9 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem }
             </div>
           </div>
         </div>
+
+        {/* 資料表數值：每個難度雇得到的類型、傭兵等級對應的數值與技能 */}
+        <MercenaryStats key={currentMerc.act} act={currentMerc.act} />
 
         {/* Recommended Meta Builds */}
         <div className="space-y-4">
