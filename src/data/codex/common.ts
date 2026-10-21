@@ -3,7 +3,7 @@
  * 這裡放「遊戲資料 → 百科頁欄位」的共用對照與覆蓋層（舊 id、公開英文名、標籤、備註）的存取。
  */
 import { gameData } from '../../engine/data';
-import { slotOfBase, CLASS_ZH } from '../../engine/catalog';
+import { slotOfBase, CLASS_ZH } from '../../engine/slots';
 import type { BaseItem } from '../../engine/types';
 import type { GearSlot } from '../../types';
 import overlayJson from './overlay.json';

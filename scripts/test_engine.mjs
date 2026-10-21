@@ -902,3 +902,12 @@ t('首頁分類磚的筆數就是資料筆數（暗金／套裝／符文之語�
   assert.equal(count('items'), E.UNIQUE_ITEMS_DATA.length); assert.equal(count('sets'), E.SET_ITEMS_DATA.length);
   assert.equal(count('runewords'), E.RUNEWORDS_DATA.length); assert.equal(count('bases'), E.BASE_ITEMS_DATA.length); assert.equal(count('runes'), E.RUNES_DATA.length);
 });
+
+console.log('【物品描述不載入整份技能表：技能名稱表自帶職業】');
+t('skillNames.json 的 charClass 與 skills.json 一致（職業技能 240 個都有，其餘沒有）', () => {
+  const names = rd('skillNames'); const skills = rd('skills');
+  const classOf = new Map(skills.map((x) => [x.gameId, x.charClass]));
+  for (const n of names) assert.equal(n.charClass, classOf.get(n.gameId), `${n.nameEn} (#${n.gameId})`);
+  for (const sk of skills) assert.ok(names.some((n) => n.gameId === sk.gameId), `skillNames 缺少職業技能 ${sk.nameEn}`);
+});
+

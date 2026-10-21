@@ -1,13 +1,12 @@
 import properties from '../data/game/properties.json';
 import stats from '../data/game/stats.json';
 import statStrings from '../data/game/statStrings.zhTW.json';
-import skills from '../data/game/skills.json';
 import skillNamesJson from '../data/game/skillNames.json';
 import itemSkillRows from '../data/game/itemSkills.json';
 import { resolveModifier } from './modifiers';
 import type { Modifier, PropertyDef, StatDef, StatEntry } from './types';
 import { CLASS_INDEX } from './character';
-import { CLASS_CODE_ZH, tabName } from './skills';
+import { CLASS_CODE_ZH, tabName } from './classes';
 
 /** 沒有職業的物品技能（熊人／狼人印記等）的持續秒數，來自遊戲資料表（auralencalc 影格數 ÷ 25） */
 const itemSkillSecs = new Map(Object.entries(itemSkillRows as Record<string, { seconds: number }>).map(([k, v]) => [k.toLowerCase(), v.seconds]));
@@ -20,9 +19,8 @@ const statDefs = stats as unknown as Record<string, StatRow>;
 const strs = statStrings as Record<string, string>;
 
 interface SkillRow { gameId: number; nameEn: string; name?: string; charClass: string }
-const classSkills = skills as unknown as SkillRow[];
-/** 全部技能的名稱（含道具專用、怪物技能；觸發技能與充能的技能參數可能是這些），class 欄只有職業技能才有 */
-const allSkills: SkillRow[] = (skillNamesJson as { gameId: number; nameEn: string; name?: string }[]).map((s) => ({ ...s, charClass: classSkills.find((c) => c.gameId === s.gameId)?.charClass ?? '' }));
+/** 全部技能的名稱（含道具專用、怪物技能；觸發技能與充能的技能參數可能是這些），class 欄只有職業技能才有（資料管線已把職業放進這張表，不必載入整份技能表） */
+const allSkills: SkillRow[] = (skillNamesJson as { gameId: number; nameEn: string; name?: string; charClass?: string }[]).map((s) => ({ ...s, charClass: s.charClass ?? '' }));
 const skillByGameId = new Map<number, SkillRow>(allSkills.map((s) => [s.gameId, s]));
 const skillByNameEn = new Map<string, SkillRow>(allSkills.map((s) => [s.nameEn.toLowerCase(), s]));
 /** modifier 的技能參數：遊戲表有時是技能 id（數字），有時是英文名（大小寫不一定一致） */

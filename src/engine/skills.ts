@@ -1,6 +1,8 @@
 import skillsJson from '../data/game/skills.json';
-import skillTabsJson from '../data/game/skillTabs.json';
 import { CalcError, evalCalc, referencedSkills } from './calc';
+import { pageName, tabId } from './classes';
+// 職業與技能樹名稱在 classes.ts（物品描述也要用，不該為此載入整份技能表）；這裡原樣轉出，既有的匯入不用改
+export { SKILL_TABS, CLASS_CODE_ZH, CLASS_CODE_EN, CLASS_CODES, pageName, tabId, tabName } from './classes';
 
 /** 遊戲技能表（skills.txt＋skilldesc.txt，3.3.93847）。 */
 export interface Bracket { b: number; lv: number[] }
@@ -21,26 +23,13 @@ export interface GameSkill {
 export interface StatLine { stat: string; calc?: string }
 
 export const GAME_SKILLS = skillsJson as unknown as GameSkill[];
-export const SKILL_TABS = skillTabsJson as Record<string, (string | null)[]>;
 
-export const CLASS_CODE_ZH: Record<string, string> = { ama: '亞馬遜', sor: '魔法使', nec: '死靈法師', pal: '聖騎士', bar: '野蠻人', dru: '德魯伊', ass: '刺客', war: '術士' };
-export const CLASS_CODE_EN: Record<string, string> = { ama: 'Amazon', sor: 'Sorceress', nec: 'Necromancer', pal: 'Paladin', bar: 'Barbarian', dru: 'Druid', ass: 'Assassin', war: 'Warlock' };
-export const CLASS_CODES = ['ama', 'sor', 'nec', 'pal', 'bar', 'dru', 'ass', 'war'];
 export const ELEMENT_ZH: Record<string, string> = { fire: '火焰', cold: '冰寒', ltng: '閃電', mag: '魔法', pois: '毒素', stun: '擊暈' };
 
 const byName = new Map(GAME_SKILLS.map((s) => [s.nameEn, s]));
 export const skillByName = (n: string) => byName.get(n);
 export const skillById = (id: string) => GAME_SKILLS.find((s) => s.id === id);
 
-/**
- * 第 page 頁的樹名。遊戲字串 SkillCategory<職業><1..3> 的編號：舊 7 職業與 SkillPage 相反（編號＝4−頁碼），
- * 術士則與頁碼相同（以內容核對：頁 1＝惡魔(召喚羊頭人)、頁 2＝邪異(迴響打擊)、頁 3＝混沌(瘴氣彈)；
- * 舊職業：魔法使頁 1＝火焰(火焰彈)、聖騎士頁 1＝戰鬥(犧牲打擊)、亞馬遜頁 1＝弓與弩(魔法箭)）。
- */
-export function pageName(classCode: string, page: number): string {
-  const names = SKILL_TABS[classCode] ?? [];
-  return (classCode === 'war' ? names[page - 1] : names[3 - page]) ?? `技能樹 ${page}`;
-}
 
 /** 顯示順序＝遊戲內由左到右（頁碼 3、2、1；術士截圖：混沌、邪異、惡魔） */
 export function treesOf(classCode: string): { page: number; name: string; skills: GameSkill[] }[] {
@@ -49,12 +38,6 @@ export function treesOf(classCode: string): { page: number; name: string; skills
     skills: GAME_SKILLS.filter((s) => s.charClass === classCode && s.page === page).sort((a, b) => a.row - b.row || a.col - b.col),
   }));
 }
-/**
- * 裝備「技能樹加成」的編號：職業序號×3＋(頁碼−1)。
- * 依據：撒卡蘭姆使者資料為 skilltab 9，遊戲內提示框顯示「+2 戰鬥技能（只限聖騎士）」（聖騎士頁 1＝戰鬥）。
- */
-export function tabId(classCode: string, page: number): number { return CLASS_CODES.indexOf(classCode) * 3 + (page - 1); }
-export function tabName(id: number): string | undefined { const code = CLASS_CODES[Math.floor(id / 3)]; return code ? pageName(code, (id % 3) + 1) : undefined; }
 
 /** 技能點數（硬點）與裝備加成後的有效等級；加成只對至少有 1 點硬點的技能生效 */
 export interface SkillBonuses { all: number; byClass: number; byTab: Record<number, number>; single: Record<string, number> }
