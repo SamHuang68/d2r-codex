@@ -1,9 +1,16 @@
 /**
  * 遊戲 skills.txt 的計算式（calc）小型求值器。
- * 支援：數字、par1..par20、lvl／blvl／clvl、skill('名稱'.lvl|.blvl)、+ - * / % 與括號、min()/max()。
+ * 支援：數字、par1..par9／pa10..pa20、lvl／blvl／clvl、skill('名稱'.lvl|.blvl|.lnXY|.dmXY)、+ - * / % 與括號、min()/max()、
+ * 以及 lnXY（線性）與 dmXY（遞減）函式。函式的定義讀自遊戲的 skillcalc.txt（資料管線輸出 skillCalc.json），不自己寫死參數配對。
+ * 運算和遊戲一樣用整數：除法往零的方向捨去（遊戲的 dm12 是 ((110*lvl)*(par2-par1))/(100*(lvl+6))+par1，每一步取整）。
  * 遇到不認得的識別字或函式一律丟出 CalcError，呼叫端應視為「無法計算」而不是當成 0。
  */
+import skillCalcFns from '../data/game/skillCalc.json';
+
 export class CalcError extends Error {}
+
+/** lnXY、dmXY 的定義（遊戲 skillcalc.txt 的說明欄），例如 dm12 ＝ ((110 * lvl) * (par2 - par1)) / (100 * (lvl + 6)) + par1 */
+const FN_DEFS = skillCalcFns as Record<string, string>;
 
 export interface CalcContext {
   /** 本技能的 parN（以 N 為鍵） */
@@ -62,18 +69,17 @@ export function evalCalc(src: string, ctx: CalcContext): number {
         const pr = ctx.skillParams?.(n.v);
         const num = (k: number) => { const v = pr?.[k]; const x = typeof v === 'number' ? v : v === undefined || v === '' ? NaN : Number(v); if (Number.isNaN(x)) throw new CalcError(`技能 ${n.v} 未定義 par${k}`); return x; };
         const pm = /^par(\d+)$/.exec(f.v); if (pm) return num(Number(pm[1]));
-        const lm = /^ln(\d)(\d)$/.exec(f.v); if (lm) return num(Number(lm[1])) + num(Number(lm[2])) * (sk.lvl - 1);
+        const fd = FN_DEFS[f.v]; if (fd) return evalCalc(fd, { ...ctx, params: pr ?? {}, lvl: sk.lvl, blvl: sk.blvl }); // 別的技能的 ln／dm：用那個技能的參數與等級
         throw new CalcError(`不支援的技能欄位 ${f.v}`);
       }
       if (id === 'min' || id === 'max') { need('('); const a = expr(); need(','); const b = expr(); need(')'); return id === 'min' ? Math.min(a, b) : Math.max(a, b); }
       if (id === 'lvl') { if (ctx.lvl === undefined) throw new CalcError('缺少 lvl'); return ctx.lvl; }
       if (id === 'blvl') { if (ctx.blvl === undefined) throw new CalcError('缺少 blvl'); return ctx.blvl; }
       if (id === 'clvl') { if (ctx.clvl === undefined) throw new CalcError('缺少 clvl'); return ctx.clvl; }
-      const ln = /^ln(\d)(\d)$/.exec(id); // lnXY：以 parX 為 1 級值、parY 為每級增量（Might 40＋10/級、火焰專精 30＋7/級）
-      if (ln) {
+      const fn = FN_DEFS[id]; // lnXY、dmXY：展開成遊戲定義的運算式，用同一組參數與等級求值
+      if (fn) {
         if (ctx.lvl === undefined) throw new CalcError('缺少 lvl');
-        const g = (n: number) => { const v = ctx.params[n]; const x = typeof v === 'number' ? v : v === undefined || v === '' ? NaN : Number(v); if (Number.isNaN(x)) throw new CalcError(`未定義 par${n}`); return x; };
-        return g(Number(ln[1])) + g(Number(ln[2])) * (ctx.lvl - 1);
+        return evalCalc(fn, ctx);
       }
       const m = /^pa(?:r)?(\d+)$/.exec(id); // pa10 是遊戲表對 par10 的簡寫（Hex Bane）
       if (m) { const v = ctx.params[Number(m[1])]; const n = typeof v === 'number' ? v : v === undefined || v === '' ? NaN : Number(v); if (Number.isNaN(n)) throw new CalcError(`未定義 ${id}`); return n; }
@@ -86,7 +92,7 @@ export function evalCalc(src: string, ctx: CalcContext): number {
     let v = primary();
     for (;;) {
       if (eatOp('*')) v *= primary();
-      else if (eatOp('/')) { const d = primary(); v = d === 0 ? 0 : v / d; }
+      else if (eatOp('/')) { const d = primary(); v = d === 0 ? 0 : Math.trunc(v / d); }
       else if (eatOp('%')) { const d = primary(); v = d === 0 ? 0 : v % d; }
       else return v;
     }

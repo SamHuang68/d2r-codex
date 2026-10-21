@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -863,8 +863,68 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
     assert.equal(v('Might', 1, 'damagepercent'), 40); assert.equal(v('Might', 20, 'damagepercent'), 230);
     assert.equal(v('Concentration', 20, 'damagepercent'), 345); assert.equal(v('Battle Orders', 20, 'item_maxhp_percent'), 35 + 3 * 19);
   });
-  t('dm（衰減）公式未支援：標示為不支援，不當成 0', () => {
-    const l = auraEffects(skillByName('Holy Freeze'), 10); assert.ok(l.some((x) => !x.supported));
+  t('dm（遞減）公式：依遊戲 skillcalc 的定義、整數運算。閃躲 1 級 18%、20 級 56%；致命攻勢 20 級 68%；自然抵抗 20 級 67%；神聖之盾 20 級格擋 +35%；救贖 20 級全抗 +109', () => {
+    const pe = (n, L, stat) => E.passiveEffects(skillByName(n), L).find((e) => e.stat === stat).value;
+    const ae = (n, L, stat) => auraEffects(skillByName(n), L).find((e) => e.stat === stat).value;
+    assert.equal(pe('Dodge', 1, 'passive_dodge'), 18); assert.equal(pe('Dodge', 20, 'passive_dodge'), 56);
+    assert.equal(pe('Critical Strike', 20, 'passive_critical_strike'), 68); assert.equal(pe('Natural Resistance', 20, 'fireresist'), 67);
+    assert.equal(ae('Holy Shield', 20, 'toblock'), 35); assert.equal(ae('Salvation', 20, 'fireresist'), 109);
+  });
+  t('遊戲定義的函式：技能表裡出現的每個 lnXY／dmXY 都有定義（skillCalc.json 來自遊戲 skillcalc.txt）', () => {
+    const defs = rd('skillCalc'); const used = new Set();
+    const scan = (v) => { if (typeof v === 'string') for (const m of v.matchAll(/\b(ln|dm)\d\d\b/g)) used.add(m[0]); else if (v && typeof v === 'object') Object.values(v).forEach(scan); };
+    rd('skills').forEach(scan);
+    assert.ok(used.size >= 8, `用到的函式 ${[...used].join(',')}`);
+    for (const k of used) assert.ok(defs[k], `skillCalc.json 缺少 ${k}`);
+  });
+  t('ln91／ln21／dm91 不是字面上的第 9／1、第 2／1 個參數，而是 par9／par10 與 par11／par12（遊戲定義）', () => {
+    const ctx = (params, lvl) => ({ params, lvl, skill: () => undefined });
+    assert.equal(E.evalCalc('ln91', ctx({ 9: 100, 10: 20, 1: 7 }, 5)), 100 + 4 * 20);
+    assert.equal(E.evalCalc('ln21', ctx({ 11: 5, 12: 3, 1: 99, 2: 99 }, 3)), 5 + 2 * 3);
+    assert.equal(E.evalCalc('dm91', ctx({ 9: 0, 10: 66 }, 20)), Math.trunc((110 * 20 * 66) / (100 * 26)));
+  });
+  t('整數運算：除法往零的方向捨去（7/2＝3、−7/2＝−3），和遊戲的計算式一致', () => {
+    const ctx = { params: {}, skill: () => undefined };
+    assert.equal(E.evalCalc('7/2', ctx), 3); assert.equal(E.evalCalc('-7/2', ctx), -3); assert.equal(E.evalCalc('10/4*4', ctx), 8);
+  });
+  t('別的技能的 dm：skill(\'X\'.dm34) 用那個技能的參數與等級', () => {
+    const ctx = { params: {}, lvl: 1, skill: () => ({ lvl: 20, blvl: 20 }), skillParams: () => ({ 3: 0, 4: 40 }) };
+    assert.equal(E.evalCalc("skill('Golem Mastery'.dm34)", ctx), Math.trunc((110 * 20 * 40) / (100 * 26)));
+  });
+  t('抗火被動：最大火焰抗性＝抗火硬點÷2（取整），公式引用自己的硬點', () => {
+    const lv = E.skillLevelsFrom({ resist_fire: 5 }, zero);
+    assert.equal(E.passiveEffects(skillByName('Resist Fire'), 5, lv).find((x) => x.stat === 'maxfireresist').value, 2);
+    assert.equal(E.passiveEffects(skillByName('Resist Fire'), 20, E.skillLevelsFrom({ resist_fire: 20 }, zero)).find((x) => x.stat === 'maxfireresist').value, 10);
+  });
+  t('被動技能：自然抵抗計入四種抗性、抗火被動計入最大火焰抗性、提高速度計入技能跑速；閃躲只列出不計入', () => {
+    const hard = { natural_resistance: 20, dodge: 20, resist_fire: 5, increased_speed: 20 };
+    const ps = E.passiveSummary(hard, zero, E.skillLevelsFrom(hard, zero));
+    const sum = (stat) => ps.self.filter((e) => e.stat === stat).reduce((a, e) => a + e.value, 0);
+    for (const st of ['fireresist', 'coldresist', 'lightresist', 'poisonresist']) assert.equal(sum(st), 67, st);
+    assert.equal(sum('maxfireresist'), 2); assert.equal(sum('skill_frw'), 43);
+    const dodge = ps.lines.find((l) => l.stat === 'passive_dodge');
+    assert.ok(dodge && dodge.applied === false && dodge.value === 56 && /閃躲近戰/.test(dodge.text), JSON.stringify(dodge));
+    assert.ok(ps.lines.filter((l) => l.applied).every((l) => ['fireresist', 'coldresist', 'lightresist', 'poisonresist', 'maxfireresist', 'velocitypercent'].includes(l.stat)));
+  });
+  t('光環套用：神聖之盾→格擋、狂熱→技能攻速、活力→技能跑速、救贖→元素抗性', () => {
+    const hard = { holy_shield: 20, fanaticism: 20, vigor: 20, salvation: 20 };
+    const ap = applyBuffs(buffCandidates('pal', hard, zero, {}), E.skillLevelsFrom(hard, zero));
+    const v = (stat) => ap.self.filter((e) => e.stat === stat).reduce((a, e) => a + e.value, 0);
+    assert.equal(v('toblock'), 35); assert.equal(v('skill_ias'), 35); assert.equal(v('skill_frw'), 43); assert.equal(v('fireresist'), 109);
+  });
+  t('神聖之盾計入格擋：同一面盾牌，開啟神聖之盾後格擋機率提高', () => {
+    const sh = gd.bases.find((b) => b.nameEn === 'Sacred Targe');
+    const items = [{ slot: 'shield', baseCode: sh.code, mods: [] }];
+    const base = { className: 'Paladin', level: 90, allocated: { str: 0, dex: 80, vit: 0, ene: 0 }, items };
+    const off = cc(gd, base);
+    const on = cc(gd, { ...base, extraStats: [{ stat: 'toblock', value: 35 }] });
+    assert.ok(on.blockChance > off.blockChance, `${off.blockChance}→${on.blockChance}`);
+    assert.equal(on.blockChance, Math.min(75, Math.floor(((sh.block + 35 + 30) * 85) / 180)));
+  });
+  t('自然抵抗進入角色抗性：開啟前後差 67 點（未截斷的值）', () => {
+    const base = { className: 'Barbarian', level: 90, allocated: { str: 0, dex: 0, vit: 0, ene: 0 }, items: [] };
+    const off = cc(gd, base); const on = cc(gd, { ...base, extraStats: [{ stat: 'fireresist', value: 67 }] });
+    assert.equal(on.rawResist.fire - off.rawResist.fire, 67);
   });
   t('增益套用：Might 疊進武器傷害；Conviction 降低敵人抗性且取最大不疊加；戰爭召喚的 Battle Orders 計入生命', () => {
     const hard = { might: 20 }; const b = { all: 0, byClass: 0, byTab: {}, single: {} };

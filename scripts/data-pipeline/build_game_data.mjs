@@ -265,6 +265,9 @@ const skills = skillRows.filter((r) => r.charclass && skillDesc.get(r.skilldesc)
   }
   return sk;
 });
+// 技能計算式裡的函式（lnXY 線性、dmXY 遞減）。定義在遊戲的 skillcalc.txt，括號內是遊戲自己的寫法，引擎用同一份定義求值，不自己寫死參數配對
+// （例如 ln91 是 par9＋(lvl−1)×par10、ln21 是 par11＋(lvl−1)×par12，不是字面上的第 9／1、第 2／1 個參數）
+const skillCalcFns = Object.fromEntries(tsv('skillcalc.txt').filter((r) => /^(ln|dm)\d\d$/.test(r.code)).map((r) => [r.code, r['*Description']]));
 // 全部技能（含道具專用、怪物技能）的名稱表：觸發技能、充能的技能名稱用。
 // charClass 只有職業技能（skills.json 裡有的）才有；放在這張小表裡，物品描述不必為了查「這個技能屬於哪個職業」而載入整份 skills.json（136 kB）
 const classOfSkill = new Map(skills.map((x) => [x.gameId, x.charClass]));
@@ -295,7 +298,7 @@ const write = (n, d) => fs.writeFileSync(path.join(outDir, n), JSON.stringify(d)
 write('meta.json', meta); write('itemtypes.json', itemtypes); write('bases.json', bases); write('uniques.json', uniques);
 write('gems.json', gems); write('sets.json', sets); write('setItems.json', setItems); write('runewords.json', runewords);
 write('properties.json', properties); write('stats.json', stats); write('statStrings.zhTW.json', statStrings);
-write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills);
+write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns);
 
 console.log(JSON.stringify(meta.counts));
 console.log('missing property defs:', missingProps.length, missingProps.slice(0, 20).join(','));
