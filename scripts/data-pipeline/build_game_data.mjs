@@ -273,6 +273,33 @@ const skills = skillRows.filter((r) => r.charclass && skillDesc.get(r.skilldesc)
   }
   return sk;
 });
+// --- 怪物與場景（monstats.txt、levels.txt；中文名取自 monsters.json、levels.json）---
+// 怪物：三個難度（普通、惡夢、地獄）各一組等級與抗性。資料表裡「沒填」的抗性格是 0；抗性 ≥100 是免疫、負值是弱點。
+// 吸取效率（Drain，生命／法力偷取對這隻怪的效果 %）沒填就留空（輸出成 null，沒有可核對的預設值），不當成 0。
+// 不含：精英、冠軍、首領詞綴（例如火焰附魔）帶來的額外抗性，以及遊戲內再依等級換算的生命。
+const monStrings = strings('monsters.json'); const levelStrings = strings('levels.json');
+const triple = (r, k, dflt) => [r[k], r[`${k}(N)`], r[`${k}(H)`]].map((v) => (v === undefined || v === '' ? dflt : num(v)));
+const monTypeEquiv = new Map(tsv('montype.txt').map((r) => [r.type, [r.equiv1, r.equiv2, r.equiv3].filter(Boolean)]));
+const monTypeIs = (t, want) => { const seen = new Set(); const walk = (x) => { if (!x || seen.has(x)) return false; seen.add(x); return x === want || (monTypeEquiv.get(x) ?? []).some(walk); }; return walk(t); };
+// 玩家的召喚物（骷髏、魔像、女武神、哨衛…）也在 monstats 裡，不是敵人，排除。沒有中文名的只留首領（例如尼拉塞克），其餘是陷阱、哨衛、傳送門之類
+const summonIdSet = new Set(skills.map((x) => x.summonId).filter(Boolean).map((x) => x.toLowerCase()));
+const monKind = (t) => ['undead', 'demon', 'insect', 'construct', 'human'].find((k) => monTypeIs(t, k));
+const monsters = tsv('monstats.txt')
+  .filter((r) => r.enabled === '1' && r.killable === '1' && r.npc !== '1' && r.inTown !== '1' && r.NameStr && !/dummy/i.test(r.NameStr) && !summonIdSet.has(r.Id.toLowerCase()))
+  .filter((r) => monStrings.get(r.NameStr)?.zhTW || r.boss === '1')
+  .map((r) => ({
+    id: r.Id, nameEn: r.NameStr, name: monStrings.get(r.NameStr)?.zhTW ?? r.NameStr, type: r.MonType, kind: monKind(r.MonType),
+    boss: r.boss === '1' || undefined, primeEvil: r.primeevil === '1' || undefined,
+    levels: triple(r, 'Level'),
+    res: { physical: triple(r, 'ResDm', 0), magic: triple(r, 'ResMa', 0), fire: triple(r, 'ResFi', 0), lightning: triple(r, 'ResLi', 0), cold: triple(r, 'ResCo', 0), poison: triple(r, 'ResPo', 0) },
+    drain: triple(r, 'Drain'),
+  }));
+const monsterIds = new Set(monsters.map((m) => m.id));
+// 場景：每個難度各有一份出現的怪物清單（mon＝普通、nmon＝惡夢、umon＝地獄）與怪物等級（擴充版 MonLvlEx）
+const areas = tsv('levels.txt').filter((r) => r.LevelName).map((r) => {
+  const list = (pre) => { const out = []; for (let i = 1; i <= 25; i++) { const id = r[`${pre}${i}`]; if (id && monsterIds.has(id) && !out.includes(id)) out.push(id); } return out; };
+  return { id: num(r.Id), nameEn: r.LevelName, name: levelStrings.get(r.LevelName)?.zhTW, act: (num(r.Act) ?? 0) + 1, mlvl: triple(r, 'MonLvlEx'), mon: [list('mon'), list('nmon'), list('umon')] };
+}).filter((a) => a.mon.some((l) => l.length));
 // --- 召喚物的怪物基礎數值（monstats.txt；普通／惡夢／地獄三組）---
 // 召喚技能（skills.json 的 summonId）召喚的怪物。生命沒有難度區分（遊戲再依等級換算），其餘三組依序是 普通、惡夢、地獄。
 // 只輸出資料表的值，不合併技能提供的加成（合併規則沒有可核對的來源）。
@@ -349,7 +376,7 @@ const write = (n, d) => fs.writeFileSync(path.join(outDir, n), JSON.stringify(d)
 write('meta.json', meta); write('itemtypes.json', itemtypes); write('bases.json', bases); write('uniques.json', uniques);
 write('gems.json', gems); write('sets.json', sets); write('setItems.json', setItems); write('runewords.json', runewords);
 write('properties.json', properties); write('stats.json', stats); write('statStrings.zhTW.json', statStrings);
-write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns); write('hireling.json', hireling); write('summons.json', summonMonsters);
+write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns); write('hireling.json', hireling); write('summons.json', summonMonsters); write('monsters.json', monsters); write('areas.json', areas);
 
 console.log(JSON.stringify(meta.counts));
 console.log('missing property defs:', missingProps.length, missingProps.slice(0, 20).join(','));

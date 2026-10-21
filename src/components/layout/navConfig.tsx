@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Flame, Sparkles, BookOpen, Layers, Compass, Trophy, Sword, MapPin, Users,
-  Gem, Skull, ShieldAlert, FlaskConical, Wrench, Activity, Crown,
+  Gem, Skull, ShieldAlert, FlaskConical, Wrench, Activity, Crown, Ghost,
 } from 'lucide-react';
 
 export interface NavModule {
@@ -18,7 +18,7 @@ export interface NavGroup {
 
 const ic = 'w-4 h-4';
 
-/** 全站 17 個分頁的單一來源（桌面側邊欄、手機抽屜共用，分頁 id 與 App.tsx 一致） */
+/** 全站 18 個分頁的單一來源（桌面側邊欄、手機抽屜共用，分頁 id 與 App.tsx 一致） */
 export const NAV_GROUPS: NavGroup[] = [
   {
     category: '總覽',
@@ -59,6 +59,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { id: 'quests', label: '任務事件', desc: '永久獎勵任務與世界事件', icon: <Compass className={`${ic} text-d2-gold`} /> },
       { id: 'areas', label: '場景恐區', desc: '85 級場景與恐怖領域', icon: <MapPin className={`${ic} text-d2-fire`} /> },
+      { id: 'monsters', label: '怪物圖鑑', desc: '三難度抗性、免疫與場景', icon: <Ghost className={`${ic} text-d2-fire`} /> },
       { id: 'uber', label: '紅門六王', desc: '火炬、地獄崔斯特姆流程', icon: <Skull className={`${ic} text-d2-fire`} /> },
     ],
   },

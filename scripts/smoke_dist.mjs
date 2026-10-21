@@ -41,6 +41,7 @@ const ROUTES = [
   { hash: '#runes', min: 3000, label: '符文寶庫' },
   { hash: '#cube', min: 3000, label: '赫拉迪克方塊' },
   { hash: '#areas', min: 1600, label: '區域' },
+  { hash: '#monsters', min: 4000, label: '怪物圖鑑' },
 ];
 
 // 首頁（含 vendor）載入的 JS 位元組預算。百科資料與各頁是進頁面才載入，首頁不該再把它們帶進來（改版前首頁約 1.8 MB，改版後約 0.3 MB）

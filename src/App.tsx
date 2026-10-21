@@ -18,6 +18,7 @@ const QuestGuide = lazy(() => import('./components/codex/QuestGuide').then((m) =
 const RuneCompendium = lazy(() => import('./components/codex/RuneCompendium').then((m) => ({ default: m.RuneCompendium })));
 const CubeLab = lazy(() => import('./components/codex/CubeLab').then((m) => ({ default: m.CubeLab })));
 const BreakpointTable = lazy(() => import('./components/codex/BreakpointTable').then((m) => ({ default: m.BreakpointTable })));
+const MonsterCompendium = lazy(() => import('./components/codex/MonsterCompendium').then((m) => ({ default: m.MonsterCompendium })));
 const AreaGuide = lazy(() => import('./components/codex/AreaGuide').then((m) => ({ default: m.AreaGuide })));
 const MercenaryGuide = lazy(() => import('./components/codex/MercenaryGuide').then((m) => ({ default: m.MercenaryGuide })));
 const ValuationGuide = lazy(() => import('./components/codex/ValuationGuide').then((m) => ({ default: m.ValuationGuide })));
@@ -30,7 +31,7 @@ const SearchModal = lazy(() => import('./components/layout/SearchModal').then((m
 // 配裝模擬器連同遊戲資料表很大，只在進入該頁時才載入，首頁不必等它
 const SimulatorV2 = lazy(() => import('./components/simulator/v2/SimulatorV2').then((m) => ({ default: m.SimulatorV2 })));
 
-const KNOWN_TABS = ['overview', 'characters', 'skills', 'runewords', 'items', 'props', 'bases', 'quests', 'mercenaries', 'valuation', 'uber', 'runes', 'cube', 'breakpoints', 'areas', 'grail', 'planner'];
+const KNOWN_TABS = ['overview', 'characters', 'skills', 'runewords', 'items', 'props', 'bases', 'quests', 'mercenaries', 'valuation', 'uber', 'runes', 'cube', 'breakpoints', 'areas', 'monsters', 'grail', 'planner'];
 /** 網址 #planner 可直接開啟對應分頁（例如配裝模擬器） */
 const tabFromHash = (): string => {
   const h = typeof window !== 'undefined' ? window.location.hash.replace(/^#/, '') : '';
@@ -249,6 +250,7 @@ export const App: React.FC = () => {
           <BreakpointTable initialClass={selectedInitialClass} />
         )}
         {activeTab === 'areas' && <AreaGuide />}
+        {activeTab === 'monsters' && <MonsterCompendium />}
         {activeTab === 'mercenaries' && (
           <MercenaryGuide onNavigateItem={handleItemOrRunewordNavigate} />
         )}
