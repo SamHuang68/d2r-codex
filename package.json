@@ -13,7 +13,8 @@
     "data:audit": "node scripts/data-pipeline/audit_game_data.mjs src/data/game",
     "test:engine": "node scripts/test_engine.mjs",
     "check:chunks": "node scripts/check_chunk_cycles.mjs",
-    "smoke": "node scripts/smoke_dist.mjs"
+    "smoke": "node scripts/smoke_dist.mjs",
+    "data:portal": "node scripts/build_portal_summary.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
