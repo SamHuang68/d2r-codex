@@ -32,7 +32,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
     { id: 'items', label: '裝備', icon: <Sword className="w-5 h-5 text-d2-unique" /> },
   ];
 
-  // 全站 19 大功能完整分類模組（與桌面側邊欄共用同一份設定）
+  // 全站 21 大功能完整分類模組（與桌面側邊欄共用同一份設定）
   const allModules = NAV_GROUPS;
 
   const handleSelectTab = (tabId: string) => {
@@ -100,7 +100,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
             <div className="flex items-center justify-between border-b border-sanctuary-800 pb-3">
               <div>
                 <div className="font-diablo text-lg font-bold text-d2-gold">SANCTUARY CODEX 全站導航</div>
-                <div className="text-[10px] text-sanctuary-400 font-mono">暗黑破壞神 II：獄火重生 19 大核心寶典</div>
+                <div className="text-[10px] text-sanctuary-400 font-mono">暗黑破壞神 II：獄火重生 21 大核心寶典</div>
               </div>
               <button
                 onClick={() => setIsDrawerOpen(false)}

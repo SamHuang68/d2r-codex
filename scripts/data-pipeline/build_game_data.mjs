@@ -227,6 +227,23 @@ for (const [file, kind] of [['magicprefix.txt', 'prefix'], ['magicsuffix.txt', '
     });
   });
 }
+// --- 聖壇（shrines.txt；中文名與提示語取自 shrines.json）---
+// frames＝持續影格（遊戲每秒 25 影格）、reset＝重置時間（分鐘）、arg0／arg1＝各效果自己的參數（意義依效果而定，只在頁面解讀效果明確的幾項）、
+// rarity／effectClass／levelMin 照資料表原值。Code 0 的「None」空列不收；效果文字標「(Not Used)」的是資料表標示未使用的聖壇，保留並標記。
+const shrineStrings = strings('shrines.json');
+const shrines = tsv('shrines.txt').filter((r) => r.Code && r.Code !== '0').map((r) => ({
+  code: num(r.Code), nameEn: r.Name, name: shrineStrings.get(r.StringName)?.zhTW, msg: shrineStrings.get(r.StringPhrase)?.zhTW,
+  type: r['*Shrine Type'], effect: r['*Effect'], arg0: num(r.Arg0), arg1: num(r.Arg1), frames: num(r['Duration in frames']), reset: num(r['reset time in minutes']),
+  rarity: num(r.rarity), effectClass: num(r.effectclass), levelMin: num(r.LevelMin), unused: /\(Not Used\)/.test(r['*Effect'] ?? '') || undefined,
+}));
+// --- 經驗值表（experience.txt）：experience[n]＝升到 n 級需要的累計經驗（0~99 級）---
+// 八個職業的數值完全相同（哪天不同就停下來，頁面目前只有一欄）。ExpRatio 欄（用途未驗證）與 MaxLvl 列不收。
+const expRows = tsv('experience.txt').filter((r) => /^\d+$/.test(r.Level));
+for (const r of expRows) {
+  if (['Sorceress', 'Necromancer', 'Paladin', 'Barbarian', 'Druid', 'Assassin', 'Warlock'].some((c) => r[c] !== r.Amazon)) throw new Error(`experience.txt 第 ${r.Level} 級各職業的經驗不同，頁面需要改成分職業`);
+}
+const experience = expRows.map((r) => num(r.Amazon));
+if (experience.length !== 100 || experience.some((v, i) => i > 0 && !(v > experience[i - 1]))) throw new Error('experience.txt 不是 0~99 級的遞增表');
 // --- properties（modifier → stat 對映）、itemstatcost（子集）---
 const propRows = tsv('properties.txt');
 const properties = {};
@@ -402,7 +419,7 @@ const write = (n, d) => fs.writeFileSync(path.join(outDir, n), JSON.stringify(d)
 write('meta.json', meta); write('itemtypes.json', itemtypes); write('bases.json', bases); write('uniques.json', uniques);
 write('gems.json', gems); write('sets.json', sets); write('setItems.json', setItems); write('runewords.json', runewords);
 write('properties.json', properties); write('stats.json', stats); write('statStrings.zhTW.json', statStrings);
-write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns); write('hireling.json', hireling); write('summons.json', summonMonsters); write('monsters.json', monsters); write('areas.json', areas); write('affixes.json', affixes);
+write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns); write('hireling.json', hireling); write('summons.json', summonMonsters); write('monsters.json', monsters); write('areas.json', areas); write('affixes.json', affixes); write('shrines.json', shrines); write('experience.json', experience);
 
 console.log(JSON.stringify(meta.counts));
 console.log('missing property defs:', missingProps.length, missingProps.slice(0, 20).join(','));
