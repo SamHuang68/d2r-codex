@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -1191,3 +1191,79 @@ console.log('【怪物圖鑑與場景免疫（monstats／levels）】');
   });
 }
 
+
+console.log('【詞綴寶典（magicprefix／magicsuffix／automagic）】');
+{
+  const { AFFIXES, AFFIX_KINDS, ITEM_TYPE_GROUPS, typeAncestry, affixAppliesToType, affixAvailableAt, affixesFor, weightShare, affixLines, affixClass, classZh, hasNegativeCharges, isUnknownType, itemTypeLabel, describeRanges } = E;
+  const byId = (id) => AFFIXES.find((a) => a.id === id);
+  t('資料完整性：id 不重複、每個詞綴至少一條屬性、權重為正、物品類型清單不為空、屬性說明沒有未知項也不是空的', () => {
+    assert.equal(new Set(AFFIXES.map((a) => a.id)).size, AFFIXES.length);
+    assert.deepEqual(AFFIX_KINDS.map((k) => AFFIXES.filter((a) => a.kind === k).length), [517, 474, 44]);
+    for (const a of AFFIXES) {
+      assert.ok(a.mods.length >= 1 && a.frequency > 0 && a.itypes.length >= 1 && Number.isInteger(a.level) && a.levelReq >= 0, a.id);
+      const d = describeRanges(a.mods);
+      assert.ok(d.length >= 1 && d.every((l) => l.known && !/undefined|NaN/.test(l.text)), `${a.id} ${a.nameEn}`);
+      assert.deepEqual(affixLines(a), d.map((l) => l.text));
+    }
+  });
+  t('物品類型繼承：大型護身符也是護身符與雜項、盾牌也是所有盾牌與所有防具、亞馬遜弓也是弓與武器；自己永遠包含在內', () => {
+    assert.ok(['lcha', 'char', 'misc'].every((c) => typeAncestry('lcha').has(c)));
+    assert.ok(['shie', 'shld', 'armo'].every((c) => typeAncestry('shie').has(c)));
+    assert.ok(['abow', 'bow', 'miss', 'weap'].every((c) => typeAncestry('abow').has(c)));
+    assert.ok(typeAncestry('nonexistent').has('nonexistent') && typeAncestry('nonexistent').size === 1);
+  });
+  t('適用判定：堅實（armo）可出現在盔甲、頭盔、盾牌，不會出現在戒指或刀劍', () => {
+    const a = byId('p143');
+    assert.equal(a.nameEn, 'Sturdy');
+    for (const ty of ['tors', 'helm', 'shie', 'glov', 'boot', 'belt', 'circ']) assert.ok(affixAppliesToType(a, ty), ty);
+    for (const ty of ['ring', 'amul', 'swor', 'jewl', 'lcha']) assert.ok(!affixAppliesToType(a, ty), ty);
+  });
+  t('排除類型：鈷藍（武器版）出現在刀劍但排除法球；護身符三種尺寸各只有自己的那一組數值', () => {
+    const wep = byId('p354');
+    assert.ok(affixAppliesToType(wep, 'swor') && !affixAppliesToType(wep, 'orb'));
+    const cobalt = (ty) => affixesFor(ty, 99).filter((a) => a.nameEn === 'Cobalt' && a.kind === 'prefix');
+    assert.deepEqual([cobalt('scha'), cobalt('mcha'), cobalt('lcha')].map((l) => l.map((a) => `${a.mods[0].min}-${a.mods[0].max}`)), [['8-9'], ['11-12'], ['21-25']]);
+  });
+  t('物品等級範圍：下限含、上限含；上限沒填＝不限', () => {
+    const s = byId('p146'); // Glorious 防禦強化，最低物品等級 19
+    assert.ok(!affixAvailableAt(s, s.level - 1) && affixAvailableAt(s, s.level) && affixAvailableAt(s, 99));
+    const capped = AFFIXES.find((a) => a.maxLevel);
+    assert.ok(affixAvailableAt(capped, capped.maxLevel) && !affixAvailableAt(capped, capped.maxLevel + 1) && affixAvailableAt(capped, capped.level));
+  });
+  t('資料表筆誤的類型代碼（staff、「ring 」）永遠不符合：燃燒不出現在法杖（staf）但出現在法球與項鍊；新星之盾不出現在戒指', () => {
+    assert.ok(isUnknownType('staff') && isUnknownType('ring ') && !isUnknownType('staf'));
+    const burning = byId('p445');
+    assert.ok(burning.itypes.includes('staff') && !affixAppliesToType(burning, 'staf') && affixAppliesToType(burning, 'orb') && affixAppliesToType(burning, 'amul'));
+    const nova = byId('s434');
+    assert.ok(nova.itypes.includes('ring ') && !affixAppliesToType(nova, 'ring') && affixAppliesToType(nova, 'tors'));
+  });
+  t('權重占比：同種類、同物品類型、同物品等級的候選詞綴占比加總為 1；不適用的詞綴沒有占比', () => {
+    for (const [ty, lv] of [['ring', 50], ['amul', 80], ['scha', 30], ['swor', 99]]) {
+      for (const k of AFFIX_KINDS) {
+        const pool = affixesFor(ty, lv, k);
+        if (!pool.length) continue;
+        const sum = pool.reduce((s, a) => s + weightShare(a, ty, lv), 0);
+        assert.ok(Math.abs(sum - 1) < 1e-9, `${ty} ${lv} ${k} ${sum}`);
+      }
+    }
+    assert.equal(weightShare(byId('p143'), 'ring', 99), undefined);
+  });
+  t('職業欄位：前綴／自動詞綴用 classspecific（造箭師＝亞馬遜）；後綴用 class＋classlevelreq（魔法箭之＝亞馬遜、等級需求 1）', () => {
+    const f = byId('p430'); assert.equal(f.classOnly, 'ama'); assert.equal(affixClass(f), 'ama'); assert.equal(classZh('ama'), '亞馬遜');
+    const m = byId('s458'); assert.equal(m.class, 'ama'); assert.equal(m.classLevelReq, 1); assert.equal(affixClass(m), 'ama');
+    assert.ok(AFFIXES.filter((a) => a.classOnly).every((a) => a.kind !== 'suffix') && AFFIXES.filter((a) => a.class).every((a) => a.kind === 'suffix'));
+  });
+  t('充能數值為負的後綴 112 個，全部是職業專用後綴；一般詞綴不受影響', () => {
+    const neg = AFFIXES.filter(hasNegativeCharges);
+    assert.equal(neg.length, 112);
+    assert.ok(neg.every((a) => a.kind === 'suffix' && a.class));
+    assert.ok(!hasNegativeCharges(byId('p143')));
+  });
+  t('物品類型名稱與篩選清單：沿用裝備分類與底材資料的中文名；清單內每個類型都有詞綴、飾品含戒指／項鍊／三種護身符／珠寶', () => {
+    assert.equal(itemTypeLabel('lcha'), '特大咒符'); assert.equal(itemTypeLabel('tors'), '盔甲'); assert.equal(itemTypeLabel('armo'), '所有防具'); assert.match(itemTypeLabel('staff'), /筆誤/);
+    const codes = ITEM_TYPE_GROUPS.flatMap((g) => g.options.map((o) => o.code));
+    assert.equal(new Set(codes).size, codes.length);
+    for (const c of ['ring', 'amul', 'scha', 'mcha', 'lcha', 'jewl', 'tors', 'swor', 'staf', 'wand', 'orb', 'abow']) assert.ok(codes.includes(c), c);
+    for (const c of codes) assert.ok(affixesFor(c).length > 0, `${c} 沒有任何詞綴`);
+  });
+}
