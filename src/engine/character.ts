@@ -1,5 +1,5 @@
 import { resolveModifier } from './modifiers';
-import type { BaseItem, CharacterInput, CharacterResult, EquippedItem, GameData, StatEntry } from './types';
+import type { BaseItem, CharacterInput, CharacterResult, EquippedItem, GameData, Modifier, StatEntry } from './types';
 
 export const CLASS_INDEX = ['Amazon', 'Sorceress', 'Necromancer', 'Paladin', 'Barbarian', 'Druid', 'Assassin', 'Warlock'];
 const DIFFICULTY_PENALTY = { normal: 0, nightmare: -40, hell: -100 } as const;
@@ -19,6 +19,40 @@ function perLevelAdd(data: GameData, stat: string, value: number, level: number)
 }
 
 interface ItemCalc { item: EquippedItem; entries: StatEntry[] }
+
+/**
+ * 套裝加成：以「不同的套裝件」計件數（同一件穿兩次只算一件）。
+ * - 套裝層級：件數 ≥ pieces 的 partial 全部生效（可疊加）；全套件數達標時 full 生效。
+ * - 單件層級：該件的 setBonus 在件數 ≥ pieces 時生效。
+ * 數值範圍取該套裝第一件的 roll（與其他屬性同一個取值設定）。
+ */
+function setBonusEntries(data: GameData, items: EquippedItem[], unhandled: CharacterResult['unhandled']): { entries: StatEntry[]; sets: CharacterResult['sets'] } {
+  const defs = new Map((data.sets ?? []).map((d) => [d.id, d]));
+  const bySet = new Map<string, EquippedItem[]>();
+  for (const it of items) {
+    if (!it.setId) continue;
+    const list = bySet.get(it.setId) ?? bySet.set(it.setId, []).get(it.setId)!;
+    if (!list.some((x) => x.name === it.name)) list.push(it);
+  }
+  const entries: StatEntry[] = []; const sets: CharacterResult['sets'] = [];
+  for (const [id, list] of bySet) {
+    const def = defs.get(id); if (!def) continue;
+    const count = list.length; const roll = list[0].roll ?? 1; const label = `套裝：${def.name ?? def.nameEn}`;
+    const apply = (mods: Modifier[]) => mods.forEach((m) => {
+      const r = resolveModifier(m, data.properties, roll);
+      if (r.unresolved) unhandled.push({ slot: label, code: m.code, reason: r.unresolved });
+      else if (r.note && r.note.startsWith('未明確')) unhandled.push({ slot: label, code: m.code, reason: r.note });
+      entries.push(...r.entries);
+    });
+    const activePieces: number[] = [];
+    def.partial.forEach((p) => { if (count >= p.pieces) { apply(p.mods); activePieces.push(p.pieces); } });
+    const full = def.size > 0 && count >= def.size;
+    if (full) apply(def.full);
+    list.forEach((it) => (it.setBonus ?? []).forEach((b) => { if (count >= b.pieces) apply(b.mods); }));
+    sets.push({ id, nameEn: def.nameEn, name: def.name, count, size: def.size, activePieces, full });
+  }
+  return { entries, sets };
+}
 
 /** 單件裝備展開成 stat 條目（含鑲嵌）；無法解析者列入 unhandled，不會悄悄丟掉 */
 function expandItem(data: GameData, item: EquippedItem, unhandled: CharacterResult['unhandled']): ItemCalc {
@@ -88,7 +122,8 @@ export function computeCharacter(data: GameData, input: CharacterInput): Charact
 
   // 1. 展開所有 modifier → stat 條目
   const calcs: ItemCalc[] = input.items.map((item) => expandItem(data, item, unhandled));
-  const allEntries: StatEntry[] = [...calcs.flatMap((c) => c.entries), ...(input.extraStats ?? [])];
+  const setBonus = setBonusEntries(data, input.items, unhandled);
+  const allEntries: StatEntry[] = [...calcs.flatMap((c) => c.entries), ...setBonus.entries, ...(input.extraStats ?? [])];
 
   // 2. 累加（無 param 的數值進 bag；有 param 的技能類另存）
   const bag: Record<string, number> = {};
@@ -142,7 +177,8 @@ export function computeCharacter(data: GameData, input: CharacterInput): Charact
   // 5. 防禦：逐件（底材 × 無形 × (1+強化防禦%)＋固定防禦），再加 敏捷/4
   let gearDefense = 0;
   for (const c of calcs) gearDefense += itemDefenseOf(data, baseByCode.get(c.item.baseCode), c, level);
-  const extraDef = (input.extraStats ?? []).filter((e) => e.stat === 'armorclass').reduce((s, e) => s + e.value, 0);
+  // 套裝加成的固定防禦不屬於任何一件，另外加上
+  const extraDef = [...(input.extraStats ?? []), ...setBonus.entries].filter((e) => e.stat === 'armorclass').reduce((s, e) => s + e.value, 0);
   const defense = gearDefense + extraDef + Math.floor(total.dex / 4);
 
   // 6. 格擋：min(75, floor((盾牌格擋＋提高格擋＋職業係數) × (敏捷−15) / (2×等級)))；需裝備盾牌
@@ -185,5 +221,5 @@ export function computeCharacter(data: GameData, input: CharacterInput): Charact
     const lr = c.item.requiredLevel ?? 0; if (lr > level) requirementsUnmet.push({ slot: c.item.slot, need: `等級 ${lr}` });
   }
 
-  return { attributes: total, life, mana, stamina, defense, blockChance, resist, maxResist, rawResist, skills, weaponDamage, requirementsUnmet, stats: bag, unhandled };
+  return { attributes: total, life, mana, stamina, defense, blockChance, resist, maxResist, rawResist, skills, weaponDamage, requirementsUnmet, stats: bag, unhandled, sets: setBonus.sets };
 }

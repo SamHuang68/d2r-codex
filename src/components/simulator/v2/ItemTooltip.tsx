@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { categoryOfEntry, getSocketables, socketCapacity, socketEffectMods, TIER_ZH } from '../../../engine/catalog';
+import { categoryOfEntry, getCatalog, getSocketables, socketCapacity, socketEffectMods, TIER_ZH } from '../../../engine/catalog';
 import { itemOwnStats } from '../../../engine/character';
 import { buildEngineItem } from '../../../engine/build';
 import { gameData } from '../../../engine/data';
@@ -17,14 +17,21 @@ interface BodyProps {
   rollMax: boolean;
   /** 目前角色的總力量／敏捷（需求顯示紅字、武器傷害的屬性加成用） */
   attrs: { str: number; dex: number };
+  /** 目前物品欄裡同一套裝的件名（套裝進度與加成是否生效用）；沒有套裝就不用給 */
+  equippedSetNames?: string[];
 }
 
 /** 物品提示框內容：依遊戲提示框的順序——名稱、底材、防禦／傷害、需求、屬性、鑲孔 */
-export const ItemTooltipBody: React.FC<BodyProps> = ({ eq, level, rollMax, attrs }) => {
+export const ItemTooltipBody: React.FC<BodyProps> = ({ eq, level, rollMax, attrs, equippedSetNames }) => {
   const e = eq.entry;
   const base = baseByCode.get(e.baseCode);
   const own = useMemo(() => itemOwnStats(gameData, buildEngineItem(eq, 'tip', rollMax), level, attrs), [eq, level, rollMax, attrs]);
   const mods = describeModifiers(e.mods, rollMax ? 1 : 0, level);
+  const setDef = e.setId ? gameData.sets?.find((d) => d.id === e.setId) : undefined;
+  const setMembers = useMemo(() => (e.setId ? getCatalog().filter((x) => x.kind === 'set' && x.setId === e.setId) : []), [e.setId]);
+  const have = new Set(equippedSetNames ?? []); const setCount = have.size;
+  // 套裝加成文字（state 是全套時的光環特效，沒有文字說明，不列）
+  const setLines = (m: { code: string }[]) => describeModifiers(m.filter((x) => x.code !== 'state'), rollMax ? 1 : 0, level);
   const cap = socketCapacity(e);
   const all = getSocketables();
   const socketed = (eq.sockets ?? []).map((id) => all.find((s) => s.id === id)).filter((s): s is NonNullable<typeof s> => !!s);
@@ -36,9 +43,8 @@ export const ItemTooltipBody: React.FC<BodyProps> = ({ eq, level, rollMax, attrs
 
   return (
     <>
-      <div className={`nm ${tone(e.kind)}`}>{e.name}</div>
+      <div className={`nm ${e.custom ? 't-magic' : tone(e.kind)}`}>{e.name}</div>
       <div className={`base ${e.kind === 'base' ? '' : tone(e.kind)}`}>{e.baseName}{base?.tier && e.kind !== 'base' ? `（${TIER_ZH[base.tier]}）` : ''}</div>
-      {e.setName && <div className="t-set">{e.setName}</div>}
       {own.defense !== undefined && stat('防禦', own.defense)}
       {base?.block !== undefined && base.block > 0 && base.ancestors.includes('shld') && stat('格擋機率', `${base.block}%`)}
       {own.damage && stat(own.damage.twoHanded ? '雙手傷害' : '單手傷害', `${own.damage.min} 至 ${own.damage.max}`)}
@@ -48,6 +54,15 @@ export const ItemTooltipBody: React.FC<BodyProps> = ({ eq, level, rollMax, attrs
       {eq.ethereal && <div className="mod">無形（無法修復）</div>}
       {mods.map((l, i) => <div key={i} className={`mod ${l.known ? '' : 'is-unknown'}`}>{l.text}</div>)}
       {e.kind === 'runeword' && e.sockets && <div className="hint">符文之語：{e.sockets.map(runeName).join(' + ')}</div>}
+      {setDef && (
+        <div className="set-block">
+          <div className="t-set">{setDef.name ?? e.setName}（{setCount}/{setDef.size}）</div>
+          {setMembers.map((m) => <div key={m.id} className={have.has(m.name) ? 't-set' : 't-dim'}>{m.name}</div>)}
+          {(e.setBonus ?? []).flatMap((b) => setLines(b.mods).map((l, i) => <div key={`i${b.pieces}-${i}`} className={setCount >= b.pieces ? 't-set' : 't-dim'}>（{b.pieces} 件）{l.text}</div>))}
+          {setDef.partial.flatMap((p) => setLines(p.mods).map((l, i) => <div key={`p${p.pieces}-${i}`} className={setCount >= p.pieces ? 't-set' : 't-dim'}>（{p.pieces} 件）{l.text}</div>))}
+          {setLines(setDef.full).map((l, i) => <div key={`f${i}`} className={setDef.size > 0 && setCount >= setDef.size ? 't-set' : 't-dim'}>（全套）{l.text}</div>)}
+        </div>
+      )}
       {socketed.map((s, i) => (
         <div key={i} className="sock">
           <span className="t-dim">鑲嵌 {s.name}：</span>

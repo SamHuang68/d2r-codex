@@ -16,6 +16,8 @@ interface Props {
   say: (m: string) => void;
 }
 
+const sameItems = (a: object, b: object) => JSON.stringify(a) === JSON.stringify(b);
+
 const PARTS: { key: keyof ApplyParts; label: string; hint: string }[] = [
   { key: 'gear', label: '裝備與護身符', hint: '換掉物品欄與護身符背包' },
   { key: 'skills', label: '技能點', hint: '換掉技能樹的加點與主力技能' },
@@ -131,7 +133,8 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
                       {(() => {
                         const pv = previews[`${b.id}:bis`];
                         if (!pv || pv.survival.minRes >= 75) return null;
-                        return <span className="d2-sub" style={{ color: 'var(--bad)' }} title="地獄難度有 −100 抗性懲罰；範本沒有針對抗性調整。「平衡減傷」只換手套、腰帶、戒指、鞋子，不降技能與施法／攻速，能補一部分">頂裝在地獄的最低抗性只有 {pv.survival.minRes}%，可試「平衡減傷」</span>;
+                        const same = sameItems(tierOf(b, 'tankEff').items, tierOf(b, 'bis').items);
+                        return <span className="d2-sub" style={{ color: 'var(--bad)' }} title="地獄難度有 −100 抗性懲罰。頂裝已在不降技能加成與施法／攻速的條件下調整過手套、腰帶、戒指、鞋子；要再補得動頭盔、護甲、武器或盾，那就不是原本的流派了">頂裝在地獄的最低抗性只有 {pv.survival.minRes}%，{same ? '可試「極致減傷」' : '可試「平衡減傷」'}</span>;
                       })()}
                     </div>
                     <div className="flex flex-wrap items-center gap-2 mt-1.5">
@@ -149,6 +152,8 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
                       <span className="d2-sub" style={{ width: 36 }}>減傷</span>
                       {(['tankEff', 'tankMax'] as PresetTier[]).map((t) => {
                         const pv = previews[`${b.id}:${t}`];
+                        // 頂裝已先依抗性修正過，平衡減傷在多數流派沒有更多可換的（會和頂裝一樣）：不放重複的按鈕
+                        if (t === 'tankEff' && sameItems(tierOf(b, 'tankEff').items, tierOf(b, 'bis').items)) return <span key={t} className="d2-sub" title="在不降技能加成與施法／攻擊速度的條件下，沒有比頂裝更好的手套、腰帶、戒指、鞋子">平衡減傷：同頂裝（頂裝已是此條件下的上限）</span>;
                         return (
                           <button key={t} type="button" className="d2-btn is-quiet" disabled={none} onClick={() => applyTemplate(b.id, t)} title={tierOf(b, t).notes}>
                             {PRESET_TIER_ZH[t]}{pv ? `　物減 ${pv.survival.pdr}%・最低抗性 ${pv.survival.minRes}%・有效生命 ${pv.survival.ehpPhys.toLocaleString()}` : ''}
