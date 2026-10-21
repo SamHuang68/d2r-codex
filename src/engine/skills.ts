@@ -17,6 +17,12 @@ export interface GameSkill {
   elem?: { type: string; min: Bracket; max: Bracket; syn?: string };
   phys?: { min: Bracket; max: Bracket; syn?: string };
   srcDam?: number;
+  /** 沒有元素類型、但有元素傷害欄位的技能（骷髏戰士）：計算式裡的 edmn／edmx 用 */
+  edmg?: { min: Bracket; max: Bracket };
+  /** 命中加成（toht）：toHit＋(等級−1)×levToHit */
+  toHit?: number; levToHit?: number;
+  /** 召喚技能：召喚的怪物 id（summons.json）與同時存在的數量算式 */
+  summonId?: string; petMax?: string;
   auraStats?: StatLine[]; auraState?: string; auraTargetState?: string; auraLen?: string;
   passiveStats?: StatLine[];
 }
@@ -149,19 +155,50 @@ export function targetDamageText(d: ReturnType<typeof skillDamage>): string | un
 
 // ── 被動（專精、穿透）與光環／戰吼（lnXY 線性、dmXY 遞減公式都支援；其餘算不出來的明確標示）──
 export interface EffectLine { stat: string; value?: number; supported: boolean }
+/** 求值時可選的環境：owner＝擁有者（玩家）的屬性（stat('X'.accr)，召喚物繼承用）；masteryPct＝元素專精（enma／enms 這類「含專精」的變數用） */
+export interface EffectOptions { owner?: Record<string, number>; masteryPct?: number }
+
+/**
+ * 技能自己的衍生數值（計算式裡的識別字）：
+ *  edmn／edmx＝元素（或召喚物的）傷害下限／上限，含協同；edns／edxs 是同一個值的 256 倍；
+ *  enma／exma、enms／exms＝再乘上元素專精（masteryPct）；toht＝命中加成。沒有元素傷害欄位的技能只有 toht。
+ */
+export function skillVars(s: GameSkill, lvl: number, levels: SkillLevels, masteryPct = 0): Record<string, number> {
+  const v: Record<string, number> = { toht: (s.toHit ?? 0) + Math.max(0, lvl - 1) * (s.levToHit ?? 0) };
+  const d = s.elem ?? s.edmg;
+  if (d && lvl > 0) {
+    const k = shiftScale(s.hitShift); const pct = s.elem ? synPercent(s.elem.syn, s, levels) : 0; const syn = Number.isNaN(pct) ? 1 : 1 + pct / 100;
+    const mn = Math.floor(bracketValue(d.min, lvl) * k * syn); const mx = Math.floor(bracketValue(d.max, lvl) * k * syn);
+    const mm = 1 + masteryPct / 100;
+    Object.assign(v, { edmn: mn, edmx: mx, edns: mn * 256, edxs: mx * 256, enma: Math.floor(mn * mm), exma: Math.floor(mx * mm), enms: Math.floor(mn * mm * 256), exms: Math.floor(mx * mm * 256) });
+  }
+  return v;
+}
+
 /**
  * 求一個技能的效果行。levels 是全職業技能的等級表（skillLevelsFrom）：公式引用別的技能或自己的硬點（skill('Resist Fire'.blvl)）時用它；
  * 沒給就假設其他技能 0 點、自己的硬點等於 lvl。
  */
-function evalLines(lines: StatLine[] | undefined, s: GameSkill, lvl: number, levels?: SkillLevels): EffectLine[] {
+function evalLines(lines: StatLine[] | undefined, s: GameSkill, lvl: number, levels?: SkillLevels, opt: EffectOptions = {}): EffectLine[] {
   const lookup = (n: string) => levels ? (levels[n] ?? { lvl: 0, blvl: 0 }) : n === s.nameEn ? { lvl, blvl: lvl } : { lvl: 0, blvl: 0 };
+  const owner = opt.owner;
   return (lines ?? []).map((l) => {
     if (!l.calc) return { stat: l.stat, supported: false };
-    try { return { stat: l.stat, value: evalCalc(l.calc, { params: s.params, lvl, blvl: levels?.[s.nameEn]?.blvl ?? lvl, skill: lookup, skillParams: (n) => byName.get(n)?.params }), supported: true }; } catch (e) { if (e instanceof CalcError) return { stat: l.stat, supported: false }; throw e; }
+    try {
+      const vars = skillVars(s, lvl, levels ?? { [s.nameEn]: { lvl, blvl: lvl } }, opt.masteryPct ?? 0);
+      return { stat: l.stat, value: evalCalc(l.calc, { params: s.params, lvl, blvl: levels?.[s.nameEn]?.blvl ?? lvl, skill: lookup, skillParams: (n) => byName.get(n)?.params, skillVars: (n) => { const o = byName.get(n); const lv = lookup(n).lvl; return o && lv > 0 ? skillVars(o, lv, levels ?? { [s.nameEn]: { lvl, blvl: lvl } }) : undefined; }, vars, stat: owner ? (n) => owner[n] ?? 0 : undefined }), supported: true };
+    } catch (e) { if (e instanceof CalcError) return { stat: l.stat, supported: false }; throw e; }
   });
 }
-export const auraEffects = (s: GameSkill, lvl: number, levels?: SkillLevels) => evalLines(s.auraStats, s, lvl, levels);
-export const passiveEffects = (s: GameSkill, lvl: number, levels?: SkillLevels) => evalLines(s.passiveStats, s, lvl, levels);
+export const auraEffects = (s: GameSkill, lvl: number, levels?: SkillLevels, opt?: EffectOptions) => evalLines(s.auraStats, s, lvl, levels, opt);
+export const passiveEffects = (s: GameSkill, lvl: number, levels?: SkillLevels, opt?: EffectOptions) => evalLines(s.passiveStats, s, lvl, levels, opt);
+
+/** 召喚技能同時存在的數量（petmax 算式，整數運算）；算不出來回傳 undefined */
+export function petCount(s: GameSkill, lvl: number, levels?: SkillLevels): number | undefined {
+  if (!s.petMax || lvl <= 0) return undefined;
+  const lookup = (n: string) => levels ? (levels[n] ?? { lvl: 0, blvl: 0 }) : n === s.nameEn ? { lvl, blvl: lvl } : { lvl: 0, blvl: 0 };
+  try { return Math.max(0, evalCalc(s.petMax, { params: s.params, lvl, blvl: levels?.[s.nameEn]?.blvl ?? lvl, skill: lookup, skillParams: (n) => byName.get(n)?.params })); } catch (e) { if (e instanceof CalcError) return undefined; throw e; }
+}
 
 export type Elem = 'fire' | 'cold' | 'ltng' | 'pois' | 'mag';
 export interface PassiveMods { mastery: Partial<Record<Elem, number>>; pierce: Partial<Record<Elem, number>> }
