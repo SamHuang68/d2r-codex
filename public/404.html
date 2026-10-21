@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>找不到頁面 | D2R Sanctuary Codex</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #0b0b10; color: #d8d2c4; font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif; }
+    main { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px; text-align: center; box-sizing: border-box; }
+    h1 { margin: 0; font-size: 28px; color: #c9b277; }
+    p { margin: 0; max-width: 32em; line-height: 1.7; color: #a29a88; }
+    a { color: #c9b277; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>找不到這個網址</h1>
+    <p>這個網站的所有分頁都在首頁網址的 # 後面（例如 #items、#planner），沒有其他路徑。</p>
+    <p><a id="home" href="./">回到首頁</a></p>
+  </main>
+  <script>
+    // 首頁在網站根目錄；GitHub Pages 的專案網站在 /<專案名>/ 底下
+    (function () {
+      var seg = location.pathname.split('/')[1];
+      var home = location.hostname.slice(-10) === '.github.io' && seg ? '/' + seg + '/' : '/';
+      document.getElementById('home').setAttribute('href', home);
+    })();
+  </script>
+</body>
+</html>
