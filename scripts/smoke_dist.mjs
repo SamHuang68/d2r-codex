@@ -237,6 +237,13 @@ async function runOnce(base, browser) {
     } catch (e) {
       failures.push(`[桌面] 召喚技能的召喚物區塊沒有出現：${String(e.message).split('\n')[0]}`);
     }
+    // 自訂飾品：詞綴表是背景載入的 chunk，載入後預設的小型護身符（+7% 魔法物品）要出現「遊戲內檢查」並判定可以長出來
+    try {
+      await page.getByRole('tab', { name: '樹狀裝備庫' }).click();
+      await page.waitForFunction(() => /可以長出來/.test(document.querySelector('[aria-label="遊戲內檢查"]')?.innerText ?? ''), null, { timeout: 15000 });
+    } catch (e) {
+      failures.push(`[桌面] 自訂飾品的遊戲內檢查沒有出現：${String(e.message).split('\n')[0]}`);
+    }
     await ctx.close();
   }
 
