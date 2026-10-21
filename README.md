@@ -69,11 +69,12 @@
 |---|---|---|
 | GitHub Pages | https://samhuang68.github.io/d2r-codex/ | 推到 `main` 時由 `.github/workflows/deploy.yml` 建置並發布 |
 | Cloudflare Pages | https://d2r-codex.pages.dev/ | 專案 `d2r-codex` 以 Git 連接本儲存庫的 `main`，推到 `main` 時由 Cloudflare 建置（`npm run build`，輸出 `dist`）；Pull Request 不建預覽 |
+| Cloudflare Pages（自訂網域） | https://d2r.samhuang68.org/ | 同一個 Cloudflare 專案；DNS 為 `samhuang68.org` 區域的 `CNAME d2r → d2r-codex.pages.dev`（proxied），與 hub、arcade、hardware、learn 同樣形式 |
 
 - 手動重新部署 Cloudflare 站：`cf pages deployments create --project-name d2r-codex --branch main`（使用 `cf` CLI，需先 `cf auth login`）。
 - 每個對 `main` 的 Pull Request 由 `.github/workflows/ci.yml` 跑型別檢查、引擎測試、建置與 chunk 循環匯入檢查。
 - **建置產物不可有 chunk 之間的循環匯入**：循環在開發伺服器與建置都不會報錯，但上線後會整頁空白（`Cannot access 'x' before initialization`）。`npm run check:chunks` 會檢查，`vite.config.ts` 的 `manualChunks` 把資料與引擎合成同一個 chunk，改動前後都要跑。
-- 作品入口（https://blog.samhuang68.org/ ）的 NODE-10 卡片連到 Cloudflare 站。
+- 作品入口（https://blog.samhuang68.org/ ）的 NODE-10 卡片連到 https://d2r.samhuang68.org/ 。
 
 ---
 
