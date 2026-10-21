@@ -6,7 +6,17 @@ import uniques from '../data/game/uniques.json';
 import setItems from '../data/game/setItems.json';
 import runewords from '../data/game/runewords.json';
 import gems from '../data/game/gems.json';
-import type { BaseItem, CharStats, EquippedItem, GameData, Gem, Modifier, PropertyDef, StatDef } from './types';
+import sets from '../data/game/sets.json';
+import type { BaseItem, CharStats, EquippedItem, GameData, Gem, Modifier, PropertyDef, SetDef, StatDef } from './types';
+
+interface SetRow { id: string; nameEn: string; name?: string; partial: (Modifier & { pieces: number })[]; full: Modifier[] }
+const setSizes = new Map<string, number>();
+for (const it of setItems as unknown as { set: string; disabled?: boolean }[]) { if (!it.disabled) setSizes.set(it.set, (setSizes.get(it.set) ?? 0) + 1); }
+const buildSets = (): SetDef[] => (sets as unknown as SetRow[]).map((r) => {
+  const byPieces = new Map<number, Modifier[]>();
+  for (const { pieces, ...m } of r.partial) (byPieces.get(pieces) ?? byPieces.set(pieces, []).get(pieces)!).push(m);
+  return { id: r.id, nameEn: r.nameEn, name: r.name, size: setSizes.get(r.id) ?? 0, partial: [...byPieces.entries()].sort((a, b) => a[0] - b[0]).map(([pieces, mods]) => ({ pieces, mods })), full: r.full };
+});
 
 export const gameData: GameData = {
   charstats: charstats as unknown as CharStats[],
@@ -14,6 +24,7 @@ export const gameData: GameData = {
   stats: stats as unknown as Record<string, StatDef>,
   bases: bases as unknown as BaseItem[],
   gems: gems as unknown as Gem[],
+  sets: buildSets(),
 };
 
 interface UniqueRow { id: string; code: string; levelReq?: number; mods: Modifier[]; name: string }

@@ -13,6 +13,16 @@ const statDefs = stats as unknown as Record<string, StatDef & { descstrpos?: str
 const strs = statStrings as Record<string, string>;
 const skillZh = new Map<string, string>((skills as { nameEn: string; name?: string }[]).filter((s) => s.name).map((s) => [s.nameEn, s.name as string]));
 
+/** 遊戲沒有文字範本、也不需要在屬性列表顯示的 stat（鑲孔數由提示框的「鑲孔」行呈現） */
+const HIDDEN_STATS = new Set(['item_numsockets']);
+/** 遊戲沒有文字範本的 stat，補上對應的繁中說明。毒素／冰寒「持續時間縮短」與外觀用的血花沒有遊戲內字串可對照，說明為依屬性名稱的直譯 */
+const EXTRA_TEXT: Record<string, (v: number) => string> = {
+  maxdurability: (v) => `${v >= 0 ? '+' : ''}${v} 耐久度`,
+  poisonlength: (v) => `毒素持續時間縮短 ${v}%`,
+  coldlength: (v) => `冰寒持續時間縮短 ${v}%`,
+  item_extrablood: (v) => `外觀：血花 +${v}`,
+};
+
 const fmt = (tpl: string, value: number, param?: string): string => {
   let t = tpl;
   t = t.replace(/%\+d/, value >= 0 ? `+${value}` : String(value)).replace(/%d/, String(value)).replace(/%s/, param ?? '').replace(/%%/g, '%');
@@ -38,6 +48,7 @@ export function describeEntry(e: StatEntry, level = 90): string | undefined {
     return `${e.value >= 0 ? '+' : ''}${e.value} ${tn ? `${tn}${/技能$|法術$/.test(tn) ? '' : '技能'}` : `技能樹 #${id % 3 + 1}`}（只限${cn}）`;
   }
   if (e.stat === 'item_singleskill' || e.stat === 'item_nonclassskill') { const n = skillZh.get(String(e.param)) ?? String(e.param); return `${e.value >= 0 ? '+' : ''}${e.value} ${n}`; }
+  if (EXTRA_TEXT[e.stat]) return EXTRA_TEXT[e.stat](e.value);
   if (e.stat === 'mindamage') return `+${e.value} 最小傷害`;
   if (e.stat === 'maxdamage') return `+${e.value} 最大傷害`;
   if (e.stat === 'item_mindamage_percent') return undefined; // 與最大傷害％合併成一行
@@ -55,6 +66,7 @@ export function describeModifiers(mods: Modifier[], roll = 1, level = 90): Descr
   const out: DescribedLine[] = [];
   for (const m of mods) {
     const r = resolveModifier(m, props, roll);
+    if (r.entries.length > 0 && r.entries.every((e) => HIDDEN_STATS.has(e.stat))) continue;
     const lines = r.entries.map((e) => describeEntry(e, level)).filter((x): x is string => !!x);
     if (lines.length) lines.forEach((text) => out.push({ text, known: true }));
     else if (r.entries.length === 0 && !r.unresolved) out.push({ text: r.note ?? m.code, known: true });

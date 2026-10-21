@@ -1,14 +1,14 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { computeCharacter } from '../../../engine/character';
 import { gameData } from '../../../engine/data';
 import { withBase, type CatalogEntry, type Group } from '../../../engine/catalog';
-import { ALL_PARTS, type ApplyParts, type SimSnapshot } from '../../../data/profileStore';
+import { ALL_PARTS, fromSavedData, loadDraft, saveDraft, type ApplyParts, type SimSnapshot } from '../../../data/profileStore';
 import type { EquippedItem } from '../../../engine/types';
 import { SkillTreeV2 } from './SkillTreeV2';
 import { auraEffects, damageText, effectiveLevel, passiveMods, skillById, skillDamage, skillLevelsFrom, skillPointBudget, targetDamageText, type DamageOptions, type GameSkill, type SkillBonuses } from '../../../engine/skills';
 import { applyBuffs, buffCandidates } from '../../../engine/buffs';
 import { describeEntry } from '../../../engine/describe';
-import { PaperDollV2, canFitCharm } from './PaperDollV2';
+import { PaperDollV2, canFitCharm, setNamesOf } from './PaperDollV2';
 import { AttributesTab } from './AttributesTab';
 import { GearTreeTab } from './GearTreeTab';
 import { GearPicker } from './GearPicker';
@@ -29,7 +29,13 @@ const DIFF_ZH: Record<Difficulty, string> = { normal: '普通', nightmare: '惡�
 const ZERO: Alloc = { str: 0, dex: 0, vit: 0, ene: 0 };
 const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
 
-export interface SimulatorV2Props { initialClass?: string }
+export interface SimulatorV2Props {
+  initialClass?: string;
+  /** 在百科中查看某件物品（傳入中文名稱） */
+  onNavigateItem?: (name: string) => void;
+  /** 使用者切換職業時通知外層，離開再回來才會回到同一個職業 */
+  onClassChange?: (zh: string) => void;
+}
 
 const NumSelect: React.FC<{ label: string; value: number; max: number; onChange: (n: number) => void; title?: string }> = ({ label, value, max, onChange, title }) => (
   <label className="d2-field" title={title}>
@@ -40,29 +46,42 @@ const NumSelect: React.FC<{ label: string; value: number; max: number; onChange:
   </label>
 );
 
-export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法使' }) => {
+export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法使', onNavigateItem, onClassChange }) => {
+  // 離開再回來：若暫存的職業與要開啟的職業相同，還原上次的配裝（從其他頁面指定了別的職業時，不蓋掉使用者的選擇）
+  const restored = useMemo(() => {
+    const want = CLASSES.find((c) => c.zh === initialClass) ?? CLASSES[1];
+    const d = loadDraft(); if (!d || d.classCode !== want.code) return null;
+    const r = fromSavedData(d); return r.errors.length ? null : r.snap;
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [cls, setCls] = useState(CLASSES.find((c) => c.zh === initialClass) ?? CLASSES[1]);
-  const [level, setLevel] = useState(90);
-  const [difficulty, setDifficulty] = useState<Difficulty>('hell');
-  const [quests, setQuests] = useState<Quests>({ lifePotions: 3, anya: 3, lamEsen: 3, skillPts: 3 }) // 預設地獄、三難度任務皆完成；可調整;
-  const [alloc, setAlloc] = useState<Alloc>(ZERO);
-  const [equipped, setEquipped] = useState<EquippedMap>({});
-  const [charms, setCharms] = useState<CatalogEntry[]>([]);
-  const [swap, setSwap] = useState<'I' | 'II'>('I');
-  const [rollMax, setRollMax] = useState(true);
+  const [level, setLevel] = useState(restored?.level ?? 90);
+  const [difficulty, setDifficulty] = useState<Difficulty>(restored?.difficulty ?? 'hell');
+  const [quests, setQuests] = useState<Quests>(restored?.quests ?? { lifePotions: 3, anya: 3, lamEsen: 3, skillPts: 3 }) // 預設地獄、三難度任務皆完成；可調整;
+  const [alloc, setAlloc] = useState<Alloc>(restored?.alloc ?? ZERO);
+  const [equipped, setEquipped] = useState<EquippedMap>(restored?.equipped ?? {});
+  const [charms, setCharms] = useState<CatalogEntry[]>(restored?.charms ?? []);
+  const [swap, setSwap] = useState<'I' | 'II'>(restored?.swap ?? 'I');
+  const [rollMax, setRollMax] = useState(restored?.rollMax ?? true);
   const [tab, setTab] = useState<TabKey>('stats');
   const [selected, setSelected] = useState<DollSlot | null>(null);
   const [dragging, setDragging] = useState<CatalogEntry | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerJump, setPickerJump] = useState<{ group: Group; seq: number } | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
-  const [skillPoints, setSkillPoints] = useState<Record<string, number>>({});
-  const [activeSkillId, setActiveSkillId] = useState<string>('');
-  const [buffsOn, setBuffsOn] = useState<Record<string, boolean>>({});
-  const [targetRes, setTargetRes] = useState(0);
+  const [toast, setToast] = useState<string | null>(restored ? '已還原離開前的配裝' : null);
+  const [skillPoints, setSkillPoints] = useState<Record<string, number>>(restored?.skillPoints ?? {});
+  const [activeSkillId, setActiveSkillId] = useState<string>(restored?.activeSkillId ?? '');
+  const [buffsOn, setBuffsOn] = useState<Record<string, boolean>>(restored?.buffsOn ?? {});
+  const [targetRes, setTargetRes] = useState(restored?.targetRes ?? 0);
   const [profileOpen, setProfileOpen] = useState(false);
   const undoRef = useRef<SimSnapshot | null>(null);
   const [canUndo, setCanUndo] = useState(false);
+
+  // 自動暫存目前的配裝（改動後稍等一下再存，避免連續輸入時一直寫）
+  useEffect(() => {
+    const timer = window.setTimeout(() => saveDraft({ classCode: cls.code, level, difficulty, quests, alloc, equipped, charms, swap, skillPoints, activeSkillId, buffsOn, targetRes, rollMax }), 400);
+    return () => window.clearTimeout(timer);
+  }, [cls, level, difficulty, quests, alloc, equipped, charms, swap, skillPoints, activeSkillId, buffsOn, targetRes, rollMax]);
+  useEffect(() => { if (restored) { const t = window.setTimeout(() => setToast(null), 3500); return () => window.clearTimeout(t); } return undefined; }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const say = (m: string) => { setToast(m); window.setTimeout(() => setToast((t) => (t === m ? null : t)), 3500); };
 
@@ -132,7 +151,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const unequip = (slot: DollSlot) => { setEquipped((m) => { const n = { ...m }; delete n[slot]; return n; }); setSelected(null); };
 
   const selectClass = (c: typeof CLASSES[number]) => {
-    setCls(c); setAlloc(ZERO); setSkillPoints({}); setActiveSkillId(''); setBuffsOn({});
+    setCls(c); onClassChange?.(c.zh); setAlloc(ZERO); setSkillPoints({}); setActiveSkillId(''); setBuffsOn({});
     const dropped: string[] = [];
     setEquipped((m) => {
       const n: EquippedMap = {};
@@ -175,7 +194,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     const c = CLASSES.find((x) => x.code === snap.classCode); if (!c) { say(`找不到職業「${snap.classCode}」`); return; }
     if (recordUndo) { undoRef.current = capture(); setCanUndo(true); }
     const classChanged = c.code !== cls.code;
-    setCls(c); setSelected(null);
+    setCls(c); setSelected(null); onClassChange?.(c.zh);
     if (parts.gear) { setEquipped(snap.equipped); setCharms(snap.charms); setSwap(snap.swap); setRollMax(snap.rollMax); }
     else if (classChanged) {
       // 只套用其他範圍但職業不同：卸下他職專屬裝備
@@ -278,11 +297,12 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
               selected={selected} onSelect={setSelected} unmet={unmetSlots} level={level} rollMax={rollMax} attrs={tipAttrs} />
             {selEq && selected && (
               <div className="mt-4">
-                <div className="d2-tip"><ItemTooltipBody eq={selEq} level={level} rollMax={rollMax} attrs={tipAttrs} /></div>
+                <div className="d2-tip"><ItemTooltipBody eq={selEq} level={level} rollMax={rollMax} attrs={tipAttrs} equippedSetNames={setNamesOf(equipped, selEq.entry.setId)} /></div>
                 <div className="flex flex-wrap items-center justify-center gap-4 mt-2">
                   {(selEq.entry.group === 'armor' || selEq.entry.group === 'weapon') && (
                     <label className="d2-field"><input type="checkbox" className="d2-check" checked={!!selEq.ethereal} onChange={(e) => setEquipped((m) => ({ ...m, [selected]: { ...m[selected]!, ethereal: e.target.checked } }))} />無形</label>
                   )}
+                  {onNavigateItem && selEq.entry.kind !== 'base' && <button type="button" onClick={() => onNavigateItem(selEq.entry.name)} className="d2-btn is-quiet" title="到百科頁查看這件物品（配裝會自動暫存，回來時還原）">在百科中查看</button>}
                   <button type="button" onClick={() => unequip(selected)} className="d2-btn is-danger">卸下</button>
                 </div>
                 <SocketEditor eq={selEq} level={level} onChange={(patch) => patchEquipped(selected, patch)} onChangeBase={(code) => changeBase(selected, code)} />
@@ -300,14 +320,15 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
           </div>
           <div className="d2-panel-body">
             {tab === 'stats' && (
-              <AttributesTab className={cls.zh} level={level} result={result} alloc={alloc} remaining={remaining} needStr={needStr} needDex={needDex}
+              <AttributesTab className={cls.zh} classCode={cls.code} level={level} result={result} alloc={alloc} remaining={remaining} needStr={needStr} needDex={needDex}
                 onAdd={onAdd} onSet={onSet} onAutoReq={onAutoReq} onAllVit={onAllVit} onReset={() => setAlloc(ZERO)} mainSkill={mainSkill}
                 targetRes={targetRes} onTargetRes={setTargetRes} buffs={buffPanel} onToggleBuff={(id) => setBuffsOn((m) => ({ ...m, [id]: !m[id] }))}
                 enemyReduction={applied.enemyResReduction} />
             )}
             {tab === 'gear' && (
               <GearTreeTab open={pickerOpen} onClose={() => setPickerOpen(false)}
-                onOpen={(g) => { setPickerOpen(true); if (g) setPickerJump((j) => ({ group: g, seq: (j?.seq ?? 0) + 1 })); }} />
+                onOpen={(g) => { setPickerOpen(true); if (g) setPickerJump((j) => ({ group: g, seq: (j?.seq ?? 0) + 1 })); }}
+                level={level} onEquip={equip} say={say} />
             )}
             {tab === 'skills' && (
               <SkillTreeV2 classCode={cls.code} level={level} skillPoints={skillPoints} onUpdateSkillPoints={setSkillPoints}

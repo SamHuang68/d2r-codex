@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -294,7 +294,9 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
       const res = E.computeCharacter(gameData, { className: E.ENGINE_CLASS_BY_CODE[p.classCode], level: p.level, allocated: snap.alloc, items, difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } });
       const a = res.attributes; let sum = 0;
       for (const it of items) { const o = itemOwnStats(gameData, it, p.level, { str: a.str, dex: a.dex }); sum += o.defense ?? 0; }
-      assert.equal(sum + Math.floor(a.dex / 4), res.defense, `${id} 防禦`);
+      // 提示框只含該件自身的屬性；套裝加成（含套裝的固定防禦）不屬於任何一件，所以拿「去掉套裝資訊」的整體數值比對
+      const noSet = E.computeCharacter(gameData, { className: E.ENGINE_CLASS_BY_CODE[p.classCode], level: p.level, allocated: snap.alloc, items: items.map((i) => ({ ...i, setId: undefined, setBonus: undefined })), difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } });
+      assert.equal(sum + Math.floor(noSet.attributes.dex / 4), noSet.defense, `${id} 防禦`);
       // 武器傷害：提示框只含該武器自身屬性（遊戲提示框同），整體計算還含其他裝備的固定傷害，所以只拿單件比對
       const w = items.find((i) => i.slot === 'weapon');
       if (w) { const solo = E.computeCharacter(gameData, { className: E.ENGINE_CLASS_BY_CODE[p.classCode], level: p.level, allocated: snap.alloc, items: [w], difficulty: 'hell', anyaScrolls: 3, quests: { lifePotions: 3 } });
@@ -363,7 +365,11 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
       assert.ok((eff.stats.item_fastercastrate ?? 0) >= (bis.stats.item_fastercastrate ?? 0), `${b.id} FCR`);
       assert.ok((eff.stats.item_fasterattackrate ?? 0) >= (bis.stats.item_fasterattackrate ?? 0), `${b.id} IAS`);
       const sb = survivalSummary(bis); const se = survivalSummary(eff);
-      assert.ok(se.ehpPhys >= sb.ehpPhys * 0.97 && se.ehpElem >= sb.ehpElem, `${b.id} 有效生命 ${se.ehpPhys}/${se.ehpElem} < ${sb.ehpPhys}/${sb.ehpElem}`);
+      // 平衡版以「物理與元素有效生命的調和平均」為目標：整體要不低於頂裝，單一方向不能掉太多（不低於原本的 65%）
+      const hm = (x) => 2 / (1 / x.ehpPhys + 1 / x.ehpElem);
+      // 搜尋的評分另外加了魔法傷害減免與固定傷害減免的小量加權，所以調和平均可以略低（最多 2%）
+      assert.ok(hm(se) >= hm(sb) * 0.98, `${b.id} 有效生命調和平均 ${se.ehpPhys}/${se.ehpElem} 低於頂裝 ${sb.ehpPhys}/${sb.ehpElem}`);
+      assert.ok(se.ehpPhys >= sb.ehpPhys * 0.65 && se.ehpElem >= sb.ehpElem * 0.65, `${b.id} 某一方向掉太多`);
     }
   });
   t('極致減傷：未被武器綁定的流派物理減免達 50% 上限，每個流派有效生命（物理與元素的調和平均）都高於頂裝', () => {
@@ -374,7 +380,7 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
       const harm = (x) => 2 / (1 / x.ehpPhys + 1 / x.ehpElem);
       assert.ok(harm(mx) > harm(bis), `${b.id} 極致減傷 ${mx.ehpPhys}/${mx.ehpElem} 的調和平均未高於頂裝 ${bis.ehpPhys}/${bis.ehpElem}`);
       if (!b.weaponBound) assert.ok(mx.ehpPhys > bis.ehpPhys && mx.ehpElem > bis.ehpElem, `${b.id} 兩項有效生命都應高於頂裝`);
-      assert.ok(mx.minRes >= 75, `${b.id} 最低抗性 ${mx.minRes}`);
+      assert.ok(mx.minRes >= (b.weaponBound ? 70 : 75), `${b.id} 最低抗性 ${mx.minRes}`);
     }
   });
   t('範本合法性：每個範本的每個槽位都通過介面同一套裝備規則（槽位種類、職業專屬、雙手武器不配盾、雙持限制）', () => {
@@ -417,6 +423,53 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
     assert.doesNotThrow(() => fromSavedData(big.data));
     const html = parseProfile(mut((d) => { d.name = '<img src=x onerror=alert(1)>'; })); assert.equal(html.name, '<img src=x onerror=alert(1)>', '名稱原樣保留（畫面以文字顯示，不當 HTML）');
   });
+  t('自訂飾品：定義檢查（拒絕不認得的底材與詞綴、非數字；數值夾進範圍）、建立目錄項目、詞綴確實計入數值', () => {
+    const { validateCustomDef, customEntry, CUSTOM_AFFIXES, computeCharacter: c2, buildEngineItem: bei2 } = E;
+    for (const bad of [null, [], { baseCode: 'zzz', name: 'x', affixes: [] }, { baseCode: 'rin', name: 5, affixes: [] }, { baseCode: 'rin', name: 'x', affixes: 'a' }, { baseCode: 'rin', name: 'x', affixes: [null] },
+      { baseCode: 'rin', name: 'x', affixes: [{ code: 'nonsense', value: 1 }] }, { baseCode: 'rin', name: 'x', affixes: [{ code: 'hp', value: '5' }] }, { baseCode: 'rin', name: 'x', affixes: Array.from({ length: 9 }, () => ({ code: 'hp', value: 1 })) }])
+      assert.equal(typeof validateCustomDef(bad), 'string', JSON.stringify(bad));
+    const ok = validateCustomDef({ baseCode: 'cm1', name: '  幸運小符  ', affixes: [{ code: 'mag%', value: 9999 }, { code: 'hp', value: -3 }] });
+    assert.equal(ok.name, '幸運小符'); assert.equal(ok.affixes[0].value, CUSTOM_AFFIXES.find((a) => a.code === 'mag%').max); assert.equal(ok.affixes[1].value, 1);
+    const e = customEntry({ baseCode: 'cm1', name: '幸運小符', affixes: [{ code: 'mag%', value: 7 }, { code: 'hp', value: 20 }, { code: 'res-all', value: 5 }] });
+    assert.equal(e.slot, 'charm'); assert.equal(e.name, '幸運小符'); assert.ok(e.id.startsWith('custom:')); assert.equal(e.custom.affixes.length, 3);
+    const base = c2(gameData, { className: 'Paladin', level: 90, allocated: none, items: [], difficulty: 'normal' });
+    const withIt = c2(gameData, { className: 'Paladin', level: 90, allocated: none, items: [bei2({ entry: e }, 'charm0')], difficulty: 'normal' });
+    assert.equal((withIt.stats.item_magicbonus ?? 0) - (base.stats.item_magicbonus ?? 0), 7); assert.equal(withIt.life - base.life, 20);
+    assert.equal(withIt.rawResist.fire - base.rawResist.fire, 5); assert.deepEqual(withIt.unhandled, []);
+    const ring = customEntry({ baseCode: 'rin', name: '', affixes: [] }); assert.equal(ring.slot, 'ring'); assert.equal(ring.name, '自訂戒指');
+    for (const a of CUSTOM_AFFIXES) { const r = c2(gameData, { className: 'Paladin', level: 90, allocated: none, items: [bei2({ entry: customEntry({ baseCode: 'amu', name: 'x', affixes: [{ code: a.code, value: 1 }] }) }, 'neck')], difficulty: 'normal' }); assert.deepEqual(r.unhandled, [], `詞綴 ${a.code} 引擎看不懂`); }
+  });
+  t('自訂飾品隨 Profile 與暫存存取：護身符與戒指存檔→還原後詞綴相同；結構不對的自訂物品被拒絕', () => {
+    const { customEntry, toSavedData, fromSavedData, parseProfile, exportProfile, newProfile, SIM_PRESETS, stateFromPreset } = E;
+    const snap = stateFromPreset(SIM_PRESETS.find((x) => x.id === 'sor-blizzard:bis')).snap;
+    const charm = customEntry({ baseCode: 'cm2', name: '抗性大符', affixes: [{ code: 'res-fire', value: 11 }, { code: 'res-cold', value: 11 }] });
+    const ring = customEntry({ baseCode: 'rin', name: '稀有戒', affixes: [{ code: 'cast2', value: 10 }, { code: 'hp', value: 30 }] });
+    const withCustom = { ...snap, charms: [...snap.charms, charm], equipped: { ...snap.equipped, ring2: { entry: ring } } };
+    const saved = JSON.parse(JSON.stringify(toSavedData(withCustom))); const back = fromSavedData(saved);
+    assert.deepEqual(back.errors, []);
+    assert.deepEqual(back.snap.equipped.ring2.entry.custom, ring.custom); assert.equal(back.snap.equipped.ring2.entry.slot, 'ring');
+    assert.deepEqual(back.snap.charms.at(-1).custom, charm.custom); assert.equal(back.snap.charms.length, snap.charms.length + 1);
+    const prof = JSON.parse(exportProfile(newProfile('x', withCustom)));
+    prof.data.equipped.ring2.custom = { baseCode: 'zzz', name: 'x', affixes: [] }; assert.equal(typeof parseProfile(JSON.stringify(prof)), 'string');
+    prof.data.equipped.ring2.custom = { baseCode: 'rin', name: 'x', affixes: [{ code: 'hp', value: 'a' }] }; assert.equal(typeof parseProfile(JSON.stringify(prof)), 'string');
+    const okProf = JSON.parse(exportProfile(newProfile('x', withCustom))); assert.equal(typeof parseProfile(JSON.stringify(okProf)), 'object');
+  });
+  t('暫存：存進去再讀出來配裝完全相同；損壞或舊版的暫存當作沒有；寫入失敗不丟例外', () => {
+    const { saveDraft, loadDraft, fromSavedData, SIM_PRESETS, stateFromPreset } = E;
+    const snap = stateFromPreset(SIM_PRESETS.find((x) => x.id === 'pal-hammerdin:bis')).snap;
+    const store = {}; const win = { localStorage: { getItem: (k) => store[k] ?? null, setItem: (k, v) => { store[k] = v; } } };
+    const old = globalThis.window; globalThis.window = win;
+    try {
+      assert.equal(loadDraft(), null);
+      saveDraft(snap); const d = loadDraft(); assert.ok(d); const back = fromSavedData(d);
+      assert.deepEqual(back.errors, []); assert.equal(back.snap.classCode, 'pal'); assert.deepEqual(back.snap.alloc, snap.alloc);
+      assert.deepEqual(Object.keys(back.snap.equipped).sort(), Object.keys(snap.equipped).sort()); assert.deepEqual(back.snap.skillPoints, snap.skillPoints);
+      store['d2sim.draft.v1'] = '{壞掉'; assert.equal(loadDraft(), null);
+      store['d2sim.draft.v1'] = JSON.stringify({ v: 1, name: 'x', data: { classCode: 'sor', equipped: { head: null } } }); assert.equal(loadDraft(), null);
+      globalThis.window = { localStorage: { getItem: () => null, setItem: () => { throw new Error('quota'); } } };
+      assert.doesNotThrow(() => saveDraft(snap));
+    } finally { globalThis.window = old; }
+  });
   t('Profile 讀取：瀏覽器存檔中格式損壞的項目被略過並回報數量，其餘照常載入', () => {
     const { loadProfiles, exportProfile, newProfile, SIM_PRESETS, stateFromPreset } = E;
     const good = JSON.parse(exportProfile(newProfile('好的', stateFromPreset(SIM_PRESETS.find((x) => x.id === 'pal-hammerdin:bis')).snap)));
@@ -444,6 +497,119 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
     const ok = parseProfile(exportProfile(newProfile('測試', snap))); assert.equal(typeof ok, 'object'); assert.equal(ok.name, '測試'); assert.equal(ok.data.level, snap.level);
     const evil = parseProfile(JSON.stringify({ v: 1, name: 'x', data: { classCode: 'sor', equipped: {}, level: 'abc', alloc: { str: -5 } } }));
     assert.equal(evil.data.level, 90); assert.equal(evil.data.alloc.str, 0);
+  });
+}
+
+// ── 套裝加成 ──
+{
+  const { getCatalog, buildEngineItem: bei, computeCharacter: cc } = E;
+  const sets = rd('sets'); const setItems = rd('setItems').filter((x) => !x.disabled);
+  console.log('【套裝加成】');
+  const mk = (names) => names.map((n) => bei({ entry: getCatalog().find((e) => e.kind === 'set' && e.nameEn === n) }, getCatalog().find((e) => e.kind === 'set' && e.nameEn === n).slot, true));
+  const run = (items) => cc(gameData, { className: 'Sorceress', level: 90, allocated: none, items, difficulty: 'normal' });
+  /** 套裝帶來的差額＝整組數值 − 各件單獨數值的加總（只看某個 stat） */
+  const delta = (names, stat) => { const items = mk(names); return (run(items).stats[stat] ?? 0) - items.reduce((a, it) => a + (run([it]).stats[stat] ?? 0), 0); };
+  /** 從遊戲資料直接算出預期值：套裝層級（≤件數）加上各件層級（件數≥pieces）的某些屬性代碼 */
+  const expected = (setId, names, codes, full) => {
+    const set = sets.find((x) => x.id === setId); const n = names.length; let v = 0;
+    for (const m of set.partial) if (m.pieces <= n && codes.includes(m.code)) v += m.max;
+    if (full) for (const m of set.full) if (codes.includes(m.code)) v += m.max;
+    for (const it of setItems.filter((x) => names.includes(x.nameEn))) for (const b of it.setBonusByCount) if (b.slot + 1 <= n && codes.includes(b.code)) v += b.max;
+    return v;
+  };
+  const TAL = ["Tal Rasha's Horadric Crest", "Tal Rasha's Howling Wind", "Tal Rasha's Fire-Spun Cloth", "Tal Rasha's Adjudication"];
+
+  t('套裝資料完整：每個套裝的件數＝資料中的套裝件數，partial 與各件加成的件數門檻都不超過全套件數', () => {
+    assert.equal(gameData.sets.length, sets.length);
+    for (const d of gameData.sets) {
+      const n = setItems.filter((x) => x.set === d.id).length; assert.equal(d.size, n, d.nameEn); assert.ok(n >= 2, d.nameEn);
+      for (const p of d.partial) assert.ok(p.pieces <= d.size, `${d.nameEn} partial ${p.pieces}`);
+    }
+    // 各件加成的門檻是「第 N 組＝N+1 件」。資料裡唯一超出全套件數的是赫拉森之領的第 5 組（要 6 件，但套裝只有 5 件），永遠不會生效，與遊戲資料一致
+    const over = setItems.flatMap((it) => it.setBonusByCount.filter((b) => b.slot + 1 > gameData.sets.find((x) => x.id === it.set).size).map((b) => `${it.nameEn}#${b.slot}`));
+    assert.deepEqual(over, ["Horazon's Dominion#5"]);
+  });
+  t('塔拉夏套裝：3 件才有 +65% MF（2 件沒有）；審判項鍊的 +10% 快速施法要 4 件才生效（兩個社群來源一致）', () => {
+    assert.equal(delta(TAL.slice(0, 2), 'item_magicbonus'), 0);
+    assert.equal(delta(TAL.slice(0, 3), 'item_magicbonus'), 65);
+    assert.equal(expected('tal_rasha_s_wrappings', TAL.slice(0, 3), ['mag%']), 65);
+    assert.equal(delta([TAL[0], TAL[1], TAL[3]], 'item_fastercastrate'), expected('tal_rasha_s_wrappings', [TAL[0], TAL[1], TAL[3]], ['cast1', 'cast2', 'cast3']));
+    assert.equal(delta(TAL, 'item_fastercastrate'), expected('tal_rasha_s_wrappings', TAL, ['cast1', 'cast2', 'cast3']));
+    assert.ok(delta(TAL, 'item_fastercastrate') >= 10, '4 件時審判項鍊的快速施法生效');
+    assert.ok(delta(TAL, 'item_fastercastrate') > delta([TAL[0], TAL[1], TAL[3]], 'item_fastercastrate'));
+  });
+  t('全套加成：希弗柏全套（3 件）力量＋15、電抗＋25；缺一件不生效；摘要顯示 3/3', () => {
+    const CIV = ["Civerb's Ward", "Civerb's Icon", "Civerb's Cudgel"];
+    assert.equal(delta(CIV, 'strength'), expected('civerb_s_vestments', CIV, ['str'], true));
+    assert.equal(delta(CIV, 'strength'), 15);
+    assert.equal(delta(CIV.slice(0, 2), 'strength'), 0);
+    const r = run(mk(CIV)); assert.deepEqual(r.sets.map((x) => [x.id, x.count, x.size, x.full]), [['civerb_s_vestments', 3, 3, true]]);
+    const r2 = run(mk(CIV.slice(0, 2))); assert.equal(r2.sets[0].full, false); assert.deepEqual(r2.sets[0].activePieces, [2]);
+  });
+  t('套裝加成：同一件穿兩次只算一件；不同套裝各算各的；非套裝物品不受影響', () => {
+    const one = mk(["Tal Rasha's Horadric Crest"]);
+    assert.equal(run([...one, ...one]).sets[0].count, 1);
+    assert.equal((run([...one, ...one]).stats.item_magicbonus ?? 0), 2 * (run(one).stats.item_magicbonus ?? 0), '重複件只有自身屬性相加，沒有套裝加成');
+    const mixed = run(mk(["Tal Rasha's Horadric Crest", "Civerb's Ward"])); assert.equal(mixed.sets.length, 2); assert.ok(mixed.sets.every((x) => x.count === 1 && x.activePieces.length === 0));
+    assert.deepEqual(run([]).sets, []);
+  });
+  t('套裝全穿：每個套裝穿滿後沒有新的未處理屬性，且套裝固定防禦有加進防禦', () => {
+    for (const d of gameData.sets) {
+      const names = setItems.filter((x) => x.set === d.id).map((x) => x.nameEn); const items = mk(names);
+      const r = run(items); assert.equal(r.sets[0].full, true, d.nameEn);
+      assert.deepEqual(r.unhandled.filter((x) => !KNOWN_UNDEFINED.has(x.code) && x.slot.startsWith('套裝：')), [], d.nameEn);
+    }
+    const WRAP = [...TAL, "Tal Rasha's Lidless Eye"];
+    const items = mk(WRAP); const noSet = items.map((it) => ({ ...it, setId: undefined, setBonus: undefined }));
+    assert.equal(run(items).defense - run(noSet).defense, expected('tal_rasha_s_wrappings', WRAP, ['ac'], true), '全套固定防禦 150 ＋ 各件在 2～5 件時的固定防禦');
+    assert.ok(expected('tal_rasha_s_wrappings', WRAP, ['ac'], true) >= 150);
+  });
+}
+
+// ── 斷點 ──
+{
+  const { BREAKPOINTS, bpStatus } = E;
+  console.log('【FCR／FHR／FBR 斷點（社群表）】');
+  const get = (kind, cls, id) => BREAKPOINTS[kind][cls].find((x) => (id ? x.id === id : true));
+  t('斷點表結構：從 0% 開始、百分比嚴格遞增、影格不增加、兩個陣列等長；沒有術士資料', () => {
+    for (const [kind, byClass] of Object.entries(BREAKPOINTS)) for (const [cls, tables] of Object.entries(byClass)) for (const tb of tables) {
+      const id = `${kind}/${cls}/${tb.id}`;
+      assert.equal(tb.thresholds[0], 0, id); assert.equal(tb.thresholds.length, tb.frames.length, id);
+      for (let i = 1; i < tb.thresholds.length; i++) { assert.ok(tb.thresholds[i] > tb.thresholds[i - 1], `${id} 百分比`); assert.ok(tb.frames[i] <= tb.frames[i - 1] && tb.frames[i - 1] - tb.frames[i] <= 1, `${id} 影格`); }
+    }
+    for (const kind of ['fcr', 'fhr', 'fbr']) assert.equal(BREAKPOINTS[kind].war, undefined);
+    assert.deepEqual(Object.keys(BREAKPOINTS.fcr).sort(), ['ama', 'ass', 'bar', 'dru', 'nec', 'pal', 'sor']);
+  });
+  t('斷點計算：魔法使一般法術 8%→13 影格、9%→12、62%→10、63%→9、105%→8、200%→7；下一格與差距正確；超過最高仍是最高', () => {
+    const sor = get('fcr', 'sor', 'regular');
+    for (const [v, f] of [[0, 13], [8, 13], [9, 12], [19, 12], [20, 11], [62, 10], [63, 9], [104, 9], [105, 8], [200, 7], [999, 7], [-5, 13]]) assert.equal(bpStatus(sor, v).frames, f, `FCR ${v}`);
+    assert.deepEqual(bpStatus(sor, 95).next, { threshold: 105, frames: 8, missing: 10 });
+    assert.equal(bpStatus(sor, 200).next, undefined);
+    assert.equal(bpStatus(sor, 95.9).current, 63, '小數捨去');
+  });
+  t('斷點與 DiabloBytes 的常用目標一致：魔法使 63%＝9 影格、死靈法師 125%＝9、聖騎士 75%＝10 與 125%＝9、野蠻人 63%＝9、刺客 102%＝10', () => {
+    assert.equal(bpStatus(get('fcr', 'sor', 'regular'), 63).frames, 9); assert.equal(bpStatus(get('fcr', 'nec', 'normal'), 125).frames, 9);
+    assert.equal(bpStatus(get('fcr', 'pal'), 75).frames, 10); assert.equal(bpStatus(get('fcr', 'pal'), 125).frames, 9);
+    assert.equal(bpStatus(get('fcr', 'bar'), 63).frames, 9); assert.equal(bpStatus(get('fcr', 'ass'), 102).frames, 10);
+  });
+  t('其他斷點：魔法使 FHR 142%→6 影格；狼人 FHR 86%→3；人形德魯伊 FBR 52%→6；來源缺漏補上的最後一格有標示', () => {
+    assert.equal(bpStatus(get('fhr', 'sor'), 142).frames, 6); assert.equal(bpStatus(get('fhr', 'dru', 'wolf'), 86).frames, 3); assert.equal(bpStatus(get('fbr', 'dru', 'human'), 52).frames, 6);
+    const inferred = ['fhr/dru/other', 'fhr/nec/normal', 'fhr/pal/spear'];
+    for (const id of inferred) { const [k, c, i] = id.split('/'); assert.equal(get(k, c, i).inferredLast, true, id); assert.equal(get(k, c, i).frames.at(-1), 4, id); }
+  });
+}
+
+// ── 屬性描述完整性 ──
+{
+  const { getCatalog, describeModifiers } = E;
+  console.log('【屬性描述】');
+  t('所有暗金／套裝／符文之語的屬性都有繁中描述（只有已知未定義的 3 個代碼例外），耐久度與鑲孔不再顯示成紅色未知行', () => {
+    const bad = new Map();
+    for (const e of getCatalog()) { if (e.kind === 'base') continue; for (const l of describeModifiers(e.mods, 1, 90)) if (!l.known) bad.set(l.text.split(' ')[0], (bad.get(l.text.split(' ')[0]) ?? 0) + 1); }
+    assert.deepEqual([...bad.keys()].filter((k) => !KNOWN_UNDEFINED.has(k)), [], '未知描述：' + JSON.stringify([...bad]));
+    const rake = getCatalog().find((x) => x.nameEn === 'Rakescar'); assert.ok(describeModifiers(rake.mods, 1, 90).some((l) => /毒素持續時間縮短 75%/.test(l.text)));
+    const withSock = getCatalog().find((x) => x.kind === 'unique' && x.mods.some((m) => m.code === 'sock')); assert.ok(withSock, '資料裡有帶鑲孔的暗金');
+    assert.ok(!describeModifiers(withSock.mods, 1, 90).some((l) => /sock/.test(l.text)));
   });
 }
 

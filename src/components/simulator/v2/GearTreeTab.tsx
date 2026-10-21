@@ -1,16 +1,21 @@
 import React, { useMemo } from 'react';
-import { getCatalog, GROUP_ZH, type Group } from '../../../engine/catalog';
+import { getCatalog, GROUP_ZH, type CatalogEntry, type Group } from '../../../engine/catalog';
+import { CustomItemBuilder } from './CustomItemBuilder';
 
 interface Props {
   open: boolean;
   onOpen: (group?: Group) => void;
   onClose: () => void;
+  /** 自訂飾品用：目前等級（詞綴文字）、穿戴、提示訊息 */
+  level: number;
+  onEquip: (entry: CatalogEntry) => void;
+  say: (m: string) => void;
 }
 
 const GROUPS: Group[] = ['armor', 'weapon', 'jewelry'];
 
 /** 「樹狀裝備庫」分頁：裝備庫改為浮動視窗（GearPicker），這裡只放入口與說明 */
-export const GearTreeTab: React.FC<Props> = ({ open, onOpen, onClose }) => {
+export const GearTreeTab: React.FC<Props> = ({ open, onOpen, onClose, level, onEquip, say }) => {
   const counts = useMemo(() => {
     const c: Record<Group, number> = { armor: 0, weapon: 0, jewelry: 0 };
     getCatalog().forEach((e) => { c[e.group] += 1; });
@@ -36,6 +41,7 @@ export const GearTreeTab: React.FC<Props> = ({ open, onOpen, onClose }) => {
           ))}
         </div>
       </div>
+      <CustomItemBuilder level={level} onEquip={onEquip} say={say} />
     </div>
   );
 };
