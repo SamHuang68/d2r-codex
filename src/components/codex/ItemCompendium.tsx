@@ -12,7 +12,7 @@ import { ITEM_TREE_DEFS, CHARM_LABEL, U_ENTRIES, S_ENTRIES, UEntry, SEntry } fro
 
 export interface ItemCompendiumProps {
   initialQuery?: string;
-  /** 一進頁面就停在的樹節點（例如首頁「成套裝備」磚傳 's'）；沒給就停在暗金·菁英 */
+  /** 一進頁面就停在的樹節點（例如首頁「成套裝備」磚傳 's'）；沒給就停在暗金·精英 */
   initialNode?: string;
   onNavigateToBase?: (baseName: string) => void;
 }
@@ -107,7 +107,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     [tree],
   );
   const node = sel === 'all' ? root : findNode(tree, sel) ?? root;
-  // 目前節點一筆都沒有、但別處有符合（例如在預設的菁英底下搜尋套裝名或戒指）時，自動放寬到全部，搜尋才不會死在預設節點
+  // 目前節點一筆都沒有、但別處有符合（例如在預設的精英底下搜尋套裝名或戒指）時，自動放寬到全部，搜尋才不會死在預設節點
   React.useEffect(() => {
     if (node.id !== 'all' && node.count === 0 && root.count > 0) setSel('all');
   }, [node.id, node.count, root.count]);
@@ -384,7 +384,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
       <PageHeader
         icon={<Sword className="w-6 h-6" />}
         title="裝備寶典 (暗金與套裝全覽)"
-        desc="收錄暗黑破壞神二代各部位指標性暗金裝備與知名全套套裝，包含屬性浮動範圍與完整套裝效果。依「暗金／套裝 → 一般／進階／菁英 → 部位 → 類型」逐層整理，預設停在終局的菁英。"
+        desc="收錄暗黑破壞神二代各部位指標性暗金裝備與知名全套套裝，包含屬性浮動範圍與完整套裝效果。依「暗金／套裝 → 普通／卓越／精英 → 部位 → 類型」逐層整理，預設停在終局的精英。"
         right={
           <div className="text-xs text-sanctuary-400 font-mono px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800 self-start shrink-0 whitespace-nowrap">
             暗金 <span className="text-d2-unique font-bold">{uHere.length}</span> ・ 套裝 <span className="text-d2-set font-bold">{sHere.length}</span>

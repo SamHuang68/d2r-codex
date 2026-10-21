@@ -43,36 +43,36 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
   {
     id: "upgrade_unique_weapon_norm_to_excep",
     category: "upgrade",
-    title: "暗金武器：普通階級 升級為 進階階級",
+    title: "暗金武器：普通階級 升級為 卓越階級",
     titleEn: "Upgrade Unique Weapon (Normal to Exceptional)",
     inputs: ["1x Ral (8#)", "1x Sol (12#)", "1x 完美綠寶石", "1x 普通暗金武器"],
-    output: "進階版同款暗金武器",
+    output: "卓越版同款暗金武器",
     notes: "基礎攻擊力上升，需求力量與等級相應提高。"
   },
   {
     id: "upgrade_unique_weapon_excep_to_elite",
     category: "upgrade",
-    title: "暗金武器：進階階級 升級為 精英階級",
+    title: "暗金武器：卓越階級 升級為 精英階級",
     titleEn: "Upgrade Unique Weapon (Exceptional to Elite)",
-    inputs: ["1x Lum (17#)", "1x Pul (21#)", "1x 完美綠寶石", "1x 進階暗金武器"],
+    inputs: ["1x Lum (17#)", "1x Pul (21#)", "1x 完美綠寶石", "1x 卓越暗金武器"],
     output: "精英版同款暗金武器",
     notes: "例如：海鷗升級、泰坦的復仇升級為女族長標槍、阿里巴巴升級。"
   },
   {
     id: "upgrade_unique_armor_norm_to_excep",
     category: "upgrade",
-    title: "暗金防具：普通階級 升級為 進階階級",
+    title: "暗金防具：普通階級 升級為 卓越階級",
     titleEn: "Upgrade Unique Armor (Normal to Exceptional)",
     inputs: ["1x Tal (7#)", "1x Shael (13#)", "1x 完美鑽石", "1x 普通暗金防具"],
-    output: "進階版同款暗金防具",
+    output: "卓越版同款暗金防具",
     notes: "例如：法師之拳 (輕型鐵手套) 升級為戰場手套 (Battle Gauntlets)。"
   },
   {
     id: "upgrade_unique_armor_excep_to_elite",
     category: "upgrade",
-    title: "暗金防具：進階階級 升級為 精英階級",
+    title: "暗金防具：卓越階級 升級為 精英階級",
     titleEn: "Upgrade Unique Armor (Exceptional to Elite)",
-    inputs: ["1x Ko (18#)", "1x Lem (20#)", "1x 完美鑽石", "1x 進階暗金防具"],
+    inputs: ["1x Ko (18#)", "1x Lem (20#)", "1x 完美鑽石", "1x 卓越暗金防具"],
     output: "精英版同款暗金防具",
     notes: "例如：蝮蛇法師之皮升級為古龍皮甲 (Wyrmhide)、飾金盾牌升級為薩卡蘭姆盾。"
   },
@@ -178,36 +178,36 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
   {
     id: "upgrade_rare_weapon_norm_to_excep",
     category: "upgrade",
-    title: "亮黃武器：普通階級 升級為 進階階級",
+    title: "亮黃武器：普通階級 升級為 卓越階級",
     titleEn: "Upgrade Rare Weapon (Normal to Exceptional)",
     inputs: ["1x Ort (9#)", "1x Amn (11#)", "1x 完美藍寶石", "1x 普通亮黃武器"],
-    output: "進階版同款亮黃武器 (保留所有詞綴屬性與鑲孔)",
+    output: "卓越版同款亮黃武器 (保留所有詞綴屬性與鑲孔)",
     notes: "升級後基礎傷害提升，需求等級與屬性增加。"
   },
   {
     id: "upgrade_rare_weapon_excep_to_elite",
     category: "upgrade",
-    title: "亮黃武器：進階階級 升級為 精英階級",
+    title: "亮黃武器：卓越階級 升級為 精英階級",
     titleEn: "Upgrade Rare Weapon (Exceptional to Elite)",
-    inputs: ["1x Fal (19#)", "1x Um (22#)", "1x 完美藍寶石", "1x 進階亮黃武器"],
+    inputs: ["1x Fal (19#)", "1x Um (22#)", "1x 完美藍寶石", "1x 卓越亮黃武器"],
     output: "精英版同款亮黃武器",
     notes: "例如極品無形自回亮黃近戰武器（如狂戰士斧、幻化之刃）升頂。"
   },
   {
     id: "upgrade_rare_armor_norm_to_excep",
     category: "upgrade",
-    title: "亮黃防具：普通階級 升級為 進階階級",
+    title: "亮黃防具：普通階級 升級為 卓越階級",
     titleEn: "Upgrade Rare Armor (Normal to Exceptional)",
     inputs: ["1x Ral (8#)", "1x Thul (10#)", "1x 完美紫寶石", "1x 普通亮黃防具"],
-    output: "進階版同款亮黃防具",
+    output: "卓越版同款亮黃防具",
     notes: "適用於亮黃頭盔、盾牌、鞋子、手套或腰帶。"
   },
   {
     id: "upgrade_rare_armor_excep_to_elite",
     category: "upgrade",
-    title: "亮黃防具：進階階級 升級為 精英階級",
+    title: "亮黃防具：卓越階級 升級為 精英階級",
     titleEn: "Upgrade Rare Armor (Exceptional to Elite)",
-    inputs: ["1x Ko (18#)", "1x Pul (21#)", "1x 完美紫寶石", "1x 進階亮黃防具"],
+    inputs: ["1x Ko (18#)", "1x Pul (21#)", "1x 完美紫寶石", "1x 卓越亮黃防具"],
     output: "精英版同款亮黃防具",
     notes: "常用於升級極品雙抗跑鞋或高防禦稀有頭甲。"
   },
