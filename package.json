@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "data:build": "node scripts/data-pipeline/build_game_data.mjs",
     "data:audit": "node scripts/data-pipeline/audit_game_data.mjs src/data/game",
-    "test:engine": "node scripts/test_engine.mjs"
+    "test:engine": "node scripts/test_engine.mjs",
+    "check:chunks": "node scripts/check_chunk_cycles.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
