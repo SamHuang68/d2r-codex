@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Flame, Sparkles, BookOpen, Layers, Compass, Trophy, Sword, MapPin, Users,
-  Gem, Skull, ShieldAlert, FlaskConical, Wrench, Activity, Crown, Ghost,
+  Gem, Skull, ShieldAlert, FlaskConical, Wrench, Activity, Crown, Ghost, Tag,
 } from 'lucide-react';
 
 export interface NavModule {
@@ -18,7 +18,7 @@ export interface NavGroup {
 
 const ic = 'w-4 h-4';
 
-/** 全站 18 個分頁的單一來源（桌面側邊欄、手機抽屜共用，分頁 id 與 App.tsx 一致） */
+/** 全站 19 個分頁的單一來源（桌面側邊欄、手機抽屜共用，分頁 id 與 App.tsx 一致） */
 export const NAV_GROUPS: NavGroup[] = [
   {
     category: '總覽',
@@ -50,6 +50,7 @@ export const NAV_GROUPS: NavGroup[] = [
     category: '合成與估價',
     items: [
       { id: 'cube', label: '方塊工坊', desc: '打孔、升級、手工裝配方', icon: <BookOpen className={`${ic} text-d2-magic`} /> },
+      { id: 'affixes', label: '詞綴寶典', desc: '魔法與稀有詞綴全表', icon: <Tag className={`${ic} text-d2-magic`} /> },
       { id: 'valuation', label: '鑑寶估價', desc: '極品詞綴與估價器', icon: <Gem className={`${ic} text-d2-magic`} /> },
       { id: 'grail', label: '聖杯打寶', desc: '全裝備收集打勾追蹤', icon: <Trophy className={`${ic} text-d2-gold`} /> },
     ],

@@ -63,7 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
   );
 };
 
-/** 桌面側邊導覽：5 組、18 個分頁全部常駐可見；預設緊湊，可收合成純圖示欄（偏好會記住） */
+/** 桌面側邊導覽：5 組、19 個分頁全部常駐可見；預設緊湊，可收合成純圖示欄（偏好會記住） */
 const COLLAPSE_KEY = 'sanctuary.sidenav.collapsed';
 const readCollapsed = () => {
   try { return window.localStorage.getItem(COLLAPSE_KEY) === '1'; } catch { return false; }

@@ -102,7 +102,7 @@ export const JEWELRY_DEF: TaxDef = {
 };
 
 /** 遊戲物品類型代碼 → 葉節點（相對路徑） */
-const TYPE_LEAF: Record<string, string> = {
+export const TYPE_LEAF: Record<string, string> = {
   helm: 'armor/head/helm', circ: 'armor/head/circ', phlm: 'armor/head/phlm', pelt: 'armor/head/pelt',
   tors: 'armor/body',
   shie: 'armor/shield/shie', ashd: 'armor/shield/ashd', head: 'armor/shield/head', grim: 'armor/shield/grim',

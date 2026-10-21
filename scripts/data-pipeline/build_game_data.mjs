@@ -87,7 +87,7 @@ function addBase(r, kind) {
     ancestors: ancestors(r.type), class: classOf(r.type),
     tier: r.code === r.normcode ? 'normal' : r.code === r.ubercode ? 'exceptional' : r.code === r.ultracode ? 'elite' : undefined,
     normcode: r.normcode, ubercode: r.ubercode, ultracode: r.ultracode,
-    level: num(r.level), levelReq: num(r.levelreq), reqStr: num(r.reqstr) ?? 0, reqDex: num(r.reqdex) ?? 0,
+    level: num(r.level), levelReq: num(r.levelreq) ?? 0, reqStr: num(r.reqstr) ?? 0, reqDex: num(r.reqdex) ?? 0,
     durability: num(r.durability), speed: num(r.speed), sockets: num(r.gemsockets),
     width: num(r.invwidth), height: num(r.invheight), invFile: r.invfile, uniqueInvFile: r.uniqueinvfile, setInvFile: r.setinvfile,
     spawnable: r.spawnable === '1', quest: r.quest === '1' ? true : undefined,
@@ -115,7 +115,7 @@ const miscBases = tsv('misc.txt').filter((r) => r.code);
 // misc 只保留與配裝相關者（護身符、戒指、項鍊、符文、寶石、藥水等皆納入以供名稱查詢）
 miscBases.forEach((r) => {
   bases.push({ code: r.code, nameEn: r.name, nameEnUS: en(r.namestr || r.code), name: needZh(r.namestr || r.code, 'misc'), kind: 'misc', type: r.type, type2: r.type2,
-    ancestors: ancestors(r.type), class: classOf(r.type), level: num(r.level), levelReq: num(r.levelreq),
+    ancestors: ancestors(r.type), class: classOf(r.type), level: num(r.level), levelReq: num(r.levelreq) ?? 0,
     width: num(r.invwidth), height: num(r.invheight), invFile: r.invfile, uniqueInvFile: r.uniqueinvfile, setInvFile: r.setinvfile, spawnable: r.spawnable === '1' });
 });
 const baseByCode = new Map(bases.map((b) => [b.code, b]));
@@ -199,6 +199,32 @@ for (const r of tsv('runes.txt')) {
     itypes: [1, 2, 3, 4, 5, 6].map((i) => r[`itype${i}`]).filter(Boolean), etypes: [1, 2, 3].map((i) => r[`etype${i}`]).filter(Boolean),
     runes, runeNamesEn: runes.map((c) => runeNames.get(c)?.name), sockets: runes.length,
     mods: track(mods(r, 7, 'T1Code', 'T1Param', 'T1Min', 'T1Max')),
+  });
+}
+// --- 魔法詞綴（magicprefix.txt、magicsuffix.txt、automagic.txt；稀有物品的前後綴也從這裡抽）---
+// level＝詞綴最低等級（alvl）、maxLevel＝最高（0 表示沒有上限）、levelReq＝這個詞綴讓物品增加的角色等級需求（沒填＝0）、group＝同一組只會出現一個、
+// frequency＝抽中的相對權重、itypes／etypes＝可出現的物品類型與排除的類型（類型的相等關係見 itemtypes.json）、rare＝稀有物品也可能抽到。
+// 職業欄位：classOnly＝資料表 classspecific 欄（前綴與自動詞綴用，職業代碼，例如 ama）；class＋classLevelReq＝資料表 class／classlevelreq 欄（後綴用，該職業的等級需求）。
+// 沒有屬性的空殼列、遊戲設定為不會產生（spawnable 不是 1）的列、權重沒填或 0（不會被隨機抽到，多半是舊版本殘留的列）不收。
+const affixItypes = (r) => [1, 2, 3, 4, 5, 6, 7].map((i) => r[`itype${i}`]).filter(Boolean);
+const affixEtypes = (r) => [1, 2, 3, 4, 5].map((i) => r[`etype${i}`]).filter(Boolean);
+const affixes = [];
+for (const [file, kind] of [['magicprefix.txt', 'prefix'], ['magicsuffix.txt', 'suffix'], ['automagic.txt', 'auto']]) {
+  tsv(file).forEach((r, i) => {
+    if (!r.Name || r.spawnable !== '1' || !(num(r.frequency) > 0)) return; // 權重沒填或 0＝不會被隨機抽到（舊版本殘留的列）
+    const ms = [1, 2, 3].filter((k) => r[`mod${k}code`]).map((k) => {
+      const m = { code: r[`mod${k}code`] };
+      if (r[`mod${k}param`] !== undefined) m.par = num(r[`mod${k}param`]);
+      m.min = num(r[`mod${k}min`]) ?? 0; m.max = num(r[`mod${k}max`]) ?? m.min;
+      return m;
+    });
+    if (!ms.length) return;
+    affixes.push({
+      id: `${kind[0]}${i}`, kind, nameEn: r.Name, name: zh(r.Name), level: num(r.level), maxLevel: num(r.maxlevel) || undefined, levelReq: num(r.levelreq) ?? 0,
+      classOnly: r.classspecific || undefined, class: r.class || undefined, classLevelReq: num(r.classlevelreq) || undefined,
+      frequency: num(r.frequency), group: num(r.group), rare: r.rare === '1' || undefined,
+      mods: track(ms), itypes: affixItypes(r), etypes: affixEtypes(r),
+    });
   });
 }
 // --- properties（modifier → stat 對映）、itemstatcost（子集）---
@@ -376,7 +402,7 @@ const write = (n, d) => fs.writeFileSync(path.join(outDir, n), JSON.stringify(d)
 write('meta.json', meta); write('itemtypes.json', itemtypes); write('bases.json', bases); write('uniques.json', uniques);
 write('gems.json', gems); write('sets.json', sets); write('setItems.json', setItems); write('runewords.json', runewords);
 write('properties.json', properties); write('stats.json', stats); write('statStrings.zhTW.json', statStrings);
-write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns); write('hireling.json', hireling); write('summons.json', summonMonsters); write('monsters.json', monsters); write('areas.json', areas);
+write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns); write('hireling.json', hireling); write('summons.json', summonMonsters); write('monsters.json', monsters); write('areas.json', areas); write('affixes.json', affixes);
 
 console.log(JSON.stringify(meta.counts));
 console.log('missing property defs:', missingProps.length, missingProps.slice(0, 20).join(','));
