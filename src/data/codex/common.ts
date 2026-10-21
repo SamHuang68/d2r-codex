@@ -42,7 +42,7 @@ export function gearSlotOf(b: BaseItem): GearSlot {
 /** 職業專屬底材 → 繁中職業名；非專屬回傳 null */
 export const classOnlyOf = (b: BaseItem): string | null => (b.class ? CLASS_ZH[b.class] ?? null : null);
 
-export const TIER_QUALITY_ZH = { normal: '普通', exceptional: '進階', elite: '精華' } as const;
+export const TIER_QUALITY_ZH = { normal: '普通', exceptional: '卓越', elite: '精英' } as const;
 
 /** 可用的最大孔數：遊戲表的孔數上限，再受物品格數限制（1 格 1 孔、2 格 2 孔、3 格 3 孔、4 格 4 孔、6 格以上 6 孔；與舊百科 508 筆逐筆核對一致） */
 export function maxSocketsOf(b: BaseItem): number {

@@ -28,7 +28,7 @@ const hasDmg = (v?: string) => !!v && v !== '-';
 const isShield = (i: BaseItemData) => i.category === 'armor' && i.name.includes('盾');
 
 // ------------------------------------------------------------
-// 分類樹：品階（一般／進階／菁英）→ 部位 → 類型。終局都停在菁英，一般與進階只在前期拓荒用到
+// 分類樹：品階（普通／卓越／精英）→ 部位 → 類型。終局都停在精英，普通與卓越只在前期拓荒用到
 // ------------------------------------------------------------
 const TREE_DEFS: TaxDef[] = tierDefs('b');
 
@@ -309,7 +309,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
         icon={<ShieldAlert className="w-6 h-6" />}
         tone="text-d2-socket"
         title="頂級符文之語底材與打孔寶典"
-        desc="收錄悔恨幻化之刃、法師鎧甲謎團、無形銳利無限、神聖小盾精神等全職業 S 級畢業底材，提供 WSM 攻速、最大孔數、拉蘇克固定打孔機制與打寶估價戰術解析。依「一般／進階／菁英 → 部位 → 類型」分層，終局都停在菁英，所以預設就看菁英。"
+        desc="收錄悔恨幻化之刃、法師鎧甲謎團、無形銳利無限、神聖小盾精神等全職業 S 級畢業底材，提供 WSM 攻速、最大孔數、拉蘇克固定打孔機制與打寶估價戰術解析。依「普通／卓越／精英 → 部位 → 類型」分層，終局都停在精英，所以預設就看精英。"
         right={
           <div className="flex items-center gap-3 bg-sanctuary-900/80 p-2.5 rounded-2xl border border-sanctuary-800 shrink-0 self-start">
             <div className="text-right px-3 border-r border-sanctuary-800">
