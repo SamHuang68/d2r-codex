@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -1148,6 +1148,46 @@ console.log('【召喚物與計算式的完整度】');
     const info = summonInfo(s, 20, lv, {}, 2); assert.ok(info && info.unsupported.length === 0 && info.lines.length >= 5, JSON.stringify(info && info.unsupported));
     assert.equal(summonInfo(skillByName('Fire Arrow'), 20, skillLevelsFrom({ fire_arrow: 20 }, zero), {}, 2), undefined);
     assert.equal(summonInfo(s, 0, lv, {}, 2), undefined);
+  });
+}
+
+console.log('【怪物圖鑑與場景免疫（monstats／levels）】');
+{
+  const { MONSTERS, AREAS, ELEMS, monsterById, isImmune, resistOf, immunitiesOf, areasOfMonster, areaImmunity, areaLevel } = E;
+  t('資料結構：每隻怪物有名稱、三個難度的等級與六種抗性（各 3 格），每個場景引用的怪物都存在', () => {
+    assert.ok(MONSTERS.length >= 500 && AREAS.length >= 100, `${MONSTERS.length} 隻、${AREAS.length} 個場景`);
+    for (const m of MONSTERS) {
+      assert.ok(m.id && m.name && m.nameEn, m.id); assert.equal(m.levels.length, 3, m.id); assert.equal(m.drain.length, 3, m.id);
+      for (const e of ELEMS) assert.equal(m.res[e].length, 3, `${m.id} ${e}`);
+    }
+    for (const a of AREAS) { assert.equal(a.mon.length, 3, a.nameEn); assert.ok(a.name, a.nameEn); for (const id of a.mon.flat()) assert.ok(monsterById(id), `${a.nameEn} 引用了不存在的怪物 ${id}`); }
+  });
+  t('資料表的值：安達莉爾地獄 火焰 −50（弱點）、閃電／冰寒／毒素 66、物理 66；首領旗標；玩家召喚物（骷髏、魔像…）與沒有中文名的陷阱、哨衛不收錄', () => {
+    const an = monsterById('andariel');
+    assert.deepEqual([an.res.fire[2], an.res.lightning[2], an.res.cold[2], an.res.poison[2], an.res.physical[2]], [-50, 66, 66, 66, 66]);
+    assert.ok(an.boss && an.primeEvil && an.levels.join() === '12,49,75');
+    for (const id of ['necroskeleton', 'claygolem', 'valkyrie', 'spiritwolf', 'turret1', 'lightningsentry', 'bladecreeper']) assert.equal(monsterById(id), undefined, id);
+  });
+  t('免疫：抗性 ≥100 才算（99 不算）；資料表沒填的抗性格是 0；吸取沒填保持 null 不當成 0', () => {
+    assert.ok(isImmune(100) && isImmune(130) && !isImmune(99) && !isImmune(-50));
+    const z = monsterById('zombie1'); assert.equal(resistOf(z, 'fire', 2), 0);
+    assert.ok(MONSTERS.some((m) => m.drain.some((v) => v === null)), '有吸取沒填的怪物');
+    const f = monsterById('fallen3'); assert.deepEqual(immunitiesOf(f, 2), ['fire']);
+  });
+  t('分類：殭屍屬亡靈、沉淪魔與安達莉爾屬惡魔（montype 的相等關係）', () => {
+    assert.equal(monsterById('zombie1').kind, 'undead'); assert.equal(monsterById('fallen1').kind, 'demon'); assert.equal(monsterById('andariel').kind, 'demon');
+  });
+  t('場景免疫：地穴第一層（地獄）怪物等級 85，火焰、冰寒、閃電都有怪物免疫，物理／魔法／毒素沒有；免疫與可放心使用的元素互補', () => {
+    const pit = AREAS.find((a) => a.nameEn === 'Pit Level 1'); assert.equal(areaLevel(pit, 2), 85);
+    const info = areaImmunity(pit, 2);
+    assert.deepEqual(info.immune, ['fire', 'lightning', 'cold']); assert.deepEqual(info.safe, ['physical', 'magic', 'poison']);
+    assert.equal(info.immune.length + info.safe.length, 6); assert.equal(info.monsters.length, 4);
+    for (const e of ELEMS) assert.equal(info.immuneCount[e], info.monsters.filter((m) => isImmune(resistOf(m, e, 2))).length);
+  });
+  t('出現場景與場景清單互為反向：怪物的出現場景一定包含列出它的場景與難度', () => {
+    let n = 0;
+    for (const a of AREAS) a.mon.forEach((ids, d) => ids.forEach((id) => { n++; const hit = areasOfMonster(id).find((x) => x.area.id === a.id); assert.ok(hit && hit.diffs.includes(d), `${id} @ ${a.nameEn} ${d}`); }));
+    assert.ok(n > 1500, `${n} 筆`);
   });
 }
 

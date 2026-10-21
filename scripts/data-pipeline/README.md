@@ -19,7 +19,7 @@
    - 驗證：`npm run test:engine`（含「百科頁資料層」區塊）、`npm test`（圖示解析與部位檢查）。
 
 ## 輸出
-meta、itemtypes、skillNames／skillTabsEn（技能公開英文名；skillNames 另帶職業技能的 charClass）、skillCalc（技能計算式裡的 lnXY／dmXY 函式定義，來自遊戲 skillcalc.txt，引擎 `engine/calc.ts` 用它求值）、summons（召喚技能召喚的 31 種怪物的基礎值，來自 monstats.txt；技能的 summonId／petMax 在 skills.json）、hireling（傭兵：hireling.txt 擴充版資料，每個類型有幾個等級檢查點與每級成長，引擎 `engine/mercenary.ts` 外推；完全相同的重複列合併）、bases（武器／防具／misc，含 nameEnUS 公開英文名、重擊／踢擊傷害、腰帶格數、堆疊上限）、uniques、sets、setItems、runewords、properties（modifier→stat 對映）、stats（itemstatcost 子集）、statStrings.zhTW（描述模板）、charstats、skills（240 招：繁中名稱與說明、樹／列／欄格位、前置、等級上限、魔力與傷害欄位、協同計算式）、skillTabs（技能樹繁中名稱）、inventory（紙娃娃座標）、uiCategories（拾取篩選器類別樹）、itemSkills（沒有職業的物品技能：印記、蜘蛛網、譫妄、生命連結的狀態持續影格與秒數，描述屬性時用）。
+meta、itemtypes、skillNames／skillTabsEn（技能公開英文名；skillNames 另帶職業技能的 charClass）、skillCalc（技能計算式裡的 lnXY／dmXY 函式定義，來自遊戲 skillcalc.txt，引擎 `engine/calc.ts` 用它求值）、summons（召喚技能召喚的 31 種怪物的基礎值，來自 monstats.txt；技能的 summonId／petMax 在 skills.json）、monsters／areas（怪物圖鑑：monstats.txt 三個難度的等級與六種抗性，與 levels.txt 每個場景在各難度出現的怪物；中文名取自 monsters.json／levels.json 字串）、hireling（傭兵：hireling.txt 擴充版資料，每個類型有幾個等級檢查點與每級成長，引擎 `engine/mercenary.ts` 外推；完全相同的重複列合併）、bases（武器／防具／misc，含 nameEnUS 公開英文名、重擊／踢擊傷害、腰帶格數、堆疊上限）、uniques、sets、setItems、runewords、properties（modifier→stat 對映）、stats（itemstatcost 子集）、statStrings.zhTW（描述模板）、charstats、skills（240 招：繁中名稱與說明、樹／列／欄格位、前置、等級上限、魔力與傷害欄位、協同計算式）、skillTabs（技能樹繁中名稱）、inventory（紙娃娃座標）、uiCategories（拾取篩選器類別樹）、itemSkills（沒有職業的物品技能：印記、蜘蛛網、譫妄、生命連結的狀態持續影格與秒數，描述屬性時用）。
 
 ## 已知限制
 - `skilltab-war`、`roguesbow-affix1`、`magdam-rand`、`Gethit-skill` 在 properties.txt 無定義（4 件暗金），`Crafted *` 為 Rift 製作範本；皆標示於稽核輸出，不當作一般暗金。
