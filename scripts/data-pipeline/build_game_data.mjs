@@ -34,6 +34,8 @@ function strings(file) {
 const S = ['item-names.json', 'item-nameaffixes.json', 'item-runes.json', 'item-modifiers.json', 'skills.json', 'ui.json']
   .map(strings);
 const zh = (key) => { for (const m of S) { const v = m.get(key); if (v) return v.zhTW; } return undefined; };
+// 遊戲內的英文顯示名（enUS）：資料表的 index／skill 欄是內部名（含拼寫錯誤與別名），玩家看到的英文名在字串表
+const en = (key) => { for (const m of S) { const v = m.get(key); if (v) return v.enUS; } return undefined; };
 
 const missingZh = new Set();
 const needZh = (key, label) => { const v = zh(key); if (!v) missingZh.add(`${label}:${key}`); return v; };
@@ -76,11 +78,12 @@ const itemtypes = itemtypesRaw.map((r) => ({
 const classOf = (type) => { for (const t of ancestors(type)) { const c = itypeMap.get(t)?.Class; if (c) return c; } return undefined; };
 
 // --- 底材 ---
+const beltBoxes = tsv('belts.txt').filter((r) => r.name && r.numboxes !== undefined).slice(0, 7).map((r) => num(r.numboxes));
 const bases = [];
 function addBase(r, kind) {
   if (!r.code) return;
   const b = {
-    code: r.code, nameEn: r.name, name: needZh(r.namestr || r.code, 'base'), kind, type: r.type, type2: r.type2,
+    code: r.code, nameEn: r.name, nameEnUS: en(r.namestr || r.code), name: needZh(r.namestr || r.code, 'base'), kind, type: r.type, type2: r.type2,
     ancestors: ancestors(r.type), class: classOf(r.type),
     tier: r.code === r.normcode ? 'normal' : r.code === r.ubercode ? 'exceptional' : r.code === r.ultracode ? 'elite' : undefined,
     normcode: r.normcode, ubercode: r.ubercode, ultracode: r.ultracode,
@@ -89,12 +92,20 @@ function addBase(r, kind) {
     width: num(r.invwidth), height: num(r.invheight), invFile: r.invfile, uniqueInvFile: r.uniqueinvfile, setInvFile: r.setinvfile,
     spawnable: r.spawnable === '1', quest: r.quest === '1' ? true : undefined,
   };
-  if (kind === 'armor') { b.minAc = num(r.minac); b.maxAc = num(r.maxac); b.block = num(r.block); }
+  if (kind === 'armor') {
+    b.minAc = num(r.minac); b.maxAc = num(r.maxac); b.block = num(r.block);
+    // armor.txt 的 mindam／maxdam：盾牌＝重擊傷害、靴子＝踢擊傷害；belt＝腰帶格數（belts.txt 的列）
+    const dmin = num(r.mindam), dmax = num(r.maxdam);
+    if (dmax && ancestors(r.type).includes('shld')) { b.smiteMin = dmin; b.smiteMax = dmax; }
+    if (dmax && ancestors(r.type).includes('boot')) { b.kickMin = dmin; b.kickMax = dmax; }
+    if (ancestors(r.type).includes('belt') && num(r.belt) !== undefined) b.beltSlots = beltBoxes[num(r.belt)];
+  }
   if (kind === 'weapon') {
     Object.assign(b, { minDam: num(r.mindam), maxDam: num(r.maxdam), twoHanded: r['2handed'] === '1',
       minDam2h: num(r['2handmindam']), maxDam2h: num(r['2handmaxdam']), minMisDam: num(r.minmisdam), maxMisDam: num(r.maxmisdam),
       strBonus: num(r.StrBonus), dexBonus: num(r.DexBonus), rangeAdder: num(r.rangeadder), wclass: r.wclass, wclass2h: r['2handedwclass'],
       oneOrTwoHanded: r['1or2handed'] === '1' });
+    if (r.stackable === '1') b.maxStack = num(r.maxstack); // 投擲武器的堆疊數量（提示框顯示「數量：N / N」，不顯示耐久度）
   }
   bases.push(b);
 }
@@ -103,7 +114,7 @@ tsv('weapons.txt').forEach((r) => addBase(r, 'weapon'));
 const miscBases = tsv('misc.txt').filter((r) => r.code);
 // misc 只保留與配裝相關者（護身符、戒指、項鍊、符文、寶石、藥水等皆納入以供名稱查詢）
 miscBases.forEach((r) => {
-  bases.push({ code: r.code, nameEn: r.name, name: needZh(r.namestr || r.code, 'misc'), kind: 'misc', type: r.type, type2: r.type2,
+  bases.push({ code: r.code, nameEn: r.name, nameEnUS: en(r.namestr || r.code), name: needZh(r.namestr || r.code, 'misc'), kind: 'misc', type: r.type, type2: r.type2,
     ancestors: ancestors(r.type), class: classOf(r.type), level: num(r.level), levelReq: num(r.levelreq),
     width: num(r.invwidth), height: num(r.invheight), invFile: r.invfile, uniqueInvFile: r.uniqueinvfile, setInvFile: r.setinvfile, spawnable: r.spawnable === '1' });
 });
@@ -124,7 +135,7 @@ const gemMods = (r, pre) => {
   return track(out);
 };
 const gems = tsv('gems.txt').filter((r) => r.code).map((r) => ({
-  code: r.code, nameEn: r.name, name: zh(r.code) ?? zh(r.name), weapon: gemMods(r, 'weaponMod'), armor: gemMods(r, 'helmMod'), shield: gemMods(r, 'shieldMod'),
+  code: r.code, nameEn: r.name, nameEnUS: en(r.code) ?? en(r.name), name: zh(r.code) ?? zh(r.name), weapon: gemMods(r, 'weaponMod'), armor: gemMods(r, 'helmMod'), shield: gemMods(r, 'shieldMod'),
 }));
 
 // --- 暗金 ---
@@ -133,7 +144,7 @@ for (const r of tsv('uniqueitems.txt')) {
   if (!r.code || !r.index || r.index === 'Expansion') continue;
   const base = baseByCode.get(r.code);
   uniques.push({
-    id: slug(r.index) + '_' + r['*ID'], gameId: num(r['*ID']), nameEn: r.index, name: needZh(r.index, 'unique'),
+    id: slug(r.index) + '_' + r['*ID'], gameId: num(r['*ID']), nameEn: r.index, nameEnUS: en(r.index), name: needZh(r.index, 'unique'),
     code: r.code, baseNameEn: r['*ItemName'], baseName: base?.name, type: base?.type, class: base?.class, slotHint: base?.ancestors,
     level: num(r.lvl), levelReq: num(r['lvl req']), rarity: num(r.rarity), version: num(r.version),
     ladderFirst: num(r.firstLadderSeason), ladderLast: num(r.lastLadderSeason), disabled: r.disabled === '1' ? true : undefined,
@@ -154,7 +165,7 @@ for (const r of tsv('sets.txt')) {
   }
   partial.forEach((m) => usedProps.add(m.code));
   const full = track(mods(r, 8, 'FCode', 'FParam', 'FMin', 'FMax'));
-  sets.push({ id: slug(r.index), nameEn: r.index, name: needZh(r.index, 'set'), version: num(r.version), partial, full });
+  sets.push({ id: slug(r.index), nameEn: r.index, nameEnUS: en(r.index), name: needZh(r.index, 'set'), version: num(r.version), partial, full });
 }
 const setItems = [];
 for (const r of tsv('setitems.txt')) {
@@ -169,7 +180,7 @@ for (const r of tsv('setitems.txt')) {
   }
   bonus.forEach((m) => usedProps.add(m.code));
   setItems.push({
-    id: slug(r.index) + '_' + r['*ID'], gameId: num(r['*ID']), nameEn: r.index, name: needZh(r.index, 'setitem'), set: slug(r.set), setNameEn: r.set,
+    id: slug(r.index) + '_' + r['*ID'], gameId: num(r['*ID']), nameEn: r.index, nameEnUS: en(r.index), name: needZh(r.index, 'setitem'), set: slug(r.set), setNameEn: r.set,
     code: r.item, baseNameEn: r['*ItemName'], baseName: base?.name, type: base?.type, class: base?.class,
     level: num(r.lvl), levelReq: num(r['lvl req']), ladderFirst: num(r.firstLadderSeason), ladderLast: num(r.lastLadderSeason),
     disabled: r.disabled === '1' ? true : undefined, mods: track(mods(r, 9)), setBonusByCount: bonus,
@@ -183,7 +194,7 @@ for (const r of tsv('runes.txt')) {
   if (r.complete !== '1') continue;
   const runes = [1, 2, 3, 4, 5, 6].map((i) => r[`Rune${i}`]).filter(Boolean);
   runewords.push({
-    id: slug(r['*Rune Name'] || r.Name) + '_' + r.Name.replace(/\D/g, ''), key: r.Name, nameEn: r['*Rune Name'], name: needZh(r.Name, 'runeword'),
+    id: slug(r['*Rune Name'] || r.Name) + '_' + r.Name.replace(/\D/g, ''), key: r.Name, nameEn: r['*Rune Name'], nameEnUS: en(r.Name), name: needZh(r.Name, 'runeword'),
     patch: r['*Patch Release'], ladderFirst: num(r.firstLadderSeason), ladderLast: num(r.lastLadderSeason),
     itypes: [1, 2, 3, 4, 5, 6].map((i) => r[`itype${i}`]).filter(Boolean), etypes: [1, 2, 3].map((i) => r[`etype${i}`]).filter(Boolean),
     runes, runeNamesEn: runes.map((c) => runeNames.get(c)?.name), sockets: runes.length,
@@ -232,7 +243,7 @@ const skills = skillRows.filter((r) => r.charclass && skillDesc.get(r.skilldesc)
   const params = {};
   for (let i = 1; i <= 20; i++) if (r[`Param${i}`] !== undefined) params[i] = num(r[`Param${i}`]);
   const sk = {
-    id: slug(r.skill), gameId: num(r['*Id']), nameEn: r.skill, name: d['str name'] ? zh(d['str name']) : undefined,
+    id: slug(r.skill), gameId: num(r['*Id']), nameEn: r.skill, nameEnUS: d['str name'] ? en(d['str name']) : undefined, name: d['str name'] ? zh(d['str name']) : undefined,
     charClass: r.charclass, page: num(d.SkillPage), row: num(d.SkillRow), col: num(d.SkillColumn),
     reqLevel: num(r.reqlevel) ?? 1, maxLvl: num(r.maxlvl) ?? 20,
     prereq: [r.reqskill1, r.reqskill2, r.reqskill3].filter(Boolean),
@@ -254,11 +265,13 @@ const skills = skillRows.filter((r) => r.charclass && skillDesc.get(r.skilldesc)
   }
   return sk;
 });
+// 全部技能（含道具專用、怪物技能）的名稱表：觸發技能、充能的技能名稱用
+const skillNames = skillRows.map((r) => { const d = skillDesc.get(r.skilldesc); const k = d?.['str name']; return { gameId: num(r['*Id']), nameEn: r.skill, nameEnUS: k ? en(k) : undefined, name: k ? zh(k) : undefined }; }).filter((x) => x.name);
 const skillByName = new Set(skills.map((x) => x.nameEn));
 const badPrereq = skills.flatMap((x) => x.prereq.filter((n) => !skillByName.has(n)).map((n) => `${x.nameEn}->${n}`));
 const CLASS_PREFIX = { ama: 'Am', sor: 'So', nec: 'Ne', pal: 'Pa', bar: 'Ba', dru: 'Dr', ass: 'As', war: 'Wa' };
-const skillTabs = {};
-for (const [code, pre] of Object.entries(CLASS_PREFIX)) skillTabs[code] = [1, 2, 3].map((i) => zh(`SkillCategory${pre}${i}`) ?? null);
+const skillTabs = {}; const skillTabsEn = {};
+for (const [code, pre] of Object.entries(CLASS_PREFIX)) { skillTabs[code] = [1, 2, 3].map((i) => zh(`SkillCategory${pre}${i}`) ?? null); skillTabsEn[code] = [1, 2, 3].map((i) => en(`SkillCategory${pre}${i}`) ?? null); }
 console.log('skills(UI):', skills.length, 'bad prereq:', badPrereq.length, badPrereq.slice(0, 5).join(','), '| tabs missing:', Object.values(skillTabs).flat().filter((x) => !x).length);
 
 // --- 版面：inventory.txt、UI 類別（拾取篩選器結構）---
@@ -272,7 +285,7 @@ const write = (n, d) => fs.writeFileSync(path.join(outDir, n), JSON.stringify(d)
 write('meta.json', meta); write('itemtypes.json', itemtypes); write('bases.json', bases); write('uniques.json', uniques);
 write('gems.json', gems); write('sets.json', sets); write('setItems.json', setItems); write('runewords.json', runewords);
 write('properties.json', properties); write('stats.json', stats); write('statStrings.zhTW.json', statStrings);
-write('charstats.json', charstats); write('skills.json', skills); write('skillTabs.json', skillTabs); write('inventory.json', inventory); write('uiCategories.json', uiCategories);
+write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories);
 
 console.log(JSON.stringify(meta.counts));
 console.log('missing property defs:', missingProps.length, missingProps.slice(0, 20).join(','));

@@ -374,7 +374,8 @@ export const searchOmni = (query: string): SearchResultItem[] => {
           sk.tree,
           sk.description,
           sk.details,
-          (sk.synergies || []).join(' ')
+          (sk.synergies || []).join(' '),
+          (sk.aliases || []).join(' ')
         ].join(' ').toLowerCase();
 
         if (text.includes(q)) {

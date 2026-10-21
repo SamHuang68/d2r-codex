@@ -39,6 +39,14 @@ export interface BaseItem {
   minAc?: number; maxAc?: number; block?: number;
   minDam?: number; maxDam?: number; twoHanded?: boolean; minDam2h?: number; maxDam2h?: number;
   strBonus?: number; dexBonus?: number; speed?: number; sockets?: number;
+  spawnable?: boolean; quest?: boolean;
+  durability?: number; rangeAdder?: number; minMisDam?: number; maxMisDam?: number;
+  /** 遊戲內的英文顯示名（nameEn 是資料表的內部名，可能含拼寫錯誤） */
+  nameEnUS?: string;
+  /** 盾牌重擊傷害、靴子踢擊傷害（armor.txt 的 mindam／maxdam）、腰帶格數（belts.txt） */
+  smiteMin?: number; smiteMax?: number; kickMin?: number; kickMax?: number; beltSlots?: number;
+  /** 投擲武器的堆疊數量上限 */
+  maxStack?: number;
   tier?: 'normal' | 'exceptional' | 'elite';
   width?: number; height?: number; oneOrTwoHanded?: boolean; invFile?: string;
 }

@@ -1,3 +1,9 @@
+// ⚠ 已停用（2026-10-21）：百科頁的 src/data/runewords.ts、uniqueItems.ts、setItems.ts 現在由遊戲資料表（src/data/game/*.json）即時產生，
+// 本腳本會用舊的爬取資料覆寫這些模組，等於把第二份資料重新帶回來。要更新資料請改跑 `npm run data:build`，
+// 舊 id／標籤／備註等人工維護內容在 src/data/codex/overlay.json。說明見 scripts/data-pipeline/README.md。
+console.error('此腳本已停用：src/data/runewords.ts、uniqueItems.ts、setItems.ts 由遊戲資料表產生，請改用 npm run data:build（說明見 scripts/data-pipeline/README.md）。');
+process.exit(1);
+
 import fs from 'fs';
 import path from 'path';
 import { decryptEndpoint } from './probe_d2r_world.mjs';
