@@ -27,6 +27,8 @@ export interface HeaderOptions {
   /** 遊戲表沒有可用資料的屬性（未定義的屬性、觸發技能等級 0）：略過這些 modifier（以索引指定），改附舊百科的文字行 */
   dropMods?: number[];
   extraLines?: string[];
+  /** 底材防禦範圍覆寫（min, max）：只有改採參考網站數值的暗金，見 engine/referenceOverrides.ts */
+  baseAc?: [number, number];
 }
 
 /** 表頭行：防禦／傷害、格擋、重擊／踢擊、需求、耐久度、範圍、速度 */
@@ -50,7 +52,8 @@ export function headerLines(base: BaseItem | undefined, mods: Modifier[], opts: 
 
   if (base?.kind === 'armor' && base.minAc !== undefined && base.maxAc !== undefined) {
     const calc = (b: number, es: StatEntry[]) => Math.floor(ethScale(b) * (1 + sumOf(es, 'item_armor_percent') / 100)) + sumOf(es, 'armorclass');
-    const lo = calc(base.minAc, e0); const hi = calc(base.maxAc, e1);
+    const [acMin, acMax] = opts.baseAc ?? [base.minAc, base.maxAc];
+    const lo = calc(acMin, e0); const hi = calc(acMax, e1);
     lines.push(`防禦：${range(lo, hi)}`);
     const r0 = sumOf(e0, 'item_armor_perlevel') / 8; const r1 = sumOf(e1, 'item_armor_perlevel') / 8;
     if (r0 || r1) lines.push(`防禦：(${lo + Math.floor(r0)}-${lo + Math.floor(r0 * 99)})-(${hi + Math.floor(r1)}-${hi + Math.floor(r1 * 99)})`);

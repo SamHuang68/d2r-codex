@@ -136,9 +136,16 @@ t('魔法使 27 級「無裝備」截圖（Normal）：生命 226、法力 87、
   assert.deepEqual([r.life, r.mana, r.stamina, r.defense, r.resist.fire], [226, 87, 170, 6, 0]);
   assert.deepEqual([r.attributes.str, r.attributes.dex, r.attributes.vit, r.attributes.ene], [70, 25, 80, 35]);
 });
-const known = (name, fn) => { try { fn(); console.log('  ⚠ 已知差異竟已消失：', name); } catch (e) { console.log('  ◇ 已知差異（待查）:', name, '→', String(e.message).slice(0, 80)); } };
-known('撒卡蘭姆使者防禦：截圖 526；資料推算上限＝floor(168×(1+1.96))＝497', () => {
-  const b = B.find((x) => x.code === 'pa9'); assert.ok(526 <= Math.floor(b.maxAc * (1 + 1.96)), `預測上限 ${Math.floor(b.maxAc * 2.96)} < 526`);
+t('撒卡蘭姆使者防禦依參考網站（Sam 指示）：百科 422–507（底材固定 169 × 強化防禦 150–200%）、模擬器取上限 507／下限 422；遊戲資料表是 360–504，只覆寫這一件，白色金紋盾與其他暗金不受影響', () => {
+  const herald = E.UNIQUE_ITEMS_DATA.find((u) => u.nameEn === 'Herald of Zakarum');
+  assert.ok(herald.attributes.includes('防禦：422-507'), herald.attributes.join(' | '));
+  const entry = E.getCatalog().find((x) => x.nameEn === 'Herald of Zakarum'); assert.deepEqual(entry.baseAc, [169, 169]);
+  const own = (roll) => bare('Paladin', 90, none, [E.buildEngineItem({ entry }, 'shield', roll)]).defense - bare('Paladin', 90).defense;
+  assert.equal(own(true), 507); assert.equal(own(false), 422);
+  assert.deepEqual(E.getCatalog().filter((x) => x.baseAc).map((x) => x.nameEn), ['Herald of Zakarum']);
+  const gilded = E.getCatalog().find((x) => x.id === 'base:pa9'); assert.equal(gilded.baseAc, undefined);
+  assert.equal(B.find((x) => x.code === 'pa9').minAc, 144); assert.equal(B.find((x) => x.code === 'pa9').maxAc, 168);
+  const storm = E.UNIQUE_ITEMS_DATA.find((u) => u.nameEn === "Stormshield"); assert.ok(storm && /^防禦：\d+-\d+$/.test(storm.attributes.find((a) => a.startsWith('防禦：'))));
 });
 
 console.log('【完整性：任何 modifier 都不得無聲遺失】');

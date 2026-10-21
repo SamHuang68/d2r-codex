@@ -79,7 +79,8 @@ export function expandItem(data: GameData, item: EquippedItem, unhandled: Charac
 export function itemDefenseOf(data: GameData, base: BaseItem | undefined, c: ItemCalc, level: number): number {
   let own = 0;
   if (base?.kind === 'armor' && base.minAc !== undefined && base.maxAc !== undefined) {
-    let b = Math.floor(base.minAc + (base.maxAc - base.minAc) * (c.item.defRoll ?? 1));
+    const [acMin, acMax] = c.item.baseAc ?? [base.minAc, base.maxAc];
+    let b = Math.floor(acMin + (acMax - acMin) * (c.item.defRoll ?? 1));
     if (c.item.ethereal) b = Math.floor(b * 1.5);
     const pct = c.entries.filter((e) => e.stat === 'item_armor_percent').reduce((sum, e) => sum + e.value, 0);
     own = Math.floor(b * (1 + pct / 100));
