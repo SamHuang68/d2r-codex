@@ -93,18 +93,18 @@ async function runOnce(base, browser) {
     });
   };
   const withBust = (hash = '') => `${base}${base.includes('?') ? '&' : '?'}smoke=${Date.now()}${hash}`;
-  const textLen = (page) => page.evaluate(() => document.body.innerText.length);
+  const textLen = (page) => page.evaluate(() => (document.body?.innerText ?? "").length);
 
   // ── 桌面 ──
   {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
     const page = await ctx.newPage(); track(page, '桌面');
     await page.goto(withBust(), { waitUntil: 'load', timeout: 45000 });
-    try { await page.waitForFunction(() => document.body.innerText.length > 800, null, { timeout: 15000 }); } catch { /* 下面會回報 */ }
+    try { await page.waitForFunction(() => (document.body?.innerText ?? "").length > 800, null, { timeout: 15000 }); } catch { /* 下面會回報 */ }
     const home = await textLen(page);
     if (home <= 800) failures.push(`[桌面] 首頁內容不足（${home} 字），可能整頁空白`);
     else if (!(await page.title()).includes('D2R')) failures.push(`[桌面] 首頁標題不對：${await page.title()}`);
-    else if (!(await page.evaluate(() => document.body.innerText)).includes('遊戲資料版本')) failures.push('[桌面] 頁尾沒有顯示遊戲資料版本');
+    else if (!(await page.evaluate(() => (document.body?.innerText ?? ""))).includes('遊戲資料版本')) failures.push('[桌面] 頁尾沒有顯示遊戲資料版本');
 
     const homeJs = await jsBytes(page);
     if (homeJs > HOME_JS_BUDGET) failures.push(`[桌面] 首頁載入了 ${(homeJs / 1024).toFixed(0)} kB 的 JS，超過 ${HOME_JS_BUDGET / 1024} kB 預算（百科資料可能又被綁回首頁）`);
@@ -117,7 +117,7 @@ async function runOnce(base, browser) {
 
     for (const r of ROUTES) {
       await page.evaluate((h) => { location.hash = h; }, r.hash);
-      try { await page.waitForFunction((min) => document.body.innerText.length > min, r.min, { timeout: 10000 }); } catch { /* 下面會回報 */ }
+      try { await page.waitForFunction((min) => (document.body?.innerText ?? "").length > min, r.min, { timeout: 10000 }); } catch { /* 下面會回報 */ }
       const n = await textLen(page);
       if (n <= r.min) failures.push(`[桌面] ${r.label}（${r.hash}）內容不足：${n} 字，要求超過 ${r.min}`);
     }
@@ -127,7 +127,7 @@ async function runOnce(base, browser) {
       const pg = await ctx.newPage(); track(pg, `桌面·${b.label}`);
       try {
         await pg.goto(withBust(b.hash), { waitUntil: 'load', timeout: 45000 });
-        await pg.waitForFunction(() => document.body.innerText.length > 800 && !document.body.innerText.includes('載入中'), null, { timeout: 15000 });
+        await pg.waitForFunction(() => (document.body?.innerText ?? "").length > 800 && !(document.body?.innerText ?? "").includes('載入中'), null, { timeout: 15000 });
         const kb = (await jsBytes(pg)) / 1024;
         if (kb > b.kb) failures.push(`[桌面] ${b.label}（${b.hash}）直接開啟載入了 ${kb.toFixed(0)} kB 的 JS，超過 ${b.kb} kB 預算（可能又被不相干的大資料表拖著載入）`);
       } catch (e) {
@@ -141,7 +141,7 @@ async function runOnce(base, browser) {
       const hp = await ctx.newPage(); track(hp, '桌面·歷史');
       try {
         await hp.goto(withBust(), { waitUntil: 'load', timeout: 45000 });
-        await hp.waitForFunction(() => document.body.innerText.length > 800, null, { timeout: 15000 });
+        await hp.waitForFunction(() => (document.body?.innerText ?? "").length > 800, null, { timeout: 15000 });
         const len0 = await hp.evaluate(() => history.length);
         const side = (label) => hp.locator('aside, nav').getByRole('link', { name: new RegExp(label) }).first();
         await side('裝備寶典').click(); await hp.waitForFunction(() => location.hash === '#items', null, { timeout: 10000 });
@@ -149,9 +149,9 @@ async function runOnce(base, browser) {
         await side('符文寶庫').click(); await sleep(300);
         if ((await hp.evaluate(() => history.length)) - len0 !== 2) failures.push('[桌面] 同一個分頁連點，歷史紀錄多了重複的一筆');
         await hp.goBack(); await hp.waitForFunction(() => location.hash === '#items', null, { timeout: 10000 });
-        await hp.waitForFunction(() => /暗金/.test(document.body.innerText) && !document.body.innerText.includes('載入中'), null, { timeout: 15000 });
+        await hp.waitForFunction(() => /暗金/.test((document.body?.innerText ?? "")) && !(document.body?.innerText ?? "").includes('載入中'), null, { timeout: 15000 });
         if (!(await hp.title()).includes('裝備寶典')) failures.push(`[桌面] 分頁標題沒有跟著分頁變：${await hp.title()}`);
-        await hp.goBack(); await hp.waitForFunction(() => document.body.innerText.includes('遊戲資料版本') && !location.hash.startsWith('#items'), null, { timeout: 10000 });
+        await hp.goBack(); await hp.waitForFunction(() => (document.body?.innerText ?? "").includes('遊戲資料版本') && !location.hash.startsWith('#items'), null, { timeout: 10000 });
         await hp.goForward(); await hp.waitForFunction(() => location.hash === '#items', null, { timeout: 10000 });
       } catch (e) {
         failures.push(`[桌面] 瀏覽器上一頁／下一頁沒有在分頁之間切換：${String(e.message).split('\n')[0]}`);
@@ -181,10 +181,10 @@ async function runOnce(base, browser) {
       await p2.route(/\/assets\/QuestGuide-[^/]*\.js(\?.*)?$/, (route) => { if (aborted === 0) { aborted++; route.abort(); } else route.continue(); });
       await p2.goto(withBust(), { waitUntil: 'load', timeout: 45000 });
       try {
-        await p2.waitForFunction(() => document.body.innerText.length > 800, null, { timeout: 15000 });
+        await p2.waitForFunction(() => (document.body?.innerText ?? "").length > 800, null, { timeout: 15000 });
         await p2.evaluate(() => { window.__notReloaded = true; }); // 整頁重整後這個標記會消失
         await p2.evaluate(() => { location.hash = '#quests'; });
-        await p2.waitForFunction(() => document.body.innerText.includes('全章節任務寶典'), null, { timeout: 20000 });
+        await p2.waitForFunction(() => (document.body?.innerText ?? "").includes('全章節任務寶典'), null, { timeout: 20000 });
         const reloaded = await p2.evaluate(() => window.__notReloaded !== true);
         if (aborted !== 1) failures.push('[桌面] 模擬 chunk 載入失敗沒有觸發（測試本身有問題）');
         else if (!reloaded) failures.push('[桌面] chunk 載入失敗後沒有整頁重整（頁面是怎麼恢復的？）');
@@ -197,7 +197,7 @@ async function runOnce(base, browser) {
     // 搜尋面板也是第一次按 Q 才載入的 lazy chunk
     await page.evaluate(() => { location.hash = '#overview'; });
     try {
-      await page.waitForFunction(() => document.body.innerText.length > 800, null, { timeout: 10000 });
+      await page.waitForFunction(() => (document.body?.innerText ?? "").length > 800, null, { timeout: 10000 });
       await page.keyboard.press('q');
       await page.waitForSelector('input[placeholder*="搜尋符文之語"]', { timeout: 10000 });
       await page.keyboard.press('Escape');
@@ -215,11 +215,11 @@ async function runOnce(base, browser) {
       const card = page.locator('.d2-build', { hasText: '冰暴魔法使' }).first();
       await card.getByRole('button', { name: /套用頂裝/ }).click();
       await page.waitForFunction(() => [...document.querySelectorAll('.d2-slot')].filter((s) => (s.getAttribute('aria-label') ?? '').includes('：')).length >= 8, null, { timeout: 15000 });
-      const stats = await page.evaluate(() => document.body.innerText);
+      const stats = await page.evaluate(() => (document.body?.innerText ?? ""));
       if (!/生\s*存\s*力/.test(stats)) failures.push('[桌面] 套用流派後屬性頁沒有出現「生存力」區塊');
       // 傭兵分頁：顯示傭兵數值；開啟「計入傭兵」後，傭兵的原生光環（預設是地獄力量傭兵）成為屬性頁增益面板裡恆啟用的一列
       await page.getByRole('tab', { name: '傭兵' }).click();
-      await page.waitForFunction(() => /傭\s*兵\s*數\s*值/.test(document.body.innerText), null, { timeout: 10000 });
+      await page.waitForFunction(() => /傭\s*兵\s*數\s*值/.test((document.body?.innerText ?? "")), null, { timeout: 10000 });
       await page.getByLabel('計入傭兵').check();
       await page.getByRole('tab', { name: '屬性頁' }).click();
       await page.waitForFunction(() => /傭兵/.test(document.querySelector('.d2sim')?.innerText ?? '') && /力量/.test(document.querySelector('.d2sim')?.innerText ?? ''), null, { timeout: 10000 });
@@ -245,7 +245,7 @@ async function runOnce(base, browser) {
     const page = await ctx.newPage(); track(page, '手機');
     for (const hash of ['', '#planner']) {
       await page.goto(withBust(hash), { waitUntil: 'load', timeout: 45000 });
-      try { await page.waitForFunction(() => document.body.innerText.length > 800, null, { timeout: 15000 }); } catch { /* 下面會回報 */ }
+      try { await page.waitForFunction(() => (document.body?.innerText ?? "").length > 800, null, { timeout: 15000 }); } catch { /* 下面會回報 */ }
       await sleep(500);
       const m = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, w: window.innerWidth }));
       if (m.sw > m.w + 1) failures.push(`[手機] ${hash || '首頁'} 有橫向捲動：scrollWidth ${m.sw} > ${m.w}`);
