@@ -45,6 +45,13 @@ const ROUTES = [
 
 // 首頁（含 vendor）載入的 JS 位元組預算。百科資料與各頁是進頁面才載入，首頁不該再把它們帶進來（改版前首頁約 1.8 MB，改版後約 0.3 MB）
 const HOME_JS_BUDGET = 700 * 1024;
+// 個別分頁「直接開啟」時載入的 JS 預算（kB，約為實測的 1.15 倍）。這幾頁只需要部分資料，預算擋的是「又被不相干的大資料表拖著載入」
+// 實測（2026-10）：底材 944、技能 1049、區域 323
+const PAGE_JS_BUDGETS = [
+  { hash: '#bases', kb: 1100, label: '底材寶典' },
+  { hash: '#skills', kb: 1250, label: '技能寶典' },
+  { hash: '#areas', kb: 450, label: '區域' },
+];
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2' };
 
@@ -100,6 +107,20 @@ async function runOnce(base, browser) {
       try { await page.waitForFunction((min) => document.body.innerText.length > min, r.min, { timeout: 10000 }); } catch { /* 下面會回報 */ }
       const n = await textLen(page);
       if (n <= r.min) failures.push(`[桌面] ${r.label}（${r.hash}）內容不足：${n} 字，要求超過 ${r.min}`);
+    }
+
+    // 個別分頁直接開啟時的 JS 量：每頁開新頁籤，才不會把前面分頁已載入的算進來
+    for (const b of PAGE_JS_BUDGETS) {
+      const pg = await ctx.newPage(); track(pg, `桌面·${b.label}`);
+      try {
+        await pg.goto(withBust(b.hash), { waitUntil: 'load', timeout: 45000 });
+        await pg.waitForFunction(() => document.body.innerText.length > 800 && !document.body.innerText.includes('載入中'), null, { timeout: 15000 });
+        const kb = (await pg.evaluate(() => performance.getEntriesByType('resource').filter((r) => /\.js(\?|$)/.test(r.name)).reduce((a, r) => a + r.decodedBodySize, 0))) / 1024;
+        if (kb > b.kb) failures.push(`[桌面] ${b.label}（${b.hash}）直接開啟載入了 ${kb.toFixed(0)} kB 的 JS，超過 ${b.kb} kB 預算（可能又被不相干的大資料表拖著載入）`);
+      } catch (e) {
+        failures.push(`[桌面] ${b.label}（${b.hash}）直接開啟失敗：${String(e.message).split('\n')[0]}`);
+      }
+      await pg.close();
     }
 
     // 跨頁連結（傭兵頁的物品名）：點了才載入比對用的資料表，再跳到對應分頁
@@ -198,4 +219,4 @@ try {
   local?.server.close();
 }
 if (failures.length) { console.error(`\n冒煙測試失敗（${base}）`); process.exit(1); }
-console.log(`冒煙測試通過（${base}）：首頁 JS 在預算內、${ROUTES.length} 個分頁有內容、跨頁物品連結可跳轉、chunk 載入失敗會自動重整、搜尋面板可開啟、配裝模擬可套用流派、手機版無橫向捲動、無頁面錯誤`);
+console.log(`冒煙測試通過（${base}）：首頁與個別分頁 JS 在預算內、${ROUTES.length} 個分頁有內容、跨頁物品連結可跳轉、chunk 載入失敗會自動重整、搜尋面板可開啟、配裝模擬可套用流派、手機版無橫向捲動、無頁面錯誤`);

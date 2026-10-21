@@ -2,26 +2,11 @@ import uniques from '../data/game/uniques.json';
 import setItems from '../data/game/setItems.json';
 import runewords from '../data/game/runewords.json';
 import { gameData } from './data';
+import { slotOfBase, type SlotKind, type Rarity, type Tier, type Group } from './slots';
+// 部位、職業名稱等輕量對照表在 slots.ts（百科頁只要這些，不該為此載入暗金與符文之語的整份資料）；這裡原樣轉出，既有的匯入不用改
+export * from './slots';
 import type { BaseItem, EquippedItem, Modifier } from './types';
 
-/** 穿戴部位（與遊戲裝備頁一致） */
-export type SlotKind = 'head' | 'body' | 'shield' | 'gloves' | 'belt' | 'boots' | 'neck' | 'ring' | 'weapon' | 'charm';
-export type Rarity = 'unique' | 'set' | 'runeword' | 'base';
-export type Tier = 'normal' | 'exceptional' | 'elite';
-export type Group = 'armor' | 'weapon' | 'jewelry';
-
-export const CLASS_ZH: Record<string, string> = {
-  ama: '亞馬遜', sor: '魔法使', nec: '死靈法師', pal: '聖騎士', bar: '野蠻人', dru: '德魯伊', ass: '刺客', war: '術士',
-};
-export const ENGINE_CLASS_BY_CODE: Record<string, string> = {
-  ama: 'Amazon', sor: 'Sorceress', nec: 'Necromancer', pal: 'Paladin', bar: 'Barbarian', dru: 'Druid', ass: 'Assassin', war: 'Warlock',
-};
-export const SLOT_ZH: Record<SlotKind, string> = {
-  head: '頭盔', body: '護甲', shield: '盾牌', gloves: '手套', belt: '腰帶', boots: '鞋靴', neck: '項鍊', ring: '戒指', weapon: '武器', charm: '護身符',
-};
-export const GROUP_ZH: Record<Group, string> = { armor: '護甲', weapon: '武器', jewelry: '飾品' };
-export const TIER_ZH: Record<Tier, string> = { normal: '一般', exceptional: '進階', elite: '菁英' };
-export const RARITY_ZH: Record<Rarity, string> = { unique: '獨特', set: '套裝', runeword: '符文之語', base: '基礎' };
 
 export interface CatalogEntry {
   id: string;
@@ -53,20 +38,6 @@ export interface CatalogEntry {
 
 const baseByCode = new Map<string, BaseItem>(gameData.bases.map((b) => [b.code, b]));
 
-export function slotOfBase(b: BaseItem): SlotKind | undefined {
-  const a = b.ancestors;
-  if (a.includes('shld')) return 'shield';
-  if (a.includes('helm')) return 'head';
-  if (a.includes('tors')) return 'body';
-  if (a.includes('glov')) return 'gloves';
-  if (a.includes('belt')) return 'belt';
-  if (a.includes('boot')) return 'boots';
-  if (a.includes('amul')) return 'neck';
-  if (a.includes('ring')) return 'ring';
-  if (a.includes('char')) return 'charm';
-  if (a.includes('weap')) return 'weapon';
-  return undefined;
-}
 const groupOfSlot = (s: SlotKind): Group => (s === 'weapon' ? 'weapon' : s === 'neck' || s === 'ring' || s === 'charm' ? 'jewelry' : 'armor');
 
 interface Row { id: string; name: string; nameEn: string; code: string; levelReq?: number; mods: Modifier[]; crafted?: boolean; disabled?: boolean; setNameEn?: string; set?: string; setBonusByCount?: (Modifier & { slot: number })[] }

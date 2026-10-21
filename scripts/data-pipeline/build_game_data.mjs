@@ -265,8 +265,10 @@ const skills = skillRows.filter((r) => r.charclass && skillDesc.get(r.skilldesc)
   }
   return sk;
 });
-// 全部技能（含道具專用、怪物技能）的名稱表：觸發技能、充能的技能名稱用
-const skillNames = skillRows.map((r) => { const d = skillDesc.get(r.skilldesc); const k = d?.['str name']; return { gameId: num(r['*Id']), nameEn: r.skill, nameEnUS: k ? en(k) : undefined, name: k ? zh(k) : undefined }; }).filter((x) => x.name);
+// 全部技能（含道具專用、怪物技能）的名稱表：觸發技能、充能的技能名稱用。
+// charClass 只有職業技能（skills.json 裡有的）才有；放在這張小表裡，物品描述不必為了查「這個技能屬於哪個職業」而載入整份 skills.json（136 kB）
+const classOfSkill = new Map(skills.map((x) => [x.gameId, x.charClass]));
+const skillNames = skillRows.map((r) => { const d = skillDesc.get(r.skilldesc); const k = d?.['str name']; const gameId = num(r['*Id']); return { gameId, nameEn: r.skill, nameEnUS: k ? en(k) : undefined, name: k ? zh(k) : undefined, charClass: classOfSkill.get(gameId) }; }).filter((x) => x.name);
 const skillByName = new Set(skills.map((x) => x.nameEn));
 const badPrereq = skills.flatMap((x) => x.prereq.filter((n) => !skillByName.has(n)).map((n) => `${x.nameEn}->${n}`));
 const CLASS_PREFIX = { ama: 'Am', sor: 'So', nec: 'Ne', pal: 'Pa', bar: 'Ba', dru: 'Dr', ass: 'As', war: 'Wa' };
