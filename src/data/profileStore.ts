@@ -1,7 +1,7 @@
 import { CLASS_ZH, findEntry, getSocketables, withBase, type CatalogEntry } from '../engine/catalog';
 import { skillById, skillByName } from '../engine/skills';
 import { customEntry, validateCustomDef, type CustomItemDef } from '../engine/customItem';
-import type { Alloc, Difficulty, DollSlot, Equipped, EquippedMap, Quests } from '../components/simulator/v2/types';
+import { DEFAULT_MERC, MERC_SLOTS, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type MercState, type Quests } from '../components/simulator/v2/types';
 
 /** 模擬器的完整狀態（畫面上的物件）；流派範本與自訂 Profile 都先轉成這個再套用 */
 export interface SimSnapshot {
@@ -18,6 +18,8 @@ export interface SimSnapshot {
   buffsOn: Record<string, boolean>;
   targetRes: number;
   rollMax: boolean;
+  /** 傭兵；舊存檔與流派範本沒有這個欄位，套用時保留目前的傭兵 */
+  merc?: MercState;
 }
 
 /** 套用範圍：只換裝備、只換技能，或連等級與配點一起換 */
@@ -25,7 +27,8 @@ export interface ApplyParts { gear: boolean; skills: boolean; character: boolean
 export const ALL_PARTS: ApplyParts = { gear: true, skills: true, character: true };
 
 interface SavedItem { id: string; baseCode?: string; ethereal?: boolean; sockets?: string[]; socketCount?: number; randomSkill?: string; /** 自訂飾品：整份定義存進去（目錄裡找不到它） */ custom?: CustomItemDef }
-type SavedData = Omit<SimSnapshot, 'equipped' | 'charms'> & { equipped: Partial<Record<DollSlot, SavedItem>>; charms: SavedItem[] };
+type SavedMerc = { on: boolean; id: number; level: number; equipped: Partial<Record<DollSlot, SavedItem>> };
+type SavedData = Omit<SimSnapshot, 'equipped' | 'charms' | 'merc'> & { equipped: Partial<Record<DollSlot, SavedItem>>; charms: SavedItem[]; merc?: SavedMerc };
 
 export interface SavedProfile { v: 1; id: string; name: string; savedAt: number; data: SavedData }
 
@@ -37,7 +40,14 @@ const saveItem = (eq: Equipped): SavedItem => ({ id: eq.entry.id, baseCode: eq.e
 export function toSavedData(s: SimSnapshot): SavedData {
   const equipped: SavedData['equipped'] = {};
   (Object.keys(s.equipped) as DollSlot[]).forEach((k) => { const e = s.equipped[k]; if (e) equipped[k] = saveItem(e); });
-  return { ...s, equipped, charms: s.charms.map((c) => ({ id: c.id, baseCode: c.baseCode, custom: c.custom })) };
+  const { merc, ...rest } = s;
+  const out: SavedData = { ...rest, equipped, charms: s.charms.map((c) => ({ id: c.id, baseCode: c.baseCode, custom: c.custom })) };
+  if (merc) {
+    const me: SavedMerc['equipped'] = {};
+    (Object.keys(merc.equipped) as DollSlot[]).forEach((k) => { const e = merc.equipped[k]; if (e) me[k] = saveItem(e); });
+    out.merc = { on: merc.on, id: merc.id, level: merc.level, equipped: me };
+  }
+  return out;
 }
 
 function restoreItem(it: SavedItem, errors: string[]): Equipped | undefined {
@@ -60,7 +70,14 @@ export function fromSavedData(d: SavedData): { snap: SimSnapshot; errors: string
   (Object.keys(d.equipped ?? {}) as DollSlot[]).forEach((k) => { const r = restoreItem(d.equipped[k]!, errors); if (r) equipped[k] = r; });
   const charms: CatalogEntry[] = [];
   (d.charms ?? []).forEach((c) => { const r = restoreItem(c, errors); if (r) charms.push(r.entry); });
-  return { snap: { ...d, equipped, charms }, errors };
+  let merc: MercState | undefined;
+  if (d.merc) {
+    const me: EquippedMap = {};
+    (Object.keys(d.merc.equipped ?? {}) as DollSlot[]).forEach((k) => { const r = restoreItem(d.merc!.equipped[k]!, errors); if (r) me[k] = r; });
+    merc = { on: d.merc.on, id: d.merc.id, level: d.merc.level, equipped: me };
+  }
+  const { merc: _savedMerc, ...rest } = d; void _savedMerc;
+  return { snap: { ...rest, equipped, charms, ...(merc ? { merc } : {}) }, errors };
 }
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -112,6 +129,20 @@ function validate(raw: unknown): SavedProfile | string {
     if (!isObj(d.buffsOn)) return '格式不符：增益勾選不是物件';
     for (const [id, v] of Object.entries(d.buffsOn)) { if (typeof v !== 'boolean') return `格式不符：增益「${id}」不是勾選值`; if (v) buffsOn[id] = true; }
   }
+  let merc: SavedMerc | undefined;
+  if (d.merc !== undefined) {
+    if (!isObj(d.merc)) return '格式不符：傭兵欄位不是物件';
+    const me: SavedMerc['equipped'] = {};
+    if (d.merc.equipped !== undefined) {
+      if (!isObj(d.merc.equipped)) return '格式不符：傭兵裝備不是物件';
+      for (const [slot, v] of Object.entries(d.merc.equipped)) {
+        if (!(MERC_SLOTS as readonly string[]).includes(slot)) return `格式不符：傭兵不能穿戴「${slot}」`;
+        const it = cleanItem(v, `傭兵的「${slot}」`); if (typeof it === 'string') return `格式不符：${it}`;
+        me[slot as DollSlot] = it;
+      }
+    }
+    merc = { on: d.merc.on === true, id: int(d.merc.id, 0, 99, DEFAULT_MERC.id), level: int(d.merc.level, 1, 99, DEFAULT_MERC.level), equipped: me };
+  }
   const q = isObj(d.quests) ? d.quests : {}; const a = isObj(d.alloc) ? d.alloc : {};
   const name = raw.name.trim().slice(0, 40) || '匯入的 Profile';
   const clean: SavedData = {
@@ -121,6 +152,7 @@ function validate(raw: unknown): SavedProfile | string {
     alloc: { str: int(a.str, 0, 999, 0), dex: int(a.dex, 0, 999, 0), vit: int(a.vit, 0, 999, 0), ene: int(a.ene, 0, 999, 0) },
     equipped, charms, swap: d.swap === 'II' ? 'II' : 'I', skillPoints, activeSkillId: typeof d.activeSkillId === 'string' ? d.activeSkillId : '',
     buffsOn, targetRes: int(d.targetRes, -100, 100, 0), rollMax: d.rollMax !== false,
+    ...(merc ? { merc } : {}),
   };
   return { v: 1, id: typeof raw.id === 'string' ? raw.id : '', name, savedAt: int(raw.savedAt, 0, Number.MAX_SAFE_INTEGER, Date.now()), data: clean };
 }

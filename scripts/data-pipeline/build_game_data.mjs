@@ -272,6 +272,34 @@ const skillCalcFns = Object.fromEntries(tsv('skillcalc.txt').filter((r) => /^(ln
 // charClass 只有職業技能（skills.json 裡有的）才有；放在這張小表裡，物品描述不必為了查「這個技能屬於哪個職業」而載入整份 skills.json（136 kB）
 const classOfSkill = new Map(skills.map((x) => [x.gameId, x.charClass]));
 const skillNames = skillRows.map((r) => { const d = skillDesc.get(r.skilldesc); const k = d?.['str name']; const gameId = num(r['*Id']); return { gameId, nameEn: r.skill, nameEnUS: k ? en(k) : undefined, name: k ? zh(k) : undefined, charClass: classOfSkill.get(gameId) }; }).filter((x) => x.name);
+// --- 傭兵（hireling.txt 的擴充版資料 Version 100）---
+// 每個類型（Id）一組，rows 是不同等級的「檢查點」：等級落在兩個檢查點之間時，用最接近的下方檢查點加上每級成長外推（引擎的 mercenary.ts）。
+// 每級成長的單位（HP／防禦／命中 1；力量／敏捷 1/8 進位；傷害 1/8 四捨五入；抗性 1/4 進位；技能等級 1/32 進位；施放機率 1/4）
+// 由相鄰檢查點驗證過，見 scripts/test_engine.mjs。完全相同的重複列（例如兩個雙手劍野蠻人）合併成一組，ids 記錄原本的 Id。
+const hirelingActZh = { 1: '俠盜斥候', 2: '沙漠傭兵', 3: '鐵狼衛士', 5: '野蠻人' };
+const hirelingSkillZh = (nameEn) => skillNames.find((x) => x.nameEn === nameEn)?.name ?? nameEn;
+const hirelingGroups = new Map();
+for (const r of tsv('hireling.txt').filter((x) => x.Version === '100')) (hirelingGroups.get(r.Id) ?? hirelingGroups.set(r.Id, []).get(r.Id)).push(r);
+const hirelingRow = (r) => ({
+  level: num(r.Level), hp: num(r.HP), hpLvl: num(r['HP/Lvl']), def: num(r.Defense), defLvl: num(r['Def/Lvl']),
+  str: num(r.Str), strLvl: num(r['Str/Lvl']), dex: num(r.Dex), dexLvl: num(r['Dex/Lvl']), ar: num(r.AR), arLvl: num(r['AR/Lvl']),
+  dmgMin: num(r['Dmg-Min']), dmgMax: num(r['Dmg-Max']), dmgLvl: num(r['Dmg/Lvl']),
+  res: { fire: [num(r.ResistFire), num(r['ResistFire/Lvl'])], cold: [num(r.ResistCold), num(r['ResistCold/Lvl'])], lightning: [num(r.ResistLightning), num(r['ResistLightning/Lvl'])], poison: [num(r.ResistPoison), num(r['ResistPoison/Lvl'])] },
+  skills: [1, 2, 3, 4, 5, 6].filter((i) => r[`Skill${i}`]).map((i) => ({ nameEn: r[`Skill${i}`], name: hirelingSkillZh(r[`Skill${i}`]), mode: num(r[`Mode${i}`]), chance: num(r[`Chance${i}`]), chanceLvl: num(r[`ChancePerLvl${i}`]), level: num(r[`Level${i}`]), levelLvl: num(r[`LvlPerLvl${i}`]) })),
+});
+const hirelingRaw = [...hirelingGroups.entries()].map(([id, g]) => {
+  const first = g[0];
+  const descKey = first.HireDesc;
+  const rows = g.map(hirelingRow).sort((a, b) => a.level - b.level);
+  const act = num(first.Act);
+  const desc = (descKey && zh(descKey)) || [...new Set(rows[0].skills.filter((x) => x.mode !== 14).map((x) => x.name))].join('／');
+  return { id: num(id), ids: [num(id)], hireling: first.Hireling, subType: first['*SubType'], act, difficulty: num(first.Difficulty), typeZh: hirelingActZh[act], desc, class: first.equivalentcharclass, maxLevelDiff: num(first.HiringMaxLevelDifference), rows };
+});
+const hireling = [];
+for (const h of hirelingRaw) {
+  const dup = hireling.find((x) => x.act === h.act && x.difficulty === h.difficulty && x.desc === h.desc && JSON.stringify(x.rows) === JSON.stringify(h.rows));
+  if (dup) dup.ids.push(h.id); else hireling.push(h);
+}
 const skillByName = new Set(skills.map((x) => x.nameEn));
 const badPrereq = skills.flatMap((x) => x.prereq.filter((n) => !skillByName.has(n)).map((n) => `${x.nameEn}->${n}`));
 const CLASS_PREFIX = { ama: 'Am', sor: 'So', nec: 'Ne', pal: 'Pa', bar: 'Ba', dru: 'Dr', ass: 'As', war: 'Wa' };
@@ -298,7 +326,7 @@ const write = (n, d) => fs.writeFileSync(path.join(outDir, n), JSON.stringify(d)
 write('meta.json', meta); write('itemtypes.json', itemtypes); write('bases.json', bases); write('uniques.json', uniques);
 write('gems.json', gems); write('sets.json', sets); write('setItems.json', setItems); write('runewords.json', runewords);
 write('properties.json', properties); write('stats.json', stats); write('statStrings.zhTW.json', statStrings);
-write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns);
+write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns); write('hireling.json', hireling);
 
 console.log(JSON.stringify(meta.counts));
 console.log('missing property defs:', missingProps.length, missingProps.slice(0, 20).join(','));

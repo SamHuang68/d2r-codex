@@ -9,6 +9,8 @@ import { GAME_SKILLS } from '../../../engine/skills';
 import { auraEffects, damageText, effectiveLevel, passiveMods, skillById, skillDamage, skillLevelsFrom, skillPointBudget, targetDamageText, type DamageOptions, type GameSkill, type SkillBonuses } from '../../../engine/skills';
 import { applyBuffs, buffCandidates } from '../../../engine/buffs';
 import { passiveSummary, skillEffectText } from '../../../engine/skillEffects';
+import { computeMercenary, hirelingById, hirelingLabel } from '../../../engine/mercenary';
+import { MercenaryTab } from './MercenaryTab';
 import { PaperDollV2, canFitCharm, setNamesOf } from './PaperDollV2';
 import { AttributesTab } from './AttributesTab';
 import { GearTreeTab } from './GearTreeTab';
@@ -19,7 +21,7 @@ import { ItemTooltipBody } from './ItemTooltip';
 import { slotPlacementError } from './equipRules';
 import { engineItemsOf } from './engineItems';
 import './d2skin.css';
-import { DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type Quests, type TabKey } from './types';
+import { DEFAULT_MERC, MERC_SLOT_ZH, DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type MercSlot, type MercState, type Quests, type TabKey } from './types';
 
 const CLASSES: { zh: string; en: string; code: string }[] = [
   { zh: '亞馬遜', en: 'Amazon', code: 'ama' }, { zh: '魔法使', en: 'Sorceress', code: 'sor' }, { zh: '死靈法師', en: 'Necromancer', code: 'nec' },
@@ -67,6 +69,9 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const [selected, setSelected] = useState<DollSlot | null>(null);
   const [dragging, setDragging] = useState<CatalogEntry | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [merc, setMerc] = useState<MercState>(restored?.merc ?? DEFAULT_MERC);
+  const [mercPickerOpen, setMercPickerOpen] = useState(false);
+  const [mercJump, setMercJump] = useState<{ group: Group; seq: number } | null>(null);
   const [pickerJump, setPickerJump] = useState<{ group: Group; seq: number } | null>(null);
   const [toast, setToast] = useState<string | null>(restored ? '已還原離開前的配裝' : null);
   const [skillPoints, setSkillPoints] = useState<Record<string, number>>(restored?.skillPoints ?? {});
@@ -79,9 +84,9 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
 
   // 自動暫存目前的配裝（改動後稍等一下再存，避免連續輸入時一直寫）
   useEffect(() => {
-    const timer = window.setTimeout(() => saveDraft({ classCode: cls.code, level, difficulty, quests, alloc, equipped, charms, swap, skillPoints, activeSkillId, buffsOn, targetRes, rollMax }), 400);
+    const timer = window.setTimeout(() => saveDraft({ classCode: cls.code, level, difficulty, quests, alloc, equipped, charms, swap, skillPoints, activeSkillId, buffsOn, targetRes, rollMax, merc }), 400);
     return () => window.clearTimeout(timer);
-  }, [cls, level, difficulty, quests, alloc, equipped, charms, swap, skillPoints, activeSkillId, buffsOn, targetRes, rollMax]);
+  }, [cls, level, difficulty, quests, alloc, equipped, charms, swap, skillPoints, activeSkillId, buffsOn, targetRes, rollMax, merc]);
   useEffect(() => { if (restored) { const t = window.setTimeout(() => setToast(null), 3500); return () => window.clearTimeout(t); } return undefined; }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const say = (m: string) => { setToast(m); window.setTimeout(() => setToast((t) => (t === m ? null : t)), 3500); };
@@ -98,9 +103,19 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     all: baseResult.skills.all, byClass: baseResult.skills.byClass[cls.en] ?? 0, byTab: baseResult.skills.byTab, single: baseResult.skills.single,
   }), [baseResult, cls]);
 
-  // 增益／光環：候選（裝備光環恆啟用；裝備給的外職業技能與本職業光環可勾選）
-  const candidates = useMemo(() => buffCandidates(cls.code, skillPoints, skillBonuses, baseResult.stats), [cls, skillPoints, skillBonuses, baseResult]);
-  const activeBuffs = useMemo(() => candidates.filter((c) => c.alwaysOn || buffsOn[c.skill.id]), [candidates, buffsOn]);
+  // 傭兵：數值與光環（光環在「計入傭兵」開啟時成為恆啟用的增益）
+  const mercHire = hirelingById(merc.id);
+  const mercResult = useMemo(
+    () => (mercHire ? computeMercenary(gameData, { hireling: mercHire, level: merc.level, items: engineItemsOf(merc.equipped, [], 'I', rollMax) }) : null),
+    [mercHire, merc, rollMax],
+  );
+
+  // 增益／光環：候選（裝備光環與傭兵光環恆啟用；裝備給的外職業技能與本職業光環可勾選）
+  const candidates = useMemo(
+    () => buffCandidates(cls.code, skillPoints, skillBonuses, baseResult.stats, merc.on && mercResult ? mercResult.auras.map((a) => ({ skill: a.skill, level: a.level })) : []),
+    [cls, skillPoints, skillBonuses, baseResult, merc.on, mercResult],
+  );
+  const activeBuffs = useMemo(() => candidates.filter((c) => c.alwaysOn || buffsOn[c.rowId]), [candidates, buffsOn]);
   // 全職業技能的等級表（公式引用別的技能或自己的硬點時用，例如抗火被動 skill('Resist Fire'.blvl)/2）
   const levels = useMemo(() => skillLevelsFrom(skillPoints, skillBonuses), [skillPoints, skillBonuses]);
   const applied = useMemo(() => applyBuffs(activeBuffs, levels), [activeBuffs, levels]);
@@ -187,20 +202,21 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     const lines = [`${cls.zh} Lv${level}（${DIFF_ZH[difficulty]}）`, `力${result.attributes.str} 敏${result.attributes.dex} 體${result.attributes.vit} 能${result.attributes.ene}`,
       `生命 ${result.life} 法力 ${result.mana} 防禦 ${result.defense} 格擋 ${result.blockChance}%`,
       `抗性 火${result.resist.fire} 冰${result.resist.cold} 電${result.resist.lightning} 毒${result.resist.poison}`,
-      ...(Object.keys(equipped) as DollSlot[]).map((k) => `${DOLL_SLOT_ZH[k]}：${equipped[k]!.entry.name}`), ...charms.map((c) => `護身符：${c.name}`)];
+      ...(Object.keys(equipped) as DollSlot[]).map((k) => `${DOLL_SLOT_ZH[k]}：${equipped[k]!.entry.name}`), ...charms.map((c) => `護身符：${c.name}`),
+      ...(merc.on && mercHire && mercResult ? [`傭兵：${hirelingLabel(mercHire)} Lv${mercResult.level}（生命 ${mercResult.life} 防禦 ${mercResult.defense}）`, ...(Object.keys(merc.equipped) as MercSlot[]).map((k) => `傭兵${MERC_SLOT_ZH[k]}：${merc.equipped[k]!.entry.name}`)] : [])];
     navigator.clipboard?.writeText(lines.join('\n')).then(() => say('已複製配裝摘要'), () => say('無法複製（瀏覽器未授權）'));
   };
   const patchEquipped = (slot: DollSlot, patch: Partial<Equipped>) => setEquipped((m) => (m[slot] ? { ...m, [slot]: { ...m[slot]!, ...patch } } : m));
   const changeBase = (slot: DollSlot, baseCode: string) => setEquipped((m) => (m[slot] ? { ...m, [slot]: { ...m[slot]!, entry: withBase(m[slot]!.entry, baseCode) } } : m));
 
   // ── 流派範本／自訂 Profile：擷取與套用完整狀態 ──
-  const capture = (): SimSnapshot => ({ classCode: cls.code, level, difficulty, quests, alloc, equipped, charms, swap, skillPoints, activeSkillId, buffsOn, targetRes, rollMax });
+  const capture = (): SimSnapshot => ({ classCode: cls.code, level, difficulty, quests, alloc, equipped, charms, swap, skillPoints, activeSkillId, buffsOn, targetRes, rollMax, merc });
   const applySnapshot = (snap: SimSnapshot, parts: ApplyParts, label: string, recordUndo = true) => {
     const c = CLASSES.find((x) => x.code === snap.classCode); if (!c) { say(`找不到職業「${snap.classCode}」`); return; }
     if (recordUndo) { undoRef.current = capture(); setCanUndo(true); }
     const classChanged = c.code !== cls.code;
     setCls(c); setSelected(null); onClassChange?.(c.zh);
-    if (parts.gear) { setEquipped(snap.equipped); setCharms(snap.charms); setSwap(snap.swap); setRollMax(snap.rollMax); }
+    if (parts.gear) { setEquipped(snap.equipped); setCharms(snap.charms); setSwap(snap.swap); setRollMax(snap.rollMax); if (snap.merc) setMerc(snap.merc); }
     else if (classChanged) {
       // 只套用其他範圍但職業不同：卸下他職專屬裝備
       setEquipped((m) => { const n: EquippedMap = {}; (Object.keys(m) as DollSlot[]).forEach((k) => { const e = m[k]!; if (!e.entry.classCode || e.entry.classCode === c.code) n[k] = e; }); return n; });
@@ -212,7 +228,15 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     say(`已套用：${label}`);
   };
   const undoApply = () => { const prev = undoRef.current; if (!prev) return; undoRef.current = null; setCanUndo(false); applySnapshot(prev, ALL_PARTS, '上一次套用之前的狀態', false); };
-  const clearAll = () => { setEquipped({}); setCharms([]); setAlloc(ZERO); setSelected(null); };
+  const clearAll = () => { setEquipped({}); setCharms([]); setAlloc(ZERO); setSelected(null); setMerc((m) => ({ ...m, equipped: {} })); };
+  // 傭兵的裝備：只收頭盔、護甲、武器，放進對應的格子
+  const equipMerc = (entry: CatalogEntry) => {
+    const slot: MercSlot | null = entry.slot === 'head' ? 'head' : entry.slot === 'body' ? 'body' : entry.slot === 'weapon' ? 'weaponI' : null;
+    if (!slot) { say('傭兵只能穿戴頭盔、護甲與武器'); return; }
+    if (entry.classCode) { say('職業專屬裝備傭兵不能穿戴'); return; }
+    setMerc((m) => ({ ...m, equipped: { ...m.equipped, [slot]: { entry } } }));
+    say(`傭兵已裝備：${entry.name}`);
+  };
 
   const selEq = selected ? equipped[selected] : undefined;
   const tipAttrs = useMemo(() => ({ str: result.attributes.str, dex: result.attributes.dex }), [result.attributes.str, result.attributes.dex]);
@@ -241,8 +265,8 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const skillUsed = Object.values(skillPoints).reduce((a2, b2) => a2 + b2, 0);
 
   const buffPanel = candidates.map((c) => ({
-    id: c.skill.id, name: c.skill.name ?? c.skill.nameEn, level: c.level, alwaysOn: c.alwaysOn, on: c.alwaysOn || !!buffsOn[c.skill.id],
-    source: c.source === 'item-aura' ? '裝備光環' : c.source === 'item-skill' ? '裝備提供' : '本職業',
+    id: c.rowId, name: c.skill.name ?? c.skill.nameEn, level: c.level, alwaysOn: c.alwaysOn, on: c.alwaysOn || !!buffsOn[c.rowId],
+    source: c.source === 'item-aura' ? '裝備光環' : c.source === 'item-skill' ? '裝備提供' : c.source === 'mercenary' ? '傭兵' : '本職業',
     lines: auraEffects(c.skill, c.level, levels),
   })).map((b2) => ({ ...b2, lines: b2.lines.map((l) => ({ supported: l.supported, text: l.supported && l.value !== undefined ? (skillEffectText(l.stat, l.value, level) ?? `${l.stat} ${l.value}`) : `${l.stat}（公式未支援，未計入）` })) }));
 
@@ -332,7 +356,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
         {/* 右半：三個 tab */}
         <div className="d2-panel min-w-0">
           <div className="d2-tabs" role="tablist">
-            {([['stats', '屬性頁'], ['gear', '樹狀裝備庫'], ['skills', '技能樹']] as [TabKey, string][]).map(([k, label]) => (
+            {([['stats', '屬性頁'], ['gear', '樹狀裝備庫'], ['skills', '技能樹'], ['merc', '傭兵']] as [TabKey, string][]).map(([k, label]) => (
               <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => { setTab(k); if (k === 'gear') setPickerOpen(true); }} className="d2-tab">{label}</button>
             ))}
           </div>
@@ -347,6 +371,10 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
               <GearTreeTab open={pickerOpen} onClose={() => setPickerOpen(false)}
                 onOpen={(g) => { setPickerOpen(true); if (g) setPickerJump((j) => ({ group: g, seq: (j?.seq ?? 0) + 1 })); }}
                 level={level} onEquip={equip} say={say} />
+            )}
+            {tab === 'merc' && (
+              <MercenaryTab merc={merc} onChange={setMerc} result={mercResult} playerLevel={level}
+                onPick={(slot) => { setMercJump((j) => ({ group: slot === 'weaponI' ? 'weapon' : 'armor', seq: (j?.seq ?? 0) + 1 })); setMercPickerOpen(true); }} />
             )}
             {tab === 'skills' && (
               <SkillTreeV2 classCode={cls.code} level={level} skillPoints={skillPoints} onUpdateSkillPoints={setSkillPoints}
@@ -370,7 +398,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
               </span>
             </div>
             {result.weaponDamage && <div className="d2-stat"><span className="k">武器傷害</span><span className="v">{result.weaponDamage.min}–{result.weaponDamage.max}</span></div>}
-            <div className="d2-sub w-full text-center">光環與戰吼只計 lnXY 公式；變身、衰減類光環未計入</div>
+            <div className="d2-sub w-full text-center">光環與戰吼計入 lnXY／dmXY 公式；變身類技能未計入</div>
           </div>
           <div className="d2-orb is-mana" title="法力"><b>{result.mana.toLocaleString()}</b><span>法力</span></div>
         </div>
@@ -378,6 +406,9 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
 
       <GearPicker open={pickerOpen} onClose={() => setPickerOpen(false)} level={level} engineClassCode={cls.code}
         onEquip={equip} onDragStart={setDragging} jump={pickerJump} />
+      {/* 傭兵用的裝備選擇視窗：不限制職業專屬以外的裝備，挑到的裝備放進傭兵的格子 */}
+      <GearPicker open={mercPickerOpen} onClose={() => setMercPickerOpen(false)} level={merc.level}
+        engineClassCode="" onEquip={equipMerc} onDragStart={() => undefined} jump={mercJump} />
     </section>
   );
 };
