@@ -8,7 +8,7 @@ import {
   X,
 } from 'lucide-react';
 
-import { NAV_GROUPS } from './navConfig';
+import { NAV_GROUPS, isPlainLeftClick, tabHref } from './navConfig';
 
 interface MobileNavProps {
   activeTab: string;
@@ -48,9 +48,11 @@ export const MobileNav: React.FC<MobileNavProps> = ({
         {quickTabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
-            <button
+            <a
               key={tab.id}
-              onClick={() => handleSelectTab(tab.id)}
+              href={tabHref(tab.id)}
+              onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); handleSelectTab(tab.id); }}
+              aria-current={isActive ? 'page' : undefined}
               className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all duration-150 shrink-0 ${
                 isActive
                   ? 'text-d2-unique font-bold scale-105'
@@ -59,7 +61,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
             >
               {tab.icon}
               <span className="text-[10px] mt-0.5">{tab.label}</span>
-            </button>
+            </a>
           );
         })}
 
@@ -119,9 +121,11 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                     {cat.items.map((item) => {
                       const isCurrent = activeTab === item.id;
                       return (
-                        <button
+                        <a
                           key={item.id}
-                          onClick={() => handleSelectTab(item.id)}
+                          href={tabHref(item.id)}
+                          onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); handleSelectTab(item.id); }}
+                          aria-current={isCurrent ? 'page' : undefined}
                           className={`p-3 rounded-2xl border text-left transition-all flex items-center gap-3 ${
                             isCurrent
                               ? 'bg-sanctuary-850 border-d2-gold text-d2-gold font-bold shadow-md'
@@ -139,7 +143,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                               {item.desc}
                             </div>
                           </div>
-                        </button>
+                        </a>
                       );
                     })}
                   </div>

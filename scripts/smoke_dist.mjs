@@ -136,6 +136,29 @@ async function runOnce(base, browser) {
       await pg.close();
     }
 
+    // 瀏覽器上一頁／下一頁：每次點進另一頁都是一筆歷史紀錄（同一頁連點不重複），上一頁回到前一個分頁而不是離開網站
+    {
+      const hp = await ctx.newPage(); track(hp, '桌面·歷史');
+      try {
+        await hp.goto(withBust(), { waitUntil: 'load', timeout: 45000 });
+        await hp.waitForFunction(() => document.body.innerText.length > 800, null, { timeout: 15000 });
+        const len0 = await hp.evaluate(() => history.length);
+        const side = (label) => hp.locator('aside, nav').getByRole('link', { name: new RegExp(label) }).first();
+        await side('裝備寶典').click(); await hp.waitForFunction(() => location.hash === '#items', null, { timeout: 10000 });
+        await side('符文寶庫').click(); await hp.waitForFunction(() => location.hash === '#runes', null, { timeout: 10000 });
+        await side('符文寶庫').click(); await sleep(300);
+        if ((await hp.evaluate(() => history.length)) - len0 !== 2) failures.push('[桌面] 同一個分頁連點，歷史紀錄多了重複的一筆');
+        await hp.goBack(); await hp.waitForFunction(() => location.hash === '#items', null, { timeout: 10000 });
+        await hp.waitForFunction(() => /暗金/.test(document.body.innerText) && !document.body.innerText.includes('載入中'), null, { timeout: 15000 });
+        if (!(await hp.title()).includes('裝備寶典')) failures.push(`[桌面] 分頁標題沒有跟著分頁變：${await hp.title()}`);
+        await hp.goBack(); await hp.waitForFunction(() => document.body.innerText.includes('遊戲資料版本') && !location.hash.startsWith('#items'), null, { timeout: 10000 });
+        await hp.goForward(); await hp.waitForFunction(() => location.hash === '#items', null, { timeout: 10000 });
+      } catch (e) {
+        failures.push(`[桌面] 瀏覽器上一頁／下一頁沒有在分頁之間切換：${String(e.message).split('\n')[0]}`);
+      }
+      await hp.close();
+    }
+
     // 跨頁連結（傭兵頁的物品名）：點了才載入比對用的資料表，再跳到對應分頁
     await page.evaluate(() => { location.hash = '#mercenaries'; });
     try {
@@ -255,4 +278,4 @@ try {
   local?.server.close();
 }
 if (failures.length) { console.error(`\n冒煙測試失敗（${base}）`); process.exit(1); }
-console.log(`冒煙測試通過（${base}）：首頁與個別分頁 JS 在預算內、首頁閒下來後預先抓取百科資料、${ROUTES.length} 個分頁有內容、跨頁物品連結可跳轉、chunk 載入失敗會自動重整、搜尋面板可開啟、配裝模擬可套用流派、傭兵分頁可開啟並計入光環、召喚技能顯示召喚物、手機版無橫向捲動、無頁面錯誤`);
+console.log(`冒煙測試通過（${base}）：首頁與個別分頁 JS 在預算內、首頁閒下來後預先抓取百科資料、瀏覽器上一頁／下一頁可在分頁間切換、${ROUTES.length} 個分頁有內容、跨頁物品連結可跳轉、chunk 載入失敗會自動重整、搜尋面板可開啟、配裝模擬可套用流派、傭兵分頁可開啟並計入光環、召喚技能顯示召喚物、手機版無橫向捲動、無頁面錯誤`);

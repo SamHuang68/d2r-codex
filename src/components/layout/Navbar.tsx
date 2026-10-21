@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChevronsLeft, ChevronsRight, Flame, Search } from 'lucide-react';
-import { NAV_GROUPS, ALL_NAV_MODULES } from './navConfig';
+import { NAV_GROUPS, ALL_NAV_MODULES, isPlainLeftClick, tabHref } from './navConfig';
 
 interface NavbarProps {
   activeTab: string;
@@ -15,8 +15,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
   return (
     <header className="sticky top-0 z-40 w-full bg-sanctuary-950/90 backdrop-blur-md border-b border-sanctuary-800/80">
       <div className="px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
-        <div
-          onClick={() => setActiveTab('overview')}
+        <a
+          href={tabHref('overview')}
+          onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); setActiveTab('overview'); }}
+          aria-label="回到主頁"
           className="flex items-center gap-2.5 cursor-pointer group shrink-0"
         >
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-d2-unique to-sanctuary-900 p-0.5 shadow-glow-gold flex items-center justify-center">
@@ -32,7 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
               暗黑II：獄火重生 全資料庫
             </div>
           </div>
-        </div>
+        </a>
 
         {current && (
           <div className="hidden md:flex items-center gap-2 text-sm text-sanctuary-300 min-w-0">
@@ -103,9 +105,12 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
               {group.items.map((item) => {
                 const isActive = activeTab === item.id;
                 return (
-                  <button
+                  <a
                     key={item.id}
-                    onClick={() => {
+                    href={tabHref(item.id)}
+                    onClick={(e) => {
+                      if (!isPlainLeftClick(e)) return;
+                      e.preventDefault();
                       setActiveTab(item.id);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
@@ -122,7 +127,7 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
                   >
                     <span className="shrink-0">{item.icon}</span>
                     {!collapsed && <span className="truncate">{item.label}</span>}
-                  </button>
+                  </a>
                 );
               })}
             </div>

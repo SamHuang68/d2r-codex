@@ -66,3 +66,10 @@ export const NAV_GROUPS: NavGroup[] = [
 ];
 
 export const ALL_NAV_MODULES: NavModule[] = NAV_GROUPS.flatMap((g) => g.items);
+
+/**
+ * 導覽項目是真正的連結（href="#分頁"）：一般左鍵點擊由程式在站內換頁（並新增一筆瀏覽器歷史紀錄）；
+ * Ctrl／⌘／Shift／中鍵點擊交給瀏覽器，會在新分頁或新視窗開啟對應的分頁網址。
+ */
+export const isPlainLeftClick = (e: React.MouseEvent): boolean => !(e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey);
+export const tabHref = (id: string): string => `#${id}`;
