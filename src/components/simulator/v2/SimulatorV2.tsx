@@ -379,7 +379,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
             {tab === 'skills' && (
               <SkillTreeV2 classCode={cls.code} level={level} skillPoints={skillPoints} onUpdateSkillPoints={setSkillPoints}
                 activeSkillId={activeSkillId} onSetActiveSkillId={setActiveSkillId} bonuses={skillBonuses}
-                damageOpts={damageOpts} budget={skillBudget} used={skillUsed} />
+                damageOpts={damageOpts} ownerStats={result.stats} budget={skillBudget} used={skillUsed} />
             )}
           </div>
         </div>

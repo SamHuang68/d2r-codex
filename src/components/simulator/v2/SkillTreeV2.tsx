@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { summonInfo } from '../../../engine/summons';
 import { Crosshair, Flame, Shield, Skull, Snowflake, Sparkles, Sword, Zap, Lock } from 'lucide-react';
 import {
   CLASS_CODE_ZH, GAME_SKILLS, damageText, effectiveLevel, manaCost, skillByName, skillDamage, skillLevelsFrom, synergySources, synergyTargets, treesOf,
@@ -17,6 +18,8 @@ export interface SkillTreeV2Props {
   bonuses: SkillBonuses;
   /** 專精、穿透與目標抗性（由上層依裝備與光環算出） */
   damageOpts: (s: GameSkill) => DamageOptions;
+  /** 玩家目前的屬性（召喚物繼承穿透、專精用） */
+  ownerStats?: Record<string, number>;
   /** 技能點預算與已用 */
   budget: number;
   used: number;
@@ -38,7 +41,7 @@ function SkillGlyph({ skill }: { skill: GameSkill }) {
   return <Crosshair className={`${cls} t-dim`} />;
 }
 
-export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skillPoints, onUpdateSkillPoints, activeSkillId, onSetActiveSkillId, bonuses, damageOpts, budget, used }) => {
+export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skillPoints, onUpdateSkillPoints, activeSkillId, onSetActiveSkillId, bonuses, damageOpts, ownerStats, budget, used }) => {
   const trees = useMemo(() => treesOf(classCode), [classCode]);
   const [treeIdx, setTreeIdx] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -127,6 +130,7 @@ export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skil
   const dmgRes = selected ? skillDamage(selected, effective, levels, damageOpts(selected)) : undefined;
   const dmg = damageText(dmgRes); const dmgTarget = targetDamageText(dmgRes);
   const mana = selected && effective > 0 ? manaCost(selected, effective) : undefined;
+  const summon = useMemo(() => (selected && effective > 0 && selected.summonId ? summonInfo(selected, effective, levels, ownerStats ?? {}, 2) : undefined), [selected, effective, levels, ownerStats]);
   const softBonus = effective > 0 ? effective - invested : 0;
 
   return (
@@ -202,6 +206,19 @@ export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skil
                   {dmgTarget && <div className="flex justify-between gap-2"><span className="k">　</span><span className="v t-gold" style={{ fontSize: 14 }}>{dmgTarget}</span></div>}
                   {mana !== undefined && <div className="flex justify-between gap-2"><span className="k">魔力消耗</span><span className="v t-cold" style={{ fontSize: 14 }}>{mana}</span></div>}
                   <div className="d2-sub">含協同與元素專精；未含武器與傷害加成。協同只計硬點（遊戲規則）；專精與協同相乘為假設。</div>
+                </div>
+              )}
+              {summon && (
+                <div className="d2-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 3 }} aria-label="召喚物">
+                  <div className="flex justify-between gap-2"><span className="k">召喚物</span><span className="v t-gold" style={{ fontSize: 14 }}>最多 {summon.count ?? '—'} 隻</span></div>
+                  {summon.lines.length > 0 && <div className="d2-sub">技能給每隻的加成（遊戲技能表，含協同與專精）</div>}
+                  {summon.lines.map((l, i) => <div key={`l${i}`} className="text-xs t-magic">{l}</div>)}
+                  {summon.inherited.length > 0 && <div className="d2-sub">繼承你身上的</div>}
+                  {summon.inherited.map((l, i) => <div key={`i${i}`} className="text-xs t-magic">{l}</div>)}
+                  {summon.base.length > 0 && <div className="d2-sub">怪物本身的基礎值（資料表，地獄）</div>}
+                  {summon.base.map((l, i) => <div key={`b${i}`} className="text-xs t-dim">{l}</div>)}
+                  {summon.unsupported.length > 0 && <div className="text-xs t-dim">公式算不出、未列入：{summon.unsupported.join('、')}</div>}
+                  <div className="d2-sub">各項來源分開列出，沒有合併成最終傷害：技能加成與怪物基礎值在遊戲內如何合併、召喚物的等級換算，沒有可核對的來源。</div>
                 </div>
               )}
               <div className="flex flex-wrap gap-2">

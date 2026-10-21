@@ -190,6 +190,16 @@ async function runOnce(base, browser) {
     } catch (e) {
       failures.push(`[桌面] 配裝模擬無法載入、套用流派或開啟傭兵分頁：${String(e.message).split('\n')[0]}`);
     }
+    // 召喚物：死靈法師的復生骷髏加到滿，技能詳情出現召喚物區塊（數量與技能加成）
+    try {
+      await page.locator('.d2sim .d2-class', { hasText: '死靈法師' }).first().click();
+      await page.getByRole('tab', { name: '技能樹' }).click();
+      await page.locator('.d2-skill', { hasText: '復生骷髏' }).first().click();
+      await page.getByRole('button', { name: 'MAX' }).first().click();
+      await page.waitForFunction(() => /最多\s*\d+\s*隻/.test(document.querySelector('[aria-label="召喚物"]')?.innerText ?? ''), null, { timeout: 10000 });
+    } catch (e) {
+      failures.push(`[桌面] 召喚技能的召喚物區塊沒有出現：${String(e.message).split('\n')[0]}`);
+    }
     await ctx.close();
   }
 
@@ -232,4 +242,4 @@ try {
   local?.server.close();
 }
 if (failures.length) { console.error(`\n冒煙測試失敗（${base}）`); process.exit(1); }
-console.log(`冒煙測試通過（${base}）：首頁與個別分頁 JS 在預算內、${ROUTES.length} 個分頁有內容、跨頁物品連結可跳轉、chunk 載入失敗會自動重整、搜尋面板可開啟、配裝模擬可套用流派、傭兵分頁可開啟並計入光環、手機版無橫向捲動、無頁面錯誤`);
+console.log(`冒煙測試通過（${base}）：首頁與個別分頁 JS 在預算內、${ROUTES.length} 個分頁有內容、跨頁物品連結可跳轉、chunk 載入失敗會自動重整、搜尋面板可開啟、配裝模擬可套用流派、傭兵分頁可開啟並計入光環、召喚技能顯示召喚物、手機版無橫向捲動、無頁面錯誤`);

@@ -253,6 +253,9 @@ const skills = skillRows.filter((r) => r.charclass && skillDesc.get(r.skilldesc)
     params,
   };
   const unq = (v) => (v === undefined ? v : String(v).replace(/^"|"$/g, ''));
+  // 召喚技能：召喚的怪物（monstats 的 Id，見 summons.json）與同時存在的數量算式
+  if (r.summon) { sk.summonId = r.summon; if (r.petmax) sk.petMax = unq(r.petmax); }
+  if (r.ToHit !== undefined || r.LevToHit !== undefined) { sk.toHit = num(r.ToHit) ?? 0; sk.levToHit = num(r.LevToHit) ?? 0; }
   const auraStats = []; for (let i = 1; i <= 6; i++) if (r[`aurastat${i}`]) auraStats.push({ stat: r[`aurastat${i}`], calc: unq(r[`aurastatcalc${i}`]) });
   const passiveStats = []; for (let i = 1; i <= 14; i++) if (r[`passivestat${i}`]) passiveStats.push({ stat: r[`passivestat${i}`], calc: unq(r[`passivecalc${i}`]) });
   if (auraStats.length) { sk.auraStats = auraStats; sk.auraState = r.aurastate; sk.auraTargetState = r.auratargetstate; sk.auraLen = r.auralencalc; }
@@ -263,8 +266,28 @@ const skills = skillRows.filter((r) => r.charclass && skillDesc.get(r.skilldesc)
     if (r.MinDam || r.MaxDam) sk.phys = { min: { b: num(r.MinDam) ?? 0, lv: lev(r, 'MinLevDam') }, max: { b: num(r.MaxDam) ?? 0, lv: lev(r, 'MaxLevDam') }, syn: r.DmgSymPerCalc };
     if (r.SrcDam) sk.srcDam = num(r.SrcDam);
   }
+  // 沒有元素類型、但有元素傷害欄位的技能（例如骷髏戰士的 edmn）：計算式裡的 edmn／edmx 用
+  if (!r.EType && (r.EMin !== undefined || r.EMax !== undefined)) {
+    sk.hitShift = num(r.HitShift) ?? 0;
+    sk.edmg = { min: { b: num(r.EMin) ?? 0, lv: lev(r, 'EMinLev') }, max: { b: num(r.EMax) ?? 0, lv: lev(r, 'EMaxLev') } };
+  }
   return sk;
 });
+// --- 召喚物的怪物基礎數值（monstats.txt；普通／惡夢／地獄三組）---
+// 召喚技能（skills.json 的 summonId）召喚的怪物。生命沒有難度區分（遊戲再依等級換算），其餘三組依序是 普通、惡夢、地獄。
+// 只輸出資料表的值，不合併技能提供的加成（合併規則沒有可核對的來源）。
+// 技能表的 summon 欄與 monstats 的 Id 大小寫不一定一致（技能表 ClayGolem，monstats claygolem），用小寫對照
+const monstatsRows = new Map(tsv('monstats.txt').map((r) => [r.Id.toLowerCase(), r]));
+const diffTriple = (r, k) => [num(r[k]), num(r[`${k}(N)`]), num(r[`${k}(H)`])];
+const summonMonsters = [];
+for (const id of [...new Set(skills.map((x) => x.summonId).filter(Boolean).map((x) => x.toLowerCase()))].sort()) {
+  const r = monstatsRows.get(id.toLowerCase()); if (!r) continue;
+  summonMonsters.push({
+    id: r.Id, minHP: num(r.minHP), maxHP: num(r.maxHP), ac: diffTriple(r, 'AC'), tohit: diffTriple(r, 'A1TH'),
+    dmg: [1, 2].map((a) => ({ min: diffTriple(r, `A${a}MinD`), max: diffTriple(r, `A${a}MaxD`), tohit: diffTriple(r, `A${a}TH`) })).filter((x) => x.max.some((v) => v)),
+    res: { physical: diffTriple(r, 'ResDm'), magic: diffTriple(r, 'ResMa'), fire: diffTriple(r, 'ResFi'), lightning: diffTriple(r, 'ResLi'), cold: diffTriple(r, 'ResCo'), poison: diffTriple(r, 'ResPo') },
+  });
+}
 // 技能計算式裡的函式（lnXY 線性、dmXY 遞減）。定義在遊戲的 skillcalc.txt，括號內是遊戲自己的寫法，引擎用同一份定義求值，不自己寫死參數配對
 // （例如 ln91 是 par9＋(lvl−1)×par10、ln21 是 par11＋(lvl−1)×par12，不是字面上的第 9／1、第 2／1 個參數）
 const skillCalcFns = Object.fromEntries(tsv('skillcalc.txt').filter((r) => /^(ln|dm)\d\d$/.test(r.code)).map((r) => [r.code, r['*Description']]));
@@ -326,7 +349,7 @@ const write = (n, d) => fs.writeFileSync(path.join(outDir, n), JSON.stringify(d)
 write('meta.json', meta); write('itemtypes.json', itemtypes); write('bases.json', bases); write('uniques.json', uniques);
 write('gems.json', gems); write('sets.json', sets); write('setItems.json', setItems); write('runewords.json', runewords);
 write('properties.json', properties); write('stats.json', stats); write('statStrings.zhTW.json', statStrings);
-write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns); write('hireling.json', hireling);
+write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns); write('hireling.json', hireling); write('summons.json', summonMonsters);
 
 console.log(JSON.stringify(meta.counts));
 console.log('missing property defs:', missingProps.length, missingProps.slice(0, 20).join(','));

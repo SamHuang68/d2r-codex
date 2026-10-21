@@ -24,7 +24,7 @@ const SKILL_STAT_LABEL: Record<string, string> = {
   passive_summon_resist: '召喚物所有抗性',
   velocitypercent: '跑步／行走速度',
   attackrate: '攻擊速度',
-  skill_armor_percent: '敵人防禦',
+  skill_armor_percent: '防禦',
   curse_resistance: '詛咒持續時間降低',
   skill_handofathena: '敵人遠程攻擊減慢至',
 };

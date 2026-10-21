@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -1084,6 +1084,70 @@ console.log('【傭兵（hireling.txt）】');
     const oldBack = E.parseProfile(oldText); assert.equal(typeof oldBack, 'object'); assert.equal(E.fromSavedData(oldBack.data).snap.merc, undefined);
     const bad = JSON.parse(text); bad.data.merc.equipped = { ring1: bad.data.merc.equipped.head };
     assert.match(String(E.parseProfile(JSON.stringify(bad))), /傭兵不能穿戴/);
+  });
+}
+
+console.log('【召喚物與計算式的完整度】');
+{
+  const { evalCalc, CalcError, GAME_SKILLS, skillByName, skillLevelsFrom, skillVars, petCount, passiveEffects, auraEffects, summonInfo, summonMonsterOf, SUMMON_MONSTERS } = E;
+  const zero = { all: 0, byClass: 0, byTab: {}, single: {} };
+  const ctx = (o = {}) => ({ params: {}, skill: () => undefined, ...o });
+  t('比較與三元運算：遊戲表的寫法（lvl < 4）? 甲 : 乙，條件為真取前者；比較結果是 1／0', () => {
+    assert.equal(evalCalc('(1 < 2) ? 5 : 7', ctx()), 5); assert.equal(evalCalc('(3 < 2) ? 5 : 7', ctx()), 7);
+    assert.equal(evalCalc('(2 >= 2) + (2 <= 1) + (3 == 3) + (3 != 3)', ctx()), 2);
+    const pet = '(lvl < 4) ?lvl:(2+lvl/3)'; // 骷髏戰士的數量算式
+    assert.equal(evalCalc(pet, ctx({ lvl: 3 })), 3); assert.equal(evalCalc(pet, ctx({ lvl: 20 })), 8); assert.equal(evalCalc(pet, ctx({ lvl: 4 })), 3);
+  });
+  t('stat(\'X\'.accr) 是擁有者（玩家）的屬性；沒提供擁有者就算不出來，不當成 0。資料表沒填的參數格讀成 0（遊戲行為）', () => {
+    assert.equal(evalCalc("stat('item_pierce_cold_immunity'.accr)", ctx({ stat: (n) => (n === 'item_pierce_cold_immunity' ? 20 : undefined) })), 20);
+    assert.throws(() => evalCalc("stat('item_pierce_cold_immunity'.accr)", ctx()), CalcError);
+    assert.equal(evalCalc("stat('x'.accr", ctx({ stat: () => 7 })), 7, '遊戲表有一條缺右括號（刀刃哨衛）');
+    assert.equal(evalCalc('par7 + 5', ctx()), 5); assert.equal(evalCalc("skill('X'.par3)", ctx({ skill: () => ({ lvl: 1, blvl: 1 }), skillParams: () => ({}) })), 0);
+  });
+  t('技能衍生數值：骷髏戰士的 edmn（無元素類型但有 EMin 欄位）20 級＝0＋8×1＋4×2＝16；元素技能含協同；toht＝命中加成', () => {
+    const rs = skillByName('Raise Skeleton'); const v = skillVars(rs, 20, skillLevelsFrom({ raise_skeleton: 20 }, zero));
+    assert.equal(v.edmn, 16); assert.equal(v.edns, 16 * 256);
+    const fa = skillByName('Fire Arrow'); const lv = skillLevelsFrom({ fire_arrow: 10 }, zero); const lv2 = skillLevelsFrom({ fire_arrow: 10, exploding_arrow: 10 }, zero);
+    assert.ok(skillVars(fa, 10, lv2).edmn > skillVars(fa, 10, lv).edmn, '協同讓 edmn 變大');
+    const en = skillByName('Enchant'); assert.equal(skillVars(en, 10, skillLevelsFrom({ enchant: 10 }, zero)).toht, (en.toHit ?? 0) + 9 * (en.levToHit ?? 0));
+  });
+  t('全職業被動／光環計算式的完整度：409 條裡算不出來的只剩 10 條（6 條本來就沒有計算式、其餘 4 條需要遊戲沒有公開的變數）；這個數字只能降不能升', () => {
+    let total = 0; const bad = [];
+    for (const s of GAME_SKILLS) {
+      const levels = skillLevelsFrom({ [s.id]: 10 }, zero);
+      for (const [lines, f] of [[s.auraStats, auraEffects], [s.passiveStats, passiveEffects]]) {
+        if (!lines) continue;
+        f(s, 10, levels, { owner: {} }).forEach((e, i) => { total++; if (!e.supported) bad.push(`${s.nameEn}:${lines[i].stat}`); });
+      }
+    }
+    assert.equal(total, 409); assert.ok(bad.length <= 10, `算不出 ${bad.length} 條：${bad.join('、')}`);
+  });
+  t('召喚數量（petmax 算式）：骷髏 20 級 8 隻、靈狼 20 級 5 隻、烏鴉 20 級 5 隻、魔像 1 隻；32 個召喚技能有 30 個算得出', () => {
+    const cnt = (n, L) => { const s = skillByName(n); return petCount(s, L, skillLevelsFrom({ [s.id]: L }, zero)); };
+    assert.equal(cnt('Raise Skeleton', 20), 8); assert.equal(cnt('Raise Skeleton', 3), 3); assert.equal(cnt('Summon Spirit Wolf', 20), 5); assert.equal(cnt('Raven', 20), 5); assert.equal(cnt('Clay Golem', 20), 1);
+    const sm = GAME_SKILLS.filter((s) => s.summonId); assert.equal(sm.length, 32);
+    assert.ok(sm.filter((s) => petCount(s, 20, skillLevelsFrom({ [s.id]: 20 }, zero)) !== undefined).length >= 30);
+  });
+  t('骷髏戰士 20 級＋骷髏專精 20 級：生命 +160、固定傷害 +56、傷害強化 +119%（skill 表的計算式逐項算出），怪物基礎值生命 21', () => {
+    const s = skillByName('Raise Skeleton'); const hard = { raise_skeleton: 20, skeleton_mastery: 20 };
+    const info = summonInfo(s, 20, skillLevelsFrom(hard, zero), {}, 2);
+    assert.equal(info.count, 8); assert.deepEqual(info.unsupported, []);
+    assert.ok(info.lines.includes('生命 +160'), info.lines.join('|')); assert.ok(info.lines.some((l) => /^傷害 \+56/.test(l)), info.lines.join('|'));
+    assert.ok(info.lines.some((l) => /\+119% 傷害強化/.test(l)), info.lines.join('|'));
+    assert.ok(info.base.includes('生命 21'), info.base.join('|'));
+  });
+  t('繼承：靈狼繼承玩家的冰寒穿透免疫；玩家沒有就不列。魔像的怪物資料大小寫不同也找得到', () => {
+    const s = skillByName('Summon Spirit Wolf'); const lv = skillLevelsFrom({ summon_spirit_wolf: 20 }, zero);
+    assert.ok(summonInfo(s, 20, lv, { item_pierce_cold_immunity: 20 }, 2).inherited.length > 0);
+    assert.equal(summonInfo(s, 20, lv, {}, 2).inherited.length, 0);
+    const g = skillByName('Clay Golem'); assert.ok(summonMonsterOf(g), 'ClayGolem → claygolem');
+    assert.ok(GAME_SKILLS.filter((x) => x.summonId && summonMonsterOf(x)).length >= 25 && SUMMON_MONSTERS.length === 31);
+  });
+  t('術士召喚物：ln91／ln21／dm91 在召喚技能上算得出（之前引用的是錯的參數）；沒有技能點或沒有召喚物的技能回傳 undefined', () => {
+    const s = skillByName('Summon Goatman'); const lv = skillLevelsFrom({ summon_goatman: 20, demonic_mastery: 20 }, zero);
+    const info = summonInfo(s, 20, lv, {}, 2); assert.ok(info && info.unsupported.length === 0 && info.lines.length >= 5, JSON.stringify(info && info.unsupported));
+    assert.equal(summonInfo(skillByName('Fire Arrow'), 20, skillLevelsFrom({ fire_arrow: 20 }, zero), {}, 2), undefined);
+    assert.equal(summonInfo(s, 0, lv, {}, 2), undefined);
   });
 }
 
