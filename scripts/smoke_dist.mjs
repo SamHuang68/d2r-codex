@@ -94,6 +94,16 @@ async function runOnce(base, browser) {
       if (/Failed to load resource/i.test(m.text()) || (loc && !loc.startsWith(origin))) return;
       failures.push(`[${tag}] console 錯誤：${m.text().slice(0, 200)}`);
     });
+    // 同網域的 /assets/*.js 一定要是 JavaScript：網址不存在時主機會回傳首頁 HTML（SPA 後備），CDN 一旦把它依 /assets/* 的長期快取規則
+    // 存下來，那個網址就會一直拿到 HTML（頁面的重新載入重試會用別的網址繞過去，所以只看頁面內容抓不到）
+    const seen = new Set();
+    page.on('response', (res) => {
+      const u = res.url();
+      if (!u.startsWith(origin) || !/\/assets\/[^?]*\.js(\?|$)/.test(u) || seen.has(u)) return;
+      seen.add(u);
+      const ct = res.headers()['content-type'] ?? '';
+      if (!/javascript/i.test(ct)) failures.push(`[${tag}] 程式檔 ${u.split('/').pop().split('?')[0]} 的內容類型不是 JavaScript（${ct || '沒有 content-type'}，HTTP ${res.status()}）：可能是 CDN 把找不到檔案時的首頁快取在這個網址上`);
+    });
   };
   const withBust = (hash = '') => `${base}${base.includes('?') ? '&' : '?'}smoke=${Date.now()}${hash}`;
   const textLen = (page) => page.evaluate(() => (document.body?.innerText ?? "").length);
