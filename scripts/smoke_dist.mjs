@@ -162,6 +162,18 @@ async function runOnce(base, browser) {
       await hp.close();
     }
 
+    // 傭兵寶典的資料表數值：預設第二幕地獄，列出傭兵數值與技能；切到普通難度後類型變成三種光環傭兵
+    await page.evaluate(() => { location.hash = '#mercenaries'; });
+    try {
+      await page.waitForFunction(() => /生命/.test(document.querySelector('[aria-label="傭兵基礎數值"]')?.innerText ?? '') && /戳刺/.test(document.querySelector('[aria-label="傭兵技能"]')?.innerText ?? ''), null, { timeout: 15000 });
+      const hell = await page.locator('[aria-label="傭兵類型"] button').count();
+      await page.locator('[aria-label="難度"]').getByRole('button', { name: '普通' }).click();
+      await page.waitForFunction(() => document.querySelectorAll('[aria-label="傭兵類型"] button').length === 3, null, { timeout: 10000 });
+      if (hell !== 6) failures.push(`[桌面] 傭兵寶典第二幕地獄難度的類型應有 6 種，實際 ${hell}`);
+    } catch (e) {
+      failures.push(`[桌面] 傭兵寶典的資料表數值沒有出現或切換難度沒有反應：${String(e.message).split('\n')[0]}`);
+    }
+
     // 跨頁連結（傭兵頁的物品名）：點了才載入比對用的資料表，再跳到對應分頁
     await page.evaluate(() => { location.hash = '#mercenaries'; });
     try {
