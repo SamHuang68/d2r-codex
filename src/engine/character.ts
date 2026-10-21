@@ -1,4 +1,4 @@
-import { resolveModifier } from './modifiers';
+import { resolveModifier, type ResolveContext } from './modifiers';
 import type { BaseItem, CharacterInput, CharacterResult, EquippedItem, GameData, Modifier, StatEntry } from './types';
 
 export const CLASS_INDEX = ['Amazon', 'Sorceress', 'Necromancer', 'Paladin', 'Barbarian', 'Druid', 'Assassin', 'Warlock'];
@@ -55,7 +55,7 @@ function setBonusEntries(data: GameData, items: EquippedItem[], unhandled: Chara
 }
 
 /** 單件裝備展開成 stat 條目（含鑲嵌）；無法解析者列入 unhandled，不會悄悄丟掉 */
-function expandItem(data: GameData, item: EquippedItem, unhandled: CharacterResult['unhandled']): ItemCalc {
+function expandItem(data: GameData, item: EquippedItem, unhandled: CharacterResult['unhandled'], ctx: ResolveContext = {}): ItemCalc {
   const baseByCode = new Map(data.bases.map((b) => [b.code, b]));
   const gemByCode = new Map(data.gems.map((g) => [g.code, g]));
   const entries: StatEntry[] = [];
@@ -67,7 +67,7 @@ function expandItem(data: GameData, item: EquippedItem, unhandled: CharacterResu
     return g[cat];
   });
   for (const m of [...item.mods, ...socketMods]) {
-    const r = resolveModifier(m, data.properties, item.roll ?? 1);
+    const r = resolveModifier(m, data.properties, item.roll ?? 1, { ...ctx, randomSkill: item.randomSkill });
     if (r.unresolved) unhandled.push({ slot: item.slot, code: m.code, reason: r.unresolved });
     else if (r.note && r.note.startsWith('未明確')) unhandled.push({ slot: item.slot, code: m.code, reason: r.note });
     entries.push(...r.entries);
@@ -121,7 +121,8 @@ export function computeCharacter(data: GameData, input: CharacterInput): Charact
   const baseByCode = new Map(data.bases.map((b) => [b.code, b]));
 
   // 1. 展開所有 modifier → stat 條目
-  const calcs: ItemCalc[] = input.items.map((item) => expandItem(data, item, unhandled));
+  const classIndex = CLASS_INDEX.indexOf(input.className);
+  const calcs: ItemCalc[] = input.items.map((item) => expandItem(data, item, unhandled, { classIndex: classIndex >= 0 ? classIndex : undefined }));
   const setBonus = setBonusEntries(data, input.items, unhandled);
   const allEntries: StatEntry[] = [...calcs.flatMap((c) => c.entries), ...setBonus.entries, ...(input.extraStats ?? [])];
 

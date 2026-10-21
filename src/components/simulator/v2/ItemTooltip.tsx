@@ -5,6 +5,7 @@ import { itemOwnStats } from '../../../engine/character';
 import { buildEngineItem } from '../../../engine/build';
 import { gameData } from '../../../engine/data';
 import { describeModifiers } from '../../../engine/describe';
+import { skillByName } from '../../../engine/skills';
 import type { Equipped } from './types';
 
 const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
@@ -54,6 +55,7 @@ export const ItemTooltipBody: React.FC<BodyProps> = ({ eq, level, rollMax, attrs
       {eq.ethereal && <div className="mod">無形（無法修復）</div>}
       {mods.map((l, i) => <div key={i} className={`mod ${l.known ? '' : 'is-unknown'}`}>{l.text}</div>)}
       {e.kind === 'runeword' && e.sockets && <div className="hint">符文之語：{e.sockets.map(runeName).join(' + ')}</div>}
+      {e.mods.some((m) => m.code.toLowerCase() === 'skill-rand') && <div className="hint">{eq.randomSkill ? `隨機技能：${skillByName(eq.randomSkill)?.name ?? eq.randomSkill}` : '尚未選擇隨機技能，該項加成未計入'}</div>}
       {setDef && (
         <div className="set-block">
           <div className="t-set">{setDef.name ?? e.setName}（{setCount}/{setDef.size}）</div>

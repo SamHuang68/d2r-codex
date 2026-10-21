@@ -10,6 +10,8 @@ export interface Equipped {
   sockets?: string[];
   /** 白裝底材的孔數（暗金／套裝／符文之語為固定） */
   socketCount?: number;
+  /** 「隨機單一技能」類屬性（奧姆斯長袍）由使用者選的技能英文名稱 */
+  randomSkill?: string;
 }
 
 export type EquippedMap = Partial<Record<DollSlot, Equipped>>;

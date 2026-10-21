@@ -1,5 +1,5 @@
 import { CLASS_ZH, findEntry, getSocketables, withBase, type CatalogEntry } from '../engine/catalog';
-import { skillById } from '../engine/skills';
+import { skillById, skillByName } from '../engine/skills';
 import { customEntry, validateCustomDef, type CustomItemDef } from '../engine/customItem';
 import type { Alloc, Difficulty, DollSlot, Equipped, EquippedMap, Quests } from '../components/simulator/v2/types';
 
@@ -24,14 +24,14 @@ export interface SimSnapshot {
 export interface ApplyParts { gear: boolean; skills: boolean; character: boolean }
 export const ALL_PARTS: ApplyParts = { gear: true, skills: true, character: true };
 
-interface SavedItem { id: string; baseCode?: string; ethereal?: boolean; sockets?: string[]; socketCount?: number; /** 自訂飾品：整份定義存進去（目錄裡找不到它） */ custom?: CustomItemDef }
+interface SavedItem { id: string; baseCode?: string; ethereal?: boolean; sockets?: string[]; socketCount?: number; randomSkill?: string; /** 自訂飾品：整份定義存進去（目錄裡找不到它） */ custom?: CustomItemDef }
 type SavedData = Omit<SimSnapshot, 'equipped' | 'charms'> & { equipped: Partial<Record<DollSlot, SavedItem>>; charms: SavedItem[] };
 
 export interface SavedProfile { v: 1; id: string; name: string; savedAt: number; data: SavedData }
 
 const KEY = 'd2sim.profiles.v1';
 
-const saveItem = (eq: Equipped): SavedItem => ({ id: eq.entry.id, baseCode: eq.entry.baseCode, ethereal: eq.ethereal || undefined, sockets: eq.sockets?.length ? eq.sockets : undefined, socketCount: eq.socketCount, custom: eq.entry.custom });
+const saveItem = (eq: Equipped): SavedItem => ({ id: eq.entry.id, baseCode: eq.entry.baseCode, ethereal: eq.ethereal || undefined, sockets: eq.sockets?.length ? eq.sockets : undefined, socketCount: eq.socketCount, randomSkill: eq.randomSkill, custom: eq.entry.custom });
 
 /** 畫面狀態 → 存檔：只存物品 id 與玩家的選擇，不存整份資料 */
 export function toSavedData(s: SimSnapshot): SavedData {
@@ -51,7 +51,7 @@ function restoreItem(it: SavedItem, errors: string[]): Equipped | undefined {
   if (it.baseCode && it.baseCode !== entry.baseCode) entry = withBase(entry, it.baseCode);
   const known = getSocketables();
   const sockets = it.sockets?.filter((id) => { const ok = known.some((s) => s.id === id); if (!ok) errors.push(`找不到鑲嵌物「${id}」`); return ok; });
-  return { entry, ethereal: it.ethereal, sockets: sockets?.length ? sockets : undefined, socketCount: it.socketCount };
+  return { entry, ethereal: it.ethereal, sockets: sockets?.length ? sockets : undefined, socketCount: it.socketCount, randomSkill: it.randomSkill && skillByName(it.randomSkill) ? it.randomSkill : undefined };
 }
 
 /** 存檔 → 畫面狀態；任何找不到的項目都會列入 errors，不會悄悄丟掉 */
@@ -77,7 +77,8 @@ function cleanItem(v: unknown, where: string): SavedItem | string {
   if (v.sockets !== undefined && !(Array.isArray(v.sockets) && v.sockets.length <= 6 && v.sockets.every((x) => typeof x === 'string'))) return `${where}的鑲嵌欄位不合法`;
   let custom: CustomItemDef | undefined;
   if (v.custom !== undefined) { const c = validateCustomDef(v.custom); if (typeof c === 'string') return `${where}：${c}`; custom = c; }
-  return { custom, id: v.id, baseCode: v.baseCode as string | undefined, ethereal: v.ethereal === true || undefined, sockets: v.sockets as string[] | undefined, socketCount: v.socketCount === undefined ? undefined : int(v.socketCount, 0, 6, 0) };
+  if (v.randomSkill !== undefined && typeof v.randomSkill !== 'string') return `${where}的隨機技能不是文字`;
+  return { custom, randomSkill: v.randomSkill as string | undefined, id: v.id, baseCode: v.baseCode as string | undefined, ethereal: v.ethereal === true || undefined, sockets: v.sockets as string[] | undefined, socketCount: v.socketCount === undefined ? undefined : int(v.socketCount, 0, 6, 0) };
 }
 
 /** 檢查存檔／匯入內容的結構，不信任外部文字。結構不合就回傳原因（不會丟例外，也不會讓壞資料流進畫面） */

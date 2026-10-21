@@ -174,12 +174,15 @@ const COMMUNITY_ALIASES: Record<string, string> = {
 };
 
 /**
- * 清理與正規化搜尋關鍵字
- * 去除括號註釋（例如 "(Faith GMB)" 提取 "Faith" 或主體）
+ * 清理與正規化搜尋關鍵字，回傳依序嘗試的候選詞。
+ * - 「烏鴉之霜 (Raven Frost) 無法被凍結」：括號可以在句中，後面接說明文字也沒關係，取括號前的主名、括號內的英文名與其第一個字
+ * - 「烏鴉之霜 無法被凍結」：沒有括號時，依序嘗試整句、第一個詞、前兩個詞（遇到說明文字時，物品名通常在最前面）
+ * - 斜線、「或」分隔的二選一，拆成各自的候選
  */
 export function cleanSearchQuery(raw: string): string[] {
   if (!raw) return [];
-  const trimmed = raw.trim();
+  const trimmed = raw.replace(/[【】]/g, '').replace(/\s+/g, ' ').trim();
+  if (!trimmed) return [];
 
   // 若含有斜線二選一（例如 "巨骷髏/安頭"），拆分成兩個候選詞
   if (trimmed.includes('/')) {
@@ -189,15 +192,19 @@ export function cleanSearchQuery(raw: string): string[] {
     return trimmed.split(' 或 ').map(s => s.trim()).filter(Boolean);
   }
 
-  // 檢查是否包含括號例如 "信心 (Faith GMB)"
-  const bracketMatch = trimmed.match(/^([^(（]+)[(（]([^)）]+)[)）]$/);
+  // 括號註釋：主名（括號前）＋括號內的英文名；括號後的說明文字一律忽略
+  const bracketMatch = trimmed.match(/^([^(（]+?)\s*[(（]([^)）]+)[)）]/);
   if (bracketMatch) {
     const mainPart = bracketMatch[1].trim();
     const subPart = bracketMatch[2].trim();
     // 檢查 subPart 內是否有英文字詞（例如 "Faith GMB" -> 拆出 "Faith"）
     const subWords = subPart.split(/\s+/);
-    return [mainPart, subPart, subWords[0]].filter(Boolean);
+    return [...new Set([mainPart, subPart, subWords[0]].filter(Boolean))];
   }
+
+  // 沒有括號但帶了說明文字：整句 → 第一個詞 → 前兩個詞
+  const words = trimmed.split(' ');
+  if (words.length > 1) return [...new Set([trimmed, words[0], words.slice(0, 2).join(' ')])];
 
   return [trimmed];
 }

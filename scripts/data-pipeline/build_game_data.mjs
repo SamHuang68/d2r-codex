@@ -278,6 +278,14 @@ console.log('skills(UI):', skills.length, 'bad prereq:', badPrereq.length, badPr
 const inventory = tsv('inventory.txt').map((r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, num(v)])));
 const uiCategories = tsv('itemuicategories.txt').map((r) => ({ name: r.Name, isEquipment: r.isEquipment === '1', parent: r.ParentCategory, qualityFilter: num(r.QualityFilter), columns: num(r.NumColumns) }));
 
+// 沒有職業的「物品技能」（印記、蜘蛛網、譫妄、生命連結）的狀態持續時間：auralencalc 是影格數，遊戲 25 影格＝1 秒。
+// 描述屬性時用（例如熊人／狼人印記持續幾秒），不再把秒數寫死在程式裡。
+const itemSkills = {};
+for (const r of skillRows) {
+  if (r.charclass || !/^\d+$/.test(r.auralencalc ?? '')) continue;
+  itemSkills[r.skill] = { id: slug(r.skill), frames: num(r.auralencalc), seconds: num(r.auralencalc) / 25 };
+}
+
 fs.mkdirSync(outDir, { recursive: true });
 const meta = { generator: 'scripts/data-pipeline/build_game_data.mjs', gameVersion, source: 'D2R local CASC (excel + zhTW strings)', generatedAt: new Date().toISOString().slice(0, 10),
   counts: { bases: bases.length, uniques: uniques.length, gems: gems.length, sets: sets.length, setItems: setItems.length, runewords: runewords.length, skills: skills.length } };
@@ -285,7 +293,7 @@ const write = (n, d) => fs.writeFileSync(path.join(outDir, n), JSON.stringify(d)
 write('meta.json', meta); write('itemtypes.json', itemtypes); write('bases.json', bases); write('uniques.json', uniques);
 write('gems.json', gems); write('sets.json', sets); write('setItems.json', setItems); write('runewords.json', runewords);
 write('properties.json', properties); write('stats.json', stats); write('statStrings.zhTW.json', statStrings);
-write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories);
+write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills);
 
 console.log(JSON.stringify(meta.counts));
 console.log('missing property defs:', missingProps.length, missingProps.slice(0, 20).join(','));

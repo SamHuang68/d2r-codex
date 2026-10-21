@@ -5,6 +5,7 @@ import { withBase, type CatalogEntry, type Group } from '../../../engine/catalog
 import { ALL_PARTS, fromSavedData, loadDraft, saveDraft, type ApplyParts, type SimSnapshot } from '../../../data/profileStore';
 import type { EquippedItem } from '../../../engine/types';
 import { SkillTreeV2 } from './SkillTreeV2';
+import { GAME_SKILLS } from '../../../engine/skills';
 import { auraEffects, damageText, effectiveLevel, passiveMods, skillById, skillDamage, skillLevelsFrom, skillPointBudget, targetDamageText, type DamageOptions, type GameSkill, type SkillBonuses } from '../../../engine/skills';
 import { applyBuffs, buffCandidates } from '../../../engine/buffs';
 import { describeEntry } from '../../../engine/describe';
@@ -305,6 +306,19 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
                   {onNavigateItem && selEq.entry.kind !== 'base' && <button type="button" onClick={() => onNavigateItem(selEq.entry.name)} className="d2-btn is-quiet" title="到百科頁查看這件物品（配裝會自動暫存，回來時還原）">在百科中查看</button>}
                   <button type="button" onClick={() => unequip(selected)} className="d2-btn is-danger">卸下</button>
                 </div>
+                {(() => {
+                  const rs = selEq.entry.mods.find((m) => m.code.toLowerCase() === 'skill-rand');
+                  if (!rs) return null;
+                  const pool = GAME_SKILLS.filter((x) => x.gameId >= (rs.min ?? 0) && x.gameId <= (rs.max ?? 0)).sort((a, b) => a.gameId - b.gameId);
+                  return (
+                    <label className="d2-field mt-2 w-full">隨機技能
+                      <select value={selEq.randomSkill ?? ''} onChange={(e) => patchEquipped(selected, { randomSkill: e.target.value || undefined })} className="d2-select flex-1 min-w-0" aria-label="隨機技能">
+                        <option value="">（尚未選擇，+{String(rs.par ?? 0)} 未計入）</option>
+                        {pool.map((x) => <option key={x.id} value={x.nameEn}>{x.name ?? x.nameEn}</option>)}
+                      </select>
+                    </label>
+                  );
+                })()}
                 <SocketEditor eq={selEq} level={level} onChange={(patch) => patchEquipped(selected, patch)} onChangeBase={(code) => changeBase(selected, code)} />
               </div>
             )}
