@@ -1,5 +1,6 @@
 import React from 'react';
 import { Flame, ShieldCheck, Database, Zap } from 'lucide-react';
+import meta from '../../data/game/meta.json';
 
 export const Footer: React.FC = () => {
   return (
@@ -31,6 +32,9 @@ export const Footer: React.FC = () => {
           <span className="flex items-center gap-1.5">
             <Zap className="w-3.5 h-3.5 text-d2-fire" />
             秒級模糊檢索 (HotKey 'Q')
+          </span>
+          <span className="flex items-center gap-1.5 text-sanctuary-500" title="模擬器與百科的數值由此版本的遊戲資料表產生">
+            遊戲資料版本 {meta.gameVersion}（{meta.generatedAt} 產生）
           </span>
         </div>
       </div>

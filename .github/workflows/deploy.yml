@@ -47,3 +47,10 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      # 部署後對「線上網址」再跑一次冒煙測試：上線後壞掉（整頁空白、載入錯誤）會讓這個工作流程失敗，GitHub 會通知，不必等人發現。
+      # 重試是因為 Pages 發布後需要一點時間傳播。
+      - name: Smoke test the live site
+        run: node scripts/smoke_dist.mjs --url "${{ steps.deployment.outputs.page_url }}" --retries 4 --delay 30
+        env:
+          SMOKE_CHANNEL: chrome

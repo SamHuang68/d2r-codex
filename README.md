@@ -72,8 +72,11 @@
 | Cloudflare Pages（自訂網域） | https://d2r.samhuang68.org/ | 同一個 Cloudflare 專案；DNS 為 `samhuang68.org` 區域的 `CNAME d2r → d2r-codex.pages.dev`（proxied），與 hub、arcade、hardware、learn 同樣形式 |
 
 - 手動重新部署 Cloudflare 站：`cf pages deployments create --project-name d2r-codex --branch main`（使用 `cf` CLI，需先 `cf auth login`）。
-- 每個對 `main` 的 Pull Request 由 `.github/workflows/ci.yml` 跑型別檢查、引擎測試、建置與 chunk 循環匯入檢查。
-- **建置產物不可有 chunk 之間的循環匯入**：循環在開發伺服器與建置都不會報錯，但上線後會整頁空白（`Cannot access 'x' before initialization`）。`npm run check:chunks` 會檢查，`vite.config.ts` 的 `manualChunks` 把資料與引擎合成同一個 chunk，改動前後都要跑。
+- 每個對 `main` 的 Pull Request 由 `.github/workflows/ci.yml` 跑型別檢查、引擎測試、建置、chunk 循環匯入檢查、**正式建置的瀏覽器冒煙測試**（`npm run smoke`）與圖示解析測試（`npm test`）。
+- 推到 `main` 後，`deploy.yml` 在 GitHub Pages 發布完成時再對**線上網址**跑一次冒煙測試（最多重試 4 次、每次間隔 30 秒，等 Pages 傳播）；上線後壞掉會讓工作流程失敗並通知，不必等人發現。
+- `public/_headers`（Cloudflare Pages 使用，GitHub Pages 會忽略）：帶雜湊的 `/assets/*` 長期快取，`index.html` 不快取，改版後不會拿到新舊不一致的檔案。
+- **建置產物不可有 chunk 之間的循環匯入**：循環在開發伺服器與建置都不會報錯，但上線後會整頁空白（`Cannot access 'x' before initialization`）。`npm run check:chunks` 會檢查，`vite.config.ts` 的 `manualChunks` 把資料與引擎合成同一個 chunk；`npm run smoke` 是更直接的把關（真的載入正式建置），我用有問題的舊設定建置確認它會失敗。
+- 本機跑冒煙測試：`npm run build && npm run smoke`（用 Playwright 內建的 Chromium；CI 與部署後檢查用系統的 Chrome，由 `SMOKE_CHANNEL=chrome` 指定）。對線上網址檢查：`node scripts/smoke_dist.mjs --url https://d2r.samhuang68.org/`。
 - 作品入口（https://blog.samhuang68.org/ ）的 NODE-10 卡片連到 https://d2r.samhuang68.org/ 。
 
 ---
