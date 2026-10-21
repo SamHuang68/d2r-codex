@@ -253,9 +253,9 @@ export const App: React.FC = () => {
           <BreakpointTable initialClass={selectedInitialClass} />
         )}
         {activeTab === 'areas' && <AreaGuide />}
-        {activeTab === 'monsters' && <MonsterCompendium />}
-        {activeTab === 'affixes' && <AffixCompendium />}
-        {activeTab === 'shrines' && <ShrineCompendium />}
+        {activeTab === 'monsters' && <MonsterCompendium initialQuery={targetQuery} />}
+        {activeTab === 'affixes' && <AffixCompendium initialQuery={targetQuery} />}
+        {activeTab === 'shrines' && <ShrineCompendium initialQuery={targetQuery} />}
         {activeTab === 'experience' && <ExperienceTable />}
         {activeTab === 'mercenaries' && (
           <MercenaryGuide onNavigateItem={handleItemOrRunewordNavigate} />

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Ghost, MapPin, Search, ShieldOff } from 'lucide-react';
 import { PageHeader } from '../common/PageHeader';
 import {
@@ -98,9 +98,11 @@ const MonsterRow: React.FC<{ m: Monster; diff: Diff; open: boolean; onToggle: ()
   );
 };
 
-const MonstersTab: React.FC = () => {
+const MonstersTab: React.FC<{ initialQuery?: string }> = ({ initialQuery }) => {
   const [diff, setDiff] = useState<Diff>(2);
-  const [q, setQ] = useState('');
+  const [q, setQ] = useState(initialQuery ?? '');
+  // 從全域搜尋點進來時帶入怪物名稱（同一頁再搜一次也要更新）
+  useEffect(() => { if (initialQuery !== undefined) setQ(initialQuery); }, [initialQuery]);
   const [kind, setKind] = useState<string>('all');
   const [immune, setImmune] = useState<ElemKey[]>([]);
   const [sort, setSort] = useState<'name' | 'level' | 'immunity'>('name');
@@ -240,7 +242,7 @@ const AreasTab: React.FC = () => {
   );
 };
 
-export const MonsterCompendium: React.FC = () => {
+export const MonsterCompendium: React.FC<{ initialQuery?: string }> = ({ initialQuery }) => {
   const [tab, setTab] = useState<'monsters' | 'areas'>('monsters');
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in">
@@ -262,7 +264,7 @@ export const MonsterCompendium: React.FC = () => {
           </div>
         }
       />
-      {tab === 'monsters' ? <MonstersTab /> : <AreasTab />}
+      {tab === 'monsters' ? <MonstersTab initialQuery={initialQuery} /> : <AreasTab />}
       <div className="text-[11px] text-sanctuary-600">資料來自遊戲 monstats.txt 與 levels.txt（3.3.93847）。抗性 ≥100 為免疫；破免（例如裝備的「怪物免疫被穿透」）請看模擬器的目標抗性。</div>
     </div>
   );

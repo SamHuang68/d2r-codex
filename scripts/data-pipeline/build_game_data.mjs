@@ -206,6 +206,11 @@ for (const r of tsv('runes.txt')) {
 // frequency＝抽中的相對權重、itypes／etypes＝可出現的物品類型與排除的類型（類型的相等關係見 itemtypes.json）、rare＝稀有物品也可能抽到。
 // 職業欄位：classOnly＝資料表 classspecific 欄（前綴與自動詞綴用，職業代碼，例如 ama）；class＋classLevelReq＝資料表 class／classlevelreq 欄（後綴用，該職業的等級需求）。
 // 沒有屬性的空殼列、遊戲設定為不會產生（spawnable 不是 1）的列、權重沒填或 0（不會被隨機抽到，多半是舊版本殘留的列）不收。
+// 詞綴名稱在字串表裡的鍵大小寫不一定跟資料表一樣（資料表「of Darkness」、字串表「Of Darkness」；遊戲查字串不分大小寫），所以這裡補一個不分大小寫的查詢。
+// 字串表完全沒有這個鍵的詞綴（of Shadows、of Despair、of Nightmares、of Ember、of Cinders、of Flames、of Inferno）沒有中文名，輸出時留空，由網站顯示英文名。
+const zhCI = new Map();
+for (const m of S) for (const [k, v] of m) if (v.zhTW && !zhCI.has(k.toLowerCase())) zhCI.set(k.toLowerCase(), v.zhTW);
+const affixZh = (name) => zh(name) ?? zhCI.get(name.toLowerCase());
 const affixItypes = (r) => [1, 2, 3, 4, 5, 6, 7].map((i) => r[`itype${i}`]).filter(Boolean);
 const affixEtypes = (r) => [1, 2, 3, 4, 5].map((i) => r[`etype${i}`]).filter(Boolean);
 const affixes = [];
@@ -220,7 +225,7 @@ for (const [file, kind] of [['magicprefix.txt', 'prefix'], ['magicsuffix.txt', '
     });
     if (!ms.length) return;
     affixes.push({
-      id: `${kind[0]}${i}`, kind, nameEn: r.Name, name: zh(r.Name), level: num(r.level), maxLevel: num(r.maxlevel) || undefined, levelReq: num(r.levelreq) ?? 0,
+      id: `${kind[0]}${i}`, kind, nameEn: r.Name, name: affixZh(r.Name), level: num(r.level), maxLevel: num(r.maxlevel) || undefined, levelReq: num(r.levelreq) ?? 0,
       classOnly: r.classspecific || undefined, class: r.class || undefined, classLevelReq: num(r.classlevelreq) || undefined,
       frequency: num(r.frequency), group: num(r.group), rare: r.rare === '1' || undefined,
       mods: track(ms), itypes: affixItypes(r), etypes: affixEtypes(r),

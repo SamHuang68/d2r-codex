@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, Flame, Shield, Sparkles, BookOpen, MapPin, Users, Gem, Skull, ShieldAlert, Compass, FlaskConical, Swords } from 'lucide-react';
+import { Search, X, Flame, Shield, Sparkles, BookOpen, MapPin, Users, Gem, Skull, ShieldAlert, Compass, FlaskConical, Swords, Ghost, Tag, Landmark, TrendingUp } from 'lucide-react';
 import { searchOmni, SearchResultItem } from '../../utils/search';
+import { searchCodex } from '../../utils/searchCodex';
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -29,12 +30,13 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   }, [isOpen]);
 
   useEffect(() => {
-    if (query.trim()) {
-      const hits = searchOmni(query);
-      setResults(hits);
-    } else {
-      setResults([]);
-    }
+    if (!query.trim()) { setResults([]); return undefined; }
+    const hits = searchOmni(query);
+    setResults(hits);
+    // 怪物、詞綴、聖壇、經驗值表的資料較大，輸入之後才載入；結果附加在原本的結果後面。輸入又變了就丟掉舊的結果
+    let alive = true;
+    searchCodex(query).then((more) => { if (alive && more.length) setResults([...hits, ...more]); }).catch(() => undefined);
+    return () => { alive = false; };
   }, [query]);
 
   // Handle ESC key
@@ -80,6 +82,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         return <FlaskConical className="w-4 h-4 text-d2-magic" />;
       case 'character':
         return <Swords className="w-4 h-4 text-d2-fire" />;
+      case 'monster':
+        return <Ghost className="w-4 h-4 text-d2-fire" />;
+      case 'affix':
+        return <Tag className="w-4 h-4 text-d2-magic" />;
+      case 'shrine':
+        return <Landmark className="w-4 h-4 text-d2-gold" />;
+      case 'exp':
+        return <TrendingUp className="w-4 h-4 text-d2-gold" />;
     }
   };
 
@@ -97,7 +107,13 @@ export const SearchModal: React.FC<SearchModalProps> = ({
       case 'area':
       case 'uber':
       case 'character':
+      case 'monster':
         return 'bg-d2-fire/10 text-d2-fire border-d2-fire/30';
+      case 'affix':
+        return 'bg-d2-magic/10 text-d2-magic border-d2-magic/30';
+      case 'shrine':
+      case 'exp':
+        return 'bg-d2-gold/10 text-d2-gold border-d2-gold/30';
       case 'mercenary':
         return 'bg-d2-gold/10 text-d2-gold border-d2-gold/30';
       case 'valuation':
@@ -126,7 +142,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="搜尋符文之語、暗金、套裝、符文、配方、85場景... (支援中英文)"
+            placeholder="搜尋符文之語、暗金、套裝、符文、配方、85場景、怪物、詞綴、聖壇、經驗... (支援中英文)"
             className="w-full bg-transparent text-sanctuary-100 placeholder-sanctuary-500 text-base focus:outline-none font-sans"
           />
           {query ? (

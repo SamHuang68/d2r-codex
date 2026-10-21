@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries'; export { TIER_LABEL, TIER_META } from './src/utils/equipTaxonomy'; export { TIER_QUALITY_ZH } from './src/data/codex/common'; export { CUBE_RECIPES_DATA } from './src/data/cubeRecipes'; export { GEMS_DATA as PROPS_GEMS_DATA, UBER_KEYS_ORGANS_DATA } from './src/data/props';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries'; export { TIER_LABEL, TIER_META } from './src/utils/equipTaxonomy'; export { TIER_QUALITY_ZH } from './src/data/codex/common'; export { searchCodex } from './src/utils/searchCodex'; export { CUBE_RECIPES_DATA } from './src/data/cubeRecipes'; export { GEMS_DATA as PROPS_GEMS_DATA, UBER_KEYS_ORGANS_DATA } from './src/data/props';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -1567,5 +1567,61 @@ console.log('【小紅門三處地圖名稱：遊戲字串「魔母巢穴／遺�
     const hits = [];
     const walk = (d) => { for (const f of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, f.name); if (f.isDirectory()) { if (p.split(path.sep).join('/').endsWith('src/data/game')) continue; walk(p); } else if (/\.(ts|tsx|json)$/.test(f.name) && /苦難熔爐|女先知/.test(fs.readFileSync(p, 'utf8'))) hits.push(p); } };
     walk('src'); assert.deepEqual(hits, [], '請用遊戲字串：魔母巢穴／遺忘沙漠／苦痛熔爐');
+  });
+}
+
+console.log('【全域搜尋：怪物、詞綴、聖壇、經驗值表】');
+{
+  const { searchCodex, MONSTERS, AFFIXES, SHRINES, EXP } = E;
+  const ta = async (name, fn) => { try { await fn(); pass++; console.log('  ✓', name); } catch (e) { console.error('  ✗', name, e.message); process.exitCode = 1; } };
+  const hits = async (q, type) => (await searchCodex(q)).filter((r) => !type || r.type === type);
+  await ta('空白與找不到的關鍵字沒有結果；結果的 id 不重複，每一類最多 6 筆（聖壇 4 筆）', async () => {
+    assert.deepEqual(await searchCodex(''), []); assert.deepEqual(await searchCodex('   '), []);
+    assert.deepEqual(await searchCodex('zzzzqqqq不存在'), []);
+    const r = await searchCodex('的'); assert.equal(new Set(r.map((x) => x.id)).size, r.length);
+    for (const ty of ['monster', 'affix']) assert.ok(r.filter((x) => x.type === ty).length <= 6);
+    assert.ok(r.filter((x) => x.type === 'shrine').length <= 4);
+  });
+  await ta('怪物：搜「安達莉爾」找得到首領、目標分頁是怪物圖鑑；說明含地獄等級與免疫；英文與代碼也搜得到', async () => {
+    const r = await hits('安達莉爾', 'monster'); assert.ok(r.length >= 1);
+    const an = r.find((x) => x.titleEn === 'Andariel'); assert.ok(an, JSON.stringify(r.map((x) => x.title)));
+    assert.equal(an.badge, '首領'); assert.equal(an.targetTab, 'monsters'); assert.match(an.preview, /地獄 Lv 75/);
+    assert.ok((await hits('andariel', 'monster')).some((x) => x.id === an.id)); assert.ok((await hits('zombie1', 'monster')).length >= 1);
+    assert.ok(MONSTERS.length > 500);
+  });
+  await ta('詞綴：搜「老虎之」後綴只有一筆（各階與各物品類型合併成一筆，另有同名的自動詞綴一筆）、搜屬性文字也找得到；目標分頁是詞綴寶典', async () => {
+    const r = await hits('老虎之', 'affix'); const tiger = r.find((x) => x.titleEn === 'of the Tiger'); assert.ok(tiger, JSON.stringify(r.map((x) => x.title)));
+    const tiers = AFFIXES.filter((a) => a.nameEn === 'of the Tiger' && a.kind === 'suffix').length; assert.ok(tiers >= 2);
+    assert.match(tiger.preview, new RegExp(`${tiers} 階`)); assert.equal(tiger.targetTab, 'affixes');
+    assert.equal(r.filter((x) => x.titleEn === 'of the Tiger' && /後綴/.test(x.category)).length, 1); assert.equal(r.filter((x) => x.titleEn === 'of the Tiger').length, 2); // 後綴與同名的自動詞綴各一筆
+    assert.ok((await hits('施法速度', 'affix')).length >= 1);
+  });
+  await ta('聖壇：搜名稱與效果（「護甲聖壇」「經驗」）找得到；增益聖壇的說明帶持續秒數', async () => {
+    const a = await hits('護甲聖壇', 'shrine'); assert.equal(a.length, 1); assert.match(a[0].preview, /防禦 \+100%（96 秒）/); assert.equal(a[0].targetTab, 'shrines');
+    assert.ok((await hits('經驗', 'shrine')).some((x) => x.titleEn === 'Experience Shrine'));
+    assert.equal(SHRINES.length, 22);
+  });
+  await ta('經驗值：問「經驗」「升級」給經驗值表；帶 1~99 的數字給那一級的累計與單級數值；沒有「經驗」字樣的數字不觸發', async () => {
+    const r = await hits('經驗', 'exp'); assert.equal(r.length, 1); assert.equal(r[0].targetTab, 'experience'); assert.match(r[0].preview, /3,837,739,017/);
+    const l = await hits('85 級經驗', 'exp'); assert.equal(l.length, 2); assert.ok(l[1].preview.includes((EXP[85]).toLocaleString('en-US')));
+    assert.equal((await hits('升級 100', 'exp')).length, 1); assert.equal((await hits('1000經驗', 'exp')).length, 1);
+    assert.equal((await hits('85', 'exp')).length, 0);
+  });
+}
+
+console.log('【詞綴名稱：不得有空值（先前 8 個詞綴沒有中文名，搜尋與依名稱排序會出錯）】');
+{
+  const { AFFIXES } = E;
+  const raw = rd('affixes');
+  t('每個詞綴都有名稱；字串表的鍵大小寫不同的（of Darkness＝黑暗之）有中文名；字串表真的沒有的 7 個詞綴顯示英文名', () => {
+    assert.ok(AFFIXES.every((a) => typeof a.name === 'string' && a.name.length > 0));
+    assert.equal(AFFIXES.find((a) => a.nameEn === 'of Darkness').name, '黑暗之');
+    const missing = [...new Set(raw.filter((a) => !a.name).map((a) => a.nameEn))].sort();
+    assert.deepEqual(missing, ['of Cinders', 'of Despair', 'of Ember', 'of Flames', 'of Inferno', 'of Nightmares', 'of Shadows']);
+    for (const n of missing) assert.ok(AFFIXES.filter((a) => a.nameEn === n).every((a) => a.name === n));
+  });
+  t('依名稱排序不會出錯（含沒有中文名的詞綴）', () => {
+    const sorted = [...AFFIXES].sort((a, b) => a.name.localeCompare(b.name, 'zh-Hant'));
+    assert.equal(sorted.length, AFFIXES.length);
   });
 }
