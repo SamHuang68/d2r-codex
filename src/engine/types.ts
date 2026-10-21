@@ -101,6 +101,8 @@ export interface EquippedItem {
   setId?: string;
   /** 此件自己的套裝加成：穿戴同套裝件數 ≥ pieces 時生效（資料的 aprop 第 N 組＝ N+1 件） */
   setBonus?: { pieces: number; mods: Modifier[] }[];
+  /** 使用者為「隨機單一技能」選的技能（英文名稱），例如奧姆斯長袍 */
+  randomSkill?: string;
 }
 
 export interface QuestBonuses {

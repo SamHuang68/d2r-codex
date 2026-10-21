@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -723,6 +723,63 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
     assert.ok(all.filter((s) => s.details).length >= 200, '戰術解析');
     const legacy = SYNERGY_RELATIONS.filter((r) => /舊版資料/.test(r.displayText)); assert.equal(legacy.length, CODEX_OVERLAY.legacySynergies.length);
     assert.equal(GAME_SKILLS.length, 240);
+  });
+}
+
+// ── 隨機屬性（暗黑火炬、奧姆斯長袍）與物品技能持續時間 ──
+{
+  const { getCatalog, buildEngineItem: bei, computeCharacter: cc, describeEntry, itemSkillSeconds } = E;
+  console.log('【隨機屬性與物品技能】');
+  const find = (nm) => getCatalog().find((e) => e.nameEn === nm && e.kind !== 'base');
+  const run = (className, items) => cc(gameData, { className, level: 90, allocated: none, items, difficulty: 'normal' });
+  t('暗黑火炬：+3 職業技能依目前職業計算（原本把職業編號當成數值、再加給聖騎士）', () => {
+    const torch = bei({ entry: find('Hellfire Torch') }, 'charm0');
+    for (const cls of ['Amazon', 'Sorceress', 'Paladin', 'Barbarian', 'Druid', 'Assassin']) {
+      const r = run(cls, [torch]);
+      assert.equal(r.skills.byClass[cls], 3, `${cls} 應 +3`);
+      assert.deepEqual(Object.keys(r.skills.byClass), [cls], `${cls} 不應有其他職業的加成`);
+    }
+    assert.deepEqual(run('Sorceress', [bei({ entry: find('Annihilus') }, 'charm0')]).skills.byClass, {}, '殲滅小符沒有職業技能');
+    assert.equal(run('Paladin', [torch]).unhandled.length, 0);
+  });
+  t('奧姆斯長袍：+3 隨機魔法使技能由使用者選；沒選就不計入（原本把技能編號當成 +60 級加給不存在的技能）', () => {
+    const robe = find("Ormus' Robes");
+    const none0 = run('Sorceress', [bei({ entry: robe }, 'body')]); assert.deepEqual(none0.skills.single, {}, '沒選技能不加');
+    const pick = run('Sorceress', [bei({ entry: robe, randomSkill: 'Blizzard' }, 'body')]); assert.deepEqual(pick.skills.single, { Blizzard: 3 });
+    const mod = robe.mods.find((m) => m.code === 'skill-rand'); assert.ok(mod.min <= 36 && mod.max >= 60);
+    const ids = new Set(E.GAME_SKILLS.filter((x) => x.gameId >= mod.min && x.gameId <= mod.max).map((x) => x.charClass)); assert.deepEqual([...ids], ['sor'], '範圍內只有魔法使技能');
+    assert.ok(E.GAME_SKILLS.some((x) => x.nameEn === 'Blizzard' && x.gameId >= mod.min && x.gameId <= mod.max));
+  });
+  t('隨機技能隨 Profile 存取（含驗證）', () => {
+    const { toSavedData, fromSavedData, parseProfile, exportProfile, newProfile, SIM_PRESETS, stateFromPreset } = E;
+    const snap = stateFromPreset(SIM_PRESETS.find((x) => x.id === 'sor-blizzard:bis')).snap;
+    const withRobe = { ...snap, equipped: { ...snap.equipped, body: { entry: find("Ormus' Robes"), randomSkill: 'Blizzard' } } };
+    const back = fromSavedData(JSON.parse(JSON.stringify(toSavedData(withRobe)))); assert.deepEqual(back.errors, []); assert.equal(back.snap.equipped.body.randomSkill, 'Blizzard');
+    const bad = JSON.parse(exportProfile(newProfile('x', withRobe))); bad.data.equipped.body.randomSkill = 5; assert.equal(typeof parseProfile(JSON.stringify(bad)), 'string');
+    const unknown = JSON.parse(exportProfile(newProfile('x', withRobe))); unknown.data.equipped.body.randomSkill = 'No Such Skill';
+    assert.equal(fromSavedData(parseProfile(JSON.stringify(unknown)).data).snap.equipped.body.randomSkill, undefined, '不認得的技能名稱不還原');
+  });
+  t('熊人／狼人印記的持續時間來自遊戲資料表（4500 影格 ÷ 25 ＝ 180 秒），不再寫死', () => {
+    assert.equal(itemSkillSeconds('Mark of the Bear'), 180); assert.equal(itemSkillSeconds('mark of the wolf'), 180); assert.equal(itemSkillSeconds('Health Link'), 20);
+    assert.equal(itemSkillSeconds('Nonexistent'), undefined);
+    const raw = rd('itemSkills'); for (const [nm, v] of Object.entries(raw)) assert.equal(v.seconds, v.frames / 25, nm);
+    const line = describeEntry({ stat: 'item_skillonattack', value: 10, level: 5, param: 'Mark of the Bear' }, 90);
+    assert.match(line, /熊人變化的攻擊會賦予印記，持續 180 秒/);
+  });
+}
+
+// ── 百科搜尋：帶說明文字的裝備名 ──
+{
+  const { normalizeItemQuery } = E;
+  console.log('【百科搜尋：帶說明文字的裝備名】');
+  t('裝備名後面接說明文字、括號在句中、有全形括號或【】時，仍能找到物品（原本只有「名稱 (英文)」結尾剛好是括號才行）', () => {
+    const rf = (q) => normalizeItemQuery(q)?.id;
+    for (const q of ['烏鴉之霜', 'Raven Frost', '烏鴉之霜 (Raven Frost)', '烏鴉之霜 (Raven Frost) 無法被凍結', '烏鴉之霜  (Raven Frost) 魔法屬性', '烏鴉之霜（Raven Frost）無法凍結', '烏鴉之霜 無法被凍結', '【烏鴉之霜】', '烏鴉之霜 (Raven Frost)\n⬩+150-250 準確率'])
+      assert.equal(rf(q), 'raven_frost', JSON.stringify(q));
+    assert.equal(rf('戰爭召喚 (Call to Arms) +1 全部技能'), 'call_to_arms'); assert.equal(rf('精神 (Spirit) 符文之語'), 'spirit');
+    assert.equal(rf('巨骷髏/安頭')?.length > 0, true, '斜線二選一照舊');
+    assert.equal(normalizeItemQuery('這不是任何物品的名字 (Not An Item)'), null);
+    assert.equal(normalizeItemQuery(''), null);
   });
 }
 

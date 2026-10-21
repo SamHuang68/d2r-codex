@@ -3,10 +3,15 @@ import stats from '../data/game/stats.json';
 import statStrings from '../data/game/statStrings.zhTW.json';
 import skills from '../data/game/skills.json';
 import skillNamesJson from '../data/game/skillNames.json';
+import itemSkillRows from '../data/game/itemSkills.json';
 import { resolveModifier } from './modifiers';
 import type { Modifier, PropertyDef, StatDef, StatEntry } from './types';
 import { CLASS_INDEX } from './character';
 import { CLASS_CODE_ZH, tabName } from './skills';
+
+/** 沒有職業的物品技能（熊人／狼人印記等）的持續秒數，來自遊戲資料表（auralencalc 影格數 ÷ 25） */
+const itemSkillSecs = new Map(Object.entries(itemSkillRows as Record<string, { seconds: number }>).map(([k, v]) => [k.toLowerCase(), v.seconds]));
+export const itemSkillSeconds = (name: string): number | undefined => itemSkillSecs.get(name.toLowerCase());
 
 const CLASS_ZH_BY_INDEX = ['亞馬遜', '魔法使', '死靈法師', '聖騎士', '野蠻人', '德魯伊', '刺客', '術士'];
 const props = properties as unknown as Record<string, PropertyDef>;
@@ -80,7 +85,7 @@ export function describeEntry(e: StatEntry, level = 90, formula = false): string
   if (e.stat === 'item_replenish_durability') return `每 ${Math.floor(100 / e.value)} 秒修復 1 點耐久度`;
   if (e.stat === 'item_replenish_quantity') return `${tpl}：每 ${Math.floor(100 / e.value)} 秒 1 個`;
   const mark = String(e.param).toLowerCase() === 'mark of the bear' ? '熊人變化' : String(e.param).toLowerCase() === 'mark of the wolf' ? '狼人變化' : undefined;
-  if (mark && d.descfunc === 15) return `${mark}的攻擊會賦予印記，持續 180`; // 持續秒數在技能的參數裡，管線尚未匯出
+  if (mark && d.descfunc === 15) { const secs = itemSkillSeconds(String(e.param)); return secs !== undefined ? `${mark}的攻擊會賦予印記，持續 ${secs} 秒` : `${mark}的攻擊會賦予印記`; }
   if (d.descfunc === 15 && e.level !== undefined) return sprintf(tpl, [e.value, e.level, skillName(e.param)]); // 觸發技能：機率、等級、技能
   if (d.descfunc === 16) return sprintf(tpl, [e.value, skillName(e.param)]); // 靈氣：等級、技能
   // descfunc 5：遊戲以 128 為 100% 儲存（怪物逃跑％）
@@ -118,7 +123,7 @@ function specialLines(m: Modifier, roll: number): Line[] | undefined {
     // 隨機職業技能：par＝加成值，min～max＝技能編號範圍（決定職業）
     case 'skill-rand': { const c = skillClassZh(m.min); const v = Number(m.par ?? 0); return [{ text: `${sign(v)} ${c ?? ''}隨機技能等級${c ? ` （只限${c}）` : ''}`, known: true, pri: prio('item_singleskill') }]; }
     // 隨機職業技能（所有職業）：加成值在屬性定義的 val
-    case 'randclassskill': { const v = props.randclassskill?.parts[0]?.val ?? 0; return [{ text: `${sign(v)} 隨機職業技能等級`, known: true, pri: prio('item_addclassskills') }]; }
+    case 'randclassskill': { const v = props.randclassskill?.parts[0]?.val ?? 0; return [{ text: `${sign(v)} 職業技能等級（暗黑火炬：模擬器依目前職業計算）`, known: true, pri: prio('item_addclassskills') }]; }
     // 術士三棵技能樹全加（properties 沒定義，屬性表有的是 skilltab 編號 21～23）
     case 'skilltab-war': return [0, 1, 2].map((i) => ({ text: describeEntry({ stat: 'item_addskill_tab', value: pickRoll(m, roll), param: 21 + i }) as string, known: true, pri: prio('item_addskill_tab') - i * 0.001 }));
     default: return undefined;

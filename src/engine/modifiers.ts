@@ -34,9 +34,30 @@ function propertyOf(props: Record<string, PropertyDef>, code: string): PropertyD
   return m.get(code.toLowerCase());
 }
 
-export function resolveModifier(m: Modifier, props: Record<string, PropertyDef>, roll = 1): ResolveResult {
+/** 隨機屬性的決定者：遊戲裡是掉落時骰出來的，模擬器改由使用者／角色決定 */
+export interface ResolveContext {
+  /** 目前角色的職業編號（CLASS_INDEX）。隨機職業技能（暗黑火炬）依此計算 */
+  classIndex?: number;
+  /** 使用者為「隨機單一技能」選的技能英文名稱（例如奧姆斯長袍的 +3 隨機魔法使技能） */
+  randomSkill?: string;
+}
+
+export function resolveModifier(m: Modifier, props: Record<string, PropertyDef>, roll = 1, ctx: ResolveContext = {}): ResolveResult {
   const def = propertyOf(props, m.code);
   if (!def) return { entries: [], unresolved: `未定義屬性 ${m.code}` };
+  const code = m.code.toLowerCase();
+  // 隨機職業技能（暗黑火炬）：屬性定義的 val 是「加幾級」，min..max 是職業編號的隨機範圍，不是數值。依目前角色的職業計算
+  if (code === 'randclassskill') {
+    const part = def.parts[0];
+    if (ctx.classIndex === undefined) return { entries: [], note: '隨機職業技能：需要指定職業才能計算' };
+    return { entries: [{ stat: part.stat ?? 'item_addclassskills', value: part.val ?? 0, param: ctx.classIndex }] };
+  }
+  // 隨機單一技能（奧姆斯長袍）：par 是「加幾級」，min..max 是技能編號的隨機範圍，不是數值。由使用者選定哪一招
+  if (code === 'skill-rand') {
+    const part = def.parts[0];
+    if (!ctx.randomSkill) return { entries: [], note: '隨機單一技能：尚未選擇技能，未計入' };
+    return { entries: [{ stat: part.stat ?? 'item_singleskill', value: typeof m.par === 'number' ? m.par : 0, param: ctx.randomSkill }] };
+  }
   const v = pick(m, roll, 'roll');
   const entries: StatEntry[] = [];
   let note: string | undefined;
