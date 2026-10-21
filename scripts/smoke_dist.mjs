@@ -108,6 +108,18 @@ async function runOnce(base, browser) {
   const withBust = (hash = '') => `${base}${base.includes('?') ? '&' : '?'}smoke=${Date.now()}${hash}`;
   const textLen = (page) => page.evaluate(() => (document.body?.innerText ?? "").length);
 
+  // 不存在的檔案要回 404（不是 SPA 後備的 200 首頁），而且 404 回應不能帶長期快取，否則 CDN 會把「找不到」快取很久。
+  // 用固定的假網址（沒有任何頁面會引用），線上重複執行也只會留下同一筆快取
+  try {
+    const res = await fetch(new URL('assets/__smoke-not-found__.js', base), { redirect: 'manual' });
+    const cc = res.headers.get('cache-control') ?? '';
+    const maxAge = Number((/max-age=(\d+)/i.exec(cc) ?? [0, 0])[1]);
+    if (res.status !== 404) failures.push(`[404] 不存在的檔案回 HTTP ${res.status}（應為 404；200 代表主機把首頁當後備回應，CDN 可能把它快取在不存在的網址上）`);
+    else if (/immutable/i.test(cc) || maxAge >= 86400) failures.push(`[404] 不存在的檔案的 404 回應帶了長期快取（Cache-Control: ${cc}），CDN 會把「找不到」快取很久`);
+  } catch (e) {
+    failures.push(`[404] 無法檢查不存在檔案的回應：${String(e.message).split('\n')[0]}`);
+  }
+
   // ── 桌面 ──
   {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
