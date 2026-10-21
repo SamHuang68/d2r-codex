@@ -8,7 +8,7 @@ import { SkillTreeV2 } from './SkillTreeV2';
 import { GAME_SKILLS } from '../../../engine/skills';
 import { auraEffects, damageText, effectiveLevel, passiveMods, skillById, skillDamage, skillLevelsFrom, skillPointBudget, targetDamageText, type DamageOptions, type GameSkill, type SkillBonuses } from '../../../engine/skills';
 import { applyBuffs, buffCandidates } from '../../../engine/buffs';
-import { describeEntry } from '../../../engine/describe';
+import { passiveSummary, skillEffectText } from '../../../engine/skillEffects';
 import { PaperDollV2, canFitCharm, setNamesOf } from './PaperDollV2';
 import { AttributesTab } from './AttributesTab';
 import { GearTreeTab } from './GearTreeTab';
@@ -101,8 +101,12 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   // 增益／光環：候選（裝備光環恆啟用；裝備給的外職業技能與本職業光環可勾選）
   const candidates = useMemo(() => buffCandidates(cls.code, skillPoints, skillBonuses, baseResult.stats), [cls, skillPoints, skillBonuses, baseResult]);
   const activeBuffs = useMemo(() => candidates.filter((c) => c.alwaysOn || buffsOn[c.skill.id]), [candidates, buffsOn]);
-  const applied = useMemo(() => applyBuffs(activeBuffs), [activeBuffs]);
-  const result = useMemo(() => computeCharacter(gameData, { ...baseInput, extraStats: applied.self }), [baseInput, applied]);
+  // 全職業技能的等級表（公式引用別的技能或自己的硬點時用，例如抗火被動 skill('Resist Fire'.blvl)/2）
+  const levels = useMemo(() => skillLevelsFrom(skillPoints, skillBonuses), [skillPoints, skillBonuses]);
+  const applied = useMemo(() => applyBuffs(activeBuffs, levels), [activeBuffs, levels]);
+  // 被動技能：自然抵抗、抗性被動、提高速度計入數值；閃躲、致命攻勢等只列出
+  const passives = useMemo(() => passiveSummary(skillPoints, skillBonuses, levels), [skillPoints, skillBonuses, levels]);
+  const result = useMemo(() => computeCharacter(gameData, { ...baseInput, extraStats: [...applied.self, ...passives.self] }), [baseInput, applied, passives]);
 
   const totalPoints = (level - 1) * 5 + quests.lamEsen * 5;
   const used = alloc.str + alloc.dex + alloc.vit + alloc.ene;
@@ -239,8 +243,8 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const buffPanel = candidates.map((c) => ({
     id: c.skill.id, name: c.skill.name ?? c.skill.nameEn, level: c.level, alwaysOn: c.alwaysOn, on: c.alwaysOn || !!buffsOn[c.skill.id],
     source: c.source === 'item-aura' ? '裝備光環' : c.source === 'item-skill' ? '裝備提供' : '本職業',
-    lines: auraEffects(c.skill, c.level),
-  })).map((b2) => ({ ...b2, lines: b2.lines.map((l) => ({ supported: l.supported, text: l.supported && l.value !== undefined ? (describeEntry({ stat: l.stat, value: l.value }, level) ?? `${l.stat} ${l.value}`) : `${l.stat}（公式未支援，未計入）` })) }));
+    lines: auraEffects(c.skill, c.level, levels),
+  })).map((b2) => ({ ...b2, lines: b2.lines.map((l) => ({ supported: l.supported, text: l.supported && l.value !== undefined ? (skillEffectText(l.stat, l.value, level) ?? `${l.stat} ${l.value}`) : `${l.stat}（公式未支援，未計入）` })) }));
 
   return (
     <section className="d2sim space-y-4" aria-label="配裝模擬器">
@@ -337,7 +341,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
               <AttributesTab className={cls.zh} classCode={cls.code} level={level} result={result} alloc={alloc} remaining={remaining} needStr={needStr} needDex={needDex}
                 onAdd={onAdd} onSet={onSet} onAutoReq={onAutoReq} onAllVit={onAllVit} onReset={() => setAlloc(ZERO)} mainSkill={mainSkill}
                 targetRes={targetRes} onTargetRes={setTargetRes} buffs={buffPanel} onToggleBuff={(id) => setBuffsOn((m) => ({ ...m, [id]: !m[id] }))}
-                enemyReduction={applied.enemyResReduction} />
+                enemyReduction={applied.enemyResReduction} passives={passives.lines} />
             )}
             {tab === 'gear' && (
               <GearTreeTab open={pickerOpen} onClose={() => setPickerOpen(false)}

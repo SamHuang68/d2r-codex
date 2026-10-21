@@ -3,6 +3,7 @@ import { MF_KIND_ZH, marginalUnique, mfSummary } from '../../../engine/magicFind
 import { PDR_CAP, survivalSummary } from '../../../engine/survival';
 import { BREAKPOINTS, bpStatus, type BpKind } from '../../../engine/breakpoints';
 import type { CharacterResult } from '../../../engine/types';
+import type { PassiveLine } from '../../../engine/skillEffects';
 import type { Alloc } from './types';
 import { skillByName, tabName } from '../../../engine/skills';
 
@@ -28,6 +29,8 @@ interface Props {
   buffs: { id: string; name: string; level: number; alwaysOn: boolean; on: boolean; source: string; lines: { supported: boolean; text: string }[] }[];
   onToggleBuff: (id: string) => void;
   enemyReduction: Partial<Record<string, number>>;
+  /** 已投入的被動技能效果（applied＝已計入上方數值） */
+  passives: PassiveLine[];
 }
 
 const fmt = (n: number) => n.toLocaleString('en-US');
@@ -42,6 +45,8 @@ const MORE: { label: string; stat: string; suffix?: string }[] = [
   { label: '快速格擋速度 (FBR)', stat: 'item_fasterblockrate', suffix: '%' },
   { label: '攻擊速度 (IAS)', stat: 'item_fasterattackrate', suffix: '%' },
   { label: '跑步／行走速度', stat: 'item_fastermovevelocity', suffix: '%' },
+  { label: '技能：跑步／行走速度', stat: 'skill_frw', suffix: '%' },
+  { label: '技能：攻擊速度（光環、狂亂等）', stat: 'skill_ias', suffix: '%' },
   { label: '尋獲魔法物品 (MF)', stat: 'item_magicbonus', suffix: '%' },
   { label: '金幣掉落', stat: 'item_goldbonus', suffix: '%' },
   { label: '生命偷取', stat: 'lifedrainmindam', suffix: '%' },
@@ -137,7 +142,7 @@ const AttrInput: React.FC<{ label: string; total: number; base: number; alloc: n
   );
 };
 
-export const AttributesTab: React.FC<Props> = ({ className, classCode, level, result, alloc, remaining, needStr, needDex, onAdd, onSet, onAutoReq, onAllVit, onReset, mainSkill, targetRes, onTargetRes, buffs, onToggleBuff, enemyReduction }) => {
+export const AttributesTab: React.FC<Props> = ({ className, classCode, level, result, alloc, remaining, needStr, needDex, onAdd, onSet, onAutoReq, onAllVit, onReset, mainSkill, targetRes, onTargetRes, buffs, onToggleBuff, enemyReduction, passives }) => {
   const [more, setMore] = useState(false);
   const a = result.attributes;
   const unmet: Record<string, boolean> = { str: a.str < needStr, dex: a.dex < needDex };
@@ -244,6 +249,19 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
             </div>
           ))}
         </div>
+        {passives.length > 0 && (
+          <div className="mt-3" aria-label="被動技能效果">
+            <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>被 動 技 能</div>
+            <div className="space-y-1">
+              {passives.map((p, i) => (
+                <div key={`${p.skillId}-${p.stat}-${i}`} className="d2-row" title={p.applied ? '已計入上方的角色數值' : '遊戲內有這個效果，但本模擬器沒有對應的數值欄位，只列出不計入'}>
+                  <span><span className="t-gold">{p.skill}</span><span className="t-dim text-xs ml-2">Lv {p.level}</span></span>
+                  <span className={p.applied ? 't-magic' : 't-dim'}>{p.text}{p.applied ? '' : '（僅列出）'}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {BREAKPOINTS.fcr[classCode] && (

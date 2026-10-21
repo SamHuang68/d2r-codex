@@ -147,16 +147,21 @@ export function targetDamageText(d: ReturnType<typeof skillDamage>): string | un
   return `對抗性 ${d.target.res}% 的目標：${d.target.min.toLocaleString()}–${d.target.max.toLocaleString()}`;
 }
 
-// ── 被動（專精、穿透）與光環／戰吼（只計算 lnXY 線性公式；dm 等未支援者明確標示）──
+// ── 被動（專精、穿透）與光環／戰吼（lnXY 線性、dmXY 遞減公式都支援；其餘算不出來的明確標示）──
 export interface EffectLine { stat: string; value?: number; supported: boolean }
-function evalLines(lines: StatLine[] | undefined, s: GameSkill, lvl: number): EffectLine[] {
+/**
+ * 求一個技能的效果行。levels 是全職業技能的等級表（skillLevelsFrom）：公式引用別的技能或自己的硬點（skill('Resist Fire'.blvl)）時用它；
+ * 沒給就假設其他技能 0 點、自己的硬點等於 lvl。
+ */
+function evalLines(lines: StatLine[] | undefined, s: GameSkill, lvl: number, levels?: SkillLevels): EffectLine[] {
+  const lookup = (n: string) => levels ? (levels[n] ?? { lvl: 0, blvl: 0 }) : n === s.nameEn ? { lvl, blvl: lvl } : { lvl: 0, blvl: 0 };
   return (lines ?? []).map((l) => {
     if (!l.calc) return { stat: l.stat, supported: false };
-    try { return { stat: l.stat, value: evalCalc(l.calc, { params: s.params, lvl, blvl: lvl, skill: () => ({ lvl: 0, blvl: 0 }), skillParams: (n) => byName.get(n)?.params }), supported: true }; } catch (e) { if (e instanceof CalcError) return { stat: l.stat, supported: false }; throw e; }
+    try { return { stat: l.stat, value: evalCalc(l.calc, { params: s.params, lvl, blvl: levels?.[s.nameEn]?.blvl ?? lvl, skill: lookup, skillParams: (n) => byName.get(n)?.params }), supported: true }; } catch (e) { if (e instanceof CalcError) return { stat: l.stat, supported: false }; throw e; }
   });
 }
-export const auraEffects = (s: GameSkill, lvl: number) => evalLines(s.auraStats, s, lvl);
-export const passiveEffects = (s: GameSkill, lvl: number) => evalLines(s.passiveStats, s, lvl);
+export const auraEffects = (s: GameSkill, lvl: number, levels?: SkillLevels) => evalLines(s.auraStats, s, lvl, levels);
+export const passiveEffects = (s: GameSkill, lvl: number, levels?: SkillLevels) => evalLines(s.passiveStats, s, lvl, levels);
 
 export type Elem = 'fire' | 'cold' | 'ltng' | 'pois' | 'mag';
 export interface PassiveMods { mastery: Partial<Record<Elem, number>>; pierce: Partial<Record<Elem, number>> }
