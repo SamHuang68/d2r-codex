@@ -11,14 +11,14 @@ const BLOCK_CAP = 75;
 const q = (n: number) => n / 4; // charstats 的「每點」數值以 1/4 為單位
 
 /** 每等級屬性（op 2/3/4）：value × clvl / 2^op_param，加到 op_stat1 */
-function perLevelAdd(data: GameData, stat: string, value: number, level: number): { target: string; add: number } | undefined {
+export function perLevelAdd(data: GameData, stat: string, value: number, level: number): { target: string; add: number } | undefined {
   const d = data.stats[stat];
   if (!d || !d.op || ![2, 3, 4].includes(d.op) || !d.op_stat1) return undefined;
   // 遊戲逐件取整：Lv67 軍帽 12/8×67＝100.5 → 提示框顯示 +100（截圖驗證）
   return { target: d.op_stat1, add: Math.floor((value * level) / 2 ** (d.op_param ?? 0)) };
 }
 
-interface ItemCalc { item: EquippedItem; entries: StatEntry[] }
+export interface ItemCalc { item: EquippedItem; entries: StatEntry[] }
 
 /**
  * 套裝加成：以「不同的套裝件」計件數（同一件穿兩次只算一件）。
@@ -26,7 +26,7 @@ interface ItemCalc { item: EquippedItem; entries: StatEntry[] }
  * - 單件層級：該件的 setBonus 在件數 ≥ pieces 時生效。
  * 數值範圍取該套裝第一件的 roll（與其他屬性同一個取值設定）。
  */
-function setBonusEntries(data: GameData, items: EquippedItem[], unhandled: CharacterResult['unhandled']): { entries: StatEntry[]; sets: CharacterResult['sets'] } {
+export function setBonusEntries(data: GameData, items: EquippedItem[], unhandled: CharacterResult['unhandled']): { entries: StatEntry[]; sets: CharacterResult['sets'] } {
   const defs = new Map((data.sets ?? []).map((d) => [d.id, d]));
   const bySet = new Map<string, EquippedItem[]>();
   for (const it of items) {
@@ -55,7 +55,7 @@ function setBonusEntries(data: GameData, items: EquippedItem[], unhandled: Chara
 }
 
 /** 單件裝備展開成 stat 條目（含鑲嵌）；無法解析者列入 unhandled，不會悄悄丟掉 */
-function expandItem(data: GameData, item: EquippedItem, unhandled: CharacterResult['unhandled'], ctx: ResolveContext = {}): ItemCalc {
+export function expandItem(data: GameData, item: EquippedItem, unhandled: CharacterResult['unhandled'], ctx: ResolveContext = {}): ItemCalc {
   const baseByCode = new Map(data.bases.map((b) => [b.code, b]));
   const gemByCode = new Map(data.gems.map((g) => [g.code, g]));
   const entries: StatEntry[] = [];
@@ -76,7 +76,7 @@ function expandItem(data: GameData, item: EquippedItem, unhandled: CharacterResu
 }
 
 /** 單件防具的防禦：底材 × 無形 × (1+強化防禦%) ＋ 固定防禦 ＋ 每等級防禦 */
-function itemDefenseOf(data: GameData, base: BaseItem | undefined, c: ItemCalc, level: number): number {
+export function itemDefenseOf(data: GameData, base: BaseItem | undefined, c: ItemCalc, level: number): number {
   let own = 0;
   if (base?.kind === 'armor' && base.minAc !== undefined && base.maxAc !== undefined) {
     let b = Math.floor(base.minAc + (base.maxAc - base.minAc) * (c.item.defRoll ?? 1));
@@ -89,8 +89,14 @@ function itemDefenseOf(data: GameData, base: BaseItem | undefined, c: ItemCalc, 
   return own;
 }
 
+/**
+ * 武器有傷害欄位：有單手傷害，或只有雙手傷害。弓、弩、長柄、矛、大斧、錘、法杖等 119 種底材只有雙手欄位（minDam2h／maxDam2h），
+ * 以前只看單手欄位，這些武器的傷害整個算不出來。
+ */
+export const hasWeaponDamage = (b: BaseItem | undefined): b is BaseItem => !!b && b.kind === 'weapon' && (b.maxDam !== undefined || b.maxDam2h !== undefined);
+
 /** 武器傷害：底材（雙手取雙手值）× 無形 × (1＋強化傷害%＋屬性加成%) ＋ 固定傷害 */
-function weaponRangeOf(base: BaseItem, ethereal: boolean | undefined, str: number, dex: number, o: { minPct: number; maxPct: number; minFlat: number; maxFlat: number }): { min: number; max: number } {
+export function weaponRangeOf(base: BaseItem, ethereal: boolean | undefined, str: number, dex: number, o: { minPct: number; maxPct: number; minFlat: number; maxFlat: number }): { min: number; max: number } {
   const two = base.twoHanded && base.minDam2h !== undefined;
   let mn = (two ? base.minDam2h : base.minDam) ?? 0; let mx = (two ? base.maxDam2h : base.maxDam) ?? 0;
   if (ethereal) { mn = Math.floor(mn * 1.5); mx = Math.floor(mx * 1.5); }
@@ -106,7 +112,7 @@ export function itemOwnStats(data: GameData, item: EquippedItem, level: number, 
   const sum = (stat: string) => c.entries.filter((e) => e.stat === stat && e.param === undefined).reduce((a, e) => a + e.value, 0);
   const out: { defense?: number; damage?: { min: number; max: number; twoHanded: boolean } } = {};
   if (base.kind === 'armor') out.defense = itemDefenseOf(data, base, c, level);
-  if (base.kind === 'weapon' && base.maxDam !== undefined) {
+  if (hasWeaponDamage(base)) {
     const r = weaponRangeOf(base, item.ethereal, attrs.str, attrs.dex, { minPct: sum('item_mindamage_percent'), maxPct: sum('item_maxdamage_percent'), minFlat: sum('mindamage'), maxFlat: sum('maxdamage') });
     out.damage = { ...r, twoHanded: !!(base.twoHanded && base.minDam2h !== undefined) };
   }
@@ -208,7 +214,7 @@ export function computeCharacter(data: GameData, input: CharacterInput): Charact
   let weaponDamage: CharacterResult['weaponDamage'];
   const wc = calcs.find((c) => c.item.slot === 'weapon');
   const wb = wc && baseByCode.get(wc.item.baseCode);
-  if (wc && wb?.kind === 'weapon' && wb.maxDam !== undefined) {
+  if (wc && hasWeaponDamage(wb)) {
     const r = weaponRangeOf(wb, wc.item.ethereal, total.str, total.dex, { minPct: bag.item_mindamage_percent ?? 0, maxPct: bag.item_maxdamage_percent ?? 0, minFlat: bag.mindamage ?? 0, maxFlat: bag.maxdamage ?? 0 });
     weaponDamage = { slot: 'weapon', ...r };
   }

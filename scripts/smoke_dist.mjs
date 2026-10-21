@@ -181,8 +181,14 @@ async function runOnce(base, browser) {
       await page.waitForFunction(() => [...document.querySelectorAll('.d2-slot')].filter((s) => (s.getAttribute('aria-label') ?? '').includes('：')).length >= 8, null, { timeout: 15000 });
       const stats = await page.evaluate(() => document.body.innerText);
       if (!/生\s*存\s*力/.test(stats)) failures.push('[桌面] 套用流派後屬性頁沒有出現「生存力」區塊');
+      // 傭兵分頁：顯示傭兵數值；開啟「計入傭兵」後，傭兵的原生光環（預設是地獄力量傭兵）成為屬性頁增益面板裡恆啟用的一列
+      await page.getByRole('tab', { name: '傭兵' }).click();
+      await page.waitForFunction(() => /傭\s*兵\s*數\s*值/.test(document.body.innerText), null, { timeout: 10000 });
+      await page.getByLabel('計入傭兵').check();
+      await page.getByRole('tab', { name: '屬性頁' }).click();
+      await page.waitForFunction(() => /傭兵/.test(document.querySelector('.d2sim')?.innerText ?? '') && /力量/.test(document.querySelector('.d2sim')?.innerText ?? ''), null, { timeout: 10000 });
     } catch (e) {
-      failures.push(`[桌面] 配裝模擬無法載入或套用流派：${String(e.message).split('\n')[0]}`);
+      failures.push(`[桌面] 配裝模擬無法載入、套用流派或開啟傭兵分頁：${String(e.message).split('\n')[0]}`);
     }
     await ctx.close();
   }
@@ -197,6 +203,13 @@ async function runOnce(base, browser) {
       await sleep(500);
       const m = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, w: window.innerWidth }));
       if (m.sw > m.w + 1) failures.push(`[手機] ${hash || '首頁'} 有橫向捲動：scrollWidth ${m.sw} > ${m.w}`);
+      if (hash === '#planner') {
+        try {
+          await page.getByRole('tab', { name: '傭兵' }).click(); await sleep(500);
+          const m2 = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, w: window.innerWidth }));
+          if (m2.sw > m2.w + 1) failures.push(`[手機] 傭兵分頁有橫向捲動：scrollWidth ${m2.sw} > ${m2.w}`);
+        } catch (e) { failures.push(`[手機] 傭兵分頁打不開：${String(e.message).split('\n')[0]}`); }
+      }
     }
     await ctx.close();
   }
@@ -219,4 +232,4 @@ try {
   local?.server.close();
 }
 if (failures.length) { console.error(`\n冒煙測試失敗（${base}）`); process.exit(1); }
-console.log(`冒煙測試通過（${base}）：首頁與個別分頁 JS 在預算內、${ROUTES.length} 個分頁有內容、跨頁物品連結可跳轉、chunk 載入失敗會自動重整、搜尋面板可開啟、配裝模擬可套用流派、手機版無橫向捲動、無頁面錯誤`);
+console.log(`冒煙測試通過（${base}）：首頁與個別分頁 JS 在預算內、${ROUTES.length} 個分頁有內容、跨頁物品連結可跳轉、chunk 載入失敗會自動重整、搜尋面板可開啟、配裝模擬可套用流派、傭兵分頁可開啟並計入光環、手機版無橫向捲動、無頁面錯誤`);

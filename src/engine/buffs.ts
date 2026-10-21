@@ -12,13 +12,15 @@ import type { StatEntry } from './types';
 export interface BuffCandidate {
   skill: GameSkill;
   level: number;
-  source: 'item-aura' | 'item-skill' | 'class';
+  source: 'item-aura' | 'item-skill' | 'class' | 'mercenary';
   alwaysOn: boolean;
+  /** 介面勾選用的識別。傭兵的光環和玩家自己的同名光環是兩列（傭兵的恆啟用），所以不能只用技能 id */
+  rowId: string;
 }
 
-export function buffCandidates(classCode: string, hard: Record<string, number>, b: SkillBonuses, resultStats: Record<string, number>): BuffCandidate[] {
+export function buffCandidates(classCode: string, hard: Record<string, number>, b: SkillBonuses, resultStats: Record<string, number>, merc: { skill: GameSkill; level: number }[] = []): BuffCandidate[] {
   const map = new Map<string, BuffCandidate>();
-  const put = (c: BuffCandidate) => { const cur = map.get(c.skill.id); if (!cur || c.level > cur.level || (c.alwaysOn && !cur.alwaysOn)) map.set(c.skill.id, c); };
+  const put = (c: Omit<BuffCandidate, 'rowId'>) => { const rowId = c.source === 'mercenary' ? `merc:${c.skill.id}` : c.skill.id; const cur = map.get(rowId); if (!cur || c.level > cur.level || (c.alwaysOn && !cur.alwaysOn)) map.set(rowId, { ...c, rowId }); };
   for (const [k, v] of Object.entries(resultStats)) {
     if (!k.startsWith('item_aura:')) continue;
     const sk = skillByName(k.slice('item_aura:'.length)); if (sk?.auraStats) put({ skill: sk, level: v, source: 'item-aura', alwaysOn: true });
@@ -26,6 +28,8 @@ export function buffCandidates(classCode: string, hard: Record<string, number>, 
   for (const [n, v] of Object.entries(b.single)) {
     const sk = skillByName(n); if (sk?.auraStats && sk.charClass !== classCode) put({ skill: sk, level: v, source: 'item-skill', alwaysOn: false });
   }
+  // 傭兵在場時，原生光環與裝備給的光環恆啟用（傭兵死亡時請在傭兵分頁關掉）
+  for (const m of merc) if (m.skill.auraStats) put({ skill: m.skill, level: m.level, source: 'mercenary', alwaysOn: true });
   for (const s of GAME_SKILLS) {
     if (s.charClass !== classCode || !s.auraStats) continue;
     const h = hard[s.id] ?? 0; if (h <= 0) continue;
@@ -47,7 +51,10 @@ export interface AppliedBuffs {
 
 export function applyBuffs(active: BuffCandidate[], levels?: SkillLevels): AppliedBuffs {
   const self: StatEntry[] = []; const enemy: Partial<Record<Elem, number>> = {}; const lines = new Map<string, EffectLine[]>();
-  for (const c of active) {
+  // 同一種光環來自多個來源（自己、傭兵、裝備）時，遊戲只取最高等級，不疊加
+  const best = new Map<string, BuffCandidate>();
+  for (const c of active) { const cur = best.get(c.skill.id); if (!cur || c.level > cur.level) best.set(c.skill.id, c); }
+  for (const c of best.values()) {
     const eff = auraEffects(c.skill, c.level, levels); lines.set(c.skill.id, eff);
     for (const e of eff) {
       if (!e.supported || e.value === undefined) continue;

@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -970,4 +970,120 @@ t('skillNames.json 的 charClass 與 skills.json 一致（職業技能 240 個�
   for (const n of names) assert.equal(n.charClass, classOf.get(n.gameId), `${n.nameEn} (#${n.gameId})`);
   for (const sk of skills) assert.ok(names.some((n) => n.gameId === sk.gameId), `skillNames 缺少職業技能 ${sk.nameEn}`);
 });
+
+console.log('【武器傷害：只有雙手欄位的武器】');
+t('所有有傷害的武器底材都算得出武器傷害（含只有雙手欄位的 119 種：弓、弩、長柄、矛、大斧、錘、法杖）', () => {
+  const miss = []; let n = 0; let only2h = 0;
+  for (const b of gameData.bases.filter((x) => x.kind === 'weapon' && (x.maxDam !== undefined || x.maxDam2h !== undefined))) {
+    n++; if (b.maxDam === undefined) only2h++;
+    const r = bare('Barbarian', 90, none, [{ slot: 'weapon', baseCode: b.code, mods: [] }]);
+    if (!r.weaponDamage || !(r.weaponDamage.max > 0)) miss.push(b.nameEn);
+  }
+  assert.deepEqual(miss, []); assert.ok(n >= 250 && only2h >= 100, `武器 ${n} 種，其中只有雙手欄位 ${only2h} 種`);
+});
+t('槍斧（只有雙手欄位 6–21）：傷害＝雙手值 ×（1＋力量加成%）', () => {
+  const v = gameData.bases.find((b) => b.nameEn === 'Voulge');
+  const r = bare('Barbarian', 90, none, [{ slot: 'weapon', baseCode: v.code, mods: [] }]);
+  const pct = (v.strBonus * r.attributes.str + (v.dexBonus ?? 0) * r.attributes.dex) / 100;
+  assert.equal(r.weaponDamage.min, Math.floor(v.minDam2h * (1 + pct / 100))); assert.equal(r.weaponDamage.max, Math.floor(v.maxDam2h * (1 + pct / 100)));
+});
+
+console.log('【傭兵（hireling.txt）】');
+{
+  const { HIRELINGS, hirelingById, mercBaseAt, mercBaseFromRow, computeMercenary, clampMercLevel, hirelingMinLevel, getCatalog, withBase, eligibleBases, toEquipped, buffCandidates, applyBuffs, skillByName, skillLevelsFrom, auraEffects } = E;
+  const gd = E.gameData; const zero = { all: 0, byClass: 0, byTab: {}, single: {} };
+  const merc = (id, level, items = []) => computeMercenary(gd, { hireling: hirelingById(id), level, items });
+  t('資料：36 組傭兵（第一幕 6、第二幕 15、第三幕 9、第五幕 6），每組至少一個等級檢查點，Id 都查得到', () => {
+    assert.equal(HIRELINGS.length, 36);
+    const byAct = {}; for (const h of HIRELINGS) byAct[h.act] = (byAct[h.act] ?? 0) + 1;
+    assert.deepEqual(byAct, { 1: 6, 2: 15, 3: 9, 5: 6 });
+    for (const h of HIRELINGS) { assert.ok(h.rows.length >= 1); for (const id of h.ids) assert.equal(hirelingById(id), h); }
+    assert.deepEqual(hirelingById(25), hirelingById(24)); // 兩個完全相同的雙手劍野蠻人合併成一組
+  });
+  t('每級成長的單位由相鄰檢查點驗證：生命、命中、力量、敏捷、傷害從前一個檢查點外推，正好等於下一個檢查點', () => {
+    let n = 0;
+    for (const h of HIRELINGS) for (let i = 0; i + 1 < h.rows.length; i++) {
+      const a = h.rows[i]; const b = h.rows[i + 1]; const x = mercBaseFromRow(a, b.level); n++;
+      const where = `${h.subType} ${a.level}→${b.level}`;
+      assert.equal(x.life, b.hp, `生命 ${where}`); assert.equal(x.ar, b.ar, `命中 ${where}`);
+      assert.equal(x.str, b.str, `力量 ${where}`); assert.equal(x.dex, b.dex, `敏捷 ${where}`);
+      assert.equal(x.damage.min, b.dmgMin, `最小傷害 ${where}`); assert.equal(x.damage.max, b.dmgMax, `最大傷害 ${where}`);
+      // 防禦與抗性在檢查點之間有幾點不連續（資料表本身如此），只要求落在合理範圍內
+      assert.ok(Math.abs(x.defense - b.def) / b.def < 0.1, `防禦 ${where}：${x.defense} vs ${b.def}`);
+      for (const k of ['fire', 'cold', 'lightning', 'poison']) assert.ok(Math.abs(x.resist[k] - b.res[k][0]) <= 2, `抗性 ${k} ${where}`);
+    }
+    assert.ok(n >= 30, `比對了 ${n} 組相鄰檢查點`);
+  });
+  t('傭兵等級不能低於該難度的第一個檢查點；超過檢查點用每級成長外推', () => {
+    const h = hirelingById(13); // 第二幕 地獄 反抗（檢查點只有 75）
+    assert.equal(hirelingMinLevel(h), 75); assert.equal(clampMercLevel(h, 1), 75); assert.equal(clampMercLevel(h, 500), 99);
+    const b75 = mercBaseAt(h, 75); const b85 = mercBaseAt(h, 85);
+    assert.equal(b85.life, b75.life + 10 * h.rows[0].hpLvl); assert.equal(b85.rowLevel, 75);
+    assert.deepEqual(mercBaseAt(h, 3), b75);
+  });
+  t('地獄 第二幕 反抗傭兵 75 級：原生光環是反抗，等級來自資料表', () => {
+    const r = merc(13, 75); const expect = hirelingById(13).rows[0].skills.find((x) => x.nameEn === 'Defiance').level;
+    const a = r.auras.find((x) => x.skill.nameEn === 'Defiance'); assert.ok(a && a.source === 'native' && a.level === expect, JSON.stringify(a && a.level));
+    assert.ok(!r.auras.some((x) => x.skill.nameEn === 'Jab'));
+  });
+  t('裝備數值：+生命、+抗性、+防禦%、強化傷害都依公式計入；沒有裝備時等於基礎值', () => {
+    const none = merc(35, 80); assert.equal(none.life, none.base.life); assert.equal(none.defense, none.base.defense);
+    const helm = gd.bases.find((b) => b.nameEn === 'Shako' || b.nameEn === 'Cap');
+    const item = { slot: 'head', baseCode: helm.code, mods: [{ code: 'hp', min: 50, max: 50 }, { code: 'res-all', min: 20, max: 20 }, { code: 'str', min: 10, max: 10 }] };
+    const r = merc(35, 80, [item]);
+    assert.equal(r.life, none.life + 50); assert.equal(r.rawResist.fire, none.rawResist.fire + 20); assert.equal(r.rawResist.poison, none.rawResist.poison + 20);
+    assert.equal(r.str, none.str + 10);
+    const own = E.itemOwnStats(gd, item, 80, { str: r.str, dex: r.dex });
+    assert.equal(r.defense, none.defense + own.defense, '防禦＝基礎＋該件自身防禦（和玩家共用公式）');
+  });
+  t('抗性上限 75（加上最大抗性）；生命% 作用在（基礎＋固定加成）上', () => {
+    const none = merc(35, 80);
+    const cap = merc(35, 80, [{ slot: 'head', baseCode: 'cap', mods: [{ code: 'res-all', min: 200, max: 200 }] }]);
+    assert.equal(cap.resist.fire, 75); assert.ok(cap.rawResist.fire > 75);
+    const pct = merc(35, 80, [{ slot: 'body', baseCode: 'qui', mods: [{ code: 'hp', min: 100, max: 100 }, { code: 'hp%', min: 10, max: 10 }] }]);
+    assert.equal(pct.life, Math.floor((none.base.life + 100) * 1.1));
+  });
+  t('武器傷害：用傭兵的力量與敏捷，無裝備武器時沒有；傭兵本身傷害另列', () => {
+    const w = gd.bases.find((b) => b.nameEn === 'Voulge');
+    const r = merc(35, 80, [{ slot: 'weapon', baseCode: w.code, mods: [{ code: 'dmg%', min: 100, max: 100 }] }]);
+    assert.ok(r.weaponDamage && r.weaponDamage.min > 0 && r.weaponDamage.max >= r.weaponDamage.min);
+    const statPct = ((w.strBonus ?? 0) * r.str + (w.dexBonus ?? 0) * r.dex) / 100;
+    const maxBase = w.twoHanded && w.minDam2h !== undefined ? w.maxDam2h : w.maxDam; // 長柄武器的傷害在 maxDam；單手也能雙手持的才有 2h 欄位
+    assert.equal(r.weaponDamage.max, Math.floor(maxBase * (1 + (100 + statPct) / 100)));
+    assert.equal(merc(35, 80).weaponDamage, undefined); assert.ok(r.base.damage.max > 0);
+  });
+  t('無限（符文之語）裝在長柄武器上：傭兵得到信念光環 12 級；原生的力量光環也在', () => {
+    const inf = getCatalog().find((e) => e.kind === 'runeword' && e.nameEn === 'Infinity');
+    const base = eligibleBases(inf).find((b) => b.ancestors.includes('pole'));
+    const item = toEquipped(withBase(inf, base.code), 'weapon', { roll: 1 });
+    const r = merc(35, 85, [item]);
+    const conv = r.auras.find((a) => a.skill.nameEn === 'Conviction'); assert.ok(conv && conv.source === 'item' && conv.level === 12, JSON.stringify(conv && conv.level));
+    assert.ok(r.auras.some((a) => a.skill.nameEn === 'Might' && a.source === 'native'));
+  });
+  t('傭兵光環成為玩家的增益：恆啟用、獨立一列；同種光環取最高等級不疊加（信念降低敵人抗性取最大）', () => {
+    const conv = skillByName('Conviction'); const might = skillByName('Might');
+    const hard = { conviction: 20 };
+    const cands = buffCandidates('pal', hard, zero, {}, [{ skill: conv, level: 12 }, { skill: might, level: 15 }]);
+    const mc = cands.find((c) => c.rowId === 'merc:conviction'); const own = cands.find((c) => c.rowId === 'conviction');
+    assert.ok(mc && mc.alwaysOn && mc.source === 'mercenary' && own && !own.alwaysOn, JSON.stringify(cands.map((c) => c.rowId)));
+    const lv = skillLevelsFrom(hard, zero);
+    const only = applyBuffs([mc], lv); const both = applyBuffs([mc, { ...own, alwaysOn: true }], lv); const mightOnly = applyBuffs([cands.find((c) => c.rowId === 'merc:might')], lv);
+    assert.ok(both.enemyResReduction.fire > only.enemyResReduction.fire, '自己 20 級比傭兵 12 級高，取高者');
+    const ownOnly = applyBuffs([{ ...own, alwaysOn: true }], lv);
+    assert.deepEqual(both.enemyResReduction, ownOnly.enemyResReduction);
+    assert.ok(mightOnly.self.some((e) => e.stat === 'item_maxdamage_percent'), '力量光環的傷害加成進入玩家數值');
+  });
+  t('存檔：傭兵狀態可存可還原；舊存檔沒有傭兵欄位照常載入；傭兵穿不合法的格子會被拒絕', () => {
+    const ent = getCatalog().find((e) => e.kind === 'unique' && e.slot === 'head' && !e.classCode);
+    const snap = { classCode: 'pal', level: 90, difficulty: 'hell', quests: { lifePotions: 3, anya: 3, lamEsen: 3, skillPts: 3 }, alloc: { str: 0, dex: 0, vit: 0, ene: 0 }, equipped: {}, charms: [], swap: 'I', skillPoints: {}, activeSkillId: '', buffsOn: {}, targetRes: 0, rollMax: true, merc: { on: true, id: 13, level: 80, equipped: { head: { entry: ent } } } };
+    const text = E.exportProfile(E.newProfile('傭兵測試', snap));
+    const back = E.parseProfile(text); assert.equal(typeof back, 'object', String(back));
+    const re = E.fromSavedData(back.data); assert.deepEqual(re.errors, []);
+    assert.ok(re.snap.merc.on && re.snap.merc.id === 13 && re.snap.merc.level === 80 && re.snap.merc.equipped.head.entry.id === ent.id);
+    const { merc: _m, ...old } = snap; const oldText = E.exportProfile(E.newProfile('舊存檔', old));
+    const oldBack = E.parseProfile(oldText); assert.equal(typeof oldBack, 'object'); assert.equal(E.fromSavedData(oldBack.data).snap.merc, undefined);
+    const bad = JSON.parse(text); bad.data.merc.equipped = { ring1: bad.data.merc.equipped.head };
+    assert.match(String(E.parseProfile(JSON.stringify(bad))), /傭兵不能穿戴/);
+  });
+}
 

@@ -26,7 +26,17 @@ export const DOLL_SLOT_ZH: Record<DollSlot, string> = {
   weaponI: '主手武器 I', shieldI: '副手 I', weaponII: '主手武器 II', shieldII: '副手 II',
 };
 
-export type TabKey = 'stats' | 'gear' | 'skills';
+export type TabKey = 'stats' | 'gear' | 'skills' | 'merc';
 export type Difficulty = 'normal' | 'nightmare' | 'hell';
 export interface Quests { lifePotions: number; anya: number; lamEsen: number; skillPts: number }
 export interface Alloc { str: number; dex: number; vit: number; ene: number }
+
+/**
+ * 傭兵（配裝模擬）。on＝計入傭兵的光環；equipped 只用 head／body／weaponI 三格（傭兵只能穿頭盔、護甲、武器），
+ * 沿用紙娃娃的 Equipped 型別，存檔與引擎轉換都共用同一套。id 是 hireling.txt 的 Id（hireling.json 的 ids）。
+ */
+export interface MercState { on: boolean; id: number; level: number; equipped: EquippedMap }
+export const MERC_SLOTS = ['head', 'body', 'weaponI'] as const;
+export type MercSlot = (typeof MERC_SLOTS)[number];
+export const MERC_SLOT_ZH: Record<MercSlot, string> = { head: '頭盔', body: '護甲', weaponI: '武器' };
+export const DEFAULT_MERC: MercState = { on: false, id: 35, level: 80, equipped: {} };
