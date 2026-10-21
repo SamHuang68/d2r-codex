@@ -1,6 +1,7 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Navbar, SideNav } from './components/layout/Navbar';
 import { MobileNav } from './components/layout/MobileNav';
+import { ALL_NAV_MODULES } from './components/layout/navConfig';
 import { Footer } from './components/layout/Footer';
 
 import { HeroSection } from './components/portal/HeroSection';
@@ -36,27 +37,57 @@ const tabFromHash = (): string => {
   return KNOWN_TABS.includes(h) ? h : 'overview';
 };
 
+/**
+ * 一次「導覽」的完整狀態。每次點進另一頁都會在瀏覽器歷史紀錄新增一筆（history.pushState）並帶著這份狀態，
+ * 所以上一頁／下一頁（滑鼠側鍵、手機返回）會回到前後的分頁，連同當時帶進來的搜尋字串、樹節點、符文編號與職業。
+ */
+interface NavState { tab: string; query: string; node?: string; runeNumber?: number; cls?: string }
+const NAV_KEY = 'd2nav';
+const sameNav = (a: NavState, b: NavState) => a.tab === b.tab && a.query === b.query && a.node === b.node && a.runeNumber === b.runeNumber && a.cls === b.cls;
+const TITLE_BASE = '聖休亞瑞典藏中樞 | D2R Sanctuary Codex';
+
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>(tabFromHash);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [searchLoaded, setSearchLoaded] = useState<boolean>(false);
   useEffect(() => { if (isSearchOpen) setSearchLoaded(true); }, [isSearchOpen]);
-  const [selectedInitialClass, setSelectedInitialClass] = useState<string>('魔法使');
+  const [selectedInitialClass, setSelectedInitialClassState] = useState<string>('魔法使');
   const [targetQuery, setTargetQuery] = useState<string>('');
   /** 裝備寶典要停在的樹節點（首頁「成套裝備」磚傳 's'、「暗金裝備」磚傳 'u'）；沒有就用預設的暗金·菁英 */
   const [itemsNode, setItemsNode] = useState<string | undefined>();
   const [targetRuneNumber, setTargetRuneNumber] = useState<number | undefined>();
   const [plannerSubMode, setPlannerSubMode] = useState<'armory' | 'notes'>('armory');
 
-  // 分頁與網址 hash 同步，方便直接連結與重新整理後停留原頁
+  // 目前這一筆導覽的狀態（用 ref 記，pushState 時才拿得到「剛剛才設定」的職業）
+  const navRef = useRef<NavState>({ tab: activeTab, query: '', cls: '魔法使' });
+  const setSelectedInitialClass = (cls: string) => { navRef.current = { ...navRef.current, cls }; setSelectedInitialClassState(cls); };
+  const applyNav = (n: NavState) => {
+    navRef.current = n;
+    setActiveTab(n.tab); setTargetQuery(n.query); setItemsNode(n.node); setTargetRuneNumber(n.runeNumber);
+    if (n.cls) setSelectedInitialClassState(n.cls);
+  };
+
+  // 分頁與網址 hash 同步，方便直接連結與重新整理後停留原頁；上一頁／下一頁依歷史紀錄裡的狀態還原
   useEffect(() => {
-    if (window.location.hash.replace(/^#/, '') !== activeTab) window.history.replaceState(null, '', `#${activeTab}`);
+    // 第一筆歷史紀錄補上狀態，之後回到它才知道當時的分頁與搜尋字串
+    window.history.replaceState({ [NAV_KEY]: navRef.current }, '', window.location.href);
+    const onPop = (e: PopStateEvent) => {
+      const saved = (e.state as { [NAV_KEY]?: NavState; scrollY?: number } | null);
+      // 沒有狀態＝使用者直接改了網址列的 hash：只看分頁
+      applyNav(saved?.[NAV_KEY] ?? { tab: tabFromHash(), query: '', cls: navRef.current.cls });
+      const y = saved?.scrollY ?? 0;
+      // 分頁內容是延遲載入的，高度不是一次到位：還原捲動位置分幾次嘗試
+      [0, 150, 500].forEach((ms) => window.setTimeout(() => window.scrollTo(0, y), ms));
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 分頁標題：瀏覽器的歷史紀錄清單、分頁列才看得出是哪一頁
+  useEffect(() => {
+    const label = ALL_NAV_MODULES.find((m) => m.id === activeTab)?.label;
+    document.title = activeTab === 'overview' || !label ? TITLE_BASE : `${label} | ${TITLE_BASE}`;
   }, [activeTab]);
-  useEffect(() => {
-    const onHash = () => setActiveTab(tabFromHash());
-    window.addEventListener('hashchange', onHash);
-    return () => window.removeEventListener('hashchange', onHash);
-  }, []);
 
   // Global hotkey 'Q' or '/' to open search modal
   useEffect(() => {
@@ -79,13 +110,14 @@ export const App: React.FC = () => {
 
   const handleNavigate = (tab: string, query?: string, runeNumber?: number, node?: string) => {
     const effectiveTab = tab === 'sets' ? 'items' : tab;
-    setActiveTab(effectiveTab);
     // 沒帶搜尋字串的導覽（側欄、首頁磚）要清掉上一次跨頁帶來的搜尋字串，否則各清單頁會帶著舊關鍵字重新載入
-    setTargetQuery(query ?? '');
-    setItemsNode(node ?? (tab === 'sets' ? 's' : undefined));
-    if (runeNumber !== undefined) {
-      setTargetRuneNumber(runeNumber);
+    const next: NavState = { tab: effectiveTab, query: query ?? '', node: node ?? (tab === 'sets' ? 's' : undefined), runeNumber, cls: navRef.current.cls };
+    if (!sameNav(navRef.current, next)) {
+      // 離開之前先把目前這一筆的捲動位置存進去，按上一頁時回到原本看的位置
+      window.history.replaceState({ ...(window.history.state ?? {}), [NAV_KEY]: navRef.current, scrollY: window.scrollY }, '');
+      window.history.pushState({ [NAV_KEY]: next }, '', `#${effectiveTab}`);
     }
+    applyNav(next);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -130,7 +162,7 @@ export const App: React.FC = () => {
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={(t) => handleNavigate(t)}
         onOpenSearch={() => setIsSearchOpen(true)}
       />
 
