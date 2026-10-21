@@ -34,7 +34,7 @@ export const baseByCode = new Map<string, BaseItem>(gameData.bases.map((b) => [b
 /** 遊戲部位 → 百科頁部位 */
 const SLOT_MAP = { head: 'helm', body: 'armor', shield: 'shield', gloves: 'gloves', belt: 'belt', boots: 'boots', neck: 'amulet', ring: 'ring', weapon: 'weapon', charm: 'charm' } as const;
 export function gearSlotOf(b: BaseItem): GearSlot {
-  if (b.type === 'jewl') return 'jewel';
+  if (b.ancestors.includes('jewl')) return 'jewel'; // 含 cjw（類型 cjwl，Rainbow Facet 變體使用的底材）
   const s = slotOfBase(b);
   return s ? SLOT_MAP[s] : 'weapon';
 }

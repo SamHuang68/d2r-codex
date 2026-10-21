@@ -1,11 +1,16 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import { resolveItemImagePath } from '../src/utils/itemImageResolver.ts';
-import { UNIQUE_ITEMS_DATA } from '../src/data/uniqueItems.ts';
-import { SET_ITEMS_DATA } from '../src/data/setItems.ts';
-import { RUNEWORDS_DATA } from '../src/data/runewords.ts';
-import { BASE_ITEMS_DATA } from '../src/data/bases.ts';
+import { fileURLToPath, pathToFileURL } from 'url';
+import { build } from 'esbuild';
+import os from 'os';
+
+// 百科資料由遊戲資料表即時產生（需要 JSON 與多個模組），以 esbuild 打包後載入
+const bundlePath = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2resolver-')), 'm.mjs');
+await build({
+  stdin: { contents: "export { resolveItemImagePath } from './src/utils/itemImageResolver'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases';", resolveDir: process.cwd(), loader: 'ts' },
+  bundle: true, platform: 'node', format: 'esm', outfile: bundlePath, logLevel: 'error', loader: { '.json': 'json' },
+});
+const { resolveItemImagePath, UNIQUE_ITEMS_DATA, SET_ITEMS_DATA, RUNEWORDS_DATA, BASE_ITEMS_DATA } = await import(pathToFileURL(bundlePath).href);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

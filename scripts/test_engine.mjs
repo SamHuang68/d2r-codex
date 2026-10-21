@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -607,9 +607,122 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
     const bad = new Map();
     for (const e of getCatalog()) { if (e.kind === 'base') continue; for (const l of describeModifiers(e.mods, 1, 90)) if (!l.known) bad.set(l.text.split(' ')[0], (bad.get(l.text.split(' ')[0]) ?? 0) + 1); }
     assert.deepEqual([...bad.keys()].filter((k) => !KNOWN_UNDEFINED.has(k)), [], '未知描述：' + JSON.stringify([...bad]));
-    const rake = getCatalog().find((x) => x.nameEn === 'Rakescar'); assert.ok(describeModifiers(rake.mods, 1, 90).some((l) => /毒素持續時間縮短 75%/.test(l.text)));
+    const rake = getCatalog().find((x) => x.nameEn === 'Rakescar'); assert.ok(describeModifiers(rake.mods, 1, 90).some((l) => l.text === '+38 毒素傷害，時效 3 秒'), '毒素傷害＝每幀傷害×持續幀數÷256（128×75÷256≈38），持續 75 幀＝3 秒');
     const withSock = getCatalog().find((x) => x.kind === 'unique' && x.mods.some((m) => m.code === 'sock')); assert.ok(withSock, '資料裡有帶鑲孔的暗金');
     assert.ok(!describeModifiers(withSock.mods, 1, 90).some((l) => /sock/.test(l.text)));
+  });
+}
+
+// ── 屬性描述：百科頁共用的轉譯（區間、合併、特殊屬性）──
+{
+  const { getCatalog, describeModifiers, describeRanges, describeEntry, evalCalc, GAME_SKILLS, synergySources } = E;
+  const cat = getCatalog(); const by = (n) => cat.find((x) => x.nameEn === n);
+  const txt = (e, ranged = false) => (ranged ? describeRanges(e.mods) : describeModifiers(e.mods, 1, 90)).map((l) => l.text);
+  console.log('【屬性描述：百科用】');
+  t('怪物逃跑％依 descfunc 5 換算（遊戲以 128 為 100%）：怒號長牙 33→25%、鐵刺棒 96→75%', () => {
+    assert.ok(txt(by('Howltusk')).includes('+25% 機率擊中使怪物逃跑'));
+    assert.ok(txt(by('Steelgoad')).includes('+75% 機率擊中使怪物逃跑'));
+  });
+  t('技能參數為技能 id 時顯示技能名稱：不死皇冠 +3 骷髏專精、地獄火炬觸發火焰風暴', () => {
+    assert.ok(txt(by('Undead Crown')).some((l) => l === '+3 至骷髏專精 （只限死靈法師）'), txt(by('Undead Crown')).join('|'));
+    assert.ok(txt(by('Hellfire Torch')).some((l) => /等級 10 火焰風暴/.test(l)), txt(by('Hellfire Torch')).join('|'));
+  });
+  t('觸發技能、充能、靈氣、鑲孔、永不毀損、無形：不得出現 %d、代碼或「非數值屬性」', () => {
+    for (const e of cat.filter((x) => x.kind !== 'base')) for (const l of describeModifiers(e.mods, 1, 90)) {
+      if (!l.known) continue;
+      assert.ok(!/%d|%s|非數值屬性|^[a-z-]+ \d|[+]\d+ \d+$/.test(l.text), e.nameEn + '：' + l.text);
+    }
+    assert.ok(txt(by('Spellsteel')).includes('等級 1 傳送術（20 次）'));
+    assert.ok(txt(by('Crown of Ages')).includes('永不毀損') && txt(by('Crown of Ages')).includes('鑲孔（2）'));
+  });
+  t('最小／最大傷害成對合併；相同時寫成「+N」；四抗、四圍相同時合併', () => {
+    assert.ok(txt(by('Stormspike')).includes('附加 1 - 120 電擊傷害'));
+    assert.ok(txt(by('Coldkill')).includes('+40 冰寒傷害'));
+    assert.ok(txt(by('Veil of Steel')).includes('所有抗性 +50'));
+    assert.ok(txt(by('Harlequin Crest')).includes('+2 所有屬性'));
+  });
+  t('百科用區間：下限～上限；依等級的屬性寫成算式（不假設角色等級）', () => {
+    const r = txt(by('Tomb Reaver'), true);
+    assert.ok(r.includes('+200-280% 傷害強化') && r.includes('鑲孔（1-3）') && r.includes('所有抗性 +30-50'), r.join('|'));
+    assert.ok(txt(by('Harlequin Crest'), true).includes('+(1-148) 生命 （依角色等級而定） [1.5 * clvl]'));
+  });
+  t('多個來源的毒素傷害：每幀傷害相加、持續時間取平均（劇毒 273 點／6 秒）', () => {
+    const rw = cat.find((x) => x.kind === 'runeword' && x.nameEn === 'Venom');
+    const gem = E.gameData.gems; const mods = [...rw.mods, ...rw.sockets.flatMap((c) => gem.find((g) => g.code === c).weapon)];
+    assert.ok(describeRanges(mods).some((l) => l.text === '+273 毒素傷害，時效 6 秒'), describeRanges(mods).map((l) => l.text).join('|'));
+  });
+  t('屬性代碼不分大小寫（Gethit-skill）；套裝全套的外觀狀態有文字', () => {
+    const d = rd('uniques').find((x) => x.nameEn === "Defender's Bile"); assert.ok(d, '遊戲表有防禦者的膽汁'); const lines = describeModifiers(d.mods, 1, 90).map((l) => l.text);
+    assert.ok(lines.some((l) => /被擊中時有 1% 機率施展等級 25 骸骨護甲/.test(l)), lines.join('|'));
+    assert.equal(describeModifiers([{ code: 'state', par: 'fullsetgeneric', min: 1, max: 1 }]).map((l) => l.text)[0], '角色顯示光環效果');
+  });
+  t('計算式：結尾缺右括號、skill(名稱.parN／.lnXY)、pa10 簡寫；遊戲表所有協同式都能求值', () => {
+    const ctx = { params: { 8: 4, 10: 3 }, lvl: 5, blvl: 5, skill: () => ({ lvl: 2, blvl: 2 }), skillParams: () => ({ 1: 10, 2: 5, 8: 6 }) };
+    assert.equal(evalCalc("(skill('A'.blvl)*par8+skill('B'.blvl)*par8", ctx), 16);
+    assert.equal(evalCalc("skill('A'.ln12)", ctx), 15); assert.equal(evalCalc("skill('A'.par8)", ctx), 6); assert.equal(evalCalc('pa10*2', ctx), 6);
+    for (const g of GAME_SKILLS) for (const x of synergySources(g, {}).sources) assert.ok(!Number.isNaN(x.perPoint), `${x.skill.nameEn}→${g.nameEn}`);
+  });
+}
+
+// ── 百科頁資料層：由遊戲資料表產生，且舊 id 不得失效 ──
+{
+  const { UNIQUE_ITEMS_DATA, SET_ITEMS_DATA, ALL_SET_PIECES, RUNEWORDS_DATA, BASE_ITEMS_DATA, RUNES_DATA, SKILLS_DATA, SYNERGY_RELATIONS, calculateSkillSynergies, SKILL_GRID_LAYOUT, CODEX_OVERLAY, normalizeItemQuery, GAME_SKILLS } = E;
+  console.log('【百科頁資料層】');
+  const ids = (a) => a.map((x) => x.id);
+  t('各類 id 在類別內不重複；覆蓋層記錄的舊 id（聖杯存檔、社群別名使用）全部仍在資料裡', () => {
+    for (const [label, list] of [['暗金', UNIQUE_ITEMS_DATA], ['套裝', SET_ITEMS_DATA], ['套裝件', ALL_SET_PIECES], ['符文之語', RUNEWORDS_DATA], ['底材', BASE_ITEMS_DATA]]) assert.equal(new Set(ids(list)).size, list.length, label + ' id 重複');
+    const has = (list, o) => Object.values(o).filter((v) => v.id).every((v) => ids(list).includes(v.id));
+    assert.ok(has(UNIQUE_ITEMS_DATA, CODEX_OVERLAY.uniques), '暗金舊 id'); assert.ok(has(ALL_SET_PIECES, CODEX_OVERLAY.setItems), '套裝件舊 id');
+    assert.ok(has(SET_ITEMS_DATA, CODEX_OVERLAY.sets), '套裝舊 id'); assert.ok(has(RUNEWORDS_DATA, CODEX_OVERLAY.runewords), '符文之語舊 id'); assert.ok(has(BASE_ITEMS_DATA, CODEX_OVERLAY.bases), '底材舊 id');
+    console.log(`    舊 id 對照：暗金 ${Object.keys(CODEX_OVERLAY.uniques).length}、套裝件 ${Object.keys(CODEX_OVERLAY.setItems).length}、套裝 ${Object.keys(CODEX_OVERLAY.sets).length}、符文之語 ${Object.keys(CODEX_OVERLAY.runewords).length}、底材 ${Object.keys(CODEX_OVERLAY.bases).length}`);
+  });
+  t('資料筆數：遊戲表全部掉落暗金／套裝／符文之語都收錄（排除任務物品與不掉落者）', () => {
+    const gu = rd('uniques'); const quest = new Set(['Amulet of the Viper', 'Staff of Kings', 'Horadric Staff', 'Hell Forge Hammer', 'KhalimFlail', 'SuperKhalimFlail']);
+    const expect = gu.filter((u) => CODEX_OVERLAY.uniques[u.id]?.id || (!quest.has(u.nameEn) && u.spawnable !== false)).length;
+    assert.equal(UNIQUE_ITEMS_DATA.length, expect); assert.equal(ALL_SET_PIECES.length, rd('setItems').length); assert.equal(SET_ITEMS_DATA.length, rd('sets').length); assert.equal(RUNEWORDS_DATA.length, rd('runewords').length);
+    console.log(`    暗金 ${UNIQUE_ITEMS_DATA.length}、套裝 ${SET_ITEMS_DATA.length} 套／${ALL_SET_PIECES.length} 件、符文之語 ${RUNEWORDS_DATA.length}、底材 ${BASE_ITEMS_DATA.length}、符文 ${RUNES_DATA.length}`);
+  });
+  t('部位：底材類型屬珠寶系（含 Rainbow Facet 變體用的 cjw）的暗金一律歸在 jewel，不得落到預設的 weapon', () => {
+    const jewels = UNIQUE_ITEMS_DATA.filter((u) => /Facet|Defender's|Guardian's|Protector's/.test(u.nameEn));
+    assert.ok(jewels.length >= 14, '珠寶類暗金筆數 ' + jewels.length);
+    assert.deepEqual(jewels.filter((u) => u.slot !== 'jewel').map((u) => u.nameEn), []);
+  });
+  t('符文之語：符文序列與孔數取自遊戲表，屬性含符文鑲嵌總計；Hustle 武器版與護甲版分開', () => {
+    const rw = (n) => RUNEWORDS_DATA.find((r) => r.nameEn === n);
+    assert.deepEqual(rw("Ancients' Pledge").attributes.filter((l) => /抗性/.test(l)).sort(), ['冰寒抗性 +43%', '毒素抗性 +48%', '火焰抗性 +48%', '電擊抗性 +48%'].sort());
+    assert.deepEqual(rw('Spirit').runes, ['Tal', 'Thul', 'Ort', 'Amn']);
+    assert.ok(RUNEWORDS_DATA.some((r) => r.name === '狂躁') && RUNEWORDS_DATA.some((r) => r.name === '歇斯底里'));
+  });
+  t('表頭行：防禦區間、無形物品 ×1.5 與需求 −10、盾牌依職業分組的格擋、投擲武器堆疊', () => {
+    const u = (n) => UNIQUE_ITEMS_DATA.find((x) => x.nameEn === n).attributes;
+    assert.ok(u('Duskdeep').includes('防禦：39-59'), u('Duskdeep').join('|'));
+    assert.ok(u('Ghostflame').some((l) => /需要力量：55/.test(l)));
+    assert.ok(u('Herald of Zakarum').some((l) => /^格擋機率：\d+%$/.test(l)), '職業專屬盾牌只列該職業的格擋');
+    assert.ok(u('The Ward').filter((l) => /^格擋機率：/.test(l)).length === 3);
+    assert.ok(u("Demon's Arch").some((l) => /^最大堆疊：/.test(l)) && !u("Demon's Arch").some((l) => /^耐久度/.test(l)));
+  });
+  t('舊 BuildPlanner／搜尋的社群別名全部對得到資料（目標 id 不得失效）', () => {
+    const src = fs.readFileSync('src/utils/itemQueryNormalizer.ts', 'utf8'); const m = [...src.matchAll(/'([^']+)':\s*'([a-z0-9_]+)'/g)];
+    const all = new Set([...ids(UNIQUE_ITEMS_DATA), ...ids(SET_ITEMS_DATA), ...ids(ALL_SET_PIECES), ...ids(RUNEWORDS_DATA), ...ids(BASE_ITEMS_DATA)]);
+    assert.ok(m.length > 100, '別名表筆數'); assert.deepEqual([...new Set(m.map((x) => x[2]))].filter((id) => !all.has(id)), []);
+    for (const [q, id] of [['軍帽', 'harlequin_crest'], ['soj', 'the_stone_of_jordan'], ['謎團', 'enigma']]) assert.equal(normalizeItemQuery(q)?.id, id, q);
+  });
+  t('技能：8 職業×3 樹×10 招；格位在 6×3 內且不重複；前置都能解析；協同端點存在；110 點預算＝引擎預算', () => {
+    assert.equal(SKILLS_DATA.length, 8);
+    const all = SKILLS_DATA.flatMap((c) => c.trees.map((tr) => { assert.equal(tr.skills.length, 10, c.characterClass + tr.name); return tr; }));
+    assert.equal(all.length, 24); const sid = new Set(all.flatMap((tr) => tr.skills.map((s) => s.id))); assert.equal(sid.size, 240);
+    for (const tr of all) { const seen = new Set(); for (const s of tr.skills) { const p = SKILL_GRID_LAYOUT[s.id]; assert.ok(p && p.row >= 0 && p.row <= 5 && p.col >= 0 && p.col <= 2, s.id); const k = p.row * 3 + p.col; assert.ok(!seen.has(k), '格位重複 ' + s.id); seen.add(k); for (const pre of s.prerequisites) assert.ok(sid.has(pre), s.id + '←' + pre); } }
+    for (const r of SYNERGY_RELATIONS) assert.ok(sid.has(r.sourceId) && sid.has(r.targetId), r.sourceId + '→' + r.targetId);
+    assert.equal(E.skillPointBudget(99, 3), 110);
+    const fb = SKILLS_DATA.flatMap((c) => c.trees.flatMap((tr) => tr.skills)).find((s) => s.nameEn === 'Fire Ball'); const prof = calculateSkillSynergies(fb.id, { fire_bolt: 10 });
+    assert.ok(prof.incoming.some((i) => i.skillId === 'fire_bolt' && i.percentPerPoint === 14 && i.totalPercent === 140), JSON.stringify(prof.incoming));
+  });
+  t('技能：每個舊技能（名稱、俗稱）仍能被搜尋到；遊戲表沒有依據的舊協同保留並標示', () => {
+    const all = SKILLS_DATA.flatMap((c) => c.trees.flatMap((tr) => tr.skills));
+    assert.ok(all.some((s) => (s.aliases ?? []).includes('冰彈')) && all.some((s) => (s.aliases ?? []).some((a) => /BO/.test(a))));
+    assert.ok(all.filter((s) => s.details).length >= 200, '戰術解析');
+    const legacy = SYNERGY_RELATIONS.filter((r) => /舊版資料/.test(r.displayText)); assert.equal(legacy.length, CODEX_OVERLAY.legacySynergies.length);
+    assert.equal(GAME_SKILLS.length, 240);
   });
 }
 
