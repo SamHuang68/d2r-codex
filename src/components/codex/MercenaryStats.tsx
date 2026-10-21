@@ -11,12 +11,6 @@ import { auraEffects, skillByName } from '../../engine/skills';
 const DIFFS = [1, 2, 3] as const;
 const inputCls = 'bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl px-3 py-2 text-xs text-sanctuary-100 font-mono focus:outline-none focus:border-d2-fire/50';
 
-/** 資料表和頁面上方敘述不同之處（依據在 scripts/test_engine.mjs 的傭兵測試裡逐項驗證）；沒有列的幕沒有發現差異 */
-const NOTES: Record<number, string> = {
-  2: '資料表的難度分法與上方「原生技能與光環靈氣」的敘述不同：普通只有祈禱、反抗、精準祝福三種；惡夢與地獄都雇得到六種（祈禱、反抗、精準祝福、荊棘、神聖冰凍、力量）。上方敘述尚未更正。',
-  3: '資料表的冰寒型技能是冰川之槍、寒冰甲、寒冰球，沒有暴風雪，與上方敘述不同。上方敘述尚未更正。',
-};
-
 export const MercenaryStats: React.FC<{ act: number }> = ({ act }) => {
   const types = useMemo(() => HIRELINGS.filter((h) => h.act === act), [act]);
   const [diff, setDiff] = useState<1 | 2 | 3>(3);
@@ -94,8 +88,6 @@ export const MercenaryStats: React.FC<{ act: number }> = ({ act }) => {
             );
           })}
         </div>
-
-        {NOTES[act] && <div className="text-xs text-d2-gold bg-sanctuary-950/70 border border-d2-gold/30 rounded-xl p-3 leading-relaxed">{NOTES[act]}</div>}
 
         <div className="overflow-x-auto" aria-label="各難度雇得到的類型">
           <table className="text-xs w-full min-w-[420px]">

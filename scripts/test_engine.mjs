@@ -1370,7 +1370,7 @@ console.log('【聖壇（shrines.txt）與經驗值表（experience.txt）】');
   });
 }
 
-console.log('【傭兵寶典的資料表數值（與頁面敘述不同處的依據）】');
+console.log('【傭兵寶典的資料表數值與手寫敘述】');
 {
   const { HIRELINGS, mercBaseAt, hirelingMinLevel, MERCENARIES_DATA, skillByName, auraEffects, skillEffectText } = E;
   const descs = (act, diff) => HIRELINGS.filter((h) => h.act === act && h.difficulty === diff).map((h) => h.desc);
@@ -1378,12 +1378,12 @@ console.log('【傭兵寶典的資料表數值（與頁面敘述不同處的依�
     assert.deepEqual(MERCENARIES_DATA.map((m) => m.act).sort(), [1, 2, 3, 5]);
     for (const m of MERCENARIES_DATA) for (const d of [1, 2, 3]) assert.ok(descs(m.act, d).length > 0, `第 ${m.act} 幕難度 ${d}`);
   });
-  t('第二幕：普通只有祈禱、反抗、精準祝福；惡夢與地獄都是六種（再加荊棘、神聖冰凍、力量）——頁面註記的依據', () => {
+  t('第二幕：普通只有祈禱、反抗、精準祝福；惡夢與地獄都是六種（再加荊棘、神聖冰凍、力量）', () => {
     const six = ['祈禱', '反抗', '精準祝福', '荊棘', '神聖冰凍', '力量'];
     assert.deepEqual(descs(2, 1).sort(), ['反抗', '祈禱', '精準祝福'].sort());
     assert.deepEqual(descs(2, 2).sort(), [...six].sort()); assert.deepEqual(descs(2, 3).sort(), [...six].sort());
   });
-  t('第三幕冰寒型的技能是冰川之槍、寒冰甲、寒冰球，各難度各檢查點都沒有暴風雪——頁面註記的依據', () => {
+  t('第三幕冰寒型的技能是冰川之槍、寒冰甲、寒冰球，各難度各檢查點都沒有暴風雪', () => {
     const cold = HIRELINGS.filter((h) => h.act === 3 && h.desc === '冰寒');
     assert.equal(cold.length, 3);
     for (const h of cold) for (const r of h.rows) assert.deepEqual(r.skills.map((s) => s.nameEn).sort(), ['Chilling Armor', 'Glacial Spike', 'Ice Blast']);
@@ -1410,5 +1410,15 @@ console.log('【傭兵寶典的資料表數值（與頁面敘述不同處的依�
       for (const l of auraEffects(sk, s.level)) { n++; assert.ok(l.supported && l.value !== undefined, `${s.nameEn} ${l.stat} 公式未支援`); assert.ok(skillEffectText(l.stat, l.value, 85), `${s.nameEn} ${l.stat}`); }
     }
     assert.ok(n >= 6);
+  });
+  t('傭兵寶典的手寫敘述與資料表一致：第二幕普通只列三種光環、惡夢與地獄列六種；第三幕冰寒型是冰川之槍、寒冰甲、寒冰球，整段第三幕敘述沒有暴風雪', () => {
+    const a2 = MERCENARIES_DATA.find((m) => m.act === 2); const a3 = MERCENARIES_DATA.find((m) => m.act === 3);
+    const [normal, upper] = a2.nativeAurasOrSkills;
+    assert.ok(normal.includes('普通') && !normal.includes('惡夢') && !normal.includes('地獄'));
+    assert.ok(['祈禱', '反抗', '精準祝福'].every((x) => normal.includes(x)) && ['荊棘', '神聖冰凍', '力量'].every((x) => !normal.includes(x)));
+    assert.ok(upper.includes('惡夢與地獄') && upper.includes('六種') && ['荊棘', '神聖冰凍', '力量'].every((x) => upper.includes(x)));
+    const cold = a3.nativeAurasOrSkills.find((x) => x.startsWith('冰寒型'));
+    assert.ok(['冰川之槍', '寒冰甲', '寒冰球'].every((x) => cold.includes(x)));
+    const all = JSON.stringify(a3); for (const bad of ['暴風雪', 'Blizzard', '冰風暴', '冰尖柱']) assert.ok(!all.includes(bad), bad);
   });
 }

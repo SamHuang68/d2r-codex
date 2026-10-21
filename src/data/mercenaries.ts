@@ -29,8 +29,8 @@ export const MERCENARIES_DATA: MercenaryData[] = [
     nameEn: "Act II Desert Mercenary",
     type: "近戰長柄刺客 / 靈氣光環核心",
     nativeAurasOrSkills: [
-      "【普通 & 地獄】：祈禱 (Prayer - 全隊回血)、反抗 (Defiance - 巨幅加防)、祝福瞄準 (Blessed Aim - 大幅加AR)",
-      "【惡夢難度】：力量 (Might - 提升物理傷害)、神聖冰凍 (Holy Freeze - 控場減速全場)、荊棘 (Thorns - 傷害反彈)"
+      "【普通難度】：只有祈禱 (Prayer - 全隊回血)、反抗 (Defiance - 巨幅加防)、精準祝福 (Blessed Aim - 大幅加AR) 三種",
+      "【惡夢與地獄難度】：上面三種之外，再加力量 (Might - 提升物理傷害)、神聖冰凍 (Holy Freeze - 控場減速全場)、荊棘 (Thorns - 傷害反彈)，共六種"
     ],
     equipmentTypes: ["長柄武器 (Polearms)", "長矛 (Spears，2.4起支援)", "頭盔 (Helms)", "胸甲 (Body Armor)"],
     patch24Updates: "2.4 起正式支援裝備長矛 (Spears)，並優化各靈氣隨等級成長數值。",
@@ -141,11 +141,11 @@ export const MERCENARIES_DATA: MercenaryData[] = [
     type: "元素法術砲台 / 輔助增益核心",
     nativeAurasOrSkills: [
       "火焰型 (Fire)：火焰彈、火球、等級 15+【強化】(Enchant - 2.4重磅新增！)",
-      "冰寒型 (Cold)：冰風暴、冰尖柱、暴風雪 (Blizzard - 2.4重磅新增！)",
+      "冰寒型 (Cold)：冰川之槍 (Glacial Spike)、寒冰甲 (Chilling Armor)、寒冰球 (Ice Blast)",
       "閃電型 (Lightning)：充能彈、閃電、靜態力場 (Static Field - 2.4重磅新增！)"
     ],
     equipmentTypes: ["單手劍 (One-handed Swords)", "盾牌 (Shields)", "頭盔 (Helms)", "胸甲 (Body Armor)"],
-    patch24Updates: "2.4 版本徹底重做！火系新增自動幫全隊施放【強化 (Enchant)】增加巨量命中率與火傷；電系新增【靜態力場】削弱全屏怪物半血；冰系新增【暴風雪】大範圍凍結控場！",
+    patch24Updates: "2.4 版本徹底重做！火系新增自動幫全隊施放【強化 (Enchant)】增加巨量命中率與火傷；電系新增【靜態力場】削弱全屏怪物半血；冰系的技能組是冰川之槍、寒冰甲、寒冰球。",
     description: "暗黑 2 中唯一能同時裝備單手劍與盾牌的法系傭兵！能攜帶兩件精神 (Spirit 劍 + 盾) 輕鬆湊出高達 70% FCR 與海量技能抗性。",
     builds: [
       {
@@ -158,13 +158,13 @@ export const MERCENARIES_DATA: MercenaryData[] = [
         strengths: ["全隊附魔巨額提升攻擊準確率", "召喚軍團火傷倍增", "自帶搖曳之焰抵抗火抗"]
       },
       {
-        name: "「極寒暴雪」極限控場防守流 (冰系鐵狼)",
-        role: "大範圍暴風雪減速冰凍，全螢幕安全結界",
+        name: "「極寒冰封」極限控場防守流 (冰系鐵狼)",
+        role: "冰川之槍與寒冰球減速冰凍，替隊友擋下近身怪潮",
         weapon: "符文之語【精神】(Spirit 劍)",
         helm: "暗金【夜翼面紗】(Nightwing's Veil +15% 冰傷)",
         armor: "符文之語【背叛】或【蛇魔法師之皮】",
-        description: "雙精神配置提供 110% 快速打擊恢復 (FHR) 與 70% 快速施法速度 (FCR)，鐵狼在後排瘋狂傾瀉暴風雪與冰尖柱，前方任何怪潮瞬間被凍結為碎冰塊。",
-        strengths: ["超大範圍暴風雪控場", "雙精神配裝造價極低", "極其安全適合專家級模式 (HC)"]
+        description: "雙精神配置提供 110% 快速打擊恢復 (FHR) 與 70% 快速施法速度 (FCR)，鐵狼在後排持續施放冰川之槍與寒冰球，前方的怪潮被減速與冰凍。",
+        strengths: ["冰系技能減速冰凍控場", "雙精神配裝造價極低", "極其安全適合專家級模式 (HC)"]
       }
     ]
   }
