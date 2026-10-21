@@ -72,6 +72,12 @@ function serveDist(dir) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// 頁面載入的 JS 位元組（解壓後）。背景預先抓取（link rel=prefetch）的 chunk 不算：它們是閒下來之後才抓、沒有被這一頁用到
+const jsBytes = (page) => page.evaluate(() => {
+  const pf = new Set([...document.querySelectorAll('link[rel=prefetch]')].map((l) => l.href));
+  return performance.getEntriesByType('resource').filter((r) => /\.js(\?|$)/.test(r.name) && !(r.initiatorType === 'link' && pf.has(r.name))).reduce((a, r) => a + r.decodedBodySize, 0);
+});
+
 async function runOnce(base, browser) {
   const failures = [];
   const origin = new URL(base).origin;
@@ -99,8 +105,14 @@ async function runOnce(base, browser) {
     else if (!(await page.title()).includes('D2R')) failures.push(`[桌面] 首頁標題不對：${await page.title()}`);
     else if (!(await page.evaluate(() => document.body.innerText)).includes('遊戲資料版本')) failures.push('[桌面] 頁尾沒有顯示遊戲資料版本');
 
-    const homeJs = await page.evaluate(() => performance.getEntriesByType('resource').filter((r) => /\.js(\?|$)/.test(r.name)).reduce((a, r) => a + r.decodedBodySize, 0));
+    const homeJs = await jsBytes(page);
     if (homeJs > HOME_JS_BUDGET) failures.push(`[桌面] 首頁載入了 ${(homeJs / 1024).toFixed(0)} kB 的 JS，超過 ${HOME_JS_BUDGET / 1024} kB 預算（百科資料可能又被綁回首頁）`);
+    // 首頁閒下來之後，背景預先抓取百科共用的大資料 chunk（vite.config.ts 的 prefetchDataChunks）：點進百科頁時才不必等下載
+    try {
+      await page.waitForFunction(() => document.querySelectorAll('link[rel=prefetch]').length >= 6, null, { timeout: 8000 });
+    } catch {
+      failures.push('[桌面] 首頁閒下來之後沒有預先抓取百科資料 chunk（vite.config.ts 的 chunk 名單可能和建置產物對不上）');
+    }
 
     for (const r of ROUTES) {
       await page.evaluate((h) => { location.hash = h; }, r.hash);
@@ -115,7 +127,7 @@ async function runOnce(base, browser) {
       try {
         await pg.goto(withBust(b.hash), { waitUntil: 'load', timeout: 45000 });
         await pg.waitForFunction(() => document.body.innerText.length > 800 && !document.body.innerText.includes('載入中'), null, { timeout: 15000 });
-        const kb = (await pg.evaluate(() => performance.getEntriesByType('resource').filter((r) => /\.js(\?|$)/.test(r.name)).reduce((a, r) => a + r.decodedBodySize, 0))) / 1024;
+        const kb = (await jsBytes(pg)) / 1024;
         if (kb > b.kb) failures.push(`[桌面] ${b.label}（${b.hash}）直接開啟載入了 ${kb.toFixed(0)} kB 的 JS，超過 ${b.kb} kB 預算（可能又被不相干的大資料表拖著載入）`);
       } catch (e) {
         failures.push(`[桌面] ${b.label}（${b.hash}）直接開啟失敗：${String(e.message).split('\n')[0]}`);
@@ -242,4 +254,4 @@ try {
   local?.server.close();
 }
 if (failures.length) { console.error(`\n冒煙測試失敗（${base}）`); process.exit(1); }
-console.log(`冒煙測試通過（${base}）：首頁與個別分頁 JS 在預算內、${ROUTES.length} 個分頁有內容、跨頁物品連結可跳轉、chunk 載入失敗會自動重整、搜尋面板可開啟、配裝模擬可套用流派、傭兵分頁可開啟並計入光環、召喚技能顯示召喚物、手機版無橫向捲動、無頁面錯誤`);
+console.log(`冒煙測試通過（${base}）：首頁與個別分頁 JS 在預算內、首頁閒下來後預先抓取百科資料、${ROUTES.length} 個分頁有內容、跨頁物品連結可跳轉、chunk 載入失敗會自動重整、搜尋面板可開啟、配裝模擬可套用流派、傭兵分頁可開啟並計入光環、召喚技能顯示召喚物、手機版無橫向捲動、無頁面錯誤`);
