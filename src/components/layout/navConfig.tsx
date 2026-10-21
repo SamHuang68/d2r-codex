@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Flame, Sparkles, BookOpen, Layers, Compass, Trophy, Sword, MapPin, Users,
-  Gem, Skull, ShieldAlert, FlaskConical, Wrench, Activity, Crown, Ghost, Tag,
+  Gem, Skull, ShieldAlert, FlaskConical, Wrench, Activity, Crown, Ghost, Tag, Landmark, TrendingUp,
 } from 'lucide-react';
 
 export interface NavModule {
@@ -18,7 +18,7 @@ export interface NavGroup {
 
 const ic = 'w-4 h-4';
 
-/** 全站 19 個分頁的單一來源（桌面側邊欄、手機抽屜共用，分頁 id 與 App.tsx 一致） */
+/** 全站 21 個分頁的單一來源（桌面側邊欄、手機抽屜共用，分頁 id 與 App.tsx 一致） */
 export const NAV_GROUPS: NavGroup[] = [
   {
     category: '總覽',
@@ -33,6 +33,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { id: 'skills', label: '技能寶典', desc: '全技能樹畫布與協同矩陣', icon: <Sparkles className={`${ic} text-d2-gold`} /> },
       { id: 'planner', label: '配裝模擬', desc: '1:1 配裝模擬器與流派筆記', icon: <Wrench className={`${ic} text-d2-unique`} /> },
       { id: 'breakpoints', label: '機制斷點', desc: 'FCR / FHR / FBR / IAS 斷點', icon: <Activity className={`${ic} text-d2-fire`} /> },
+      { id: 'experience', label: '經驗值表', desc: '1~99 級經驗與升級計算', icon: <TrendingUp className={`${ic} text-d2-gold`} /> },
       { id: 'mercenaries', label: '傭兵寶典', desc: '四大傭兵光環與終極神裝', icon: <Crown className={`${ic} text-d2-gold`} /> },
     ],
   },
@@ -61,6 +62,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { id: 'quests', label: '任務事件', desc: '永久獎勵任務與世界事件', icon: <Compass className={`${ic} text-d2-gold`} /> },
       { id: 'areas', label: '場景恐區', desc: '85 級場景與恐怖領域', icon: <MapPin className={`${ic} text-d2-fire`} /> },
       { id: 'monsters', label: '怪物圖鑑', desc: '三難度抗性、免疫與場景', icon: <Ghost className={`${ic} text-d2-fire`} /> },
+      { id: 'shrines', label: '聖壇圖鑑', desc: '聖壇效果、持續時間與等級', icon: <Landmark className={`${ic} text-d2-gold`} /> },
       { id: 'uber', label: '紅門六王', desc: '火炬、地獄崔斯特姆流程', icon: <Skull className={`${ic} text-d2-fire`} /> },
     ],
   },

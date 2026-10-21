@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -1328,5 +1328,44 @@ console.log('【自訂飾品的遊戲內檢查（對照魔法詞綴表）】');
       const t0 = performance.now(); const r = chk(b.code, [a.code, 1]);
       assert.ok(['ok', 'absent', 'value'].includes(r.lines[0].verdict)); assert.ok(!r.undecided); assert.ok(performance.now() - t0 < 50, `${b.code} ${a.code}`);
     }
+  });
+}
+
+console.log('【聖壇（shrines.txt）與經驗值表（experience.txt）】');
+{
+  const { SHRINES, SHRINE_TYPES, SHRINE_TYPE_ZH, durationSeconds, shrineSummary, EXP, MAX_LEVEL, expToReach, expForLevel, expBetween, progressOf } = E;
+  const sh = (code) => SHRINES.find((s) => s.code === code);
+  t('聖壇資料：22 種（不含空白的 None）、編號 1~22 不重複、每種有繁中名稱、類型與效果文字；三個標「(Not Used)」的保留並標記', () => {
+    assert.equal(SHRINES.length, 22); assert.deepEqual(SHRINES.map((s) => s.code), Array.from({ length: 22 }, (_, i) => i + 1));
+    for (const s of SHRINES) { assert.ok(s.name && s.nameEn && s.effect, String(s.code)); assert.ok(SHRINE_TYPES.includes(s.type) && SHRINE_TYPE_ZH[s.type]); assert.ok(shrineSummary(s).length > 0); }
+    assert.deepEqual(SHRINES.filter((s) => s.unused).map((s) => s.code), [4, 5, 16]);
+    assert.ok(SHRINES.filter((s) => !s.unused).every((s) => !/Not Used/.test(s.effect)));
+  });
+  t('增益聖壇：護甲 +100% 防禦持續 96 秒、抗火 +75% 持續 144 秒、技能 +2、經驗 +50%（資料表影格 ÷ 25）；非增益類不顯示持續秒數', () => {
+    assert.equal(sh(6).name, '護甲聖壇'); assert.equal(shrineSummary(sh(6)), '防禦 +100%'); assert.equal(durationSeconds(sh(6)), 96);
+    assert.equal(shrineSummary(sh(8)), '火焰抗性 +75%'); assert.equal(durationSeconds(sh(8)), 144);
+    assert.equal(shrineSummary(sh(12)), '所有技能 +2'); assert.equal(shrineSummary(sh(15)), '擊殺怪物的經驗 +50%');
+    assert.equal(shrineSummary(sh(7)), '物理傷害 +200%、命中率 +200%');
+    assert.equal(durationSeconds(sh(19)), undefined); assert.equal(durationSeconds(sh(2)), undefined);
+    for (const s of SHRINES.filter((x) => x.type === 'Booster')) assert.ok(durationSeconds(s) > 0, s.nameEn);
+  });
+  t('聖壇的最低場景等級與重置時間取自資料表：寶石聖壇 4、抗寒 26、抗電 32；增益類重置 5 分鐘、回復聖壇 2 分鐘', () => {
+    assert.deepEqual([sh(18).levelMin, sh(9).levelMin, sh(10).levelMin], [4, 26, 32]);
+    assert.equal(sh(6).reset, 5); assert.equal(sh(1).reset, 2);
+  });
+  t('經驗值表：0~99 級共 100 筆、嚴格遞增、1 級 500、99 級累計 3,837,739,017（與公開的 D2 經驗表一致）', () => {
+    assert.equal(EXP.length, 100); assert.equal(MAX_LEVEL, 99); assert.equal(EXP[0], 0); assert.equal(EXP[1], 500); assert.equal(EXP[99], 3837739017);
+    for (let i = 1; i < EXP.length; i++) assert.ok(EXP[i] > EXP[i - 1], String(i));
+  });
+  t('經驗值計算：單級＝相鄰累計之差、區間＝兩端累計之差且各單級加總相同；超出範圍夾在 0~99', () => {
+    assert.equal(expForLevel(1), 500); assert.equal(expForLevel(99), EXP[99] - EXP[98]); assert.equal(expForLevel(0), 0); assert.equal(expForLevel(100), 0);
+    let sum = 0; for (let l = 86; l <= 90; l++) sum += expForLevel(l); assert.equal(expBetween(85, 90), sum);
+    assert.equal(expBetween(90, 85), 0); assert.equal(expToReach(150), EXP[99]); assert.equal(expToReach(-3), 0);
+  });
+  t('由累計經驗算等級：剛好在門檻是該級、差 1 是前一級；滿級後超出的算在滿級；進度與剩餘互補', () => {
+    assert.equal(progressOf(0).level, 0); assert.equal(progressOf(499).level, 0); assert.equal(progressOf(500).level, 1);
+    assert.equal(progressOf(EXP[50]).level, 50); assert.equal(progressOf(EXP[50] - 1).level, 49);
+    const p = progressOf(EXP[80] + 1000); assert.equal(p.level, 80); assert.equal(p.into, 1000); assert.equal(p.into + p.remaining, expForLevel(81)); assert.equal(p.toMax, EXP[99] - EXP[80] - 1000);
+    const m = progressOf(EXP[99] + 5); assert.equal(m.level, 99); assert.equal(m.remaining, 0); assert.equal(m.fraction, 1); assert.equal(m.toMax, 0);
   });
 }
