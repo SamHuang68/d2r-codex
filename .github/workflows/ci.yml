@@ -1,6 +1,6 @@
 name: CI
 
-# 每個對 main 的 Pull Request 都跑：型別檢查與計算引擎測試。
+# 每個對 main 的 Pull Request 都跑：型別檢查、計算引擎測試、建置與 chunk 循環匯入檢查。
 # 只負責「檢查」，不部署；部署仍由 deploy.yml 在推到 main 時執行。
 on:
   pull_request:
@@ -38,3 +38,11 @@ jobs:
 
       - name: Engine tests
         run: npm run test:engine
+
+      # 建置也要過，而且 chunk 之間不能有循環匯入：循環在開發伺服器與建置都不會報錯，
+      # 但上線後會整頁空白（Cannot access 'x' before initialization）。
+      - name: Build
+        run: npm run build
+
+      - name: Check chunk cycles
+        run: node scripts/check_chunk_cycles.mjs
