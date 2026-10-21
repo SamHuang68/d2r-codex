@@ -1,9 +1,32 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+
+/**
+ * 首頁載完、閒下來之後，在背景預先抓好「百科各頁共用的大資料 chunk」（遊戲資料、暗金、符文之語、技能、描述…），
+ * 使用者點進百科或配裝模擬時直接從快取取，不必等下載（節流慢速網路下進頁約 2.5～2.9 秒 → 只剩執行與繪製）。
+ * 只抓、不執行（<link rel=prefetch>，最低優先權）；使用者開了省流量模式或連線不是 4g 就不抓。
+ * 這些 chunk 的名字來自模組名稱（data.ts、uniques.json…），改名時 scripts/smoke_dist.mjs 會因找不到預先抓取連結而失敗。
+ */
+const PREFETCH_CHUNKS = ['data', 'uniques', 'runewords', 'skills', 'describe', 'catalogImage', 'common', 'setItems'];
+const prefetchDataChunks = (): Plugin => ({
+  name: 'prefetch-data-chunks',
+  transformIndexHtml: {
+    order: 'post',
+    handler(_html, ctx) {
+      if (!ctx.bundle) return undefined;
+      const files = Object.values(ctx.bundle)
+        .filter((c) => c.type === 'chunk' && !c.isEntry && PREFETCH_CHUNKS.includes(c.name))
+        .map((c) => `./${c.fileName}`);
+      if (!files.length) return undefined;
+      const code = `addEventListener('load',function(){var c=navigator.connection;if(c&&(c.saveData||(c.effectiveType&&c.effectiveType!=='4g')))return;setTimeout(function(){${JSON.stringify(files)}.forEach(function(u){var l=document.createElement('link');l.rel='prefetch';l.as='script';l.crossOrigin='';l.href=u;document.head.appendChild(l)})},2000)})`;
+      return [{ tag: 'script', children: code, injectTo: 'head' }];
+    },
+  },
+});
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), prefetchDataChunks()],
   base: './', // relative base for versatile static hosting
   server: {
     port: 3000,
