@@ -207,6 +207,13 @@ assertEqual(
   'Horadric Cube must resolve to existing horadric_cube.gif'
 );
 
+// 咒符的遊戲寫法（小型咒符／大型咒符／特大咒符／滅絕）要和站內舊寫法解析到同一張圖
+for (const [oldName, gameName] of [['小護身符', '小型咒符'], ['大型護身符', '大型咒符'], ['超大護身符', '特大咒符'], ['魔法超大護身符', '魔法特大咒符'], ['毀滅小護身符', '滅絕小型咒符']]) {
+  const g = resolveItemImagePath({ name: gameName, nameEn: '' });
+  assertEqual(g, resolveItemImagePath({ name: oldName, nameEn: '' }), `${gameName} 要和 ${oldName} 解析到同一張圖`);
+  if (!g) throw new Error(`${gameName} 解析不到圖`);
+}
+
 assertEqual(
   resolveItemImagePath({ name: '赦免徽章', nameEn: 'Token of Absolution' }),
   'images/items/props/token_of_absolution.jpg',

@@ -204,7 +204,7 @@ export function resolveItemImagePath({
   // ──────────────────────────────────────────────
   // 3. 護身符 (Charms) 與珠寶 (Jewels)
   // ──────────────────────────────────────────────
-  if (n.includes('毀滅小護身符') || n.includes('暗黑小符') || n.includes('annihilus') || /\banni\b/.test(n)) {
+  if (n.includes('毀滅小護身符') || n.includes('滅絕小型咒符') || n.includes('滅絕咒符') || n.includes('暗黑小符') || n.includes('annihilus') || /\banni\b/.test(n)) {
     return `${base}images/items/charms/anni.gif`;
   }
   if (n.includes('地獄火炬') || n.includes('hellfire torch') || (n.includes('火炬') && !n.includes('艾羅') && !n.includes('iro'))) {
@@ -221,13 +221,13 @@ export function resolveItemImagePath({
       n.includes('黑結晶') || n.includes('破物') || n.includes('bone break')) {
     return `${base}images/items/charms/gheeds.gif`;
   }
-  if (n.includes('大型護身符') || n.includes('large charm')) {
+  if (n.includes('大型護身符') || n.includes('大型咒符') || n.includes('large charm')) {
     return 'https://static.d2r.world/img/items/misc/charm_medium.jpg';
   }
-  if (n.includes('小護身符') || n.includes('small charm') || slot === 'charm' && (n.includes('小') || n.includes('small'))) {
+  if (n.includes('小護身符') || n.includes('小型咒符') || n.includes('small charm') || slot === 'charm' && (n.includes('小') || n.includes('small'))) {
     return 'https://static.d2r.world/img/items/misc/charm_small.jpg';
   }
-  if (n.includes('超大護身符') || n.includes('技能板') || n.includes('grand charm') || slot === 'charm') {
+  if (n.includes('超大護身符') || n.includes('特大咒符') || n.includes('技能板') || n.includes('grand charm') || slot === 'charm') {
     return `${base}images/items/charms/gheeds.gif`;
   }
   if (n.includes('彩虹刻面') || n.includes('rainbow facet') || n.includes('facet')) {
