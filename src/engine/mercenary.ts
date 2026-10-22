@@ -1,4 +1,5 @@
 import hirelingJson from '../data/game/hireling.json';
+import { actZh } from '../utils/actLabel';
 import { expandItem, hasWeaponDamage, itemDefenseOf, perLevelAdd, setBonusEntries, weaponRangeOf } from './character';
 import { skillByName, type GameSkill } from './skills';
 import type { CharacterResult, EquippedItem, GameData, StatEntry } from './types';
@@ -28,7 +29,7 @@ export const HIRELINGS = hirelingJson as unknown as Hireling[];
 const byId = new Map<number, Hireling>(HIRELINGS.flatMap((h) => h.ids.map((id) => [id, h] as [number, Hireling])));
 export const hirelingById = (id: number): Hireling | undefined => byId.get(id);
 export const DIFFICULTY_ZH: Record<number, string> = { 1: '普通', 2: '惡夢', 3: '地獄' };
-export const hirelingLabel = (h: Hireling): string => `第${h.act}幕 ${h.typeZh}・${h.desc}（${DIFFICULTY_ZH[h.difficulty]}）`;
+export const hirelingLabel = (h: Hireling): string => `${actZh(h.act)} ${h.typeZh}・${h.desc}（${DIFFICULTY_ZH[h.difficulty]}）`;
 /** 這個類型雇得到的最低等級（第一個檢查點） */
 export const hirelingMinLevel = (h: Hireling): number => h.rows[0].level;
 export const MERC_MAX_LEVEL = 99;

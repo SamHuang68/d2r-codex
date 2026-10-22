@@ -169,7 +169,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
   {
     id: "unsocket_item",
     category: "repair",
-    title: "拔除已鑲嵌物 (清空凹槽孔位)",
+    title: "拔除已鑲嵌物 (清空鑲孔)",
     titleEn: "Unsocket Item (Remove socketed gems/runes)",
     inputs: ["1x Hel (15#)", "1x 城鎮傳送卷軸 (Scroll of Town Portal)", "1x 已鑲嵌物品"],
     output: "鑲孔完全清空的原本裝備 (孔數保留)",
