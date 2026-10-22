@@ -27,7 +27,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     titleEn: "Socket Normal Helm",
     inputs: ["1x Ral (8#)", "1x Thul (10#)", "1x 完美藍寶石", "1x 一般無孔白色頭盔"],
     output: "隨機孔數該頭盔 (1 至最大孔數)",
-    notes: "常用於洗搖曳焰火、治癒等頭盔底材。"
+    notes: "常用於洗閃爍火焰、治癒等頭盔底材。"
   },
   {
     id: "socket_shield",
@@ -56,7 +56,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     titleEn: "Upgrade Unique Weapon (Exceptional to Elite)",
     inputs: ["1x Lum (17#)", "1x Pul (21#)", "1x 完美綠寶石", "1x 卓越暗金武器"],
     output: "精英版同款暗金武器",
-    notes: "例如：海鷗升級、泰坦的復仇升級為女族長標槍、阿里巴巴升級。"
+    notes: "例如：海鷗升級、泰坦的復仇升級為女傑標槍、阿里巴巴升級。"
   },
   {
     id: "upgrade_unique_armor_norm_to_excep",
@@ -65,7 +65,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     titleEn: "Upgrade Unique Armor (Normal to Exceptional)",
     inputs: ["1x Tal (7#)", "1x Shael (13#)", "1x 完美鑽石", "1x 普通暗金防具"],
     output: "卓越版同款暗金防具",
-    notes: "例如：法師之拳 (輕型鐵手套) 升級為戰鬥護手 (Battle Gauntlets)。"
+    notes: "例如：法師之拳 (輕型護手) 升級為戰鬥護手 (Battle Gauntlets)。"
   },
   {
     id: "upgrade_unique_armor_excep_to_elite",
@@ -74,7 +74,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     titleEn: "Upgrade Unique Armor (Exceptional to Elite)",
     inputs: ["1x Ko (18#)", "1x Lem (20#)", "1x 完美鑽石", "1x 卓越暗金防具"],
     output: "精英版同款暗金防具",
-    notes: "例如：蛇魔法師之皮升級為古龍皮甲 (Wyrmhide)、飾金盾牌升級為撒卡蘭姆盾。"
+    notes: "例如：蛇魔法師之皮升級為龍皮甲 (Wyrmhide)、飾金盾牌升級為撒卡蘭姆盾。"
   },
 
   // ── 手工合成配方 (Crafted Items) ──
@@ -92,7 +92,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     category: "craft",
     title: "吸血鬼血腥手套 (Blood Gloves)",
     titleEn: "Crafted Blood Gloves",
-    inputs: ["1x 魔法厚皮手套/鯊皮手套/吸血鬼手套", "1x Nef (4#)", "1x 完美紅寶石", "1x 任意珠寶"],
+    inputs: ["1x 魔法厚皮手套/鯊皮手套/吸血鬼骸骨手套", "1x Nef (4#)", "1x 完美紅寶石", "1x 任意珠寶"],
     output: "手工血腥手套 (附帶 5-10% 壓碎打擊 CB、每次命中偷取 1-3% 生命、+10-20 生命)",
     notes: "物理近戰（標馬、雙熱丁、弓馬）畢業手套首選，有機會同時出現 +2 標槍 +20% 攻速。"
   },
@@ -110,7 +110,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     category: "craft",
     title: "打擊力量擊退手套 (Hit Power Gloves)",
     titleEn: "Crafted Hit Power Gloves",
-    inputs: ["1x 魔法鎖鏈手套/重裝手套/吸魂手套", "1x Ort (9#)", "1x 完美藍寶石", "1x 任意珠寶"],
+    inputs: ["1x 魔法鍊甲手套/重型護腕/護臂", "1x Ort (9#)", "1x 完美藍寶石", "1x 任意珠寶"],
     output: "手工打擊手套 (固定自帶擊退 Knockback、攻擊者反傷 3-7、被擊中時 5% 機率施展等級 4 冰霜新星)",
     notes: "物理弓馬的最愛，免於被近戰怪包圍。"
   },
@@ -137,7 +137,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     titleEn: "Open Secret Cow Level Portal",
     inputs: ["1x 維特的腿 (Wirt's Leg)", "1x 城鎮傳送之書 (Tome of Town Portal)"],
     output: "開啟通往秘密乳牛關 (Moo Moo Farm) 的紅色傳送門",
-    notes: "需在同一難度完成擊殺巴爾後，於第一章蘿格營地內放入方塊轉化。"
+    notes: "需在同一難度完成擊殺巴爾後，於第一章俠盜營地內放入方塊轉化。"
   },
   {
     id: "repair_weapon",
@@ -191,7 +191,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     titleEn: "Upgrade Rare Weapon (Exceptional to Elite)",
     inputs: ["1x Fal (19#)", "1x Um (22#)", "1x 完美藍寶石", "1x 卓越亮黃武器"],
     output: "精英版同款亮黃武器",
-    notes: "例如極品無形自回亮黃近戰武器（如狂戰士斧、幻化之刃）升頂。"
+    notes: "例如極品無形自回亮黃近戰武器（如狂戰斧、幻化之刃）升頂。"
   },
   {
     id: "upgrade_rare_armor_norm_to_excep",
@@ -216,7 +216,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     category: "craft",
     title: "施法者手工腰帶 (Caster Belt)",
     titleEn: "Crafted Caster Belt",
-    inputs: ["1x 魔法輕扣帶/鯊皮腰帶/吸血鬼腰帶", "1x Ith (6#)", "1x 完美紫寶石", "1x 任意珠寶"],
+    inputs: ["1x 魔法輕腰帶/鯊皮腰帶/吸血鬼牙腰帶", "1x Ith (6#)", "1x 完美紫寶石", "1x 任意珠寶"],
     output: "手工施法腰帶 (固定附帶 +5-10% 快速施法速度 FCR、法力回充 +4-10%、+10-20 法力)",
     notes: "在沒有蜘蛛之網前，唯一的 10% FCR 腰帶來源！"
   },
@@ -240,7 +240,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
       "1x 毀滅之鑰 (Key of Destruction - 尼拉塞克掉落)"
     ],
     output: "於地獄難度第 5 章城鎮開啟：魔母巢穴、遺忘沙漠或苦痛熔爐隨機一道紅門",
-    notes: "收集『墨菲斯托之腦 + 巴爾的眼睛 + 迪亞布羅之角』三樣器官，再次放入方塊轉化，即可開啟通往【超級崔斯特姆 (Uber Tristram)】的終極紅門，擊殺三大魔神取得【地獄火炬 (Hellfire Torch)】！"
+    notes: "收集『墨菲斯托之腦 + 巴爾之眼 + 迪亞布羅之角』三樣器官，再次放入方塊轉化，即可開啟通往【超級崔斯特姆 (Uber Tristram)】的終極紅門，擊殺三大魔神取得【地獄火炬 (Hellfire Torch)】！"
   },
   {
     id: "reroll_magic_charm",
@@ -260,7 +260,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     title: "洗亮黃物品：重骰稀有黃裝",
     titleEn: "Reroll Rare Item with Skulls",
     inputs: [
-      "6x 完美骷髏 (Perfect Skulls)",
+      "6x 完美骷髏石 (Perfect Skulls)",
       "1x 亮黃稀有物品 (Rare Item)"
     ],
     output: "全新屬性的稀有物品 (ilvl = 0.4 * clvl + 0.4 * 原 ilvl)",
@@ -302,7 +302,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
       "1x 城鎮傳送之書 (Tome of Town Portal)"
     ],
     output: "開啟通往【秘密乳牛關】的深紅色傳送門",
-    notes: "需在已擊敗該難度巴爾的狀態下，於第 1 章羅格營地放入方塊轉化開啟。在 D2R 中擊殺『牛王 (Cow King)』後，未來仍然可以無限重複開啟乳牛關，不必再擔心鎖關！是刷鑲嵌底材與高階符文的聖地。"
+    notes: "需在已擊敗該難度巴爾的狀態下，於第 1 章俠盜營地放入方塊轉化開啟。在 D2R 中擊殺『牛王 (Cow King)』後，未來仍然可以無限重複開啟乳牛關，不必再擔心鎖關！是刷鑲嵌底材與高階符文的聖地。"
   }
 ];
 

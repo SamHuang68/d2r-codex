@@ -486,18 +486,18 @@ export const QUESTS_DATA: QuestData[] = [
     name: "冰凍囚牢",
     nameEn: "Prison of Ice",
     givenBy: "瑪拉 (Malah)",
-    location: "冰河 (Frozen River)",
+    location: "冰凍之河 (Frozen River)",
     isMandatory: false,
     permanentReward: {
       type: "resistance",
       description: "瑪拉贈予神聖的「抗性卷軸 (Scroll of Resistance)」，閱讀後永久提升 +10 全四系元素抗性！",
       value: "永久 +10 全抗性 (三難度共 +30 全抗)"
     },
-    summary: "深入極度酷寒的冰河迷宮，打破冰壁解救被尼拉塞克囚禁的煉金術士安亞 (Anya)。",
+    summary: "深入極度酷寒的冰凍之河迷宮，打破冰壁解救被尼拉塞克囚禁的煉金術士安亞 (Anya)。",
     walkthrough: [
-      "從水晶通道進入冰河地下冰窟。",
+      "從水晶通道進入冰凍之河地下冰窟。",
       "擊殺守護冰窟的雪怪首領「冰霜爬行者」，在冰封水池中找到被凍住的安亞對話。",
-      "回城找瑪拉取得解凍藥劑，再次進入冰河澆注在冰塊上救出安亞。",
+      "回城找瑪拉取得解凍藥劑，再次進入冰凍之河澆注在冰塊上救出安亞。",
       "回城領取抗性卷軸右鍵閱讀，安亞在城鎮開設紅門並開放賭博與裝備交易。"
     ],
     tacticalTips: "【全抗性保命天花板】普通、惡夢、地獄三難度各送一張 +10 全抗卷軸，三難度全解直接永久白嫖 +30% 全火/冰/電/毒抗性！地獄難度 -100 抗性懲罰直接被抵消將近三分之一！"

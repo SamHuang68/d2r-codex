@@ -331,7 +331,7 @@ export const TERROR_ZONE_GUIDE = {
         "鮮血荒地 & 邪惡洞窟 (Blood Moor)",
         "大沼澤 (Great Marsh) - 地圖又繞又多小矮人吹箭",
         "庫拉斯特下水道 (Sewers)",
-        "水晶通道與冰河 (Crystal Passage)"
+        "水晶通道與冰凍之河 (Crystal Passage)"
       ]
     }
   ]
