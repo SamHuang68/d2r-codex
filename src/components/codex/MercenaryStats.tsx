@@ -3,6 +3,7 @@ import { Database } from 'lucide-react';
 import { DIFFICULTY_ZH, HIRELINGS, MERC_MAX_LEVEL, clampMercLevel, hirelingMinLevel, mercBaseAt } from '../../engine/mercenary';
 import { skillEffectText } from '../../engine/skillEffects';
 import { auraEffects, skillByName } from '../../engine/skills';
+import { actZh } from '../../utils/actLabel';
 
 /**
  * 傭兵資料表數值（hireling.txt）：每個難度雇得到哪些類型、傭兵等級對應的生命／防禦／命中／抗性／傷害與技能。
@@ -56,7 +57,7 @@ export const MercenaryStats: React.FC<{ act: number }> = ({ act }) => {
           </label>
         </div>
 
-        <div className="text-xs text-sanctuary-400">第 {h.act} 幕 {h.typeZh}・{h.desc}・{DIFFICULTY_ZH[h.difficulty]}　目前 <span className="text-sanctuary-100 font-mono">{level}</span> 級</div>
+        <div className="text-xs text-sanctuary-400">{actZh(h.act)} {h.typeZh}・{h.desc}・{DIFFICULTY_ZH[h.difficulty]}　目前 <span className="text-sanctuary-100 font-mono">{level}</span> 級</div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-sm" aria-label="傭兵基礎數值">
           {[

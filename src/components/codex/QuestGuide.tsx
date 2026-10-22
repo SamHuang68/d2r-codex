@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { QUESTS_DATA, WORLD_EVENTS_DATA, QuestData, WorldEventData } from '../../data/quests';
+import { actZh } from '../../utils/actLabel';
 import { 
   Compass, 
   MapPin, 
@@ -105,7 +106,7 @@ export const QuestGuide: React.FC = () => {
             }`}
           >
             <MapPin className="w-4 h-4" />
-            第 {actNum} 幕 {actNum === 1 ? "(俠盜營地)" : actNum === 2 ? "(魯高因)" : actNum === 3 ? "(庫拉斯特港口)" : actNum === 4 ? "(混沌界要塞)" : "(哈洛加斯)"}
+            {actZh(actNum)} {actNum === 1 ? "(俠盜營地)" : actNum === 2 ? "(魯高因)" : actNum === 3 ? "(庫拉斯特港口)" : actNum === 4 ? "(混沌界要塞)" : "(哈洛加斯)"}
           </button>
         ))}
 

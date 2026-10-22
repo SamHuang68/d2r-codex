@@ -225,7 +225,7 @@ export const VALUATION_ITEMS_DATA: ValuationItem[] = [
       "+15% 增加攻擊速度 (IAS, Fervor 滿變)"
     ],
     estimatedValue: "滿變單顆身價 15-25 顆貝符文！",
-    description: "物理弓馬風之力、巨魔巢穴盾牌、吉永之臉與各類頂級物理武器的最佳鑲嵌物。同時兼顧拉滿最高攻速檔位與百分比物理輸出爆發。",
+    description: "物理弓馬風之力、食人妖骨盾、吉永之臉與各類頂級物理武器的最佳鑲嵌物。同時兼顧拉滿最高攻速檔位與百分比物理輸出爆發。",
     farmingSources: "惡夢第三章後至地獄全圖掉落的魔法珠寶。",
     keyRule: "ED (30-40%) 與 IAS (15%) 同時存在即為高價；未滿變 38/15 或 35/15 亦有極高價值。"
   }

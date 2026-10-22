@@ -134,7 +134,7 @@ export const PRESET_META_BUILDS: Omit<CharacterBuildPlan, 'id'>[] = [
       magicFind: 0,
       allSkills: 6
     },
-    notes: '擊殺超級崔斯特姆三大魔神的唯一權威配置！盾牌重擊 (Smite) 100% 命中，搭配 50%+ 粉碎打擊 (CB) 秒速削血，卓古拉觸發偷取生命 (Life Tap) 瞬間吸滿血量，雷神腰帶徹底免疫老墨閃電審判。'
+    notes: '擊殺超級崔斯特姆三大魔神的唯一權威配置！盾牌重擊 (Smite) 100% 命中，搭配 50%+ 粉碎打擊 (CB) 秒速削血，德古拉之握觸發偷取生命 (Life Tap) 瞬間吸滿血量，雷神腰帶徹底免疫老墨閃電審判。'
   },
   {
     characterClass: '亞馬遜',
