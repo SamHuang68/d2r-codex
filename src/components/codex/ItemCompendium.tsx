@@ -289,7 +289,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   const LIST_GRID = 'grid grid-cols-1 xl:grid-cols-2 gap-4';
   const CHIP_GRID = 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2';
 
-  /** 一個葉節點的暗金段落：目錄模式只列名稱小圖；詳細模式列完整卡片（護身符再依尺寸分段） */
+  /** 一個葉節點的暗金段落：目錄模式只列名稱小圖；詳細模式列完整卡片（咒符再依尺寸分段） */
   const uniqueSection = (leaf: TreeNode) => {
     const rows = uHere.filter((e) => e.leaf === leaf.id);
     if (rows.length === 0) return null;

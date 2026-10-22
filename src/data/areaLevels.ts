@@ -93,7 +93,7 @@ export const AREA_LEVELS_DATA: AreaLevelData[] = [
     isAlvl85: true,
     isTerrorZone: true,
     immunities: ["冰寒免疫", "火焰免疫", "閃電免疫"],
-    chestsAndBosses: "上庫拉斯特地下寺廟，怪物極度密集且凶狠，適合頂級裝備角色刷寶。"
+    chestsAndBosses: "庫拉斯特上層地下寺廟，怪物極度密集且凶狠，適合頂級裝備角色刷寶。"
   },
   {
     act: 3,

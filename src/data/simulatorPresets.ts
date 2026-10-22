@@ -224,7 +224,7 @@ BUILDS.forEach((b) => {
 // ── 尋寶（MF）檔位 ──
 // MF 數值來自遊戲資料（item_magicbonus，含依等級成長的部分），以 scripts/test_engine.mjs 逐一核對；
 // 掉落受 MF 遞減（見 engine/magicFind.ts）。這裡只決定「換哪些欄位」：
-//  - 效率：保留流派核心，只把頭、身、鞋、右戒指、護身符換成 MF 件，輸出幾乎不受影響
+//  - 效率：保留流派核心，只把頭、身、鞋、右戒指、咒符換成 MF 件，輸出幾乎不受影響
 //  - 極致：全身換成 MF 最高的可取得裝備，主手改為「阿里巴巴之刃」、副手「聲韻（Rhyme）」，不顧輸出與生存
 const MF_EFF: Items = { head: n('Harlequin Crest'), body: n('Enigma', 'Dusk Shroud'), boots: n('Wartraveler'), ring2: n('Nagelring') };
 const MF_MAX: Items = {

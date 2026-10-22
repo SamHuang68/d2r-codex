@@ -48,7 +48,7 @@ interface Props {
 const GRID_COLS = 10;
 const GRID_ROWS = 4;
 
-/** 護身符在 10×4 背包的簡易排列：由上而下、由左而右找第一個放得下的位置 */
+/** 咒符在 10×4 背包的簡易排列：由上而下、由左而右找第一個放得下的位置 */
 export function packCharms(charms: CatalogEntry[]): { entry: CatalogEntry; x: number; y: number; ok: boolean }[] {
   const used = Array.from({ length: GRID_ROWS }, () => Array(GRID_COLS).fill(false));
   return charms.map((entry) => {
@@ -163,7 +163,7 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
           );
         })}
 
-        {/* 背包 10×4 與護身符 */}
+        {/* 背包 10×4 與咒符 */}
         <div
           className="absolute grid d2-well"
           style={{ left: gridL, top: gridT, width: cell * GRID_COLS, height: cell * GRID_ROWS, gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`, gridTemplateRows: `repeat(${GRID_ROWS}, 1fr)`,

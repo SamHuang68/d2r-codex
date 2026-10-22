@@ -216,5 +216,5 @@ export function passiveMods(hard: Record<string, number>, b: SkillBonuses): Pass
   return out;
 }
 
-/** 技能點預算：每級 1 點（2 級起）＋任務（每難度：魔物巢穴 1、拉瑪達 1、伊祖爾 2＝4 點）。任務點數為社群共識，未於遊戲內核對 */
+/** 技能點預算：每級 1 點（2 級起）＋任務（每難度：魔物巢穴 1、拉瑪達 1、伊卒爾 2＝4 點）。任務點數為社群共識，未於遊戲內核對 */
 export const skillPointBudget = (level: number, questDifficulties: number) => Math.max(0, level - 1) + 4 * Math.max(0, Math.min(3, questDifficulties));

@@ -46,7 +46,7 @@ export const HolyGrailTracker: React.FC = () => {
       isTC87: boolean;
       imageUrl?: string;
       leaf: string;
-      /** 同一段內的小標（護身符尺寸、套裝名稱）；沒有則為空字串 */
+      /** 同一段內的小標（咒符尺寸、套裝名稱）；沒有則為空字串 */
       group: string;
     }[] = [];
 
@@ -140,7 +140,7 @@ export const HolyGrailTracker: React.FC = () => {
     const slots = [
       { id: 'weapon', label: '武器類' },
       { id: 'armor', label: '衣服護甲' },
-      { id: 'helm', label: '頭部頭盔' },
+      { id: 'helm', label: '頭盔' },
       { id: 'shield', label: '盾牌類' },
       { id: 'jewelry', label: '首飾護符' },
       { id: 'set', label: '綠色套裝' },

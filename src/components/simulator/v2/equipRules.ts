@@ -10,7 +10,7 @@ const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
  * - 槽位種類要對；野蠻人與刺客的副手欄可以放武器（雙持），刺客只能放爪，雙手武器不能放在副手欄。
  * - 職業專屬物品只能給該職業。
  * - 雙手武器不能搭配盾牌（野蠻人的「單雙手皆可」武器除外）。
- * 護身符放背包的規則（只能放護身符、空間夠不夠）不在這裡，由背包排列決定。
+ * 咒符放背包的規則（只能放咒符、空間夠不夠）不在這裡，由背包排列決定。
  */
 export function slotPlacementError(target: DollSlot, entry: CatalogEntry, equipped: EquippedMap, engineClass: string): string | null {
   const dualWield = entry.slot === 'weapon' && (target === 'shieldI' || target === 'shieldII') && (engineClass === 'Barbarian' || engineClass === 'Assassin');

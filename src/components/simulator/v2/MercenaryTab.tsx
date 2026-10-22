@@ -20,7 +20,7 @@ const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
 
 /**
  * 傭兵能用的武器種類。遊戲資料表（hireling.txt）沒有這項規則，這是玩家社群的共識：
- * 第一幕弓與弩；第二幕長矛與長柄；第三幕單手劍；第五幕依子類型用雙手劍或單手劍。只提醒，不阻擋。
+ * 第一章弓與弩；第二章長矛與長柄；第三章單手劍；第五章依子類型用雙手劍或單手劍。只提醒，不阻擋。
  */
 const weaponWarning = (act: number, subType: string, entry: CatalogEntry): string | undefined => {
   const b = baseByCode.get(entry.baseCode); if (!b) return undefined;

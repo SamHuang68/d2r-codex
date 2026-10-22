@@ -257,7 +257,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
 
               <span className={`flex items-center gap-1 ${item.isSuperiorValued ? 'text-d2-gold font-bold' : 'text-sanctuary-500'}`}>
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                {item.isSuperiorValued ? "超強 15%ED 天價" : "普通白板即可"}
+                {item.isSuperiorValued ? "特等的 15%ED 天價" : "普通白板即可"}
               </span>
             </div>
           </div>
@@ -368,7 +368,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
             }`}
           >
             <Gem className="w-3.5 h-3.5" />
-            超強 15%ED 尊貴
+            特等的 15%ED 尊貴
           </button>
 
           <div className="relative flex-1 min-w-[180px]">

@@ -28,7 +28,7 @@ export interface PropCompendiumProps {
   onNavigateToRunewords?: (rwName: string) => void;
 }
 
-/** 護身符／珠寶頁的圖：裂口護身符用資料頁已有的彩色圖（RotW 為 Renewed 版），彩虹刻面用 misc 的小圖（避開 magic 圖的浮水印） */
+/** 咒符／珠寶頁的圖：裂口咒符用資料頁已有的彩色圖（RotW 為 Renewed 版），彩虹刻面用 misc 的小圖（避開 magic 圖的浮水印） */
 const charmImage = (nameEn: string): string | undefined => {
   if (nameEn === 'Rainbow Facet') return 'https://static.d2r.world/img/items/misc/rainbow_facet.jpg';
   return UNIQUE_ITEMS_DATA.find((u) => u.nameEn === `Renewed ${nameEn}`)?.imageUrl
@@ -489,7 +489,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
         </div>
       )}
 
-      {/* ── TAB 5: 破免護身符與頂級珠寶 ── */}
+      {/* ── TAB 5: 破免咒符與頂級珠寶 ── */}
       {activeCategory === 'charms' && (
         <div className="space-y-6">
           <div className="bg-sanctuary-900/60 p-5 rounded-2xl border border-sanctuary-800 space-y-2">

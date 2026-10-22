@@ -95,7 +95,7 @@ export const EQUIP_DEFS: TaxDef[] = [
 export const JEWELRY_DEF: TaxDef = {
   id: 'jewelry', label: '飾品', children: [
     { id: 'jewelry/ring', label: '戒指', en: 'Ring' },
-    { id: 'jewelry/amulet', label: '項鍊', en: 'Amulet' },
+    { id: 'jewelry/amulet', label: '護身符', en: 'Amulet' },
     { id: 'jewelry/charm', label: '咒符', en: 'Charm' },
     { id: 'jewelry/jewel', label: '珠寶', en: 'Jewel' },
   ],
@@ -179,7 +179,7 @@ export function tierOfBase(b: BaseItem | undefined, fallback?: string): TierKey 
   return t === 'exceptional' || t === 'elite' ? t : 'normal';
 }
 
-/** 護身符尺寸（飾品沒有品階，改以尺寸分段） */
+/** 咒符尺寸（飾品沒有品階，改以尺寸分段） */
 export function charmSize(baseItemId?: string): 'small' | 'large' | 'grand' | undefined {
   const k = (baseItemId ?? '').toLowerCase();
   if (k.startsWith('small')) return 'small';

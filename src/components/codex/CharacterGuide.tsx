@@ -48,8 +48,8 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
   // Class-specific base weapon and armor mechanics
   const classSpecificGear: Record<string, { title: string; desc: string; topBases: string[] }> = {
     sorceress: {
-      title: "魔法使專用單手寶珠 (Sorceress Orbs)",
-      desc: "次元碎片、怪異之球、艾斯屈塔。原生可帶有 +3 單系技能與 +3 暴風雪/連鎖閃電等神級底材技能。",
+      title: "魔法使專用單手法珠 (Sorceress Orbs)",
+      desc: "次元法珠、異能法珠、艾斯屈塔。原生可帶有 +3 單系技能與 +3 暴風雪/連鎖閃電等神級底材技能。",
       topBases: ["死亡深度 (Death's Fathom)", "艾斯屈塔的憤怒 (Eschuta's Temper)", "核瞳 (The Oculus)"]
     },
     paladin: {
@@ -65,11 +65,11 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
     necromancer: {
       title: "死靈法師魔杖與專用頭骨盾 (Wands & Shrunken Heads)",
       desc: "魔胎 (Homunculus) 與骨焰；頂級白魔杖可帶有 +3 劇毒新星與衰老詛咒，是製作符文之語【骸骨】的最佳基底。",
-      topBases: ["破隱法杖 (死亡之網 -50%毒抗)", "魔胎 (Homunculus)", "白骨盾牌 (+3衰老 +3骨矛)"]
+      topBases: ["埋骨魔杖 (死亡之網 -50%毒抗)", "魔胎 (Homunculus)", "骨盾 (+3衰老 +3骨矛)"]
     },
     barbarian: {
       title: "野蠻人專用頭盔 (Barbarian Primal Helms)",
-      desc: "亞瑞特的面容 (神頭)；原生帶有 +3 戰鬥狂嗥、+3 戰鬥命令 (BO喊血) 的野蠻人專用頭盔是極品副手與主手。",
+      desc: "亞瑞特的面容 (神頭)；原生帶有 +3 戰鬥怒吼、+3 戰鬥命令 (BO喊血) 的野蠻人專用頭盔是極品副手與主手。",
       topBases: ["亞瑞特的面容 (Arreat's Face)", "惡魔頭角 (+3戰鬥命令 3孔治癒頭底材)", "殺手護盔"]
     },
     druid: {

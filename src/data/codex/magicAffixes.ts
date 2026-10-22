@@ -12,7 +12,7 @@ import { EQUIP_DEFS, TYPE_LEAF, type TaxDef } from '../../utils/equipTaxonomy';
  *
  * 判定規則（跟遊戲資料表的欄位一致）：
  *  - 物品等級（alvl）要落在 [level, maxLevel]；maxLevel 沒填表示沒有上限。
- *  - 物品類型要符合 itypes 其中之一，而且不屬於 etypes；類型有繼承關係（例如「大型護身符」也算「護身符」、「長劍」也算「刀劍」「近戰武器」「武器」），
+ *  - 物品類型要符合 itypes 其中之一，而且不屬於 etypes；類型有繼承關係（例如「大型咒符」也算「咒符」、「長劍」也算「刀劍」「近戰武器」「武器」），
  *    繼承關係用 itemtypes.json 的 equiv。資料表裡不存在的類型代碼（兩處筆誤：staff、「ring 」帶空白）永遠不會符合，跟遊戲讀表的結果一致。
  *  - 同一個 group 的詞綴在同一件物品上只會出現一個。
  *  - frequency 是抽選權重；權重 0 或沒填的列（舊版本殘留）資料管線已經排除，不會被隨機抽到。
@@ -92,7 +92,7 @@ export const isUnknownType = (code: string): boolean => !equivOf.has(code);
 
 export interface ItemTypeOption { code: string; label: string }
 export interface ItemTypeGroup { label: string; options: ItemTypeOption[] }
-/** 篩選用的具體物品類型，依裝備分類的順序排列；飾品（戒指、項鍊、三種護身符、珠寶）接在最後 */
+/** 篩選用的具體物品類型，依裝備分類的順序排列；飾品（戒指、護身符、三種咒符、珠寶）接在最後 */
 export const ITEM_TYPE_GROUPS: ItemTypeGroup[] = (() => {
   const codeOfLeaf = new Map<string, string>();
   for (const [code, leaf] of Object.entries(TYPE_LEAF)) if (!codeOfLeaf.has(leaf)) codeOfLeaf.set(leaf, code);

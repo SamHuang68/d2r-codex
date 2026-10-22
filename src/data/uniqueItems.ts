@@ -15,7 +15,7 @@ const rows = uniquesJson as unknown as Row[];
 
 /** 任務物品：不是掉落裝備，不收進暗金列表 */
 const QUEST_ITEMS = new Set(['Amulet of the Viper', 'Staff of Kings', 'Horadric Staff', 'Hell Forge Hammer', 'KhalimFlail', 'SuperKhalimFlail']);
-/** 收錄規則：舊百科已有的一律保留；新增項目排除任務物品與不會自然掉落者（束縛之戒、黑暗恐懼、舊版碧藍怒火、Rift 護身符本體） */
+/** 收錄規則：舊百科已有的一律保留；新增項目排除任務物品與不會自然掉落者（束縛之戒、黑暗恐懼、舊版碧藍怒火、Rift 咒符本體） */
 const included = (r: Row) => !!overlay.uniques[r.id]?.id || (!QUEST_ITEMS.has(r.nameEn) && r.spawnable !== false);
 
 const used = new Set<string>(Object.values(overlay.uniques).map((o) => o.id as string));

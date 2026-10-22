@@ -8,7 +8,7 @@ import areasJson from '../game/areas.json';
  * 規則與限制：
  *  - 三個難度（普通、惡夢、地獄）各有一組等級與抗性。資料表沒填的抗性格是 0；抗性 ≥100 是免疫、負值是弱點。
  *  - 吸取效率（生命／法力偷取對這隻怪的效果 %）與等級資料表沒填就是 null（JSON 裡沒有 undefined），不當成 0。
- *  - 不含：精英、冠軍、首領詞綴（例如火焰附魔）帶來的額外抗性；遊戲內再依等級換算的生命；首領出沒的場景。
+ *  - 不含：精英、獨特詞綴（例如火焰附魔）帶來的額外抗性；遊戲內再依等級換算的生命；頭目出沒的場景。
  */
 export type ElemKey = 'physical' | 'magic' | 'fire' | 'lightning' | 'cold' | 'poison';
 export type Diff = 0 | 1 | 2;

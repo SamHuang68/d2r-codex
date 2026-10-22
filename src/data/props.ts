@@ -69,7 +69,7 @@ export interface CharmJewelMeta {
 
 // ── 1. 寶石系統 (Gems) ──
 export const GEMS_DATA: GemData[] = [
-  // 完美紫水晶
+  // 完美紫寶石
   {
     id: "gem_perfect_amethyst",
     name: "完美紫寶石",
@@ -183,7 +183,7 @@ export const GEMS_DATA: GemData[] = [
       "對抗地獄抗性懲罰：地獄難度全抗直接 -100%，完鑽盾牌是平民法師拓荒保命首選"
     ]
   },
-  // 完美骷髏
+  // 完美骷髏石
   {
     id: "gem_perfect_skull",
     name: "完美骷髏石",
@@ -412,12 +412,12 @@ export const COMBAT_POTIONS_DATA: CombatPotionData[] = [
     effect: "右鍵使用後，立即將當前角色的【全部技能點數】與【全部屬性點數】完整歸還重置！",
     hiddenMechanic: "使用次數無上限！只要有足夠的四大精華，隨時可以隨意切換轉型流派。",
     recipe: "方塊合成：扭曲的苦怨精華 + 充盈的憎恨精華 + 燃燒的恐懼精華 + 潰爛的毀滅精華",
-    description: "D2R 天梯中後期最硬通貨之一，讓玩家自由在純冰、火法、電法或盾擊、狂熱間切換。",
+    description: "D2R 天梯中後期最硬通貨之一，讓玩家自由在純冰、火法、電法或盾牌重擊、狂熱間切換。",
     proTips: "換流派或收穫謎團/無限等關鍵神裝後，使用赦免徽章精確配點，力量只要點到剛好穿裝即可。"
   }
 ];
 
-// ── 5. 神級護身符與暗金珠寶 (Charms & Jewels Codex) ──
+// ── 5. 神級咒符與暗金珠寶 (Charms & Jewels Codex) ──
 export const CHARMS_JEWELS_DATA: CharmJewelMeta[] = [
   {
     id: "sunder_cold",

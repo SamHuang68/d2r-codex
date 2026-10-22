@@ -108,7 +108,7 @@ export interface EquippedItem {
 }
 
 export interface QuestBonuses {
-  /** 生命藥水（第三幕「金鳥」，每難度 +20 最大生命，永久；來源：社群共識，尚待遊戲內驗證） */
+  /** 生命藥水（第三章「金鳥」，每難度 +20 最大生命，永久；來源：社群共識，尚待遊戲內驗證） */
   lifePotions?: number;
 }
 

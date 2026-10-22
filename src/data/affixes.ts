@@ -21,7 +21,7 @@ export const VALUATION_ITEMS_DATA: ValuationItem[] = [
     itemType: "君主盾 (Monarch)",
     rarity: "magic",
     idealStats: [
-      "天然 4 凹槽 (Jeweler's 詞綴)",
+      "天然 4 鑲孔 (Jeweler's 詞綴)",
       "+30% 快速格擋速度 (FBR)",
       "+20% 增加格擋機率 (Deflecting 偏折詞綴)"
     ],
@@ -90,11 +90,11 @@ export const VALUATION_ITEMS_DATA: ValuationItem[] = [
       "+2 職業全技能等級 (Prefix)",
       "+20% 快速施法速度 (FCR) (Suffix)",
       "+30% 跑步/步行速度 (FRW) (Suffix)",
-      "凹槽 2 (Socketed 2S) (Prefix)",
+      "鑲孔 2 (Socketed 2S) (Prefix)",
       "附加額外屬性：20 力量 / 20 敏捷 / 20 全抗"
     ],
     estimatedValue: "可遇不可求的神器！拍賣行天價可達 100+ 顆高階符文！",
-    description: "法系與陷阱刺客、風德超越軍帽的絕對神頭！完美兼顧了傳送機動性 (30 FRW)、最高檔位 (20 FCR) 與鑲嵌 2 顆彩虹刻面的爆發力。",
+    description: "法系與陷阱刺客、風德超越軍帽的絕對神頭！完美兼顧了傳送術機動性 (30 FRW)、最高檔位 (20 FCR) 與鑲嵌 2 顆彩虹刻面的爆發力。",
     farmingSources: "地獄賭博 (Gambling)、恰西灌注魔力 (Imbue)、6 完美骷髏石洗權冠。",
     keyRule: "洗權冠 (Diadem) 具有無限洗詞綴優勢，因其品質等級極高，哪怕降 ilvl 也能反覆出現 2/20/2S。"
   },
@@ -148,7 +148,7 @@ export const VALUATION_ITEMS_DATA: ValuationItem[] = [
     idealStats: [
       "+3 閃電技能 或 +3 火焰技能 或 +3 毒素與骸骨技能",
       "+20% 快速施法速度 (FCR)",
-      "打孔工匠打出 2 凹槽 (2 Sockets)"
+      "打孔工匠打出 2 鑲孔 (2 Sockets)"
     ],
     estimatedValue: "極限法系競速標配，身價 15-35 顆貝符文！",
     description: "極端純法傷害的極限突破頭具！鑲嵌 2 顆 5/5 彩虹刻面後，能提供高達 +3 技能、20% FCR、+10% 技能傷害與 -10% 敵抗性，傷害直接超越獅鷲之眼！",
@@ -209,7 +209,7 @@ export const VALUATION_ITEMS_DATA: ValuationItem[] = [
       "自動修復耐久度 (Replenish Durability 33秒回1)"
     ],
     estimatedValue: "PvP 刺客至尊神兵！身價超越數百顆貝符文！",
-    description: "全暗黑世界最昂貴的近戰爪類武器之一！無形提升巨額基礎物理面板，自動修復保證永久不壞，愚人詞綴給予幾千點額外命中率，是刺客內戰與天梯對抗的終極殺手鐧。",
+    description: "全暗黑世界最昂貴的近戰爪類武器之一！無形提升巨額基礎物理面板，自動修復保證永久不壞，愚者詞綴給予幾千點額外命中率，是刺客內戰與天梯對抗的終極殺手鐧。",
     farmingSources: "地獄牛關、恰西灌注魔力、邪惡威脅區域黃色爪。",
     keyRule: "必須是『無形 (Eth)』且同時帶有『自修 (Rep)』！若無自修則耐久打光即報廢。"
   },
