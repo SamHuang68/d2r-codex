@@ -1665,3 +1665,10 @@ console.log('【全站用字：遊戲字串的寫法（舊寫法不得再出現�
     assert.ok(![...searchOmni('地穴'), ...searchOmni('第二章'), ...searchOmni('第2幕')].some((r) => /幕|恐懼領域/.test(r.category + r.badge)));
   });
 }
+{
+  t('巨型斬鐮的說明拿來比的是斬鐮（速度 -10），不是絕秘斧（速度 +10）：用字更正時 d2r.world 的舊版欄「銳利之斧」是斬鐮', () => {
+    const bases = rd('bases'); const spd = (n) => bases.find((b) => b.nameEn === n).speed;
+    assert.equal(spd('Thresher'), -10); assert.equal(spd('Cryptic Axe'), 10);
+    assert.ok(JSON.stringify(E.CODEX_OVERLAY).includes('兼具斬鐮的 -10 極速'));
+  });
+}
