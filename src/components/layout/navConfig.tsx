@@ -60,7 +60,7 @@ export const NAV_GROUPS: NavGroup[] = [
     category: '戰役與終局',
     items: [
       { id: 'quests', label: '任務事件', desc: '永久獎勵任務與世界事件', icon: <Compass className={`${ic} text-d2-gold`} /> },
-      { id: 'areas', label: '場景恐區', desc: '85 級場景與恐怖領域', icon: <MapPin className={`${ic} text-d2-fire`} /> },
+      { id: 'areas', label: '場景恐區', desc: '85 級場景與邪惡威脅區域', icon: <MapPin className={`${ic} text-d2-fire`} /> },
       { id: 'monsters', label: '怪物圖鑑', desc: '三難度抗性、免疫與場景', icon: <Ghost className={`${ic} text-d2-fire`} /> },
       { id: 'shrines', label: '聖壇圖鑑', desc: '聖壇效果、持續時間與等級', icon: <Landmark className={`${ic} text-d2-gold`} /> },
       { id: 'uber', label: '紅門六王', desc: '火炬、地獄崔斯特姆流程', icon: <Skull className={`${ic} text-d2-fire`} /> },

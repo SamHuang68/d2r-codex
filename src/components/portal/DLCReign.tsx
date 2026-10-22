@@ -29,7 +29,7 @@ export const DLCReign: React.FC<DLCReignProps> = ({
               </span>
             </h2>
             <p className="text-sm text-sanctuary-300 font-sans leading-relaxed">
-              邪惡再次現身於聖休亞瑞。駕馭禁忌魔法、使役地獄原生僕從，並迎來全面升級的現代化遊戲體驗，包括自訂拾取過濾器、專屬材料倉庫與動態恐懼區域。
+              邪惡再次現身於聖休亞瑞。駕馭禁忌魔法、使役地獄原生僕從，並迎來全面升級的現代化遊戲體驗，包括自訂拾取過濾器、專屬材料倉庫與動態邪惡威脅區域。
             </p>
 
             <div className="space-y-2.5 text-xs text-sanctuary-200">
@@ -123,7 +123,7 @@ export const DLCReign: React.FC<DLCReignProps> = ({
                 { feature: '《暗黑破壞神 II：獄火重生》基礎七大經典職業', base: true, dlc: true },
                 { feature: '《術士軍臨》全新術士 (Warlock) 職業', base: false, dlc: true },
                 { feature: '最新 DLC 專屬符文之語 (權威 / 巫師會 / 虛無)', base: false, dlc: true },
-                { feature: '動態恐懼區域 (Terror Zones) 與 85 級場景', base: true, dlc: true },
+                { feature: '動態邪惡威脅區域 (Terror Zones) 與 85 級場景', base: true, dlc: true },
                 { feature: '自訂拾取過濾器 (Loot Filter QoL)', base: true, dlc: true },
                 { feature: '符文與材料專屬儲物箱分頁', base: true, dlc: true },
                 { feature: '《暗黑破壞神 IV》跨遊戲寵物與禁忌繫鏈戰利品', base: false, dlc: true },

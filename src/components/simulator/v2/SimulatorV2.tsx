@@ -149,7 +149,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     }
   };
   const canDrop = (target: DollSlot | 'charms', entry: CatalogEntry): string | null => {
-    if (target === 'charms') return entry.slot !== 'charm' ? '只有護身符能放進背包' : canFitCharm(charms, entry) ? null : '背包空間不足';
+    if (target === 'charms') return entry.slot !== 'charm' ? '只有咒符能放進背包' : canFitCharm(charms, entry) ? null : '背包空間不足';
     return slotPlacementError(target, entry, equipped, cls.en);
   };
   const place = (target: DollSlot | 'charms', entry: CatalogEntry) => {
@@ -202,7 +202,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     const lines = [`${cls.zh} Lv${level}（${DIFF_ZH[difficulty]}）`, `力${result.attributes.str} 敏${result.attributes.dex} 體${result.attributes.vit} 能${result.attributes.ene}`,
       `生命 ${result.life} 法力 ${result.mana} 防禦 ${result.defense} 格擋 ${result.blockChance}%`,
       `抗性 火${result.resist.fire} 冰${result.resist.cold} 電${result.resist.lightning} 毒${result.resist.poison}`,
-      ...(Object.keys(equipped) as DollSlot[]).map((k) => `${DOLL_SLOT_ZH[k]}：${equipped[k]!.entry.name}`), ...charms.map((c) => `護身符：${c.name}`),
+      ...(Object.keys(equipped) as DollSlot[]).map((k) => `${DOLL_SLOT_ZH[k]}：${equipped[k]!.entry.name}`), ...charms.map((c) => `咒符：${c.name}`),
       ...(merc.on && mercHire && mercResult ? [`傭兵：${hirelingLabel(mercHire)} Lv${mercResult.level}（生命 ${mercResult.life} 防禦 ${mercResult.defense}）`, ...(Object.keys(merc.equipped) as MercSlot[]).map((k) => `傭兵${MERC_SLOT_ZH[k]}：${merc.equipped[k]!.entry.name}`)] : [])];
     navigator.clipboard?.writeText(lines.join('\n')).then(() => say('已複製配裝摘要'), () => say('無法複製（瀏覽器未授權）'));
   };
@@ -297,10 +297,10 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
               </select>
             </label>
             <span className="d2-sub" style={{ letterSpacing: '.2em' }}>任務</span>
-            <NumSelect label="生命藥水" value={quests.lifePotions} max={3} onChange={(n) => setQuests((q) => ({ ...q, lifePotions: n }))} title="第三幕「金鳥」，每難度 +20 最大生命" />
-            <NumSelect label="安亞卷軸" value={quests.anya} max={3} onChange={(n) => setQuests((q) => ({ ...q, anya: n }))} title="第五幕，每難度 +10 全抗" />
-            <NumSelect label="拉姆艾森之書" value={quests.lamEsen} max={3} onChange={(n) => setQuests((q) => ({ ...q, lamEsen: n }))} title="第三幕，每難度 +5 屬性點" />
-            <NumSelect label="技能點任務" value={quests.skillPts} max={3} onChange={(n) => setQuests((q) => ({ ...q, skillPts: n }))} title="魔物巢穴 1、拉瑪達 1、伊祖爾 2，每難度共 +4 技能點（社群共識，未於遊戲內核對）" />
+            <NumSelect label="生命藥水" value={quests.lifePotions} max={3} onChange={(n) => setQuests((q) => ({ ...q, lifePotions: n }))} title="第三章「金鳥」，每難度 +20 最大生命" />
+            <NumSelect label="安亞卷軸" value={quests.anya} max={3} onChange={(n) => setQuests((q) => ({ ...q, anya: n }))} title="第五章，每難度 +10 全抗" />
+            <NumSelect label="拉姆艾森之書" value={quests.lamEsen} max={3} onChange={(n) => setQuests((q) => ({ ...q, lamEsen: n }))} title="第三章，每難度 +5 屬性點" />
+            <NumSelect label="技能點任務" value={quests.skillPts} max={3} onChange={(n) => setQuests((q) => ({ ...q, skillPts: n }))} title="魔物巢穴 1、拉瑪達 1、伊卒爾 2，每難度共 +4 技能點（社群共識，未於遊戲內核對）" />
             <label className="d2-field" title="裝備詞綴範圍值取上限或下限">屬性取值
               <select value={rollMax ? 'max' : 'min'} onChange={(e) => setRollMax(e.target.value === 'max')} className="d2-select">
                 <option value="max">上限</option><option value="min">下限</option>

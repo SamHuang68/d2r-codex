@@ -17,7 +17,7 @@ export interface CustomItemDef {
 
 export const CUSTOM_BASES: { code: string; label: string }[] = [
   { code: 'rin', label: '戒指' }, { code: 'amu', label: '項鍊' },
-  { code: 'cm1', label: '小型護身符' }, { code: 'cm2', label: '大型護身符' }, { code: 'cm3', label: '特大護身符' },
+  { code: 'cm1', label: '小型咒符' }, { code: 'cm2', label: '大型咒符' }, { code: 'cm3', label: '特大咒符' },
 ];
 
 /** 可選詞綴（屬性代碼）與防呆上限 */

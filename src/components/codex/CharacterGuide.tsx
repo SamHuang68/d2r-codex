@@ -48,39 +48,39 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
   // Class-specific base weapon and armor mechanics
   const classSpecificGear: Record<string, { title: string; desc: string; topBases: string[] }> = {
     sorceress: {
-      title: "法師專用單手寶珠 (Sorceress Orbs)",
+      title: "魔法使專用單手寶珠 (Sorceress Orbs)",
       desc: "次元碎片、怪異之球、艾斯屈塔。原生可帶有 +3 單系技能與 +3 暴風雪/連鎖閃電等神級底材技能。",
-      topBases: ["次元碎片 (Death's Fathom)", "怪異之球 (Eschuta's Temper)", "眼球 (The Oculus)"]
+      topBases: ["死亡深度 (Death's Fathom)", "艾斯屈塔的憤怒 (Eschuta's Temper)", "核瞳 (The Oculus)"]
     },
     paladin: {
       title: "聖騎士專用重盾 (Paladin Shields)",
       desc: "原生附帶高達 +45 全抗性 (All Res) 或 +65% 增傷 +121 命中率！4孔神聖小盾是製作符文之語【精神】或【流亡】的最頂級底材。",
-      topBases: ["神聖小盾 (Sacred Targe 60%高格擋)", "飾金盾牌 (Herald of Zakarum)", "庫拉斯特之盾"]
+      topBases: ["神聖小盾 (Sacred Targe 60%高格擋)", "撒卡蘭姆使者 (Herald of Zakarum)", "庫拉斯特盾"]
     },
     amazon: {
       title: "亞馬遜專用神聖弓與標槍 (Amazon Weapons)",
-      desc: "大院長之弓與女族長之弓，原生可自帶 +3 弓與十字弓技能；泰坦的復仇與雷擊標槍提供極速投擲彈幕。",
-      topBases: ["泰坦的復仇 (Titan's Revenge)", "雷擊 (Thunderstroke)", "大院長之弓 (+3技能 4孔信心底材)"]
+      desc: "主母之弓與女傑之弓，原生可自帶 +3 弓與弩技能；泰坦的復仇與雷霆之擊標槍提供極速投擲彈幕。",
+      topBases: ["泰坦的復仇 (Titan's Revenge)", "雷霆之擊 (Thunderstroke)", "主母之弓 (+3技能 4孔信心底材)"]
     },
     necromancer: {
       title: "死靈法師魔杖與專用頭骨盾 (Wands & Shrunken Heads)",
-      desc: "侏儒 (荷曼庫魯斯) 與骨焰；頂級白魔杖可帶有 +3 劇毒新星與衰老詛咒，是製作符文之語【白骨】的最佳基底。",
-      topBases: ["破隱法杖 (死亡之網 -50%毒抗)", "侏儒 (Homunculus)", "白骨盾牌 (+3衰老 +3骨矛)"]
+      desc: "魔胎 (Homunculus) 與骨焰；頂級白魔杖可帶有 +3 劇毒新星與衰老詛咒，是製作符文之語【骸骨】的最佳基底。",
+      topBases: ["破隱法杖 (死亡之網 -50%毒抗)", "魔胎 (Homunculus)", "白骨盾牌 (+3衰老 +3骨矛)"]
     },
     barbarian: {
       title: "野蠻人專用頭盔 (Barbarian Primal Helms)",
-      desc: "亞瑞特的面容 (神頭)；原生帶有 +3 戰鬥狂嗥、+3 戰鬥體質 (BO喊血) 的野蠻人專用頭盔是極品副手與主手。",
-      topBases: ["亞瑞特的面容 (Arreat's Face)", "惡魔頭角 (+3戰鬥體質 3孔治癒頭底材)", "殺戮者防護面甲"]
+      desc: "亞瑞特的面容 (神頭)；原生帶有 +3 戰鬥狂嗥、+3 戰鬥命令 (BO喊血) 的野蠻人專用頭盔是極品副手與主手。",
+      topBases: ["亞瑞特的面容 (Arreat's Face)", "惡魔頭角 (+3戰鬥命令 3孔治癒頭底材)", "殺手護盔"]
     },
     druid: {
       title: "德魯伊專用狼頭與鹿頭 (Druid Pelts)",
-      desc: "加爾的長髮；原生附帶 +3 龍捲風 (Tornado)、+3 狂怒 (Fury) 或 +3 毀天滅地的高級自然頭冠。",
-      topBases: ["加爾的長髮 (Jalal's Mane)", "地獄之吻 (Cerebus' Bite)", "大地靈魂 (+3龍捲風 3孔幻化底材)"]
+      desc: "加爾的鬃毛；原生附帶 +3 龍捲風 (Tornado)、+3 狂怒 (Fury) 或 +3 毀天滅地的高級自然頭冠。",
+      topBases: ["加爾的鬃毛 (Jalal's Mane)", "地獄犬之咬 (Cerebus' Bite)", "地土靈獸帽 (+3龍捲風 3孔變化底材)"]
     },
     assassin: {
       title: "刺客專用拳劍與爪 (Assassin Katars)",
-      desc: "巴特克的猛擊；原生附帶 +3 陷阱、+3 雷電守衛與武器格擋 (Weapon Block) 的雙持利爪。",
-      topBases: ["巴特克的猛擊 (Bartuc's Cut-Throat)", "符文爪 (+3雷光守衛 3孔混沌底材)", "近身刃"]
+      desc: "霸圖克的割喉爪；原生附帶 +3 陷阱、+3 雷光衛哨與武器格擋 (Weapon Block) 的雙持利爪。",
+      topBases: ["霸圖克的割喉爪 (Bartuc's Cut-Throat)", "符紋爪 (+3雷光衛哨 3孔混沌底材)", "近身刃"]
     },
     warlock: {
       title: "術士專用禁忌魔典與邪異匕首 (Warlock Grimoires)",
@@ -186,7 +186,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
               <p className="text-sanctuary-300 leading-relaxed pl-5 font-sans">
                 • <strong>力量 (Str)</strong>：點到剛好能穿戴核心裝備即可（通常以統盾 156 力量或謎團加成後為基準）。<br />
                 • <strong>敏捷 (Dex)</strong>：格擋流點到滿 75% 格擋率，其餘流派點到裝備需求即可。<br />
-                • <strong>精力 (Ene)</strong>：原則上一點都不點！後期裝備與眼光冥想靈氣可徹底解決法力問題。<br />
+                • <strong>精力 (Ene)</strong>：原則上一點都不點！後期裝備與靈光冥想靈氣可徹底解決法力問題。<br />
                 • <strong>活力 (Vit)</strong>：所有剩餘點數全部投入活力，最大化生命值抵禦猝死！
               </p>
             </div>

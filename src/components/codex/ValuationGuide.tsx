@@ -20,12 +20,12 @@ import {
 const VAL_CATS = [
   { id: 'all', label: '全部神物' },
   { id: 'shield', label: '盾牌 (JMoD)' },
-  { id: 'charm', label: '護身符 (板子)' },
+  { id: 'charm', label: '咒符 (板子)' },
   { id: 'helm', label: '頭飾/權冠' },
   { id: 'ring', label: '戒指' },
   { id: 'gloves', label: '手套' },
   { id: 'boots', label: '鞋子 (三抗鞋)' },
-  { id: 'amulet', label: '項鍊 (2/20)' },
+  { id: 'amulet', label: '護身符 (2/20)' },
   { id: 'weapon', label: '武器 (自修爪)' },
   { id: 'jewel', label: '珠寶 (40/15)' },
 ];
@@ -66,7 +66,7 @@ export const ValuationGuide: React.FC = () => {
       { id: 'plus_2_skill', label: '+2 職業全技能等級', score: 35, isCrucial: true },
       { id: 'fcr_20', label: '+20% 快速施法速度 (FCR)', score: 35, isCrucial: true },
       { id: 'frw_30', label: '+30% 高速跑步/步行 (FRW)', score: 25 },
-      { id: 'sockets_2', label: '天然 2 凹槽 (2 Sockets)', score: 30, isCrucial: true },
+      { id: 'sockets_2', label: '天然 2 鑲孔 (2 Sockets)', score: 30, isCrucial: true },
       { id: 'strength', label: '+20-30 力量', score: 18 },
       { id: 'dexterity', label: '+15-20 敏捷', score: 18 },
       { id: 'all_res', label: '全抗性 +15-20%', score: 20 },
@@ -80,7 +80,7 @@ export const ValuationGuide: React.FC = () => {
       { id: 'mf_plr', label: '打寶率 (MF) 或 較低毒素持續時間 (PLR)', score: 15 },
     ],
     gloves: [
-      { id: 'plus_2_skill', label: '+2 標槍或武學技能', score: 35, isCrucial: true },
+      { id: 'plus_2_skill', label: '+2 標槍與長矛或武學技藝技能', score: 35, isCrucial: true },
       { id: 'ias_20', label: '+20% 攻擊速度 (IAS)', score: 35, isCrucial: true },
       { id: 'strength', label: '+10-15 力量', score: 18 },
       { id: 'dexterity', label: '+10-15 敏捷', score: 18 },
@@ -88,8 +88,8 @@ export const ValuationGuide: React.FC = () => {
       { id: 'leech', label: '每次命中偷取 3% 生命', score: 12 },
     ],
     shield: [
-      { id: 'jewelers_4s', label: '天然 4 凹槽 (Jeweler\'s 珠寶匠)', score: 45, isCrucial: true },
-      { id: 'deflecting', label: '偏向 (30% FBR + 20% 格擋率)', score: 45, isCrucial: true },
+      { id: 'jewelers_4s', label: '天然 4 鑲孔 (Jeweler\'s 珠寶匠)', score: 45, isCrucial: true },
+      { id: 'deflecting', label: '偏折 (30% FBR + 20% 格擋率)', score: 45, isCrucial: true },
       { id: 'eth_rep', label: '無形 + 自動修復耐久度', score: 35 },
       { id: 'life_60', label: '+50-60 生命 (巨鯨詞綴)', score: 25 },
     ]
@@ -384,7 +384,7 @@ export const ValuationGuide: React.FC = () => {
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-3">
                 {[
                   { id: 'ring', label: '黃戒指' },
-                  { id: 'amulet', label: '手工項鍊' },
+                  { id: 'amulet', label: '手工護身符' },
                   { id: 'helm', label: '黃頭飾' },
                   { id: 'boots', label: '三抗鞋' },
                   { id: 'gloves', label: '黃手套' },

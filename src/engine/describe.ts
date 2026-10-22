@@ -121,7 +121,7 @@ function specialLines(m: Modifier, roll: number): Line[] | undefined {
     // 隨機職業技能：par＝加成值，min～max＝技能編號範圍（決定職業）
     case 'skill-rand': { const c = skillClassZh(m.min); const v = Number(m.par ?? 0); return [{ text: `${sign(v)} ${c ?? ''}隨機技能等級${c ? ` （只限${c}）` : ''}`, known: true, pri: prio('item_singleskill') }]; }
     // 隨機職業技能（所有職業）：加成值在屬性定義的 val
-    case 'randclassskill': { const v = props.randclassskill?.parts[0]?.val ?? 0; return [{ text: `${sign(v)} 職業技能等級（暗黑火炬：模擬器依目前職業計算）`, known: true, pri: prio('item_addclassskills') }]; }
+    case 'randclassskill': { const v = props.randclassskill?.parts[0]?.val ?? 0; return [{ text: `${sign(v)} 職業技能等級（地獄火炬：模擬器依目前職業計算）`, known: true, pri: prio('item_addclassskills') }]; }
     // 術士三棵技能樹全加（properties 沒定義，屬性表有的是 skilltab 編號 21～23）
     case 'skilltab-war': return [0, 1, 2].map((i) => ({ text: describeEntry({ stat: 'item_addskill_tab', value: pickRoll(m, roll), param: 21 + i }) as string, known: true, pri: prio('item_addskill_tab') - i * 0.001 }));
     default: return undefined;

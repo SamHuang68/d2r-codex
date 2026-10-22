@@ -113,8 +113,8 @@ function validate(raw: unknown): SavedProfile | string {
   }
   const charms: SavedItem[] = [];
   if (d.charms !== undefined) {
-    if (!Array.isArray(d.charms) || d.charms.length > MAX_CHARMS) return '格式不符：護身符清單不合法';
-    for (const [i, v] of d.charms.entries()) { const it = cleanItem(v, `第 ${i + 1} 個護身符`); if (typeof it === 'string') return `格式不符：${it}`; charms.push(it); }
+    if (!Array.isArray(d.charms) || d.charms.length > MAX_CHARMS) return '格式不符：咒符清單不合法';
+    for (const [i, v] of d.charms.entries()) { const it = cleanItem(v, `第 ${i + 1} 個咒符`); if (typeof it === 'string') return `格式不符：${it}`; charms.push(it); }
   }
   const skillPoints: Record<string, number> = {};
   if (d.skillPoints !== undefined) {

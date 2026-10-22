@@ -6,7 +6,7 @@ export const BREAKPOINTS_DATA: BreakpointData[] = [
     characterClass: "魔法使",
     classNameEn: "Sorceress",
     type: "FCR",
-    variant: "標準法術 (冰風暴/暴風雪/火球/隕石/傳送)",
+    variant: "標準法術 (冰風暴/暴風雪/火球術/隕石術/傳送術)",
     notes: "最核心門檻為 63% (過渡) 與 105% (終局標配)；極限衝刺 200% 可達 7 幀極速傳送。",
     breakpoints: [
       { frames: 13, requiredValue: 0 },
@@ -22,7 +22,7 @@ export const BREAKPOINTS_DATA: BreakpointData[] = [
     characterClass: "魔法使",
     classNameEn: "Sorceress",
     type: "FCR",
-    variant: "閃電 / 連鎖閃電 (Lightning / Chain Lightning)",
+    variant: "閃電箭 / 連鎖閃電 (Lightning / Chain Lightning)",
     notes: "閃電系具有獨立施法動作，關鍵檔位為 78% 與 117% (電法畢業標配)。",
     breakpoints: [
       { frames: 19, requiredValue: 0 },
@@ -60,7 +60,7 @@ export const BREAKPOINTS_DATA: BreakpointData[] = [
     characterClass: "聖騎士",
     classNameEn: "Paladin",
     type: "FCR",
-    variant: "祝槌 / 天堂之拳 / 傳送",
+    variant: "祝福之鎚 / 天堂之拳 / 傳送術",
     notes: "祝槌騎 (Hammerdin) 推薦 75% (10 幀) 或 125% (9 幀畢業速度)。",
     breakpoints: [
       { frames: 15, requiredValue: 0 },
@@ -104,7 +104,7 @@ export const BREAKPOINTS_DATA: BreakpointData[] = [
     characterClass: "死靈法師",
     classNameEn: "Necromancer",
     type: "FCR",
-    variant: "人型形態 (骨矛/屍體爆炸/傳送)",
+    variant: "人型形態 (骨矛/屍爆/傳送術)",
     notes: "骨系與毒系普遍標配 75% (10 幀) 或極致 125% (9 幀)。",
     breakpoints: [
       { frames: 15, requiredValue: 0 },
@@ -157,7 +157,7 @@ export const BREAKPOINTS_DATA: BreakpointData[] = [
     characterClass: "亞馬遜",
     classNameEn: "Amazon",
     type: "FCR",
-    notes: "亞馬遜天生施法前搖極慢，謎團傳送推薦至少 68% (13 幀) 或 99% (12 幀)。",
+    notes: "亞馬遜天生施法前搖極慢，謎團傳送術推薦至少 68% (13 幀) 或 99% (12 幀)。",
     breakpoints: [
       { frames: 19, requiredValue: 0 },
       { frames: 18, requiredValue: 7 },
@@ -209,7 +209,7 @@ export const BREAKPOINTS_DATA: BreakpointData[] = [
     characterClass: "刺客",
     classNameEn: "Assassin",
     type: "FCR",
-    notes: "心靈震爆與傳送檔位，陷阱擺放速度則取決於攻擊速度 (IAS) 而非施法速度 (FCR)。",
+    notes: "心靈震爆與傳送術檔位，陷阱擺放速度則取決於攻擊速度 (IAS) 而非施法速度 (FCR)。",
     breakpoints: [
       { frames: 16, requiredValue: 0 },
       { frames: 15, requiredValue: 8 },

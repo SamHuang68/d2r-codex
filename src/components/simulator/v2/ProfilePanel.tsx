@@ -19,7 +19,7 @@ interface Props {
 const sameItems = (a: object, b: object) => JSON.stringify(a) === JSON.stringify(b);
 
 const PARTS: { key: keyof ApplyParts; label: string; hint: string }[] = [
-  { key: 'gear', label: '裝備與護身符', hint: '換掉物品欄與護身符背包' },
+  { key: 'gear', label: '裝備與咒符', hint: '換掉物品欄與咒符背包' },
   { key: 'skills', label: '技能點', hint: '換掉技能樹的加點與主力技能' },
   { key: 'character', label: '等級、屬性點與任務', hint: '換掉等級、難度、任務與四項屬性配點' },
 ];
@@ -176,7 +176,7 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
             <button type="button" className="d2-btn" onClick={save}>{profiles.some((p) => p.name === name.trim()) && name.trim() ? '覆蓋儲存' : '儲存目前配置'}</button>
             <button type="button" className="d2-btn is-quiet" aria-expanded={importOpen} onClick={() => setImportOpen((v) => !v)}>匯入</button>
           </div>
-          <div className="d2-sub mt-1">會儲存目前的職業、裝備與鑲嵌、護身符、技能點、等級、屬性點與任務。只存在這個瀏覽器，換瀏覽器或清除網站資料前請先「匯出」備份。</div>
+          <div className="d2-sub mt-1">會儲存目前的職業、裝備與鑲嵌、咒符、技能點、等級、屬性點與任務。只存在這個瀏覽器，換瀏覽器或清除網站資料前請先「匯出」備份。</div>
           {importOpen && (
             <div className="mt-2 space-y-2">
               <textarea value={importText} onChange={(e) => setImportText(e.target.value)} rows={4} placeholder="貼上匯出的 Profile 文字" aria-label="匯入 Profile" className="d2-input w-full" style={{ fontFamily: 'monospace', fontSize: 12 }} />

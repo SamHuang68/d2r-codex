@@ -26,7 +26,7 @@ export const UberBossGuide: React.FC = () => {
             紅門六王與地表暗黑攻略寶典
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-2xl">
-            收錄地獄火炬 (Hellfire Torch) 9把鑰匙三紅門合成流程、盾擊聖騎士單挑六大魔神核心鐵律，以及超級暗黑破壞神 (DClone 毀符) 刷新機制。
+            收錄地獄火炬 (Hellfire Torch) 9把鑰匙三紅門合成流程、盾擊聖騎士單挑六大魔神核心鐵律，以及超級迪亞布羅 (DClone 毀符) 刷新機制。
           </p>
         </div>
 
@@ -163,7 +163,7 @@ export const UberBossGuide: React.FC = () => {
                 {UBER_TRISTRAM_GUIDE.dcloneGuide.title}
               </h3>
               <p className="text-xs text-sanctuary-400">
-                獲取全職業必備暗金小護身符【毀滅小護身符 (Annihilus)】的特殊世界事件。
+                獲取全職業必備暗金小型咒符【滅絕小型咒符 (Annihilus)】的特殊世界事件。
               </p>
             </div>
           </div>

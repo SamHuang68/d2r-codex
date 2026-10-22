@@ -75,7 +75,7 @@ export function weightShare(a: Affix, typeCode: string, alvl: number): number | 
 /** 上層（分組用）類型代碼的中文名稱；具體類型的名稱沿用裝備分類（equipTaxonomy）與底材資料，不另外維護 */
 const GROUP_TYPE_ZH: Record<string, string> = {
   armo: '所有防具', weap: '所有武器', mele: '近戰武器', miss: '遠程武器（弓與弩）', thro: '投擲武器', blun: '鈍器', rod: '杖類（法杖、魔杖、權杖）',
-  shld: '所有盾牌', sppl: '長柄與長矛', amaz: '亞馬遜專用', char: '護身符', misc: '雜項',
+  shld: '所有盾牌', sppl: '長柄與長矛', amaz: '亞馬遜專用', char: '咒符', misc: '雜項',
 };
 const leafLabels = new Map<string, string>();
 const collectLeaves = (defs: TaxDef[]) => defs.forEach((d) => (d.children ? collectLeaves(d.children) : leafLabels.set(d.id, d.label)));

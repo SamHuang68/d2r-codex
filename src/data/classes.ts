@@ -50,7 +50,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
         name: "混沌火影術士 (Chaos Pyromancer)",
         tier: "S",
         coreSkills: "暗影裂隙 + 地獄熾焰 + 混沌崩解",
-        gearSummary: "巫師會匕首 + 謎團 + 獅鷲之眼"
+        gearSummary: "巫師之刺 + 謎團 + 獅鷲之眼"
       }
     ]
   },
@@ -59,7 +59,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     name: "魔法使",
     nameEn: "Sorceress",
     title: "元素風暴主宰",
-    description: "元素魔法的女王，精通冰寒、火焰與閃電三系法術。天生具備瞬息移動的「傳送」神技，是開荒拓荒第一人與高難度打寶的終極常勝軍。",
+    description: "元素魔法的女王，精通冰寒、火焰與閃電三系法術。天生具備瞬息移動的「傳送術」神技，是開荒拓荒第一人與高難度打寶的終極常勝軍。",
     primaryAttributes: "活力、精力",
     startingStats: {
       str: 10,
@@ -76,32 +76,32 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     },
     skillTrees: [
       {
-        name: "冰凍法術 (Cold Spells)",
+        name: "冰寒法術 (Cold Spells)",
         description: "凍結戰場的絕對零度，兼顧控場減速與大範圍清怪。",
-        keySkills: ["暴風雪 (Blizzard)", "冰風暴 (Glacial Spike)", "冰凍專精", "冰封球"]
+        keySkills: ["暴風雪 (Blizzard)", "冰川之槍 (Glacial Spike)", "冰寒專精", "冰封球"]
       },
       {
         name: "閃電法術 (Lightning Spells)",
         description: "瞬發穿透的高額電能打擊，擁有無上限的最高面板單次傷害。",
-        keySkills: ["閃電 (Lightning)", "連鎖閃電", "傳送 (Teleport)", "靜態力場"]
+        keySkills: ["閃電箭 (Lightning)", "連鎖閃電", "傳送術 (Teleport)", "靜電力場"]
       },
       {
         name: "火焰法術 (Fire Spells)",
-        description: "焚盡一切的烈火，在破火護身符支援下擁有最極致的 DPS。",
-        keySkills: ["火球 (Fire Ball)", "隕石 (Meteor)", "九頭蛇 (Hydra)", "暖氣 (Warmth)"]
+        description: "焚盡一切的烈火，在破火咒符支援下擁有最極致的 DPS。",
+        keySkills: ["火球術 (Fire Ball)", "隕石術 (Meteor)", "多頭蛇 (Hydra)", "暖流 (Warmth)"]
       }
     ],
     popularBuilds: [
       {
         name: "純冰暴風雪 (Pure Blizzard)",
         tier: "S",
-        coreSkills: "暴風雪 + 冰風暴 + 冰凍專精滿",
-        gearSummary: "次元碎片 + 蛇皮/漆甲 + 精神盾 + 軍帽"
+        coreSkills: "暴風雪 + 冰風暴 + 冰寒專精滿",
+        gearSummary: "死亡深度 + 蛇皮/漆甲 + 精神盾 + 軍帽"
       },
       {
         name: "無限電法 (Lightning Infinity)",
         tier: "S",
-        coreSkills: "閃電 + 連鎖閃電 + 閃電專精 + 靜態力場",
+        coreSkills: "閃電箭 + 連鎖閃電 + 閃電專精 + 靜電力場",
         gearSummary: "獅鷲之眼 + 無限長柄 (自持或傭兵) + 謎團"
       }
     ]
@@ -128,14 +128,14 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     },
     skillTrees: [
       {
-        name: "作戰技能 (Combat Skills)",
-        description: "聖錘旋轉、神聖衝擊與盾牌猛擊的戰鬥本能。",
-        keySkills: ["祝福之槌 (Blessed Hammer)", "神聖之盾", "重擊 (Smite)", "熱誠 (Zeal)"]
+        name: "戰鬥技能 (Combat Skills)",
+        description: "聖錘旋轉、神聖電擊與盾牌猛擊的戰鬥本能。",
+        keySkills: ["祝福之鎚 (Blessed Hammer)", "神聖之盾", "盾牌重擊 (Smite)", "熱忱打擊 (Zeal)"]
       },
       {
-        name: "進攻靈氣 (Offensive Auras)",
+        name: "攻擊靈氣 (Offensive Auras)",
         description: "鼓舞全隊輸出爆發的神聖光環。",
-        keySkills: ["專注 (Concentration)", "狂熱 (Fanaticism)", "審判 (Conviction)", "神聖衝擊"]
+        keySkills: ["專注 (Concentration)", "狂熱 (Fanaticism)", "信念 (Conviction)", "神聖電擊"]
       },
       {
         name: "防禦靈氣 (Defensive Auras)",
@@ -147,14 +147,14 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
       {
         name: "祝槌騎 (Hammerdin)",
         tier: "S",
-        coreSkills: "祝福之槌 + 專注靈氣 + 神聖之盾滿",
-        gearSummary: "橡樹之心 + 謎團 + 飾金盾牌/精神盾 + 蛛網腰帶"
+        coreSkills: "祝福之鎚 + 專注靈氣 + 神聖之盾滿",
+        gearSummary: "橡樹之心 + 謎團 + 撒卡蘭姆使者/精神盾 + 蜘蛛之網"
       },
       {
         name: "盾擊重擊騎 (Smiter)",
         tier: "S",
-        coreSkills: "重擊 (Smite) + 神聖之盾 + 狂熱靈氣",
-        gearSummary: "悔恨 + 飾金盾牌 + 剛毅/背信 + 卓古拉之握"
+        coreSkills: "盾牌重擊 (Smite) + 神聖之盾 + 狂熱靈氣",
+        gearSummary: "悔恨 + 撒卡蘭姆使者 + 剛毅/背信 + 德古拉之握"
       }
     ]
   },
@@ -163,7 +163,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     name: "死靈法師",
     nameEn: "Necromancer",
     title: "生死界限掌門人",
-    description: "行於幽冥的召喚宗師。能喚醒龐大骷髏軍團與石魔為己作戰，以致命白骨長矛擊穿敵陣，並以全遊戲最霸道之範圍技能「屍體爆炸」清空戰場。",
+    description: "行於幽冥的召喚宗師。能喚醒龐大骷髏軍團與魔像為己作戰，以致命白骨長矛擊穿敵陣，並以全遊戲最霸道之範圍技能「屍爆」清空戰場。",
     primaryAttributes: "活力、力量",
     startingStats: {
       str: 15,
@@ -181,13 +181,13 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     skillTrees: [
       {
         name: "召喚法術 (Summoning)",
-        description: "統帥骷髏狂潮、復 raw 怪物與鮮血石魔的強大軍勢。",
-        keySkills: ["骷髏復甦", "骷髏支配", "鋼鐵石魔", "重生 (Revive)"]
+        description: "統帥骷髏狂潮、復 raw 怪物與鮮血魔像的強大軍勢。",
+        keySkills: ["復生骷髏", "骷髏專精", "鋼鐵魔像", "重生 (Revive)"]
       },
       {
-        name: "毒素與白骨 (Poison & Bone)",
+        name: "毒素與骸骨 (Poison & Bone)",
         description: "操縱純粹骨質魔法與致命劇毒的直接破壞法術。",
-        keySkills: ["屍體爆炸 (Corpse Explosion)", "骨矛", "骨魂", "劇毒新星"]
+        keySkills: ["屍爆 (Corpse Explosion)", "骨矛", "骸骨之魂", "劇毒新星"]
       },
       {
         name: "詛咒 (Curses)",
@@ -199,14 +199,14 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
       {
         name: "純召死靈 (Fishymancer)",
         tier: "S",
-        coreSkills: "骷髏復甦 + 骷髏支配 + 屍體爆炸滿",
-        gearSummary: "野獸/李奧瑞克王魔杖 + 謎團 + 侏儒盾 + 軍帽"
+        coreSkills: "復生骷髏 + 骷髏專精 + 屍爆滿",
+        gearSummary: "野獸/李奧瑞克王的手骨 + 謎團 + 魔胎盾 + 軍帽"
       },
       {
         name: "毒死靈 (Poison Nova Necro)",
         tier: "S",
-        coreSkills: "劇毒新星 + 毒爆 + 劇毒匕首滿",
-        gearSummary: "破隱法杖 (Death's Web) + 塔格奧三件套 + 謎團"
+        coreSkills: "劇毒新星 + 毒爆 + 淬毒匕首滿",
+        gearSummary: "死亡之網 (Death's Web) + 塔拉夏三件套 + 謎團"
       }
     ]
   },
@@ -215,7 +215,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     name: "亞馬遜",
     nameEn: "Amazon",
     title: "雙系神射長矛女傑",
-    description: "馳騁叢林的精準戰士，無論是以閃電狂怒撕裂整屏怪物的標槍系，或是以物理掃射穿刺百步穿楊的弓箭系，皆具備極度華麗的視覺回饋。",
+    description: "馳騁叢林的精準戰士，無論是以閃電烈怒撕裂整屏怪物的標槍系，或是以物理掃射穿刺百步穿楊的弓箭系，皆具備極度華麗的視覺回饋。",
     primaryAttributes: "敏捷、活力、力量",
     startingStats: {
       str: 20,
@@ -234,31 +234,31 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
       {
         name: "標槍與長矛 (Javelin & Spear)",
         description: "投擲蘊含雷電神威的標槍，造成海量彈跳連鎖與單體戳刺。",
-        keySkills: ["閃電狂怒 (Lightning Fury)", "充能一擊", "劇毒標槍"]
+        keySkills: ["閃電烈怒 (Lightning Fury)", "聚能強擊", "劇毒標槍"]
       },
       {
-        name: "弓與十字弓 (Bow & Crossbow)",
+        name: "弓與弩 (Bow & Crossbow)",
         description: "長程箭雨傾瀉，覆蓋物理與急凍/爆裂元素打擊。",
-        keySkills: ["多重箭 (Multiple Shot)", "掃射 (Strafe)", "導引箭", "急凍箭"]
+        keySkills: ["多重箭 (Multiple Shot)", "掃射 (Strafe)", "導引箭", "冰凍箭"]
       },
       {
         name: "被動與魔法 (Passive & Magic)",
         description: "強化命中、閃避與致命暴擊的內在武道境界。",
-        keySkills: ["女武神 (Valkyrie)", "致命攻擊 (Critical Strike)", "穿刺 (Pierce)"]
+        keySkills: ["女武神 (Valkyrie)", "致命攻勢 (Critical Strike)", "貫穿攻勢 (Pierce)"]
       }
     ],
     popularBuilds: [
       {
         name: "標槍電馬 (Javazon)",
         tier: "S",
-        coreSkills: "閃電狂怒 + 充能一擊 + 相關電系協同滿",
-        gearSummary: "無形泰坦的復仇 + 獅鷲之眼 + 謎團 + 鳳凰/統治者大盾"
+        coreSkills: "閃電烈怒 + 聚能強擊 + 相關電系協同滿",
+        gearSummary: "無形泰坦的復仇 + 獅鷲之眼 + 謎團 + 鳳凰/君主盾"
       },
       {
         name: "信心物理弓馬 (Physical Bowazon)",
         tier: "A",
         coreSkills: "多重箭 + 掃射 + 導引箭 + 女武神",
-        gearSummary: "信心 (Faith GMB) + 剛毅甲 + 巨骷髏/安頭 + 戰旅"
+        gearSummary: "信心 (Faith GMB) + 剛毅甲 + 巨大顱骨/安頭 + 戰旅"
       }
     ]
   },
@@ -267,7 +267,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     name: "野蠻人",
     nameEn: "Barbarian",
     title: "亞瑞特山鐵血雄獅",
-    description: "亞瑞特聖山的守護者，兼具雙持重型兵刃與無畏狂暴力量。戰鬥體質 (BO) 戰吼使全隊生存能力提升數倍，並能利用「尋找物品」實現無人能及的打寶翻屍收益。",
+    description: "亞瑞特聖山的守護者，兼具雙持重型兵刃與無畏狂暴力量。戰鬥命令 (BO) 戰吼使全隊生存能力提升數倍，並能利用「尋找物品」實現無人能及的打寶翻屍收益。",
     primaryAttributes: "力量、活力",
     startingStats: {
       str: 30,
@@ -286,30 +286,30 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
       {
         name: "戰鬥技能 (Combat Skills)",
         description: "旋風斬、狂亂加速與撕裂敵人的原始物理戰技。",
-        keySkills: ["旋風斬 (Whirlwind)", "狂乱 (Frenzy)", "狂戰士 (Berserk)", "跳躍攻擊"]
+        keySkills: ["旋風斬 (Whirlwind)", "狂亂連擊 (Frenzy)", "狂暴之擊 (Berserk)", "躍擊"]
       },
       {
-        name: "戰鬥支配 (Combat Masteries)",
+        name: "戰鬥專精 (Combat Masteries)",
         description: "專精刀、斧、槌等各式武器熟練度與天然抗性。",
-        keySkills: ["劍專精", "斧專精", "鐵布衫 (Iron Skin)", "自然抵抗 (Natural Resistance)"]
+        keySkills: ["劍專精", "斧術專精", "鋼鐵之膚 (Iron Skin)", "自然抵抗 (Natural Resistance)"]
       },
       {
-        name: "吶喊技能 (Warcries)",
+        name: "戰吼 (Warcries)",
         description: "震撼敵方耳膜、激發同胞生命潛能的雄渾戰吼。",
-        keySkills: ["戰鬥體質 (Battle Orders)", "戰鬥指揮", "狂嗥 (Howl)", "尋找物品 (Find Item)"]
+        keySkills: ["戰鬥命令 (Battle Orders)", "戰鬥指揮", "狂嗥 (Howl)", "尋找物品 (Find Item)"]
       }
     ],
     popularBuilds: [
       {
         name: "打寶翻屍狂 (Horker / Gold Find Barb)",
         tier: "S",
-        coreSkills: "旋風斬 + 尋找物品 + 尋找藥劑 + 戰鬥體質滿",
+        coreSkills: "旋風斬 + 尋找物品 + 尋找藥水 + 戰鬥命令滿",
         gearSummary: "悔恨 (Grief) + 阿里巴巴/海鷗 + 謎團 + 亞瑞特的面容"
       },
       {
         name: "狂暴近戰野蠻人 (Berserk Barb)",
         tier: "A",
-        coreSkills: "狂戰士 (100% 魔法傷害) + 戰鬥體質 + 吶喊",
+        coreSkills: "狂暴之擊 (100% 魔法傷害) + 戰鬥命令 + 吶喊",
         gearSummary: "悔恨 + 暴風之盾 (物免盾) + 剛毅 + 蝕肉騎士"
       }
     ]
@@ -318,8 +318,8 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     id: "assassin",
     name: "刺客",
     nameEn: "Assassin",
-    title: "維茲耶雷秘密暗殺者",
-    description: "獵殺失控魔法師的無形幽魂。精通置放各類自動射擊的陷阱裝置、運用影子大師分身作戰，更能在武學連擊下積蓄聚氣，施展毀天滅地的終結技。",
+    title: "費斯傑利秘密暗殺者",
+    description: "獵殺失控魔法師的無形幽魂。精通置放各類自動射擊的陷阱裝置、運用暗影宗師分身作戰，更能在武學連擊下積蓄聚氣，施展毀天滅地的終結技。",
     primaryAttributes: "敏捷、活力、力量",
     startingStats: {
       str: 20,
@@ -337,32 +337,32 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     skillTrees: [
       {
         name: "陷阱 (Traps)",
-        description: "佈置雷光守衛與亡者守衛，提供遠距無傷自動清場。",
-        keySkills: ["雷光守衛 (Lightning Sentry)", "亡者守衛 (Death Sentry)", "火焰復甦"]
+        description: "佈置雷光衛哨與死亡衛哨，提供遠距無傷自動清場。",
+        keySkills: ["雷光衛哨 (Lightning Sentry)", "死亡衛哨 (Death Sentry)", "焰痕衛哨"]
       },
       {
-        name: "影子訓練 (Shadow Disciplines)",
-        description: "操控能量消解 (Fade) 與速度爆發，召喚影子並釋放心靈震爆控場。",
-        keySkills: ["速度爆發", "能量消解 (Fade)", "影子大師", "心靈震爆"]
+        name: "暗影修行 (Shadow Disciplines)",
+        description: "操控影散 (Fade) 與速度爆發，召喚影子並釋放心靈震爆控場。",
+        keySkills: ["速度爆發", "影散 (Fade)", "暗影宗師", "心靈震爆"]
       },
       {
-        name: "武學藝術 (Martial Arts)",
+        name: "武學技藝 (Martial Arts)",
         description: "積累三種元素與吸血連擊，配合終結踢擊引爆龐大能量。",
-        keySkills: ["鳳凰攻擊 (Phoenix Strike)", "雷電爪", "虎擊", "神龍擺尾"]
+        keySkills: ["鳳凰擊 (Phoenix Strike)", "雷電爪", "猛虎擊", "龍擺尾"]
       }
     ],
     popularBuilds: [
       {
-        name: "馬賽克武學刺客 (Mosaic Martial Arts)",
+        name: "嵌飾武學刺客 (Mosaic Martial Arts)",
         tier: "S",
-        coreSkills: "鳳凰攻擊 + 虎擊 + 眼睛蛇擊 + 龍爪終結",
-        gearSummary: "雙持馬賽克爪 (Mosaic 2S) + 謎團 + 獅鷲之眼"
+        coreSkills: "鳳凰擊 + 猛虎擊 + 靈蛇擊 + 龍爪終結",
+        gearSummary: "雙持嵌飾爪 (Mosaic 2S) + 謎團 + 獅鷲之眼"
       },
       {
         name: "電陷阱刺客 (Trapasin)",
         tier: "A",
-        coreSkills: "雷光守衛 + 亡者守衛 + 電系連鎖滿",
-        gearSummary: "巨鷹之爪 (+3陷阱) + 精神盾 + 謎團 + 蛛網腰帶"
+        coreSkills: "雷光衛哨 + 死亡衛哨 + 電系連鎖滿",
+        gearSummary: "巨鷹爪 (+3陷阱) + 精神盾 + 謎團 + 蜘蛛之網"
       }
     ]
   },
@@ -388,33 +388,33 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     },
     skillTrees: [
       {
-        name: "元素 (Elemental)",
+        name: "元素法術 (Elemental)",
         description: "掌控狂暴烈焰與極地冰風暴的廣域自然魔法。",
-        keySkills: ["龍捲風 (Tornado)", "暴風 (Hurricane)", "毀天滅地 (Armageddon)", "裂地"]
+        keySkills: ["龍捲風 (Tornado)", "颶風術 (Hurricane)", "毀天滅地 (Armageddon)", "裂地"]
       },
       {
-        name: "變形 (Shape Shifting)",
+        name: "變形技能 (Shape Shifting)",
         description: "化身狂狼撕裂獵物或化身巨熊硬撼強敵的肉搏神技。",
-        keySkills: ["狼人變化", "狂怒 (Fury)", "熊人變化", "撞擊 (Maul)"]
+        keySkills: ["狼人變化", "狂怒 (Fury)", "熊人變化", "槌擊 (Maul)"]
       },
       {
-        name: "召喚 (Summoning)",
-        description: "召集橡樹智者提供巨幅生命、狼群牽制與灰熊痛擊。",
-        keySkills: ["橡樹智者 (Oak Sage)", "召喚灰熊", "狂狼", "劇毒藤蔓"]
+        name: "召喚法術 (Summoning)",
+        description: "召集橡木智者提供巨幅生命、狼群牽制與灰熊痛擊。",
+        keySkills: ["橡木智者 (Oak Sage)", "召喚灰熊", "狂狼", "劇毒藤蔓"]
       }
     ],
     popularBuilds: [
       {
         name: "風德 (Wind Druid)",
         tier: "S",
-        coreSkills: "龍捲風 + 暴風 + 旋風裝甲 + 橡樹智者滿",
-        gearSummary: "橡樹之心 + 謎團 + 加爾的長髮/鹿角 + 精神盾"
+        coreSkills: "龍捲風 + 颶風術 + 氣旋護甲 + 橡木智者滿",
+        gearSummary: "橡樹之心 + 謎團 + 加爾的鬃毛/鹿角 + 精神盾"
       },
       {
         name: "狂怒變形狼德 (Fury Wolf)",
         tier: "A",
-        coreSkills: "狼人變化 + 變形術 + 狂怒 + 狼灌之心滿",
-        gearSummary: "變形頭盔 (Metamorphosis) + 死亡呼吸/盜墓者 + 剛毅"
+        coreSkills: "狼人變化 + 變形術 + 狂怒 + 狼獾之心滿",
+        gearSummary: "變化 (Metamorphosis) + 死亡呼吸/盜墓者 + 剛毅"
       }
     ]
   }

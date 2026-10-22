@@ -46,20 +46,20 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
 
   const gemTypes = [
     { id: 'all', label: '全部寶石' },
-    { id: 'amethyst', label: '紫水晶 (Amethyst)' },
+    { id: 'amethyst', label: '紫寶石 (Amethyst)' },
     { id: 'topaz', label: '黃寶石 (Topaz)' },
     { id: 'ruby', label: '紅寶石 (Ruby)' },
     { id: 'sapphire', label: '藍寶石 (Sapphire)' },
     { id: 'emerald', label: '綠寶石 (Emerald)' },
     { id: 'diamond', label: '鑽石 (Diamond)' },
-    { id: 'skull', label: '骷髏 (Skull)' },
+    { id: 'skull', label: '骷髏石 (Skull)' },
   ];
 
   const propTiles: CategoryTile[] = [
     { id: 'gems', label: '完美寶石與工藝', count: GEMS_DATA.length, tone: 'magic', icon: { name: '完美紫寶石', nameEn: 'Perfect Amethyst', rarity: 'prop' } },
     { id: 'keys', label: '六王鑰匙與器官', count: UBER_KEYS_ORGANS_DATA.length, tone: 'rune', icon: { name: '恐懼之鑰', nameEn: 'Key of Terror', rarity: 'prop' } },
     { id: 'essences', label: '四大精華與洗點徽章', count: ESSENCES_DATA.length, tone: 'unique', icon: { name: '精華', nameEn: 'Essence', rarity: 'prop' } },
-    { id: 'potions', label: '戰鬥藥劑與黑科技', count: COMBAT_POTIONS_DATA.length, tone: 'rare', icon: { name: '全面恢復藥劑', nameEn: 'Full Rejuvenation Potion', rarity: 'prop' } },
+    { id: 'potions', label: '戰鬥藥劑與黑科技', count: COMBAT_POTIONS_DATA.length, tone: 'rare', icon: { name: '全效活力藥水', nameEn: 'Full Rejuvenation Potion', rarity: 'prop' } },
     { id: 'charms', label: '破免板與頂級珠寶', count: CHARMS_JEWELS_DATA.length, tone: 'set', icon: { name: '地獄火炬', nameEn: 'Hellfire Torch', rarity: 'unique' } },
   ];
 
@@ -159,7 +159,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                   <CheckCircle2 className="w-3.5 h-3.5 text-d2-magic" /> 洗大板與手工施法：完紫與完骷
                 </div>
                 <p className="text-sanctuary-300 leading-relaxed">
-                  3顆完美寶石 + 巴爾/暗黑超大護身符可洗出 <strong>+1技能 +45生命</strong> 極品板；6顆完美骷髏可無限洗金色裝備。
+                  3顆完美寶石 + 巴爾/暗黑特大咒符可洗出 <strong>+1技能 +45生命</strong> 極品板；6顆完美骷髏石可無限洗金色裝備。
                 </p>
               </div>
             </div>
@@ -273,7 +273,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
               <div className="p-3 rounded-xl bg-sanctuary-950 border border-sanctuary-800">
                 <div className="text-d2-fire font-bold mb-1">【步驟一：收集 9 把鑰匙】</div>
                 <p className="text-sanctuary-300 font-sans text-[11px]">
-                  擊殺女伯爵、召喚者、尼拉塞克，各取得 3 把鑰匙 (合計 3組 恐懼+憎恨+毀滅)。
+                  擊殺女伯爵、召喚師、尼拉塞克，各取得 3 把鑰匙 (合計 3組 恐懼+憎恨+毀滅)。
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-sanctuary-950 border border-sanctuary-800">
@@ -285,7 +285,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
               <div className="p-3 rounded-xl bg-sanctuary-950 border border-sanctuary-800">
                 <div className="text-d2-fire font-bold mb-1">【步驟三：擊殺王取得 3 大器官】</div>
                 <p className="text-sanctuary-300 font-sans text-[11px]">
-                  擊殺莉莉絲、超級督瑞爾、超級衣卒爾，100% 掉落大腦、眼睛、暗黑破壞神之角。
+                  擊殺莉莉絲、超級都瑞爾、超級伊卒爾，100% 掉落墨菲斯托之腦、巴爾之眼、迪亞布羅之角。
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-sanctuary-950 border border-d2-gold/50 shadow-glow-gold/10">
@@ -365,7 +365,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                   赦免徽章 (Token of Absolution)
                 </h3>
                 <p className="text-xs text-sanctuary-300 max-w-xl leading-relaxed">
-                  在地獄難度擊殺第一至第五幕大 Boss 收集四色精華，於赫拉迪姆方塊中融合即可獲得「赦免徽章」。右鍵使用即可完全重置當前角色所有屬性點與技能樹，隨心轉型！
+                  在地獄難度擊殺第一至第五章大 Boss 收集四色精華，於赫拉迪姆方塊中融合即可獲得「赦免徽章」。右鍵使用即可完全重置當前角色所有屬性點與技能樹，隨心轉型！
                 </p>
               </div>
             </div>
@@ -498,7 +498,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
               <span>D2R 2.5 破免機制 (Sunder Charms) 與終局配置</span>
             </h3>
             <p className="text-xs text-sanctuary-300 leading-relaxed">
-              破免護身符將怪物的抗性<strong>強制壓制為 95%</strong>（不再免疫），但自身對應抗性會大幅降低。此時再搭配裝備上的減抗屬性（如獅鷲之眼、死亡之網、格里斯瓦德之杖、彩虹刻面珠寶、無限審判靈氣），可對原免疫怪物打出毀滅性全額傷害！
+              破免咒符將怪物的抗性<strong>強制壓制為 95%</strong>（不再免疫），但自身對應抗性會大幅降低。此時再搭配裝備上的減抗屬性（如獅鷲之眼、死亡之網、格里斯瓦德之杖、彩虹刻面珠寶、無限信念靈氣），可對原免疫怪物打出毀滅性全額傷害！
             </p>
           </div>
 

@@ -108,7 +108,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
             }`}
           >
             <MapPin className="w-3.5 h-3.5" />
-            <span>85 場景與恐懼區域 (Area Levels)</span>
+            <span>85 場景與邪惡威脅區域 (Area Levels)</span>
           </button>
         </div>
       </div>
@@ -323,7 +323,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                   />
                 </div>
                 <div className="text-[10px] text-sanctuary-500 font-mono mt-1">
-                  例：神聖小盾(聖盾開) 75%、暴風盾 67%、侏儒 60%
+                  例：神聖小盾(聖盾開) 75%、暴風之盾 67%、魔胎 60%
                 </div>
               </div>
 
@@ -341,7 +341,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
         <div className="bg-sanctuary-950 border border-sanctuary-800 rounded-2xl overflow-hidden shadow-2xl">
           <div className="p-4 border-b border-sanctuary-850 bg-sanctuary-900/60 flex items-center justify-between text-xs text-sanctuary-300">
             <span>
-              ⭐ <strong>85 級場景 (Area Level 85)</strong> 怪物能掉落遊戲中全數暗金裝備 (包含泰瑞爾的力量、獅鷲之眼、風之力)。
+              ⭐ <strong>85 級場景 (Area Level 85)</strong> 怪物能掉落遊戲中全數暗金裝備 (包含泰瑞爾之力、獅鷲之眼、風之力)。
             </span>
           </div>
           <div className="overflow-x-auto">
