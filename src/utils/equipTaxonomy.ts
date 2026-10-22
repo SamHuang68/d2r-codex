@@ -96,7 +96,7 @@ export const JEWELRY_DEF: TaxDef = {
   id: 'jewelry', label: '飾品', children: [
     { id: 'jewelry/ring', label: '戒指', en: 'Ring' },
     { id: 'jewelry/amulet', label: '項鍊', en: 'Amulet' },
-    { id: 'jewelry/charm', label: '護身符', en: 'Charm' },
+    { id: 'jewelry/charm', label: '咒符', en: 'Charm' },
     { id: 'jewelry/jewel', label: '珠寶', en: 'Jewel' },
   ],
 };

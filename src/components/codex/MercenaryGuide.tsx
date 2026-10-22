@@ -77,7 +77,7 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem }
             傭兵寶典與終局配裝
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-2xl">
-            收錄第一幕至第五幕全部僱傭兵原生靈氣技能、Patch 2.4 重生改版機制、以及 S 級終極神裝（治癒三靈氣、無限破免、死神喪鐘、雙持狂亂狂戰士等）。
+            收錄第一章至第五章全部僱傭兵原生靈氣技能、Patch 2.4 重生改版機制、以及 S 級終極神裝（治癒三靈氣、無限破免、死神喪鐘、雙持狂亂狂戰士等）。
           </p>
         </div>
       </div>

@@ -169,7 +169,7 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
           style={{ left: gridL, top: gridT, width: cell * GRID_COLS, height: cell * GRID_ROWS, gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`, gridTemplateRows: `repeat(${GRID_ROWS}, 1fr)`,
             outline: gridRing === 'is-valid' ? '1px solid var(--gold)' : gridRing === 'is-over-ok' ? '2px solid #6fe06f' : gridRing === 'is-over-bad' ? '2px solid #ff5e50' : 'none' }}
           {...dropHandlers('charms')}
-          aria-label="背包（護身符）"
+          aria-label="背包（咒符）"
         >
           {Array.from({ length: GRID_COLS * GRID_ROWS }, (_, i) => <i key={i} style={{ boxShadow: 'inset 0 0 0 1px #1f1a12' }} />)}
         </div>
@@ -186,7 +186,7 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
           </div>
         ))}
         <div className="absolute d2-well flex items-center justify-center t-dim" style={{ right: 20, bottom: 20, width: 60, height: 60, fontSize: 12, letterSpacing: '.2em' }}>方塊</div>
-        <div className="absolute t-dim" style={{ left: 28, bottom: 14, fontSize: 11 }}>護身符只有放在背包內才生效（遊戲規則）</div>
+        <div className="absolute t-dim" style={{ left: 28, bottom: 14, fontSize: 11 }}>咒符只有放在背包內才生效（遊戲規則）</div>
       </div>
       {tip && tipHost && <FloatingItemTip host={tipHost} at={tip.at} eq={tip.eq} level={level} rollMax={rollMax} attrs={attrs} equippedSetNames={setNamesOf(equipped, tip.eq.entry.setId)} />}
     </div>

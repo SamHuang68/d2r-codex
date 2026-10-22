@@ -64,7 +64,7 @@ export const QuestGuide: React.FC = () => {
             全章節任務寶典與終局世界事件
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-3xl">
-            收錄 Act 1 至 Act 5 全部 27 個任務詳細步驟、永久 +12 技能點、+15 屬性點、+60 生命值與 +30 全抗性全獎勵攻略，附帶母牛關、紅門六王、地表大菠蘿與恐懼領域 TZ 指南。
+            收錄 Act 1 至 Act 5 全部 27 個任務詳細步驟、永久 +12 技能點、+15 屬性點、+60 生命值與 +30 全抗性全獎勵攻略，附帶乳牛關、紅門六王、地表大菠蘿與邪惡威脅區域 TZ 指南。
           </p>
         </div>
 
@@ -105,7 +105,7 @@ export const QuestGuide: React.FC = () => {
             }`}
           >
             <MapPin className="w-4 h-4" />
-            第 {actNum} 幕 {actNum === 1 ? "(羅格營地)" : actNum === 2 ? "(魯高因)" : actNum === 3 ? "(庫拉斯特)" : actNum === 4 ? "(群魔堡壘)" : "(哈洛加斯)"}
+            第 {actNum} 幕 {actNum === 1 ? "(俠盜營地)" : actNum === 2 ? "(魯高因)" : actNum === 3 ? "(庫拉斯特港口)" : actNum === 4 ? "(混沌界要塞)" : "(哈洛加斯)"}
           </button>
         ))}
 
@@ -305,7 +305,7 @@ export const QuestGuide: React.FC = () => {
                       <div className="p-1 rounded bg-d2-fire/20 border border-d2-fire text-d2-fire font-bold animate-pulse">階 6<br/>降臨！</div>
                     </div>
                     <p className="text-[11px] text-sanctuary-300 font-sans leading-snug">
-                      ⚠️ <strong>回血封鎖鐵律</strong>：暗黑克隆體擁有極其恐怖的每秒千點回血。必須由角色<strong>本體</strong>使用附帶「防止怪物治療 (PMH)」的武器擊中 1 次（持續 80 分鐘）；傭兵攻擊無法觸發 PMH！
+                      ⚠️ <strong>回血封鎖鐵律</strong>：暗黑克隆體擁有極其恐怖的每秒千點回血。必須由角色<strong>本體</strong>使用附帶「防止怪物自療 (PMH)」的武器擊中 1 次（持續 80 分鐘）；傭兵攻擊無法觸發 PMH！
                     </p>
                   </div>
                 )}
@@ -332,10 +332,10 @@ export const QuestGuide: React.FC = () => {
                       乳牛關合成與刷寶機制圖解
                     </div>
                     <div className="p-2 rounded-lg bg-sanctuary-900/80 border border-sanctuary-800 text-[11px] font-mono text-sanctuary-200 leading-relaxed text-center">
-                      【懷特的腿】(石塊荒野崔斯特姆左上) + 【滿20張回城書】放入方塊 ➔ 鮮紅母牛傳送門
+                      【維特的腿】(亂石曠野崔斯特姆左上) + 【滿20張回城書】放入方塊 ➔ 鮮紅母牛傳送門
                     </div>
                     <p className="text-[11px] text-sanctuary-300 font-sans leading-snug">
-                      🐮 <strong>D2R 現代化版本規則</strong>：已徹底移除「擊殺母牛之王永久無法再開門」的古老詛咒！現在可以毫無顧忌全力擊殺母牛之王 (Cow King)，隨意反覆開門刷取白裝、無形神級底材與符文！
+                      🐮 <strong>D2R 現代化版本規則</strong>：已徹底移除「擊殺牛王永久無法再開門」的古老詛咒！現在可以毫無顧忌全力擊殺牛王 (Cow King)，隨意反覆開門刷取白裝、無形神級底材與符文！
                     </p>
                   </div>
                 )}
@@ -344,7 +344,7 @@ export const QuestGuide: React.FC = () => {
                   <div className="bg-sanctuary-950 p-3.5 rounded-xl border border-d2-fire/30 space-y-2">
                     <div className="text-[11px] font-mono text-d2-fire font-bold flex items-center gap-1.5">
                       <Zap className="w-3.5 h-3.5" />
-                      恐懼領域動態等級運算模型
+                      邪惡威脅區域動態等級運算模型
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-center text-[10px] font-mono">
                       <div className="p-1.5 rounded bg-sanctuary-900 border border-sanctuary-800">
@@ -352,7 +352,7 @@ export const QuestGuide: React.FC = () => {
                         <strong className="text-sanctuary-100 text-xs">房主 Lv + 2</strong>
                       </div>
                       <div className="p-1.5 rounded bg-sanctuary-900 border border-sanctuary-800">
-                        <span className="text-sanctuary-400">冠軍精英怪</span><br/>
+                        <span className="text-sanctuary-400">精英怪</span><br/>
                         <strong className="text-d2-magic text-xs">房主 Lv + 4</strong>
                       </div>
                       <div className="p-1.5 rounded bg-sanctuary-900 border border-sanctuary-800">
@@ -361,7 +361,7 @@ export const QuestGuide: React.FC = () => {
                       </div>
                     </div>
                     <p className="text-[11px] text-sanctuary-300 font-sans leading-snug">
-                      ⚡ <strong>破免板專屬產地</strong>：地獄 TZ 內所有冠軍怪與暗金怪均有機率掉落六大「破免護身符 (Sunder Charms)」，將怪物免疫直接壓至 95%，是法系流派終局通關聖地。
+                      ⚡ <strong>破免板專屬產地</strong>：地獄 TZ 內所有精英怪與暗金怪均有機率掉落六大「破免咒符 (Sunder Charms)」，將怪物免疫直接壓至 95%，是法系流派終局通關聖地。
                     </p>
                   </div>
                 )}

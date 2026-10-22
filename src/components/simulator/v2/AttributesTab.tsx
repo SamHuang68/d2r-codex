@@ -46,7 +46,7 @@ const MORE: { label: string; stat: string; suffix?: string }[] = [
   { label: '攻擊速度 (IAS)', stat: 'item_fasterattackrate', suffix: '%' },
   { label: '跑步／行走速度', stat: 'item_fastermovevelocity', suffix: '%' },
   { label: '技能：跑步／行走速度', stat: 'skill_frw', suffix: '%' },
-  { label: '技能：攻擊速度（光環、狂亂等）', stat: 'skill_ias', suffix: '%' },
+  { label: '技能：攻擊速度（光環、狂亂連擊等）', stat: 'skill_ias', suffix: '%' },
   { label: '尋獲魔法物品 (MF)', stat: 'item_magicbonus', suffix: '%' },
   { label: '金幣掉落', stat: 'item_goldbonus', suffix: '%' },
   { label: '生命偷取', stat: 'lifedrainmindam', suffix: '%' },
@@ -284,7 +284,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
                 title="件數以不同的套裝件計；滑過物品可看各件與套裝加成的內容" />
             ))}
           </div>
-          <div className="d2-sub mt-1">各件自己的加成以「第 N 組＝穿戴 N+1 件」計算（塔拉夏的審判項鍊 4 件才生效，與社群資料一致，其餘件未逐一核對）。</div>
+          <div className="d2-sub mt-1">各件自己的加成以「第 N 組＝穿戴 N+1 件」計算（塔拉夏的審判護身符 4 件才生效，與社群資料一致，其餘件未逐一核對）。</div>
         </div>
       )}
 

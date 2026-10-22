@@ -28,7 +28,7 @@ export const ITEM_TREE_DEFS: TaxDef[] = [
   { id: 's', label: '套裝', children: prefixDefs(SET_DEFS, 's') },
 ];
 
-export const CHARM_LABEL: Record<string, string> = { small: '小型護身符', large: '大型護身符', grand: '特大護身符' };
+export const CHARM_LABEL: Record<string, string> = { small: '小型咒符', large: '大型咒符', grand: '特大咒符' };
 export const CHARM_ORDER = ['small', 'large', 'grand'];
 
 export interface UEntry { item: UniqueItemData; leaf: string; sec: string; secIdx: number }

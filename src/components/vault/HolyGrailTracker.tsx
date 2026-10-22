@@ -56,10 +56,10 @@ export const HolyGrailTracker: React.FC = () => {
         item.name.includes("泰瑞爾") || 
         item.name.includes("風之力") || 
         item.name.includes("死亡之網") || 
-        item.name.includes("格利風") || 
-        item.name.includes("次元碎片") || 
-        item.name.includes("年紀之冠") || 
-        item.name.includes("祖父");
+        item.name.includes("獅鷲之眼") || 
+        item.name.includes("死亡深度") || 
+        item.name.includes("歲月之冠") || 
+        item.name.includes("高祖");
 
       list.push({
         id: item.id,

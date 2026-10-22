@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Flame, Shield, Sparkles, BookOpen, MapPin, Users, Gem, Skull, ShieldAlert, Compass, FlaskConical, Swords, Ghost, Tag, Landmark, TrendingUp } from 'lucide-react';
 import { searchOmni, SearchResultItem } from '../../utils/search';
 import { searchCodex } from '../../utils/searchCodex';
+import { expandLegacyQuery } from '../../utils/termAliases';
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -31,11 +32,16 @@ export const SearchModal: React.FC<SearchModalProps> = ({
 
   useEffect(() => {
     if (!query.trim()) { setResults([]); return undefined; }
-    const hits = searchOmni(query);
+    // 查詢字串裡若有舊寫法（站內用字已統一成遊戲字串），也用遊戲寫法搜一次；原查詢的結果在前，附加的結果依 id 去重
+    const queries = expandLegacyQuery(query);
+    const dedupe = (list: SearchResultItem[]) => { const seen = new Set<string>(); return list.filter((r) => (seen.has(r.id) ? false : (seen.add(r.id), true))); };
+    const hits = dedupe(queries.flatMap((q) => searchOmni(q)));
     setResults(hits);
     // 怪物、詞綴、聖壇、經驗值表的資料較大，輸入之後才載入；結果附加在原本的結果後面。輸入又變了就丟掉舊的結果
     let alive = true;
-    searchCodex(query).then((more) => { if (alive && more.length) setResults([...hits, ...more]); }).catch(() => undefined);
+    Promise.all(queries.map((q) => searchCodex(q)))
+      .then((lists) => { const more = dedupe(lists.flat()); if (alive && more.length) setResults(dedupe([...hits, ...more])); })
+      .catch(() => undefined);
     return () => { alive = false; };
   }, [query]);
 

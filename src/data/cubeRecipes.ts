@@ -9,7 +9,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     titleEn: "Socket Normal Weapon",
     inputs: ["1x Ral (8#)", "1x Amn (11#)", "1x 完美紫寶石", "1x 一般無孔白色武器"],
     output: "隨機孔數該武器 (1 至該物品當前物品等級最大孔數)",
-    notes: "只能用於無前綴的普通白裝或無形白裝，超強的 (Superior) 或劣質的不可用。"
+    notes: "只能用於無前綴的普通白裝或無形白裝，特等的 (Superior) 或劣質的不可用。"
   },
   {
     id: "socket_armor",
@@ -36,7 +36,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     titleEn: "Socket Normal Shield",
     inputs: ["1x Tal (7#)", "1x Amn (11#)", "1x 完美紅寶石", "1x 一般無孔白色盾牌"],
     output: "隨機孔數該盾牌 (1 至最大孔數)",
-    notes: "統治者大盾洗 4 孔（精神盾）或聖騎士專用盾洗孔。"
+    notes: "君主盾洗 4 孔（精神盾）或聖騎士專用盾洗孔。"
   },
 
   // ── 裝備升級配方 (Upgrades) ──
@@ -65,7 +65,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     titleEn: "Upgrade Unique Armor (Normal to Exceptional)",
     inputs: ["1x Tal (7#)", "1x Shael (13#)", "1x 完美鑽石", "1x 普通暗金防具"],
     output: "卓越版同款暗金防具",
-    notes: "例如：法師之拳 (輕型鐵手套) 升級為戰場手套 (Battle Gauntlets)。"
+    notes: "例如：法師之拳 (輕型鐵手套) 升級為戰鬥護手 (Battle Gauntlets)。"
   },
   {
     id: "upgrade_unique_armor_excep_to_elite",
@@ -74,25 +74,25 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     titleEn: "Upgrade Unique Armor (Exceptional to Elite)",
     inputs: ["1x Ko (18#)", "1x Lem (20#)", "1x 完美鑽石", "1x 卓越暗金防具"],
     output: "精英版同款暗金防具",
-    notes: "例如：蝮蛇法師之皮升級為古龍皮甲 (Wyrmhide)、飾金盾牌升級為薩卡蘭姆盾。"
+    notes: "例如：蛇魔法師之皮升級為古龍皮甲 (Wyrmhide)、飾金盾牌升級為撒卡蘭姆盾。"
   },
 
   // ── 手工合成配方 (Crafted Items) ──
   {
     id: "craft_caster_amulet",
     category: "craft",
-    title: "施法者手工項鍊 (Caster Amulet)",
+    title: "施法者手工護身符 (Caster Amulet)",
     titleEn: "Crafted Caster Amulet",
     inputs: ["1x 魔法項鍊 (藍色)", "1x Ral (8#)", "1x 完美紫寶石", "1x 任意珠寶 (Jewel)"],
     output: "手工施法項鍊 (附帶 +5-10% 快速施法速度 FCR、法力回充 +4-10%、+10-20 法力)",
-    notes: "人物 93 級以上配合 93 等級項鍊賭博或打 88+ 場景掉落項鍊，最高可洗出 +2 職業技能與 +20% FCR 的神級項鍊！"
+    notes: "人物 93 級以上配合 93 等級護身符賭博或打 88+ 場景掉落護身符，最高可洗出 +2 職業技能與 +20% FCR 的神級護身符！"
   },
   {
     id: "craft_blood_gloves",
     category: "craft",
     title: "吸血鬼血腥手套 (Blood Gloves)",
     titleEn: "Crafted Blood Gloves",
-    inputs: ["1x 魔法重型手套/鯊皮手套/吸血鬼手套", "1x Nef (4#)", "1x 完美紅寶石", "1x 任意珠寶"],
+    inputs: ["1x 魔法厚皮手套/鯊皮手套/吸血鬼手套", "1x Nef (4#)", "1x 完美紅寶石", "1x 任意珠寶"],
     output: "手工血腥手套 (附帶 5-10% 壓碎打擊 CB、每次命中偷取 1-3% 生命、+10-20 生命)",
     notes: "物理近戰（標馬、雙熱丁、弓馬）畢業手套首選，有機會同時出現 +2 標槍 +20% 攻速。"
   },
@@ -122,8 +122,8 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     title: "赦免徽章 (重置技能與屬性點數)",
     titleEn: "Token of Absolution",
     inputs: [
-      "1x 扭曲的痛苦精華 (Twisted Essence of Suffering - 安達利爾/都瑞爾掉落)",
-      "1x 充能的憎恨精華 (Charged Essence of Hatred - 墨菲斯托掉落)",
+      "1x 扭曲的苦怨精華 (Twisted Essence of Suffering - 安達莉爾/都瑞爾掉落)",
+      "1x 充盈的憎恨精華 (Charged Essence of Hatred - 墨菲斯托掉落)",
       "1x 燃燒的恐懼精華 (Burning Essence of Terror - 迪亞布羅掉落)",
       "1x 潰爛的毀滅精華 (Festering Essence of Destruction - 巴爾掉落)"
     ],
@@ -133,10 +133,10 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
   {
     id: "secret_cow_level",
     category: "misc",
-    title: "開啟秘密乳牛關卡",
+    title: "開啟秘密乳牛關",
     titleEn: "Open Secret Cow Level Portal",
-    inputs: ["1x 維特之腳 (Wirt's Leg)", "1x 城鎮傳送之書 (Tome of Town Portal)"],
-    output: "開啟通往秘密乳牛關卡 (Moo Moo Farm) 的紅色傳送門",
+    inputs: ["1x 維特的腿 (Wirt's Leg)", "1x 城鎮傳送之書 (Tome of Town Portal)"],
+    output: "開啟通往秘密乳牛關 (Moo Moo Farm) 的紅色傳送門",
     notes: "需在同一難度完成擊殺巴爾後，於第一章蘿格營地內放入方塊轉化。"
   },
   {
@@ -218,7 +218,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     titleEn: "Crafted Caster Belt",
     inputs: ["1x 魔法輕扣帶/鯊皮腰帶/吸血鬼腰帶", "1x Ith (6#)", "1x 完美紫寶石", "1x 任意珠寶"],
     output: "手工施法腰帶 (固定附帶 +5-10% 快速施法速度 FCR、法力回充 +4-10%、+10-20 法力)",
-    notes: "在沒有蛛網腰帶前，唯一的 10% FCR 腰帶來源！"
+    notes: "在沒有蜘蛛之網前，唯一的 10% FCR 腰帶來源！"
   },
   {
     id: "craft_blood_ring",
@@ -232,27 +232,27 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
   {
     id: "uber_tristram_portals",
     category: "misc",
-    title: "紅門地獄火炬挑戰 (Pandemonium Event)",
+    title: "群魔亂舞事件 (Pandemonium Event)",
     titleEn: "Uber Tristram & Organ Portals",
     inputs: [
       "1x 恐懼之鑰 (Key of Terror - 女伯爵掉落)",
-      "1x 憎恨之鑰 (Key of Hate - 召喚者掉落)",
+      "1x 憎恨之鑰 (Key of Hate - 召喚師掉落)",
       "1x 毀滅之鑰 (Key of Destruction - 尼拉塞克掉落)"
     ],
     output: "於地獄難度第 5 章城鎮開啟：魔母巢穴、遺忘沙漠或苦痛熔爐隨機一道紅門",
-    notes: "收集『墨菲斯托的大腦 + 巴爾的眼睛 + 迪亞布羅的角』三樣器官，再次放入方塊轉化，即可開啟通往【超級崔斯特姆 (Uber Tristram)】的終極紅門，擊殺三大魔神取得【地獄火炬 (Hellfire Torch)】！"
+    notes: "收集『墨菲斯托之腦 + 巴爾的眼睛 + 迪亞布羅之角』三樣器官，再次放入方塊轉化，即可開啟通往【超級崔斯特姆 (Uber Tristram)】的終極紅門，擊殺三大魔神取得【地獄火炬 (Hellfire Torch)】！"
   },
   {
     id: "reroll_magic_charm",
     category: "misc",
-    title: "洗大板：重骰魔法物品 (護身符/珠寶)",
+    title: "洗大板：重骰魔法物品 (咒符/珠寶)",
     titleEn: "Reroll Magic Item (Charms / Jewels)",
     inputs: [
       "3x 完美寶石 (Perfect Gems，任意種類，包含骷髏)",
-      "1x 藍色魔法物品 (如大護身符 Grand Charm、珠寶、頭飾)"
+      "1x 藍色魔法物品 (如特大咒符 Grand Charm、珠寶、頭飾)"
     ],
     output: "全新隨機屬性的同類型魔法物品 (維持原物品等級 ilvl 不變)",
-    notes: "【神級致富公式】！使用巴爾 (ilvl 99)、暗黑破壞神 (ilvl 94)、尼拉塞克 (ilvl 95) 或 Terror Zone 恐懼領域 (ilvl 91+) 掉落的大板，可用 3 顆雜碎紫/紅/黃等完美寶石無限洗出『+1 職業單系技能 + 41-45 生命』的天價畢業板！"
+    notes: "【神級致富公式】！使用巴爾 (ilvl 99)、迪亞布羅 (ilvl 94)、尼拉塞克 (ilvl 95) 或 Terror Zone 邪惡威脅區域 (ilvl 91+) 掉落的大板，可用 3 顆雜碎紫/紅/黃等完美寶石無限洗出『+1 職業單系技能 + 41-45 生命』的天價畢業板！"
   },
   {
     id: "reroll_rare_item",
@@ -277,7 +277,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
       "1x 耐久度受損或充能耗盡的防具"
     ],
     output: "耐久度與聚氣次數 100% 完整修復的防具",
-    notes: "節省數十萬修理費的神技！對於超強 (Superior) 詞綴的謎團甲或剛毅甲，鐵匠修理費用常高達 50-80 萬金幣；使用 1 顆 8# Ral 放入方塊即可 0 元秒修！若加上 1 顆瑕疵寶石，還能同時補滿所有聚氣次數。"
+    notes: "節省數十萬修理費的神技！對於特等的 (Superior) 詞綴的謎團甲或剛毅甲，鐵匠修理費用常高達 50-80 萬金幣；使用 1 顆 8# Ral 放入方塊即可 0 元秒修！若加上 1 顆瑕疵寶石，還能同時補滿所有聚氣次數。"
   },
   {
     id: "repair_weapon_recharge",
@@ -298,11 +298,11 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     title: "開啟秘密乳牛關 (The Secret Cow Level)",
     titleEn: "Open The Secret Cow Level",
     inputs: [
-      "1x 懷特的義肢 (Wirt's Leg - 於崔斯特姆左上角懷特屍體取得)",
+      "1x 維特的腿 (Wirt's Leg - 於崔斯特姆左上角維特的屍體取得)",
       "1x 城鎮傳送之書 (Tome of Town Portal)"
     ],
-    output: "開啟通往【秘密乳牛關卡】的深紅色傳送門",
-    notes: "需在已擊敗該難度巴爾的狀態下，於第 1 章羅格營地放入方塊轉化開啟。在 D2R 中擊殺『母牛之王 (Cow King)』後，未來仍然可以無限重複開啟乳牛關，不必再擔心鎖關！是刷鑲嵌底材與高階符文的聖地。"
+    output: "開啟通往【秘密乳牛關】的深紅色傳送門",
+    notes: "需在已擊敗該難度巴爾的狀態下，於第 1 章羅格營地放入方塊轉化開啟。在 D2R 中擊殺『牛王 (Cow King)』後，未來仍然可以無限重複開啟乳牛關，不必再擔心鎖關！是刷鑲嵌底材與高階符文的聖地。"
   }
 ];
 

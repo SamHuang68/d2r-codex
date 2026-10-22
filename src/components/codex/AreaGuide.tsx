@@ -50,10 +50,10 @@ export const AreaGuide: React.FC = () => {
             Endgame Farming & Terror Zones
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            場景寶典與恐怖領域
+            場景寶典與邪惡威脅區域
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-2xl">
-            收錄 D2R 全 85 級頂級打寶場景 (TC87 掉落聖地)、原生怪物免疫分佈，以及 2.5 恐怖領域 (Terror Zone) 縮放機制與梯隊評級。
+            收錄 D2R 全 85 級頂級打寶場景 (TC87 掉落聖地)、原生怪物免疫分佈，以及 2.5 邪惡威脅區域 (Terror Zone) 縮放機制與梯隊評級。
           </p>
         </div>
 
@@ -79,7 +79,7 @@ export const AreaGuide: React.FC = () => {
             }`}
           >
             <Sparkles className="w-4 h-4" />
-            恐怖領域攻略指南
+            邪惡威脅區域攻略指南
           </button>
         </div>
       </div>
@@ -238,7 +238,7 @@ export const AreaGuide: React.FC = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-diablo font-bold text-sanctuary-100 flex items-center gap-2">
               <Award className="w-5 h-5 text-d2-gold" />
-              恐怖領域 (TZ) 輪替刷取效率梯隊排行榜
+              邪惡威脅區域 (TZ) 輪替刷取效率梯隊排行榜
             </h3>
 
             <div className="space-y-4">

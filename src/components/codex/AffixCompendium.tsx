@@ -175,7 +175,7 @@ export const AffixCompendium: React.FC<{ initialQuery?: string }> = ({ initialQu
 
       <div className="text-[11px] text-sanctuary-600 space-y-1">
         <p>資料來自遊戲 magicprefix.txt、magicsuffix.txt、automagic.txt（3.3.93847）。已排除遊戲設定為不會產生、權重為 0 或沒有任何屬性的列。屬性範圍以 99 級角色的數值呈現；「依角色等級」的屬性用算式表示。</p>
-        <p>物品類型有繼承：選「大型護身符」會同時包含寫給「護身符」的詞綴。資料表裡有兩處類型代碼筆誤（staff、「ring 」帶空白），以紅框標示，遊戲讀表時不會符合任何物品，這裡照樣不符合。</p>
+        <p>物品類型有繼承：選「大型咒符」會同時包含寫給「咒符」的詞綴。資料表裡有兩處類型代碼筆誤（staff、「ring 」帶空白），以紅框標示，遊戲讀表時不會符合任何物品，這裡照樣不符合。</p>
         <p>未納入：部分底材的詞綴等級加成（magic_lvl）、遊戲內其他影響抽選的修正；權重占比是資料表權重的相對值，不等於實際掉落機率。職業與職業等級需求照資料表欄位顯示，尚未在遊戲內逐項驗證。</p>
       </div>
     </div>

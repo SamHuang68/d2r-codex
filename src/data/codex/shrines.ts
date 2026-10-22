@@ -46,7 +46,7 @@ export function shrineSummary(s: Shrine): string {
     case 17: return '在目前章節的城鎮開一個中立傳送門';
     case 18: return '隨機把背包裡一顆寶石升一階；背包沒有寶石就產生一顆隨機碎裂寶石';
     case 19: return '釋放火球新星，範圍內的玩家與怪物損失一定比例的生命';
-    case 20: return '讓最近的怪物升級為冠軍或首領（Unique）型';
+    case 20: return '讓最近的怪物升級為精英或獨特（Unique）型';
     case 21: return '對附近怪物造成火焰傷害，並產生隨機數量的爆炸藥水';
     case 22: return '產生毒氣傷害附近怪物，並產生隨機數量的毒氣藥水';
     default: return s.effect;
