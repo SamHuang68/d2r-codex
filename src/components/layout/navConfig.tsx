@@ -42,7 +42,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { id: 'items', label: '裝備寶典', desc: '暗金與套裝全覽', icon: <Sword className={`${ic} text-d2-unique`} /> },
       { id: 'runewords', label: '符文之語', desc: '全天梯符文之語速查', icon: <Sparkles className={`${ic} text-d2-rune`} /> },
-      { id: 'bases', label: '底材寶典', desc: '打孔、超強與屬性需求', icon: <ShieldAlert className={`${ic} text-d2-socket`} /> },
+      { id: 'bases', label: '底材寶典', desc: '打孔、特等的底材與屬性需求', icon: <ShieldAlert className={`${ic} text-d2-socket`} /> },
       { id: 'runes', label: '符文寶庫', desc: '1~33 號符文屬性與合成', icon: <Layers className={`${ic} text-d2-rune`} /> },
       { id: 'props', label: '道具聖物', desc: '寶石、鑰匙、精華與藥劑', icon: <FlaskConical className={`${ic} text-d2-magic`} /> },
     ],

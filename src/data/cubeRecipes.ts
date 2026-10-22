@@ -162,8 +162,8 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     category: "misc",
     title: "重置魔法特大咒符 (洗技能板)",
     titleEn: "Reroll Magic Grand Charm",
-    inputs: ["3x 任意完美寶石 (Perfect Gems)", "1x 魔法超大護身符 (遊戲配方接受任何魔法物品；洗板建議 ilvl 85+)"],
-    output: "隨機重新生成屬性的魔法超大護身符",
+    inputs: ["3x 任意完美寶石 (Perfect Gems)", "1x 魔法特大咒符 (遊戲配方接受任何魔法物品；洗板建議 ilvl 85+)"],
+    output: "隨機重新生成屬性的魔法特大咒符",
     notes: "使用巴爾、迪亞布羅、尼拉塞克掉落的 91+ 級咒符，有機會洗出 +1 技能 +45 生命的夢幻神板！"
   },
   {
