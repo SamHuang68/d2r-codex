@@ -1,4 +1,5 @@
 import { RUNES_DATA } from '../data/runes';
+import { actZh } from './actLabel';
 import { RUNEWORDS_DATA } from '../data/runewords';
 import { UNIQUE_ITEMS_DATA } from '../data/uniqueItems';
 import { SET_ITEMS_DATA, ALL_SET_PIECES } from '../data/setItems';
@@ -277,7 +278,7 @@ export const searchOmni = (query: string): SearchResultItem[] => {
     const textToMatch = [
       area.name,
       area.nameEn,
-      `第${area.act}幕`,
+      `第${area.act}幕 ${actZh(area.act)}`,
       area.immunities.join(' '),
       area.chestsAndBosses || ''
     ].join(' ').toLowerCase();
@@ -288,8 +289,8 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'area',
         title: area.name,
         titleEn: area.nameEn,
-        category: `第 ${area.act} 幕 · 區域等級 Lv ${area.areaLevel}`,
-        badge: area.isAlvl85 ? 'Lv85 頂級場景' : (area.isTerrorZone ? '恐懼領域' : '常規場景'),
+        category: `${actZh(area.act)} · 區域等級 Lv ${area.areaLevel}`,
+        badge: area.isAlvl85 ? 'Lv85 頂級場景' : (area.isTerrorZone ? '邪惡威脅區域' : '常規場景'),
         preview: `免疫: ${area.immunities.join(', ')} | ${area.chestsAndBosses || ''}`,
         targetTab: 'areas'
       });
@@ -429,7 +430,7 @@ export const searchOmni = (query: string): SearchResultItem[] => {
     const text = [
       quest.name,
       quest.nameEn,
-      `第${quest.act}幕`,
+      `第${quest.act}幕 ${actZh(quest.act)}`,
       quest.location,
       quest.summary,
       quest.tacticalTips,
@@ -442,7 +443,7 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'quest',
         title: quest.name,
         titleEn: quest.nameEn,
-        category: `第 ${quest.act} 幕 任務 ${quest.questNumber} (${quest.location})`,
+        category: `${actZh(quest.act)} 任務 ${quest.questNumber} (${quest.location})`,
         badge: quest.permanentReward ? '永久獎勵' : (quest.isMandatory ? '主線必解' : '支線任務'),
         preview: quest.permanentReward ? quest.permanentReward.description : quest.summary,
         targetTab: 'quests'
