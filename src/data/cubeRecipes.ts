@@ -74,7 +74,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     titleEn: "Upgrade Unique Armor (Exceptional to Elite)",
     inputs: ["1x Ko (18#)", "1x Lem (20#)", "1x 完美鑽石", "1x 卓越暗金防具"],
     output: "精英版同款暗金防具",
-    notes: "例如：蛇魔法師之皮升級為龍皮甲 (Wyrmhide)、飾金盾牌升級為撒卡蘭姆盾。"
+    notes: "例如：蛇魔法師之皮升級為龍皮甲 (Wyrmhide)、撒卡蘭姆使者升級為撒卡蘭姆盾。"
   },
 
   // ── 手工合成配方 (Crafted Items) ──
@@ -93,7 +93,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     title: "吸血鬼血腥手套 (Blood Gloves)",
     titleEn: "Crafted Blood Gloves",
     inputs: ["1x 魔法厚皮手套/鯊皮手套/吸血鬼骸骨手套", "1x Nef (4#)", "1x 完美紅寶石", "1x 任意珠寶"],
-    output: "手工血腥手套 (附帶 5-10% 壓碎打擊 CB、每次命中偷取 1-3% 生命、+10-20 生命)",
+    output: "手工血腥手套 (附帶 5-10% 粉碎打擊 CB、每次命中偷取 1-3% 生命、+10-20 生命)",
     notes: "物理近戰（標馬、雙熱丁、弓馬）畢業手套首選，有機會同時出現 +2 標槍 +20% 攻速。"
   },
   {
@@ -160,11 +160,11 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
   {
     id: "reroll_grand_charm",
     category: "misc",
-    title: "重置魔法超大護身符 (洗技能板)",
+    title: "重置魔法特大咒符 (洗技能板)",
     titleEn: "Reroll Magic Grand Charm",
     inputs: ["3x 任意完美寶石 (Perfect Gems)", "1x 魔法超大護身符 (遊戲配方接受任何魔法物品；洗板建議 ilvl 85+)"],
     output: "隨機重新生成屬性的魔法超大護身符",
-    notes: "使用巴爾、迪亞布羅、尼拉塞克掉落的 91+ 級護身符，有機會洗出 +1 技能 +45 生命的夢幻神板！"
+    notes: "使用巴爾、迪亞布羅、尼拉塞克掉落的 91+ 級咒符，有機會洗出 +1 技能 +45 生命的夢幻神板！"
   },
   {
     id: "unsocket_item",
@@ -172,7 +172,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     title: "拔除已鑲嵌物 (清空凹槽孔位)",
     titleEn: "Unsocket Item (Remove socketed gems/runes)",
     inputs: ["1x Hel (15#)", "1x 城鎮傳送卷軸 (Scroll of Town Portal)", "1x 已鑲嵌物品"],
-    output: "凹槽完全清空的原本裝備 (孔數保留)",
+    output: "鑲孔完全清空的原本裝備 (孔數保留)",
     notes: "【警告】：孔內原先鑲嵌的符文、寶石或珠寶將永久銷毀摧毀，裝備本體與孔位完好保留。常用於重洗精神盾/精神劍 FCR。"
   },
   {
@@ -248,7 +248,7 @@ export const CUBE_RECIPES_DATA: CubeRecipeData[] = [
     title: "洗大板：重骰魔法物品 (咒符/珠寶)",
     titleEn: "Reroll Magic Item (Charms / Jewels)",
     inputs: [
-      "3x 完美寶石 (Perfect Gems，任意種類，包含骷髏)",
+      "3x 完美寶石 (Perfect Gems，任意種類，包含骷髏石)",
       "1x 藍色魔法物品 (如特大咒符 Grand Charm、珠寶、頭飾)"
     ],
     output: "全新隨機屬性的同類型魔法物品 (維持原物品等級 ilvl 不變)",

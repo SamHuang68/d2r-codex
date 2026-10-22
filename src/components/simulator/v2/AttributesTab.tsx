@@ -284,7 +284,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
                 title="件數以不同的套裝件計；滑過物品可看各件與套裝加成的內容" />
             ))}
           </div>
-          <div className="d2-sub mt-1">各件自己的加成以「第 N 組＝穿戴 N+1 件」計算（塔拉夏的審判護身符 4 件才生效，與社群資料一致，其餘件未逐一核對）。</div>
+          <div className="d2-sub mt-1">各件自己的加成以「第 N 組＝穿戴 N+1 件」計算（塔拉夏的判決護身符 4 件才生效，與社群資料一致，其餘件未逐一核對）。</div>
         </div>
       )}
 

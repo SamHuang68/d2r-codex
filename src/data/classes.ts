@@ -95,7 +95,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
       {
         name: "純冰暴風雪 (Pure Blizzard)",
         tier: "S",
-        coreSkills: "暴風雪 + 冰風暴 + 冰寒專精滿",
+        coreSkills: "暴風雪 + 冰川之槍 + 冰寒專精滿",
         gearSummary: "死亡深度 + 蛇皮/漆甲 + 精神盾 + 軍帽"
       },
       {
@@ -151,7 +151,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
         gearSummary: "橡樹之心 + 謎團 + 撒卡蘭姆使者/精神盾 + 蜘蛛之網"
       },
       {
-        name: "盾擊重擊騎 (Smiter)",
+        name: "盾牌重擊騎 (Smiter)",
         tier: "S",
         coreSkills: "盾牌重擊 (Smite) + 神聖之盾 + 狂熱靈氣",
         gearSummary: "悔恨 + 撒卡蘭姆使者 + 剛毅/背信 + 德古拉之握"
@@ -163,7 +163,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     name: "死靈法師",
     nameEn: "Necromancer",
     title: "生死界限掌門人",
-    description: "行於幽冥的召喚宗師。能喚醒龐大骷髏軍團與魔像為己作戰，以致命白骨長矛擊穿敵陣，並以全遊戲最霸道之範圍技能「屍爆」清空戰場。",
+    description: "行於幽冥的召喚宗師。能喚醒龐大骷髏軍團與魔像為己作戰，以致命骨矛擊穿敵陣，並以全遊戲最霸道之範圍技能「屍爆」清空戰場。",
     primaryAttributes: "活力、力量",
     startingStats: {
       str: 15,
@@ -206,7 +206,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
         name: "毒死靈 (Poison Nova Necro)",
         tier: "S",
         coreSkills: "劇毒新星 + 毒爆 + 淬毒匕首滿",
-        gearSummary: "死亡之網 (Death's Web) + 塔拉夏三件套 + 謎團"
+        gearSummary: "死亡之網 (Death's Web) + 塔格奧三件套 + 謎團"
       }
     ]
   },
@@ -267,7 +267,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     name: "野蠻人",
     nameEn: "Barbarian",
     title: "亞瑞特山鐵血雄獅",
-    description: "亞瑞特聖山的守護者，兼具雙持重型兵刃與無畏狂暴力量。戰鬥命令 (BO) 戰吼使全隊生存能力提升數倍，並能利用「尋找物品」實現無人能及的打寶翻屍收益。",
+    description: "亞瑞特山的守護者，兼具雙持重型兵刃與無畏狂暴力量。戰鬥命令 (BO) 戰吼使全隊生存能力提升數倍，並能利用「尋找物品」實現無人能及的打寶翻屍收益。",
     primaryAttributes: "力量、活力",
     startingStats: {
       str: 30,
@@ -285,7 +285,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     skillTrees: [
       {
         name: "戰鬥技能 (Combat Skills)",
-        description: "旋風斬、狂亂加速與撕裂敵人的原始物理戰技。",
+        description: "旋風斬、狂亂連擊加速與撕裂敵人的原始物理戰技。",
         keySkills: ["旋風斬 (Whirlwind)", "狂亂連擊 (Frenzy)", "狂暴之擊 (Berserk)", "躍擊"]
       },
       {

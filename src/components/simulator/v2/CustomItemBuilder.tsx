@@ -55,7 +55,7 @@ const GameCheck: React.FC<{ check: ItemCheck; level: number }> = ({ check, level
 };
 
 /**
- * 自訂飾品：魔法／稀有的戒指、項鍊、護身符的詞綴是隨機的，遊戲資料裡沒有現成物品可選，所以讓使用者自己組。
+ * 自訂飾品：魔法／稀有的戒指、護身符、咒符的詞綴是隨機的，遊戲資料裡沒有現成物品可選，所以讓使用者自己組。
  * 詞綴從清單選、數值自填；數值上限只是防呆。「遊戲內檢查」會對照遊戲詞綴表提示能不能長出來，但只是參考，不擋穿戴與儲存。
  */
 export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
@@ -101,7 +101,7 @@ export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
     <section aria-label="自訂飾品" className="d2-panel" style={{ marginTop: 12 }}>
       <div className="d2-title">自 訂 飾 品</div>
       <div className="d2-panel-body space-y-3">
-        <div className="d2-sub">魔法或稀有的戒指、項鍊、咒符，詞綴是隨機的，遊戲資料裡沒有現成物品可選，所以由你自己組。詞綴從清單選、數值自己填；數值上限只是防呆。下方的「遊戲內檢查」會對照遊戲的詞綴表，提示這組詞綴能不能長出來，<b>只是參考，不會擋下穿戴或儲存</b>。</div>
+        <div className="d2-sub">魔法或稀有的戒指、護身符、咒符，詞綴是隨機的，遊戲資料裡沒有現成物品可選，所以由你自己組。詞綴從清單選、數值自己填；數值上限只是防呆。下方的「遊戲內檢查」會對照遊戲的詞綴表，提示這組詞綴能不能長出來，<b>只是參考，不會擋下穿戴或儲存</b>。</div>
         <div className="flex flex-wrap items-center gap-2">
           <label className="d2-field">種類
             <select value={baseCode} onChange={(e) => setBaseCode(e.target.value)} className="d2-select" aria-label="自訂飾品種類">

@@ -2,21 +2,21 @@ import { getCatalog, type CatalogEntry } from './catalog';
 import type { Modifier } from './types';
 
 /**
- * 自訂飾品：魔法／稀有的戒指、項鍊、護身符。它們的詞綴是隨機的，遊戲資料表沒有「某個物品」可選，所以由使用者自己組。
+ * 自訂飾品：魔法／稀有的戒指、護身符、咒符。它們的詞綴是隨機的，遊戲資料表沒有「某個物品」可選，所以由使用者自己組。
  * 詞綴只從下面的清單選（每一項都是引擎看得懂、能計入數值的屬性代碼），數值上限只是防呆，
  * 不是遊戲裡各種飾品實際能骰到的範圍；這裡不擋、也不驗證能不能在遊戲中出現，
  * 能不能長出來由 data/codex/customItemCheck.ts 對照遊戲詞綴表提示（只是參考，建構器背景載入）。
  */
 export interface CustomAffix { code: string; value: number }
 export interface CustomItemDef {
-  /** 底材代碼：rin 戒指、amu 項鍊、cm1／cm2／cm3 小／大／特大護身符 */
+  /** 底材代碼：rin 戒指、amu 護身符、cm1／cm2／cm3 小／大／特大咒符 */
   baseCode: string;
   name: string;
   affixes: CustomAffix[];
 }
 
 export const CUSTOM_BASES: { code: string; label: string }[] = [
-  { code: 'rin', label: '戒指' }, { code: 'amu', label: '項鍊' },
+  { code: 'rin', label: '戒指' }, { code: 'amu', label: '護身符' },
   { code: 'cm1', label: '小型咒符' }, { code: 'cm2', label: '大型咒符' }, { code: 'cm3', label: '特大咒符' },
 ];
 

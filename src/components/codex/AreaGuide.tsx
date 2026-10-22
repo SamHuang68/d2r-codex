@@ -209,7 +209,7 @@ export const AreaGuide: React.FC = () => {
         </div>
       )}
 
-      {/* ── SubTab 2: 恐怖領域 (Terror Zone) 攻略指南 ── */}
+      {/* ── SubTab 2: 邪惡威脅區域 (Terror Zone) 攻略指南 ── */}
       {activeSubTab === 'terror_zone' && (
         <div className="space-y-8">
           {/* Mechanics Cards */}

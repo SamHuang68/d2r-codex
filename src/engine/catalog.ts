@@ -33,7 +33,7 @@ export interface CatalogEntry {
   /** 套裝 id 與此件自己的套裝加成（見 engine/types EquippedItem） */
   setId?: string;
   setBonus?: { pieces: number; mods: Modifier[] }[];
-  /** 自訂飾品（魔法／稀有的戒指、項鍊、護身符）：使用者組出來的詞綴，見 engine/customItem.ts */
+  /** 自訂飾品（魔法／稀有的戒指、護身符、咒符）：使用者組出來的詞綴，見 engine/customItem.ts */
   custom?: import('./customItem').CustomItemDef;
   /** 底材防禦範圍覆寫（只有與遊戲資料表不一致、改採參考網站數值的暗金），見 engine/referenceOverrides.ts */
   baseAc?: [number, number];
@@ -45,7 +45,7 @@ const groupOfSlot = (s: SlotKind): Group => (s === 'weapon' ? 'weapon' : s === '
 
 interface Row { id: string; name: string; nameEn: string; code: string; levelReq?: number; mods: Modifier[]; crafted?: boolean; disabled?: boolean; setNameEn?: string; set?: string; setBonusByCount?: (Modifier & { slot: number })[] }
 
-/** 資料的 aprop 第 N 組＝穿戴同套裝 N+1 件時生效（例：塔拉夏的審判項鍊第 3 組＝4 件，+10% 快速施法；兩個社群來源一致） */
+/** 資料的 aprop 第 N 組＝穿戴同套裝 N+1 件時生效（例：塔拉夏的判決護身符第 3 組＝4 件，+10% 快速施法；兩個社群來源一致） */
 const bonusByPieces = (rows?: (Modifier & { slot: number })[]): { pieces: number; mods: Modifier[] }[] | undefined => {
   if (!rows?.length) return undefined;
   const m = new Map<number, Modifier[]>();

@@ -104,7 +104,7 @@ export function modLines(mods: Modifier[], base?: BaseItem, opts: DescribeRangeO
   return describeRanges([...mods.filter((m) => m.code !== 'dur'), ...blunt], opts).map((l) => l.text);
 }
 
-/** 完整屬性行：表頭＋屬性；範本類（Rift 護身符，遊戲表只有詞綴範本）改用覆蓋層保留的舊屬性行 */
+/** 完整屬性行：表頭＋屬性；範本類（Rift 咒符，遊戲表只有詞綴範本）改用覆蓋層保留的舊屬性行 */
 export function itemAttributes(base: BaseItem | undefined, mods: Modifier[], opts: HeaderOptions & { staticLines?: string[] } = {}): string[] {
   const used = opts.dropMods?.length ? mods.filter((_, i) => !opts.dropMods?.includes(i)) : mods;
   const head = headerLines(base, opts.staticLines ? [] : used, opts);

@@ -80,7 +80,7 @@ export const PRESET_META_BUILDS: Omit<CharacterBuildPlan, 'id'>[] = [
       magicFind: 180,
       allSkills: 15
     },
-    notes: '2.6 顛覆遊戲機制的弒神流派！雙持嵌飾使終結技 100%「不消耗聚氣點數」，聚滿鳳凰擊三段冰/火/雷、龍擺尾與猛虎擊後，每踢一腳全螢幕同時爆發隕石、連鎖閃電與冰封球，8 人難度 Boss 3 秒融化！'
+    notes: '2.6 顛覆遊戲機制的弒神流派！雙持嵌飾使終結技 100%「不消耗聚氣點數」，聚滿鳳凰擊三段冰/火/雷、龍擺尾與猛虎擊後，每踢一腳全螢幕同時爆發隕石術、連鎖閃電與冰封球，8 人難度 Boss 3 秒融化！'
   },
   {
     characterClass: '聖騎士',
@@ -114,7 +114,7 @@ export const PRESET_META_BUILDS: Omit<CharacterBuildPlan, 'id'>[] = [
     buildName: '紅門六王盾擊雙熱騎 (Smiter / Uber Tristram Killer)',
     targetLevel: 88,
     gear: {
-      helm: '套裝【吉永之臉】(Guillaume\'s Face) 35% 壓碎打擊 CB',
+      helm: '套裝【吉永之臉】(Guillaume\'s Face) 35% 粉碎打擊 CB',
       armor: '符文之語【剛毅】(Fortitude 統御者鎧甲) 或【背信】(Treachery 偷靈氣)',
       weapon1: '符文之語【悔恨】(Grief 幻化之刃 400 純增傷 40% IAS)',
       shield1: '暗金【撒卡蘭姆使者】(金紋盾 HOZ 鑲 22# 烏姆 72 全抗)',
@@ -134,7 +134,7 @@ export const PRESET_META_BUILDS: Omit<CharacterBuildPlan, 'id'>[] = [
       magicFind: 0,
       allSkills: 6
     },
-    notes: '擊殺超級崔斯特姆三大魔神的唯一權威配置！盾牌重擊 (Smite) 100% 命中，搭配 50%+ 壓碎打擊 (CB) 秒速削血，卓古拉觸發偷取生命 (Life Tap) 瞬間吸滿血量，雷神腰帶徹底免疫老墨閃電審判。'
+    notes: '擊殺超級崔斯特姆三大魔神的唯一權威配置！盾牌重擊 (Smite) 100% 命中，搭配 50%+ 粉碎打擊 (CB) 秒速削血，卓古拉觸發偷取生命 (Life Tap) 瞬間吸滿血量，雷神腰帶徹底免疫老墨閃電審判。'
   },
   {
     characterClass: '亞馬遜',
@@ -144,7 +144,7 @@ export const PRESET_META_BUILDS: Omit<CharacterBuildPlan, 'id'>[] = [
       helm: '獅鷲之眼 (Griffon\'s Eye) 鑲 5/5 電珠寶',
       armor: '符文之語【謎團】(Enigma)',
       weapon1: '無形暗金【泰坦的復仇】(Titan\'s Revenge 升級儀禮標槍 自動回復數量)',
-      shield1: '暗金【暴風之盾】(Stormshield 物免盾 35% DR) 或 JMoD 偏向盾 (鑲4電珠寶)',
+      shield1: '暗金【暴風之盾】(Stormshield 物免盾 35% DR) 或 JMoD 偏折盾 (鑲4電珠寶)',
       weapon2: '戰爭召喚 (Call to Arms)',
       shield2: '精神君主盾 (Spirit Monarch)',
       gloves: '亮黃厚皮手套 (+2 標槍技能 / 20% IAS / 吸血 / 抗性)',

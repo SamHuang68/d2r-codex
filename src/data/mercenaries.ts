@@ -52,7 +52,7 @@ export const MERCENARIES_DATA: MercenaryData[] = [
         helm: "暗金【安達莉爾的面貌】(鑲 15% IAS / 30% 火抗珠寶)",
         armor: "無形符文之語【剛毅】(Fortitude 統御者鎧甲/神聖戰甲)",
         description: "自帶 12 級信念靈氣 (Conviction)，直接降低周圍敵人 85% 元素抗性！讓標馬、電法、火法與陷阱刺客的傷害成倍暴增，米山配合安頭剛毅單挑傷害亦極為恐怖。",
-        strengths: ["破除絕大部分電免/火免怪", "壓碎打擊 40% 快速削血", "攻防一體終極畢業"]
+        strengths: ["破除絕大部分電免/火免怪", "粉碎打擊 40% 快速削血", "攻防一體終極畢業"]
       },
       {
         name: "「衰老碎骨」物理破免控場流 (物理系最佳拍檔)",
@@ -60,7 +60,7 @@ export const MERCENARIES_DATA: MercenaryData[] = [
         weapon: "無形暗金【死神喪鐘】(The Reaper's Toll 鑲 13# 夏)",
         helm: "綠色套裝【吉永之臉】(Guillaume's Face 35% CB)",
         armor: "符文之語【背信】(Treachery 45% IAS + 15級影散)",
-        description: "專門配合旋風野蠻人、弓馬與狂熱聖騎士。死神喪鐘打擊時有 33% 機率施展等級 3 衰老 (Decrepify)，破除怪物物理免疫並降低敵人 50% 速度與輸出，吉永之臉補足 35% 壓碎打擊。",
+        description: "專門配合旋風野蠻人、弓馬與狂熱聖騎士。死神喪鐘打擊時有 33% 機率施展等級 3 衰老 (Decrepify)，破除怪物物理免疫並降低敵人 50% 速度與輸出，吉永之臉補足 35% 粉碎打擊。",
         strengths: ["100% 穩定破除物理免疫", "衰老減速極限保命", "擊殺 Boss 速度極快"]
       }
     ]
@@ -86,7 +86,7 @@ export const MERCENARIES_DATA: MercenaryData[] = [
         helm: "暗金【亞瑞特的面容】(Arreat's Face 野蠻人神頭)",
         armor: "符文之語【剛毅】(Fortitude) 或【背信】(Treachery)",
         description: "雙持雙倍出手判定，使衰老 (Decrepify) 幾乎每秒觸發！同時裝備執法者賦予的庇護靈氣 (Sanctuary) 會強制擊退所有不死生物並直接無視其物理抗性，在混沌魔殿與古墓如入無人之境。",
-        strengths: ["極高頻率衰老覆蓋", "庇護靈氣推開危險怪", "狂亂衝鋒追怪速度極快"]
+        strengths: ["極高頻率衰老覆蓋", "庇護靈氣推開危險怪", "狂亂連擊衝鋒追怪速度極快"]
       },
       {
         name: "「沙薩比不死軍團」全套硬抗流 (超高性價比)",

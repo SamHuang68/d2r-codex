@@ -36,7 +36,7 @@ export interface SEntry { set: SetItemCollection; leaf: string; minLv: number }
 
 export const byText = (a: string, b: string) => a.localeCompare(b, 'zh-Hant');
 
-/** 暗金：護甲武器依底材品階掛到「品階 → 部位 → 類型」；飾品直接依部位；護身符再依尺寸分段；同段依需求等級排序 */
+/** 暗金：護甲武器依底材品階掛到「品階 → 部位 → 類型」；飾品直接依部位；咒符再依尺寸分段；同段依需求等級排序 */
 export const U_ENTRIES: UEntry[] = UNIQUE_ITEMS_DATA.map((item) => {
   const rel = leafOfItem(item);
   if (rel.startsWith('jewelry/')) {

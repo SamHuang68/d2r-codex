@@ -60,7 +60,7 @@ export const SkillTreeCanvas: React.FC<SkillTreeCanvasProps> = ({
     if (name.includes('甲') || name.includes('盾') || name.includes('抗') || tree.includes('防禦')) return <Shield className="w-5 h-5 text-emerald-400" />;
     if (name.includes('箭') || name.includes('瞄準') || name.includes('標槍')) return <Crosshair className="w-5 h-5 text-sky-400" />;
     if (name.includes('毒') || name.includes('骨') || name.includes('詛咒') || tree.includes('召喚')) return <Skull className="w-5 h-5 text-purple-400" />;
-    if (name.includes('打擊') || name.includes('熱誠') || name.includes('旋風') || tree.includes('戰鬥')) return <Sword className="w-5 h-5 text-rose-400" />;
+    if (name.includes('打擊') || name.includes('熱忱打擊') || name.includes('旋風') || tree.includes('戰鬥')) return <Sword className="w-5 h-5 text-rose-400" />;
     return <Sparkles className="w-5 h-5 text-d2-gold" />;
   };
 

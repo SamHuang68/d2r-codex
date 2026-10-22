@@ -22,7 +22,7 @@ export const DOLL_SLOT_KIND: Record<DollSlot, SlotKind> = {
 };
 
 export const DOLL_SLOT_ZH: Record<DollSlot, string> = {
-  head: '頭盔', neck: '項鍊', body: '護甲', gloves: '手套', belt: '腰帶', ring1: '左戒指', ring2: '右戒指', boots: '鞋靴',
+  head: '頭盔', neck: '護身符', body: '護甲', gloves: '手套', belt: '腰帶', ring1: '左戒指', ring2: '右戒指', boots: '鞋靴',
   weaponI: '主手武器 I', shieldI: '副手 I', weaponII: '主手武器 II', shieldII: '副手 II',
 };
 

@@ -49,7 +49,7 @@ const MonsterRow: React.FC<{ m: Monster; diff: Diff; open: boolean; onToggle: ()
         <div className="min-w-0 lg:w-64 shrink-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span className={`font-bold ${m.boss ? 'text-d2-unique' : 'text-sanctuary-100'}`}>{m.name}</span>
-            {m.boss && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-d2-unique/15 text-d2-unique border border-d2-unique/30">首領</span>}
+            {m.boss && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-d2-unique/15 text-d2-unique border border-d2-unique/30">頭目</span>}
             <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sanctuary-800 text-sanctuary-300">{KIND_ZH[m.kind ?? 'other']}</span>
           </div>
           <div className="text-[11px] font-mono text-sanctuary-500 truncate">{m.nameEn !== m.name ? `${m.nameEn}　` : ''}{m.id}</div>
@@ -81,8 +81,8 @@ const MonsterRow: React.FC<{ m: Monster; diff: Diff; open: boolean; onToggle: ()
           </div>
           <div className="text-[11px] text-sanctuary-500">抗性 ≥100 為免疫、負值為弱點；資料表沒填的抗性格視為 0；吸取沒填顯示「—」（沒有可核對的預設值）。</div>
           <div>
-            <div className="text-[11px] font-mono text-sanctuary-500 mb-1">出現的場景（遊戲資料的一般怪物清單，不含首領的固定出沒點）：</div>
-            {areasOfMonster(m.id).length === 0 ? <span className="text-xs text-sanctuary-500">沒有出現在一般場景的怪物清單（例如首領、事件怪物、召喚物）</span> : (
+            <div className="text-[11px] font-mono text-sanctuary-500 mb-1">出現的場景（遊戲資料的一般怪物清單，不含頭目的固定出沒點）：</div>
+            {areasOfMonster(m.id).length === 0 ? <span className="text-xs text-sanctuary-500">沒有出現在一般場景的怪物清單（例如頭目、事件怪物、召喚物）</span> : (
               <div className="flex flex-wrap gap-1.5">
                 {areasOfMonster(m.id).map(({ area, diffs }) => (
                   <span key={area.id} className="text-[11px] px-2 py-0.5 rounded-full border border-sanctuary-700 bg-sanctuary-950/60 text-sanctuary-300">
@@ -138,7 +138,7 @@ const MonstersTab: React.FC<{ initialQuery?: string }> = ({ initialQuery }) => {
           </div>
           <select value={kind} onChange={(e) => { setKind(e.target.value); setLimit(PAGE); }} aria-label="分類" className="bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl px-3 py-2 text-xs text-sanctuary-200">
             <option value="all">全部分類</option>
-            <option value="boss">首領</option>
+            <option value="boss">頭目</option>
             {(Object.keys(KIND_ZH) as (keyof typeof KIND_ZH)[]).map((k) => <option key={k} value={k}>{KIND_ZH[k]}</option>)}
           </select>
           <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} aria-label="排序" className="bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl px-3 py-2 text-xs text-sanctuary-200">
@@ -234,7 +234,7 @@ const AreasTab: React.FC = () => {
         </div>
         <span className="md:ml-auto text-xs text-sanctuary-500">{list.length} 個場景（{DIFF_ZH[diff]}）</span>
       </div>
-      <div className="text-xs text-sanctuary-500">綠色＝這個場景（該難度）出現的一般怪物裡沒有任何一種免疫該元素；紅色等＝有幾種免疫。不含精英、冠軍與首領詞綴帶來的額外免疫（例如火焰附魔）。</div>
+      <div className="text-xs text-sanctuary-500">綠色＝這個場景（該難度）出現的一般怪物裡沒有任何一種免疫該元素；紅色等＝有幾種免疫。不含精英與獨特詞綴帶來的額外免疫（例如火焰附魔）。</div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" aria-label="場景清單">
         {list.map((a) => <AreaCard key={a.id} area={a} diff={diff} />)}
       </div>
