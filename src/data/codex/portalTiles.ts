@@ -30,3 +30,11 @@ export function buildGearTiles(d: PortalSource): CategoryTile[] {
     { id: 'props', label: '道具聖物', sub: '寶石・鑰匙・藥劑', tone: 'magic', size: 'lg', icon: { name: '完美紫寶石', nameEn: 'Perfect Amethyst', rarity: 'prop' } },
   ];
 }
+
+/** 只計非空的技能職業／樹；職業介紹不代表已有技能資料或完整效果模擬。 */
+export function buildSkillSummary(groups: { trees: { skills: unknown[] }[] }[]) {
+  return {
+    classCount: groups.filter((group) => group.trees.some((tree) => tree.skills.length > 0)).length,
+    treeCount: groups.reduce((count, group) => count + group.trees.filter((tree) => tree.skills.length > 0).length, 0),
+  };
+}

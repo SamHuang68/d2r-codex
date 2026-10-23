@@ -470,15 +470,16 @@ export const HolyGrailTracker: React.FC = () => {
                                   onClick={() => toggleObtained(item.id)}
                                   className="flex items-center gap-3 cursor-pointer min-w-0 flex-1 text-left rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold focus-visible:ring-offset-2 focus-visible:ring-offset-sanctuary-950"
                                 >
-                                  <div className="shrink-0">
+                                  <span className="shrink-0">
                                     {isObtained ? (
                                       <CheckCircle2 className="w-5 h-5 text-d2-set" />
                                     ) : (
                                       <Circle className={`w-5 h-5 ${item.isTC87 ? 'text-amber-400/60' : 'text-sanctuary-600'}`} />
                                     )}
-                                  </div>
+                                  </span>
 
                                   <ItemIcon
+                                    as="span"
                                     name={item.name}
                                     nameEn={item.nameEn}
                                     slot={item.slot}
@@ -487,8 +488,8 @@ export const HolyGrailTracker: React.FC = () => {
                                     size="sm"
                                   />
 
-                                  <div className="min-w-0">
-                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="block min-w-0">
+                                    <span className="flex items-center gap-1.5 flex-wrap">
                                       <span
                                         className={`font-diablo font-bold text-sm truncate ${
                                           item.isSet
@@ -505,11 +506,11 @@ export const HolyGrailTracker: React.FC = () => {
                                           TC87
                                         </span>
                                       )}
-                                    </div>
-                                    <div className="text-[10px] font-mono text-sanctuary-400 truncate">
+                                    </span>
+                                    <span className="block text-[10px] font-mono text-sanctuary-400 truncate">
                                       {item.nameEn} • {item.category}
-                                    </div>
-                                  </div>
+                                    </span>
+                                  </span>
                                 </button>
 
                                 {/* 獨立的無形收藏切換 */}

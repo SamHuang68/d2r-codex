@@ -4,6 +4,8 @@ import { resolveItemImagePath } from '../../utils/itemImageResolver';
 import { MagicArt, artBoxOf } from './MagicArt';
 
 export interface ItemIconProps {
+  /** 收藏等按鈕內使用 span，讓所有 HTML 容器保持 phrasing content。 */
+  as?: 'div' | 'span';
   name?: string;
   nameEn?: string;
   baseItem?: string;
@@ -25,6 +27,7 @@ export interface ItemIconProps {
  * 採用遊戲原版真實提取物品貼圖（Sprites），結合復古像素銳化渲染與動態品質光暈
  */
 export const ItemIcon: React.FC<ItemIconProps> = ({
+  as: Container = 'div',
   name = '',
   nameEn = '',
   baseItem = '',
@@ -141,21 +144,21 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
   const alt = name || nameEn || 'Item';
 
   return (
-    <div
+    <Container
       className={`relative flex items-center justify-center rounded transition-all duration-200 select-none overflow-hidden ${
         fill ? 'w-full h-full' : 'shrink-0'
       } ${showBorder ? `border ${colorConfig.border} ${colorConfig.bg} ${colorConfig.glow} shadow-sm` : ''} ${className}`}
       style={boxStyle}
       title={alt}
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70 pointer-events-none" />
+      <Container className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70 pointer-events-none" />
 
       {!imgError && imageSrc ? (
         isMagicRemote && artBox ? (
           <MagicArt src={imageSrc} alt={alt} box={artBox} fill={fill} onError={() => setImgError(true)} />
         ) : isMagicRemote ? (
           // 沒有預先算好的物品範圍（資料新增的圖）：完整顯示整張 1:2 畫布，底部以模糊遮罩淡化浮水印
-          <div className="relative z-10 overflow-hidden max-w-full max-h-full" style={{ height: '100%', aspectRatio: '1 / 2' }}>
+          <Container className="block relative z-10 overflow-hidden max-w-full max-h-full" style={{ height: '100%', aspectRatio: '1 / 2' }}>
             <img
               src={imageSrc}
               alt={alt}
@@ -164,7 +167,7 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
               referrerPolicy="no-referrer"
               onError={() => setImgError(true)}
             />
-            <div
+            <Container
               aria-hidden
               className="absolute inset-x-0 bottom-0 pointer-events-none"
               style={{
@@ -176,7 +179,7 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
                 maskImage: 'linear-gradient(to bottom, transparent, #000 22%)',
               }}
             />
-          </div>
+          </Container>
         ) : (
           <img
             src={imageSrc}
@@ -201,6 +204,6 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
           <span aria-hidden>◇</span>
         </span>
       )}
-    </div>
+    </Container>
   );
 };

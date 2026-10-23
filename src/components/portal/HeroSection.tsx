@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Play, Sparkles, ArrowRight, X } from 'lucide-react';
-import { RUNEWORDS_DATA } from '../../data/runewords';
-import { SKILLS_DATA } from '../../data/skills';
+import portalSummary from '../../data/codex/portalSummary.json';
 
-// 只統計有技能資料的職業與樹；新增職業介紹不等於已有可用技能。
-const skillClassCount = SKILLS_DATA.filter((group) => group.trees.some((tree) => tree.skills.length > 0)).length;
-const skillTreeCount = SKILLS_DATA.reduce((count, group) => count + group.trees.filter((tree) => tree.skills.length > 0).length, 0);
+// 與首頁分類磚共用預先產生的小摘要，不在首頁載入百科大資料。
+const runewordCount = portalSummary.gearTiles.find((tile) => tile.id === 'runewords')!.count;
+const { classCount: skillClassCount, treeCount: skillTreeCount } = portalSummary.skills;
 
 interface HeroSectionProps {
   onNavigateTab: (tab: string) => void;
@@ -58,7 +57,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
             onClick={() => onNavigateTab('runewords')}
             className="flex items-center gap-2 px-5 py-3.5 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-d2-unique font-medium text-sm transition-all duration-200 hover:scale-[1.02]"
           >
-            <span>符文之語（{RUNEWORDS_DATA.length} 組）</span>
+            <span>符文之語（{runewordCount} 組）</span>
           </button>
 
           <button
@@ -91,7 +90,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
             <div className="text-xs text-sanctuary-400 mt-1">{skillClassCount} 職業技能資料・110 點配點</div>
           </div>
           <div className="p-4 rounded-xl bg-sanctuary-900/50 border border-sanctuary-800">
-            <div className="font-diablo text-2xl font-bold text-d2-unique">{RUNEWORDS_DATA.length} 組</div>
+            <div className="font-diablo text-2xl font-bold text-d2-unique">{runewordCount} 組</div>
             <div className="text-xs text-sanctuary-400 mt-1">已收錄符文之語・與寶典同步</div>
           </div>
           <div className="p-4 rounded-xl bg-sanctuary-900/50 border border-sanctuary-800">

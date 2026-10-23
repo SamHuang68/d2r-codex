@@ -11,7 +11,7 @@ interface CategoryGridProps {
 /** 首頁大圖分類格：裝備圖鑑用大尺寸物品圖，其餘 15 個分頁用分組入口卡，21 個分頁入口全數保留 */
 export const CategoryGrid: React.FC<CategoryGridProps> = ({ onNavigateTab }) => {
   // 各類筆數與代表物品圖示由 scripts/build_portal_summary.mjs 事先算好（首頁不必載入整份百科資料）
-  const gearTiles = portalSummary as unknown as CategoryTile[];
+  const gearTiles = portalSummary.gearTiles as unknown as CategoryTile[];
 
   // 非裝備類分頁：沿用導覽設定的圖示與說明，放大成入口卡
   const gearIds = new Set(['items', 'runewords', 'bases', 'runes', 'props', 'overview']);

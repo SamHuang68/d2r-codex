@@ -67,6 +67,18 @@ try {
     await state('重新載入');
   } else {
     assert.equal(semantics.tag, 'BUTTON');
+    const content = await main.evaluate(el => ({
+      invalidHtml: Array.from(el.querySelectorAll('*'))
+        .filter(node => node.namespaceURI === 'http://www.w3.org/1999/xhtml' && !['SPAN', 'IMG'].includes(node.tagName))
+        .map(node => node.tagName),
+      nestedInteractive: el.querySelectorAll('button, a, input, select, textarea, [tabindex]').length,
+      iconTag: el.querySelector('[title]')?.tagName,
+    }));
+    assert.deepEqual(content.invalidHtml, []);
+    assert.equal(content.nestedInteractive, 0);
+    assert.equal(content.iconTag, 'SPAN');
+    assert.ok(await eth.evaluate(el => el.previousElementSibling?.tagName === 'BUTTON'), 'ETH 必須是兄弟按鈕');
+    record('收藏按鈕合法內容', content);
     assert.equal(semantics.tabIndex, 0);
     assert.equal(semantics.pressed, 'false');
     assert.match(semantics.label, /畢格因的軟帽.*Biggin.*收藏/);

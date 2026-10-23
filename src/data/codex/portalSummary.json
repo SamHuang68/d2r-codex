@@ -1,85 +1,91 @@
-[
-  {
-    "id": "items",
-    "label": "暗金裝備",
-    "sub": "暗金 Unique",
-    "count": 409,
-    "tone": "unique",
-    "icon": {
-      "name": "諧角之冠",
-      "nameEn": "Harlequin Crest",
-      "baseItem": "軍帽",
-      "rarity": "unique",
-      "imageUrl": "https://static.d2r.world/img/items/magic/cap_hat_cgrn.jpg"
+{
+  "gearTiles": [
+    {
+      "id": "items",
+      "label": "暗金裝備",
+      "sub": "暗金 Unique",
+      "count": 409,
+      "tone": "unique",
+      "icon": {
+        "name": "諧角之冠",
+        "nameEn": "Harlequin Crest",
+        "baseItem": "軍帽",
+        "rarity": "unique",
+        "imageUrl": "https://static.d2r.world/img/items/magic/cap_hat_cgrn.jpg"
+      }
+    },
+    {
+      "id": "sets",
+      "label": "成套裝備",
+      "sub": "綠色套裝 Set",
+      "count": 35,
+      "tone": "set",
+      "icon": {
+        "name": "克維雷布的短棍",
+        "nameEn": "Civerb's Cudgel",
+        "baseItem": "莊嚴權杖",
+        "slot": "weapon",
+        "rarity": "set",
+        "imageUrl": "https://static.d2r.world/img/items/magic/grand_scepter_lyel.jpg"
+      }
+    },
+    {
+      "id": "runewords",
+      "label": "符文之語",
+      "sub": "Runeword",
+      "count": 99,
+      "tone": "unique",
+      "icon": {
+        "name": "幻化之刃",
+        "nameEn": "Phase Blade",
+        "baseItem": "幻化之刃",
+        "rarity": "runeword",
+        "imageUrl": "https://static.d2r.world/img/items/base/crystal_sword.jpg"
+      }
+    },
+    {
+      "id": "bases",
+      "label": "底材寶典",
+      "sub": "白色底材",
+      "count": 508,
+      "tone": "neutral",
+      "icon": {
+        "name": "統御者鎧甲",
+        "nameEn": "Archon Plate",
+        "baseItem": "統御者鎧甲",
+        "rarity": "normal",
+        "imageUrl": "https://static.d2r.world/img/items/base/light_plate.jpg"
+      }
+    },
+    {
+      "id": "runes",
+      "label": "符文寶庫",
+      "sub": "1-33# 符文",
+      "count": 33,
+      "tone": "rune",
+      "size": "lg",
+      "icon": {
+        "runeNumber": 30,
+        "name": "貝",
+        "nameEn": "Ber",
+        "rarity": "rune"
+      }
+    },
+    {
+      "id": "props",
+      "label": "道具聖物",
+      "sub": "寶石・鑰匙・藥劑",
+      "tone": "magic",
+      "size": "lg",
+      "icon": {
+        "name": "完美紫寶石",
+        "nameEn": "Perfect Amethyst",
+        "rarity": "prop"
+      }
     }
-  },
-  {
-    "id": "sets",
-    "label": "成套裝備",
-    "sub": "綠色套裝 Set",
-    "count": 35,
-    "tone": "set",
-    "icon": {
-      "name": "克維雷布的短棍",
-      "nameEn": "Civerb's Cudgel",
-      "baseItem": "莊嚴權杖",
-      "slot": "weapon",
-      "rarity": "set",
-      "imageUrl": "https://static.d2r.world/img/items/magic/grand_scepter_lyel.jpg"
-    }
-  },
-  {
-    "id": "runewords",
-    "label": "符文之語",
-    "sub": "Runeword",
-    "count": 99,
-    "tone": "unique",
-    "icon": {
-      "name": "幻化之刃",
-      "nameEn": "Phase Blade",
-      "baseItem": "幻化之刃",
-      "rarity": "runeword",
-      "imageUrl": "https://static.d2r.world/img/items/base/crystal_sword.jpg"
-    }
-  },
-  {
-    "id": "bases",
-    "label": "底材寶典",
-    "sub": "白色底材",
-    "count": 508,
-    "tone": "neutral",
-    "icon": {
-      "name": "統御者鎧甲",
-      "nameEn": "Archon Plate",
-      "baseItem": "統御者鎧甲",
-      "rarity": "normal",
-      "imageUrl": "https://static.d2r.world/img/items/base/light_plate.jpg"
-    }
-  },
-  {
-    "id": "runes",
-    "label": "符文寶庫",
-    "sub": "1-33# 符文",
-    "count": 33,
-    "tone": "rune",
-    "size": "lg",
-    "icon": {
-      "runeNumber": 30,
-      "name": "貝",
-      "nameEn": "Ber",
-      "rarity": "rune"
-    }
-  },
-  {
-    "id": "props",
-    "label": "道具聖物",
-    "sub": "寶石・鑰匙・藥劑",
-    "tone": "magic",
-    "size": "lg",
-    "icon": {
-      "name": "完美紫寶石",
-      "nameEn": "Perfect Amethyst",
-      "rarity": "prop"
-    }
+  ],
+  "skills": {
+    "classCount": 8,
+    "treeCount": 24
   }
-]
+}
