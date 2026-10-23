@@ -347,7 +347,7 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
     const mk = (stats, resist, life = 1000) => ({ life, stats, resist, blockChance: 10 });
     const a = survivalSummary(mk({ damageresist: 80 }, { fire: 75, cold: 60, lightning: 75, poison: 75 }));
     assert.equal(a.pdr, 50); assert.equal(a.pdrRaw, 80); assert.equal(a.ehpPhys, 2000); assert.equal(a.minRes, 60); assert.equal(a.ehpElem, 2500);
-    const b = survivalSummary(mk({}, { fire: -30, cold: 0, lightning: 0, poison: 0 })); assert.equal(b.pdr, 0); assert.equal(b.ehpElem, 1000, '負抗性不讓有效生命低於生命');
+    const b = survivalSummary(mk({}, { fire: -30, cold: 0, lightning: 0, poison: 0 })); assert.equal(b.pdr, 0); assert.equal(b.ehpElem, 769.2, '負抗性會放大傷害，有效生命低於生命');
   });
   t('減傷資料與社群公認值一致：暴風盾 35%、亡者之耳 15%、維爾杜戈 15%、哈利昆之冠 10%', () => {
     const pdrOf = (nm) => { const e = E.getCatalog().find((x) => x.nameEn === nm && x.kind !== 'base'); const r = E.computeCharacter(gameData, { className: 'Paladin', level: 90, allocated: none, items: [E.buildEngineItem({ entry: e }, e.slot, true)] }); return r.stats.damageresist ?? 0; };
