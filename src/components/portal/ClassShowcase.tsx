@@ -23,7 +23,7 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
         <div className="text-center max-w-3xl mx-auto mb-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-d2-fire/10 border border-d2-fire/30 text-xs text-d2-fire font-semibold uppercase tracking-wider mb-3">
             <Swords className="w-3.5 h-3.5" />
-            <span>英雄殿堂 • 8 大職業深度解析</span>
+            <span>英雄殿堂 • {CHARACTER_CLASSES_DATA.length} 大職業深度解析</span>
           </div>
           <h2 className="font-diablo text-3xl sm:text-4xl font-bold text-sanctuary-100">
             選擇你的救世者或毀滅之源

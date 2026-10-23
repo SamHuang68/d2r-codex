@@ -455,7 +455,7 @@ export const HolyGrailTracker: React.FC = () => {
                             return (
                               <div
                                 key={item.id}
-                                className={`p-3.5 rounded-2xl border transition-all duration-150 flex items-center justify-between gap-3 ${
+                                className={`p-3.5 rounded-2xl border transition-all duration-150 flex items-center justify-between gap-3 focus-within:opacity-100 ${
                                   isObtained
                                     ? 'bg-sanctuary-900/80 border-d2-set/50 shadow-md ring-1 ring-d2-set/20'
                                     : item.isTC87
@@ -463,19 +463,23 @@ export const HolyGrailTracker: React.FC = () => {
                                     : 'bg-sanctuary-950 border-sanctuary-800/80 opacity-60 hover:opacity-100'
                                 }`}
                               >
-                                <div
+                                <button
+                                  type="button"
+                                  aria-label={`${item.name}（${item.nameEn}）收藏`}
+                                  aria-pressed={isObtained}
                                   onClick={() => toggleObtained(item.id)}
-                                  className="flex items-center gap-3 cursor-pointer min-w-0 flex-1"
+                                  className="flex items-center gap-3 cursor-pointer min-w-0 flex-1 text-left rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold focus-visible:ring-offset-2 focus-visible:ring-offset-sanctuary-950"
                                 >
-                                  <div className="shrink-0">
+                                  <span className="shrink-0">
                                     {isObtained ? (
                                       <CheckCircle2 className="w-5 h-5 text-d2-set" />
                                     ) : (
                                       <Circle className={`w-5 h-5 ${item.isTC87 ? 'text-amber-400/60' : 'text-sanctuary-600'}`} />
                                     )}
-                                  </div>
+                                  </span>
 
                                   <ItemIcon
+                                    as="span"
                                     name={item.name}
                                     nameEn={item.nameEn}
                                     slot={item.slot}
@@ -484,8 +488,8 @@ export const HolyGrailTracker: React.FC = () => {
                                     size="sm"
                                   />
 
-                                  <div className="min-w-0">
-                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="block min-w-0">
+                                    <span className="flex items-center gap-1.5 flex-wrap">
                                       <span
                                         className={`font-diablo font-bold text-sm truncate ${
                                           item.isSet
@@ -502,19 +506,21 @@ export const HolyGrailTracker: React.FC = () => {
                                           TC87
                                         </span>
                                       )}
-                                    </div>
-                                    <div className="text-[10px] font-mono text-sanctuary-400 truncate">
+                                    </span>
+                                    <span className="block text-[10px] font-mono text-sanctuary-400 truncate">
                                       {item.nameEn} • {item.category}
-                                    </div>
-                                  </div>
-                                </div>
+                                    </span>
+                                  </span>
+                                </button>
 
-                                {/* ETH checkbox toggle */}
+                                {/* 獨立的無形收藏切換 */}
                                 <button
                                   type="button"
                                   onClick={() => toggleEthereal(item.id)}
+                                  aria-label={`${item.name}（${item.nameEn}）無形 (ETH) 收藏`}
+                                  aria-pressed={isEth}
                                   title="標記是否打到無形 (ETH) 版本"
-                                  className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold border transition-colors shrink-0 ${
+                                  className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold border transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold focus-visible:ring-offset-2 focus-visible:ring-offset-sanctuary-950 ${
                                     isEth
                                       ? 'bg-cyan-950 text-cyan-300 border-cyan-500 shadow-sm'
                                       : 'bg-sanctuary-900 text-sanctuary-500 border-sanctuary-800 hover:text-sanctuary-300'

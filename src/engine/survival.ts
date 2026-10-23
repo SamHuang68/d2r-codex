@@ -24,7 +24,7 @@ export interface Survival {
   block: number;
   /** 有效生命：物理 */
   ehpPhys: number;
-  /** 有效生命：最弱的元素（抗性不足時就是弱點） */
+  /** 有效生命：最弱的元素（保留一位小數；負抗性會低於生命） */
   ehpElem: number;
 }
 
@@ -32,9 +32,10 @@ export function survivalSummary(r: CharacterResult): Survival {
   const pdrRaw = r.stats.damageresist ?? 0;
   const pdr = Math.max(0, Math.min(PDR_CAP, pdrRaw));
   const minRes = Math.min(r.resist.fire, r.resist.cold, r.resist.lightning, r.resist.poison);
-  const resCapped = Math.max(0, Math.min(95, minRes));
+  // 負抗性會放大受到的元素傷害，必須保留；95% 上限避免分母為零。
+  const resCapped = Math.min(95, minRes);
   return {
     life: r.life, pdr, pdrRaw, flatDr: r.stats.normal_damage_reduction ?? 0, magicDr: r.stats.magic_damage_reduction ?? 0, minRes, block: r.blockChance,
-    ehpPhys: Math.round(r.life / (1 - pdr / 100)), ehpElem: Math.round(r.life / (1 - resCapped / 100)),
+    ehpPhys: Math.round(r.life / (1 - pdr / 100)), ehpElem: Math.round((r.life / (1 - resCapped / 100)) * 10) / 10,
   };
 }

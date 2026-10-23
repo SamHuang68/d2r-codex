@@ -2,7 +2,7 @@
 
 暗黑破壞神 II：獄火重生 (Diablo II: Resurrected) 旗艦級遊戲專頁、百科資料庫與終極配裝工坊。
 
-結合暴雪官方網站的大氣沉浸展演（Cinematic Portal）與 D2R.world 級別的高效實用手冊工具（Utility-First Codex），支援全域快捷模糊搜尋、8 大職業機制斷點計算機、完整的 80 組符文之語與 113 款暗金裝備庫、傭兵畢業配裝、JMoD 鑑寶估價秘笈、紅門六王火炬指南、S 級主流畢業配裝一鍵套用，以及純本地無痕保存的聖杯打寶挑戰器。
+結合暴雪官方網站的大氣沉浸展演（Cinematic Portal）與 D2R.world 級別的高效實用手冊工具（Utility-First Codex），支援全域快捷模糊搜尋、8 大職業機制斷點計算機、依遊戲資料表產生的符文之語與 113 款暗金裝備庫、傭兵畢業配裝、JMoD 鑑寶估價秘笈、紅門六王火炬指南、S 級主流畢業配裝一鍵套用，以及純本地無痕保存的聖杯打寶挑戰器。
 
 ---
 
@@ -18,7 +18,7 @@
   - 鍵盤按下 `Q` 或 `/` 或 `Ctrl+K` 立即彈出搜尋框。
   - 支援中英文雙語模糊檢索：可搜尋符文之語、暗金裝備、套裝、符文、方塊公式、85場景、傭兵配置、JMoD 鑑寶項目與紅門六王階段，支援一鍵回車跳轉。
 - **符文之語檢索器 (Runewords Finder)**：
-  - 收錄 **80 組核心符文之語**（含 2.4/2.6 天梯最新：嵌飾、搖曳之焰、變化、喧囂、治癒、碎骨/大地/爐火/回火四抗頭、裂縫、正義之手、雙飛龍、智慧、圖樣、啟蒙等）。
+  - 收錄數量依 **遊戲資料表** 產生，首頁摘要與寶典使用同一份符文之語來源（含 2.4/2.6 天梯最新：嵌飾、搖曳之焰、變化、喧囂、治癒、碎骨/大地/爐火/回火四抗頭、裂縫、正義之手、雙飛龍、智慧、圖樣、啟蒙等）。
   - 多維度交叉過濾：按孔數 (2-6S)、底材類型、天梯限定 (Ladder)、DLC 限定 (RotW)、關鍵詞綴標籤 (Teleport, FCR, CB, IAS, MF 等)。
 - **裝備寶典 (Item Compendium)**：
   - 收錄 **113 款頂級暗金神裝**（涵蓋四大彩虹刻面珠寶、眼球、巴特克、死亡之刀、大砲、水魔陷阱、泰瑞爾與聖堂武士力量雙璧、全系破免咒符、地獄火炬與毀符）與 **16 大全套綠裝**（塔拉夏、塔格奧、不朽之王、娜塔亞、艾爾多、沙薩比等）。
@@ -76,7 +76,7 @@
 - 推到 `main` 後，`deploy.yml` 在 GitHub Pages 發布完成時再對**線上網址**跑一次冒煙測試（最多重試 4 次、每次間隔 30 秒，等 Pages 傳播）；上線後壞掉會讓工作流程失敗並通知，不必等人發現。
 - `public/_headers`（Cloudflare Pages 使用，GitHub Pages 會忽略）：帶雜湊的 `/assets/*` 長期快取，`index.html` 不快取，改版後不會拿到新舊不一致的檔案。
 - **建置產物不可有 chunk 之間的循環匯入**：循環在開發伺服器與建置都不會報錯，但上線後會整頁空白（`Cannot access 'x' before initialization`）。`npm run check:chunks` 會檢查；`npm run smoke` 是更直接的把關（真的載入正式建置），我用有問題的舊設定建置確認它會失敗。`vite.config.ts` 只手動切 vendor 兩包，資料與引擎交給 Rollup 依匯入關係切（曾手動切成互相匯入的兩包而整頁空白）。
-- **首頁只載入約 0.3 MB 的 JS（原本約 1.8 MB）**：百科各頁（16 頁）與搜尋面板都用 `React.lazy` 在進頁面／第一次按 Q 時才載入，連同它們用到的遊戲資料表（約 1.3 MB）。首頁「裝備圖鑑」六個分類磚需要的筆數與代表圖示由 `scripts/build_portal_summary.mjs` 事先算成 `src/data/codex/portalSummary.json`（`npm run data:portal` 重新產生，`--check` 只檢查不寫入）；引擎測試會比對這個小檔與現在的資料，資料更新後忘了重跑會直接測試失敗。新增頁面時請維持 lazy，且不要讓首頁元件（`CategoryGrid`、`ClassShowcase`、`Footer` 等）匯入大型資料模組；冒煙測試有首頁 JS 預算（700 kB）擋這件事。
+- **首頁只載入約 0.3 MB 的 JS（原本約 1.8 MB）**：百科各頁（16 頁）與搜尋面板都用 `React.lazy` 在進頁面／第一次按 Q 時才載入，連同它們用到的遊戲資料表（約 1.3 MB）。首頁「裝備圖鑑」六個分類磚需要的筆數、代表圖示，以及首屏的非空技能職業／樹數由 `scripts/build_portal_summary.mjs` 事先算成 `src/data/codex/portalSummary.json`（`npm run data:portal` 重新產生，`--check` 只檢查不寫入）；引擎測試會比對這個小檔與現在的資料，資料更新後忘了重跑會直接測試失敗。新增頁面時請維持 lazy，且不要讓首頁元件（`CategoryGrid`、`ClassShowcase`、`Footer` 等）匯入大型資料模組；冒煙測試有首頁 JS 預算（700 kB）擋這件事。
 - **背景預先抓取**：首頁載完、閒下來 2 秒後，`vite.config.ts` 的 `prefetchDataChunks` 外掛注入的小腳本會用 `<link rel=prefetch>` 把百科共用的大資料 chunk（遊戲資料、暗金、符文之語、技能、描述等，約 250 kB gzip）抓進快取，只抓不執行、最低優先權；使用者開了省流量模式或連線不是 4g 就不抓。點進百科或配裝模擬時就不用等下載。chunk 名單在外掛的 `PREFETCH_CHUNKS`，改了模組名稱時冒煙測試會因為找不到預先抓取連結而失敗。
 - **各資料頁只載入自己需要的資料**：物品描述（`engine/describe.ts`）不再匯入整份技能表（136 kB），它需要的「技能→職業」放在 `skillNames.json`（資料管線產生），職業與技能樹名稱在 `engine/classes.ts`；部位、稀有度、職業對照表與 `slotOfBase` 在 `engine/slots.ts`，不依賴暗金／符文之語資料。`skills.ts` 與 `catalog.ts` 原樣轉出這些名稱，既有的匯入不用改。新增的百科頁若只用部位或職業名稱，請從 `slots.ts`／`classes.ts` 匯入，不要從 `catalog.ts`／`skills.ts`（會連帶載入大資料表）；冒煙測試對底材、技能、區域三頁有各自的 JS 預算。
 - 本機跑冒煙測試：`npm run build && npm run smoke`（用 Playwright 內建的 Chromium；CI 與部署後檢查用系統的 Chrome，由 `SMOKE_CHANNEL=chrome` 指定）。對線上網址檢查：`node scripts/smoke_dist.mjs --url https://d2r.samhuang68.org/`。
