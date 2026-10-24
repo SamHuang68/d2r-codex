@@ -11,6 +11,22 @@ interface NavbarProps {
 /** 頂部列：品牌、目前所在頁、搜尋；桌面版的完整分頁導覽由 SideNav 提供 */
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenSearch }) => {
   const current = ALL_NAV_MODULES.find((m) => m.id === activeTab);
+  const [scrollPercent, setScrollPercent] = React.useState(0);
+
+  React.useEffect(() => {
+    const onScroll = () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      const currentY = window.scrollY || document.documentElement.scrollTop;
+      setScrollPercent(total > 0 ? Math.min(100, Math.max(0, (currentY / total) * 100)) : 0);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <header className="sticky top-0 z-40 w-full bg-sanctuary-950/90 backdrop-blur-md border-b border-sanctuary-800/80">
@@ -37,12 +53,17 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
         </a>
 
         {current && (
-          <div className="hidden md:flex items-center gap-2 text-sm text-sanctuary-300 min-w-0">
+          <button
+            type="button"
+            onClick={scrollToTop}
+            className="hidden md:flex items-center gap-2 text-sm text-sanctuary-300 min-w-0 hover:text-d2-unique transition-colors cursor-pointer group"
+            title="點擊回到頂端"
+          >
             <span className="text-sanctuary-600">/</span>
             {current.icon}
-            <span className="font-bold text-d2-unique truncate">{current.label}</span>
+            <span className="font-bold text-d2-unique group-hover:underline truncate">{current.label}</span>
             <span className="hidden xl:inline text-xs text-sanctuary-500 truncate">{current.desc}</span>
-          </div>
+          </button>
         )}
 
         <div className="flex items-center gap-2 shrink-0 ml-auto">
@@ -59,6 +80,15 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
           </button>
         </div>
       </div>
+      {/* 頂部閱讀滾動進度條 */}
+      <div
+        className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-amber-600 via-d2-unique to-amber-300 transition-all duration-150 pointer-events-none opacity-80"
+        style={{ width: `${scrollPercent}%` }}
+        role="progressbar"
+        aria-valuenow={Math.round(scrollPercent)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      />
     </header>
   );
 };

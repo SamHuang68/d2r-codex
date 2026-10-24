@@ -3,6 +3,7 @@ import { Navbar, SideNav } from './components/layout/Navbar';
 import { MobileNav } from './components/layout/MobileNav';
 import { ALL_NAV_MODULES } from './components/layout/navConfig';
 import { Footer } from './components/layout/Footer';
+import { BackToTop } from './components/common/BackToTop';
 
 import { HeroSection } from './components/portal/HeroSection';
 import { CategoryGrid } from './components/portal/CategoryGrid';
@@ -326,6 +327,9 @@ export const App: React.FC = () => {
         setActiveTab={(t) => handleNavigate(t)}
         onOpenSearch={() => setIsSearchOpen(true)}
       />
+
+      {/* 浮動返回頂端按鈕 (帶環形滾動進度條與快速搜尋) */}
+      <BackToTop onOpenSearch={() => setIsSearchOpen(true)} />
 
       {/* Global Footer */}
       <Footer />

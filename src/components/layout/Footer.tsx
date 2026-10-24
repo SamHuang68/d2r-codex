@@ -1,8 +1,14 @@
 import React from 'react';
-import { Flame, ShieldCheck, Database, Zap } from 'lucide-react';
+import { Flame, ShieldCheck, Database, Zap, ArrowUp } from 'lucide-react';
 import meta from '../../data/game/meta.json';
 
 export const Footer: React.FC = () => {
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
   return (
     <footer className="w-full bg-sanctuary-950 border-t border-sanctuary-850 mt-16 pb-20 xl:pb-8 text-xs text-sanctuary-400">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -36,6 +42,15 @@ export const Footer: React.FC = () => {
           <span className="flex items-center gap-1.5 text-sanctuary-500" title="模擬器與百科的數值由此版本的遊戲資料表產生">
             遊戲資料版本 {meta.gameVersion}（{meta.generatedAt} 產生）
           </span>
+          <button
+            type="button"
+            onClick={scrollToTop}
+            className="px-3 py-1.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 hover:border-d2-unique text-sanctuary-300 hover:text-d2-unique transition-all flex items-center gap-1.5 cursor-pointer shadow-sm ml-2"
+            title="回到頁面頂端 (或按 Home 鍵)"
+          >
+            <ArrowUp className="w-3.5 h-3.5" />
+            <span>回到頂端</span>
+          </button>
         </div>
       </div>
     </footer>
