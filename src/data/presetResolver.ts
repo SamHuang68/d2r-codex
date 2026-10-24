@@ -9,7 +9,14 @@ const norm = (s: string) => s.toLowerCase();
 function resolveItem(it: PresetItem, errors: string[]): Equipped | undefined {
   const cat = getCatalog();
   const cands = cat.filter((e) => norm(e.nameEn) === norm(it.nameEn));
-  let entry = cands.find((e) => e.kind !== 'base') ?? cands[0];
+  let entry = cands.find((e) => {
+    if (e.kind === 'base') return false;
+    if (it.baseNameEn) {
+      const b = eligibleBases(e).find((x) => norm(x.nameEn) === norm(it.baseNameEn!));
+      return !!b;
+    }
+    return true;
+  }) ?? cands.find((e) => e.kind !== 'base') ?? cands[0];
   if (!entry) { errors.push(`找不到物品「${it.nameEn}」`); return undefined; }
   if (it.baseNameEn) {
     const b = eligibleBases(entry).find((x) => norm(x.nameEn) === norm(it.baseNameEn!));

@@ -686,7 +686,7 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
   t('資料筆數：遊戲表全部掉落暗金／套裝／符文之語都收錄（排除任務物品與不掉落者）', () => {
     const gu = rd('uniques'); const quest = new Set(['Amulet of the Viper', 'Staff of Kings', 'Horadric Staff', 'Hell Forge Hammer', 'KhalimFlail', 'SuperKhalimFlail']);
     const expect = gu.filter((u) => CODEX_OVERLAY.uniques[u.id]?.id || (!quest.has(u.nameEn) && u.spawnable !== false)).length;
-    assert.equal(UNIQUE_ITEMS_DATA.length, expect); assert.equal(ALL_SET_PIECES.length, rd('setItems').length); assert.equal(SET_ITEMS_DATA.length, rd('sets').length); assert.equal(RUNEWORDS_DATA.length, rd('runewords').length);
+    assert.equal(UNIQUE_ITEMS_DATA.length, expect); assert.equal(ALL_SET_PIECES.length, rd('setItems').length); assert.equal(SET_ITEMS_DATA.length, rd('sets').length); assert.equal(RUNEWORDS_DATA.length, rd('runewords').length - 1); // 98 組：對齊 d2r.world，歇斯底里護甲版與武器版（狂躁）統一為一筆
     console.log(`    暗金 ${UNIQUE_ITEMS_DATA.length}、套裝 ${SET_ITEMS_DATA.length} 套／${ALL_SET_PIECES.length} 件、符文之語 ${RUNEWORDS_DATA.length}、底材 ${BASE_ITEMS_DATA.length}、符文 ${RUNES_DATA.length}`);
   });
   t('部位：底材類型屬珠寶系（含 Rainbow Facet 變體用的 cjw）的暗金一律歸在 jewel，不得落到預設的 weapon', () => {
@@ -694,11 +694,84 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
     assert.ok(jewels.length >= 14, '珠寶類暗金筆數 ' + jewels.length);
     assert.deepEqual(jewels.filter((u) => u.slot !== 'jewel').map((u) => u.nameEn), []);
   });
-  t('符文之語：符文序列與孔數取自遊戲表，屬性含符文鑲嵌總計；Hustle 武器版與護甲版分開', () => {
+  t('符文之語：對齊 d2r.world，歇斯底里（Hustle）同時具備護甲／武器雙重組成與獨立屬性', () => {
     const rw = (n) => RUNEWORDS_DATA.find((r) => r.nameEn === n);
     assert.deepEqual(rw("Ancients' Pledge").attributes.filter((l) => /抗性/.test(l)).sort(), ['冰寒抗性 +43%', '毒素抗性 +48%', '火焰抗性 +48%', '電擊抗性 +48%'].sort());
     assert.deepEqual(rw('Spirit').runes, ['Tal', 'Thul', 'Ort', 'Amn']);
-    assert.ok(RUNEWORDS_DATA.some((r) => r.name === '狂躁') && RUNEWORDS_DATA.some((r) => r.name === '歇斯底里'));
+
+    const hustle = rw('Hustle');
+    assert.ok(hustle, '歇斯底里存在');
+    assert.equal(hustle.name, '歇斯底里');
+    assert.deepEqual(hustle.allowedBases.sort(), ['武器', '護甲'].sort(), '歇斯底里可用底材同時具備武器與護甲');
+    assert.ok(hustle.attributes.some((l) => l.includes('【護甲】')), '歇斯底里有【護甲】區塊');
+    assert.ok(hustle.attributes.some((l) => l.includes('【武器】')), '歇斯底里有【武器】區塊');
+    assert.ok(hustle.attributes.some((l) => l.includes('【共通】')), '歇斯底里有【共通】區塊');
+    assert.ok(hustle.attributes.some((l) => l.includes('+65% 跑步 / 行走速度')), '護甲版跑速屬性');
+    assert.ok(hustle.attributes.some((l) => l.includes('狂熱靈氣')), '武器版狂熱靈氣');
+    assert.ok(hustle.attributes.some((l) => l.includes('速度爆發')), '武器版速度爆發');
+    assert.ok(hustle.attributes.some((l) => l.includes('+10 敏捷')), '共通敏捷屬性');
+  });
+
+  t('符文之語跨部位屬性分離：剛毅、精神、鳳凰、變化完整對齊 d2r.world 區塊呈現', () => {
+    const rw = (n) => RUNEWORDS_DATA.find((r) => r.nameEn === n);
+
+    // 剛毅 (Fortitude)
+    const fort = rw('Fortitude');
+    assert.deepEqual(fort.allowedBases.sort(), ['武器', '護甲'].sort());
+    assert.ok(fort.attributes.some((l) => l.includes('【護甲】') || l.includes('傷害降低 7')));
+    assert.ok(fort.attributes.some((l) => l.includes('【武器】') || l.includes('+9 最小傷害')));
+
+    // 精神 (Spirit)
+    const spirit = rw('Spirit');
+    assert.deepEqual(spirit.allowedBases.sort(), ['刀劍', '盾牌'].sort());
+    assert.ok(spirit.attributes.some((l) => l.includes('【盾牌】') || l.includes('冰寒抗性 +35%')));
+    assert.ok(spirit.attributes.some((l) => l.includes('【武器】') || l.includes('附加 1 - 50 電擊傷害')));
+
+    // 鳳凰 (Phoenix)
+    const phoenix = rw('Phoenix');
+    assert.deepEqual(phoenix.allowedBases.sort(), ['武器', '盾牌'].sort());
+    assert.ok(phoenix.attributes.some((l) => l.includes('【盾牌】') || l.includes('+50 生命')));
+    assert.ok(phoenix.attributes.some((l) => l.includes('【武器】') || l.includes('無視目標防禦')));
+
+    // 變化 (Metamorphosis)
+    const meta = rw('Metamorphosis');
+    assert.ok(meta.attributes.some((l) => l.includes('【狼之印記】')));
+    assert.ok(meta.attributes.some((l) => l.includes('【熊之印記】')));
+  });
+
+  t('模擬器目錄：跨部位符文之語（剛毅、精神、鳳凰、飛龍、夢境、歇斯底里）在各相容槽位皆可選用', () => {
+    const cat = E.getCatalog();
+    const entriesOf = (n) => cat.filter((e) => e.nameEn === n && e.kind === 'runeword');
+
+    // 剛毅：武器與胸甲
+    const fortEntries = entriesOf('Fortitude');
+    assert.ok(fortEntries.some((e) => e.slot === 'weapon'), '剛毅武器槽位可選');
+    assert.ok(fortEntries.some((e) => e.slot === 'body'), '剛毅護甲槽位可選');
+
+    // 精神：武器與盾牌
+    const spiritEntries = entriesOf('Spirit');
+    assert.ok(spiritEntries.some((e) => e.slot === 'weapon'), '精神武器槽位可選');
+    assert.ok(spiritEntries.some((e) => e.slot === 'shield'), '精神盾牌槽位可選');
+
+    // 鳳凰：武器與盾牌
+    const phoenixEntries = entriesOf('Phoenix');
+    assert.ok(phoenixEntries.some((e) => e.slot === 'weapon'), '鳳凰武器槽位可選');
+    assert.ok(phoenixEntries.some((e) => e.slot === 'shield'), '鳳凰盾牌槽位可選');
+
+    // 飛龍：護甲與盾牌
+    const dragonEntries = entriesOf('Dragon');
+    assert.ok(dragonEntries.some((e) => e.slot === 'body'), '飛龍護甲槽位可選');
+    assert.ok(dragonEntries.some((e) => e.slot === 'shield'), '飛龍盾牌槽位可選');
+
+    // 夢境：頭盔與盾牌
+    const dreamEntries = entriesOf('Dream');
+    assert.ok(dreamEntries.some((e) => e.slot === 'head'), '夢境頭盔槽位可選');
+    assert.ok(dreamEntries.some((e) => e.slot === 'shield'), '夢境盾牌槽位可選');
+
+    // 歇斯底里：護甲與武器
+    const hustleEntries = cat.filter((e) => e.name.includes('歇斯底里') && e.kind === 'runeword');
+    assert.ok(hustleEntries.some((e) => e.slot === 'body'), '歇斯底里護甲槽位可選');
+    assert.ok(hustleEntries.some((e) => e.slot === 'weapon'), '歇斯底里武器槽位可選');
   });
   t('表頭行：防禦區間、無形物品 ×1.5 與需求 −10、盾牌依職業分組的格擋、投擲武器堆疊', () => {
     const u = (n) => UNIQUE_ITEMS_DATA.find((x) => x.nameEn === n).attributes;

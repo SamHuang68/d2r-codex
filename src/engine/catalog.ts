@@ -65,7 +65,7 @@ function fromRow(r: Row, kind: Rarity, setName?: string): CatalogEntry | undefin
   };
 }
 
-function runewordEntry(r: typeof runewords[number]): CatalogEntry | undefined {
+function runewordEntries(r: typeof runewords[number]): CatalogEntry[] {
   const rw = r as unknown as { id: string; name: string; nameEn: string; itypes: string[]; etypes: string[]; runes: string[]; mods: Modifier[] };
   const ok = (b: BaseItem) => rw.itypes.some((t) => b.ancestors.includes(t)) && !rw.etypes.some((t) => b.ancestors.includes(t)) && (b.sockets ?? 0) >= rw.runes.length && !!slotOfBase(b);
   // 預設底材：非職業專屬、非圓環類，精英、需求最低者（容易穿戴）；之後可由 UI 更換。
@@ -73,21 +73,47 @@ function runewordEntry(r: typeof runewords[number]): CatalogEntry | undefined {
   // 它們的需求力量為 0，過去會搶到所有頭盔符文之語的預設底材，圖與數值都不像一般頭盔
   const isCirclet = (b: BaseItem) => b.ancestors.includes('circ');
   const cands = gameData.bases.filter((b) => b.kind !== 'misc' && ok(b)).sort((a, b) => (a.class ? 1 : 0) - (b.class ? 1 : 0) || (isCirclet(a) ? 1 : 0) - (isCirclet(b) ? 1 : 0) || (b.tier === 'elite' ? 1 : 0) - (a.tier === 'elite' ? 1 : 0) || (a.reqStr ?? 0) - (b.reqStr ?? 0));
-  const b = cands[0]; if (!b) return undefined;
-  const slot = slotOfBase(b)!;
-  return {
-    id: `runeword:${rw.id}`, kind: 'runeword', name: rw.name, nameEn: rw.nameEn, slot, group: groupOfSlot(slot), tier: b.tier as Tier | undefined,
-    classCode: b.class, baseCode: b.code, baseName: b.name, baseNameEn: b.nameEn, mods: rw.mods, sockets: rw.runes,
-    twoHanded: b.twoHanded, width: b.width ?? 1, height: b.height ?? 1,
-  };
+  if (!cands.length) return [];
+
+  // 若符文組跨多個部位（如剛毅：武器/護甲、精神/鳳凰：武器/盾牌、飛龍：護甲/盾牌、夢境：頭盔/盾牌），為每個相容部位皆建立 CatalogEntry
+  const slots = new Set<SlotKind>();
+  for (const b of cands) {
+    const s = slotOfBase(b);
+    if (s) slots.add(s);
+  }
+
+  const primarySlot = slotOfBase(cands[0])!;
+  const entries: CatalogEntry[] = [];
+
+  for (const slot of slots) {
+    const isPrimary = slot === primarySlot;
+    const b = cands.find((cand) => slotOfBase(cand) === slot) ?? cands[0];
+    const id = isPrimary ? `runeword:${rw.id}` : `runeword:${rw.id}:${slot}`;
+
+    let displayName = rw.name;
+    if (rw.id === 'hustle_weapon_172') {
+      displayName = '歇斯底里（武器）';
+    } else if (rw.id === 'hustle_armor_171') {
+      displayName = '歇斯底里（護甲）';
+    }
+
+    entries.push({
+      id, kind: 'runeword', name: displayName, nameEn: rw.nameEn, slot, group: groupOfSlot(slot), tier: b.tier as Tier | undefined,
+      classCode: b.class, baseCode: b.code, baseName: b.name, baseNameEn: b.nameEn, mods: rw.mods, sockets: rw.runes,
+      twoHanded: b.twoHanded, width: b.width ?? 1, height: b.height ?? 1,
+    });
+  }
+
+  return entries;
 }
 
-/** 符文之語可用的底材（依遊戲規則：類型符合、未被排除、孔數足夠）。非符文之語回傳空陣列 */
+/** 符文之語可用的底材（依遊戲規則：類型符合、未被排除、孔數足夠、且部位相符）。非符文之語回傳空陣列 */
 export function eligibleBases(entry: CatalogEntry): BaseItem[] {
   if (entry.kind !== 'runeword') return [];
-  const rw = (runewords as unknown as { id: string; itypes: string[]; etypes: string[]; runes: string[] }[]).find((r) => `runeword:${r.id}` === entry.id);
+  const rwId = entry.id.replace(/^runeword:/, '').split(':')[0];
+  const rw = (runewords as unknown as { id: string; itypes: string[]; etypes: string[]; runes: string[] }[]).find((r) => r.id === rwId);
   if (!rw) return [];
-  return gameData.bases.filter((b) => b.kind !== 'misc' && rw.itypes.some((t) => b.ancestors.includes(t)) && !rw.etypes.some((t) => b.ancestors.includes(t)) && (b.sockets ?? 0) >= rw.runes.length && !!slotOfBase(b))
+  return gameData.bases.filter((b) => b.kind !== 'misc' && slotOfBase(b) === entry.slot && rw.itypes.some((t) => b.ancestors.includes(t)) && !rw.etypes.some((t) => b.ancestors.includes(t)) && (b.sockets ?? 0) >= rw.runes.length)
     .sort((a, b) => (a.class ? 1 : 0) - (b.class ? 1 : 0) || (a.tier === b.tier ? 0 : a.tier === 'elite' ? -1 : b.tier === 'elite' ? 1 : a.tier === 'exceptional' ? -1 : 1) || (a.reqStr ?? 0) - (b.reqStr ?? 0));
 }
 
@@ -142,7 +168,7 @@ export function getCatalog(): CatalogEntry[] {
   const out: CatalogEntry[] = [];
   for (const u of uniques as unknown as Row[]) { if (u.crafted || u.disabled) continue; const e = fromRow(u, 'unique'); if (e) out.push(e); }
   for (const s of setItems as unknown as Row[]) { if (s.disabled) continue; const e = fromRow(s, 'set', s.setNameEn); if (e) out.push(e); }
-  for (const r of runewords) { const e = runewordEntry(r); if (e) out.push(e); }
+  for (const r of runewords) { for (const e of runewordEntries(r)) out.push(e); }
   // 白裝／基礎底材（含護身符）：讓使用者能放任意底材
   for (const b of gameData.bases) {
     const slot = slotOfBase(b); if (!slot || (b.kind === 'misc' && slot !== 'charm' && slot !== 'neck' && slot !== 'ring')) continue;

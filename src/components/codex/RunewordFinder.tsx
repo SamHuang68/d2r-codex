@@ -289,11 +289,21 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
 
                 {/* Attributes List */}
                 <div className="space-y-1 text-xs text-d2-magic font-sans pt-1">
-                  {rw.attributes.map((attr, idx) => (
-                    <div key={idx} className="leading-relaxed">
-                      • {attr}
-                    </div>
-                  ))}
+                  {rw.attributes.map((attr, idx) => {
+                    const isSection = /^【.+】$/.test(attr);
+                    if (isSection) {
+                      return (
+                        <div key={idx} className="text-amber-400 font-bold font-diablo text-xs pt-2 pb-0.5 border-b border-sanctuary-850/60 first:pt-0">
+                          {attr}
+                        </div>
+                      );
+                    }
+                    return (
+                      <div key={idx} className="leading-relaxed pl-1">
+                        • {attr}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
