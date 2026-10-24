@@ -34,6 +34,7 @@ const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
 
 export interface SimulatorV2Props {
   initialClass?: string;
+  initialTab?: TabKey;
   /** 在百科中查看某件物品（傳入中文名稱） */
   onNavigateItem?: (name: string) => void;
   /** 使用者切換職業時通知外層，離開再回來才會回到同一個職業 */
@@ -49,7 +50,7 @@ const NumSelect: React.FC<{ label: string; value: number; max: number; onChange:
   </label>
 );
 
-export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法使', onNavigateItem, onClassChange }) => {
+export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法使', initialTab, onNavigateItem, onClassChange }) => {
   // 離開再回來：若暫存的職業與要開啟的職業相同，還原上次的配裝（從其他頁面指定了別的職業時，不蓋掉使用者的選擇）
   const restored = useMemo(() => {
     const want = CLASSES.find((c) => c.zh === initialClass) ?? CLASSES[1];
@@ -65,7 +66,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const [charms, setCharms] = useState<CatalogEntry[]>(restored?.charms ?? []);
   const [swap, setSwap] = useState<'I' | 'II'>(restored?.swap ?? 'I');
   const [rollMax, setRollMax] = useState(restored?.rollMax ?? true);
-  const [tab, setTab] = useState<TabKey>('stats');
+  const [tab, setTab] = useState<TabKey>(initialTab ?? 'stats');
   const [selected, setSelected] = useState<DollSlot | null>(null);
   const [dragging, setDragging] = useState<CatalogEntry | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);

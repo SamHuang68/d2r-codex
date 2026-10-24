@@ -4,6 +4,7 @@ import { MobileNav } from './components/layout/MobileNav';
 import { ALL_NAV_MODULES } from './components/layout/navConfig';
 import { Footer } from './components/layout/Footer';
 import { BackToTop } from './components/common/BackToTop';
+import { CLASS_ZH } from './engine/catalog';
 
 import { HeroSection } from './components/portal/HeroSection';
 import { CategoryGrid } from './components/portal/CategoryGrid';
@@ -62,6 +63,7 @@ export const App: React.FC = () => {
   const [itemsNode, setItemsNode] = useState<string | undefined>();
   const [targetRuneNumber, setTargetRuneNumber] = useState<number | undefined>();
   const [plannerSubMode, setPlannerSubMode] = useState<'armory' | 'notes'>('armory');
+  const [simInitialTab, setSimInitialTab] = useState<'stats' | 'gear' | 'skills' | 'merc' | undefined>();
 
   // 目前這一筆導覽的狀態（用 ref 記，pushState 時才拿得到「剛剛才設定」的職業）
   const navRef = useRef<NavState>({ tab: activeTab, query: '', cls: '魔法使' });
@@ -259,7 +261,17 @@ export const App: React.FC = () => {
         {activeTab === 'shrines' && <ShrineCompendium initialQuery={targetQuery} />}
         {activeTab === 'experience' && <ExperienceTable />}
         {activeTab === 'mercenaries' && (
-          <MercenaryGuide onNavigateItem={handleItemOrRunewordNavigate} />
+          <MercenaryGuide
+            onNavigateItem={handleItemOrRunewordNavigate}
+            onNavigateToSimulator={(_tier, classCode) => {
+              if (classCode && CLASS_ZH[classCode]) {
+                setSelectedInitialClass(CLASS_ZH[classCode]);
+              }
+              setPlannerSubMode('armory');
+              setSimInitialTab('merc');
+              handleNavigate('planner');
+            }}
+          />
         )}
         {activeTab === 'valuation' && <ValuationGuide />}
         {activeTab === 'uber' && <UberBossGuide />}
@@ -293,7 +305,7 @@ export const App: React.FC = () => {
 
             {plannerSubMode === 'armory' ? (
               <Suspense fallback={<div className="p-8 text-center text-sanctuary-400" role="status">載入配裝模擬器…</div>}>
-                <SimulatorV2 initialClass={selectedInitialClass} onNavigateItem={handleItemOrRunewordNavigate} onClassChange={setSelectedInitialClass} />
+                <SimulatorV2 initialClass={selectedInitialClass} initialTab={simInitialTab} onNavigateItem={handleItemOrRunewordNavigate} onClassChange={setSelectedInitialClass} />
               </Suspense>
             ) : (
               <BuildPlanner 
