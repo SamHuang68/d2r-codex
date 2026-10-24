@@ -2,19 +2,29 @@ import React, { useState, useMemo } from 'react';
 import { cleanSearchQuery, normalizeItemQuery } from '../../utils/itemQueryNormalizer';
 import { ItemTooltip } from '../common/ItemTooltip';
 import { ItemIcon } from '../common/ItemIcon';
-import { Sword, Search, X } from 'lucide-react';
+import { Sword, Search, X, ArrowUpDown, RotateCcw } from 'lucide-react';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
 import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, crumbsOf, useDirectory } from '../common/TreeIndex';
-import type { SetItemCollection, UniqueItemData } from '../../types';
+import type { SetItemCollection, UniqueItemData, GearSlot } from '../../types';
 import { TIER_LABEL, DEFAULT_TIER, TreeNode, buildTree, recount, findNode, leavesOf, inNode, relPath } from '../../utils/equipTaxonomy';
 import { ITEM_TREE_DEFS, CHARM_LABEL, U_ENTRIES, S_ENTRIES, UEntry, SEntry } from '../../utils/itemIndex';
+import { CrossPropertyFilterBar } from './CrossPropertyFilterBar';
+import { CrossItemCard } from './CrossItemCard';
+import {
+  getAllUnifiedItems,
+  filterUnifiedItems,
+  getPropertyHitCounts,
+  SPECIAL_PROPERTIES,
+  UnifiedItemRarity,
+} from '../../utils/propertyFilter';
 
 export interface ItemCompendiumProps {
   initialQuery?: string;
   /** 一進頁面就停在的樹節點（例如首頁「成套裝備」磚傳 's'）；沒給就停在暗金·精英 */
   initialNode?: string;
   onNavigateToBase?: (baseName: string) => void;
+  onNavigateToRune?: (runeNumber: number) => void;
 }
 
 /** 分類磚的代表圖（以去掉品階後的相對路徑查；該節點內沒有這件時，改用節點內最高等級者） */
@@ -62,9 +72,82 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   initialQuery = '',
   initialNode,
   onNavigateToBase,
+  onNavigateToRune,
 }) => {
   const [sel, setSel] = useState<string>(initialNode ?? `u/${DEFAULT_TIER}`);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
+
+  // 跨裝備特殊屬性篩選 State
+  const [selectedPropertyIds, setSelectedPropertyIds] = useState<string[]>([]);
+  const [selectedRarity, setSelectedRarity] = useState<'all' | UnifiedItemRarity>('all');
+  const [selectedSlot, setSelectedSlot] = useState<'all' | GearSlot | 'multiple'>('all');
+  const [crossSortBy, setCrossSortBy] = useState<'level-desc' | 'level-asc' | 'name'>('level-desc');
+
+  const handleToggleProperty = (propId: string) => {
+    setSelectedPropertyIds((prev) =>
+      prev.includes(propId) ? prev.filter((id) => id !== propId) : [...prev, propId]
+    );
+  };
+
+  const handleClearCrossFilters = () => {
+    setSelectedPropertyIds([]);
+    setSelectedRarity('all');
+    setSelectedSlot('all');
+  };
+
+  const allUnifiedItems = useMemo(() => getAllUnifiedItems(), []);
+
+  // 當前部位與搜尋字串下的裝備池（用於屬性數量統計）
+  const contextUnifiedItems = useMemo(() => {
+    return filterUnifiedItems(allUnifiedItems, {
+      slot: selectedSlot,
+      searchQuery: searchQuery.trim(),
+    });
+  }, [allUnifiedItems, selectedSlot, searchQuery]);
+
+  // 各特殊屬性的命中件數
+  const propertyCounts = useMemo(() => {
+    return getPropertyHitCounts(contextUnifiedItems);
+  }, [contextUnifiedItems]);
+
+  // 各品質的命中件數（在當前屬性、部位與搜尋字串下）
+  const rarityCounts = useMemo(() => {
+    const base = filterUnifiedItems(allUnifiedItems, {
+      selectedPropertyIds,
+      slot: selectedSlot,
+      searchQuery: searchQuery.trim(),
+    });
+    return {
+      all: base.length,
+      unique: base.filter((i) => i.rarity === 'unique').length,
+      set: base.filter((i) => i.rarity === 'set').length,
+      runeword: base.filter((i) => i.rarity === 'runeword').length,
+    };
+  }, [allUnifiedItems, selectedPropertyIds, selectedSlot, searchQuery]);
+
+  // 跨裝備過濾結果清單
+  const filteredCrossItems = useMemo(() => {
+    const items = filterUnifiedItems(allUnifiedItems, {
+      selectedPropertyIds,
+      rarity: selectedRarity,
+      slot: selectedSlot,
+      searchQuery: searchQuery.trim(),
+    });
+
+    return [...items].sort((a, b) => {
+      if (crossSortBy === 'level-desc') return b.requiredLevel - a.requiredLevel || a.name.localeCompare(b.name, 'zh-Hant');
+      if (crossSortBy === 'level-asc') return a.requiredLevel - b.requiredLevel || a.name.localeCompare(b.name, 'zh-Hant');
+      return a.name.localeCompare(b.name, 'zh-Hant');
+    });
+  }, [allUnifiedItems, selectedPropertyIds, selectedRarity, selectedSlot, searchQuery, crossSortBy]);
+
+  // 目前活躍的特殊屬性定義
+  const activePropertyDefs = useMemo(() => {
+    return SPECIAL_PROPERTIES.filter((p) => selectedPropertyIds.includes(p.id));
+  }, [selectedPropertyIds]);
+
+  // 是否進入跨裝備屬性檢索模式
+  const isCrossPropertyMode = selectedPropertyIds.length > 0 || selectedRarity === 'runeword';
 
   // Sync initialQuery when prop changes
   React.useEffect(() => {
@@ -383,11 +466,13 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     <div className="py-8 max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
       <PageHeader
         icon={<Sword className="w-6 h-6" />}
-        title="裝備寶典 (暗金與套裝全覽)"
-        desc="收錄暗黑破壞神二代各部位指標性暗金裝備與知名全套套裝，包含屬性浮動範圍與完整套裝效果。依「暗金／套裝 → 普通／卓越／精英 → 部位 → 類型」逐層整理，預設停在終局的精英。"
+        title="裝備寶典 (暗金 · 套裝 · 符文之語)"
+        desc="收錄暗黑破壞神二代各部位指標性暗金裝備、全套套裝與經典符文之語，支援跨裝備特殊屬性（永不毀損、+全技能、全抗、MF 等）一鍵篩選。未選取特殊屬性時保留階層式分類樹。"
         right={
           <div className="text-xs text-sanctuary-400 font-mono px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800 self-start shrink-0 whitespace-nowrap">
-            暗金 <span className="text-d2-unique font-bold">{uHere.length}</span> ・ 套裝 <span className="text-d2-set font-bold">{sHere.length}</span>
+            isCrossPropertyMode
+              ? `跨裝備符合: ${filteredCrossItems.length} (暗金 ${rarityCounts.unique} · 套裝 ${rarityCounts.set} · 符文組 ${rarityCounts.runeword})`
+              : `暗金 ${uHere.length} ・ 套裝 ${sHere.length}`
           </div>
         }
       />
@@ -398,7 +483,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="搜尋暗金或套裝名稱、底材或屬性 (例如：軍帽、獅鷲、塔拉夏、SOJ...)；索引的數量會即時對應"
+          placeholder="搜尋暗金、套裝或符文之語名稱、底材或屬性 (例如：軍帽、獅鷲、塔拉夏、精神、謎團、SOJ...)；索引數量會即時對應"
           className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-4 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
         />
         {searchQuery && (
@@ -408,15 +493,94 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         )}
       </div>
 
-      <TreeIndex
-        title="裝備索引"
-        rootLabel="全部裝備"
-        rootCount={root.count}
-        nodes={tree}
-        activeId={node.id}
-        onSelect={go}
-        tone={isSetBranch ? 'set' : 'unique'}
-      >
+      {/* 跨裝備特殊屬性篩選列 */}
+      <CrossPropertyFilterBar
+        selectedPropertyIds={selectedPropertyIds}
+        onToggleProperty={handleToggleProperty}
+        selectedRarity={selectedRarity}
+        onSelectRarity={setSelectedRarity}
+        selectedSlot={selectedSlot}
+        onSelectSlot={setSelectedSlot}
+        onClearFilters={handleClearCrossFilters}
+        totalHits={filteredCrossItems.length}
+        propertyCounts={propertyCounts}
+        rarityCounts={rarityCounts}
+      />
+
+      {isCrossPropertyMode ? (
+        <div className="space-y-4">
+          {/* 跨裝備檢索工具列 */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-sanctuary-950/60 p-3 rounded-xl border border-sanctuary-800 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-sanctuary-200">
+                共找到 {filteredCrossItems.length} 件符合條件的裝備
+              </span>
+              <span className="text-sanctuary-400">
+                (暗金 {rarityCounts.unique} · 套裝 {rarityCounts.set} · 符文組 {rarityCounts.runeword})
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleClearCrossFilters}
+                className="px-2.5 py-1 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-800 text-sanctuary-300 border border-sanctuary-750 flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <RotateCcw className="w-3 h-3 text-d2-unique" />
+                <span>返回分類樹</span>
+              </button>
+
+              <div className="flex items-center gap-1 border-l border-sanctuary-800 pl-2">
+                <ArrowUpDown className="w-3.5 h-3.5 text-sanctuary-400" />
+                <select
+                  value={crossSortBy}
+                  onChange={(e) => setCrossSortBy(e.target.value as any)}
+                  className="bg-sanctuary-900 border border-sanctuary-750 rounded px-2 py-0.5 text-sanctuary-200 focus:outline-none"
+                >
+                  <option value="level-desc">需求等級 (高至低)</option>
+                  <option value="level-asc">需求等級 (低至高)</option>
+                  <option value="name">名稱筆劃排序</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* 裝備卡片清單 */}
+          {filteredCrossItems.length === 0 ? (
+            <div className="p-12 text-center text-sanctuary-400 bg-sanctuary-900/40 rounded-xl border border-sanctuary-800 space-y-3">
+              <div>查無同時符合目前特殊屬性、品質與部位的裝備。</div>
+              <button
+                type="button"
+                onClick={handleClearCrossFilters}
+                className="px-4 py-2 rounded-lg bg-sanctuary-800 border border-sanctuary-700 text-sm text-sanctuary-100 hover:border-d2-unique cursor-pointer"
+              >
+                重置屬性篩選
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+              {filteredCrossItems.map((item) => (
+                <CrossItemCard
+                  key={item.id}
+                  item={item}
+                  activePropertyDefs={activePropertyDefs}
+                  onNavigateToBase={onNavigateToBase}
+                  onNavigateToRune={onNavigateToRune}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <TreeIndex
+          title="裝備索引"
+          rootLabel="全部裝備"
+          rootCount={root.count}
+          nodes={tree}
+          activeId={node.id}
+          onSelect={go}
+          tone={isSetBranch ? 'set' : 'unique'}
+        >
         <div className="space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <Crumbs crumbs={crumbs} onSelect={go} tone={isSetBranch ? 'set' : 'unique'} />
@@ -457,7 +621,8 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             </div>
           )}
         </div>
-      </TreeIndex>
+        </TreeIndex>
+      )}
     </div>
   );
 };

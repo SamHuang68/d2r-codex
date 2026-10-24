@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles, buildSkillSummary } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries'; export { TIER_LABEL, TIER_META } from './src/utils/equipTaxonomy'; export { TIER_QUALITY_ZH } from './src/data/codex/common'; export { searchCodex } from './src/utils/searchCodex'; export { searchOmni } from './src/utils/search'; export { LEGACY_TERM_ALIASES, expandLegacyQuery } from './src/utils/termAliases'; export { actZh } from './src/utils/actLabel'; export { CUBE_RECIPES_DATA } from './src/data/cubeRecipes'; export { GEMS_DATA as PROPS_GEMS_DATA, UBER_KEYS_ORGANS_DATA } from './src/data/props';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles, buildSkillSummary } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries'; export { TIER_LABEL, TIER_META } from './src/utils/equipTaxonomy'; export { TIER_QUALITY_ZH } from './src/data/codex/common'; export { searchCodex } from './src/utils/searchCodex'; export { searchOmni } from './src/utils/search'; export { LEGACY_TERM_ALIASES, expandLegacyQuery } from './src/utils/termAliases'; export { actZh } from './src/utils/actLabel'; export { CUBE_RECIPES_DATA } from './src/data/cubeRecipes'; export { GEMS_DATA as PROPS_GEMS_DATA, UBER_KEYS_ORGANS_DATA } from './src/data/props'; export * from './src/utils/propertyFilter';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -1743,5 +1743,95 @@ console.log('【全站用字：遊戲字串的寫法（舊寫法不得再出現�
     const bases = rd('bases'); const spd = (n) => bases.find((b) => b.nameEn === n).speed;
     assert.equal(spd('Thresher'), -10); assert.equal(spd('Cryptic Axe'), 10);
     assert.ok(JSON.stringify(E.CODEX_OVERLAY).includes('兼具斬鐮的 -10 極速'));
+  });
+}
+
+{
+  const {
+    getAllUnifiedItems,
+    filterUnifiedItems,
+  } = E;
+
+  console.log('【跨裝備（暗金、套裝、符文之語）特殊屬性篩選】');
+
+  t('資料筆數整合：暗金 409 + 套裝配件 140 + 符文之語 98 = 647 筆', () => {
+    const all = getAllUnifiedItems();
+    assert.equal(all.length, 647);
+    const uCount = all.filter((i) => i.rarity === 'unique').length;
+    const sCount = all.filter((i) => i.rarity === 'set').length;
+    const rCount = all.filter((i) => i.rarity === 'runeword').length;
+    assert.equal(uCount, 409);
+    assert.equal(sCount, 140);
+    assert.equal(rCount, 98);
+  });
+
+  t('永不毀損篩選：涵蓋暗金與符文之語（泰瑞爾之力、死神、死亡呼吸等）', () => {
+    const all = getAllUnifiedItems();
+    const hits = filterUnifiedItems(all, { selectedPropertyIds: ['indestructible'] });
+    assert.ok(hits.length >= 10, '命中數應大於等於 10');
+    const names = hits.map((i) => i.name);
+    assert.ok(names.includes('泰瑞爾之力'), '應含泰瑞爾之力');
+    assert.ok(names.includes('死神'), '應含死神 (Death)');
+    assert.ok(names.includes('死亡呼吸'), '應含死亡呼吸 (Breath of the Dying)');
+  });
+
+  t('增加所有技能等級篩選：跨暗金、套裝與符文組（軍帽、謎團、榮耀之鍊、馬拉、精神等）', () => {
+    const all = getAllUnifiedItems();
+    const hits = filterUnifiedItems(all, { selectedPropertyIds: ['all_skills'] });
+    const names = hits.map((i) => i.name);
+    assert.ok(names.includes('諧角之冠'), '應含諧角之冠 (Harlequin Crest)');
+    assert.ok(names.includes('謎團'), '應含謎團');
+    assert.ok(names.includes('榮耀之鍊'), '應含榮耀之鍊');
+    assert.ok(names.includes('馬拉的萬花筒'), '應含馬拉的萬花筒');
+    assert.ok(names.includes('精神'), '應含精神');
+  });
+
+  t('所有抗性 (全抗) 篩選：涵蓋暗金、套裝配件與符文組', () => {
+    const all = getAllUnifiedItems();
+    const hits = filterUnifiedItems(all, { selectedPropertyIds: ['all_res'] });
+    const names = hits.map((i) => i.name);
+    assert.ok(names.includes('馬拉的萬花筒'), '應含馬拉的萬花筒');
+    assert.ok(names.includes('蛇魔法師之皮'), '應含蛇魔法師之皮');
+    assert.ok(names.includes('榮耀之鍊'), '應含榮耀之鍊');
+    assert.ok(names.includes('橡樹之心'), '應含橡樹之心');
+  });
+
+  t('尋獲魔法物品機率 (MF) 篩選：涵蓋軍帽、戰爭旅者、基德、謎團、財富等', () => {
+    const all = getAllUnifiedItems();
+    const hits = filterUnifiedItems(all, { selectedPropertyIds: ['mf'] });
+    const names = hits.map((i) => i.name);
+    assert.ok(names.includes('諧角之冠'), '應含諧角之冠 (Harlequin Crest)');
+    assert.ok(names.includes('戰爭旅者'), '應含戰爭旅者');
+    assert.ok(names.includes('基德的財運'), '應含基德的財運 (Gheed\'s Fortune)');
+    assert.ok(names.includes('謎團'), '應含謎團');
+    assert.ok(names.includes('財富'), '應含財富');
+  });
+
+  t('無法凍結篩選：涵蓋烏鴉之霜、泰瑞爾之力、押韻等', () => {
+    const all = getAllUnifiedItems();
+    const hits = filterUnifiedItems(all, { selectedPropertyIds: ['cannot_be_frozen'] });
+    const names = hits.map((i) => i.name);
+    assert.ok(names.includes('烏鴉之霜'), '應含烏鴉之霜');
+    assert.ok(names.includes('泰瑞爾之力'), '應含泰瑞爾之力');
+    assert.ok(names.includes('聲韻'), '應含聲韻 (Rhyme)');
+  });
+
+  t('複合篩選（品質、部位、文字搜尋）精確無誤', () => {
+    const all = getAllUnifiedItems();
+    const rwOnly = filterUnifiedItems(all, { rarity: 'runeword' });
+    assert.equal(rwOnly.length, 98);
+    const armorRes = filterUnifiedItems(all, { slot: 'armor', selectedPropertyIds: ['all_res'] });
+    assert.ok(armorRes.every((i) => i.applicableSlots.includes('armor')));
+    assert.ok(armorRes.some((i) => i.name === '蛇魔法師之皮'));
+    assert.ok(armorRes.some((i) => i.name === '榮耀之鍊'));
+    const weaponHits = filterUnifiedItems(all, { slot: 'weapon', selectedPropertyIds: ['all_res'] });
+    assert.ok(weaponHits.some((i) => i.name === '剛毅'), '武器部位應能篩出剛毅');
+    assert.ok(armorRes.some((i) => i.name === '剛毅'), '護甲部位應能篩出剛毅');
+    // 別名搜尋：搜「軍帽」應能查得「諧角之冠」，搜「押韻」應能查得「聲韻」
+    const shakoAliasHits = filterUnifiedItems(all, { searchQuery: '軍帽' });
+    assert.ok(shakoAliasHits.some((i) => i.name === '諧角之冠'), '搜尋「軍帽」應查出諧角之冠');
+    const rhymeAliasHits = filterUnifiedItems(all, { searchQuery: '押韻' });
+    assert.ok(rhymeAliasHits.some((i) => i.name === '聲韻'), '搜尋「押韻」應查出聲韻');
+
   });
 }
