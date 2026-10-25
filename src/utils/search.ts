@@ -12,6 +12,7 @@ import { SKILLS_DATA } from '../data/skills';
 import { BASE_ITEMS_DATA } from '../data/bases';
 import { QUESTS_DATA, WORLD_EVENTS_DATA } from '../data/quests';
 import { CHARACTER_CLASSES_DATA } from '../data/classes';
+import { CLASS_TRANSLATIONS } from '../data/classTranslations';
 import { 
   GEMS_DATA, 
   UBER_KEYS_ORGANS_DATA, 
@@ -469,13 +470,18 @@ export const searchOmni = (query: string): SearchResultItem[] => {
 
   // 13. Search Characters
   for (const cls of CHARACTER_CLASSES_DATA) {
+    const classTr = CLASS_TRANSLATIONS[cls.id];
     const text = [
       cls.name,
       cls.nameEn,
       cls.title,
+      classTr?.title || '',
       cls.description,
+      classTr?.description || '',
       cls.skillTrees.map(t => t.name).join(' '),
-      cls.popularBuilds.map(b => b.name + ' ' + b.coreSkills).join(' ')
+      classTr?.skillTrees.map(t => t.name).join(' ') || '',
+      cls.popularBuilds.map(b => b.name + ' ' + b.coreSkills).join(' '),
+      classTr?.popularBuilds.map(b => b.name + ' ' + b.coreSkills).join(' ') || '',
     ].join(' ').toLowerCase();
 
     if (text.includes(q)) {
@@ -483,7 +489,7 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         id: cls.id,
         type: 'character',
         title: `${cls.name} (${cls.nameEn})`,
-        titleEn: cls.title,
+        titleEn: classTr?.title || cls.title,
         category: `英雄職業 (${cls.isDLC ? 'RotW DLC' : '經典原版'})`,
         badge: cls.isDLC ? 'RotW DLC' : '8大英雄',
         preview: cls.description,

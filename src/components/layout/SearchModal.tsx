@@ -173,12 +173,12 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             <div className="py-12 text-center text-sanctuary-400 text-sm">
               <Search className="w-8 h-8 mx-auto mb-2 opacity-30 text-sanctuary-400" />
               {t('輸入關鍵字進行秒級速查，例如：', 'Type keywords for instant lookup, e.g.:')}<br />
-              <span className="text-d2-unique font-medium">謎團</span>、
-              <span className="text-d2-unique font-medium">Enigma</span>、
-              <span className="text-d2-set font-medium">塔拉夏</span>、
-              <span className="text-d2-rune font-medium">喬丹</span>、
-              <span className="text-d2-magic font-medium">打孔</span>、
-              <span className="text-d2-fire font-medium">地穴</span>
+              <span className="text-d2-unique font-medium">{isEn ? 'Enigma' : '謎團'}</span>、
+              <span className="text-d2-unique font-medium">{isEn ? 'Infinity' : '無限'}</span>、
+              <span className="text-d2-set font-medium">{isEn ? 'Tal Rasha' : '塔拉夏'}</span>、
+              <span className="text-d2-rune font-medium">{isEn ? 'Stone of Jordan' : '喬丹'}</span>、
+              <span className="text-d2-magic font-medium">{isEn ? 'Sockets' : '打孔'}</span>、
+              <span className="text-d2-fire font-medium">{isEn ? 'The Pit' : '地穴'}</span>
             </div>
           ) : results.length === 0 ? (
             <div className="py-12 text-center text-sanctuary-400 text-sm">

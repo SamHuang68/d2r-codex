@@ -20,7 +20,7 @@ export const Footer: React.FC = () => {
           </div>
           <div>
             <div className="font-diablo text-sm font-bold text-sanctuary-200 tracking-wider">
-              SANCTUARY CODEX • 聖休亞瑞典藏中樞
+              {isEn ? "SANCTUARY CODEX • DIABLO II ARCHIVE" : "SANCTUARY CODEX • 聖休亞瑞典藏中樞"}
             </div>
             <div className="text-[11px] text-sanctuary-500 font-sans">
               {isEn ? "Diablo II: Resurrected (D2R) Sanctuary Codex & Armor Simulator" : "暗黑破壞神 II：獄火重生 (D2R) 旗艦遊戲專頁與全功能速查手冊"}

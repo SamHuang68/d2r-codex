@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { CHARACTER_CLASSES_DATA } from '../../data/classes';
+import { CLASS_TRANSLATIONS } from '../../data/classTranslations';
 import { Sparkles, Shield, Swords, Compass, Flame } from 'lucide-react';
 
 interface ClassShowcaseProps {
@@ -18,6 +19,7 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
   const [selectedClassId, setSelectedClassId] = useState(CHARACTER_CLASSES_DATA[0].id);
 
   const currentClass = CHARACTER_CLASSES_DATA.find((c) => c.id === selectedClassId) || CHARACTER_CLASSES_DATA[0];
+  const classTr = CLASS_TRANSLATIONS[currentClass.id];
 
   return (
     <section className="py-16 bg-sanctuary-900/40 border-b border-sanctuary-800">
@@ -25,13 +27,15 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
         <div className="text-center max-w-3xl mx-auto mb-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-d2-fire/10 border border-d2-fire/30 text-xs text-d2-fire font-semibold uppercase tracking-wider mb-3">
             <Swords className="w-3.5 h-3.5" />
-            <span>英雄殿堂 • {CHARACTER_CLASSES_DATA.length} 大職業深度解析</span>
+            <span>{isEn ? `Hall of Heroes • ${CHARACTER_CLASSES_DATA.length} Classes In-Depth` : `英雄殿堂 • ${CHARACTER_CLASSES_DATA.length} 大職業深度解析`}</span>
           </div>
           <h2 className="font-diablo text-3xl sm:text-4xl font-bold text-sanctuary-100">
-            選擇你的救世者或毀滅之源
+            {isEn ? 'Choose Your Savior or Herald of Doom' : '選擇你的救世者或毀滅之源'}
           </h2>
           <p className="mt-2 text-sm text-sanctuary-400">
-            從駕馭地獄禁術的全新術士，到執掌暴風雪的純冰法師，探索各職業專屬技能樹、屬性成長與終局流派。
+            {isEn
+              ? 'From the forbidden void arts of the Warlock to the blizzard mastery of the Sorceress, explore skill trees, stat growths, and endgame builds.'
+              : '從駕馭地獄禁術的全新術士，到執掌暴風雪的純冰法師，探索各職業專屬技能樹、屬性成長與終局流派。'}
           </p>
         </div>
 
@@ -55,9 +59,11 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
                   </span>
                 )}
                 <span>{isEn && cls.nameEn ? cls.nameEn : cls.name}</span>
-                <span className="text-[11px] text-sanctuary-400 font-mono hidden sm:inline">
-                  ({cls.nameEn})
-                </span>
+                {!isEn && (
+                  <span className="text-[11px] text-sanctuary-400 font-mono hidden sm:inline">
+                    ({cls.nameEn})
+                  </span>
+                )}
               </button>
             );
           })}
@@ -78,18 +84,18 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
                   </span>
                   {currentClass.isDLC && (
                     <span className="text-[10px] px-2 py-0.5 rounded bg-d2-fire/20 text-d2-fire border border-d2-fire/40 font-bold">
-                      全新 DLC 職業
+                      {isEn ? 'New DLC Class' : '全新 DLC 職業'}
                     </span>
                   )}
                 </div>
                 <h3 className="font-diablo text-3xl font-extrabold text-sanctuary-100">
                   {isEn && currentClass.nameEn ? currentClass.nameEn : currentClass.name}
                   <span className="text-lg font-normal text-d2-unique ml-3">
-                    • {currentClass.title}
+                    • {isEn && classTr ? classTr.title : currentClass.title}
                   </span>
                 </h3>
                 <p className="mt-3 text-sm text-sanctuary-300 font-sans leading-relaxed">
-                  {currentClass.description}
+                  {isEn && classTr ? classTr.description : currentClass.description}
                 </p>
               </div>
 
@@ -97,20 +103,20 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
               <div className="p-4 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800">
                 <div className="text-xs text-sanctuary-400 font-semibold mb-3 flex items-center gap-1.5">
                   <Shield className="w-3.5 h-3.5 text-d2-unique" />
-                  <span>核心屬性成長倍率</span>
+                  <span>{isEn ? 'Core Stat Growth Rates' : '核心屬性成長倍率'}</span>
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-center text-xs">
                   <div className="p-2 rounded bg-sanctuary-950 border border-sanctuary-800">
-                    <div className="text-sanctuary-400 text-[11px]">每點活力 (Vit)</div>
-                    <div className="text-d2-blood font-bold text-sm mt-0.5">+{currentClass.statGains.lifePerVit} 生命</div>
+                    <div className="text-sanctuary-400 text-[11px]">{isEn ? 'Per Vitality (Vit)' : '每點活力 (Vit)'}</div>
+                    <div className="text-d2-blood font-bold text-sm mt-0.5">+{currentClass.statGains.lifePerVit} {isEn ? 'Life' : '生命'}</div>
                   </div>
                   <div className="p-2 rounded bg-sanctuary-950 border border-sanctuary-800">
-                    <div className="text-sanctuary-400 text-[11px]">每點精力 (Ene)</div>
-                    <div className="text-d2-magic font-bold text-sm mt-0.5">+{currentClass.statGains.manaPerEne} 法力</div>
+                    <div className="text-sanctuary-400 text-[11px]">{isEn ? 'Per Energy (Ene)' : '每點精力 (Ene)'}</div>
+                    <div className="text-d2-magic font-bold text-sm mt-0.5">+{currentClass.statGains.manaPerEne} {isEn ? 'Mana' : '法力'}</div>
                   </div>
                   <div className="p-2 rounded bg-sanctuary-950 border border-sanctuary-800">
-                    <div className="text-sanctuary-400 text-[11px]">每點活力 (Vit)</div>
-                    <div className="text-d2-set font-bold text-sm mt-0.5">+{currentClass.statGains.staminaPerVit} 體力</div>
+                    <div className="text-sanctuary-400 text-[11px]">{isEn ? 'Per Vitality (Vit)' : '每點活力 (Vit)'}</div>
+                    <div className="text-d2-set font-bold text-sm mt-0.5">+{currentClass.statGains.staminaPerVit} {isEn ? 'Stamina' : '體力'}</div>
                   </div>
                 </div>
               </div>
@@ -143,27 +149,33 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
               <div>
                 <h4 className="text-xs font-bold text-sanctuary-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                   <Flame className="w-3.5 h-3.5 text-d2-fire" />
-                  三大技能系別 (Skill Trees)
+                  {isEn ? '3 Class Skill Trees' : '三大技能系別 (Skill Trees)'}
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {currentClass.skillTrees.map((tree, idx) => (
-                    <div
-                      key={idx}
-                      className="p-3.5 rounded-xl bg-sanctuary-900/70 border border-sanctuary-800/80 flex flex-col justify-between"
-                    >
-                      <div>
-                        <div className="text-xs font-bold text-sanctuary-200">
-                          {tree.name}
+                  {currentClass.skillTrees.map((tree, idx) => {
+                    const treeTr = classTr?.skillTrees[idx];
+                    return (
+                      <div
+                        key={idx}
+                        className="p-3.5 rounded-xl bg-sanctuary-900/70 border border-sanctuary-800/80 flex flex-col justify-between"
+                      >
+                        <div>
+                          <div className="text-xs font-bold text-sanctuary-200">
+                            {isEn && treeTr ? treeTr.name : tree.name}
+                          </div>
+                          <div className="text-[11px] text-sanctuary-400 mt-1 leading-snug">
+                            {isEn && treeTr ? treeTr.description : tree.description}
+                          </div>
                         </div>
-                        <div className="text-[11px] text-sanctuary-400 mt-1 leading-snug">
-                          {tree.description}
+                        <div className="mt-3 pt-2 border-t border-sanctuary-800 text-[10px] text-d2-unique font-medium">
+                          {isEn ? 'Key Skills: ' : '代表技能: '}
+                          {isEn && treeTr
+                            ? treeTr.keySkills.slice(0, 2).join(', ')
+                            : tree.keySkills.slice(0, 2).join('、')}
                         </div>
                       </div>
-                      <div className="mt-3 pt-2 border-t border-sanctuary-800 text-[10px] text-d2-unique font-medium">
-                        代表技能: {tree.keySkills.slice(0, 2).join('、')}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -171,42 +183,47 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
               <div>
                 <h4 className="text-xs font-bold text-sanctuary-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-d2-unique" />
-                  終局主流流派推薦 (Popular Builds)
+                  {isEn ? 'Endgame Meta Builds' : '終局主流流派推薦 (Popular Builds)'}
                 </h4>
                 <div className="space-y-3">
-                  {currentClass.popularBuilds.map((build, idx) => (
-                    <div
-                      key={idx}
-                      className="p-4 rounded-xl bg-sanctuary-900 border border-sanctuary-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
-                    >
-                      <div className="space-y-1 flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-extrabold px-1.5 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-mono">
-                            {build.tier} 階
-                          </span>
-                          <span className="font-diablo text-sm font-bold text-sanctuary-100">
-                            {build.name}
-                          </span>
+                  {currentClass.popularBuilds.map((build, idx) => {
+                    const buildTr = classTr?.popularBuilds[idx];
+                    return (
+                      <div
+                        key={idx}
+                        className="p-4 rounded-xl bg-sanctuary-900 border border-sanctuary-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+                      >
+                        <div className="space-y-1 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-extrabold px-1.5 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-mono">
+                              {build.tier} {isEn ? 'Tier' : '階'}
+                            </span>
+                            <span className="font-diablo text-sm font-bold text-sanctuary-100">
+                              {isEn && buildTr ? buildTr.name : build.name}
+                            </span>
+                          </div>
+                          <div className="text-xs text-sanctuary-400">
+                            <strong className="text-sanctuary-300">{isEn ? 'Core Skills: ' : '核心技能：'}</strong>
+                            {isEn && buildTr ? buildTr.coreSkills : build.coreSkills}
+                          </div>
+                          <div className="text-xs text-d2-magic">
+                            <strong className="text-sanctuary-300">{isEn ? 'BiS Gear: ' : '畢業配裝：'}</strong>
+                            {isEn && buildTr ? buildTr.gearSummary : build.gearSummary}
+                          </div>
                         </div>
-                        <div className="text-xs text-sanctuary-400">
-                          <strong className="text-sanctuary-300">核心技能：</strong>{build.coreSkills}
-                        </div>
-                        <div className="text-xs text-d2-magic">
-                          <strong className="text-sanctuary-300">畢業配裝：</strong>{build.gearSummary}
-                        </div>
-                      </div>
 
-                      {onExploreBuilds && (
-                        <button
-                          onClick={onExploreBuilds}
-                          className="px-3 py-1.5 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-750 text-d2-unique border border-sanctuary-700 text-xs font-mono shrink-0 transition-colors flex items-center gap-1 self-end sm:self-center"
-                        >
-                          <span>載入配裝</span>
-                          <span>→</span>
-                        </button>
-                      )}
-                    </div>
-                  ))}
+                        {onExploreBuilds && (
+                          <button
+                            onClick={onExploreBuilds}
+                            className="px-3 py-1.5 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-750 text-d2-unique border border-sanctuary-700 text-xs font-mono shrink-0 transition-colors flex items-center gap-1 self-end sm:self-center"
+                          >
+                            <span>{isEn ? 'Load Build' : '載入配裝'}</span>
+                            <span>→</span>
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CHARACTER_CLASSES_DATA } from '../../data/classes';
+import { CLASS_TRANSLATIONS } from '../../data/classTranslations';
 import { useLanguage } from '../../context/LanguageContext';
 import { 
   Users, 
@@ -22,16 +23,6 @@ export interface CharacterGuideProps {
   onNavigateToItems?: (itemName: string) => void;
 }
 
-const CLASS_TITLES_EN: Record<string, string> = {
-  sorceress: 'Master of the Elements',
-  paladin: 'Holy Warrior & Crusader',
-  amazon: 'Mistress of Bow & Javelin',
-  necromancer: 'Commander of the Undead',
-  barbarian: 'Primal Titan of Melee',
-  druid: 'Lord of Nature & Beasts',
-  assassin: 'Martial Arts & Shadow Trapper',
-  warlock: 'Forbidden Lord of the Void',
-};
 export const CharacterGuide: React.FC<CharacterGuideProps> = ({
   onNavigateToSkills,
   onNavigateToBreakpoints,
@@ -42,6 +33,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
   const [selectedClassId, setSelectedClassId] = useState<string>('sorceress');
 
   const currentClass = CHARACTER_CLASSES_DATA.find((c) => c.id === selectedClassId) || CHARACTER_CLASSES_DATA[0];
+  const classTr = CLASS_TRANSLATIONS[currentClass.id];
 
   const getClassIcon = (id: string) => {
     switch (id) {
@@ -101,7 +93,10 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
     }
   };
 
-  const gearInfo = classSpecificGear[currentClass.id] || classSpecificGear.sorceress;
+  const gearInfoZh = classSpecificGear[currentClass.id] || classSpecificGear.sorceress;
+  const gearTitle = isEn && classTr ? classTr.gearInfo.title : gearInfoZh.title;
+  const gearDesc = isEn && classTr ? classTr.gearInfo.desc : gearInfoZh.desc;
+  const topBases = isEn && classTr ? classTr.gearInfo.topBases : gearInfoZh.topBases;
 
   return (
     <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 animate-fade-in">
@@ -179,27 +174,38 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
               </span>
               <span className="text-xs text-sanctuary-500">•</span>
               <span className="text-xs text-sanctuary-300 font-semibold">
-                {isEn && CLASS_TITLES_EN[currentClass.id] ? CLASS_TITLES_EN[currentClass.id] : currentClass.title}
+                {isEn && classTr ? classTr.title : currentClass.title}
               </span>
             </div>
             <h2 className="font-diablo text-3xl sm:text-4xl font-extrabold text-sanctuary-100">
               {isEn && currentClass.nameEn ? currentClass.nameEn : currentClass.name}
             </h2>
             <p className="text-sm text-sanctuary-300 font-sans leading-relaxed">
-              {currentClass.description}
+              {isEn && classTr ? classTr.description : currentClass.description}
             </p>
 
             {/* Golden Rule for Stat Points */}
             <div className="p-4 rounded-2xl bg-sanctuary-950/80 border border-d2-gold/30 text-xs space-y-1.5">
               <div className="text-d2-gold font-bold flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-d2-gold" />
-                <span>{isEn ? "Diablo II Stat Points Allocation Golden Rules:" : "暗黑 II 角色屬性點分配「黃金守則」："}</span>
+                <span>{isEn ? 'Diablo II Stat Points Allocation "Golden Rules":' : '暗黑 II 角色屬性點分配「黃金守則」：'}</span>
               </div>
               <p className="text-sanctuary-300 leading-relaxed pl-5 font-sans">
-                • <strong>力量 (Str)</strong>：點到剛好能穿戴核心裝備即可（通常以統盾 156 力量或謎團加成後為基準）。<br />
-                • <strong>敏捷 (Dex)</strong>：格擋流點到滿 75% 格擋率，其餘流派點到裝備需求即可。<br />
-                • <strong>精力 (Ene)</strong>：原則上一點都不點！後期裝備與靈光冥想靈氣可徹底解決法力問題。<br />
-                • <strong>活力 (Vit)</strong>：所有剩餘點數全部投入活力，最大化生命值抵禦猝死！
+                {isEn ? (
+                  <>
+                    • <strong>Strength (Str)</strong>: Invest just enough to meet equipment requirements (typically 156 Str for Monarch or post-Enigma).<br />
+                    • <strong>Dexterity (Dex)</strong>: Invest to reach 75% Max Block for shield builds, otherwise just enough for gear.<br />
+                    • <strong>Energy (Ene)</strong>: Zero points invested! End-game gear and Insight Meditation aura completely solve mana.<br />
+                    • <strong>Vitality (Vit)</strong>: Dump all remaining points here to maximize life and survive lethal bursts!
+                  </>
+                ) : (
+                  <>
+                    • <strong>力量 (Str)</strong>：點到剛好能穿戴核心裝備即可（通常以統盾 156 力量或謎團加成後為基準）。<br />
+                    • <strong>敏捷 (Dex)</strong>：格擋流點到滿 75% 格擋率，其餘流派點到裝備需求即可。<br />
+                    • <strong>精力 (Ene)</strong>：原則上一點都不點！後期裝備與靈光冥想靈氣可徹底解決法力問題。<br />
+                    • <strong>活力 (Vit)</strong>：所有剩餘點數全部投入活力，最大化生命值抵禦猝死！
+                  </>
+                )}
               </p>
             </div>
           </div>
@@ -215,19 +221,19 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800/80">
                 <span className="text-sanctuary-400">{isEn ? "Vitality ➔ Life" : "每點活力 ➔ 生命"}</span>
                 <span className="text-d2-blood font-bold font-mono text-sm">
-                  +{currentClass.statGains.lifePerVit} Life
+                  +{currentClass.statGains.lifePerVit} {isEn ? "Life" : "生命"}
                 </span>
               </div>
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800/80">
                 <span className="text-sanctuary-400">{isEn ? "Energy ➔ Mana" : "每點精力 ➔ 法力"}</span>
                 <span className="text-d2-magic font-bold font-mono text-sm">
-                  +{currentClass.statGains.manaPerEne} Mana
+                  +{currentClass.statGains.manaPerEne} {isEn ? "Mana" : "法力"}
                 </span>
               </div>
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800/80">
                 <span className="text-sanctuary-400">{isEn ? "Vitality ➔ Stamina" : "每點活力 ➔ 體力"}</span>
                 <span className="text-d2-set font-bold font-mono text-sm">
-                  +{currentClass.statGains.staminaPerVit} Stamina
+                  +{currentClass.statGains.staminaPerVit} {isEn ? "Stamina" : "體力"}
                 </span>
               </div>
             </div>
@@ -246,16 +252,16 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
           <div className="p-6 rounded-2xl bg-sanctuary-950 border border-sanctuary-800 space-y-4">
             <h3 className="font-diablo text-lg font-bold text-d2-unique flex items-center gap-2">
               <Shield className="w-4 h-4 text-d2-unique" />
-              <span>{isEn ? `${currentClass.nameEn || currentClass.name} Exclusive Gear & Bases` : `${currentClass.name} 專屬裝備與極品底材`}</span>
+              <span>{gearTitle}</span>
             </h3>
             <p className="text-xs text-sanctuary-300 leading-relaxed">
-              {gearInfo.desc}
+              {gearDesc}
             </p>
 
             <div className="space-y-2 pt-2">
               <div className="text-[11px] font-mono text-sanctuary-400">{isEn ? "Signature Bases & Trophies:" : "代表性指標底材與神裝："}</div>
               <div className="space-y-2">
-                {gearInfo.topBases.map((base, idx) => (
+                {topBases.map((base, idx) => (
                   <div
                     key={idx}
                     className="p-3 rounded-xl bg-sanctuary-900/70 border border-sanctuary-800 flex items-center justify-between text-xs"
@@ -285,64 +291,71 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
             </h3>
 
             <div className="space-y-4">
-              {currentClass.popularBuilds.map((b, bIdx) => (
-                <div
-                  key={bIdx}
-                  className="p-4 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800 hover:border-d2-gold/50 transition-all space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-diablo text-base font-bold text-sanctuary-100 flex items-center gap-2">
-                      <span>{b.name}</span>
-                    </h4>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-d2-gold/20 text-d2-gold border border-d2-gold/40">
-                      TIER {b.tier}
-                    </span>
-                  </div>
+              {currentClass.popularBuilds.map((b, bIdx) => {
+                const buildTr = classTr?.popularBuilds[bIdx];
+                const buildName = isEn && buildTr ? buildTr.name : b.name;
+                const coreSkills = isEn && buildTr ? buildTr.coreSkills : b.coreSkills;
+                const gearSummary = isEn && buildTr ? buildTr.gearSummary : b.gearSummary;
 
-                  <div className="text-xs font-sans space-y-1">
-                    <div>
-                      <span className="text-sanctuary-500 font-medium">{isEn ? "Core Skills: " : "核心技能組合："}</span>
-                      <span className="text-sanctuary-200">{b.coreSkills}</span>
-                    </div>
-                    <div>
-                      <span className="text-sanctuary-500 font-medium">{isEn ? "Signature Gear: " : "代表性配裝："}</span>
-                      <span className="text-d2-unique font-medium">
-                        {b.gearSummary.split('+').map((gearItem, gIdx, arr) => {
-                          const cleanItem = gearItem.trim();
-                          const subItems = cleanItem.includes('/') ? cleanItem.split('/') : [cleanItem];
-                          return (
-                            <React.Fragment key={gIdx}>
-                              {subItems.map((sub, sIdx) => {
-                                const trimmedSub = sub.trim();
-                                return (
-                                  <React.Fragment key={sIdx}>
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        if (onNavigateToItems) {
-                                          onNavigateToItems(trimmedSub);
-                                        } else {
-                                          onNavigateToRunewords?.(trimmedSub);
-                                        }
-                                      }}
-                                      className="hover:underline hover:text-amber-300 cursor-pointer"
-                                      title={`前往查詢【${trimmedSub}】`}
-                                    >
-                                      {trimmedSub}
-                                    </button>
-                                    {sIdx < subItems.length - 1 && <span className="text-sanctuary-400 mx-0.5">/</span>}
-                                  </React.Fragment>
-                                );
-                              })}
-                              {gIdx < arr.length - 1 && <span className="text-sanctuary-500 mx-1">+</span>}
-                            </React.Fragment>
-                          );
-                        })}
+                return (
+                  <div
+                    key={bIdx}
+                    className="p-4 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800 hover:border-d2-gold/50 transition-all space-y-2"
+                  >
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-diablo text-base font-bold text-sanctuary-100 flex items-center gap-2">
+                        <span>{buildName}</span>
+                      </h4>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-d2-gold/20 text-d2-gold border border-d2-gold/40">
+                        TIER {b.tier}
                       </span>
                     </div>
+
+                    <div className="text-xs font-sans space-y-1">
+                      <div>
+                        <span className="text-sanctuary-500 font-medium">{isEn ? "Core Skills: " : "核心技能組合："}</span>
+                        <span className="text-sanctuary-200">{coreSkills}</span>
+                      </div>
+                      <div>
+                        <span className="text-sanctuary-500 font-medium">{isEn ? "Signature Gear: " : "代表性配裝："}</span>
+                        <span className="text-d2-unique font-medium">
+                          {gearSummary.split('+').map((gearItem, gIdx, arr) => {
+                            const cleanItem = gearItem.trim();
+                            const subItems = cleanItem.includes('/') ? cleanItem.split('/') : [cleanItem];
+                            return (
+                              <React.Fragment key={gIdx}>
+                                {subItems.map((sub, sIdx) => {
+                                  const trimmedSub = sub.trim();
+                                  return (
+                                    <React.Fragment key={sIdx}>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          if (onNavigateToItems) {
+                                            onNavigateToItems(trimmedSub);
+                                          } else {
+                                            onNavigateToRunewords?.(trimmedSub);
+                                          }
+                                        }}
+                                        className="hover:underline hover:text-amber-300 cursor-pointer"
+                                        title={isEn ? `Search gear "${trimmedSub}"` : `前往查詢【${trimmedSub}】`}
+                                      >
+                                        {trimmedSub}
+                                      </button>
+                                      {sIdx < subItems.length - 1 && <span className="text-sanctuary-400 mx-0.5">/</span>}
+                                    </React.Fragment>
+                                  );
+                                })}
+                                {gIdx < arr.length - 1 && <span className="text-sanctuary-500 mx-1">+</span>}
+                              </React.Fragment>
+                            );
+                          })}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

@@ -37,7 +37,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
         <a
           href={tabHref('overview')}
           onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); setActiveTab('overview'); }}
-          aria-label="回到主頁"
+          aria-label={t('回到主頁', 'Back to Home')}
           className="flex items-center gap-2.5 cursor-pointer group shrink-0"
         >
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-d2-unique to-sanctuary-900 p-0.5 shadow-glow-gold flex items-center justify-center">

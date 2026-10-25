@@ -142,7 +142,7 @@ export const BackToTop: React.FC<BackToTopProps> = ({
 
         {/* Tooltip 提示 */}
         <span className="hidden lg:group-hover:inline-block absolute right-13 px-2 py-1 rounded bg-sanctuary-950 border border-sanctuary-750 text-[11px] text-sanctuary-200 whitespace-nowrap shadow-xl pointer-events-none font-sans font-medium">
-          返回頂端 <span className="text-sanctuary-500 font-mono text-[10px]">(Home)</span>
+          {isEn ? "Back to top " : "返回頂端 "}<span className="text-sanctuary-500 font-mono text-[10px]">(Home)</span>
         </span>
       </button>
     </div>

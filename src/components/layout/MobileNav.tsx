@@ -111,6 +111,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                 <LanguageToggle />
                 <button
                   onClick={() => setIsDrawerOpen(false)}
+                  aria-label={t('關閉選單', 'Close menu')}
                   className="w-8 h-8 rounded-full bg-sanctuary-900 border border-sanctuary-750 flex items-center justify-center text-sanctuary-400 hover:text-white"
                 >
                   <X className="w-4 h-4" />
