@@ -8,6 +8,7 @@ import { PageHeader } from '../common/PageHeader';
 import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, crumbsOf, useDirectory } from '../common/TreeIndex';
 import { TaxDef, TreeNode, buildTree, recount, findNode } from '../../utils/equipTaxonomy';
 import { Search, Sparkles, Filter, X } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 export interface RunewordFinderProps {
   initialQuery?: string;
@@ -44,6 +45,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
   onNavigateToRune,
   onNavigateToBase,
 }) => {
+  const { t, isEn } = useLanguage();
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [selectedSockets, setSelectedSockets] = useState<number | 'all'>('all');
   const [selectedBase, setSelectedBase] = useState<string>('all');
@@ -213,14 +215,14 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="font-diablo text-lg font-bold text-d2-unique group-hover:text-amber-300 transition-colors">
-                          {rw.name}
+                          {isEn && rw.nameEn ? rw.nameEn : rw.name}
                         </h3>
                         <span className="text-xs text-sanctuary-400 font-mono italic">
-                          {rw.nameEn}
+                          {isEn && rw.nameEn ? rw.name : rw.nameEn}
                         </span>
                       </div>
                       <div className="text-xs text-sanctuary-300 mt-1 flex items-center gap-1.5 flex-wrap">
-                      <span>需求等級: <strong className="text-sanctuary-100">{rw.requiredLevel}</strong> • {rw.sockets} 孔</span>
+                      <span>{isEn ? 'Req Level:' : '需求等級:'} <strong className="text-sanctuary-100">{rw.requiredLevel}</strong> • {rw.sockets} {isEn ? 'Sockets' : '孔'}</span>
                       <span>(</span>
                       {rw.allowedBases.map((base, bIdx) => (
                         <React.Fragment key={bIdx}>
@@ -252,7 +254,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                     )}
                     {rw.ladderOnly && (
                       <span className="text-[10px] px-2 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-medium">
-                        天梯限定
+                        {isEn ? 'Ladder Only' : '天梯限定'}
                       </span>
                     )}
                   </div>
@@ -260,7 +262,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
 
                 {/* Rune Sequence */}
                 <div className="py-3 flex items-end gap-2 flex-wrap">
-                  <span className="text-xs text-sanctuary-400 font-semibold mr-1 self-center">鑲嵌順序:</span>
+                  <span className="text-xs text-sanctuary-400 font-semibold mr-1 self-center">{isEn ? 'Socket Order:' : '鑲嵌順序:'}</span>
                   {rw.runes.map((r, i) => (
                     <button
                       key={i}
@@ -311,7 +313,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               <div className="mt-4 pt-3 border-t border-sanctuary-850/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-sanctuary-400">
                 {rw.recommendedBases ? (
                   <div className="truncate">
-                    <strong className="text-sanctuary-300">推薦底材：</strong>
+                    <strong className="text-sanctuary-300">{isEn ? 'Recommended Bases: ' : '推薦底材：'}</strong>
                     <span className="text-d2-white font-medium">{rw.recommendedBases}</span>
                   </div>
                 ) : <div />}
@@ -330,11 +332,15 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
     <div className="py-8 max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
       <PageHeader
         icon={<Sparkles className="w-6 h-6" />}
-        title="符文之語全能檢索手冊"
-        desc="包含全經典、天梯限定及最新《術士軍臨》DLC 符文之語，支援按底材孔數與關鍵屬性即時交叉篩選。依「底材類型 → 孔數」分層，每層內依需求等級排序。"
+        title={t('符文之語全能檢索手冊', 'Runewords Complete Codex')}
+        desc={t('包含全經典、天梯限定及最新《術士軍臨》DLC 符文之語，支援按底材孔數與關鍵屬性即時交叉篩選。依「底材類型 → 孔數」分層，每層內依需求等級排序。', 'Complete database of Classic, Ladder-only, and Reign of the Warlock DLC runewords with multi-dimensional filtering by sockets, bases, and affixes.')}
         right={
           <div className="text-xs text-sanctuary-400 font-mono self-start shrink-0 whitespace-nowrap px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800">
-            已收錄 <span className="text-d2-unique font-bold">{RUNEWORDS_DATA.length}</span> 組 • 篩選符合 <span className="text-d2-set font-bold">{filteredRunewords.length}</span> 組
+            {isEn ? (
+              <>Recorded <span className="text-d2-unique font-bold">{RUNEWORDS_DATA.length}</span> • Matched <span className="text-d2-set font-bold">{filteredRunewords.length}</span></>
+            ) : (
+              <>已收錄 <span className="text-d2-unique font-bold">{RUNEWORDS_DATA.length}</span> 組 • 篩選符合 <span className="text-d2-set font-bold">{filteredRunewords.length}</span> 組</>
+            )}
           </div>
         }
       />
@@ -348,7 +354,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="快速搜尋符文之語 (例如：謎團、精神、悔恨、Jah、FCR、Teleport...)"
+            placeholder={t('快速搜尋符文之語 (例如：謎團、精神、悔恨、Jah、FCR、Teleport...)', 'Search Runewords (e.g. Enigma, Spirit, Grief, Jah, FCR, Teleport...)')}
             className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-4 py-2 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
           />
           {searchQuery && (
@@ -365,7 +371,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
           {/* Socket Filter */}
           <div>
-            <label className="block text-sanctuary-400 mb-1 font-medium">孔數 (Sockets)</label>
+            <label className="block text-sanctuary-400 mb-1 font-medium">{t('孔數 (Sockets)', 'Sockets')}</label>
             <select
               value={selectedSockets}
               onChange={(e) => setSelectedSockets(e.target.value === 'all' ? 'all' : Number(e.target.value))}
@@ -382,7 +388,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
 
           {/* Base Type Filter */}
           <div>
-            <label className="block text-sanctuary-400 mb-1 font-medium">底材類別 (Bases)</label>
+            <label className="block text-sanctuary-400 mb-1 font-medium">{t('底材類別 (Bases)', 'Bases')}</label>
             <select
               value={selectedBase}
               onChange={(e) => setSelectedBase(e.target.value)}
@@ -397,7 +403,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
 
           {/* Tag Filter */}
           <div>
-            <label className="block text-sanctuary-400 mb-1 font-medium">核心詞綴 (Tags)</label>
+            <label className="block text-sanctuary-400 mb-1 font-medium">{t('核心詞綴 (Tags)', 'Key Affixes')}</label>
             <select
               value={selectedTag}
               onChange={(e) => setSelectedTag(e.target.value)}
@@ -443,7 +449,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               className="w-full py-1.5 px-3 rounded bg-sanctuary-800 hover:bg-sanctuary-750 text-sanctuary-300 text-xs flex items-center justify-center gap-1.5 border border-sanctuary-700"
             >
               <Filter className="w-3.5 h-3.5" />
-              <span>清除篩選</span>
+              <span>{t('清除篩選', 'Reset')}</span>
             </button>
           </div>
         </div>

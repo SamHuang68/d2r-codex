@@ -1,6 +1,7 @@
 import React from 'react';
 import { ItemRarity } from '../../types';
 import { ItemIcon } from './ItemIcon';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface ItemTooltipProps {
   title: string;
@@ -42,6 +43,12 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
   layout = 'stack',
   badges,
 }) => {
+  const { isEn } = useLanguage();
+  const primaryTitle = isEn && titleEn ? titleEn : title;
+  const secondaryTitle = isEn && titleEn ? title : titleEn;
+  const primaryBase = isEn && baseItemEn ? baseItemEn : baseItem;
+  const secondaryBase = isEn && baseItemEn ? baseItem : baseItemEn;
+
   // Title color according to rarity
   const getTitleColor = () => {
     switch (rarity) {
@@ -80,33 +87,33 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
   const header = (
     <>
       <div className={`font-diablo text-lg md:text-xl font-bold tracking-wide leading-tight ${getTitleColor()}`}>
-        {title}
+        {primaryTitle}
       </div>
-      {titleEn && (
+      {secondaryTitle && (
         <div className="text-xs text-sanctuary-400 font-mono italic mb-1">
-          {titleEn}
+          {secondaryTitle}
         </div>
       )}
 
-      {baseItem && (
+      {primaryBase && (
         <div className={`text-xs text-sanctuary-300 font-medium pb-2 border-b border-sanctuary-800 ${row ? '' : ''}`}>
           {onNavigateToBase ? (
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                onNavigateToBase(baseItem);
+                onNavigateToBase(baseItem || primaryBase);
               }}
               className="hover:text-d2-socket hover:underline cursor-pointer transition-colors inline-flex items-center gap-1 group/base"
-              title={`點擊查看【${baseItem}】符文底材指南`}
+              title={isEn ? `Click to view base item guide` : `點擊查看【${baseItem}】符文底材指南`}
             >
-              <span>{baseItem}</span>
-              {baseItemEn && <span className="text-sanctuary-400">({baseItemEn})</span>}
+              <span>{primaryBase}</span>
+              {secondaryBase && <span className="text-sanctuary-400">({secondaryBase})</span>}
               <span className="text-[10px] text-d2-socket opacity-60 group-hover/base:opacity-100">↗</span>
             </button>
           ) : (
             <span>
-              {baseItem} {baseItemEn && <span className="text-sanctuary-400">({baseItemEn})</span>}
+              {primaryBase} {secondaryBase && <span className="text-sanctuary-400">({secondaryBase})</span>}
             </span>
           )}
         </div>
@@ -124,13 +131,13 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
 
       <div className="text-xs text-sanctuary-400 py-1 space-x-2">
         {requiredLevel !== undefined && requiredLevel > 0 && (
-          <span>需求等級: <strong className="text-sanctuary-200">{requiredLevel}</strong></span>
+          <span>{isEn ? 'Required Level: ' : '需求等級: '}<strong className="text-sanctuary-200">{requiredLevel}</strong></span>
         )}
         {requiredStr !== undefined && requiredStr > 0 && (
-          <span>需求力量: <strong className="text-sanctuary-200">{requiredStr}</strong></span>
+          <span>{isEn ? 'Required Strength: ' : '需求力量: '}<strong className="text-sanctuary-200">{requiredStr}</strong></span>
         )}
         {requiredDex !== undefined && requiredDex > 0 && (
-          <span>需求敏捷: <strong className="text-sanctuary-200">{requiredDex}</strong></span>
+          <span>{isEn ? 'Required Dexterity: ' : '需求敏捷: '}<strong className="text-sanctuary-200">{requiredDex}</strong></span>
         )}
       </div>
 
@@ -144,10 +151,10 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
 
       {setBonuses && setBonuses.length > 0 && (
         <div className="mt-3 pt-2 border-t border-d2-set/30 text-left text-xs space-y-1">
-          <div className="text-d2-set font-semibold">部分套裝獎勵:</div>
+          <div className="text-d2-set font-semibold">{isEn ? 'Partial Set Bonuses:' : '部分套裝獎勵:'}</div>
           {setBonuses.map((sb, idx) => (
             <div key={idx} className="text-d2-set-dark">
-              ({sb.count} 件) {sb.bonus}
+              ({sb.count} {isEn ? 'Items' : '件'}) {sb.bonus}
             </div>
           ))}
         </div>
@@ -155,7 +162,7 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
 
       {fullSetBonuses && fullSetBonuses.length > 0 && (
         <div className="mt-2 pt-1 border-t border-d2-set/30 text-left text-xs space-y-1">
-          <div className="text-d2-set font-bold">完整套裝獎勵:</div>
+          <div className="text-d2-set font-bold">{isEn ? 'Full Set Bonuses:' : '完整套裝獎勵:'}</div>
           {fullSetBonuses.map((fb, idx) => (
             <div key={idx} className="text-d2-set font-medium">
               {fb}
@@ -172,37 +179,40 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
     </>
   );
 
-  const icon = (
-    <ItemIcon
-      name={title}
-      nameEn={titleEn}
-      baseItem={baseItem}
-      rarity={rarity}
-      size="xl"
-      imageUrl={imageUrl}
-    />
-  );
-
   return (
     <div
-      className={`bg-sanctuary-950/95 backdrop-blur-md border ${getBorderColor()} rounded-lg p-4 text-sm font-sans w-full transition-all duration-200 select-none ${
-        row ? 'flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:items-start text-left' : 'text-center max-w-sm'
-      } ${className}`}
-      style={{
-        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.8), inset 0 0 12px rgba(0, 0, 0, 0.6)'
-      }}
+      className={`bg-sanctuary-950 border rounded-2xl p-4 transition-all duration-200 ${getBorderColor()} ${className}`}
     >
       {row ? (
-        <>
-          {/* 手機：圖在上、文字在下（單欄寬度不夠左右並排）；≥640px 左右並排，圖寬最多佔 42% */}
-          <div className="shrink-0 sm:max-w-[42%]">{icon}</div>
-          <div className="min-w-0 w-full sm:w-auto sm:flex-1">{header}</div>
-        </>
+        <div className="flex items-start gap-4">
+          <div className="shrink-0 p-2 bg-sanctuary-900/60 rounded-xl border border-sanctuary-800/80 flex items-center justify-center">
+            <ItemIcon
+              name={title}
+              nameEn={titleEn}
+              baseItem={baseItem}
+              rarity={rarity}
+              size="lg"
+              showBorder={false}
+              imageUrl={imageUrl}
+            />
+          </div>
+          <div className="flex-1 min-w-0">{header}</div>
+        </div>
       ) : (
-        <>
-          <div className="flex justify-center mb-3">{icon}</div>
+        <div className="text-center space-y-2">
+          <div className="flex justify-center p-3 bg-sanctuary-900/40 rounded-xl border border-sanctuary-800/50">
+            <ItemIcon
+              name={title}
+              nameEn={titleEn}
+              baseItem={baseItem}
+              rarity={rarity}
+              size="xl"
+              showBorder={false}
+              imageUrl={imageUrl}
+            />
+          </div>
           {header}
-        </>
+        </div>
       )}
     </div>
   );

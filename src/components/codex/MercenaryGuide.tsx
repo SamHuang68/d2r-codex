@@ -3,6 +3,7 @@ import { MERCENARIES_DATA } from '../../data/mercenaries';
 import { MercenaryStats } from './MercenaryStats';
 import { MercenaryMatrix } from './MercenaryMatrix';
 import type { MercTierBuild } from '../../data/mercenaryMatrix';
+import { useLanguage } from '../../context/LanguageContext';
 import { 
   Users, 
   ShieldCheck, 
@@ -21,6 +22,7 @@ export interface MercenaryGuideProps {
 }
 
 export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, onNavigateToSimulator }) => {
+  const { t } = useLanguage();
   const [viewMode, setViewMode] = useState<'matrix' | 'act_guide'>('matrix');
   const [selectedActId, setSelectedActId] = useState<string>('act2_desert');
 
@@ -80,10 +82,13 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
             Mercenaries Compendium & Meta Builds
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            傭兵搭配矩陣與終局配裝
+            {t('傭兵搭配矩陣與終局配裝', 'Mercenary Matrix & Meta Builds')}
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-2xl">
-            提供全職業主流流派 Matrix 矩陣對照（全裝成形 / 打寶專精 / 頂規畢業三段配置、一鍵帶入配裝模擬器），並完整收錄第一章至第五章傭兵百科數據與 Patch 2.4 改版機制。
+            {t(
+              '提供全職業主流流派 Matrix 矩陣對照（全裝成形 / 打寶專精 / 頂規畢業三段配置、一鍵帶入配裝模擬器），並完整收錄第一章至第五章傭兵百科數據與 Patch 2.4 改版機制。',
+              'Comprehensive class-by-class mercenary build matrix with Starter, Magic Find, and BiS setups, 1-click armory export, and Patch 2.4 act compendiums.'
+            )}
           </p>
         </div>
 
@@ -99,7 +104,7 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
             }`}
           >
             <Grid3X3 className="w-4 h-4" />
-            <span>📊 職業搭配矩陣 (Matrix)</span>
+            <span>{t('📊 職業搭配矩陣 (Matrix)', '📊 Build Matrix')}</span>
           </button>
           <button
             type="button"
@@ -111,7 +116,7 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
             }`}
           >
             <BookOpen className="w-4 h-4" />
-            <span>🛡️ 各章傭兵百科 (Act Guide)</span>
+            <span>{t('🛡️ 各章傭兵百科 (Act Guide)', '🛡️ Act Guide')}</span>
           </button>
         </div>
       </div>

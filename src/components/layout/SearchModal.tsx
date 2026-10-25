@@ -3,6 +3,7 @@ import { Search, X, Flame, Shield, Sparkles, BookOpen, MapPin, Users, Gem, Skull
 import { searchOmni, SearchResultItem } from '../../utils/search';
 import { searchCodex } from '../../utils/searchCodex';
 import { expandLegacyQuery } from '../../utils/termAliases';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   onClose,
   onSelectResult,
 }) => {
+  const { t, isEn } = useLanguage();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResultItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -148,7 +150,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="搜尋符文之語、暗金、套裝、符文、配方、85場景、怪物、詞綴、聖壇、經驗... (支援中英文)"
+            placeholder={t('搜尋符文之語、暗金、套裝、符文、配方、85場景、怪物、詞綴、聖壇、經驗... (支援中英文)', 'Search Runewords, Uniques, Sets, Runes, Recipes, TC85, Monsters, Affixes... (EN / 中文)')}
             className="w-full bg-transparent text-sanctuary-100 placeholder-sanctuary-500 text-base focus:outline-none font-sans"
           />
           {query ? (
@@ -160,7 +162,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             </button>
           ) : (
             <kbd className="hidden sm:inline-block px-2 py-0.5 text-[11px] font-mono text-sanctuary-400 bg-sanctuary-850 rounded border border-sanctuary-700">
-              ESC 關閉
+              {t('ESC 關閉', 'ESC to Close')}
             </kbd>
           )}
         </div>
@@ -170,7 +172,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           {query.trim() === '' ? (
             <div className="py-12 text-center text-sanctuary-400 text-sm">
               <Search className="w-8 h-8 mx-auto mb-2 opacity-30 text-sanctuary-400" />
-              輸入關鍵字進行秒級速查，例如：<br />
+              {t('輸入關鍵字進行秒級速查，例如：', 'Type keywords for instant lookup, e.g.:')}<br />
               <span className="text-d2-unique font-medium">謎團</span>、
               <span className="text-d2-unique font-medium">Enigma</span>、
               <span className="text-d2-set font-medium">塔拉夏</span>、
@@ -180,49 +182,59 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             </div>
           ) : results.length === 0 ? (
             <div className="py-12 text-center text-sanctuary-400 text-sm">
-              查無與「<span className="text-sanctuary-200 font-semibold">{query}</span>」相符之遊戲資料
+              {isEn ? (
+                <>No game data found matching &ldquo;<span className="text-sanctuary-200 font-semibold">{query}</span>&rdquo;</>
+              ) : (
+                <>查無與「<span className="text-sanctuary-200 font-semibold">{query}</span>」相符之遊戲資料</>
+              )}
             </div>
           ) : (
-            results.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => {
-                  let runeNum: number | undefined;
-                  if (item.type === 'rune') {
-                    const match = item.id.match(/\d+/);
-                    if (match) runeNum = parseInt(match[0], 10);
-                  }
-                  onSelectResult(item.targetTab, item.id, item.title, runeNum);
-                  onClose();
-                }}
-                className="p-3 hover:bg-sanctuary-800/60 rounded-lg cursor-pointer transition-colors duration-150 group"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="shrink-0">{getTypeIcon(item.type)}</span>
-                    <span className="font-semibold text-sanctuary-100 group-hover:text-d2-unique truncate text-sm">
-                      {item.title}
-                    </span>
-                    <span className="text-xs text-sanctuary-400 font-mono hidden sm:inline truncate">
-                      {item.titleEn}
+            results.map((item) => {
+              const mainTitle = isEn && item.titleEn ? item.titleEn : item.title;
+              const subTitle = isEn && item.titleEn ? item.title : item.titleEn;
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => {
+                    let runeNum: number | undefined;
+                    if (item.type === 'rune') {
+                      const match = item.id.match(/\d+/);
+                      if (match) runeNum = parseInt(match[0], 10);
+                    }
+                    onSelectResult(item.targetTab, item.id, item.title, runeNum);
+                    onClose();
+                  }}
+                  className="p-3 hover:bg-sanctuary-800/60 rounded-lg cursor-pointer transition-colors duration-150 group"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="shrink-0">{getTypeIcon(item.type)}</span>
+                      <span className="font-semibold text-sanctuary-100 group-hover:text-d2-unique truncate text-sm">
+                        {mainTitle}
+                      </span>
+                      {subTitle && (
+                        <span className="text-xs text-sanctuary-400 font-mono hidden sm:inline truncate">
+                          {subTitle}
+                        </span>
+                      )}
+                    </div>
+                    <span className={`text-[11px] px-2 py-0.5 rounded border shrink-0 font-medium ${getTypeBadgeClass(item.type)}`}>
+                      {item.badge}
                     </span>
                   </div>
-                  <span className={`text-[11px] px-2 py-0.5 rounded border shrink-0 font-medium ${getTypeBadgeClass(item.type)}`}>
-                    {item.badge}
-                  </span>
+                  <div className="text-xs text-sanctuary-400 mt-1 pl-6 truncate font-sans">
+                    {item.category} • <span className="text-sanctuary-300">{item.preview}</span>
+                  </div>
                 </div>
-                <div className="text-xs text-sanctuary-400 mt-1 pl-6 truncate font-sans">
-                  {item.category} • <span className="text-sanctuary-300">{item.preview}</span>
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
 
         {/* Footer info */}
         <div className="px-4 py-2 border-t border-sanctuary-800 bg-sanctuary-950 flex items-center justify-between text-xs text-sanctuary-400">
-          <span>共找到 {results.length} 筆資料</span>
-          <span className="text-[11px]">按「Q」鍵隨時喚出此視窗</span>
+          <span>{isEn ? `Found ${results.length} results` : `共找到 ${results.length} 筆資料`}</span>
+          <span className="text-[11px]">{t('按「Q」鍵隨時喚出此視窗', 'Press "Q" anytime to search')}</span>
         </div>
       </div>
     </div>

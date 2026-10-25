@@ -1,6 +1,8 @@
 import React from 'react';
 import { ChevronsLeft, ChevronsRight, Flame, Search } from 'lucide-react';
 import { NAV_GROUPS, ALL_NAV_MODULES, isPlainLeftClick, tabHref } from './navConfig';
+import { useLanguage } from '../../context/LanguageContext';
+import { LanguageToggle } from '../common/LanguageToggle';
 
 interface NavbarProps {
   activeTab: string;
@@ -8,8 +10,9 @@ interface NavbarProps {
   onOpenSearch: () => void;
 }
 
-/** 頂部列：品牌、目前所在頁、搜尋；桌面版的完整分頁導覽由 SideNav 提供 */
+/** 頂部列：品牌、目前所在頁、語言切換、搜尋；桌面版的完整分頁導覽由 SideNav 提供 */
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenSearch }) => {
+  const { t } = useLanguage();
   const current = ALL_NAV_MODULES.find((m) => m.id === activeTab);
   const [scrollPercent, setScrollPercent] = React.useState(0);
 
@@ -47,7 +50,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
               SANCTUARY CODEX
             </div>
             <div className="hidden sm:block text-[9px] text-d2-unique/80 font-mono tracking-widest uppercase">
-              暗黑II：獄火重生 全資料庫
+              {t('暗黑II：獄火重生 全資料庫', 'D2: Resurrected Database')}
             </div>
           </div>
         </a>
@@ -57,23 +60,31 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
             type="button"
             onClick={scrollToTop}
             className="hidden md:flex items-center gap-2 text-sm text-sanctuary-300 min-w-0 hover:text-d2-unique transition-colors cursor-pointer group"
-            title="點擊回到頂端"
+            title={t('點擊回到頂端', 'Scroll to top')}
           >
             <span className="text-sanctuary-600">/</span>
             {current.icon}
-            <span className="font-bold text-d2-unique group-hover:underline truncate">{current.label}</span>
-            <span className="hidden xl:inline text-xs text-sanctuary-500 truncate">{current.desc}</span>
+            <span className="font-bold text-d2-unique group-hover:underline truncate">
+              {t(current.label, current.labelEn)}
+            </span>
+            <span className="hidden xl:inline text-xs text-sanctuary-500 truncate">
+              {t(current.desc, current.descEn)}
+            </span>
           </button>
         )}
 
         <div className="flex items-center gap-2 shrink-0 ml-auto">
+          {/* 中／英雙語切換按鈕 */}
+          <LanguageToggle />
+
+          {/* 全域搜尋按鈕 */}
           <button
             onClick={onOpenSearch}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-sanctuary-300 hover:text-sanctuary-100 text-xs transition-colors shadow-inner"
-            title="按下 Q 或 / 鍵快速搜尋"
+            title={t('按下 Q 或 / 鍵快速搜尋', 'Press Q or / to search')}
           >
             <Search className="w-3.5 h-3.5 text-sanctuary-400" />
-            <span className="hidden sm:inline">搜尋資料庫</span>
+            <span className="hidden sm:inline">{t('搜尋資料庫', 'Search')}</span>
             <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-sanctuary-800 border border-sanctuary-700 rounded text-d2-unique font-bold">
               Q
             </kbd>
@@ -103,6 +114,7 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
   activeTab,
   setActiveTab,
 }) => {
+  const { t } = useLanguage();
   const [collapsed, setCollapsed] = React.useState<boolean>(readCollapsed);
   const toggle = () => {
     const next = !collapsed;
@@ -116,24 +128,32 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
         aria-label="全站分頁"
         className={`sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-y-auto no-scrollbar py-1 px-1`}
       >
-
         <button
           type="button"
           onClick={toggle}
-          aria-label={collapsed ? '展開側邊欄' : '收合側邊欄'}
-          title={collapsed ? '展開側邊欄' : '收合側邊欄'}
+          aria-label={collapsed ? t('展開側邊欄', 'Expand sidebar') : t('收合側邊欄', 'Collapse sidebar')}
+          title={collapsed ? t('展開側邊欄', 'Expand sidebar') : t('收合側邊欄', 'Collapse sidebar')}
           className={`mb-0.5 w-full flex items-center rounded-md h-6 text-[11px] text-sanctuary-400 hover:text-sanctuary-100 hover:bg-sanctuary-900 border border-transparent transition-colors ${collapsed ? 'justify-center' : 'gap-1.5 px-1.5'}`}
         >
-          {collapsed ? <ChevronsRight className="w-4 h-4" /> : (<><ChevronsLeft className="w-4 h-4" /><span>收合側邊欄</span></>)}
+          {collapsed ? (
+            <ChevronsRight className="w-4 h-4" />
+          ) : (
+            <>
+              <ChevronsLeft className="w-4 h-4" />
+              <span>{t('收合側邊欄', 'Collapse')}</span>
+            </>
+          )}
         </button>
         {NAV_GROUPS.map((group, gi) => (
           <div key={group.category} role="group" aria-label={group.category} className={gi === 0 ? '' : collapsed ? 'mt-1 pt-1 border-t border-sanctuary-800/70' : 'mt-1.5'}>
-            <div className={collapsed ? 'sr-only' : 'px-1.5 text-[10px] leading-4 font-mono font-bold tracking-wider text-sanctuary-400 uppercase'}>
-              {group.category}
+            <div className={collapsed ? 'sr-only' : 'px-1.5 text-[10px] leading-4 font-mono font-bold tracking-wider text-sanctuary-400 uppercase truncate'}>
+              {t(group.category, group.categoryEn)}
             </div>
             <div>
               {group.items.map((item) => {
                 const isActive = activeTab === item.id;
+                const label = t(item.label, item.labelEn);
+                const desc = t(item.desc, item.descEn);
                 return (
                   <a
                     key={item.id}
@@ -144,8 +164,8 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
                       setActiveTab(item.id);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
-                    title={collapsed ? `${item.label}：${item.desc}` : item.desc}
-                    aria-label={item.label}
+                    title={collapsed ? `${label}：${desc}` : desc}
+                    aria-label={label}
                     aria-current={isActive ? 'page' : undefined}
                     className={`w-full flex items-center rounded-md text-[13px] leading-5 text-left transition-colors border ${
                       collapsed ? 'justify-center h-7' : 'gap-1.5 px-1.5 py-[3px]'
@@ -156,14 +176,13 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
                     }`}
                   >
                     <span className="shrink-0">{item.icon}</span>
-                    {!collapsed && <span className="truncate">{item.label}</span>}
+                    {!collapsed && <span className="truncate">{label}</span>}
                   </a>
                 );
               })}
             </div>
           </div>
         ))}
-
       </nav>
     </aside>
   );

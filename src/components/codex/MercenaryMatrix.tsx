@@ -7,6 +7,7 @@ import {
   type MercGearItemRef,
 } from '../../data/mercenaryMatrix';
 import { applyMercenaryPresetToSimulator } from '../../utils/mercPresetBridge';
+import { useLanguage } from '../../context/LanguageContext';
 import {
   Search,
   Sparkles,
@@ -25,25 +26,27 @@ export interface MercenaryMatrixProps {
   onNavigateToSimulator?: (tier: MercTierBuild, classCode?: string) => void;
 }
 
-const CLASS_BADGES: { code: string; zh: string; color: string; border: string; bg: string }[] = [
-  { code: 'all', zh: '全部職業', color: 'text-sanctuary-200', border: 'border-sanctuary-600', bg: 'bg-sanctuary-800/80' },
-  { code: 'sor', zh: '魔法使', color: 'text-blue-400', border: 'border-blue-500/40', bg: 'bg-blue-950/40' },
-  { code: 'pal', zh: '聖騎士', color: 'text-amber-400', border: 'border-amber-500/40', bg: 'bg-amber-950/40' },
-  { code: 'ama', zh: '亞馬遜', color: 'text-orange-400', border: 'border-orange-500/40', bg: 'bg-orange-950/40' },
-  { code: 'nec', zh: '死靈法師', color: 'text-teal-400', border: 'border-teal-500/40', bg: 'bg-teal-950/40' },
-  { code: 'bar', zh: '野蠻人', color: 'text-red-400', border: 'border-red-500/40', bg: 'bg-red-950/40' },
-  { code: 'dru', zh: '德魯伊', color: 'text-emerald-400', border: 'border-emerald-500/40', bg: 'bg-emerald-950/40' },
-  { code: 'ass', zh: '刺客', color: 'text-purple-400', border: 'border-purple-500/40', bg: 'bg-purple-950/40' },
-  { code: 'war', zh: '術士', color: 'text-violet-400', border: 'border-violet-500/40', bg: 'bg-violet-950/40' },
+const CLASS_BADGES: { code: string; zh: string; en: string; color: string; border: string; bg: string }[] = [
+  { code: 'all', zh: '全部職業', en: 'All Classes', color: 'text-sanctuary-200', border: 'border-sanctuary-600', bg: 'bg-sanctuary-800/80' },
+  { code: 'sor', zh: '魔法使', en: 'Sorceress', color: 'text-blue-400', border: 'border-blue-500/40', bg: 'bg-blue-950/40' },
+  { code: 'pal', zh: '聖騎士', en: 'Paladin', color: 'text-amber-400', border: 'border-amber-500/40', bg: 'bg-amber-950/40' },
+  { code: 'ama', zh: '亞馬遜', en: 'Amazon', color: 'text-orange-400', border: 'border-orange-500/40', bg: 'bg-orange-950/40' },
+  { code: 'nec', zh: '死靈法師', en: 'Necromancer', color: 'text-teal-400', border: 'border-teal-500/40', bg: 'bg-teal-950/40' },
+  { code: 'bar', zh: '野蠻人', en: 'Barbarian', color: 'text-red-400', border: 'border-red-500/40', bg: 'bg-red-950/40' },
+  { code: 'dru', zh: '德魯伊', en: 'Druid', color: 'text-emerald-400', border: 'border-emerald-500/40', bg: 'bg-emerald-950/40' },
+  { code: 'ass', zh: '刺客', en: 'Assassin', color: 'text-purple-400', border: 'border-purple-500/40', bg: 'bg-purple-950/40' },
+  { code: 'war', zh: '術士', en: 'Warlock', color: 'text-violet-400', border: 'border-violet-500/40', bg: 'bg-violet-950/40' },
 ];
 
 const TIER_META: Record<
   MercTierKey,
-  { label: string; sub: string; badgeCls: string; borderCls: string; bgCls: string; icon: React.ReactNode }
+  { label: string; labelEn: string; sub: string; subEn: string; badgeCls: string; borderCls: string; bgCls: string; icon: React.ReactNode }
 > = {
   start: {
     label: '全裝成形',
+    labelEn: 'Starter',
     sub: '造價親民 · 迅速通關',
+    subEn: 'Budget · Quick Progression',
     badgeCls: 'bg-amber-500/10 text-amber-300 border-amber-500/30',
     borderCls: 'border-amber-500/30 hover:border-amber-400/50',
     bgCls: 'from-amber-950/20 via-sanctuary-900/60 to-sanctuary-950',
@@ -51,7 +54,9 @@ const TIER_META: Record<
   },
   mf: {
     label: '打寶專精',
+    labelEn: 'Magic Find',
     sub: '極限尋寶 · 穩健生存',
+    subEn: 'Max MF · Solid Survival',
     badgeCls: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30',
     borderCls: 'border-cyan-500/30 hover:border-cyan-400/50',
     bgCls: 'from-cyan-950/20 via-sanctuary-900/60 to-sanctuary-950',
@@ -59,7 +64,9 @@ const TIER_META: Record<
   },
   bis: {
     label: '頂規畢業',
+    labelEn: 'Best in Slot',
     sub: '破免神裝 · 終極輸出',
+    subEn: 'Sunder Piercing · Endgame DPS',
     badgeCls: 'bg-purple-500/10 text-purple-300 border-purple-500/30',
     borderCls: 'border-purple-500/30 hover:border-purple-400/50',
     bgCls: 'from-purple-950/20 via-sanctuary-900/60 to-sanctuary-950',
@@ -71,6 +78,7 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
   onNavigateItem,
   onNavigateToSimulator,
 }) => {
+  const { t, isEn } = useLanguage();
   const [selectedClass, setSelectedClass] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [tierView, setTierView] = useState<'all' | MercTierKey>('all');
@@ -134,14 +142,18 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
   };
 
   // 渲染單件裝備列
-  const renderGearRow = (label: string, item: MercGearItemRef | undefined) => {
+  const renderGearRow = (labelZh: string, labelEn: string, item: MercGearItemRef | undefined) => {
     if (!item) return null;
+    const itemName = isEn ? item.nameEn : item.name;
+    const itemSub = isEn ? item.name : item.nameEn;
+    const base = isEn && item.baseNameEn ? item.baseNameEn : item.baseName;
+
     return (
       <div className="flex items-start justify-between gap-2 py-1.5 border-b border-sanctuary-800/50 last:border-0 group">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
             <span className="text-[11px] font-medium text-sanctuary-400 shrink-0">
-              {label}：
+              {t(labelZh, labelEn)}：
             </span>
             <button
               type="button"
@@ -149,17 +161,18 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
               className="text-xs font-semibold text-d2-unique hover:text-amber-300 hover:underline transition-colors cursor-pointer text-left inline-flex items-center gap-1"
               title={`在百科中查看【${item.name}】（${item.nameEn}）詳細數值`}
             >
-              <span>{item.name}</span>
+              <span>{itemName}</span>
+              {itemSub && <span className="text-[11px] text-sanctuary-400 font-mono italic">({itemSub})</span>}
               <ExternalLink className="w-2.5 h-2.5 opacity-60 group-hover:opacity-100" />
             </button>
             {item.ethereal && (
-              <span className="text-[10px] px-1 py-0.2 rounded bg-cyan-950/70 border border-cyan-500/40 text-cyan-300 font-mono" title="無形裝備（傭兵不消耗耐久，數值高1.5倍）">
-                無形
+              <span className="text-[10px] px-1 py-0.2 rounded bg-cyan-950/70 border border-cyan-500/40 text-cyan-300 font-mono" title={t('無形裝備（傭兵不消耗耐久，數值高1.5倍）', 'Ethereal Item')}>
+                {t('無形', 'Eth')}
               </span>
             )}
-            {item.baseName && (
-              <span className="text-[10px] text-sanctuary-400 font-mono" title="推薦搭配底材">
-                ({item.baseName})
+            {base && (
+              <span className="text-[10px] text-sanctuary-400 font-mono" title={t('推薦搭配底材', 'Recommended Base')}>
+                ({base})
               </span>
             )}
           </div>
@@ -194,10 +207,10 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
               <div>
                 <div className="flex items-center gap-1.5">
                   <span className={`text-xs font-bold px-1.5 py-0.5 rounded border ${meta.badgeCls}`}>
-                    {meta.label}
+                    {t(meta.label, meta.labelEn)}
                   </span>
                   <span className="text-[11px] text-sanctuary-400 font-diablo">
-                    {meta.sub}
+                    {t(meta.sub, meta.subEn)}
                   </span>
                 </div>
               </div>
@@ -219,17 +232,17 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
 
           {/* 裝備三件套清單 */}
           <div className="space-y-1 mb-3 bg-sanctuary-950/40 rounded-lg p-2 border border-sanctuary-800/40">
-            {renderGearRow('武器', tier.weapon)}
-            {tier.weapon2 && renderGearRow('副手武器', tier.weapon2)}
-            {renderGearRow('頭盔', tier.helm)}
-            {renderGearRow('護甲', tier.armor)}
+            {renderGearRow('武器', 'Weapon', tier.weapon)}
+            {tier.weapon2 && renderGearRow('副手武器', 'Offhand', tier.weapon2)}
+            {renderGearRow('頭盔', 'Helm', tier.helm)}
+            {renderGearRow('護甲', 'Armor', tier.armor)}
           </div>
 
           {/* 核心光環標籤群 */}
           <div className="mb-2.5">
             <div className="text-[10px] text-sanctuary-400 mb-1 flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-d2-unique" />
-              <span>核心賦予光環：</span>
+              <span>{t('核心賦予光環：', 'Key Granted Auras:')}</span>
             </div>
             <div className="flex flex-wrap gap-1">
               {tier.keyAuras.map((aura, idx) => (
@@ -245,7 +258,7 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
 
           {/* 流派協同效應 */}
           <div className="p-2 rounded bg-sanctuary-950/60 border border-sanctuary-800/70 mb-3 text-[11px] text-sanctuary-300 leading-relaxed">
-            <span className="text-amber-400 font-medium">戰術協同：</span>
+            <span className="text-amber-400 font-medium">{t('戰術協同：', 'Combat Synergy: ')}</span>
             {tier.synergyNote}
           </div>
         </div>
@@ -264,12 +277,12 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
             {isCopied ? (
               <>
                 <CheckCircle2 className="w-3.5 h-3.5 text-white animate-bounce" />
-                <span>已成功帶入模擬器！</span>
+                <span>{t('已成功帶入模擬器！', 'Loaded into Simulator!')}</span>
               </>
             ) : (
               <>
                 <Zap className="w-3.5 h-3.5" />
-                <span>⚡ 一鍵帶入配裝模擬器</span>
+                <span>{t('⚡ 一鍵帶入配裝模擬器', '⚡ Load Into Simulator')}</span>
               </>
             )}
           </button>
@@ -288,7 +301,9 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
           </div>
           <div>
             <p className="text-xs font-bold">{toastMessage}</p>
-            <p className="text-[10px] text-sanctuary-400 mt-0.5">傭兵裝備已就緒，可隨時在「配裝模擬器」查看光環與數值！</p>
+            <p className="text-[10px] text-sanctuary-400 mt-0.5">
+              {t('傭兵裝備已就緒，可隨時在「配裝模擬器」查看光環與數值！', 'Mercenary gear loaded! Check auras & stats in Build Planner.')}
+            </p>
           </div>
         </div>
       )}
@@ -300,10 +315,13 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-sanctuary-300 flex items-center gap-1.5">
               <Filter className="w-3.5 h-3.5 text-d2-unique" />
-              依主角職業篩選搭配：
+              {t('依主角職業篩選搭配：', 'Filter by Hero Class:')}
             </span>
             <span className="text-[11px] text-sanctuary-400">
-              顯示 {filteredData.length} / {MERCENARY_MATRIX_DATA.length} 款流派矩陣
+              {t(
+                `顯示 ${filteredData.length} / ${MERCENARY_MATRIX_DATA.length} 款流派矩陣`,
+                `Showing ${filteredData.length} / ${MERCENARY_MATRIX_DATA.length} Builds`
+              )}
             </span>
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -325,7 +343,7 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
                       : 'bg-sanctuary-950/60 text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-800 border border-sanctuary-800'
                   }`}
                 >
-                  <span>{b.zh}</span>
+                  <span>{t(b.zh, b.en)}</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                       isSelected ? 'bg-sanctuary-900 text-amber-300' : 'bg-sanctuary-900/60 text-sanctuary-400'
@@ -348,7 +366,10 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="搜尋流派、武器 (如靈光/死神喪鐘)、光環、傭兵型態…"
+              placeholder={t(
+                '搜尋流派、武器 (如靈光/死神喪鐘)、光環、傭兵型態…',
+                'Search builds, weapons (e.g. Insight), auras, merc...'
+              )}
               className="w-full pl-9 pr-8 py-1.5 rounded-xl bg-sanctuary-950/90 border border-sanctuary-700/80 text-xs text-sanctuary-100 placeholder-sanctuary-400 focus:outline-none focus:border-amber-500/80 focus:ring-1 focus:ring-amber-500/40 transition-all"
             />
             {searchQuery && (
@@ -373,7 +394,7 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
                   : 'text-sanctuary-400 hover:text-sanctuary-200'
               }`}
             >
-              📊 完整矩陣對照
+              {t('📊 完整矩陣對照', '📊 All Matrix')}
             </button>
             <button
               type="button"
@@ -384,7 +405,7 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
                   : 'text-sanctuary-400 hover:text-sanctuary-200'
               }`}
             >
-              ⚡ 全裝成形
+              {t('⚡ 全裝成形', '⚡ Starter')}
             </button>
             <button
               type="button"
@@ -395,7 +416,7 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
                   : 'text-sanctuary-400 hover:text-sanctuary-200'
               }`}
             >
-              💎 打寶專精
+              {t('💎 打寶專精', '💎 Magic Find')}
             </button>
             <button
               type="button"
@@ -406,7 +427,7 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
                   : 'text-sanctuary-400 hover:text-sanctuary-200'
               }`}
             >
-              🏆 頂規畢業
+              {t('🏆 頂規畢業', '🏆 Best in Slot')}
             </button>
           </div>
         </div>
@@ -415,8 +436,12 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
       {/* 矩陣清單本體 */}
       {filteredData.length === 0 ? (
         <div className="p-12 text-center rounded-2xl bg-sanctuary-900/50 border border-sanctuary-800 text-sanctuary-400 space-y-2">
-          <p className="text-base font-diablo text-sanctuary-300">找不到符合條件的流派搭配</p>
-          <p className="text-xs text-sanctuary-400">請嘗試更換搜尋關鍵字，或切換至其他職業分類標籤。</p>
+          <p className="text-base font-diablo text-sanctuary-300">
+            {t('找不到符合條件的流派搭配', 'No matching builds found')}
+          </p>
+          <p className="text-xs text-sanctuary-400">
+            {t('請嘗試更換搜尋關鍵字，或切換至其他職業分類標籤。', 'Try another search term or switch hero classes.')}
+          </p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -435,7 +460,7 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
                       <span
                         className={`text-xs px-2 py-0.5 rounded-md font-bold border ${classBadge?.bg} ${classBadge?.color} ${classBadge?.border}`}
                       >
-                        {entry.classZh}
+                        {t(entry.classZh, entry.classEn)}
                       </span>
                       <h3 className="text-lg font-bold font-diablo text-sanctuary-100">
                         {entry.buildName}
@@ -447,11 +472,15 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
                     {/* 痛點與最佳解 */}
                     <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
                       <div className="flex items-start gap-1.5 text-sanctuary-300 bg-sanctuary-950/70 p-2 rounded-lg border border-sanctuary-800/80">
-                        <span className="text-rose-400 font-bold shrink-0">◆ 流派痛點：</span>
+                        <span className="text-rose-400 font-bold shrink-0">
+                          {t('◆ 流派痛點：', '◆ Core Need: ')}
+                        </span>
                         <span className="leading-relaxed">{entry.coreProblem}</span>
                       </div>
                       <div className="flex items-start gap-1.5 text-sanctuary-300 bg-sanctuary-950/70 p-2 rounded-lg border border-sanctuary-800/80">
-                        <span className="text-d2-unique font-bold shrink-0">★ 推薦傭兵：</span>
+                        <span className="text-d2-unique font-bold shrink-0">
+                          {t('★ 推薦傭兵：', '★ Best Merc: ')}
+                        </span>
                         <span className="leading-relaxed">{entry.bestMercSummary}</span>
                       </div>
                     </div>

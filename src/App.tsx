@@ -5,6 +5,7 @@ import { ALL_NAV_MODULES } from './components/layout/navConfig';
 import { Footer } from './components/layout/Footer';
 import { BackToTop } from './components/common/BackToTop';
 import { CLASS_ZH } from './engine/catalog';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 
 import { HeroSection } from './components/portal/HeroSection';
 import { CategoryGrid } from './components/portal/CategoryGrid';
@@ -50,9 +51,10 @@ const tabFromHash = (): string => {
 interface NavState { tab: string; query: string; node?: string; runeNumber?: number; cls?: string }
 const NAV_KEY = 'd2nav';
 const sameNav = (a: NavState, b: NavState) => a.tab === b.tab && a.query === b.query && a.node === b.node && a.runeNumber === b.runeNumber && a.cls === b.cls;
-const TITLE_BASE = '聖休亞瑞典藏中樞 | D2R Sanctuary Codex';
 
-export const App: React.FC = () => {
+
+const AppContent: React.FC = () => {
+  const { t, isEn } = useLanguage();
   const [activeTab, setActiveTab] = useState<string>(tabFromHash);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [searchLoaded, setSearchLoaded] = useState<boolean>(false);
@@ -92,9 +94,11 @@ export const App: React.FC = () => {
 
   // 分頁標題：瀏覽器的歷史紀錄清單、分頁列才看得出是哪一頁
   useEffect(() => {
-    const label = ALL_NAV_MODULES.find((m) => m.id === activeTab)?.label;
-    document.title = activeTab === 'overview' || !label ? TITLE_BASE : `${label} | ${TITLE_BASE}`;
-  }, [activeTab]);
+    const mod = ALL_NAV_MODULES.find((m) => m.id === activeTab);
+    const label = mod ? (isEn ? mod.labelEn : mod.label) : '';
+    const base = isEn ? 'Sanctuary Codex | D2R Database' : '聖休亞瑞典藏中樞 | D2R Sanctuary Codex';
+    document.title = activeTab === 'overview' || !label ? base : `${label} | ${base}`;
+  }, [activeTab, isEn]);
 
   // Global hotkey 'Q' or '/' to open search modal
   useEffect(() => {
@@ -288,7 +292,7 @@ export const App: React.FC = () => {
                       : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-900'
                   }`}
                 >
-                  🎮 1:1 全息配裝模擬器
+                  {t('🎮 1:1 全息配裝模擬器', '🎮 1:1 Armory Simulator')}
                 </button>
                 <button
                   onClick={() => setPlannerSubMode('notes')}
@@ -298,7 +302,7 @@ export const App: React.FC = () => {
                       : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-900'
                   }`}
                 >
-                  📋 傳統流派筆記清單
+                  {t('📋 傳統流派筆記清單', '📋 Meta Build Notes')}
                 </button>
               </div>
             </div>
@@ -348,5 +352,11 @@ export const App: React.FC = () => {
     </div>
   );
 };
+
+export const App: React.FC = () => (
+  <LanguageProvider>
+    <AppContent />
+  </LanguageProvider>
+);
 
 export default App;

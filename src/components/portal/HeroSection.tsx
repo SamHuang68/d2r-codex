@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Play, Sparkles, ArrowRight, X } from 'lucide-react';
 import portalSummary from '../../data/codex/portalSummary.json';
+import { useLanguage } from '../../context/LanguageContext';
 
 // 與首頁分類磚共用預先產生的小摘要，不在首頁載入百科大資料。
 const runewordCount = portalSummary.gearTiles.find((tile) => tile.id === 'runewords')!.count;
@@ -11,6 +12,7 @@ interface HeroSectionProps {
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
+  const { t } = useLanguage();
   const [showVideoModal, setShowVideoModal] = useState(false);
 
   return (
@@ -26,20 +28,25 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
         {/* Top Announcement Pill */}
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sanctuary-900 border border-d2-unique/30 text-xs text-d2-unique mb-4 shadow-glow-gold/40">
           <Sparkles className="w-3.5 h-3.5" />
-          <span className="font-semibold tracking-wide">DLC《術士軍臨》REIGN OF THE WARLOCK 全新收錄</span>
+          <span className="font-semibold tracking-wide">
+            {t('DLC《術士軍臨》REIGN OF THE WARLOCK 全新收錄', 'DLC REIGN OF THE WARLOCK Included')}
+          </span>
           <span className="text-sanctuary-400 font-mono">v2.6+</span>
         </div>
 
         {/* Hero Title */}
         <h1 className="font-diablo text-3xl sm:text-5xl lg:text-5xl font-extrabold tracking-wider text-sanctuary-100 max-w-4xl mx-auto leading-tight">
-          聖休亞瑞的命運，
+          {t('聖休亞瑞的命運，', 'The Fate of Sanctuary, ')}
           <span className="bg-gradient-to-r from-d2-unique via-amber-200 to-d2-fire bg-clip-text text-transparent drop-shadow-sm">
-            由你執掌
+            {t('由你執掌', 'In Your Hands')}
           </span>
         </h1>
 
         <p className="mt-4 text-sm sm:text-base text-sanctuary-300 max-w-2xl mx-auto font-sans leading-relaxed">
-          歷久不衰的動作角色扮演傳奇。打造專屬於你的極速查裝工具、符文之語配裝矩陣、FCR/FHR 幀數斷點計算機與聖杯打寶挑戰追蹤器。
+          {t(
+            '歷久不衰的動作角色扮演傳奇。打造專屬於你的極速查裝工具、符文之語配裝矩陣、FCR/FHR 幀數斷點計算機與聖杯打寶挑戰追蹤器。',
+            'The timeless ARPG legend. Featuring build armory simulator, runeword matrix, breakpoint calculators, and Holy Grail drop tracker.'
+          )}
         </p>
 
         {/* Action CTAs */}
@@ -49,7 +56,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
             className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-d2-gold to-amber-500 hover:from-amber-400 hover:to-d2-gold text-sanctuary-950 font-bold text-sm tracking-wide shadow-glow-gold transition-all duration-200 hover:scale-[1.02]"
           >
             <Sparkles className="w-4 h-4 text-sanctuary-950" />
-            <span>職業技能樹模擬器</span>
+            <span>{t('職業技能樹模擬器', 'Skill Trees Simulator')}</span>
             <ArrowRight className="w-4 h-4 ml-1" />
           </button>
 
@@ -57,21 +64,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
             onClick={() => onNavigateTab('runewords')}
             className="flex items-center gap-2 px-5 py-3.5 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-d2-unique font-medium text-sm transition-all duration-200 hover:scale-[1.02]"
           >
-            <span>符文之語（{runewordCount} 組）</span>
+            <span>{t(`符文之語（${runewordCount} 組）`, `Runewords (${runewordCount})`)}</span>
           </button>
 
           <button
             onClick={() => onNavigateTab('bases')}
             className="flex items-center gap-2 px-5 py-3.5 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-d2-socket font-medium text-sm transition-all duration-200 hover:scale-[1.02]"
           >
-            <span>頂級底材寶典</span>
+            <span>{t('頂級底材寶典', 'Base Items Guide')}</span>
           </button>
 
           <button
             onClick={() => onNavigateTab('quests')}
             className="flex items-center gap-2 px-5 py-3.5 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-sanctuary-200 font-medium text-sm transition-all duration-200 hover:scale-[1.02]"
           >
-            <span>全章節任務</span>
+            <span>{t('全章節任務', 'All Quests & Events')}</span>
           </button>
 
           <button
@@ -79,33 +86,51 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
             className="flex items-center gap-2 px-4 py-3.5 rounded-xl bg-sanctuary-950 hover:bg-sanctuary-900 border border-sanctuary-800 text-sanctuary-400 hover:text-white text-sm transition-all duration-200"
           >
             <Play className="w-4 h-4 text-d2-fire fill-d2-fire" />
-            <span>宣傳影片</span>
+            <span>{t('宣傳影片', 'Official Trailer')}</span>
           </button>
         </div>
 
         {/* Feature Stat Matrix */}
         <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto pt-6 border-t border-sanctuary-800/60">
           <div className="p-4 rounded-xl bg-sanctuary-900/50 border border-sanctuary-800">
-            <div className="font-diablo text-2xl font-bold text-d2-gold">{skillTreeCount} 系技能樹</div>
-            <div className="text-xs text-sanctuary-400 mt-1">{skillClassCount} 職業技能資料・110 點配點</div>
+            <div className="font-diablo text-2xl font-bold text-d2-gold">
+              {t(`${skillTreeCount} 系技能樹`, `${skillTreeCount} Skill Trees`)}
+            </div>
+            <div className="text-xs text-sanctuary-400 mt-1">
+              {t(`${skillClassCount} 職業技能資料・110 點配點`, `${skillClassCount} Classes · 110 Points Budget`)}
+            </div>
           </div>
           <div className="p-4 rounded-xl bg-sanctuary-900/50 border border-sanctuary-800">
-            <div className="font-diablo text-2xl font-bold text-d2-unique">{runewordCount} 組</div>
-            <div className="text-xs text-sanctuary-400 mt-1">已收錄符文之語・與寶典同步</div>
+            <div className="font-diablo text-2xl font-bold text-d2-unique">
+              {t(`${runewordCount} 組`, `${runewordCount} Runewords`)}
+            </div>
+            <div className="text-xs text-sanctuary-400 mt-1">
+              {t('已收錄符文之語・與寶典同步', 'Complete Runewords Database')}
+            </div>
           </div>
           <div className="p-4 rounded-xl bg-sanctuary-900/50 border border-sanctuary-800">
-            <div className="font-diablo text-2xl font-bold text-d2-socket">27 任務</div>
-            <div className="text-xs text-sanctuary-400 mt-1">永久+12技能/+15屬性/+30全抗</div>
+            <div className="font-diablo text-2xl font-bold text-d2-socket">
+              {t('27 任務', '27 Quests')}
+            </div>
+            <div className="text-xs text-sanctuary-400 mt-1">
+              {t('永久+12技能/+15屬性/+30全抗', 'Permanent +12 Skills / +15 Stats / +30 Res')}
+            </div>
           </div>
           <div className="p-4 rounded-xl bg-sanctuary-900/50 border border-sanctuary-800">
-            <div className="font-diablo text-2xl font-bold text-d2-fire">4 大事件</div>
-            <div className="text-xs text-sanctuary-400 mt-1">紅門六王·地表大菠蘿·牛關·TZ</div>
+            <div className="font-diablo text-2xl font-bold text-d2-fire">
+              {t('4 大事件', '4 Endgame Events')}
+            </div>
+            <div className="text-xs text-sanctuary-400 mt-1">
+              {t('紅門六王·地表大菠蘿·牛關·TZ', 'Uber Tristram · D-Clone · Cow · TZ')}
+            </div>
           </div>
         </div>
 
         {/* Platforms Badges */}
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs text-sanctuary-400">
-          <span className="text-sanctuary-500 uppercase tracking-widest font-mono text-[11px]">支援平台:</span>
+          <span className="text-sanctuary-500 uppercase tracking-widest font-mono text-[11px]">
+            {t('支援平台:', 'Platforms:')}
+          </span>
           <span className="px-2.5 py-1 rounded bg-sanctuary-900/80 border border-sanctuary-800">PC (Battle.net & Steam)</span>
           <span className="px-2.5 py-1 rounded bg-sanctuary-900/80 border border-sanctuary-800">PlayStation 5 | PS4</span>
           <span className="px-2.5 py-1 rounded bg-sanctuary-900/80 border border-sanctuary-800">Xbox Series X|S | Xbox One</span>
@@ -118,7 +143,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
           <div className="relative w-full max-w-4xl bg-sanctuary-950 border border-sanctuary-700 rounded-2xl overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between p-4 border-b border-sanctuary-800 bg-sanctuary-900">
-              <span className="font-diablo font-bold text-d2-unique text-base">《暗黑破壞神 II：獄火重生》實機展示影片</span>
+              <span className="font-diablo font-bold text-d2-unique text-base">
+                {t('《暗黑破壞神 II：獄火重生》實機展示影片', 'Diablo II: Resurrected Official Trailer')}
+              </span>
               <button
                 onClick={() => setShowVideoModal(false)}
                 className="p-1.5 rounded-lg text-sanctuary-400 hover:text-white hover:bg-sanctuary-800"

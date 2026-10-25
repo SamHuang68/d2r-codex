@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 
 import { NAV_GROUPS, isPlainLeftClick, tabHref } from './navConfig';
+import { useLanguage } from '../../context/LanguageContext';
+import { LanguageToggle } from '../common/LanguageToggle';
 
 interface MobileNavProps {
   activeTab: string;
@@ -21,15 +23,16 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   setActiveTab,
   onOpenSearch,
 }) => {
+  const { t } = useLanguage();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // 底部快捷直達鍵 (最常用的 5 大模組)
   const quickTabs = [
-    { id: 'overview', label: '主頁', icon: <Flame className="w-5 h-5" /> },
-    { id: 'characters', label: '英雄', icon: <Users className="w-5 h-5 text-d2-fire" /> },
-    { id: 'skills', label: '技能樹', icon: <Sparkles className="w-5 h-5 text-d2-gold" /> },
-    { id: 'runewords', label: '符文語', icon: <Sparkles className="w-5 h-5 text-d2-unique" /> },
-    { id: 'items', label: '裝備', icon: <Sword className="w-5 h-5 text-d2-unique" /> },
+    { id: 'overview', label: '主頁', labelEn: 'Home', icon: <Flame className="w-5 h-5" /> },
+    { id: 'characters', label: '英雄', labelEn: 'Heroes', icon: <Users className="w-5 h-5 text-d2-fire" /> },
+    { id: 'skills', label: '技能樹', labelEn: 'Skills', icon: <Sparkles className="w-5 h-5 text-d2-gold" /> },
+    { id: 'runewords', label: '符文語', labelEn: 'Runewords', icon: <Sparkles className="w-5 h-5 text-d2-unique" /> },
+    { id: 'items', label: '裝備', labelEn: 'Items', icon: <Sword className="w-5 h-5 text-d2-unique" /> },
   ];
 
   // 全站 21 大功能完整分類模組（與桌面側邊欄共用同一份設定）
@@ -60,7 +63,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
               }`}
             >
               {tab.icon}
-              <span className="text-[10px] mt-0.5">{tab.label}</span>
+              <span className="text-[10px] mt-0.5">{t(tab.label, tab.labelEn)}</span>
             </a>
           );
         })}
@@ -73,7 +76,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
           }`}
         >
           {isDrawerOpen ? <X className="w-5 h-5 text-d2-gold" /> : <Menu className="w-5 h-5" />}
-          <span className="text-[10px] mt-0.5">全站功能</span>
+          <span className="text-[10px] mt-0.5">{t('全站功能', 'Menu')}</span>
         </button>
 
         {/* 全域快速搜尋按鈕 */}
@@ -84,7 +87,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
           <div className="w-6 h-6 rounded-full bg-d2-unique/20 flex items-center justify-center border border-d2-unique/40 shadow-glow-gold/20">
             <span className="text-[10px] font-bold font-mono">Q</span>
           </div>
-          <span className="text-[10px] mt-0.5 font-bold">搜尋</span>
+          <span className="text-[10px] mt-0.5 font-bold">{t('搜尋', 'Search')}</span>
         </button>
       </div>
 
@@ -99,15 +102,20 @@ export const MobileNav: React.FC<MobileNavProps> = ({
           <div className="bg-sanctuary-950 border-t-2 border-d2-gold/50 rounded-t-3xl max-h-[80vh] overflow-y-auto p-5 pb-24 shadow-2xl space-y-6">
             <div className="flex items-center justify-between border-b border-sanctuary-800 pb-3">
               <div>
-                <div className="font-diablo text-lg font-bold text-d2-gold">SANCTUARY CODEX 全站導航</div>
-                <div className="text-[10px] text-sanctuary-400 font-mono">暗黑破壞神 II：獄火重生 21 大核心寶典</div>
+                <div className="font-diablo text-lg font-bold text-d2-gold">SANCTUARY CODEX</div>
+                <div className="text-[10px] text-sanctuary-400 font-mono">
+                  {t('暗黑破壞神 II：獄火重生 21 大核心寶典', 'Diablo II: Resurrected 21 Core Compendiums')}
+                </div>
               </div>
-              <button
-                onClick={() => setIsDrawerOpen(false)}
-                className="w-8 h-8 rounded-full bg-sanctuary-900 border border-sanctuary-750 flex items-center justify-center text-sanctuary-400 hover:text-white"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2">
+                <LanguageToggle />
+                <button
+                  onClick={() => setIsDrawerOpen(false)}
+                  className="w-8 h-8 rounded-full bg-sanctuary-900 border border-sanctuary-750 flex items-center justify-center text-sanctuary-400 hover:text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
             {/* 模組分類網格 */}
@@ -115,11 +123,13 @@ export const MobileNav: React.FC<MobileNavProps> = ({
               {allModules.map((cat, cIdx) => (
                 <div key={cIdx} className="space-y-2">
                   <div className="text-xs font-mono font-bold text-sanctuary-400 border-l-2 border-d2-gold pl-2">
-                    {cat.category}
+                    {t(cat.category, cat.categoryEn)}
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {cat.items.map((item) => {
                       const isCurrent = activeTab === item.id;
+                      const label = t(item.label, item.labelEn);
+                      const desc = t(item.desc, item.descEn);
                       return (
                         <a
                           key={item.id}
@@ -137,10 +147,10 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                           </div>
                           <div className="min-w-0">
                             <div className="text-sm font-diablo font-bold truncate">
-                              {item.label}
+                              {label}
                             </div>
                             <div className="text-[11px] text-sanctuary-400 truncate">
-                              {item.desc}
+                              {desc}
                             </div>
                           </div>
                         </a>
