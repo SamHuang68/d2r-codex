@@ -6,6 +6,7 @@ import {
   CLASS_CODE_ZH, GAME_SKILLS, damageText, effectiveLevel, manaCost, skillByName, skillDamage, skillLevelsFrom, synergySources, synergyTargets, treesOf,
   targetDamageText, type DamageOptions, type GameSkill, type SkillBonuses,
 } from '../../../engine/skills';
+import { ENGINE_CLASS_BY_CODE } from '../../../engine/slots';
 
 /** 技能樹頁：資料全部來自遊戲技能表（樹名、格位、前置、說明、傷害與協同公式）。 */
 export interface SkillTreeV2Props {
@@ -47,9 +48,9 @@ const TREE_NAME_EN: Record<string, string> = {
   '冰凍魔法': 'Cold Spells', '閃電魔法': 'Lightning Spells', '火焰魔法': 'Fire Spells',
   '詛咒': 'Curses', '毒素與白骨技能': 'Poison & Bone', '召喚技能': 'Summoning Skills',
   '戰鬥技能': 'Combat Skills', '攻擊靈氣': 'Offensive Auras', '防禦靈氣': 'Defensive Auras',
-  '戰吼': 'Warcries', '戰鬥支配': 'Combat Masteries',
+  '戰吼': 'Warcries', '戰鬥專精': 'Combat Masteries',
   '元素技能': 'Elemental', '變形技能': 'Shape Shifting',
-  '武學藝術': 'Martial Arts', '暗影修煉': 'Shadow Disciplines', '陷阱': 'Traps'
+  '武學技藝': 'Martial Arts', '暗影修煉': 'Shadow Disciplines', '陷阱': 'Traps'
 };
 export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skillPoints, onUpdateSkillPoints, activeSkillId, onSetActiveSkillId, bonuses, damageOpts, ownerStats, budget, used }) => {
   const { isEn } = useLanguage();
@@ -270,7 +271,7 @@ export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skil
                 )}
                 {targets.length > 0 && <div className="d2-sub">本技能同時為 {targets.map((x) => x.name ?? x.nameEn).join('、')} 增傷。</div>}
               </div>
-              <div className="d2-sub" style={{ color: remainingPts < 0 ? 'var(--bad)' : undefined }}>已投入 {totalInvested}／可用 {budget} 點（等級−1＋任務）{remainingPts < 0 ? `，超出 ${-remainingPts} 點（一鍵點滿協同不受預算限制）` : `，剩餘 ${remainingPts} 點`}。{CLASS_CODE_ZH[classCode]}。</div>
+              <div className="d2-sub" style={{ color: remainingPts < 0 ? 'var(--bad)' : undefined }}>已投入 {totalInvested}／可用 {budget} 點（等級−1＋任務）{remainingPts < 0 ? `，超出 ${-remainingPts} 點（一鍵點滿協同不受預算限制）` : `，剩餘 ${remainingPts} 點`}。{isEn ? (ENGINE_CLASS_BY_CODE[classCode] ?? classCode) : (CLASS_CODE_ZH[classCode] ?? classCode)}。</div>
             </>
           ) : (
             <div className="d2-sub text-center py-10">{isEn ? "Select a skill on the left" : "請在左側點選技能"}</div>

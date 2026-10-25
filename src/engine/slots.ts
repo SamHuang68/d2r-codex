@@ -34,3 +34,25 @@ export function slotOfBase(b: BaseItem): SlotKind | undefined {
   if (a.includes('weap')) return 'weapon';
   return undefined;
 }
+
+export const CLASS_ZH_TO_EN: Record<string, string> = {
+  '亞馬遜': 'Amazon',
+  '魔法使': 'Sorceress',
+  '死靈法師': 'Necromancer',
+  '聖騎士': 'Paladin',
+  '野蠻人': 'Barbarian',
+  '德魯伊': 'Druid',
+  '刺客': 'Assassin',
+  '術士': 'Warlock',
+};
+
+export const CLASS_EN_TO_ZH: Record<string, string> = {
+  Amazon: '亞馬遜',
+  Sorceress: '魔法使',
+  Necromancer: '死靈法師',
+  Paladin: '聖騎士',
+  Barbarian: '野蠻人',
+  Druid: '德魯伊',
+  Assassin: '刺客',
+  Warlock: '術士',
+};

@@ -7,6 +7,7 @@ import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
 import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, crumbsOf, useDirectory } from '../common/TreeIndex';
 import type { SetItemCollection, UniqueItemData, GearSlot } from '../../types';
+import { CLASS_ZH_TO_EN } from '../../engine/slots';
 import { TIER_LABEL, DEFAULT_TIER, TreeNode, buildTree, recount, findNode, leavesOf, inNode, relPath } from '../../utils/equipTaxonomy';
 import { ITEM_TREE_DEFS, CHARM_LABEL, U_ENTRIES, S_ENTRIES, UEntry, SEntry } from '../../utils/itemIndex';
 import { CrossPropertyFilterBar } from './CrossPropertyFilterBar';
@@ -234,17 +235,14 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   // 最上層只有「暗金／套裝」兩顆磚太空曠，直接展開成第二層（品階、飾品、職業套裝、通用套裝）
   const tileNodes = node.id === 'all' ? tree.flatMap((t) => t.children ?? []) : node.children ?? [];
   const tiles: CategoryTile[] = tileNodes.filter((c) => c.count > 0).map((c) => ({
-    id: c.id,
-    label: c.label,
-    sub: c.en,
-    count: c.count,
+    id: c.id, label: c.label, labelEn: c.en, sub: c.en, subEn: c.en, count: c.count,
     tone: c.id === 's' || c.id.startsWith('s/') ? 'set' : 'unique',
     icon: repIcon(c),
   }));
 
-  const labelPath = (leafId: string) => relPath(tree, leafId, node.id);
+  const labelPath = (leafId: string) => relPath(tree, leafId, node.id, isEn);
 
-  const crumbs = crumbsOf('全部裝備', tree, sel);
+  const crumbs = crumbsOf(isEn ? 'All Equipment' : '全部裝備', tree, sel, isEn);
   const go = (id: string) => setSel(id);
 
   const flashCls = (id: string) => (dir.flash === id ? 'ring-2 ring-d2-unique rounded-xl transition-shadow' : '');
@@ -289,7 +287,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         key={item.id}
         icon={<ItemIcon name={item.name} nameEn={item.nameEn} baseItem={item.baseItem} slot={item.slot} rarity="unique" size="sm" imageUrl={item.imageUrl} showBorder={false} />}
         title={item.name}
-        sub={`Lv${item.requiredLevel} · ${item.baseItem}${item.classOnly ? ` · ${item.classOnly}` : ''}`}
+        sub={`Lv${item.requiredLevel} · ${isEn && item.baseItemEn ? item.baseItemEn : item.baseItem}${item.classOnly ? (isEn ? ` · ${CLASS_ZH_TO_EN[item.classOnly] || item.classOnly}` : ` · ${item.classOnly}`) : ''}`}
         hint={`${item.name}（${item.nameEn}）｜${item.baseItem}`}
         onClick={() => dir.jump(`item-${item.id}`, e.leaf, go)}
       />
@@ -304,7 +302,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         tone="set"
         icon={<ItemIcon name={p?.name} nameEn={p?.nameEn} baseItem={p?.baseItem} slot={p?.slot} rarity="set" size="sm" imageUrl={p?.imageUrl} showBorder={false} />}
         title={r.set.name}
-        sub={`${r.set.pieces.length} 件 · Lv${r.minLv} 起${r.set.class ? ` · ${r.set.class}` : ''}`}
+        sub={isEn ? `${r.set.pieces.length} Pieces · Req Lv${r.minLv}${r.set.class ? ` · ${CLASS_ZH_TO_EN[r.set.class] || r.set.class}` : ''}` : `${r.set.pieces.length} 件 · Lv${r.minLv} 起${r.set.class ? ` · ${r.set.class}` : ''}`}
         hint={`${r.set.name}（${r.set.nameEn}）`}
         onClick={() => dir.jump(`set-${r.set.id}`, r.leaf, go)}
       />

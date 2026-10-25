@@ -140,7 +140,7 @@ export const BuildPlanner: React.FC<BuildPlannerProps> = ({ onNavigateToSkills, 
           >
             {plans.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.buildName} ({p.characterClass})
+                {p.buildName} ({isEn ? (CLASS_ZH_TO_EN[p.characterClass] || p.characterClass) : p.characterClass})
               </option>
             ))}
           </select>
@@ -201,8 +201,7 @@ export const BuildPlanner: React.FC<BuildPlannerProps> = ({ onNavigateToSkills, 
                     {['魔法使', '聖騎士', '死靈法師', '術士', '亞馬遜', '野蠻人', '刺客', '德魯伊'].map(
                       (cls) => (
                         <option key={cls} value={cls}>
-                          {cls}
-                        </option>
+                          {isEn ? (CLASS_ZH_TO_EN[cls] || cls) : cls}</option>
                       )
                     )}
                   </select>
@@ -291,7 +290,7 @@ export const BuildPlanner: React.FC<BuildPlannerProps> = ({ onNavigateToSkills, 
                   <div className="p-3 rounded-lg bg-sanctuary-900 border border-sanctuary-800 text-xs text-sanctuary-300">
                     <div className="font-semibold text-d2-unique mb-1 flex items-center gap-1.5">
                       <CheckCircle2 className="w-3.5 h-3.5 text-d2-set" />
-                      <span>{isEn ? `${currentPlan.characterClass} FCR Breakpoints:` : `${currentPlan.characterClass} 施法幀數檢測：`}</span>
+                      <span>{isEn ? `$${CLASS_ZH_TO_EN[currentPlan.characterClass] || currentPlan.characterClass} FCR Breakpoints:` : `${currentPlan.characterClass} 施法幀數檢測：`}</span>
                     </div>
                     <div>
                       {isEn ? `Current ${currentPlan.customStats.fcr}% FCR, Breakpoints:` : `當前 ${currentPlan.customStats.fcr}% FCR，標準檔位：`}
@@ -447,7 +446,7 @@ export const BuildPlanner: React.FC<BuildPlannerProps> = ({ onNavigateToSkills, 
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-sanctuary-800 text-d2-unique font-bold">
-                          {preset.characterClass}
+                          {isEn ? (CLASS_ZH_TO_EN[preset.characterClass] || preset.characterClass) : preset.characterClass}
                         </span>
                         <span className="text-[11px] font-mono text-sanctuary-400">
                           Lv.{preset.targetLevel}

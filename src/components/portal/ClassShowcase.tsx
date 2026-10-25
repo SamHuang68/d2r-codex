@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../../context/LanguageContext';
 import { CHARACTER_CLASSES_DATA } from '../../data/classes';
 import { Sparkles, Shield, Swords, Compass, Flame } from 'lucide-react';
 
@@ -13,6 +14,7 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
   onExploreSkills, 
   onExploreBuilds 
 }) => {
+  const { isEn } = useLanguage();
   const [selectedClassId, setSelectedClassId] = useState(CHARACTER_CLASSES_DATA[0].id);
 
   const currentClass = CHARACTER_CLASSES_DATA.find((c) => c.id === selectedClassId) || CHARACTER_CLASSES_DATA[0];
@@ -52,7 +54,7 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
                     RotW
                   </span>
                 )}
-                <span>{cls.name}</span>
+                <span>{isEn && cls.nameEn ? cls.nameEn : cls.name}</span>
                 <span className="text-[11px] text-sanctuary-400 font-mono hidden sm:inline">
                   ({cls.nameEn})
                 </span>
@@ -81,7 +83,7 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
                   )}
                 </div>
                 <h3 className="font-diablo text-3xl font-extrabold text-sanctuary-100">
-                  {currentClass.name}
+                  {isEn && currentClass.nameEn ? currentClass.nameEn : currentClass.name}
                   <span className="text-lg font-normal text-d2-unique ml-3">
                     • {currentClass.title}
                   </span>
@@ -121,7 +123,7 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
                     className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-d2-gold text-sanctuary-950 font-bold text-xs tracking-wide hover:bg-amber-400 shadow-lg shadow-d2-gold/20 transition-all"
                   >
                     <Sparkles className="w-4 h-4 text-sanctuary-950" />
-                    <span>開啟 {currentClass.name} 完整技能樹與加點模擬器</span>
+                    <span>{isEn ? `Open ${currentClass.nameEn || currentClass.name} Skill Trees & Planner` : `開啟 ${currentClass.name} 完整技能樹與加點模擬器`}</span>
                   </button>
                 )}
 
@@ -130,7 +132,7 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
                   className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-d2-unique text-xs font-semibold tracking-wide transition-colors"
                 >
                   <Compass className="w-4 h-4" />
-                  <span>檢視 {currentClass.name} 施法速度 (FCR) 與打擊恢復 (FHR) 斷點</span>
+                  <span>{isEn ? `View ${currentClass.nameEn || currentClass.name} Breakpoints (FCR/FHR/FBR)` : `檢視 ${currentClass.name} 施法速度 (FCR) 與打擊恢復 (FHR) 斷點`}</span>
                 </button>
               </div>
             </div>

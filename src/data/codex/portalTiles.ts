@@ -22,12 +22,12 @@ export function buildGearTiles(d: PortalSource): CategoryTile[] {
   const setPiece = d.sets[0]?.pieces[0];
   const base = d.bases.find((b) => b.nameEn === 'Archon Plate') || d.bases[0];
   return [
-    { id: 'items', label: '暗金裝備', sub: '暗金 Unique', count: d.uniques.length, tone: 'unique', icon: { name: harlequin.name, nameEn: harlequin.nameEn, baseItem: harlequin.baseItem, rarity: 'unique', imageUrl: harlequin.imageUrl } },
-    { id: 'sets', label: '成套裝備', sub: '綠色套裝 Set', count: d.sets.length, tone: 'set', icon: { name: setPiece?.name, nameEn: setPiece?.nameEn, baseItem: setPiece?.baseItem, slot: setPiece?.slot, rarity: 'set', imageUrl: setPiece?.imageUrl } },
-    { id: 'runewords', label: '符文之語', sub: 'Runeword', count: d.runewords.length, tone: 'unique', icon: { name: pb?.name, nameEn: pb?.nameEn, baseItem: pb?.name, rarity: 'runeword', imageUrl: pb?.imageUrl } },
-    { id: 'bases', label: '底材寶典', sub: '白色底材', count: d.bases.length, tone: 'neutral', icon: { name: base.name, nameEn: base.nameEn, baseItem: base.name, rarity: 'normal', imageUrl: base.imageUrl } },
-    { id: 'runes', label: '符文寶庫', sub: '1-33# 符文', count: d.runes.length, tone: 'rune', size: 'lg', icon: { runeNumber: 30, name: '貝', nameEn: 'Ber', rarity: 'rune' } },
-    { id: 'props', label: '道具聖物', sub: '寶石・鑰匙・藥劑', tone: 'magic', size: 'lg', icon: { name: '完美紫寶石', nameEn: 'Perfect Amethyst', rarity: 'prop' } },
+    { id: 'items', label: '暗金裝備', labelEn: 'Unique Items', sub: '暗金 Unique', subEn: 'Uniques', count: d.uniques.length, tone: 'unique', icon: { name: harlequin.name, nameEn: harlequin.nameEn, baseItem: harlequin.baseItem, rarity: 'unique', imageUrl: harlequin.imageUrl } },
+    { id: 'sets', label: '成套裝備', labelEn: 'Set Items', sub: '綠色套裝 Set', subEn: 'Sets', count: d.sets.length, tone: 'set', icon: { name: setPiece?.name, nameEn: setPiece?.nameEn, baseItem: setPiece?.baseItem, slot: setPiece?.slot, rarity: 'set', imageUrl: setPiece?.imageUrl } },
+    { id: 'runewords', label: '符文之語', labelEn: 'Runewords', sub: 'Runeword', subEn: 'Runewords', count: d.runewords.length, tone: 'unique', icon: { name: pb?.name, nameEn: pb?.nameEn, baseItem: pb?.name, rarity: 'runeword', imageUrl: pb?.imageUrl } },
+    { id: 'bases', label: '底材寶典', labelEn: 'Base Items', sub: '白色底材', subEn: 'Bases & Sockets', count: d.bases.length, tone: 'neutral', icon: { name: base.name, nameEn: base.nameEn, baseItem: base.name, rarity: 'normal', imageUrl: base.imageUrl } },
+    { id: 'runes', label: '符文寶庫', labelEn: 'Runes Vault', sub: '1-33# 符文', subEn: '#1–#33 Runes', count: d.runes.length, tone: 'rune', size: 'lg', icon: { runeNumber: 30, name: '貝', nameEn: 'Ber', rarity: 'rune' } },
+    { id: 'props', label: '道具聖物', labelEn: 'Relics & Charms', sub: '寶石・鑰匙・藥劑', subEn: 'Gems, Keys & Potions', tone: 'magic', size: 'lg', icon: { name: '完美紫寶石', nameEn: 'Perfect Amethyst', rarity: 'prop' } },
   ];
 }
 

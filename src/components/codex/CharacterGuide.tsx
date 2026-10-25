@@ -22,6 +22,16 @@ export interface CharacterGuideProps {
   onNavigateToItems?: (itemName: string) => void;
 }
 
+const CLASS_TITLES_EN: Record<string, string> = {
+  sorceress: 'Master of the Elements',
+  paladin: 'Holy Warrior & Crusader',
+  amazon: 'Mistress of Bow & Javelin',
+  necromancer: 'Commander of the Undead',
+  barbarian: 'Primal Titan of Melee',
+  druid: 'Lord of Nature & Beasts',
+  assassin: 'Martial Arts & Shadow Trapper',
+  warlock: 'Forbidden Lord of the Void',
+};
 export const CharacterGuide: React.FC<CharacterGuideProps> = ({
   onNavigateToSkills,
   onNavigateToBreakpoints,
@@ -169,11 +179,11 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
               </span>
               <span className="text-xs text-sanctuary-500">•</span>
               <span className="text-xs text-sanctuary-300 font-semibold">
-                {currentClass.title}
+                {isEn && CLASS_TITLES_EN[currentClass.id] ? CLASS_TITLES_EN[currentClass.id] : currentClass.title}
               </span>
             </div>
             <h2 className="font-diablo text-3xl sm:text-4xl font-extrabold text-sanctuary-100">
-              {currentClass.name}
+              {isEn && currentClass.nameEn ? currentClass.nameEn : currentClass.name}
             </h2>
             <p className="text-sm text-sanctuary-300 font-sans leading-relaxed">
               {currentClass.description}

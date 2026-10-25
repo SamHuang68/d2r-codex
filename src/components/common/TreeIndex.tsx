@@ -30,9 +30,9 @@ interface TreeIndexProps {
 }
 
 /** 目前選取節點的麵包屑（含根） */
-export const crumbsOf = (rootLabel: string, nodes: TreeNode[], activeId: string): { id: string; label: string }[] => [
+export const crumbsOf = (rootLabel: string, nodes: TreeNode[], activeId: string, isEn = false): { id: string; label: string }[] => [
   { id: 'all', label: rootLabel },
-  ...pathTo(nodes, activeId).map((n) => ({ id: n.id, label: n.label })),
+  ...pathTo(nodes, activeId).map((n) => ({ id: n.id, label: isEn && n.en ? n.en : n.label })),
 ];
 
 const collectParents = (nodes: TreeNode[], out: string[] = []): string[] => {
@@ -136,7 +136,7 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
                 <button
                   type="button"
                   onClick={() => toggle(n.id)}
-                  aria-label={`${expanded ? '收合' : '展開'}${n.label}`}
+                  aria-label={isEn ? `${expanded ? 'Collapse ' : 'Expand '}${n.en || n.label}` : `${expanded ? '收合' : '展開'}${n.label}`}
                   className="w-6 shrink-0 flex items-center justify-center text-sanctuary-500 hover:text-sanctuary-200"
                 >
                   <ChevronRight className={`w-3.5 h-3.5 transition-transform ${expanded ? 'rotate-90' : ''}`} />

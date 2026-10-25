@@ -366,7 +366,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
           </div>
           <div className="d2-panel-body">
             {tab === 'stats' && (
-              <AttributesTab className={cls.zh} classCode={cls.code} level={level} result={result} alloc={alloc} remaining={remaining} needStr={needStr} needDex={needDex}
+              <AttributesTab className={isEn ? cls.en : cls.zh} classCode={cls.code} level={level} result={result} alloc={alloc} remaining={remaining} needStr={needStr} needDex={needDex}
                 onAdd={onAdd} onSet={onSet} onAutoReq={onAutoReq} onAllVit={onAllVit} onReset={() => setAlloc(ZERO)} mainSkill={mainSkill}
                 targetRes={targetRes} onTargetRes={setTargetRes} buffs={buffPanel} onToggleBuff={(id) => setBuffsOn((m) => ({ ...m, [id]: !m[id] }))}
                 enemyReduction={applied.enemyResReduction} passives={passives.lines} />

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../../context/LanguageContext';
 import { ItemIcon, ItemIconProps } from './ItemIcon';
 
 export type TileTone = 'unique' | 'set' | 'rune' | 'magic' | 'rare' | 'neutral';
@@ -6,7 +7,9 @@ export type TileTone = 'unique' | 'set' | 'rune' | 'magic' | 'rare' | 'neutral';
 export interface CategoryTile {
   id: string;
   label: string;
+  labelEn?: string;
   sub?: string;
+  subEn?: string;
   count?: number;
   icon: ItemIconProps;
   tone?: TileTone;
@@ -38,7 +41,9 @@ export const CategoryTiles: React.FC<CategoryTilesProps> = ({
   onSelect,
   iconSize = 'lg',
   className = 'grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7',
-}) => (
+}) => {
+  const { isEn } = useLanguage();
+  return (
   <div className={`grid gap-2.5 sm:gap-3 ${className}`}>
     {tiles.map((t) => {
       const tone = TONE[t.tone ?? 'unique'];
@@ -56,16 +61,17 @@ export const CategoryTiles: React.FC<CategoryTilesProps> = ({
           <div className="flex items-end justify-center flex-1">
             <ItemIcon {...t.icon} size={t.size ?? iconSize} showBorder={false} />
           </div>
-          <div className={`font-diablo font-bold text-sm leading-tight ${tone.text}`}>{t.label}</div>
-          {(t.sub || t.count !== undefined) && (
+          <div className={`font-diablo font-bold text-sm leading-tight ${tone.text}`}>{isEn && t.labelEn ? t.labelEn : t.label}</div>
+          {((isEn ? t.subEn : t.sub) || t.count !== undefined) && (
             <div className="text-[11px] text-sanctuary-400 font-mono leading-none">
-              {t.sub}
-              {t.sub && t.count !== undefined ? ' · ' : ''}
-              {t.count !== undefined ? `${t.count} 項` : ''}
+              {isEn && t.subEn ? t.subEn : t.sub}
+              {(isEn ? t.subEn : t.sub) && t.count !== undefined ? ' · ' : ''}
+              {t.count !== undefined ? (isEn ? `${t.count} items` : `${t.count} 項`) : ''}
             </div>
           )}
         </button>
       );
     })}
   </div>
-);
+  );
+};

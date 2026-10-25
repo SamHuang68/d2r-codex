@@ -31,6 +31,7 @@ export interface UnifiedGearItem {
   attributes: string[];
   // 特殊類別屬性
   setName?: string;          // 套裝配件專屬
+  setNameEn?: string;        // 套裝配件專屬英文名
   runes?: string[];          // 符文之語專屬
   runeNumbers?: number[];    // 符文之語專屬
   sockets?: number;          // 符文之語專屬
@@ -507,6 +508,7 @@ export function getAllUnifiedItems(): UnifiedGearItem[] {
         requiredDex: piece.requiredDex,
         attributes: piece.attributes,
         setName: s.name,
+        setNameEn: s.nameEn,
         classOnly: piece.classOnly,
         grade: piece.grade,
         imageUrl: piece.imageUrl,

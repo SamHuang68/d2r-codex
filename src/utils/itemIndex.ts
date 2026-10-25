@@ -3,6 +3,7 @@
  * 資料仍來自 src/data/uniqueItems.ts、setItems.ts，分類依據來自 equipTaxonomy（遊戲物品類型）。
  */
 import { UNIQUE_ITEMS_DATA } from '../data/uniqueItems';
+import { CLASS_ZH_TO_EN } from '../engine/slots';
 import { SET_ITEMS_DATA } from '../data/setItems';
 import type { SetItemCollection, UniqueItemData } from '../types';
 import {
@@ -14,18 +15,30 @@ import {
 // ------------------------------------------------------------
 export const CLASS_ORDER = ['亞馬遜', '刺客', '野蠻人', '德魯伊', '聖騎士', '死靈法師', '魔法使', '術士'];
 export const SET_DEFS: TaxDef[] = [
-  { id: 'class', label: '職業套裝', children: CLASS_ORDER.map((c) => ({ id: `class/${c}`, label: `${c}套裝` })) },
   {
-    id: 'common', label: '通用套裝', children: [
-      { id: 'common/early', label: '初階（Lv 1–9）' },
-      { id: 'common/mid', label: '中階（Lv 10–19）' },
-      { id: 'common/late', label: '高階（Lv 20 以上）' },
+    id: 'class',
+    label: '職業套裝',
+    en: 'Class Sets',
+    children: CLASS_ORDER.map((c) => ({
+      id: `class/${c}`,
+      label: `${c}套裝`,
+      en: `${CLASS_ZH_TO_EN[c] || c} Sets`,
+    })),
+  },
+  {
+    id: 'common',
+    label: '通用套裝',
+    en: 'General Sets',
+    children: [
+      { id: 'common/early', label: '初階（Lv 1–9）', en: 'Early (Lv 1–9)' },
+      { id: 'common/mid', label: '中階（Lv 10–19）', en: 'Mid (Lv 10–19)' },
+      { id: 'common/late', label: '高階（Lv 20 以上）', en: 'High (Lv 20+)' },
     ],
   },
 ];
 export const ITEM_TREE_DEFS: TaxDef[] = [
-  { id: 'u', label: '暗金裝備', children: [...tierDefs('u'), ...prefixDefs([JEWELRY_DEF], 'u')] },
-  { id: 's', label: '套裝', children: prefixDefs(SET_DEFS, 's') },
+  { id: 'u', label: '暗金裝備', en: 'Unique Items', children: [...tierDefs('u'), ...prefixDefs([JEWELRY_DEF], 'u')] },
+  { id: 's', label: '套裝', en: 'Set Items', children: prefixDefs(SET_DEFS, 's') },
 ];
 
 export const CHARM_LABEL: Record<string, string> = { small: '小型咒符', large: '大型咒符', grand: '特大咒符' };

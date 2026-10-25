@@ -3,7 +3,9 @@
     {
       "id": "items",
       "label": "暗金裝備",
+      "labelEn": "Unique Items",
       "sub": "暗金 Unique",
+      "subEn": "Uniques",
       "count": 409,
       "tone": "unique",
       "icon": {
@@ -17,7 +19,9 @@
     {
       "id": "sets",
       "label": "成套裝備",
+      "labelEn": "Set Items",
       "sub": "綠色套裝 Set",
+      "subEn": "Sets",
       "count": 35,
       "tone": "set",
       "icon": {
@@ -32,7 +36,9 @@
     {
       "id": "runewords",
       "label": "符文之語",
+      "labelEn": "Runewords",
       "sub": "Runeword",
+      "subEn": "Runewords",
       "count": 98,
       "tone": "unique",
       "icon": {
@@ -46,7 +52,9 @@
     {
       "id": "bases",
       "label": "底材寶典",
+      "labelEn": "Base Items",
       "sub": "白色底材",
+      "subEn": "Bases & Sockets",
       "count": 508,
       "tone": "neutral",
       "icon": {
@@ -60,7 +68,9 @@
     {
       "id": "runes",
       "label": "符文寶庫",
+      "labelEn": "Runes Vault",
       "sub": "1-33# 符文",
+      "subEn": "#1–#33 Runes",
       "count": 33,
       "tone": "rune",
       "size": "lg",
@@ -74,7 +84,9 @@
     {
       "id": "props",
       "label": "道具聖物",
+      "labelEn": "Relics & Charms",
       "sub": "寶石・鑰匙・藥劑",
+      "subEn": "Gems, Keys & Potions",
       "tone": "magic",
       "size": "lg",
       "icon": {

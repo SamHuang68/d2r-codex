@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { getCatalog, CLASS_ZH, RARITY_ZH, SLOT_ZH, TIER_ZH, type CatalogEntry, type Group, type Rarity, type Tier } from '../../../engine/catalog';
+import { getCatalog, CLASS_ZH, ENGINE_CLASS_BY_CODE, RARITY_ZH, SLOT_ZH, TIER_ZH, type CatalogEntry, type Group, type Rarity, type Tier } from '../../../engine/catalog';
 import { describeModifiers } from '../../../engine/describe';
 import { gameData } from '../../../engine/data';
 import { EQUIP_DEFS, JEWELRY_DEF, leafOfBase, type TaxDef } from '../../../utils/equipTaxonomy';
@@ -22,7 +22,7 @@ interface Props {
 const SLOT_EN: Record<SlotKind, string> = { head: 'Helm', body: 'Armor', shield: 'Shield', gloves: 'Gloves', belt: 'Belt', boots: 'Boots', neck: 'Amulet', ring: 'Ring', weapon: 'Weapon', charm: 'Charm' };
 const RARITY_EN: Record<Rarity, string> = { unique: 'Unique', set: 'Set', runeword: 'Runeword', base: 'Base' };
 const TIER_EN: Record<Tier, string> = { normal: 'Normal', exceptional: 'Exceptional', elite: 'Elite' };
-const CLASS_EN: Record<string, string> = { ama: 'Amazon', sor: 'Sorceress', nec: 'Necromancer', pal: 'Paladin', bar: 'Barbarian', dru: 'Druid', asn: 'Assassin' };
+
 const RARITIES: Rarity[] = ['unique', 'set', 'runeword', 'base'];
 const TIERS: Tier[] = ['normal', 'exceptional', 'elite'];
 const KINDS = ['一般', '職業專屬'];
@@ -187,8 +187,8 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
   const list = showList ? sortList(searching ? filtered : entriesUnder(path)) : [];
   const crumbLabels = path.map((_, i) => labelOfPath(path.slice(0, i + 1)));
   const goUp = () => { if (flat) { setFlat(false); return; } setPath((p) => p.slice(0, -1)); };
-  const rarityText = RARITIES.filter((r) => rarity[r]).map((r) => RARITY_ZH[r]).join('・') || '未選';
-  const tierText = TIERS.filter((t) => tiers[t]).map((t) => TIER_ZH[t]).join('・') || '未選';
+  const rarityText = RARITIES.filter((r) => rarity[r]).map((r) => isEn ? RARITY_EN[r] : RARITY_ZH[r]).join(isEn ? ', ' : '・') || (isEn ? 'None' : '未選');
+  const tierText = TIERS.filter((t) => tiers[t]).map((t) => isEn ? TIER_EN[t] : TIER_ZH[t]).join(isEn ? ', ' : '・') || (isEn ? 'None' : '未選');
 
   const floatStyle: React.CSSProperties = wide
     ? (pos ? { left: pos.x, top: pos.y, width: WIDTH, height: minimized ? 'auto' : 'min(72vh, 680px)' } : {})
@@ -218,7 +218,7 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
               <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={isEn ? "Search name (EN / ZH), base..." : "搜尋名稱（中／英）、底材…"} className="d2-input w-full" aria-label="搜尋裝備" />
               <button type="button" className="d2-filter-toggle" aria-expanded={filtersOpen} onClick={() => setFiltersOpen((v) => !v)}>
                 <span>{isEn ? "Filters" : "篩選"}</span>
-                <span className="d2-filter-sum">{rarityText}｜{tierText}{onlyMyClass ? '｜隱藏他職專屬' : ''}</span>
+                <span className="d2-filter-sum">{rarityText}｜{tierText}{onlyMyClass ? (isEn ? ' | Class Only' : '｜隱藏他職專屬') : ''}</span>
                 <span aria-hidden>{filtersOpen ? '▲' : '▼'}</span>
               </button>
               {filtersOpen && (
@@ -282,7 +282,7 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
                         <div className="min-w-0 flex-1 cursor-pointer" onClick={() => setDetail(detail === e.id ? null : e.id)}>
                           <div className={`truncate font-semibold ${tone(e.kind)}`}>{isEn ? (e.nameEn || e.name) : e.name}</div>
                           <div className="truncate text-xs t-dim">{isEn ? e.name : e.nameEn}</div>
-                          <div className="truncate text-xs t-dim">{isEn ? (SLOT_EN[e.slot] ?? e.slot) : SLOT_ZH[e.slot]} · {isEn ? (e.baseNameEn || e.baseName) : e.baseName}{e.classCode ? (isEn ? ` · ${CLASS_EN[e.classCode] ?? e.classCode} Only` : ` · ${CLASS_ZH[e.classCode]}專用`) : ''}{e.levelReq ? ` · Lv${e.levelReq}` : ''}{e.setName ? ` · ${e.setName}` : ''}</div>
+                          <div className="truncate text-xs t-dim">{isEn ? (SLOT_EN[e.slot] ?? e.slot) : SLOT_ZH[e.slot]} · {isEn ? (e.baseNameEn || e.baseName) : e.baseName}{e.classCode ? (isEn ? ` · ${ENGINE_CLASS_BY_CODE[e.classCode] ?? e.classCode} Only` : ` · ${CLASS_ZH[e.classCode]}專用`) : ''}{e.levelReq ? ` · Lv${e.levelReq}` : ''}{e.setName ? ` · ${e.setName}` : ''}</div>
                         </div>
                         <button type="button" onClick={() => onEquip(e)} className="d2-btn shrink-0" style={{ padding: '3px 12px' }}>{isEn ? "Equip" : "穿戴"}</button>
                       </div>

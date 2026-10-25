@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BREAKPOINTS_DATA } from '../../data/breakpoints';
 import { AREA_LEVELS_DATA } from '../../data/areaLevels';
+import { CLASS_ZH_TO_EN } from '../../engine/slots';
 import { Compass, Zap, MapPin, CheckCircle2, Sparkles, Calculator } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -18,17 +19,6 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
   // 75% 滿格擋試算器狀態
   const [charLevel, setCharLevel] = useState<number>(85);
   const [shieldBlockPercent, setShieldBlockPercent] = useState<number>(75);
-
-  const CLASS_EN_NAME: Record<string, string> = {
-  '魔法使': 'Sorceress',
-  '聖騎士': 'Paladin',
-  '死靈法師': 'Necromancer',
-  '術士': 'Warlock',
-  '亞馬遜': 'Amazon',
-  '野蠻人': 'Barbarian',
-  '刺客': 'Assassin',
-  '德魯伊': 'Druid',
-};
 
   const classesList = ['魔法使', '聖騎士', '死靈法師', '術士', '亞馬遜', '野蠻人', '刺客', '德魯伊'];
 
@@ -145,7 +135,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                           : 'bg-sanctuary-900 text-sanctuary-400 border-sanctuary-800 hover:text-white'
                       }`}
                     >
-                      {isEn ? (CLASS_EN_NAME[cls] || cls) : cls}
+                      {isEn ? (CLASS_ZH_TO_EN[cls] || cls) : cls}
                     </button>
                   ))}
                 </div>
@@ -200,7 +190,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
             <div className="pt-2 border-t border-sanctuary-850 flex items-center gap-2 flex-wrap text-xs">
               <span className="text-sanctuary-400 font-mono flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5 text-d2-gold" />
-                {isEn ? `Common ${selectedClass} ${selectedType} Breakpoints:` : `${selectedClass} 常用 ${selectedType} 質變檔位：`}
+                {isEn ? `Common ${CLASS_ZH_TO_EN[selectedClass] || selectedClass} ${selectedType} Breakpoints:` : `${selectedClass} 常用 ${selectedType} 質變檔位：`}
               </span>
               {currentPresets.map((val) => (
                 <button
@@ -241,7 +231,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-sanctuary-850">
                     <div>
                       <h3 className="font-diablo text-lg font-bold text-sanctuary-100">
-                        {cfg.characterClass} • {cfg.type} {cfg.variant ? `(${cfg.variant})` : ''}
+                        {isEn ? (CLASS_ZH_TO_EN[cfg.characterClass] || cfg.characterClass) : cfg.characterClass} • {cfg.type} {cfg.variant ? `(${cfg.variant})` : ''}
                       </h3>
                       {cfg.notes && (
                         <p className="text-xs text-d2-unique mt-0.5">
@@ -284,10 +274,10 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                           }`}
                         >
                           <div className="text-xs font-mono font-bold">
-                            {bp.frames} 幀
+                            {bp.frames} {isEn ? "frames" : "幀"}
                           </div>
                           <div className="text-[11px] text-sanctuary-400 mt-1">
-                            需要: <strong className={isCurrent ? 'text-d2-fire' : 'text-sanctuary-100'}>{bp.requiredValue}%</strong>
+                            {isEn ? "Req: " : "需要: "}<strong className={isCurrent ? 'text-d2-fire' : 'text-sanctuary-100'}>{bp.requiredValue}%</strong>
                           </div>
                         </div>
                       );

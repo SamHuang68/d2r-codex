@@ -19,15 +19,15 @@ export interface RunewordFinderProps {
 type RW = (typeof RUNEWORDS_DATA)[number];
 
 // 以可鑲嵌底材分組（同一組符文之語可能適用多種底材，會同時出現在多個分組）
-const GROUPS: { id: string; label: string; match: (b: string[]) => boolean; rep: string }[] = [
-  { id: 'armor', label: '護甲', match: (b) => b.some((x) => x.includes('護甲')), rep: 'Archon Plate' },
-  { id: 'helm', label: '頭盔', match: (b) => b.some((x) => x.includes('頭盔')), rep: 'Shako' },
-  { id: 'shield', label: '盾牌', match: (b) => b.some((x) => x.includes('盾牌')), rep: 'Monarch' },
-  { id: 'melee', label: '近戰武器', match: (b) => b.some((x) => /近戰武器|^武器$|刀劍|斧|釘鎚|重槌|權杖|短棒/.test(x)), rep: 'Phase Blade' },
-  { id: 'bow', label: '弓或弩', match: (b) => b.some((x) => x.includes('弓')), rep: 'Hydra Bow' },
-  { id: 'staff', label: '法杖・魔杖', match: (b) => b.some((x) => /法杖|魔杖/.test(x)), rep: 'Archon Staff' },
-  { id: 'polearm', label: '長柄・長矛', match: (b) => b.some((x) => /長柄|長矛/.test(x)), rep: 'Thresher' },
-  { id: 'claw', label: '爪・匕首', match: (b) => b.some((x) => /爪|拳刃|匕首/.test(x)), rep: 'Runic Talons' },
+const GROUPS: { id: string; label: string; labelEn: string; match: (b: string[]) => boolean; rep: string }[] = [
+  { id: 'armor', label: '護甲', labelEn: 'Body Armor', match: (b) => b.some((x) => x.includes('護甲')), rep: 'Archon Plate' },
+  { id: 'helm', label: '頭盔', labelEn: 'Helms', match: (b) => b.some((x) => x.includes('頭盔')), rep: 'Shako' },
+  { id: 'shield', label: '盾牌', labelEn: 'Shields', match: (b) => b.some((x) => x.includes('盾牌')), rep: 'Monarch' },
+  { id: 'melee', label: '近戰武器', labelEn: 'Melee Weapons', match: (b) => b.some((x) => /近戰武器|^武器$|刀劍|斧|釘鎚|重槌|權杖|短棒/.test(x)), rep: 'Phase Blade' },
+  { id: 'bow', label: '弓或弩', labelEn: 'Missile Weapons', match: (b) => b.some((x) => x.includes('弓')), rep: 'Hydra Bow' },
+  { id: 'staff', label: '法杖・魔杖', labelEn: 'Staves & Wands', match: (b) => b.some((x) => /法杖|魔杖/.test(x)), rep: 'Archon Staff' },
+  { id: 'polearm', label: '長柄・長矛', labelEn: 'Polearms & Spears', match: (b) => b.some((x) => /長柄|長矛/.test(x)), rep: 'Thresher' },
+  { id: 'claw', label: '爪・匕首', labelEn: 'Claws & Daggers', match: (b) => b.some((x) => /爪|拳刃|匕首/.test(x)), rep: 'Runic Talons' },
 ];
 const SOCKETS = [2, 3, 4, 5, 6];
 
@@ -35,7 +35,8 @@ const SOCKETS = [2, 3, 4, 5, 6];
 const TREE_DEFS: TaxDef[] = GROUPS.map((g) => ({
   id: g.id,
   label: g.label,
-  children: SOCKETS.map((n) => ({ id: `${g.id}/${n}`, label: `${n} 孔` })),
+  en: g.labelEn,
+  children: SOCKETS.map((n) => ({ id: `${g.id}/${n}`, label: `${n} 孔`, en: `${n} Sockets` })),
 }));
 const groupsOf = (rw: RW) => GROUPS.filter((g) => g.match(rw.allowedBases));
 const byLevel = (a: RW, b: RW) => a.requiredLevel - b.requiredLevel || a.name.localeCompare(b.name, 'zh-Hant');
@@ -162,7 +163,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
     .sort(byLevel), [filteredRunewords, selGroup, selSockets]);
   const dirMode = dir.isDir(isLeaf, here.length);
   const go = (id: string) => setSel(id);
-  const crumbs = crumbsOf('全部符文之語', tree, sel);
+  const crumbs = crumbsOf(isEn ? 'All Runewords' : '全部符文之語', tree, sel, isEn);
 
   // 區段：依孔數；全部視圖與底材分組視圖都是 2→6 孔，進入葉節點後只剩一段
   const sections = SOCKETS
@@ -174,7 +175,9 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
     return {
       id: c.id,
       label: c.label,
-      sub: selGroup ? `${selGroup.label}` : undefined,
+      labelEn: c.en,
+      sub: selGroup ? (isEn && selGroup.labelEn ? selGroup.labelEn : selGroup.label) : (isEn && g?.labelEn ? g.labelEn : g?.label),
+      subEn: selGroup ? selGroup.labelEn : g?.labelEn,
       count: c.count,
       tone: 'rune',
       icon: baseImg(g ? g.rep : 'Phase Blade'),

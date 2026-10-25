@@ -114,7 +114,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
   const isLeaf = !node.children;
   const dirMode = dir.isDir(isLeaf, here.length);
   const go = (id: string) => setSel(id);
-  const crumbs = crumbsOf('全部底材', tree, sel);
+  const crumbs = crumbsOf(isEn ? 'All Bases' : '全部底材', tree, sel, isEn);
 
   const repIcon = (n: TreeNode): CategoryTile['icon'] => {
     const pool = B_ENTRIES.filter((e) => inNode(e.leaf, n.id) && e.item.imageUrl);
@@ -125,10 +125,10 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
     return { name: i?.name, nameEn: i?.nameEn, baseItem: i?.name, rarity: 'normal', imageUrl: i?.imageUrl };
   };
   const tiles: CategoryTile[] = (node.children ?? []).filter((c) => c.count > 0).map((c) => ({
-    id: c.id, label: c.label, sub: c.en, count: c.count, tone: 'unique', icon: repIcon(c),
+    id: c.id, label: c.label, labelEn: c.en, sub: c.en, subEn: c.en, count: c.count, tone: 'unique', icon: repIcon(c),
   }));
 
-  const labelPath = (leafId: string) => relPath(tree, leafId, node.id);
+  const labelPath = (leafId: string) => relPath(tree, leafId, node.id, isEn);
 
   const baseCard = ({ item }: BEntry) => (
           <div

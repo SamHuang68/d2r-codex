@@ -262,9 +262,9 @@ export function recount(nodes: TreeNode[], counts: Map<string, number>): TreeNod
 }
 
 /** 葉節點相對於目前節點的路徑文字（例如在「精英」底下看到「防具 › 頭部 › 頭盔」），避免每段都重複上層名稱 */
-export function relPath(tree: TreeNode[], leafId: string, nodeId: string): string {
+export function relPath(tree: TreeNode[], leafId: string, nodeId: string, isEn = false): string {
   const chain = pathTo(tree, leafId);
   const idx = nodeId === 'all' ? 0 : chain.findIndex((n) => n.id === nodeId) + 1;
   const rest = chain.slice(Math.max(0, idx));
-  return (rest.length ? rest : chain.slice(-1)).map((n) => n.label).join(' › ');
+  return (rest.length ? rest : chain.slice(-1)).map((n) => (isEn && n.en ? n.en : n.label)).join(' › ');
 }
