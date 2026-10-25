@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Ghost, MapPin, Search, ShieldOff } from 'lucide-react';
+import { Ghost, MapPin, Search, ShieldOff, Flame } from 'lucide-react';
 import { PageHeader } from '../common/PageHeader';
 import { useLanguage } from '../../context/LanguageContext';
+import { getMonsterImage, MAJOR_BOSS_SPOTLIGHT, type BossSpotlightItem } from '../../utils/monsterImages';
 import {
   AREAS, DIFF_ZH, ELEMS, ELEM_ZH, KIND_ZH, MONSTERS, areaImmunity, areaLevel, areasOfMonster, immunitiesOf, isImmune, resistOf,
   type Area, type Diff, type ElemKey, type Monster,
@@ -24,7 +25,7 @@ const ELEM_TONE: Record<ElemKey, string> = {
   cold: 'text-d2-cold border-d2-cold/40 bg-d2-cold/10',
   poison: 'text-d2-poison border-d2-poison/40 bg-d2-poison/10',
 };
-const KIND_EN: Record<string, string> = { demon: 'Demon', undead: 'Undead', beast: 'Beast', other: 'Other' };
+const KIND_EN: Record<string, string> = { demon: 'Demon', undead: 'Undead', insect: 'Insect', beast: 'Beast', human: 'Human', construct: 'Construct', other: 'Other' };
 const DIFF_EN: Record<Diff, string> = ['Normal', 'Nightmare', 'Hell'];
 const PAGE = 100;
 
@@ -46,53 +47,154 @@ const ResChip: React.FC<{ elem: ElemKey; value: number }> = ({ elem, value }) =>
 
 const DiffButtons: React.FC<{ diff: Diff; onChange: (d: Diff) => void }> = ({ diff, onChange }) => {
   const { isEn } = useLanguage();
-  const diffLabels = isEn ? ['Normal', 'Nightmare', 'Hell'] : DIFF_ZH;
+  const diffLabels = isEn ? DIFF_EN : DIFF_ZH;
   return (
-  <div className="flex items-center gap-1" role="group" aria-label="難度">
-    {([0, 1, 2] as Diff[]).map((d) => (
-      <button key={d} type="button" onClick={() => onChange(d)} aria-pressed={diff === d}
-        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${diff === d ? 'bg-d2-fire text-sanctuary-950 font-bold shadow' : 'bg-sanctuary-950/80 text-sanctuary-300 hover:text-sanctuary-100 border border-sanctuary-800'}`}>
-        {diffLabels[d]}
-      </button>
-    ))}
-  </div>
+    <div className="flex items-center gap-1" role="group" aria-label="難度">
+      {([0, 1, 2] as Diff[]).map((d) => (
+        <button key={d} type="button" onClick={() => onChange(d)} aria-pressed={diff === d}
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${diff === d ? 'bg-d2-fire text-sanctuary-950 font-bold shadow' : 'bg-sanctuary-950/80 text-sanctuary-300 hover:text-sanctuary-100 border border-sanctuary-800'}`}>
+          {diffLabels[d]}
+        </button>
+      ))}
+    </div>
   );
 };
 
 const MonsterRow: React.FC<{ m: Monster; diff: Diff; open: boolean; onToggle: () => void }> = ({ m, diff, open, onToggle }) => {
   const { isEn } = useLanguage();
   const imms = immunitiesOf(m, diff);
+  const imgSrc = getMonsterImage(m);
+
   return (
-    <div className="rounded-xl border border-sanctuary-800/80 bg-sanctuary-900/40">
-      <button type="button" onClick={onToggle} aria-expanded={open} className="w-full text-left p-3 sm:p-4 flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4">
-        <div className="min-w-0 lg:w-64 shrink-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className={`font-bold ${m.boss ? 'text-d2-unique' : 'text-sanctuary-100'}`}>{m.name}</span>
-            {m.boss && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-d2-unique/15 text-d2-unique border border-d2-unique/30">{isEn ? 'Boss' : '頭目'}</span>}
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sanctuary-800 text-sanctuary-300">{isEn ? KIND_EN[m.kind ?? 'other'] : KIND_ZH[m.kind ?? 'other']}</span>
+    <div className={`rounded-xl border transition-all duration-200 ${open ? 'border-sanctuary-700 bg-sanctuary-900/60 shadow-lg' : 'border-sanctuary-800/80 bg-sanctuary-900/40 hover:border-sanctuary-700/70'}`}>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        className="w-full text-left p-3 sm:p-4 flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4 group cursor-pointer"
+      >
+        {/* Monster Avatar Thumbnail & Title Block */}
+        <div className="flex items-center gap-3 min-w-0 lg:w-72 shrink-0">
+          <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-sanctuary-800 bg-sanctuary-950 flex items-center justify-center group-hover:border-sanctuary-600 transition-colors shadow-inner">
+            <img
+              src={imgSrc}
+              alt={isEn ? (m.nameEn || m.name) : m.name}
+              className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-110"
+              loading="lazy"
+            />
+            {m.boss && (
+              <div className="absolute inset-0 border-2 border-d2-unique/60 rounded-xl pointer-events-none shadow-[inset_0_0_8px_rgba(200,165,100,0.35)]" />
+            )}
           </div>
-          <div className="text-[11px] font-mono text-sanctuary-500 truncate">{m.nameEn !== m.name ? `${m.nameEn}　` : ''}{m.id}</div>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className={`font-bold truncate ${m.boss ? 'text-d2-unique group-hover:text-amber-300' : 'text-sanctuary-100 group-hover:text-white'} transition-colors`}>
+                {m.name}
+              </span>
+              {m.boss && (
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-d2-unique/15 text-d2-unique border border-d2-unique/30 font-semibold shrink-0">
+                  {isEn ? 'Boss' : '頭目'}
+                </span>
+              )}
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sanctuary-800/90 text-sanctuary-300 border border-sanctuary-700/50 shrink-0">
+                {isEn ? (KIND_EN[m.kind ?? 'other'] || m.kind) : (KIND_ZH[m.kind ?? 'other'] || m.kind)}
+              </span>
+            </div>
+            <div className="text-[11px] font-mono text-sanctuary-500 truncate mt-0.5">
+              {m.nameEn !== m.name ? `${m.nameEn}　` : ''}{m.id}
+            </div>
+          </div>
         </div>
-        <div className="text-xs text-sanctuary-300 font-mono lg:w-24 shrink-0" title={isEn ? "Monster Level (this difficulty)" : "怪物等級（該難度）"}>
+
+        <div className="text-xs text-sanctuary-300 font-mono lg:w-20 shrink-0" title={isEn ? "Monster Level (this difficulty)" : "怪物等級（該難度）"}>
           Lv {m.levels[diff] ?? '—'}
         </div>
         <div className="flex flex-wrap gap-1 flex-1">
           {ELEMS.map((e) => <ResChip key={e} elem={e} value={resistOf(m, e, diff)} />)}
         </div>
-        <div className="text-[11px] text-sanctuary-500 lg:w-24 shrink-0 text-right">{imms.length ? (isEn ? `Immune to ${imms.length}` : `免疫 ${imms.length} 項`) : (isEn ? 'No Immunity' : '無免疫')}</div>
+        <div className="text-[11px] text-sanctuary-500 lg:w-24 shrink-0 text-right">
+          {imms.length ? (isEn ? `Immune to ${imms.length}` : `免疫 ${imms.length} 項`) : (isEn ? 'No Immunity' : '無免疫')}
+        </div>
       </button>
+
       {open && (
-        <div className="border-t border-sanctuary-800/80 p-3 sm:p-4 space-y-3">
+        <div className="border-t border-sanctuary-800/80 p-3 sm:p-5 space-y-4 bg-sanctuary-950/40">
+          {/* Monster Visual Profile Showcase Banner */}
+          <div className="p-3.5 sm:p-4 rounded-xl border border-sanctuary-800/90 bg-gradient-to-r from-sanctuary-900/90 via-sanctuary-900/60 to-sanctuary-950/90 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className={`relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shrink-0 border ${m.boss ? 'border-d2-unique/60 shadow-[0_0_16px_rgba(200,165,100,0.25)]' : 'border-sanctuary-700/80'} bg-sanctuary-950 flex items-center justify-center`}>
+              <img
+                src={imgSrc}
+                alt={isEn ? (m.nameEn || m.name) : m.name}
+                className="w-full h-full object-cover object-top"
+              />
+              {m.boss && (
+                <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded bg-d2-unique/90 text-sanctuary-950 text-[10px] font-bold font-mono tracking-wider shadow">
+                  BOSS
+                </div>
+              )}
+            </div>
+
+            <div className="min-w-0 flex-1 space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className={`text-lg sm:text-xl font-bold tracking-wide ${m.boss ? 'text-d2-unique' : 'text-sanctuary-100'}`}>
+                  {m.name}
+                </h3>
+                {m.nameEn && m.nameEn !== m.name && (
+                  <span className="text-sm font-serif italic text-sanctuary-400">
+                    ({m.nameEn})
+                  </span>
+                )}
+                {m.boss && (
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-semibold flex items-center gap-1">
+                    <Flame className="w-3.5 h-3.5 text-d2-fire" />
+                    {isEn ? 'Boss / Superunique' : '首領 / 暗金頭目'}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+                <span className="px-2 py-0.5 rounded bg-sanctuary-800/90 text-sanctuary-200 border border-sanctuary-700/60">
+                  {isEn ? `Category: ${KIND_EN[m.kind ?? 'other'] || m.kind}` : `種族大類：${KIND_ZH[m.kind ?? 'other'] || m.kind}`}
+                </span>
+                {m.type && (
+                  <span className="px-2 py-0.5 rounded bg-sanctuary-800/90 text-sanctuary-300 border border-sanctuary-700/60">
+                    Type: <span className="text-amber-300/90">{m.type}</span>
+                  </span>
+                )}
+                <span className="px-2 py-0.5 rounded bg-sanctuary-950 text-sanctuary-400 border border-sanctuary-800">
+                  ID: <span className="text-sanctuary-300">{m.id}</span>
+                </span>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="text-sanctuary-400 text-[11px] font-mono">{isEn ? 'Level by Diff:' : '各難度等級：'}</span>
+                {([0, 1, 2] as Diff[]).map((d) => (
+                  <span
+                    key={d}
+                    className={`px-2 py-0.5 rounded-md font-mono text-[11px] border ${
+                      d === diff
+                        ? 'border-d2-fire/50 bg-d2-fire/20 text-d2-fire font-bold'
+                        : 'border-sanctuary-800 bg-sanctuary-900/60 text-sanctuary-400'
+                    }`}
+                  >
+                    {isEn ? DIFF_EN[d] : DIFF_ZH[d]}: Lv {m.levels[d] ?? '—'}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
           <div className="overflow-x-auto">
             <table className="text-xs w-full min-w-[420px]">
               <thead><tr className="text-sanctuary-500 font-mono"><th className="text-left font-normal pb-1">{isEn ? 'Difficulty' : '難度'}</th><th className="font-normal pb-1">{isEn ? 'Level' : '等級'}</th>{ELEMS.map((e) => <th key={e} className="font-normal pb-1">{isEn ? ELEM_EN[e] : ELEM_ZH[e]}</th>)}<th className="font-normal pb-1" title={isEn ? "Life/Mana leech effectiveness against this monster" : "生命／法力偷取對這隻怪的效果"}>{isEn ? 'Drain' : '吸取'}</th></tr></thead>
               <tbody>
                 {([0, 1, 2] as Diff[]).map((d) => (
-                  <tr key={d} className={d === diff ? 'text-sanctuary-100' : 'text-sanctuary-400'}>
-                    <td className="py-0.5">{isEn ? DIFF_EN[d] : DIFF_ZH[d]}</td>
-                    <td className="text-center font-mono">{m.levels[d] ?? '—'}</td>
-                    {ELEMS.map((e) => { const v = resistOf(m, e, d); return <td key={e} className={`text-center font-mono ${isImmune(v) ? 'text-d2-fire font-bold' : v < 0 ? 'text-emerald-300' : ''}`}>{isImmune(v) ? (isEn ? 'Immune' : '免疫') : v}</td>; })}
-                    <td className="text-center font-mono">{m.drain[d] == null ? '—' : `${m.drain[d]}%`}</td>
+                  <tr key={d} className={d === diff ? 'text-sanctuary-100 font-medium bg-sanctuary-800/30' : 'text-sanctuary-400'}>
+                    <td className="py-1 px-1">{isEn ? DIFF_EN[d] : DIFF_ZH[d]}</td>
+                    <td className="text-center font-mono py-1">{m.levels[d] ?? '—'}</td>
+                    {ELEMS.map((e) => { const v = resistOf(m, e, d); return <td key={e} className={`text-center font-mono py-1 ${isImmune(v) ? 'text-d2-fire font-bold' : v < 0 ? 'text-emerald-300' : ''}`}>{isImmune(v) ? (isEn ? 'Immune' : '免疫') : v}</td>; })}
+                    <td className="text-center font-mono py-1">{m.drain[d] == null ? '—' : `${m.drain[d]}%`}</td>
                   </tr>
                 ))}
               </tbody>
@@ -146,8 +248,66 @@ const MonstersTab: React.FC<{ initialQuery?: string }> = ({ initialQuery }) => {
 
   const toggleImmune = (e: ElemKey) => { setImmune((cur) => (cur.includes(e) ? cur.filter((x) => x !== e) : [...cur, e])); setLimit(PAGE); };
 
+  const handleBossClick = (boss: BossSpotlightItem) => {
+    setImmune([]);
+    setKind('boss');
+    setQ(isEn ? boss.nameEn : boss.name);
+    setOpen(boss.id);
+  };
+
   return (
     <div className="space-y-4">
+      {/* Prime Evils & Act Bosses Spotlight */}
+      <div className="bg-sanctuary-900/60 p-4 rounded-2xl border border-sanctuary-800 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs font-bold text-d2-unique uppercase tracking-wider">
+            <Flame className="w-4 h-4 text-d2-fire animate-pulse" />
+            <span>{isEn ? 'Act Bosses & Prime Evils Spotlight' : '章節核心首領與終極魔王速查'}</span>
+          </div>
+          <span className="text-[11px] text-sanctuary-500 font-mono">
+            {isEn ? 'Click portrait to inspect' : '點擊頭像快速定位魔王檔案'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
+          {MAJOR_BOSS_SPOTLIGHT.map((boss) => {
+            const bossImg = getMonsterImage({ id: boss.id, boss: true, kind: 'demon' });
+            const isSelected = open === boss.id;
+            return (
+              <button
+                key={boss.id}
+                type="button"
+                onClick={() => handleBossClick(boss)}
+                className={`group text-left p-2 rounded-xl border transition-all duration-200 flex items-center gap-2.5 cursor-pointer ${
+                  isSelected
+                    ? 'border-d2-unique bg-d2-unique/15 shadow-[0_0_12px_rgba(200,165,100,0.3)] ring-1 ring-d2-unique/50'
+                    : 'border-sanctuary-800/90 bg-sanctuary-950/60 hover:border-sanctuary-700 hover:bg-sanctuary-900/80'
+                }`}
+              >
+                <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-sanctuary-700/60 bg-sanctuary-950">
+                  <img
+                    src={bossImg}
+                    alt={isEn ? boss.nameEn : boss.name}
+                    className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 border border-d2-unique/30 rounded-lg pointer-events-none" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-bold text-xs truncate text-sanctuary-100 group-hover:text-d2-unique transition-colors">
+                    {isEn ? boss.nameEn : boss.name}
+                  </div>
+                  <div className="text-[10px] font-mono text-sanctuary-400 truncate">
+                    {isEn ? boss.titleEn : boss.title}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Filter and Controls */}
       <div className="bg-sanctuary-900/60 p-4 rounded-2xl border border-sanctuary-800 space-y-3">
         <div className="flex flex-col md:flex-row md:items-center gap-3">
           <DiffButtons diff={diff} onChange={setDiff} />
@@ -157,9 +317,9 @@ const MonstersTab: React.FC<{ initialQuery?: string }> = ({ initialQuery }) => {
               className="w-full pl-9 pr-3 py-2 bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-fire/50" />
           </div>
           <select value={kind} onChange={(e) => { setKind(e.target.value); setLimit(PAGE); }} aria-label="分類" className="bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl px-3 py-2 text-xs text-sanctuary-200">
-            <option value="all">全部分類</option>
-            <option value="boss">頭目</option>
-            {(Object.keys(KIND_ZH) as (keyof typeof KIND_ZH)[]).map((k) => <option key={k} value={k}>{KIND_ZH[k]}</option>)}
+            <option value="all">{isEn ? 'All Categories' : '全部分類'}</option>
+            <option value="boss">{isEn ? 'Bosses & Superuniques' : '頭目'}</option>
+            {(Object.keys(KIND_ZH) as (keyof typeof KIND_ZH)[]).map((k) => <option key={k} value={k}>{isEn ? (KIND_EN[k] || k) : KIND_ZH[k]}</option>)}
           </select>
           <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} aria-label="排序" className="bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl px-3 py-2 text-xs text-sanctuary-200">
             <option value="name">{isEn ? 'Sort by Name' : '依名稱'}</option><option value="level">{isEn ? 'Sort by Level (High to Low)' : '依等級（高到低）'}</option><option value="immunity">{isEn ? 'Sort by Immunities' : '依免疫項數'}</option>
@@ -170,7 +330,7 @@ const MonstersTab: React.FC<{ initialQuery?: string }> = ({ initialQuery }) => {
           {ELEMS.map((e) => (
             <button key={e} type="button" onClick={() => toggleImmune(e)} aria-pressed={immune.includes(e)}
               className={`px-2.5 py-1 rounded-lg text-xs border transition-colors ${immune.includes(e) ? ELEM_TONE[e] + ' font-bold' : 'text-sanctuary-400 border-sanctuary-800 bg-sanctuary-950/60 hover:text-sanctuary-200'}`}>
-              {ELEM_ZH[e]}
+              {isEn ? ELEM_EN[e] : ELEM_ZH[e]}
             </button>
           ))}
           {immune.length > 0 && <button type="button" onClick={() => setImmune([])} className="text-xs text-sanctuary-500 underline ml-1">{isEn ? 'Clear' : '清除'}</button>}
@@ -206,20 +366,31 @@ const AreaCard: React.FC<{ area: Area; diff: Diff }> = ({ area, diff }) => {
           <div className="flex flex-wrap gap-1.5">
             {ELEMS.map((e) => (
               <span key={e} className={`text-[11px] font-mono px-2 py-0.5 rounded-md border ${info.immuneCount[e] ? ELEM_TONE[e] + ' font-bold' : 'text-emerald-300 border-emerald-500/30 bg-emerald-500/10'}`}
-                title={info.immuneCount[e] ? `${total} 種怪物中有 ${info.immuneCount[e]} 種免疫${ELEM_ZH[e]}` : `沒有任何怪物免疫${ELEM_ZH[e]}`}>
+                title={info.immuneCount[e] ? `${total} 種怪物中有 ${info.immuneCount[e]} 種免疫${isEn ? ELEM_EN[e] : ELEM_ZH[e]}` : `沒有任何怪物免疫${isEn ? ELEM_EN[e] : ELEM_ZH[e]}`}>
                 {isEn ? ELEM_EN[e] : ELEM_ZH[e]}{info.immuneCount[e] ? (isEn ? ` Imm ${info.immuneCount[e]}/${total}` : `免疫 ${info.immuneCount[e]}/${total}`) : (isEn ? ' Clear' : '全無免疫')}
               </span>
             ))}
           </div>
           <button type="button" onClick={() => setOpen(!open)} aria-expanded={open} className="text-xs text-sanctuary-400 underline">{open ? (isEn ? 'Collapse monster list' : '收合怪物清單') : (isEn ? `View ${total} monsters` : `看 ${total} 種怪物`)}</button>
           {open && (
-            <ul className="space-y-1 text-xs">
-              {info.monsters.map((m) => (
-                <li key={m.id} className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                  <span className="text-sanctuary-200">{m.name}</span><span className="text-sanctuary-500 font-mono">Lv {m.levels[diff] ?? '—'}</span>
-                  {immunitiesOf(m, diff).map((e) => <span key={e} className={`text-[10px] font-mono px-1.5 rounded border ${ELEM_TONE[e]}`}>{isEn ? `${ELEM_EN[e]} Imm.` : `${ELEM_ZH[e]}免疫`}</span>)}
-                </li>
-              ))}
+            <ul className="space-y-1.5 text-xs pt-1">
+              {info.monsters.map((m) => {
+                const aImg = getMonsterImage(m);
+                return (
+                  <li key={m.id} className="flex flex-wrap items-center gap-x-2 gap-y-1 py-0.5 border-b border-sanctuary-800/40 last:border-b-0">
+                    <img src={aImg} alt="" className="w-5 h-5 rounded object-cover object-top border border-sanctuary-800 shrink-0" loading="lazy" />
+                    <span className="text-sanctuary-200 font-medium">{isEn ? (m.nameEn || m.name) : m.name}</span>
+                    <span className="text-sanctuary-500 font-mono text-[11px]">Lv {m.levels[diff] ?? '—'}</span>
+                    <div className="flex flex-wrap gap-1 ml-auto">
+                      {immunitiesOf(m, diff).map((e) => (
+                        <span key={e} className={`text-[10px] font-mono px-1.5 rounded border ${ELEM_TONE[e]}`}>
+                          {isEn ? `${ELEM_EN[e]} Imm.` : `${ELEM_ZH[e]}免疫`}
+                        </span>
+                      ))}
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </>
