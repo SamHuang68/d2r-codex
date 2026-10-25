@@ -105,7 +105,7 @@ export const DLCReign: React.FC<DLCReignProps> = ({
                   >
                     {isEn ? "Lore of Idiabolos ↗" : "艾迪亞布羅斯學術 ↗"}
                   </button>
-                  、
+                  {isEn ? ', ' : '、'}
                   <button
                     type="button"
                     onClick={() => onNavigateItem?.('貝恩的衣裝')}
@@ -129,7 +129,7 @@ export const DLCReign: React.FC<DLCReignProps> = ({
                   >
                     {isEn ? "Authority ↗" : "權威 (Authority) ↗"}
                   </button>
-                  、
+                  {isEn ? ', ' : '、'}
                   <button
                     type="button"
                     onClick={() => onNavigateToRuneword?.('巫師會')}
@@ -138,7 +138,7 @@ export const DLCReign: React.FC<DLCReignProps> = ({
                   >
                     {isEn ? "Coven ↗" : "巫師會 (Coven) ↗"}
                   </button>
-                  、
+                  {isEn ? ', ' : '、'}
                   <button
                     type="button"
                     onClick={() => onNavigateToRuneword?.('虛無')}

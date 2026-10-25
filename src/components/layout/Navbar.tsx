@@ -123,9 +123,9 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
   };
 
   return (
-    <aside aria-label="全站功能列" className={`hidden lg:block shrink-0 border-r border-sanctuary-800/80 bg-sanctuary-950/60 transition-[width] duration-150 ${collapsed ? 'w-10' : 'w-32'}`}>
+    <aside aria-label={t('全站功能列', 'Site Navigation')} className={`hidden lg:block shrink-0 border-r border-sanctuary-800/80 bg-sanctuary-950/60 transition-[width] duration-150 ${collapsed ? 'w-10' : 'w-32'}`}>
       <nav
-        aria-label="全站分頁"
+        aria-label={t('全站分頁', 'Site Tabs')}
         className={`sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-y-auto no-scrollbar py-1 px-1`}
       >
         <button
@@ -145,7 +145,7 @@ export const SideNav: React.FC<{ activeTab: string; setActiveTab: (tab: string) 
           )}
         </button>
         {NAV_GROUPS.map((group, gi) => (
-          <div key={group.category} role="group" aria-label={group.category} className={gi === 0 ? '' : collapsed ? 'mt-1 pt-1 border-t border-sanctuary-800/70' : 'mt-1.5'}>
+          <div key={group.category} role="group" aria-label={t(group.category, group.categoryEn)} className={gi === 0 ? '' : collapsed ? 'mt-1 pt-1 border-t border-sanctuary-800/70' : 'mt-1.5'}>
             <div className={collapsed ? 'sr-only' : 'px-1.5 text-[10px] leading-4 font-mono font-bold tracking-wider text-sanctuary-400 uppercase truncate'}>
               {t(group.category, group.categoryEn)}
             </div>

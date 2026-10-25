@@ -181,7 +181,7 @@ const AppContent: React.FC = () => {
       <SideNav activeTab={activeTab} setActiveTab={(t) => handleNavigate(t)} />
       {/* Main Content Area */}
       <main className="flex-1 min-w-0 pb-16 lg:pb-0">
-        <Suspense fallback={<div className="p-8 text-center text-sanctuary-400" role="status">載入中…</div>}>
+        <Suspense fallback={<div className="p-8 text-center text-sanctuary-400" role="status">{t('載入中…', 'Loading…')}</div>}>
         {activeTab === 'overview' && (
           <div>
             <HeroSection onNavigateTab={(tab) => handleNavigate(tab)} />
@@ -308,7 +308,7 @@ const AppContent: React.FC = () => {
             </div>
 
             {plannerSubMode === 'armory' ? (
-              <Suspense fallback={<div className="p-8 text-center text-sanctuary-400" role="status">載入配裝模擬器…</div>}>
+              <Suspense fallback={<div className="p-8 text-center text-sanctuary-400" role="status">{t('載入配裝模擬器…', 'Loading Armory Simulator…')}</div>}>
                 <SimulatorV2 initialClass={selectedInitialClass} initialTab={simInitialTab} onNavigateItem={handleItemOrRunewordNavigate} onClassChange={setSelectedInitialClass} />
               </Suspense>
             ) : (

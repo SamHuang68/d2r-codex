@@ -158,14 +158,14 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
         keySkills: ['Lightning Fury', 'Charged Strike', 'Power Strike'],
       },
       {
-        name: 'Passive and Magic',
-        description: 'Keen evasive instincts, critical strike mastery, and tactical decoy summoning.',
-        keySkills: ['Valkyrie', 'Pierce', 'Critical Strike', 'Dodge / Evade'],
-      },
-      {
         name: 'Bow and Crossbow',
         description: 'Long-range physical barrages and freezing elemental archery covering entire horizons.',
         keySkills: ['Multishot', 'Strafe', 'Freezing Arrow', 'Guided Arrow'],
+      },
+      {
+        name: 'Passive and Magic',
+        description: 'Keen evasive instincts, critical strike mastery, and tactical decoy summoning.',
+        keySkills: ['Valkyrie', 'Pierce', 'Critical Strike', 'Dodge / Evade'],
       },
     ],
     popularBuilds: [
@@ -253,9 +253,9 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
         gearSummary: 'Dual Grief Phase Blades + Enigma + Arreat\'s Face + Dual Ali Baba (Swap)',
       },
       {
-        name: 'Frenzy Melee Barb',
-        coreSkills: 'Frenzy + Double Swing + Taunt + Battle Orders',
-        gearSummary: 'Grief + Death / Lawbringer + Fortitude + Arreat\'s Face + Gore Rider',
+        name: 'Berserk Melee Barb',
+        coreSkills: 'Berserk (100% Magic Damage) + Battle Orders + Howl',
+        gearSummary: 'Grief Phase Blade + Stormshield + Fortitude + Gore Rider',
       },
     ],
     gearInfo: {
@@ -326,14 +326,14 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
     ],
     popularBuilds: [
       {
+        name: 'Mosaic Phoenix Striker',
+        coreSkills: 'Phoenix Strike + Tiger Strike + Cobra Strike + Dragon Talon',
+        gearSummary: 'Dual Mosaic Greater Talons + Enigma + Griffon\'s Eye',
+      },
+      {
         name: 'Trapsin (Lightning Trap)',
         coreSkills: 'Lightning Sentry + Death Sentry + Fire Blast + Burst of Speed',
         gearSummary: 'Dual +3 Trap Greater Talons + Enigma + Griffon\'s Eye + Arachnid Mesh',
-      },
-      {
-        name: 'Mosaic Phoenix Striker',
-        coreSkills: 'Phoenix Strike + Claws of Thunder + Blades of Ice + Dragon Flight',
-        gearSummary: 'Dual Mosaic Runewords (Greater Talons) + Enigma + Griffon\'s Eye',
       },
     ],
     gearInfo: {
