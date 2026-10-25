@@ -2,18 +2,13 @@ import React, { useState } from 'react';
 import { CHARACTER_CLASSES_DATA } from '../../data/classes';
 import { CLASS_TRANSLATIONS } from '../../data/classTranslations';
 import { useLanguage } from '../../context/LanguageContext';
+import { getClassImage } from '../../utils/classImages';
 import { 
-  Users, 
   Shield, 
   Swords, 
   Sparkles, 
-  Compass, 
-  Flame, 
-  Zap, 
-  Crosshair, 
-  Skull, 
-  Snowflake, 
-  Sword 
+  Compass,
+  Flame 
 } from 'lucide-react';
 
 export interface CharacterGuideProps {
@@ -35,19 +30,6 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
   const currentClass = CHARACTER_CLASSES_DATA.find((c) => c.id === selectedClassId) || CHARACTER_CLASSES_DATA[0];
   const classTr = CLASS_TRANSLATIONS[currentClass.id];
 
-  const getClassIcon = (id: string) => {
-    switch (id) {
-      case 'sorceress': return <Flame className="w-4 h-4 text-d2-fire" />;
-      case 'paladin': return <Shield className="w-4 h-4 text-d2-gold" />;
-      case 'amazon': return <Crosshair className="w-4 h-4 text-d2-rare" />;
-      case 'necromancer': return <Skull className="w-4 h-4 text-d2-poison" />;
-      case 'barbarian': return <Sword className="w-4 h-4 text-d2-blood" />;
-      case 'druid': return <Snowflake className="w-4 h-4 text-d2-cold" />;
-      case 'assassin': return <Zap className="w-4 h-4 text-d2-lightning" />;
-      case 'warlock': return <Flame className="w-4 h-4 text-d2-unique" />;
-      default: return <Users className="w-4 h-4" />;
-    }
-  };
 
   // Class-specific base weapon and armor mechanics
   const classSpecificGear: Record<string, { title: string; desc: string; topBases: string[] }> = {
@@ -138,7 +120,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
         </div>
       </div>
 
-      {/* Class Selector Tabs */}
+      {/* Class Selector Tabs with Avatars */}
       <div className="flex items-center gap-2 overflow-x-auto pb-3 border-b border-sanctuary-850 no-scrollbar">
         {CHARACTER_CLASSES_DATA.map((cls) => {
           const isSelected = cls.id === selectedClassId;
@@ -146,13 +128,19 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
             <button
               key={cls.id}
               onClick={() => setSelectedClassId(cls.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0 border ${
+              className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0 border ${
                 isSelected
                   ? 'bg-sanctuary-800 text-d2-unique border-d2-unique/60 shadow-md shadow-d2-unique/10 font-bold'
                   : 'bg-sanctuary-950/80 text-sanctuary-400 border-sanctuary-800 hover:text-sanctuary-200'
               }`}
             >
-              <span>{getClassIcon(cls.id)}</span>
+              <img
+                src={getClassImage(cls.id)}
+                alt=""
+                className={`w-6 h-6 rounded-full object-cover object-[75%_15%] border transition-transform ${
+                  isSelected ? 'border-d2-unique scale-110 shadow-sm' : 'border-sanctuary-700/60 opacity-80'
+                }`}
+              />
               <span>{isEn && cls.nameEn ? cls.nameEn : cls.name}</span>
               {cls.isDLC && (
                 <span className="text-[9px] px-1.5 py-0.2 rounded bg-d2-fire/20 text-d2-fire font-mono font-bold">
@@ -166,6 +154,44 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
 
       {/* Class Spotlight Banner */}
       <div className="bg-gradient-to-br from-sanctuary-900 via-sanctuary-950 to-sanctuary-900 p-6 sm:p-8 rounded-3xl border border-sanctuary-800 shadow-2xl relative overflow-hidden">
+        {/* Character Profile Artwork Showcase */}
+        <div className="relative group rounded-2xl overflow-hidden border border-sanctuary-750/90 bg-sanctuary-950 shadow-2xl mb-8">
+          <div className="relative h-44 sm:h-56 md:h-64 w-full overflow-hidden bg-sanctuary-950">
+            <img
+              src={getClassImage(currentClass.id)}
+              alt={currentClass.nameEn}
+              className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+            />
+            {/* Atmospheric Gradients */}
+            <div className="absolute inset-0 bg-gradient-to-t from-sanctuary-950 via-sanctuary-950/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-sanctuary-950/80 via-transparent to-sanctuary-950/60" />
+
+            {/* Top Badges */}
+            <div className="absolute top-4 left-4 sm:left-6 flex items-center gap-2">
+              <span className="px-2.5 py-1 rounded-md bg-sanctuary-950/90 border border-sanctuary-700 text-xs font-mono font-bold text-d2-unique shadow-lg backdrop-blur-md">
+                {currentClass.nameEn.toUpperCase()}
+              </span>
+              {currentClass.isDLC && (
+                <span className="px-2 py-0.5 rounded-md bg-d2-fire/30 border border-d2-fire/60 text-[10px] font-bold text-d2-fire shadow-lg backdrop-blur-md">
+                  {isEn ? 'RotW DLC Expansion' : '全新 DLC 擴充職業'}
+                </span>
+              )}
+            </div>
+
+            {/* Bottom Title Bar Overlay */}
+            <div className="absolute bottom-4 left-4 sm:left-6 right-4 sm:right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+              <div>
+                <div className="text-[10px] font-mono text-sanctuary-400 uppercase tracking-widest">
+                  {isEn ? 'OFFICIAL CLASS DOSSIER' : '官方典藏角色檔案'}
+                </div>
+                <div className="font-diablo text-xl sm:text-2xl font-extrabold text-sanctuary-100 drop-shadow-md">
+                  {isEn && classTr ? classTr.title : currentClass.title}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-8 space-y-4">
             <div className="flex items-center gap-2">

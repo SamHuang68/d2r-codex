@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BREAKPOINTS_DATA } from '../../data/breakpoints';
 import { AREA_LEVELS_DATA } from '../../data/areaLevels';
 import { CLASS_ZH_TO_EN } from '../../engine/slots';
+import { getClassImage } from '../../utils/classImages';
 import { Compass, Zap, MapPin, CheckCircle2, Sparkles, Calculator } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -129,13 +130,13 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                     <button
                       key={cls}
                       onClick={() => setSelectedClass(cls)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border ${
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors border flex items-center gap-1.5 ${
                         selectedClass === cls
                           ? 'bg-sanctuary-800 text-d2-fire border-d2-fire/50 shadow'
                           : 'bg-sanctuary-900 text-sanctuary-400 border-sanctuary-800 hover:text-white'
                       }`}
                     >
-                      {isEn ? (CLASS_ZH_TO_EN[cls] || cls) : cls}
+                      <img src={getClassImage(cls)} alt="" className="w-4 h-4 rounded-full object-cover object-[75%_15%] border border-sanctuary-700/60 inline-block" /><span>{isEn ? (CLASS_ZH_TO_EN[cls] || cls) : cls}</span>
                     </button>
                   ))}
                 </div>

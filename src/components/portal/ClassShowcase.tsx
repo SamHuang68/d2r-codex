@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { CHARACTER_CLASSES_DATA } from '../../data/classes';
 import { CLASS_TRANSLATIONS } from '../../data/classTranslations';
+import { getClassImage } from '../../utils/classImages';
 import { Sparkles, Shield, Swords, Compass, Flame } from 'lucide-react';
 
 interface ClassShowcaseProps {
@@ -39,7 +40,7 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
           </p>
         </div>
 
-        {/* Class Selection Tabs */}
+        {/* Class Selection Tabs with Avatars */}
         <div className="flex items-center justify-start md:justify-center gap-2 overflow-x-auto pb-4 mb-8 no-scrollbar">
           {CHARACTER_CLASSES_DATA.map((cls) => {
             const isSelected = cls.id === selectedClassId;
@@ -47,12 +48,19 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
               <button
                 key={cls.id}
                 onClick={() => setSelectedClassId(cls.id)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs md:text-sm font-medium transition-all duration-150 shrink-0 border ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs md:text-sm font-medium transition-all duration-150 shrink-0 border ${
                   isSelected
                     ? 'bg-sanctuary-800 text-d2-unique border-d2-unique/60 shadow-glow-gold/20'
                     : 'bg-sanctuary-950/80 text-sanctuary-300 border-sanctuary-800 hover:border-sanctuary-700 hover:text-sanctuary-100'
                 }`}
               >
+                <img
+                  src={getClassImage(cls.id)}
+                  alt=""
+                  className={`w-6 h-6 rounded-full object-cover object-[75%_15%] border transition-transform ${
+                    isSelected ? 'border-d2-unique scale-110 shadow-sm' : 'border-sanctuary-700/60 opacity-80'
+                  }`}
+                />
                 {cls.isDLC && (
                   <span className="px-1.5 py-0.2 text-[9px] font-mono bg-d2-fire/20 text-d2-fire rounded border border-d2-fire/40">
                     RotW
@@ -75,8 +83,46 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
           <div className="absolute top-0 right-0 w-96 h-96 bg-d2-unique/5 rounded-full blur-3xl pointer-events-none" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left Column: Lore & Stats */}
-            <div className="lg:col-span-5 space-y-6">
+            {/* Left Column: Profile Artwork, Lore & Stats */}
+            <div className="lg:col-span-5 space-y-5">
+              {/* Character Profile Artwork Card */}
+              <div className="relative group rounded-2xl overflow-hidden border border-sanctuary-750/90 bg-sanctuary-900 shadow-2xl">
+                <div className="relative aspect-[16/9] w-full overflow-hidden bg-sanctuary-950">
+                  <img
+                    src={getClassImage(currentClass.id)}
+                    alt={currentClass.nameEn}
+                    className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                  />
+                  {/* Atmospheric Gradients */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-sanctuary-950 via-sanctuary-950/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-sanctuary-950/60 via-transparent to-sanctuary-950/40" />
+
+                  {/* Corner Badges */}
+                  <div className="absolute top-3 left-3 flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-md bg-sanctuary-950/90 border border-sanctuary-700 text-[10px] font-mono font-bold text-d2-unique shadow-lg backdrop-blur-md">
+                      {currentClass.nameEn.toUpperCase()}
+                    </span>
+                    {currentClass.isDLC && (
+                      <span className="px-2 py-0.5 rounded-md bg-d2-fire/30 border border-d2-fire/60 text-[10px] font-bold text-d2-fire shadow-lg backdrop-blur-md">
+                        {isEn ? 'RotW DLC Class' : '全新 DLC 擴充職業'}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Bottom Crest / Title info on image */}
+                  <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+                    <div>
+                      <div className="text-[10px] font-mono text-sanctuary-400 uppercase tracking-widest">
+                        {isEn ? 'CLASS PROFILE DOSSIER' : '職業典藏檔案'}
+                      </div>
+                      <div className="font-diablo text-base sm:text-lg font-bold text-sanctuary-100 drop-shadow-md">
+                        {isEn && classTr ? classTr.title : currentClass.title}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-mono text-xs text-d2-unique tracking-widest uppercase">
@@ -88,9 +134,9 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
                     </span>
                   )}
                 </div>
-                <h3 className="font-diablo text-3xl font-extrabold text-sanctuary-100">
+                <h3 className="font-diablo text-2xl sm:text-3xl font-extrabold text-sanctuary-100">
                   {isEn && currentClass.nameEn ? currentClass.nameEn : currentClass.name}
-                  <span className="text-lg font-normal text-d2-unique ml-3">
+                  <span className="text-base font-normal text-d2-unique ml-3">
                     • {isEn && classTr ? classTr.title : currentClass.title}
                   </span>
                 </h3>

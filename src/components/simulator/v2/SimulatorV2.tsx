@@ -22,6 +22,7 @@ import { slotPlacementError } from './equipRules';
 import { engineItemsOf } from './engineItems';
 import './d2skin.css';
 import { useLanguage } from '../../../context/LanguageContext';
+import { getClassImage } from '../../../utils/classImages';
 import { DEFAULT_MERC, MERC_SLOT_ZH, DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type MercSlot, type MercState, type Quests, type TabKey } from './types';
 
 const CLASSES: { zh: string; en: string; code: string }[] = [
@@ -282,7 +283,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="職業">
               {CLASSES.map((c) => (
-                <button key={c.code} type="button" role="tab" aria-selected={c.code === cls.code} onClick={() => selectClass(c)} className="d2-class">{isEn ? c.en : c.zh}</button>
+                <button key={c.code} type="button" role="tab" aria-selected={c.code === cls.code} onClick={() => selectClass(c)} className="d2-class flex items-center gap-1.5"><img src={getClassImage(c.code)} alt="" className="w-4 h-4 rounded-full object-cover object-[75%_15%] border border-sanctuary-700/60 inline-block" /><span>{isEn ? c.en : c.zh}</span></button>
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-2">

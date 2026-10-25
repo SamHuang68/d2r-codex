@@ -2,6 +2,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { SKILLS_DATA, SkillData } from '../../data/skills';
 import { SkillTreeCanvas } from './SkillTreeCanvas';
 import { useLanguage } from '../../context/LanguageContext';
+import { getClassImage } from '../../utils/classImages';
+import { CLASS_ZH_TO_EN } from '../../engine/slots';
 import { SkillSynergyPanel } from './SkillSynergyPanel';
 import { 
   Sparkles, 
@@ -14,26 +16,10 @@ import {
   Check, 
   AlertCircle,
   Zap,
-  Flame,
-  Snowflake,
-  Shield,
-  Crosshair,
-  Skull,
-  Sword,
   LayoutGrid,
   Network
 } from 'lucide-react';
 
-const CLASS_EN_NAME: Record<string, string> = {
-  '魔法使': 'Sorceress',
-  '聖騎士': 'Paladin',
-  '死靈法師': 'Necromancer',
-  '術士': 'Warlock',
-  '亞馬遜': 'Amazon',
-  '野蠻人': 'Barbarian',
-  '刺客': 'Assassin',
-  '德魯伊': 'Druid',
-};
 
 const MAX_TOTAL_POINTS = 110; // 98 (等級 2-99) + 12 (任務獎勵)
 const MAX_SKILL_POINTS = 20;
@@ -234,19 +220,6 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
   }, [allCurrentClassSkills, selectedSkillId, activeTree]);
 
   // 職業圖示映射
-  const getClassIcon = (cls: string) => {
-    switch (cls) {
-      case "魔法使": return <Flame className="w-4 h-4 text-d2-fire" />;
-      case "聖騎士": return <Shield className="w-4 h-4 text-d2-gold" />;
-      case "亞馬遜": return <Crosshair className="w-4 h-4 text-d2-rare" />;
-      case "死靈法師": return <Skull className="w-4 h-4 text-d2-poison" />;
-      case "野蠻人": return <Sword className="w-4 h-4 text-d2-blood" />;
-      case "德魯伊": return <Snowflake className="w-4 h-4 text-d2-cold" />;
-      case "刺客": return <Zap className="w-4 h-4 text-d2-lightning" />;
-      case "術士": return <Flame className="w-4 h-4 text-d2-unique" />;
-      default: return <Sparkles className="w-4 h-4" />;
-    }
-  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
@@ -312,8 +285,8 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
                   : 'bg-sanctuary-900/60 border-sanctuary-800/80 text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-850'
               }`}
             >
-              {getClassIcon(cls.characterClass)}
-              {isEn ? (CLASS_EN_NAME[cls.characterClass] || cls.characterClass) : cls.characterClass}
+              <img src={getClassImage(cls.characterClass)} alt="" className={`w-5 h-5 rounded-full object-cover object-[75%_15%] border transition-transform ${isSelected ? 'border-d2-gold scale-110 shadow-sm' : 'border-sanctuary-700/60 opacity-80'}`} />
+              {isEn ? (CLASS_ZH_TO_EN[cls.characterClass] || cls.characterClass) : cls.characterClass}
             </button>
           );
         })}
