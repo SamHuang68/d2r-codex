@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowUp, Search } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 export interface BackToTopProps {
   /** 滾動超過多少像素時顯示，預設 280px */
@@ -9,9 +10,11 @@ export interface BackToTopProps {
 }
 
 export const BackToTop: React.FC<BackToTopProps> = ({
+
   threshold = 280,
   onOpenSearch,
 }) => {
+  const { isEn } = useLanguage();
   const [isVisible, setIsVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -72,21 +75,21 @@ export const BackToTop: React.FC<BackToTopProps> = ({
     <div
       className="fixed bottom-20 lg:bottom-8 right-4 lg:right-8 z-40 flex flex-col items-center gap-2 transition-all duration-300 animate-fade-in"
       role="region"
-      aria-label="頁面導航快捷按鈕"
+      aria-label={isEn ? "Page navigation shortcut buttons" : "頁面導航快捷按鈕"}
     >
       {/* 快捷全域搜尋小按鈕（滾動深處時隨時可搜，免去手動滾到最頂端） */}
       {onOpenSearch && scrollProgress > 15 && (
         <button
           type="button"
           onClick={onOpenSearch}
-          aria-label="快速開啟全域搜尋"
-          title="快速開啟全域搜尋 (HotKey: Q)"
+          aria-label={isEn ? "Open Global Search" : "快速開啟全域搜尋"}
+          title={isEn ? "Open Global Search (HotKey: Q)" : "快速開啟全域搜尋 (HotKey: Q)"}
           className="group relative w-9 h-9 rounded-full bg-sanctuary-900/90 hover:bg-sanctuary-850 border border-sanctuary-750 hover:border-d2-unique text-sanctuary-400 hover:text-d2-unique shadow-lg backdrop-blur-md flex items-center justify-center transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95"
         >
           <Search className="w-4 h-4 transition-transform group-hover:scale-110" />
           {/* Tooltip */}
           <span className="hidden lg:group-hover:inline-block absolute right-11 px-2 py-1 rounded bg-sanctuary-950 border border-sanctuary-750 text-[11px] text-sanctuary-200 whitespace-nowrap shadow-xl pointer-events-none font-sans font-medium">
-            全站搜尋 <kbd className="font-mono text-d2-unique ml-0.5 font-bold">Q</kbd>
+            {isEn ? "Search " : "全站搜尋 "}<kbd className="font-mono text-d2-unique ml-0.5 font-bold">Q</kbd>
           </span>
         </button>
       )}
@@ -95,8 +98,8 @@ export const BackToTop: React.FC<BackToTopProps> = ({
       <button
         type="button"
         onClick={scrollToTop}
-        aria-label="返回頁面頂端"
-        title="返回頂端 (或按 Home 鍵)"
+        aria-label={isEn ? "Back to top" : "返回頁面頂端"}
+        title={isEn ? "Back to top (or press Home key)" : "返回頂端 (或按 Home 鍵)"}
         className="group relative w-11 h-11 rounded-full bg-sanctuary-950/90 hover:bg-sanctuary-900 border border-sanctuary-750 hover:border-d2-unique shadow-2xl backdrop-blur-md flex items-center justify-center transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 ring-1 ring-black/40 hover:shadow-glow-gold"
       >
         {/* 背景環形 SVG 滾動進度條 */}

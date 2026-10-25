@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { BREAKPOINTS_DATA } from '../../data/breakpoints';
 import { AREA_LEVELS_DATA } from '../../data/areaLevels';
 import { Compass, Zap, MapPin, CheckCircle2, Sparkles, Calculator } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface BreakpointTableProps {
   initialClass?: string;
 }
 
 export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass = '魔法使' }) => {
+  const { t, isEn } = useLanguage();
   const [selectedClass, setSelectedClass] = useState<string>(initialClass);
   const [selectedType, setSelectedType] = useState<'FCR' | 'FHR' | 'FBR'>('FCR');
   const [currentValInput, setCurrentValInput] = useState<number>(0);
@@ -16,6 +18,17 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
   // 75% 滿格擋試算器狀態
   const [charLevel, setCharLevel] = useState<number>(85);
   const [shieldBlockPercent, setShieldBlockPercent] = useState<number>(75);
+
+  const CLASS_EN_NAME: Record<string, string> = {
+  '魔法使': 'Sorceress',
+  '聖騎士': 'Paladin',
+  '死靈法師': 'Necromancer',
+  '術士': 'Warlock',
+  '亞馬遜': 'Amazon',
+  '野蠻人': 'Barbarian',
+  '刺客': 'Assassin',
+  '德魯伊': 'Druid',
+};
 
   const classesList = ['魔法使', '聖騎士', '死靈法師', '術士', '亞馬遜', '野蠻人', '刺客', '德魯伊'];
 
@@ -83,10 +96,10 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
             Combat Mechanics, Frame Breakpoints & Area Levels
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            核心機制斷點與 85 級打寶場景表
+            {t('核心機制斷點與 85 級打寶場景表', 'Combat Breakpoints & Action Frames Guide')}
           </h1>
           <p className="text-xs sm:text-sm text-sanctuary-400 mt-1 max-w-2xl">
-            精準查詢施法速度 (FCR)、打擊恢復 (FHR)、格擋速度 (FBR) 幀數檔位與 75% 滿格擋敏捷試算，掌握 85 級地獄場景原生怪物免疫分佈。
+            {t('精準查詢施法速度 (FCR)、打擊恢復 (FHR)、格擋速度 (FBR) 幀數檔位與 75% 滿格擋敏捷試算，掌握 85 級地獄場景原生怪物免疫分佈。', 'Look up frame breakpoints for Faster Cast Rate (FCR), Faster Hit Recovery (FHR), and Faster Block Rate (FBR) alongside a 75% Max Block Dex calculator.')}
           </p>
         </div>
 
@@ -120,7 +133,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
             <div className="flex flex-wrap items-center justify-between gap-4">
               {/* Class Selector */}
               <div>
-                <label className="block text-xs text-sanctuary-400 mb-1.5 font-medium">選擇職業</label>
+                <label className="block text-xs text-sanctuary-400 mb-1.5 font-medium">{isEn ? 'Select Class' : '選擇職業'}</label>
                 <div className="flex items-center gap-1.5 flex-wrap">
                   {classesList.map((cls) => (
                     <button
@@ -132,7 +145,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                           : 'bg-sanctuary-900 text-sanctuary-400 border-sanctuary-800 hover:text-white'
                       }`}
                     >
-                      {cls}
+                      {isEn ? (CLASS_EN_NAME[cls] || cls) : cls}
                     </button>
                   ))}
                 </div>
@@ -140,7 +153,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
 
               {/* Mechanic Type Selector */}
               <div>
-                <label className="block text-xs text-sanctuary-400 mb-1.5 font-medium">機制種類</label>
+                <label className="block text-xs text-sanctuary-400 mb-1.5 font-medium">{isEn ? "Mechanic Type" : "機制種類"}</label>
                 <div className="flex items-center gap-1.5">
                   {(['FCR', 'FHR', 'FBR'] as const).map((type) => (
                     <button
@@ -152,7 +165,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                           : 'bg-sanctuary-900 text-sanctuary-400 border-sanctuary-800 hover:text-white'
                       }`}
                     >
-                      {type === 'FCR' ? '快速施法 (FCR)' : type === 'FHR' ? '打擊恢復 (FHR)' : '格擋速度 (FBR)'}
+                      {isEn ? (type === 'FCR' ? 'Faster Cast Rate (FCR)' : type === 'FHR' ? 'Faster Hit Recovery (FHR)' : 'Faster Block Rate (FBR)') : (type === 'FCR' ? '快速施法 (FCR)' : type === 'FHR' ? '打擊恢復 (FHR)' : '格擋速度 (FBR)')}
                     </button>
                   ))}
                 </div>
@@ -161,7 +174,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
               {/* Live Calculator Input */}
               <div className="w-full sm:w-auto">
                 <label className="block text-xs text-sanctuary-400 mb-1.5 font-medium">
-                  輸入當前裝備總數值 ({selectedType} %)
+                  {isEn ? `Input Total Gear ${selectedType} %` : `輸入當前裝備總數值 (${selectedType} %)`}
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -171,7 +184,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                     value={currentValInput}
                     onChange={(e) => setCurrentValInput(Math.max(0, Number(e.target.value)))}
                     className="w-32 bg-sanctuary-900 border border-sanctuary-750 rounded-lg px-3 py-1.5 text-sm text-d2-fire font-bold focus:outline-none focus:border-d2-fire"
-                    placeholder="例如: 105"
+                    placeholder={isEn ? "e.g. 105" : "例如: 105"}
                   />
                   <button
                     onClick={() => setCurrentValInput(0)}
@@ -187,7 +200,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
             <div className="pt-2 border-t border-sanctuary-850 flex items-center gap-2 flex-wrap text-xs">
               <span className="text-sanctuary-400 font-mono flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5 text-d2-gold" />
-                {selectedClass} 常用 {selectedType} 質變檔位：
+                {isEn ? `Common ${selectedClass} ${selectedType} Breakpoints:` : `${selectedClass} 常用 ${selectedType} 質變檔位：`}
               </span>
               {currentPresets.map((val) => (
                 <button
@@ -240,18 +253,18 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                     {/* Calculator Result Pill */}
                     <div className="p-2.5 rounded-xl bg-sanctuary-900 border border-sanctuary-750 flex items-center gap-3 text-xs shrink-0">
                       <div>
-                        當前達成：<strong className="text-d2-fire text-sm">{achievedFrame} 幀</strong>
+                        {isEn ? "Achieved: " : "當前達成："}<strong className="text-d2-fire text-sm">{achievedFrame} {isEn ? "frames" : "幀"}</strong>
                       </div>
                       {nextBp ? (
                         <div className="text-sanctuary-400">
-                          距離下一檔 ({nextBp.frames} 幀) 還差：
+                          {isEn ? `To next (${nextBp.frames} frames): ` : `距離下一檔 (${nextBp.frames} 幀) 還差：`}
                           <span className="text-d2-unique font-bold ml-1">
                             +{nextBp.requiredValue - currentValInput}%
                           </span>
                         </div>
                       ) : (
                         <div className="text-d2-set font-semibold flex items-center gap-1">
-                          <CheckCircle2 className="w-3.5 h-3.5" /> 頂級極速檔位已封頂！
+                          <CheckCircle2 className="w-3.5 h-3.5" /> {isEn ? "Max Breakpoint Reached!" : "頂級極速檔位已封頂！"}
                         </div>
                       )}
                     </div>
@@ -290,11 +303,11 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
             <div className="flex items-center gap-2 text-d2-gold border-b border-sanctuary-800 pb-3">
               <Calculator className="w-5 h-5 text-d2-gold" />
               <h3 className="font-diablo text-lg font-bold text-sanctuary-100">
-                75% 滿格擋率 (Max Block) 敏捷精確計算器
+                {isEn ? "75% Max Block Dexterity Calculator" : "75% 滿格擋率 (Max Block) 敏捷精確計算器"}
               </h3>
             </div>
             <p className="text-xs text-sanctuary-400">
-              暗黑破壞神二代的格擋公式中，角色等級每升一級，達到 75% 滿格擋所需要的敏捷點數就會遞增。輸入您的等級與盾牌實際格擋率即可秒算所需敏捷：
+              {isEn ? "In Diablo II, required Dexterity for 75% Max Block increases each level. Input character level and shield block % to calculate required Dexterity:" : "暗黑破壞神二代的格擋公式中，角色等級每升一級，達到 75% 滿格擋所需要的敏捷點數就會遞增。輸入您的等級與盾牌實際格擋率即可秒算所需敏捷："}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-sanctuary-900/70 p-4 rounded-xl border border-sanctuary-800">
@@ -328,9 +341,9 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
               </div>
 
               <div className="flex flex-col justify-center bg-sanctuary-950 p-3 rounded-lg border border-sanctuary-800 text-center">
-                <div className="text-[10px] font-mono text-sanctuary-400 uppercase">達到 75% 滿格擋所需敏捷：</div>
+                <div className="text-[10px] font-mono text-sanctuary-400 uppercase">{isEn ? "Required Dexterity for 75% Max Block:" : "達到 75% 滿格擋所需敏捷："}</div>
                 <div className="text-2xl font-bold font-mono text-d2-gold mt-0.5">
-                  {requiredDexForMaxBlock} <span className="text-xs font-normal text-sanctuary-400">點敏捷</span>
+                  {requiredDexForMaxBlock} <span className="text-xs font-normal text-sanctuary-400">{isEn ? "Dex" : "點敏捷"}</span>
                 </div>
               </div>
             </div>

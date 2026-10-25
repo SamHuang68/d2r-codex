@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { SKILLS_DATA, SkillData } from '../../data/skills';
 import { SkillTreeCanvas } from './SkillTreeCanvas';
+import { useLanguage } from '../../context/LanguageContext';
 import { SkillSynergyPanel } from './SkillSynergyPanel';
 import { 
   Sparkles, 
@@ -23,6 +24,17 @@ import {
   Network
 } from 'lucide-react';
 
+const CLASS_EN_NAME: Record<string, string> = {
+  '魔法使': 'Sorceress',
+  '聖騎士': 'Paladin',
+  '死靈法師': 'Necromancer',
+  '術士': 'Warlock',
+  '亞馬遜': 'Amazon',
+  '野蠻人': 'Barbarian',
+  '刺客': 'Assassin',
+  '德魯伊': 'Druid',
+};
+
 const MAX_TOTAL_POINTS = 110; // 98 (等級 2-99) + 12 (任務獎勵)
 const MAX_SKILL_POINTS = 20;
 
@@ -31,6 +43,7 @@ export interface SkillPlannerProps {
 }
 
 export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔法使" }) => {
+  const { t, isEn } = useLanguage();
   const [selectedClass, setSelectedClass] = useState<string>(initialClass);
   const [activeTreeIndex, setActiveTreeIndex] = useState<number>(0);
   const [skillPoints, setSkillPoints] = useState<Record<string, number>>({});
@@ -164,7 +177,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
 
     currentClassData.trees.forEach((tree, idx) => {
       const p = treePoints[idx];
-      lines.push(`【${tree.name}】(${p} 點):`);
+      lines.push(`【${isEn && tree.nameEn ? tree.nameEn : tree.name}】(${p} 點):`);
       const allocated = tree.skills.filter(s => (skillPoints[s.id] || 0) > 0);
       if (allocated.length === 0) {
         lines.push("  (無投資點數)");
@@ -245,7 +258,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
             Authentic In-Game Skill Tree & Synergy Matrix
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            八大職業全技能樹與協同矩陣模擬器
+            {t('八大職業全技能樹與協同矩陣模擬器', 'Skill Trees & Synergy Matrix Planner')}
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-3xl">
             100% 復刻暗黑破壞神遊戲內經典 6x3 技能樹畫布與前置連線，全息整合雙向協同加成（Synergy）即時算力模型，支援 110 點加點模擬、天梯戰術圖說與配點匯出。
@@ -255,7 +268,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
         {/* 點數面板與操作按鈕 */}
         <div className="flex items-center gap-3 bg-sanctuary-900/90 p-3 rounded-2xl border border-sanctuary-800 shadow-xl shrink-0">
           <div className="text-right pr-3 border-r border-sanctuary-800">
-            <div className="text-[11px] text-sanctuary-400 font-mono">剩餘可用技能點數</div>
+            <div className="text-[11px] text-sanctuary-400 font-mono">{isEn ? 'Remaining Skill Points' : '剩餘可用技能點數'}</div>
             <div className="flex items-baseline justify-end gap-1.5">
               <span className={`text-2xl font-bold font-mono ${remainingPoints < 10 ? 'text-d2-blood' : 'text-d2-gold'}`}>
                 {remainingPoints}
@@ -271,15 +284,15 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
               className="px-3 py-2 bg-sanctuary-800/80 hover:bg-sanctuary-750 text-sanctuary-300 hover:text-sanctuary-100 rounded-xl text-xs font-medium border border-sanctuary-700/60 transition-all flex items-center gap-1.5"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              清空重置
+              {t('清空重置', 'Reset')}
             </button>
             <button
               onClick={handleCopyBuild}
-              title="複製加點文字方案"
+              title={isEn ? "Copy build plan text" : "複製加點文字方案"}
               className="px-3 py-2 bg-d2-gold text-sanctuary-950 font-bold hover:bg-amber-400 rounded-xl text-xs transition-all flex items-center gap-1.5 shadow-md shadow-d2-gold/20"
             >
               {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-              {copied ? "已複製！" : "匯出配點"}
+              {copied ? (isEn ? "Copied!" : "已複製！") : (isEn ? "Export Build" : "匯出配點")}
             </button>
           </div>
         </div>
@@ -300,7 +313,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
               }`}
             >
               {getClassIcon(cls.characterClass)}
-              {cls.characterClass}
+              {isEn ? (CLASS_EN_NAME[cls.characterClass] || cls.characterClass) : cls.characterClass}
             </button>
           );
         })}
@@ -315,7 +328,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
             const points = treePoints[idx];
             return (
               <button
-                key={tree.name}
+                key={isEn && tree.nameEn ? tree.nameEn : tree.name}
                 onClick={() => {
                   setActiveTreeIndex(idx);
                   setSearchQuery("");
@@ -329,7 +342,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
                     : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-800/60'
                 }`}
               >
-                <span>{tree.name}</span>
+                <span>{isEn && tree.nameEn ? tree.nameEn : tree.name}</span>
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
                   isActive ? 'bg-sanctuary-950 text-d2-gold' : 'bg-sanctuary-800 text-sanctuary-300'
                 }`}>

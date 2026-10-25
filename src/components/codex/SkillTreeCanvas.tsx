@@ -1,6 +1,7 @@
 import React from 'react';
 import { SkillData } from '../../data/skills';
 import { getSkillGridPosition } from '../../data/skills/layout';
+import { useLanguage } from '../../context/LanguageContext';
 import { 
   getRelatedSynergySkillIds, 
   SYNERGY_RELATIONS 
@@ -44,6 +45,7 @@ export const SkillTreeCanvas: React.FC<SkillTreeCanvasProps> = ({
   isPrerequisitesMet,
   remainingPoints,
 }) => {
+  const { isEn } = useLanguage();
   // 決定當前要突顯協同加成的技能 (hover 優先，次為 selected)
   const activeFocusId = hoveredSkillId || selectedSkillId;
   const activeSynergyIds = React.useMemo(() => {
@@ -334,7 +336,7 @@ export const SkillTreeCanvas: React.FC<SkillTreeCanvasProps> = ({
 
                 {/* 技能名稱簡稱 */}
                 <div className="text-[10px] sm:text-[11px] font-diablo font-bold text-sanctuary-200 truncate max-w-[52px] sm:max-w-[60px] text-center mt-0.5 leading-tight">
-                  {skill.name}
+                  {isEn && skill.nameEn ? skill.nameEn : skill.name}
                 </div>
 
                 {/* 點數計數器方框 (右下角 D2 經典標記) */}
@@ -353,7 +355,7 @@ export const SkillTreeCanvas: React.FC<SkillTreeCanvasProps> = ({
                 {/* 協同徽章 (當有協同時顯示小閃電) */}
                 {skill.synergies && skill.synergies.length > 0 && (
                   <div
-                    title={`擁有 ${skill.synergies.length} 項協同關聯`}
+                    title={isEn ? `Has ${skill.synergies.length} synergy relationships` : `擁有 ${skill.synergies.length} 項協同關聯`}
                     className="absolute -top-1.5 -left-1.5 w-4 h-4 rounded-full bg-cyan-950 border border-cyan-400/60 flex items-center justify-center text-[9px] text-cyan-300 shadow"
                   >
                     ⚡
@@ -371,7 +373,7 @@ export const SkillTreeCanvas: React.FC<SkillTreeCanvasProps> = ({
                     }}
                     disabled={points <= 0}
                     className="w-5 h-5 rounded flex items-center justify-center bg-sanctuary-800 hover:bg-sanctuary-700 text-sanctuary-200 disabled:opacity-30 disabled:cursor-not-allowed text-xs"
-                    title="右鍵或點擊扣除 1 點"
+                    title={isEn ? "Right-click or click to remove 1 point" : "右鍵或點擊扣除 1 點"}
                   >
                     <Minus className="w-3 h-3" />
                   </button>
@@ -383,7 +385,7 @@ export const SkillTreeCanvas: React.FC<SkillTreeCanvasProps> = ({
                     }}
                     disabled={isMax || remainingPoints <= 0}
                     className="w-5 h-5 rounded flex items-center justify-center bg-d2-gold text-sanctuary-950 hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold"
-                    title="左鍵或點擊增加 1 點"
+                    title={isEn ? "Left-click or click to add 1 point" : "左鍵或點擊增加 1 點"}
                   >
                     <Plus className="w-3 h-3" />
                   </button>
@@ -395,7 +397,7 @@ export const SkillTreeCanvas: React.FC<SkillTreeCanvasProps> = ({
                     }}
                     disabled={isMax || remainingPoints <= 0}
                     className="px-1 text-[9px] font-mono font-bold rounded bg-sanctuary-800 hover:bg-d2-gold hover:text-sanctuary-950 text-d2-gold disabled:opacity-30 disabled:cursor-not-allowed"
-                    title="加滿至 20 點"
+                    title={isEn ? "Max out to 20 points" : "加滿至 20 點"}
                   >
                     MAX
                   </button>
@@ -411,15 +413,15 @@ export const SkillTreeCanvas: React.FC<SkillTreeCanvasProps> = ({
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-d2-gold inline-block" />
-            <span className="text-sanctuary-300">前置傳遞路徑</span>
+            <span className="text-sanctuary-300">{isEn ? "Prerequisite Path" : "前置傳遞路徑"}</span>
           </span>
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse inline-block" />
-            <span className="text-cyan-300 font-semibold">協同加成弧線 (Synergy)</span>
+            <span className="text-cyan-300 font-semibold">{isEn ? "Synergy Arc" : "協同加成弧線 (Synergy)"}</span>
           </span>
         </div>
         <div className="text-sanctuary-400 font-mono text-[10px]">
-          左鍵加點 / 右鍵減點 / 點擊查看全息協同矩陣
+          {isEn ? "Left-click: +1 / Right-click: -1 / Click: view synergy matrix" : "左鍵加點 / 右鍵減點 / 點擊查看全息協同矩陣"}
         </div>
       </div>
     </div>

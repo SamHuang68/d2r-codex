@@ -1,8 +1,10 @@
 import React from 'react';
 import { Flame, ShieldCheck, Database, Zap, ArrowUp } from 'lucide-react';
 import meta from '../../data/game/meta.json';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const Footer: React.FC = () => {
+  const { isEn } = useLanguage();
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -21,7 +23,7 @@ export const Footer: React.FC = () => {
               SANCTUARY CODEX • 聖休亞瑞典藏中樞
             </div>
             <div className="text-[11px] text-sanctuary-500 font-sans">
-              暗黑破壞神 II：獄火重生 (D2R) 旗艦遊戲專頁與全功能速查手冊
+              {isEn ? "Diablo II: Resurrected (D2R) Sanctuary Codex & Armor Simulator" : "暗黑破壞神 II：獄火重生 (D2R) 旗艦遊戲專頁與全功能速查手冊"}
             </div>
           </div>
         </div>
@@ -29,27 +31,27 @@ export const Footer: React.FC = () => {
         <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-sanctuary-400">
           <span className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-d2-set" />
-            純本地無痕存儲 (LocalStorage)
+            {isEn ? "Client-side Storage (LocalStorage)" : "純本地無痕存儲 (LocalStorage)"}
           </span>
           <span className="flex items-center gap-1.5">
             <Database className="w-3.5 h-3.5 text-d2-unique" />
-            完整典藏資料庫 (離線支援)
+            {isEn ? "Full Game Database (Offline Ready)" : "完整典藏資料庫 (離線支援)"}
           </span>
           <span className="flex items-center gap-1.5">
             <Zap className="w-3.5 h-3.5 text-d2-fire" />
-            秒級模糊檢索 (HotKey 'Q')
+            {isEn ? "Instant Search (HotKey 'Q')" : "秒級模糊檢索 (HotKey 'Q')"}
           </span>
-          <span className="flex items-center gap-1.5 text-sanctuary-500" title="模擬器與百科的數值由此版本的遊戲資料表產生">
-            遊戲資料版本 {meta.gameVersion}（{meta.generatedAt} 產生）
+          <span className="flex items-center gap-1.5 text-sanctuary-500" title={isEn ? "Simulator and codex values are generated from this game data version" : "模擬器與百科的數值由此版本的遊戲資料表產生"}>
+            {isEn ? `Game Data Version ${meta.gameVersion} (Built ${meta.generatedAt})` : `遊戲資料版本 ${meta.gameVersion}（${meta.generatedAt} 產生）`}
           </span>
           <button
             type="button"
             onClick={scrollToTop}
             className="px-3 py-1.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 hover:border-d2-unique text-sanctuary-300 hover:text-d2-unique transition-all flex items-center gap-1.5 cursor-pointer shadow-sm ml-2"
-            title="回到頁面頂端 (或按 Home 鍵)"
+            title={isEn ? "Back to top (or press Home key)" : "回到頁面頂端 (或按 Home 鍵)"}
           >
             <ArrowUp className="w-3.5 h-3.5" />
-            <span>回到頂端</span>
+            <span>{isEn ? "Back to Top" : "回到頂端"}</span>
           </button>
         </div>
       </div>

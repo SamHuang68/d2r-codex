@@ -3,6 +3,7 @@ import type { CatalogEntry } from '../../../engine/catalog';
 import type { ItemCheck } from '../../../data/codex/customItemCheck';
 import { CUSTOM_AFFIXES, CUSTOM_BASES, MAX_CUSTOM_AFFIXES, MAX_CUSTOM_NAME, customEntry, validateCustomDef, type CustomAffix, type CustomItemDef } from '../../../engine/customItem';
 import { describeModifiers } from '../../../engine/describe';
+import { useLanguage } from '../../../context/LanguageContext';
 
 interface Props {
   level: number;
@@ -29,10 +30,11 @@ const fmtRange = ([lo, hi]: [number, number]) => (lo === hi ? `${lo}` : `${lo}�
 
 /** 「遊戲內檢查」：對照遊戲魔法詞綴表，說明這組詞綴能不能長在這種飾品上（只是參考，不擋穿戴與儲存） */
 const GameCheck: React.FC<{ check: ItemCheck; level: number }> = ({ check, level }) => {
+  const { isEn } = useLanguage();
   const label = (code: string, value: number) => describeModifiers([{ code, min: value, max: value }], 1, level)[0]?.text ?? code;
   return (
     <div className="d2-tip" aria-label="遊戲內檢查" style={{ textAlign: 'left' }}>
-      <div className="nm t-gold">遊戲內檢查（參考）</div>
+      <div className="nm t-gold">{isEn ? "In-Game Check (Reference)" : "遊戲內檢查（參考）"}</div>
       {check.fit && (
         <div className="mod t-set">
           可以長出來：{QUALITY_ZH[check.fit.quality]}品質{check.fit.quality === 'rare' ? '才行' : '即可'}，物品等級 ≥ {check.fit.minIlvl}{check.fit.maxIlvl ? `（且 ≤ ${check.fit.maxIlvl}）` : ''}；用到 {check.fit.rows.map((r) => `${r.name}（${KIND_ZH[r.kind]}）`).join('、')}
@@ -59,6 +61,7 @@ const GameCheck: React.FC<{ check: ItemCheck; level: number }> = ({ check, level
  * 詞綴從清單選、數值自填；數值上限只是防呆。「遊戲內檢查」會對照遊戲詞綴表提示能不能長出來，但只是參考，不擋穿戴與儲存。
  */
 export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
+  const { isEn } = useLanguage();
   const [baseCode, setBaseCode] = useState('cm1');
   const [name, setName] = useState('');
   const [affixes, setAffixes] = useState<CustomAffix[]>([{ code: 'mag%', value: 7 }]);
@@ -99,16 +102,16 @@ export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
 
   return (
     <section aria-label="自訂飾品" className="d2-panel" style={{ marginTop: 12 }}>
-      <div className="d2-title">自 訂 飾 品</div>
+      <div className="d2-title">{isEn ? "CUSTOM ITEM BUILDER" : "自 訂 飾 品"}</div>
       <div className="d2-panel-body space-y-3">
-        <div className="d2-sub">魔法或稀有的戒指、護身符、咒符，詞綴是隨機的，遊戲資料裡沒有現成物品可選，所以由你自己組。詞綴從清單選、數值自己填；數值上限只是防呆。下方的「遊戲內檢查」會對照遊戲的詞綴表，提示這組詞綴能不能長出來，<b>只是參考，不會擋下穿戴或儲存</b>。</div>
+        <div className="d2-sub">{isEn ? "Craft custom magic or rare jewelry/charms by picking affixes from the game database. The In-Game Check validates rolls against the affix tables for reference." : "魔法或稀有的戒指、護身符、咒符，詞綴是隨機的，遊戲資料裡沒有現成物品可選，所以由你自己組。詞綴從清單選、數值自己填；數值上限只是防呆。下方的「遊戲內檢查」會對照遊戲的詞綴表，提示這組詞綴能不能長出來，只是參考，不會擋下穿戴或儲存。"}</div>
         <div className="flex flex-wrap items-center gap-2">
-          <label className="d2-field">種類
+          <label className="d2-field">{isEn ? "Type" : "種類"}
             <select value={baseCode} onChange={(e) => setBaseCode(e.target.value)} className="d2-select" aria-label="自訂飾品種類">
               {CUSTOM_BASES.map((b) => <option key={b.code} value={b.code}>{b.label}</option>)}
             </select>
           </label>
-          <input value={name} onChange={(e) => setName(e.target.value)} maxLength={MAX_CUSTOM_NAME} placeholder="名稱（選填），例如：幸運小符" aria-label="自訂飾品名稱" className="d2-input flex-1" style={{ minWidth: 160 }} />
+          <input value={name} onChange={(e) => setName(e.target.value)} maxLength={MAX_CUSTOM_NAME} placeholder={isEn ? "Name (optional), e.g. Lucky Small Charm" : "名稱（選填），例如：幸運小符"} aria-label="自訂飾品名稱" className="d2-input flex-1" style={{ minWidth: 160 }} />
         </div>
         <ul className="space-y-1.5">
           {affixes.map((a, i) => (
@@ -117,13 +120,13 @@ export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
                 {CUSTOM_AFFIXES.map((x) => <option key={x.code} value={x.code}>{labels.get(x.code)}</option>)}
               </select>
               <input type="number" min={1} max={CUSTOM_AFFIXES.find((x) => x.code === a.code)?.max} value={a.value} onChange={(e) => setAffix(i, { value: Number(e.target.value) || 1 })} className="d2-input" style={{ width: 80 }} aria-label={`第 ${i + 1} 條詞綴的數值`} />
-              <button type="button" className="d2-btn is-danger" onClick={() => setAffixes((l) => l.filter((_, k) => k !== i))} aria-label={`移除第 ${i + 1} 條詞綴`}>移除</button>
+              <button type="button" className="d2-btn is-danger" onClick={() => setAffixes((l) => l.filter((_, k) => k !== i))} aria-label={`移除第 ${i + 1} 條詞綴`}>{isEn ? "Remove" : "移除"}</button>
             </li>
           ))}
         </ul>
         <div className="flex flex-wrap items-center gap-2">
-          <button type="button" className="d2-btn is-quiet" disabled={affixes.length >= MAX_CUSTOM_AFFIXES} onClick={() => setAffixes((l) => [...l, { code: 'hp', value: 1 }])}>＋ 加一條詞綴</button>
-          <span className="d2-sub">最多 {MAX_CUSTOM_AFFIXES} 條</span>
+          <button type="button" className="d2-btn is-quiet" disabled={affixes.length >= MAX_CUSTOM_AFFIXES} onClick={() => setAffixes((l) => [...l, { code: 'hp', value: 1 }])}>{isEn ? "+ Add Modifier" : "＋ 加一條詞綴"}</button>
+          <span className="d2-sub">{isEn ? `Up to ${MAX_CUSTOM_AFFIXES} mods` : `最多 ${MAX_CUSTOM_AFFIXES} 條`}</span>
         </div>
         {clean && (
           <div className="d2-tip" aria-label="自訂飾品預覽">
@@ -135,13 +138,13 @@ export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
         {gameCheck && <GameCheck check={gameCheck} level={level} />}
         {typeof check === 'string' && <div className="d2-sub" style={{ color: 'var(--bad)' }}>{check}</div>}
         <div className="flex flex-wrap items-center gap-2">
-          <button type="button" className="d2-btn" disabled={!clean} onClick={() => clean && equip(clean)}>穿戴</button>
-          <button type="button" className="d2-btn is-quiet" disabled={!clean} onClick={save}>存入我的自訂飾品</button>
+          <button type="button" className="d2-btn" disabled={!clean} onClick={() => clean && equip(clean)}>{isEn ? "Equip" : "穿戴"}</button>
+          <button type="button" className="d2-btn is-quiet" disabled={!clean} onClick={save}>{isEn ? "Save to Library" : "存入我的自訂飾品"}</button>
         </div>
 
         <div style={{ borderTop: '1px solid #2e271c', paddingTop: 10 }}>
-          <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>我的自訂飾品</div>
-          {library.length === 0 ? <div className="d2-empty">還沒有存過。</div> : (
+          <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "MY CUSTOM ITEMS" : "我的自訂飾品"}</div>
+          {library.length === 0 ? <div className="d2-empty">{isEn ? "No custom items saved yet." : "還沒有存過。"}</div> : (
             <ul className="space-y-1.5">
               {library.map((d, i) => (
                 <li key={`${d.name}-${i}`} className="d2-build flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -149,9 +152,9 @@ export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
                     <b className="t-magic break-all">{d.name}</b>
                     <div className="d2-sub">{CUSTOM_BASES.find((b) => b.code === d.baseCode)?.label}・{linesOf(d, level).join('，') || '沒有詞綴'}</div>
                   </div>
-                  <button type="button" className="d2-btn" onClick={() => equip(d)}>穿戴</button>
-                  <button type="button" className="d2-btn is-quiet" onClick={() => load(d)}>載入編輯</button>
-                  <button type="button" className="d2-btn is-danger" onClick={() => remove(d)}>刪除</button>
+                  <button type="button" className="d2-btn" onClick={() => equip(d)}>{isEn ? "Equip" : "穿戴"}</button>
+                  <button type="button" className="d2-btn is-quiet" onClick={() => load(d)}>{isEn ? "Edit" : "載入編輯"}</button>
+                  <button type="button" className="d2-btn is-danger" onClick={() => remove(d)}>{isEn ? "Delete" : "刪除"}</button>
                 </li>
               ))}
             </ul>

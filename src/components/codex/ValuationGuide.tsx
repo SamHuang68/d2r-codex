@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { VALUATION_ITEMS_DATA } from '../../data/affixes';
+import { useLanguage } from '../../context/LanguageContext';
 import { SectionHead } from '../common/TreeIndex';
 import { ItemIcon } from '../common/ItemIcon';
 import { 
@@ -17,20 +18,21 @@ import {
 } from 'lucide-react';
 
 /** 天價神物的部位分類（依序分段顯示） */
-const VAL_CATS = [
-  { id: 'all', label: '全部神物' },
-  { id: 'shield', label: '盾牌 (JMoD)' },
-  { id: 'charm', label: '咒符 (板子)' },
-  { id: 'helm', label: '頭飾/權冠' },
-  { id: 'ring', label: '戒指' },
-  { id: 'gloves', label: '手套' },
-  { id: 'boots', label: '鞋子 (三抗鞋)' },
-  { id: 'amulet', label: '護身符 (2/20)' },
-  { id: 'weapon', label: '武器 (自修爪)' },
-  { id: 'jewel', label: '珠寶 (40/15)' },
+const VAL_CATS: { id: string; label: string; labelEn: string }[] = [
+  { id: 'all', label: '全部神物', labelEn: 'All Trophies' },
+  { id: 'shield', label: '盾牌 (JMoD)', labelEn: 'Shields (JMoD)' },
+  { id: 'charm', label: '咒符 (板子)', labelEn: 'Charms' },
+  { id: 'helm', label: '頭飾/權冠', labelEn: 'Helms / Circlets' },
+  { id: 'ring', label: '戒指', labelEn: 'Rings' },
+  { id: 'gloves', label: '手套', labelEn: 'Gloves' },
+  { id: 'boots', label: '鞋子 (三抗鞋)', labelEn: 'Boots (Tri-Res)' },
+  { id: 'amulet', label: '護身符 (2/20)', labelEn: 'Amulets (2/20)' },
+  { id: 'weapon', label: '武器 (自修爪)', labelEn: 'Weapons' },
+  { id: 'jewel', label: '珠寶 (40/15)', labelEn: 'Jewels (40/15)' },
 ];
 
 export const ValuationGuide: React.FC = () => {
+  const { isEn } = useLanguage();
   const [activeTab, setActiveTab] = useState<'showcase' | 'appraiser'>('showcase');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -212,7 +214,7 @@ export const ValuationGuide: React.FC = () => {
             }`}
           >
             <Award className="w-3.5 h-3.5" />
-            <span>天價神物圖鑑</span>
+            <span>{isEn ? 'Trophy Showcase' : '天價神物圖鑑'}</span>
           </button>
           <button
             onClick={() => setActiveTab('appraiser')}
@@ -223,7 +225,7 @@ export const ValuationGuide: React.FC = () => {
             }`}
           >
             <Scale className="w-3.5 h-3.5" />
-            <span>互動鑑寶鑑定器</span>
+            <span>{isEn ? 'Interactive Appraiser' : '互動鑑寶鑑定器'}</span>
           </button>
         </div>
       </div>
@@ -245,7 +247,7 @@ export const ValuationGuide: React.FC = () => {
                       : 'bg-sanctuary-900/60 text-sanctuary-300 hover:text-sanctuary-100 border border-sanctuary-800'
                   }`}
                 >
-                  {cat.label}
+                  {isEn ? cat.labelEn : cat.label}
                 </button>
               ))}
             </div>
@@ -255,7 +257,7 @@ export const ValuationGuide: React.FC = () => {
               <Search className="w-4 h-4 text-sanctuary-500 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="搜尋神裝詞綴 (如 3/20/20)..."
+                placeholder={isEn ? "Search affixes (e.g. 3/20/20)..." : "搜尋神裝詞綴 (如 3/20/20)..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 bg-sanctuary-900 border border-sanctuary-800 rounded-xl text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-fire/50"
@@ -270,7 +272,7 @@ export const ValuationGuide: React.FC = () => {
               if (rows.length === 0) return null;
               return (
                 <section key={cat.id} id={`val-${cat.id}`} aria-label={cat.label} className="scroll-mt-20">
-                  <SectionHead title={cat.label} count={rows.length} tone="unique" />
+                  <SectionHead title={isEn ? cat.labelEn : cat.label} count={rows.length} tone="unique" />
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {rows.map((item) => {
               const isMagic = item.rarity === 'magic';
@@ -297,7 +299,7 @@ export const ValuationGuide: React.FC = () => {
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold ${rarityBadge}`}>
-                              {isMagic ? '藍色魔法極品' : '亮黃稀有極品'}
+                              {isMagic ? (isEn ? 'Magic Trophy' : '藍色魔法極品') : (isEn ? 'Rare Trophy' : '亮黃稀有極品')}
                             </span>
                             <span className="text-xs font-mono text-sanctuary-400">
                               {item.itemType}
@@ -318,7 +320,7 @@ export const ValuationGuide: React.FC = () => {
                       <Coins className="w-5 h-5 text-d2-gold shrink-0" />
                       <div>
                         <div className="text-[10px] font-mono uppercase tracking-wider text-sanctuary-400">
-                          拍賣行估價 (Market Price)
+                          {isEn ? "Market Valuation" : "拍賣行估價 (Market Price)"}
                         </div>
                         <div className="text-xs sm:text-sm font-bold text-d2-gold mt-0.5">
                           {item.estimatedValue}
@@ -379,7 +381,7 @@ export const ValuationGuide: React.FC = () => {
             <div>
               <h2 className="text-xl font-diablo font-bold text-sanctuary-100 flex items-center gap-2">
                 <Scale className="w-5 h-5 text-d2-fire" />
-                <span>步驟 1：選擇裝備部位</span>
+                <span>{isEn ? 'Step 1: Select Item Slot' : '步驟 1：選擇裝備部位'}</span>
               </h2>
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-3">
                 {[
@@ -411,7 +413,7 @@ export const ValuationGuide: React.FC = () => {
             <div>
               <h2 className="text-xl font-diablo font-bold text-sanctuary-100 flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-d2-gold" />
-                <span>步驟 2：勾選實際開出的詞綴</span>
+                <span>{isEn ? 'Step 2: Check Spawned Affixes' : '步驟 2：勾選實際開出的詞綴'}</span>
               </h2>
               <p className="text-xs text-sanctuary-400 mt-1">
                 請根據您撿到的亮黃色/魔法裝備屬性，點選有出現的詞綴項目：
@@ -443,7 +445,7 @@ export const ValuationGuide: React.FC = () => {
 
                       {affix.isCrucial && (
                         <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-d2-fire/15 text-d2-fire border border-d2-fire/30 shrink-0">
-                          關鍵質變
+                          {isEn ? 'Crucial' : '關鍵質變'}
                         </span>
                       )}
                     </button>
@@ -483,7 +485,7 @@ export const ValuationGuide: React.FC = () => {
             <div className="space-y-1">
               <div className="text-xs font-mono text-sanctuary-400 flex items-center gap-1">
                 <Coins className="w-4 h-4 text-d2-gold" />
-                預估交易身價：
+                {isEn ? 'Estimated Market Value:' : '預估交易身價：'}
               </div>
               <div className="text-lg font-bold text-d2-gold font-mono bg-sanctuary-900/60 p-3 rounded-xl border border-sanctuary-800">
                 {appraisalGrade.estValue}
@@ -494,7 +496,7 @@ export const ValuationGuide: React.FC = () => {
             <div className="space-y-2">
               <div className="text-xs font-mono text-sanctuary-400 flex items-center gap-1">
                 <HelpCircle className="w-4 h-4 text-sanctuary-400" />
-                鑑定師專業解析：
+                {isEn ? 'Expert Appraisal Analysis:' : '鑑定師專業解析：'}
               </div>
               <p className="text-xs sm:text-sm text-sanctuary-200 leading-relaxed bg-sanctuary-900/40 p-4 rounded-2xl border border-sanctuary-800">
                 {appraisalGrade.advice}
@@ -506,7 +508,7 @@ export const ValuationGuide: React.FC = () => {
               onClick={() => setSelectedAffixes({})}
               className="w-full py-2.5 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-800 text-xs font-medium text-sanctuary-400 hover:text-sanctuary-200 transition-colors border border-sanctuary-800"
             >
-              清空詞綴並重新鑑定
+              {isEn ? 'Clear Affixes & Re-evaluate' : '清空詞綴並重新鑑定'}
             </button>
           </div>
         </div>

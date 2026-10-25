@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { QUESTS_DATA, WORLD_EVENTS_DATA, QuestData, WorldEventData } from '../../data/quests';
 import { actZh } from '../../utils/actLabel';
+import { useLanguage } from '../../context/LanguageContext';
 import { 
   Compass, 
   MapPin, 
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 
 export const QuestGuide: React.FC = () => {
+  const { isEn } = useLanguage();
   const [selectedAct, setSelectedAct] = useState<number | 'events'>(1);
   const [filterPermanentOnly, setFilterPermanentOnly] = useState<boolean>(false);
   const [filterMandatoryOnly, setFilterMandatoryOnly] = useState<boolean>(false);
@@ -47,7 +49,7 @@ export const QuestGuide: React.FC = () => {
     return (
       <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-d2-gold/15 border border-d2-gold/40 text-d2-gold font-mono text-xs font-bold shadow-sm shadow-d2-gold/10">
         <Award className="w-3.5 h-3.5 text-d2-gold shrink-0" />
-        <span>永久獎勵: {reward.value}</span>
+        <span>{isEn ? "Permanent: " : "永久獎勵: "}{reward.value}</span>
       </div>
     );
   };
@@ -62,30 +64,30 @@ export const QuestGuide: React.FC = () => {
             Complete Questline & World Events Almanac
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            全章節任務寶典與終局世界事件
+            {isEn ? "All Acts Quest Guide & Endgame World Events" : "全章節任務寶典與終局世界事件"}
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-3xl">
-            收錄 Act 1 至 Act 5 全部 27 個任務詳細步驟、永久 +12 技能點、+15 屬性點、+60 生命值與 +30 全抗性全獎勵攻略，附帶乳牛關、紅門六王、地表大菠蘿與邪惡威脅區域 TZ 指南。
+            {isEn ? "Covers all 27 quests across Acts 1 to 5, permanent +12 Skill Points, +15 Stat Points, +60 Life, and +30 All Resistances rewards guide, with Secret Cow Level, Uber Tristram, Diablo Clone, and Terror Zones (TZ) walkthroughs." : "收錄 Act 1 至 Act 5 全部 27 個任務詳細步驟、永久 +12 技能點、+15 屬性點、+60 生命值與 +30 全抗性全獎勵攻略，附帶乳牛關、紅門六王、地表大菠蘿與邪惡威脅區域 TZ 指南。"}
           </p>
         </div>
 
         {/* 永久獎勵總覽迷你看板 */}
         <div className="bg-sanctuary-900/90 border border-sanctuary-800 p-3 rounded-2xl flex items-center gap-3 shrink-0 text-xs font-mono">
           <div className="text-center px-2 border-r border-sanctuary-800">
-            <div className="text-sanctuary-500 text-[10px]">技能點</div>
-            <div className="text-d2-gold font-bold text-base">+12 點</div>
+            <div className="text-sanctuary-500 text-[10px]">{isEn ? "Skill Pts" : "技能點"}</div>
+            <div className="text-d2-gold font-bold text-base">{isEn ? "+12 Pts" : "+12 點"}</div>
           </div>
           <div className="text-center px-2 border-r border-sanctuary-800">
-            <div className="text-sanctuary-500 text-[10px]">屬性點</div>
-            <div className="text-amber-300 font-bold text-base">+15 點</div>
+            <div className="text-sanctuary-500 text-[10px]">{isEn ? "Stat Pts" : "屬性點"}</div>
+            <div className="text-amber-300 font-bold text-base">{isEn ? "+15 Pts" : "+15 點"}</div>
           </div>
           <div className="text-center px-2 border-r border-sanctuary-800">
-            <div className="text-sanctuary-500 text-[10px]">最大生命</div>
-            <div className="text-d2-blood font-bold text-base">+60 血</div>
+            <div className="text-sanctuary-500 text-[10px]">{isEn ? "Max Life" : "最大生命"}</div>
+            <div className="text-d2-blood font-bold text-base">{isEn ? "+60 Life" : "+60 血"}</div>
           </div>
           <div className="text-center px-2">
-            <div className="text-sanctuary-500 text-[10px]">永久全抗</div>
-            <div className="text-sky-300 font-bold text-base">+30% 抗</div>
+            <div className="text-sanctuary-500 text-[10px]">{isEn ? "All Res" : "永久全抗"}</div>
+            <div className="text-sky-300 font-bold text-base">{isEn ? "+30% Res" : "+30% 抗"}</div>
           </div>
         </div>
       </div>
@@ -106,7 +108,7 @@ export const QuestGuide: React.FC = () => {
             }`}
           >
             <MapPin className="w-4 h-4" />
-            {actZh(actNum)} {actNum === 1 ? "(俠盜營地)" : actNum === 2 ? "(魯高因)" : actNum === 3 ? "(庫拉斯特港口)" : actNum === 4 ? "(混沌界要塞)" : "(哈洛加斯)"}
+            {(isEn ? `Act ${actNum}` : actZh(actNum))} {actNum === 1 ? (isEn ? "(Rogue Encampment)" : "(俠盜營地)") : actNum === 2 ? (isEn ? "(Lut Gholein)" : "(魯高因)") : actNum === 3 ? (isEn ? "(Kurast Docks)" : "(庫拉斯特港口)") : actNum === 4 ? (isEn ? "(Pandemonium Fortress)" : "(混沌界要塞)") : (isEn ? "(Harrogath)" : "(哈洛加斯)")}
           </button>
         ))}
 
@@ -120,7 +122,7 @@ export const QuestGuide: React.FC = () => {
           }`}
         >
           <Globe className="w-4 h-4" />
-          終局世界事件與隱藏關卡
+          {isEn ? "Endgame Events & Secret Levels" : "終局世界事件與隱藏關卡"}
         </button>
       </div>
 
@@ -139,7 +141,7 @@ export const QuestGuide: React.FC = () => {
                 }`}
               >
                 <Award className="w-3.5 h-3.5" />
-                僅顯示「永久屬性/技能獎勵」任務
+                {isEn ? "Permanent Rewards Only" : "僅顯示「永久屬性/技能獎勵」任務"}
               </button>
 
               <button
@@ -151,7 +153,7 @@ export const QuestGuide: React.FC = () => {
                 }`}
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                僅主線必解
+                {isEn ? "Mandatory Only" : "僅主線必解"}
               </button>
             </div>
 
@@ -161,7 +163,7 @@ export const QuestGuide: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="搜尋任務名稱、地點或獎勵..."
+                placeholder={isEn ? "Search quest name, location or reward..." : "搜尋任務名稱、地點或獎勵..."}
                 className="w-full bg-sanctuary-900 border border-sanctuary-800 rounded-xl pl-9 pr-4 py-2 text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-gold transition-colors"
               />
             </div>
@@ -199,12 +201,12 @@ export const QuestGuide: React.FC = () => {
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-xs font-mono text-sanctuary-400 mt-0.5">
-                          <span>委託: {quest.givenBy}</span>
+                          <span>{isEn ? "Given By: " : "委託: "}{quest.givenBy}</span>
                           <span>·</span>
-                          <span className="text-sanctuary-300">地點: {quest.location}</span>
+                          <span className="text-sanctuary-300">{isEn ? "Location: " : "地點: "}{quest.location}</span>
                           <span>·</span>
                           <span className={quest.isMandatory ? "text-amber-400 font-bold" : "text-sanctuary-500"}>
-                            {quest.isMandatory ? "主線必解" : "支線可選"}
+                            {quest.isMandatory ? (isEn ? "Mandatory" : "主線必解") : (isEn ? "Optional" : "支線可選")}
                           </span>
                         </div>
                       </div>
@@ -227,7 +229,7 @@ export const QuestGuide: React.FC = () => {
                       <div className="bg-sanctuary-950/70 p-4 rounded-xl border border-sanctuary-800/80 space-y-2">
                         <div className="font-mono text-xs font-bold text-sanctuary-100 flex items-center gap-1.5">
                           <BookOpen className="w-3.5 h-3.5 text-d2-gold" />
-                          通關指引流程:
+                          {isEn ? "Walkthrough:" : "通關指引流程:"}
                         </div>
                         <ul className="space-y-1.5 font-sans text-sanctuary-300 pl-4 list-decimal">
                           {quest.walkthrough.map((step, idx) => (
@@ -242,7 +244,7 @@ export const QuestGuide: React.FC = () => {
                       <div className="bg-sanctuary-950/90 p-4 rounded-xl border border-sanctuary-800 space-y-1.5">
                         <div className="flex items-center gap-1 text-xs font-mono text-d2-gold font-bold">
                           <Zap className="w-3.5 h-3.5 text-d2-gold" />
-                          專家戰術圖說與速通要點
+                          {isEn ? "Pro Tactical Guide & Tips" : "專家戰術圖說與速通要點"}
                         </div>
                         <p className="text-sanctuary-300 leading-relaxed text-xs">
                           {quest.tacticalTips}
@@ -279,14 +281,14 @@ export const QuestGuide: React.FC = () => {
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <span className="font-mono text-sanctuary-400 font-bold block mb-1">觸發條件與開啟方式:</span>
+                  <span className="font-mono text-sanctuary-400 font-bold block mb-1">{isEn ? "Trigger Conditions:" : "觸發條件與開啟方式:"}</span>
                   <div className="bg-sanctuary-950/80 p-2.5 rounded-xl border border-sanctuary-800 text-sanctuary-200 font-sans leading-relaxed">
                     {evt.triggerCondition}
                   </div>
                 </div>
 
                 <div>
-                  <span className="font-mono text-sanctuary-400 font-bold block mb-1">發生地點:</span>
+                  <span className="font-mono text-sanctuary-400 font-bold block mb-1">{isEn ? "Location:" : "發生地點:"}</span>
                   <span className="text-d2-gold font-mono">{evt.location}</span>
                 </div>
 
@@ -295,7 +297,7 @@ export const QuestGuide: React.FC = () => {
                   <div className="bg-sanctuary-950 p-3.5 rounded-xl border border-d2-fire/30 space-y-2">
                     <div className="text-[11px] font-mono text-d2-fire font-bold flex items-center gap-1.5">
                       <Zap className="w-3.5 h-3.5" />
-                      地表暗黑 6 階段進度條與 PMH 封鎖機制圖說
+                      {isEn ? "Diablo Clone 6-Stage Progress & PMH Mechanics" : "地表暗黑 6 階段進度條與 PMH 封鎖機制圖說"}
                     </div>
                     <div className="grid grid-cols-6 gap-1 text-[10px] font-mono text-center">
                       <div className="p-1 rounded bg-sanctuary-900 border border-sanctuary-800 text-sanctuary-400">階 1<br/>恐怖</div>

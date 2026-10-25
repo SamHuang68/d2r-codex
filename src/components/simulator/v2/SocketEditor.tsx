@@ -3,6 +3,7 @@ import { categoryOfEntry, eligibleBases, getSocketables, socketCapacity, socketE
 import { gameData } from '../../../engine/data';
 import { describeModifiers } from '../../../engine/describe';
 import type { Equipped } from './types';
+import { useLanguage } from '../../../context/LanguageContext';
 
 interface Props {
   eq: Equipped;
@@ -14,6 +15,7 @@ interface Props {
 const runeName = (code: string) => gameData.gems.find((g) => g.code === code)?.name ?? code;
 
 export const SocketEditor: React.FC<Props> = ({ eq, level, onChange, onChangeBase }) => {
+  const { isEn } = useLanguage();
   const entry: CatalogEntry = eq.entry;
   const cap = socketCapacity(entry);
   const cat = categoryOfEntry(entry);
@@ -41,17 +43,17 @@ export const SocketEditor: React.FC<Props> = ({ eq, level, onChange, onChangeBas
   return (
     <div className="mt-3 space-y-2 text-xs">
       {entry.kind === 'runeword' && bases.length > 1 && (
-        <label className="d2-field w-full">底材
+        <label className="d2-field w-full">{isEn ? "Base Item" : "底材"}
           <select value={entry.baseCode} onChange={(e) => onChangeBase(e.target.value)} className="d2-select flex-1 min-w-0">
-            {bases.map((b) => <option key={b.code} value={b.code}>{b.name}（{b.nameEn}）{` ${TIER_ZH[b.tier ?? 'normal']}`}{b.class ? ' · 職業專屬' : ''} · 需求力量 {b.reqStr ?? 0}</option>)}
+            {bases.map((b) => <option key={b.code} value={b.code}>{isEn ? `${b.nameEn} (${b.name}) · ${b.tier ?? 'normal'}${b.class ? ' · Class Specific' : ''} · Req Str ${b.reqStr ?? 0}` : `${b.name}（${b.nameEn}） ${TIER_ZH[b.tier ?? 'normal']}${b.class ? ' · 職業專屬' : ''} · 需求力量 ${b.reqStr ?? 0}`}</option>)}
           </select>
         </label>
       )}
       {entry.kind === 'runeword' && (
-        <div className="t-dim">符文：{(entry.sockets ?? []).map(runeName).join(' + ')}<span style={{ color: 'var(--faint)' }}>（符文本身的鑲嵌效果已計入）</span></div>
+        <div className="t-dim">{isEn ? "Runes: " : "符文："}{(entry.sockets ?? []).map(runeName).join(' + ')}<span style={{ color: 'var(--faint)' }}>{isEn ? " (Socketing bonuses from runes/gems already included)" : "（符文本身的鑲嵌效果已計入）"}</span></div>
       )}
       {!cap.fixed && cap.max > cap.count && (
-        <label className="d2-field">孔數
+        <label className="d2-field">{isEn ? "Sockets" : "孔數"}
           <select value={count} onChange={(e) => { const n = Number(e.target.value); onChange({ socketCount: n, sockets: socks.slice(0, n) }); }} className="d2-select">
             {Array.from({ length: cap.max - cap.count + 1 }, (_, i) => <option key={i} value={cap.count + i}>{cap.count + i}</option>)}
           </select>
@@ -60,17 +62,17 @@ export const SocketEditor: React.FC<Props> = ({ eq, level, onChange, onChangeBas
       )}
       {entry.kind !== 'runeword' && count > 0 && (
         <div className="space-y-1">
-          <div className="t-dim">鑲嵌（{count} 孔）</div>
+          <div className="t-dim">{isEn ? `Sockets (${count})` : `鑲嵌（${count} 孔）`}</div>
           {Array.from({ length: count }, (_, i) => (
-            <select key={i} aria-label={`第 ${i + 1} 孔`} value={socks[i] ?? ''} onChange={(e) => setSock(i, e.target.value)} className="d2-select w-full">
-              <option value="">（空）</option>
-              {opt('rune', '符文')}{opt('gem', '寶石')}{opt('jewel', '珠寶（暗金）')}
+            <select key={i} aria-label={isEn ? `Socket #${i + 1}` : `第 ${i + 1} 孔`} value={socks[i] ?? ''} onChange={(e) => setSock(i, e.target.value)} className="d2-select w-full">
+              <option value="">{isEn ? "(Empty)" : "（空）"}</option>
+              {opt('rune', isEn ? 'Runes' : '符文')}{opt('gem', isEn ? 'Gems' : '寶石')}{opt('jewel', isEn ? 'Jewels (Unique)' : '珠寶（暗金）')}
             </select>
           ))}
-          <div style={{ color: 'var(--faint)' }}>魔法／稀有珠寶的詞綴為隨機，尚未支援；目前可放暗金珠寶（彩虹刻面）。</div>
+          <div style={{ color: 'var(--faint)' }}>{isEn ? "Magic/Rare jewels have random affixes and are not supported yet; Unique Facets are available." : "魔法／稀有珠寶的詞綴為隨機，尚未支援；目前可放暗金珠寶（彩虹刻面）。"}</div>
         </div>
       )}
-      {entry.kind !== 'runeword' && cap.max === 0 && <div style={{ color: 'var(--faint)' }}>此物品沒有鑲孔</div>}
+      {entry.kind !== 'runeword' && cap.max === 0 && <div style={{ color: 'var(--faint)' }}>{isEn ? "This item has no sockets" : "此物品沒有鑲孔"}</div>}
     </div>
   );
 };

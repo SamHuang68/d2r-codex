@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronRight, ListTree, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
 import { TreeNode, pathTo } from '../../utils/equipTaxonomy';
+import { useLanguage } from '../../context/LanguageContext';
 
 export type IndexTone = 'unique' | 'set' | 'rune' | 'socket' | 'magic';
 
@@ -46,6 +47,7 @@ const collectParents = (nodes: TreeNode[], out: string[] = []): string[] => {
 export const TreeIndex: React.FC<TreeIndexProps> = ({
   title, rootLabel, rootCount, nodes, activeId, onSelect, tone = 'unique', children, contentId = 'tree-content', initialOpen = 'first',
 }) => {
+  const { isEn } = useLanguage();
   const t = TONE[tone];
   const allParents = useMemo(() => collectParents(nodes), [nodes]);
   // 預設只展開第一層，其餘由使用者或選取節點時帶開
@@ -153,7 +155,7 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
                   active ? `${t.text} font-bold` : depth === 1 ? 'text-sanctuary-100 font-semibold' : 'text-sanctuary-300 hover:text-sanctuary-100'
                 }`}
               >
-                <span className="truncate">{n.label}</span>
+                <span className="truncate">{isEn && n.en ? n.en : n.label}</span>
                 <span className={`shrink-0 text-[11px] font-mono tabular-nums ${active ? t.text : 'text-sanctuary-400'}`}>{n.count}</span>
               </button>
             </div>
@@ -175,8 +177,8 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
           <button
             type="button"
             onClick={() => setOpen(new Set(allParents))}
-            aria-label="全部展開"
-            title="全部展開"
+            aria-label={isEn ? 'Expand All' : '全部展開'}
+            title={isEn ? 'Expand All' : '全部展開'}
             className="p-1 rounded text-sanctuary-400 hover:text-sanctuary-100 hover:bg-sanctuary-800"
           >
             <ChevronsUpDown className="w-3.5 h-3.5" />
@@ -187,8 +189,8 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
               const trail = pathTo(nodes, activeId).map((n) => n.id);
               setOpen(new Set(trail.length ? trail : initialOpen === 'first' ? nodes.map((n) => n.id) : []));
             }}
-            aria-label="全部收合"
-            title="全部收合（只保留目前位置）"
+            aria-label={isEn ? 'Collapse All' : '全部收合'}
+            title={isEn ? 'Collapse All (Keep current)' : '全部收合（只保留目前位置）'}
             className="p-1 rounded text-sanctuary-400 hover:text-sanctuary-100 hover:bg-sanctuary-800"
           >
             <ChevronsDownUp className="w-3.5 h-3.5" />
@@ -340,9 +342,14 @@ export function useDirectory(sel: string, resetKey = '') {
   };
 }
 
-export const ViewToggle: React.FC<{ dir: boolean; onChange: (v: 'dir' | 'detail') => void }> = ({ dir, onChange }) => (
+export const ViewToggle: React.FC<{ dir: boolean; onChange: (v: 'dir' | 'detail') => void }> = ({ dir, onChange }) => {
+  const { isEn } = useLanguage();
+  const options = isEn
+    ? ([['dir', 'Directory'], ['detail', 'Detailed']] as const)
+    : ([['dir', '目錄'], ['detail', '詳細']] as const);
+  return (
   <div className="inline-flex rounded-lg border border-sanctuary-700 bg-sanctuary-900 p-0.5 text-xs" role="group" aria-label="顯示方式">
-    {([['dir', '目錄'], ['detail', '詳細']] as const).map(([k, label]) => {
+    {options.map(([k, label]) => {
       const on = (dir ? 'dir' : 'detail') === k;
       return (
         <button
@@ -357,7 +364,8 @@ export const ViewToggle: React.FC<{ dir: boolean; onChange: (v: 'dir' | 'detail'
       );
     })}
   </div>
-);
+  );
+};
 
 /** 目錄模式的一個項目：小圖 + 名稱 + 一行重點，整格可點 */
 export const DirChip: React.FC<{

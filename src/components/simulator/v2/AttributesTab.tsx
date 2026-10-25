@@ -6,6 +6,7 @@ import type { CharacterResult } from '../../../engine/types';
 import type { PassiveLine } from '../../../engine/skillEffects';
 import type { Alloc } from './types';
 import { skillByName, tabName } from '../../../engine/skills';
+import { useLanguage } from '../../../context/LanguageContext';
 
 interface Props {
   className: string;
@@ -35,8 +36,8 @@ interface Props {
 
 const fmt = (n: number) => n.toLocaleString('en-US');
 
-const ATTRS: { key: keyof Alloc; label: string }[] = [
-  { key: 'str', label: '力量' }, { key: 'dex', label: '敏捷' }, { key: 'vit', label: '體能' }, { key: 'ene', label: '能量' },
+const ATTRS: { key: keyof Alloc; label: string; labelEn: string }[] = [
+  { key: 'str', label: '力量', labelEn: 'Strength' }, { key: 'dex', label: '敏捷', labelEn: 'Dexterity' }, { key: 'vit', label: '體能', labelEn: 'Vitality' }, { key: 'ene', label: '能量', labelEn: 'Energy' },
 ];
 
 const MORE: { label: string; stat: string; suffix?: string }[] = [
@@ -69,6 +70,7 @@ const BP_ROWS: { kind: BpKind; label: string; stat: string; unit: string }[] = [
 
 /** 斷點：目前的百分比落在哪一格、下一格還差多少。同一職業有多種動作（武器、型態）時可切換 */
 const BreakpointRow: React.FC<{ kind: BpKind; label: string; unit: string; classCode: string; value: number }> = ({ kind, label, unit, classCode, value }) => {
+  const { isEn } = useLanguage();
   const tables = BREAKPOINTS[kind][classCode];
   const [pick, setPick] = useState('');
   if (!tables) return null;
@@ -79,7 +81,7 @@ const BreakpointRow: React.FC<{ kind: BpKind; label: string; unit: string; class
       <span className="k">{label}</span>
       <span className="v">
         {value}%・{st.frames} {unit}
-        {st.next ? <span className="t-dim">　下一格 {st.next.threshold}%（還差 {st.next.missing}%，{st.next.frames} 影格）</span> : <span className="t-gold">　已達最高斷點</span>}
+        {st.next ? <span className="t-dim">　{isEn ? `Next ${st.next.threshold}% (${st.next.missing}% missing, ${st.next.frames} frames)` : `下一格 ${st.next.threshold}%（還差 ${st.next.missing}%，${st.next.frames} 影格）`}</span> : <span className="t-gold">　{isEn ? "Max breakpoint reached" : "已達最高斷點"}</span>}
       </span>
       {tables.length > 1 && (
         <select value={table.id} onChange={(e) => setPick(e.target.value)} className="d2-select w-full" aria-label={`${label}的動作種類`}>
@@ -143,6 +145,7 @@ const AttrInput: React.FC<{ label: string; total: number; base: number; alloc: n
 };
 
 export const AttributesTab: React.FC<Props> = ({ className, classCode, level, result, alloc, remaining, needStr, needDex, onAdd, onSet, onAutoReq, onAllVit, onReset, mainSkill, targetRes, onTargetRes, buffs, onToggleBuff, enemyReduction, passives }) => {
+  const { isEn } = useLanguage();
   const [more, setMore] = useState(false);
   const a = result.attributes;
   const unmet: Record<string, boolean> = { str: a.str < needStr, dex: a.dex < needDex };
@@ -171,13 +174,14 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
       <div className="grid grid-cols-1 md:grid-cols-[1fr_1.35fr] gap-4">
         {/* 左：四屬性＋加點 */}
         <div className="space-y-2">
-          {ATTRS.map(({ key, label }) => {
+          {ATTRS.map(({ key, label, labelEn }) => {
+            const displayLabel = isEn ? labelEn : label;
             const bad = unmet[key] ?? false;
             return (
               <div key={key} className="flex gap-2 items-stretch">
-                <AttrInput label={label} total={a[key]} base={a[key] - alloc[key]} alloc={alloc[key]} maxAlloc={alloc[key] + remaining} bad={bad} onCommit={(v) => onSet(key, v)} />
+                <AttrInput label={displayLabel} total={a[key]} base={a[key] - alloc[key]} alloc={alloc[key]} maxAlloc={alloc[key] + remaining} bad={bad} onCommit={(v) => onSet(key, v)} />
                 <button
-                  type="button" className="d2-plus" aria-label={`${label} 加點`}
+                  type="button" className="d2-plus" aria-label={`${displayLabel} +`}
                   disabled={remaining <= 0}
                   title="點擊 ＋1；Shift ＋5"
                   onClick={(e) => (e.altKey ? onAdd(key, e.shiftKey ? -5 : -1) : onAdd(key, e.shiftKey ? 5 : 1))}
@@ -187,26 +191,26 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
             );
           })}
           <div className="d2-row" style={{ justifyContent: 'center', color: remaining > 0 ? 'var(--bad)' : 'var(--dim)' }}>
-            {remaining > 0 ? `還有 ${remaining} 點屬性點數` : '屬性點已分配完畢'}
+            {remaining > 0 ? (isEn ? `${remaining} Stat Points Remaining` : `還有 ${remaining} 點屬性點數`) : (isEn ? 'All Stat Points Allocated' : '屬性點已分配完畢')}
           </div>
           <div className="flex flex-wrap gap-2 pt-1">
-            <button type="button" onClick={onAutoReq} className="d2-btn">一鍵滿足裝備需求</button>
-            <button type="button" onClick={onAllVit} className="d2-btn">剩餘全灌體能</button>
-            <button type="button" onClick={onReset} className="d2-btn is-quiet">重置配點</button>
+            <button type="button" onClick={onAutoReq} className="d2-btn">{isEn ? "Meet Reqs" : "一鍵滿足裝備需求"}</button>
+            <button type="button" onClick={onAllVit} className="d2-btn">{isEn ? "All Remaining to Vit" : "剩餘全灌體能"}</button>
+            <button type="button" onClick={onReset} className="d2-btn is-quiet">{isEn ? "Reset Stats" : "重置配點"}</button>
           </div>
           <div className="d2-sub">直接點數字輸入總值（Enter 套用，↑↓ 微調，Shift ×10）；或點 ＋1／Shift ＋5，右鍵或 Alt 點擊 −1。配點：力 {alloc.str}　敏 {alloc.dex}　體 {alloc.vit}　能 {alloc.ene}</div>
         </div>
 
         {/* 右：結果欄位 */}
         <div className="space-y-1.5">
-          <Row label="攻擊傷害（武器，未含技能）" value={wd ? `${fmt(wd.min)}–${fmt(wd.max)}` : '—'} tone="t-set" />
+          <Row label={isEn ? "Weapon Damage" : "攻擊傷害（武器，未含技能）"} value={wd ? `${fmt(wd.min)}–${fmt(wd.max)}` : '—'} tone="t-set" />
           {mainSkill && <Row label={`主力技能：${mainSkill.name}${mainSkill.level ? ` Lv${mainSkill.level}` : ''}`} value={mainSkill.text} tone="t-set" title="遊戲技能表值（含協同、專精）；未含武器與傷害加成" />}
           {mainSkill?.targetText && <Row label="　" value={mainSkill.targetText} tone="t-gold" />}
-          <Row label="防禦" value={fmt(result.defense)} />
-          <Row label="耐力" value={`${fmt(result.stamina)} / ${fmt(result.stamina)}`} tone="t-magic" />
-          <Row label="生命" value={`${fmt(result.life)} / ${fmt(result.life)}`} tone="t-magic" />
-          <Row label="法力" value={`${fmt(result.mana)} / ${fmt(result.mana)}`} tone="t-magic" />
-          <Row label="格擋機率" value={`${result.blockChance}%`} />
+          <Row label={isEn ? "Defense" : "防禦"} value={fmt(result.defense)} />
+          <Row label={isEn ? "Stamina" : "耐力"} value={`${fmt(result.stamina)} / ${fmt(result.stamina)}`} tone="t-magic" />
+          <Row label={isEn ? "Life" : "生命"} value={`${fmt(result.life)} / ${fmt(result.life)}`} tone="t-magic" />
+          <Row label={isEn ? "Mana" : "法力"} value={`${fmt(result.mana)} / ${fmt(result.mana)}`} tone="t-magic" />
+          <Row label={isEn ? "Block Chance" : "格擋機率"} value={`${result.blockChance}%`} />
           <div className="grid grid-cols-2 gap-1.5 pt-1">
             {resRows.map(([n, v, r, m, c]) => (
               <div key={n} className="d2-row" title={`未截斷 ${r}%，上限 ${m}%`}>
@@ -224,9 +228,9 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
       </div>
 
       <div className="mt-5">
-        <div className="t-gold text-sm tracking-[.2em] mb-2" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>戰鬥條件</div>
+        <div className="t-gold text-sm tracking-[.2em] mb-2" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "COMBAT CONDITIONS" : "戰鬥條件"}</div>
         <div className="d2-row" style={{ flexWrap: 'wrap' }}>
-          <label className="d2-field">目標抗性
+          <label className="d2-field">{isEn ? "Target Res" : "目標抗性"}
             <select className="d2-select" value={[0, 25, 50, 75, 100].includes(targetRes) ? targetRes : 'custom'} onChange={(e) => { if (e.target.value !== 'custom') onTargetRes(Number(e.target.value)); }} aria-label="目標抗性預設">
               {[0, 25, 50, 75, 100].map((n) => <option key={n} value={n}>{n === 100 ? '100（免疫）' : `${n}%`}</option>)}
               <option value="custom">自訂</option>
@@ -251,7 +255,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
         </div>
         {passives.length > 0 && (
           <div className="mt-3" aria-label="被動技能效果">
-            <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>被 動 技 能</div>
+            <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "PASSIVE SKILLS" : "被 動 技 能"}</div>
             <div className="space-y-1">
               {passives.map((p, i) => (
                 <div key={`${p.skillId}-${p.stat}-${i}`} className="d2-row" title={p.applied ? '已計入上方的角色數值' : '遊戲內有這個效果，但本模擬器沒有對應的數值欄位，只列出不計入'}>
@@ -266,7 +270,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
 
       {BREAKPOINTS.fcr[classCode] && (
         <div className="mt-5" aria-label="斷點">
-          <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>斷 點</div>
+          <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "BREAKPOINTS" : "斷 點"}</div>
           <div className="grid grid-cols-1 gap-1.5">
             {BP_ROWS.map((r) => <BreakpointRow key={`${classCode}-${r.kind}`} kind={r.kind} label={r.label} unit={r.unit} classCode={classCode} value={s[r.stat] ?? 0} />)}
           </div>
@@ -276,7 +280,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
 
       {result.sets.length > 0 && (
         <div className="mt-5" aria-label="套裝">
-          <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>套 裝</div>
+          <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "SET BONUSES" : "套 裝"}</div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
             {result.sets.map((x) => (
               <Row key={x.id} label={x.name ?? x.nameEn} tone={x.full ? 't-set' : ''}
@@ -289,36 +293,36 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
       )}
 
       <div className="mt-5" aria-label="生存力">
-        <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>生 存 力</div>
+        <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "SURVIVABILITY" : "生 存 力"}</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-          <Row label="物理傷害減免" value={`${sv.pdr}%${sv.pdrRaw > PDR_CAP ? `（裝備 ${sv.pdrRaw}%，超出上限 ${PDR_CAP}% 的部分無效）` : sv.pdr >= PDR_CAP ? '（已達上限）' : ''}`} tone={sv.pdr >= PDR_CAP ? 't-unique' : ''} title="「受到的傷害降低 N%」，只對物理傷害，上限 50%" />
-          <Row label="固定傷害減免" value={`${sv.flatDr}`} title="Damage Reduced by N：每次受到的物理傷害先減掉這個數字" />
-          <Row label="魔法傷害減免" value={`${sv.magicDr}`} title="Magic Damage Reduced by N：每次受到的魔法傷害先減掉這個數字" />
-          <Row label="最低元素抗性" value={`${sv.minRes}%`} tone={sv.minRes < 75 ? 't-bad' : ''} title="四項元素抗性中最弱的一項（目前難度的懲罰已計入）" />
-          <Row label="有效生命（物理）" value={fmt(sv.ehpPhys)} title="生命 ÷ (1 − 物理傷害減免)" />
-          <Row label="有效生命（最弱元素）" value={fmt(sv.ehpElem)} title="生命 ÷ (1 − 最低元素抗性)" />
+          <Row label={isEn ? "Physical Damage Reduction (PDR %)" : "物理傷害減免"} value={`${sv.pdr}%${sv.pdrRaw > PDR_CAP ? (isEn ? ` (Gear ${sv.pdrRaw}%, capped at ${PDR_CAP}%)` : `（裝備 ${sv.pdrRaw}%，超出上限 ${PDR_CAP}% 的部分無效）`) : sv.pdr >= PDR_CAP ? (isEn ? ' (Capped)' : '（已達上限）') : ''}`} tone={sv.pdr >= PDR_CAP ? 't-unique' : ''} title={isEn ? "Damage reduced by N%, physical only, cap 50%" : "「受到的傷害降低 N%」，只對物理傷害，上限 50%"} />
+          <Row label={isEn ? "Damage Reduced by (Flat DR)" : "固定傷害減免"} value={`${sv.flatDr}`} title={isEn ? "Damage Reduced by N: subtract flat amount from incoming physical damage" : "Damage Reduced by N：每次受到的物理傷害先減掉這個數字"} />
+          <Row label={isEn ? "Magic Damage Reduced (MDR)" : "魔法傷害減免"} value={`${sv.magicDr}`} title={isEn ? "Magic Damage Reduced by N" : "Magic Damage Reduced by N：每次受到的魔法傷害先減掉這個數字"} />
+          <Row label={isEn ? "Lowest Elemental Resistance" : "最低元素抗性"} value={`${sv.minRes}%`} tone={sv.minRes < 75 ? 't-bad' : ''} title={isEn ? "Lowest of 4 elemental resistances (Hell penalty included)" : "四項元素抗性中最弱的一項（目前難度的懲罰已計入）"} />
+          <Row label={isEn ? "Effective HP (Physical)" : "有效生命（物理）"} value={fmt(sv.ehpPhys)} title={isEn ? "Life / (1 - PDR)" : "生命 ÷ (1 − 物理傷害減免)"} />
+          <Row label={isEn ? "Effective HP (Lowest Element)" : "有效生命（最弱元素）"} value={fmt(sv.ehpElem)} title={isEn ? "Life / (1 - Lowest Res)" : "生命 ÷ (1 − 最低元素抗性)"} />
         </div>
         <div className="d2-sub mt-1">有效生命只把生命與百分比減傷合成一個數字，用來比較兩套配裝誰比較耐打；不含格擋、閃避、防禦、固定傷害減免、傭兵與回復，不是實際能吃幾下。物理減免上限 50%（Wowhead）；元素抗性上限 75%，最大抗性可提高到 95%（Maxroll）。</div>
       </div>
 
       {mfRaw > 0 && (
         <div className="mt-5" aria-label="尋寶效益">
-          <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>尋 寶 效 益</div>
+          <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "MAGIC FIND SCALING" : "尋 寶 效 益"}</div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-            <Row label="MF（裝備合計）" value={`${mfRaw}%`} tone="t-unique" title="裝備提供的魔法物品尋獲率（含依等級成長的部分）" />
-            {s.item_goldbonus ? <Row label="金幣掉落" value={`${s.item_goldbonus}%`} /> : null}
+            <Row label={isEn ? "Magic Find (Total Gear)" : "MF（裝備合計）"} value={`${mfRaw}%`} tone="t-unique" title={isEn ? "Magic Find from equipped gear" : "裝備提供的魔法物品尋獲率（含依等級成長的部分）"} />
+            {s.item_goldbonus ? <Row label={isEn ? "Extra Gold" : "金幣掉落"} value={`${s.item_goldbonus}%`} /> : null}
             {mfSummary(mfRaw).filter((l) => l.kind !== 'magic').map((l) => (
               <Row key={l.kind} label={`${MF_KIND_ZH[l.kind]}有效 MF`} value={`${Math.floor(l.effective)}%（掉落約 ×${l.multiplier.toFixed(2)}）`}
                 title="有效 MF ＝ MF×係數÷(MF＋係數)，係數：暗金 250、套裝 500、稀有 600；魔法物品沒有遞減" />
             ))}
-            <Row label="魔法物品" value={`${mfRaw}%（無遞減）`} />
+            <Row label={isEn ? "Magic Items" : "魔法物品"} value={isEn ? `${mfRaw}% (No diminishing)` : `${mfRaw}%（無遞減）`} />
           </div>
           <div className="d2-sub mt-1">再加 1% MF 約讓暗金有效 MF +{marginalUnique(mfRaw).toFixed(2)}%：MF 越高，每點越不划算。公式為社群整理，沒有在遊戲內逐項實測；傭兵尚未模擬，不含傭兵提供的 MF。</div>
         </div>
       )}
 
       <button type="button" onClick={() => setMore((v) => !v)} className="mt-5 t-gold text-sm tracking-wider" aria-expanded={more} style={{ background: 'none', border: 0, cursor: 'pointer' }}>
-        {more ? '▼' : '▶'} 更多數值　<span className="t-dim">（遊戲角色頁沒有，模擬器獨有）</span>
+        {more ? '▼' : '▶'} {isEn ? 'More Stats' : '更多數值'}　<span className="t-dim">{isEn ? '(Simulator specific)' : '（遊戲角色頁沒有，模擬器獨有）'}</span>
       </button>
       {more && (
         <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1.5">

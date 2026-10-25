@@ -17,9 +17,9 @@ export interface TaxDef {
 /** 防具與武器的分類（相對路徑 id，掛到各頁面的根節點之下） */
 export const EQUIP_DEFS: TaxDef[] = [
   {
-    id: 'armor', label: '防具', children: [
+    id: 'armor', label: '防具', en: 'Armor', children: [
       {
-        id: 'armor/head', label: '頭部', children: [
+        id: 'armor/head', label: '頭部', en: 'Head', children: [
           { id: 'armor/head/helm', label: '頭盔', en: 'Helm' },
           { id: 'armor/head/circ', label: '頭環', en: 'Circlet' },
           { id: 'armor/head/phlm', label: '野蠻人頭盔', en: 'Primal Helm' },
@@ -28,7 +28,7 @@ export const EQUIP_DEFS: TaxDef[] = [
       },
       { id: 'armor/body', label: '盔甲', en: 'Armor' },
       {
-        id: 'armor/shield', label: '盾牌', children: [
+        id: 'armor/shield', label: '盾牌', en: 'Shields', children: [
           { id: 'armor/shield/shie', label: '通用盾牌', en: 'Shield' },
           { id: 'armor/shield/ashd', label: '聖騎士盾牌', en: 'Auric Shield' },
           { id: 'armor/shield/head', label: '死靈法師首級', en: 'Voodoo Head' },
@@ -41,9 +41,9 @@ export const EQUIP_DEFS: TaxDef[] = [
     ],
   },
   {
-    id: 'weapon', label: '武器', children: [
+    id: 'weapon', label: '武器', en: 'Weapons', children: [
       {
-        id: 'weapon/melee', label: '近戰武器', children: [
+        id: 'weapon/melee', label: '近戰武器', en: 'Melee Weapons', children: [
           { id: 'weapon/melee/swor', label: '刀劍', en: 'Sword' },
           { id: 'weapon/melee/knif', label: '匕首', en: 'Dagger' },
           { id: 'weapon/melee/axe', label: '斧', en: 'Axe' },
@@ -54,33 +54,33 @@ export const EQUIP_DEFS: TaxDef[] = [
         ],
       },
       {
-        id: 'weapon/polearm', label: '長柄與長矛', children: [
+        id: 'weapon/polearm', label: '長柄與長矛', en: 'Polearms & Spears', children: [
           { id: 'weapon/polearm/pole', label: '長柄武器', en: 'Polearm' },
           { id: 'weapon/polearm/spea', label: '長矛', en: 'Spear' },
         ],
       },
       {
-        id: 'weapon/ranged', label: '弓與弩', children: [
+        id: 'weapon/ranged', label: '弓與弩', en: 'Bows & Crossbows', children: [
           { id: 'weapon/ranged/bow', label: '弓', en: 'Bow' },
           { id: 'weapon/ranged/xbow', label: '弩', en: 'Crossbow' },
         ],
       },
       {
-        id: 'weapon/throw', label: '投擲武器', children: [
+        id: 'weapon/throw', label: '投擲武器', en: 'Throwing Weapons', children: [
           { id: 'weapon/throw/jave', label: '標槍', en: 'Javelin' },
           { id: 'weapon/throw/tkni', label: '飛刀', en: 'Throwing Knife' },
           { id: 'weapon/throw/taxe', label: '飛斧', en: 'Throwing Axe' },
         ],
       },
       {
-        id: 'weapon/caster', label: '法杖・魔杖・法球', children: [
+        id: 'weapon/caster', label: '法杖・魔杖・法球', en: 'Staves & Wands', children: [
           { id: 'weapon/caster/staf', label: '法杖', en: 'Staff' },
           { id: 'weapon/caster/wand', label: '魔杖', en: 'Wand' },
           { id: 'weapon/caster/orb', label: '法球', en: 'Orb' },
         ],
       },
       {
-        id: 'weapon/class', label: '職業專用武器', children: [
+        id: 'weapon/class', label: '職業專用武器', en: 'Class Weapons', children: [
           { id: 'weapon/class/abow', label: '亞馬遜弓', en: 'Amazon Bow' },
           { id: 'weapon/class/aspe', label: '亞馬遜長矛', en: 'Amazon Spear' },
           { id: 'weapon/class/ajav', label: '亞馬遜標槍', en: 'Amazon Javelin' },
@@ -93,7 +93,7 @@ export const EQUIP_DEFS: TaxDef[] = [
 
 /** 飾品（沒有底材品階，只有暗金／套裝會出現） */
 export const JEWELRY_DEF: TaxDef = {
-  id: 'jewelry', label: '飾品', children: [
+  id: 'jewelry', label: '飾品', en: 'Jewelry', children: [
     { id: 'jewelry/ring', label: '戒指', en: 'Ring' },
     { id: 'jewelry/amulet', label: '護身符', en: 'Amulet' },
     { id: 'jewelry/charm', label: '咒符', en: 'Charm' },
@@ -155,12 +155,13 @@ export type TierKey = 'normal' | 'exceptional' | 'elite';
 export const TIER_ORDER: TierKey[] = ['normal', 'exceptional', 'elite'];
 
 /** 底材品階：普通 → 卓越 → 精英。實際遊玩最終都停在精英，普通與卓越只在前期拓荒用到，所以預設看精英 */
-export const TIER_META: { key: TierKey; label: string; sub: string }[] = [
-  { key: 'normal', label: '普通', sub: '拓荒期' },
-  { key: 'exceptional', label: '卓越', sub: '過渡期' },
-  { key: 'elite', label: '精英', sub: '終局' },
+export const TIER_META: { key: TierKey; label: string; en: string; sub: string }[] = [
+  { key: 'normal', label: '普通', en: 'Normal', sub: '拓荒期' },
+  { key: 'exceptional', label: '卓越', en: 'Exceptional', sub: '過渡期' },
+  { key: 'elite', label: '精英', en: 'Elite', sub: '終局' },
 ];
 export const TIER_LABEL: Record<TierKey, string> = { normal: '普通', exceptional: '卓越', elite: '精英' };
+export const TIER_LABEL_EN: Record<TierKey, string> = { normal: 'Normal', exceptional: 'Exceptional', elite: 'Elite' };
 export const DEFAULT_TIER: TierKey = 'elite';
 
 /** 普通／卓越／精英三層，每層底下都是同一套「部位 → 類型」分類 */
@@ -168,7 +169,7 @@ export function tierDefs(prefix: string): TaxDef[] {
   return TIER_META.map((t) => ({
     id: `${prefix}/${t.key}`,
     label: t.label,
-    en: t.sub,
+    en: t.en,
     children: prefixDefs(EQUIP_DEFS, `${prefix}/${t.key}`),
   }));
 }

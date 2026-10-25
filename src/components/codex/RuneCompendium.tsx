@@ -6,6 +6,7 @@ import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
 import { SectionHead } from '../common/TreeIndex';
 import { Layers, ArrowRight, Sparkles, Flame } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 export interface RuneCompendiumProps {
   targetRuneNumber?: number;
@@ -16,6 +17,7 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
   targetRuneNumber,
   onNavigateToRuneword,
 }) => {
+  const { t, isEn } = useLanguage();
   const [tierFilter, setTierFilter] = useState<'all' | 'low' | 'mid' | 'high'>('all');
 
   // 若外部指定了目標符文，自動切換至相應階層並平滑滾動至目標卡片
@@ -39,10 +41,10 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
     return { runeNumber: n, name: r?.name, nameEn: r?.nameEn, rarity: 'rune' as const };
   };
   const tierTiles: CategoryTile[] = [
-    { id: 'all', label: '全部符文', sub: '1-33#', count: RUNES_DATA.length, icon: rep(30), tone: 'rune' },
-    { id: 'low', label: '低階符文', sub: '1-10#', count: RUNES_DATA.filter((r) => r.number <= 10).length, icon: rep(5), tone: 'rune' },
-    { id: 'mid', label: '中階符文', sub: '11-21#', count: RUNES_DATA.filter((r) => r.number >= 11 && r.number <= 21).length, icon: rep(15), tone: 'rune' },
-    { id: 'high', label: '高階神符', sub: '22-33#', count: RUNES_DATA.filter((r) => r.number >= 22).length, icon: rep(33), tone: 'unique' },
+    { id: 'all', label: isEn ? 'All Runes' : '全部符文', sub: '1-33#', count: RUNES_DATA.length, icon: rep(30), tone: 'rune' },
+    { id: 'low', label: isEn ? 'Low Runes' : '低階符文', sub: '1-10#', count: RUNES_DATA.filter((r) => r.number <= 10).length, icon: rep(5), tone: 'rune' },
+    { id: 'mid', label: isEn ? 'Mid Runes' : '中階符文', sub: '11-21#', count: RUNES_DATA.filter((r) => r.number >= 11 && r.number <= 21).length, icon: rep(15), tone: 'rune' },
+    { id: 'high', label: isEn ? 'High Runes' : '高階神符', sub: '22-33#', count: RUNES_DATA.filter((r) => r.number >= 22).length, icon: rep(33), tone: 'unique' },
   ];
 
   const filteredRunes = RUNES_DATA.filter((r) => {
@@ -57,8 +59,8 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
       <PageHeader
         icon={<Layers className="w-6 h-6" />}
         tone="text-d2-rune"
-        title="33 枚符文全典藏與熱門符文語互聯"
-        desc="從 1# 艾爾 (El) 到 33# 薩德 (Zod)，完整收錄鑲嵌屬性、方塊升級公式，並支援點擊「相關符文之語」直達組成細節。"
+        title={t('33 枚符文全典藏與熱門符文語互聯', 'All 33 Runes Codex & Runewords Directory')}
+        desc={t('從 1# 艾爾 (El) 到 33# 薩德 (Zod)，完整收錄鑲嵌屬性、方塊升級公式，並支援點擊「相關符文之語」直達組成細節。', 'From 1# El to 33# Zod: complete socket effects, Horadric Cube upgrade formulas, and cross-referenced Runewords.')}
       />
 
       {/* 階層大圖分類磚（全部 / 低階 / 中階 / 高階神符） */}
@@ -92,9 +94,9 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
       {/* Runes：依階層分段（低階 → 中階 → 高階神符），每段有標題與數量 */}
       <div className="space-y-9">
         {([
-          { id: 'low', label: '低階符文', sub: '1–10#', test: (n: number) => n <= 10 },
-          { id: 'mid', label: '中階符文', sub: '11–21#', test: (n: number) => n >= 11 && n <= 21 },
-          { id: 'high', label: '高階神符', sub: '22–33#', test: (n: number) => n >= 22 },
+          { id: 'low', label: isEn ? 'Low Runes' : '低階符文', sub: '1–10#', test: (n: number) => n <= 10 },
+          { id: 'mid', label: isEn ? 'Mid Runes' : '中階符文', sub: '11–21#', test: (n: number) => n >= 11 && n <= 21 },
+          { id: 'high', label: isEn ? 'High Runes' : '高階神符', sub: '22–33#', test: (n: number) => n >= 22 },
         ] as const).map((grp) => {
           const rows = filteredRunes.filter((r) => grp.test(r.number));
           if (rows.length === 0) return null;
@@ -136,25 +138,25 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                     />
                     <div>
                       <h3 className="font-diablo text-base font-bold text-d2-rune flex items-center gap-1.5">
-                        {rune.name}
+                        {isEn && rune.nameEn ? rune.nameEn : rune.name}
                         {isTarget && (
                           <span className="text-[10px] px-1.5 py-0.2 rounded bg-d2-gold text-sanctuary-950 font-bold font-mono">
-                            目標
+                            {isEn ? 'Target' : '目標'}
                           </span>
                         )}
                       </h3>
                       <div className="text-[11px] text-sanctuary-400 font-mono italic">
-                        {rune.nameEn}
+                        {isEn && rune.nameEn ? rune.name : rune.nameEn}
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
                     <span className="text-[11px] text-sanctuary-400">
-                      需求等級: <strong className="text-sanctuary-200">{rune.requiredLevel}</strong>
+                      {isEn ? 'Req Level:' : '需求等級:'} <strong className="text-sanctuary-200">{rune.requiredLevel}</strong>
                     </span>
                     {isHighRune && (
                       <div className="text-[10px] text-d2-unique font-bold flex items-center justify-end gap-1 mt-0.5">
-                        <Sparkles className="w-2.5 h-2.5" /> 大號神符
+                        <Sparkles className="w-2.5 h-2.5" /> {isEn ? 'High Rune' : '大號神符'}
                       </div>
                     )}
                   </div>
@@ -163,15 +165,15 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                 {/* Sockets Details */}
                 <div className="space-y-2 text-xs">
                   <div>
-                    <span className="text-sanctuary-400 font-medium">武器鑲嵌：</span>
+                    <span className="text-sanctuary-400 font-medium">{isEn ? 'Weapons: ' : '武器鑲嵌：'}</span>
                     <span className="text-sanctuary-200 ml-1">{rune.weaponEffect}</span>
                   </div>
                   <div>
-                    <span className="text-sanctuary-400 font-medium">防具/頭盔：</span>
+                    <span className="text-sanctuary-400 font-medium">{isEn ? 'Armor / Helms: ' : '防具/頭盔：'}</span>
                     <span className="text-sanctuary-200 ml-1">{rune.armorHelmEffect}</span>
                   </div>
                   <div>
-                    <span className="text-sanctuary-400 font-medium">盾牌鑲嵌：</span>
+                    <span className="text-sanctuary-400 font-medium">{isEn ? 'Shields: ' : '盾牌鑲嵌：'}</span>
                     <span className="text-sanctuary-200 ml-1">{rune.shieldEffect}</span>
                   </div>
                 </div>
@@ -183,7 +185,7 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                 {rune.cubeRecipe && (
                   <div className="flex items-center justify-between text-[11px] text-d2-magic font-mono bg-sanctuary-900/60 p-2 rounded-xl border border-sanctuary-850">
                     <span className="text-sanctuary-400 flex items-center gap-1 font-sans">
-                      <ArrowRight className="w-3 h-3 text-d2-rune shrink-0" /> 升級:
+                      <ArrowRight className="w-3 h-3 text-d2-rune shrink-0" /> {isEn ? 'Cube:' : '升級:'}
                     </span>
                     <span className="font-semibold text-sanctuary-200 truncate ml-2">
                       {rune.cubeRecipe}
@@ -197,9 +199,9 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                     <div className="text-[10px] text-sanctuary-400 font-mono flex items-center justify-between">
                       <span className="flex items-center gap-1">
                         <Flame className="w-3 h-3 text-d2-rune" />
-                        組成之符文語 ({relevantRunewords.length}組):
+                        {isEn ? `Used in Runewords (${relevantRunewords.length}):` : `組成之符文語 (${relevantRunewords.length}組):`}
                       </span>
-                      <span className="text-[9px] text-sanctuary-500">點擊查看配方</span>
+                      <span className="text-[9px] text-sanctuary-500">{isEn ? 'Click to view' : '點擊查看配方'}</span>
                     </div>
                     <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto scrollbar-thin">
                       {relevantRunewords.map((rw) => (
@@ -208,9 +210,9 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                           type="button"
                           onClick={() => onNavigateToRuneword?.(rw.name)}
                           className="group/tag px-2 py-0.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-800 border border-sanctuary-750 hover:border-d2-unique text-[11px] font-mono text-d2-unique transition-all flex items-center gap-1 cursor-pointer shadow-sm"
-                          title={`點擊跳轉至【${rw.name} (${rw.nameEn})】完整組成細節與屬性`}
+                          title={isEn ? `Jump to ${rw.nameEn || rw.name} full recipe & properties` : `點擊跳轉至【${rw.name} (${rw.nameEn})】完整組成細節與屬性`}
                         >
-                          <span>{rw.name}</span>
+                          <span>{isEn && rw.nameEn ? rw.nameEn : rw.name}</span>
                           <span className="text-[9px] text-d2-unique/60 group-hover/tag:text-d2-unique">↗</span>
                         </button>
                       ))}

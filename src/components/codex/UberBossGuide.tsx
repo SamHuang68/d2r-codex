@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../../context/LanguageContext';
 import { UBER_TRISTRAM_GUIDE } from '../../data/uberBosses';
 import { 
   Skull, 
@@ -11,6 +12,7 @@ import {
 } from 'lucide-react';
 
 export const UberBossGuide: React.FC = () => {
+  const { t, isEn } = useLanguage();
   const [activeTab, setActiveTab] = useState<'tristram' | 'dclone'>('tristram');
 
   return (
@@ -23,10 +25,10 @@ export const UberBossGuide: React.FC = () => {
             Endgame Uber Tristram & Diablo Clone Guide
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            紅門六王與地表暗黑攻略寶典
+            {t('紅門六王與地表暗黑攻略寶典', 'Uber Tristram & Diablo Clone Guide')}
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-2xl">
-            收錄地獄火炬 (Hellfire Torch) 9把鑰匙三紅門合成流程、盾擊聖騎士單挑六大魔神核心鐵律，以及超級迪亞布羅 (DClone 毀符) 刷新機制。
+            {t('收錄地獄火炬 (Hellfire Torch) 9把鑰匙三紅門合成流程、盾擊聖騎士單挑六大魔神核心鐵律，以及超級迪亞布羅 (DClone 毀符) 刷新機制。', 'Complete endgame guide for Hellfire Torch (Key farming, Organs, Uber Tristram Smiter strategy) and Diablo Clone (Annihilus charm) spawning mechanics.')}
           </p>
         </div>
 
@@ -41,7 +43,7 @@ export const UberBossGuide: React.FC = () => {
             }`}
           >
             <Trophy className="w-4 h-4" />
-            超級崔斯特姆 (火炬)
+            {isEn ? 'Uber Tristram (Torch)' : '超級崔斯特姆 (火炬)'}
           </button>
           <button
             onClick={() => setActiveTab('dclone')}
@@ -52,7 +54,7 @@ export const UberBossGuide: React.FC = () => {
             }`}
           >
             <Flame className="w-4 h-4" />
-            地表大菠蘿 (毀符)
+            {isEn ? 'Diablo Clone (Anni)' : '地表大菠蘿 (毀符)'}
           </button>
         </div>
       </div>
@@ -64,7 +66,7 @@ export const UberBossGuide: React.FC = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-diablo font-bold text-sanctuary-100 flex items-center gap-2">
               <Key className="w-5 h-5 text-d2-gold" />
-              三大攻略階段：鑰匙 ➔ 器官 ➔ 超級崔斯特姆
+              {isEn ? '3-Stage Progression: Keys ➔ Organs ➔ Uber Tristram' : '三大攻略階段：鑰匙 ➔ 器官 ➔ 超級崔斯特姆'}
             </h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -90,7 +92,7 @@ export const UberBossGuide: React.FC = () => {
                     {/* Requirements */}
                     <div className="space-y-1.5 bg-sanctuary-950/70 p-3.5 rounded-2xl border border-sanctuary-800/80">
                       <div className="text-[10px] font-mono font-bold text-sanctuary-500 uppercase">
-                        所需材料與條件：
+                        {isEn ? 'Requirements & Conditions:' : '所需材料與條件：'}
                       </div>
                       {st.requirements.map((req, rIdx) => (
                         <div key={rIdx} className="text-xs text-sanctuary-200 flex items-start gap-1.5 leading-relaxed">
@@ -102,12 +104,12 @@ export const UberBossGuide: React.FC = () => {
 
                     {/* Rewards */}
                     <div className="text-xs bg-sanctuary-900/60 p-3 rounded-xl border border-sanctuary-800 text-sanctuary-300">
-                      <span className="text-d2-gold font-bold font-mono">階段收穫：</span> {st.rewards}
+                      <span className="text-d2-gold font-bold font-mono">{isEn ? "Stage Rewards: " : "階段收穫："}</span> {st.rewards}
                     </div>
 
                     {/* Strategy */}
                     <p className="text-xs text-sanctuary-400 leading-relaxed">
-                      <span className="text-sanctuary-200 font-bold">戰術秘訣：</span> {st.strategy}
+                      <span className="text-sanctuary-200 font-bold">{isEn ? "Tactical Tips: " : "戰術秘訣："}</span> {st.strategy}
                     </p>
                   </div>
                 </div>
@@ -123,10 +125,10 @@ export const UberBossGuide: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-xl sm:text-2xl font-diablo font-bold text-sanctuary-100">
-                  盾擊聖騎士 (Smiter) 必勝五大配裝鐵律
+                  {isEn ? "Smiter Paladin: 5 Essential Gear Rules" : "盾擊聖騎士 (Smiter) 必勝五大配裝鐵律"}
                 </h3>
                 <p className="text-xs text-sanctuary-400">
-                  為何盾擊騎是通關紅門最穩、造價最低的職業？掌握以下五條核心機制即可輕鬆單刷。
+                  {isEn ? "Why is Smiter the most reliable and affordable class for Pandemonium Event? Master these 5 mechanics for an easy solo clear." : "為何盾擊騎是通關紅門最穩、造價最低的職業？掌握以下五條核心機制即可輕鬆單刷。"}
                 </p>
               </div>
             </div>
@@ -163,7 +165,7 @@ export const UberBossGuide: React.FC = () => {
                 {UBER_TRISTRAM_GUIDE.dcloneGuide.title}
               </h3>
               <p className="text-xs text-sanctuary-400">
-                獲取全職業必備暗金小型咒符【滅絕小型咒符 (Annihilus)】的特殊世界事件。
+                {isEn ? "Special world event to obtain the essential Unique Small Charm: Annihilus." : "獲取全職業必備暗金小型咒符【滅絕小型咒符 (Annihilus)】的特殊世界事件。"}
               </p>
             </div>
           </div>
@@ -171,7 +173,7 @@ export const UberBossGuide: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-sanctuary-950/80 p-5 rounded-2xl border border-sanctuary-800 space-y-2">
               <div className="text-xs font-mono font-bold text-d2-gold uppercase">
-                ① 觸發機制 (SOJ Counter)
+                {isEn ? "① SOJ Counter Trigger" : "① 觸發機制 (SOJ Counter)"}
               </div>
               <p className="text-xs text-sanctuary-300 leading-relaxed">
                 {UBER_TRISTRAM_GUIDE.dcloneGuide.mechanics}
@@ -180,7 +182,7 @@ export const UberBossGuide: React.FC = () => {
 
             <div className="bg-sanctuary-950/80 p-5 rounded-2xl border border-sanctuary-800 space-y-2">
               <div className="text-xs font-mono font-bold text-d2-fire uppercase">
-                ② 降臨地點 (Spawn Location)
+                {isEn ? "② Spawn Location" : "② 降臨地點 (Spawn Location)"}
               </div>
               <p className="text-xs text-sanctuary-300 leading-relaxed">
                 {UBER_TRISTRAM_GUIDE.dcloneGuide.spawnRule}
@@ -189,7 +191,7 @@ export const UberBossGuide: React.FC = () => {
 
             <div className="bg-sanctuary-950/80 p-5 rounded-2xl border border-sanctuary-800 space-y-2">
               <div className="text-xs font-mono font-bold text-d2-unique uppercase">
-                ③ 擊殺必掉 (Guaranteed Reward)
+                {isEn ? "③ Guaranteed Reward" : "③ 擊殺必掉 (Guaranteed Reward)"}
               </div>
               <p className="text-xs text-sanctuary-300 leading-relaxed">
                 {UBER_TRISTRAM_GUIDE.dcloneGuide.dropReward}

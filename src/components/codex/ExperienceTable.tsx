@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { TrendingUp } from 'lucide-react';
 import { PageHeader } from '../common/PageHeader';
+import { useLanguage } from '../../context/LanguageContext';
 import { EXP, MAX_LEVEL, expBetween, expForLevel, expToReach, fmtExp, progressOf } from '../../data/codex/experience';
 
 const inputCls = 'bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl px-3 py-2 text-xs text-sanctuary-100 font-mono focus:outline-none focus:border-d2-gold/50';
@@ -8,6 +9,7 @@ const clampLevel = (v: string, lo: number, hi: number, dflt: number): number => 
 const KEY_LEVELS = [30, 45, 60, 75, 85, 90, 95, 98, 99];
 
 const RangeCalculator: React.FC = () => {
+  const { isEn } = useLanguage();
   const [from, setFrom] = useState('85');
   const [to, setTo] = useState('90');
   const f = clampLevel(from, 1, MAX_LEVEL - 1, 85);
@@ -15,7 +17,7 @@ const RangeCalculator: React.FC = () => {
   const need = expBetween(f, t);
   return (
     <section aria-label="升級計算" className="bg-sanctuary-900/60 p-4 rounded-2xl border border-sanctuary-800 space-y-3">
-      <h3 className="font-bold text-sanctuary-100">從幾級升到幾級</h3>
+      <h3 className="font-bold text-sanctuary-100">{isEn ? "Level Range XP Calculator" : "從幾級升到幾級"}</h3>
       <div className="flex flex-wrap items-center gap-2 text-xs text-sanctuary-300">
         從 <input type="text" inputMode="numeric" value={from} onChange={(e) => setFrom(e.target.value)} aria-label="起始等級" className={`${inputCls} w-20`} />
         級升到 <input type="text" inputMode="numeric" value={to} onChange={(e) => setTo(e.target.value)} aria-label="目標等級" className={`${inputCls} w-20`} /> 級
@@ -28,15 +30,16 @@ const RangeCalculator: React.FC = () => {
 };
 
 const ProgressCalculator: React.FC = () => {
+  const { isEn } = useLanguage();
   const [xpText, setXpText] = useState('');
   const xp = /^[\d,]+$/.test(xpText.trim()) ? Math.min(Number(xpText.trim().replace(/,/g, '')), Number.MAX_SAFE_INTEGER) : undefined;
   const p = xp !== undefined ? progressOf(xp) : undefined;
   return (
     <section aria-label="經驗進度" className="bg-sanctuary-900/60 p-4 rounded-2xl border border-sanctuary-800 space-y-3">
-      <h3 className="font-bold text-sanctuary-100">由目前經驗算等級與進度</h3>
+      <h3 className="font-bold text-sanctuary-100">{isEn ? "XP to Level & Progress Calculator" : "由目前經驗算等級與進度"}</h3>
       <label className="flex flex-wrap items-center gap-2 text-xs text-sanctuary-300">
         目前累計經驗
-        <input type="text" inputMode="numeric" value={xpText} onChange={(e) => setXpText(e.target.value)} placeholder="例如 1,234,567,890" aria-label="目前累計經驗" className={`${inputCls} w-52`} />
+        <input type="text" inputMode="numeric" value={xpText} onChange={(e) => setXpText(e.target.value)} placeholder={isEn ? "e.g. 1,234,567,890" : "例如 1,234,567,890"} aria-label="目前累計經驗" className={`${inputCls} w-52`} />
       </label>
       {p ? (
         <div className="text-sm text-sanctuary-100 space-y-1">
@@ -49,6 +52,7 @@ const ProgressCalculator: React.FC = () => {
 };
 
 export const ExperienceTable: React.FC = () => {
+  const { t, isEn } = useLanguage();
   const total = EXP[MAX_LEVEL];
   const rows = useMemo(() => Array.from({ length: MAX_LEVEL }, (_, i) => {
     const level = i + 1; const need = expForLevel(level);
@@ -58,31 +62,31 @@ export const ExperienceTable: React.FC = () => {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in">
       <PageHeader
         icon={<TrendingUp className="w-7 h-7" />}
-        title="經驗值表"
+        title={t('經驗值表', 'Experience Table')}
         tone="text-d2-gold"
-        desc="1 到 99 級每一級需要的累計經驗與單級經驗，以及升級計算。八個職業的經驗表完全相同。資料來自遊戲資料表。"
+        desc={t('1 到 99 級每一級需要的累計經驗與單級經驗，以及升級計算。八個職業的經驗表完全相同。資料來自遊戲資料表。', 'Experience curve from Level 1 to 99, cumulative XP, XP per level, and level calculators for all 8 classes.')}
       />
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3" aria-label="重點數字">
-        <div className="rounded-xl border border-sanctuary-800 bg-sanctuary-900/40 p-3"><div className="text-[11px] text-sanctuary-500">升到 99 級的累計經驗</div><div className="font-mono text-sanctuary-100 text-sm">{fmtExp(total)}</div></div>
-        <div className="rounded-xl border border-sanctuary-800 bg-sanctuary-900/40 p-3"><div className="text-[11px] text-sanctuary-500">98 → 99 級需要</div><div className="font-mono text-sanctuary-100 text-sm">{fmtExp(expForLevel(99))}</div></div>
-        <div className="rounded-xl border border-sanctuary-800 bg-sanctuary-900/40 p-3"><div className="text-[11px] text-sanctuary-500">升到 90 級占 99 級累計</div><div className="font-mono text-sanctuary-100 text-sm">{((EXP[90] / total) * 100).toFixed(2)}%</div></div>
-        <div className="rounded-xl border border-sanctuary-800 bg-sanctuary-900/40 p-3"><div className="text-[11px] text-sanctuary-500">升到 85 級占 99 級累計</div><div className="font-mono text-sanctuary-100 text-sm">{((EXP[85] / total) * 100).toFixed(2)}%</div></div>
+        <div className="rounded-xl border border-sanctuary-800 bg-sanctuary-900/40 p-3"><div className="text-[11px] text-sanctuary-500">{isEn ? 'Total XP to Level 99' : '升到 99 級的累計經驗'}</div><div className="font-mono text-sanctuary-100 text-sm">{fmtExp(total)}</div></div>
+        <div className="rounded-xl border border-sanctuary-800 bg-sanctuary-900/40 p-3"><div className="text-[11px] text-sanctuary-500">{isEn ? 'Level 98 → 99 Required' : '98 → 99 級需要'}</div><div className="font-mono text-sanctuary-100 text-sm">{fmtExp(expForLevel(99))}</div></div>
+        <div className="rounded-xl border border-sanctuary-800 bg-sanctuary-900/40 p-3"><div className="text-[11px] text-sanctuary-500">{isEn ? 'Level 90 Share of Max' : '升到 90 級占 99 級累計'}</div><div className="font-mono text-sanctuary-100 text-sm">{((EXP[90] / total) * 100).toFixed(2)}%</div></div>
+        <div className="rounded-xl border border-sanctuary-800 bg-sanctuary-900/40 p-3"><div className="text-[11px] text-sanctuary-500">{isEn ? 'Level 85 Share of Max' : '升到 85 級占 99 級累計'}</div><div className="font-mono text-sanctuary-100 text-sm">{((EXP[85] / total) * 100).toFixed(2)}%</div></div>
       </div>
       <div className="grid md:grid-cols-2 gap-4">
         <RangeCalculator />
         <ProgressCalculator />
       </div>
       <div className="flex items-center gap-1.5 flex-wrap text-xs" aria-label="快速跳到等級">
-        <span className="text-sanctuary-500 font-mono">快速跳到：</span>
+        <span className="text-sanctuary-500 font-mono">{isEn ? 'Jump to:' : '快速跳到：'}</span>
         {KEY_LEVELS.map((l) => (
           <button key={l} type="button" onClick={() => document.getElementById(`exp-lv-${l}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' })}
-            className="px-2.5 py-1 rounded-lg border border-sanctuary-800 bg-sanctuary-950/60 text-sanctuary-300 hover:text-sanctuary-100">{l} 級</button>
+            className="px-2.5 py-1 rounded-lg border border-sanctuary-800 bg-sanctuary-950/60 text-sanctuary-300 hover:text-sanctuary-100">{isEn ? `Lv ${l}` : `${l} 級`}</button>
         ))}
       </div>
       <div className="overflow-x-auto rounded-2xl border border-sanctuary-800">
         <table className="w-full text-xs min-w-[560px]">
           <thead className="bg-sanctuary-900 text-sanctuary-400 font-mono">
-            <tr><th className="text-right px-3 py-2 font-normal">等級</th><th className="text-right px-3 py-2 font-normal">累計經驗</th><th className="text-right px-3 py-2 font-normal">本級所需</th><th className="text-right px-3 py-2 font-normal" title="本級所需 ÷ 上一級所需">倍率</th><th className="text-right px-3 py-2 font-normal">占 99 級累計</th></tr>
+            <tr><th className="text-right px-3 py-2 font-normal">{isEn ? 'Level' : '等級'}</th><th className="text-right px-3 py-2 font-normal">{isEn ? 'Total XP' : '累計經驗'}</th><th className="text-right px-3 py-2 font-normal">{isEn ? 'XP Needed' : '本級所需'}</th><th className="text-right px-3 py-2 font-normal" title="本級所需 ÷ 上一級所需">{isEn ? 'Ratio' : '倍率'}</th><th className="text-right px-3 py-2 font-normal">{isEn ? '% of Max' : '占 99 級累計'}</th></tr>
           </thead>
           <tbody>
             {rows.map((r) => (

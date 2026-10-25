@@ -10,6 +10,7 @@ import { ItemIcon } from '../common/ItemIcon';
 import { UNIQUE_ITEMS_DATA } from '../../data/uniqueItems';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
+import { useLanguage } from '../../context/LanguageContext';
 import { 
   Gem, 
   Sparkles, 
@@ -40,27 +41,28 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
   onNavigateToCube,
   onNavigateToRunewords,
 }) => {
+  const { isEn } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<'gems' | 'keys' | 'essences' | 'potions' | 'charms'>('gems');
   const [gemSearchQuery, setGemSearchQuery] = useState('');
   const [selectedGemType, setSelectedGemType] = useState<string>('all');
 
   const gemTypes = [
-    { id: 'all', label: '全部寶石' },
-    { id: 'amethyst', label: '紫寶石 (Amethyst)' },
-    { id: 'topaz', label: '黃寶石 (Topaz)' },
-    { id: 'ruby', label: '紅寶石 (Ruby)' },
-    { id: 'sapphire', label: '藍寶石 (Sapphire)' },
-    { id: 'emerald', label: '綠寶石 (Emerald)' },
-    { id: 'diamond', label: '鑽石 (Diamond)' },
-    { id: 'skull', label: '骷髏石 (Skull)' },
+    { id: 'all', label: isEn ? 'All Gems' : '全部寶石' },
+    { id: 'amethyst', label: isEn ? 'Amethyst' : '紫寶石 (Amethyst)' },
+    { id: 'topaz', label: isEn ? 'Topaz' : '黃寶石 (Topaz)' },
+    { id: 'ruby', label: isEn ? 'Ruby' : '紅寶石 (Ruby)' },
+    { id: 'sapphire', label: isEn ? 'Sapphire' : '藍寶石 (Sapphire)' },
+    { id: 'emerald', label: isEn ? 'Emerald' : '綠寶石 (Emerald)' },
+    { id: 'diamond', label: isEn ? 'Diamond' : '鑽石 (Diamond)' },
+    { id: 'skull', label: isEn ? 'Skull' : '骷髏石 (Skull)' },
   ];
 
   const propTiles: CategoryTile[] = [
-    { id: 'gems', label: '完美寶石與工藝', count: GEMS_DATA.length, tone: 'magic', icon: { name: '完美紫寶石', nameEn: 'Perfect Amethyst', rarity: 'prop' } },
-    { id: 'keys', label: '六王鑰匙與器官', count: UBER_KEYS_ORGANS_DATA.length, tone: 'rune', icon: { name: '恐懼之鑰', nameEn: 'Key of Terror', rarity: 'prop' } },
-    { id: 'essences', label: '四大精華與洗點徽章', count: ESSENCES_DATA.length, tone: 'unique', icon: { name: '精華', nameEn: 'Essence', rarity: 'prop' } },
-    { id: 'potions', label: '戰鬥藥劑與黑科技', count: COMBAT_POTIONS_DATA.length, tone: 'rare', icon: { name: '全效活力藥水', nameEn: 'Full Rejuvenation Potion', rarity: 'prop' } },
-    { id: 'charms', label: '破免板與頂級珠寶', count: CHARMS_JEWELS_DATA.length, tone: 'set', icon: { name: '地獄火炬', nameEn: 'Hellfire Torch', rarity: 'unique' } },
+    { id: 'gems', label: isEn ? 'Perfect Gems & Crafting' : '完美寶石與工藝', count: GEMS_DATA.length, tone: 'magic', icon: { name: '完美紫寶石', nameEn: 'Perfect Amethyst', rarity: 'prop' } },
+    { id: 'keys', label: isEn ? 'Uber Keys & Organs' : '六王鑰匙與器官', count: UBER_KEYS_ORGANS_DATA.length, tone: 'rune', icon: { name: '恐懼之鑰', nameEn: 'Key of Terror', rarity: 'prop' } },
+    { id: 'essences', label: isEn ? '4 Essences & Respec Token' : '四大精華與洗點徽章', count: ESSENCES_DATA.length, tone: 'unique', icon: { name: '精華', nameEn: 'Essence', rarity: 'prop' } },
+    { id: 'potions', label: isEn ? 'Combat Potions & Elixirs' : '戰鬥藥劑與黑科技', count: COMBAT_POTIONS_DATA.length, tone: 'rare', icon: { name: '全效活力藥水', nameEn: 'Full Rejuvenation Potion', rarity: 'prop' } },
+    { id: 'charms', label: isEn ? 'Sunder Charms & Top Jewels' : '破免板與頂級珠寶', count: CHARMS_JEWELS_DATA.length, tone: 'set', icon: { name: '地獄火炬', nameEn: 'Hellfire Torch', rarity: 'unique' } },
   ];
 
   const filteredGems = GEMS_DATA.filter((g) => {
@@ -84,8 +86,8 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
       <PageHeader
         icon={<FlaskConical className="w-6 h-6" />}
         tone="text-d2-magic"
-        title="道具、寶石與戰鬥聖物全典藏"
-        desc="收錄七大完美寶石鑲嵌與手工工藝、崔斯特姆紅門鑰匙與六王器官、四大魔神精華與洗點徽章，以及解毒/解凍抗性黑科技藥劑。"
+        title={isEn ? "Items, Gems & Combat Relics Compendium" : "道具、寶石與戰鬥聖物全典藏"}
+        desc={isEn ? "Full database of 7 Perfect Gems socketing & crafting recipes, Pandemonium Event keys & organs, 4 Prime Evil Essences & Token of Absolution, and combat potions." : "收錄七大完美寶石鑲嵌與手工工藝、崔斯特姆紅門鑰匙與六王器官、四大魔神精華與洗點徽章，以及解毒/解凍抗性黑科技藥劑。"}
         right={
           <div className="flex items-center gap-2 flex-wrap self-start">
           {onNavigateToCube && (
@@ -94,7 +96,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
               className="px-3 py-2 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-d2-magic text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
             >
               <Layers className="w-3.5 h-3.5" />
-              <span>方塊合成工坊</span>
+              <span>{isEn ? "Horadric Cube Lab" : "方塊合成工坊"}</span>
             </button>
           )}
           {onNavigateToRunes && (
@@ -103,7 +105,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
               className="px-3 py-2 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-d2-rune text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
             >
               <Flame className="w-3.5 h-3.5" />
-              <span>33枚符文寶庫</span>
+              <span>{isEn ? "33 Runes Vault" : "33枚符文寶庫"}</span>
             </button>
           )}
           {onNavigateToRunewords && (
@@ -112,7 +114,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
               className="px-3 py-2 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-d2-unique text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>符文之語速查</span>
+              <span>{isEn ? "Runewords Guide" : "符文之語速查"}</span>
             </button>
           )}
           </div>
@@ -135,31 +137,31 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
           <div className="bg-gradient-to-r from-sanctuary-900/90 via-sanctuary-950 to-sanctuary-900/90 p-5 rounded-2xl border border-sanctuary-800 space-y-3">
             <div className="flex items-center gap-2 text-xs font-bold text-d2-magic uppercase tracking-wider">
               <Gem className="w-4 h-4 text-d2-magic" />
-              <span>寶石鑲嵌與重置工藝核心法則</span>
+              <span>{isEn ? "Core Rules for Gem Sockets & Crafting" : "寶石鑲嵌與重置工藝核心法則"}</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-sans">
               <div className="bg-sanctuary-950/90 p-3.5 rounded-xl border border-sanctuary-800">
                 <div className="text-d2-gold font-bold mb-1 flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-d2-gold" /> 拓荒防禦之王：完美鑽石
+                  <CheckCircle2 className="w-3.5 h-3.5 text-d2-gold" /> {isEn ? "King of Defense: Perfect Diamond" : "拓荒防禦之王：完美鑽石"}
                 </div>
                 <p className="text-sanctuary-300 leading-relaxed">
-                  3孔普通盾牌或聖騎士專用盾鑲嵌 3 顆完美鑽石，直接提供高達 <strong>+57% 全抗性</strong>，平民跨越地獄抗性懲罰第一神器。
+                  {isEn ? "3 Perfect Diamonds in a 3-socket shield grants +57% All Resists, essential for surviving Hell difficulty." : "3孔普通盾牌或聖騎士專用盾鑲嵌 3 顆完美鑽石，直接提供高達 +57% 全抗性，平民跨越地獄抗性懲罰第一神器。"}
                 </p>
               </div>
               <div className="bg-sanctuary-950/90 p-3.5 rounded-xl border border-sanctuary-800">
                 <div className="text-d2-unique font-bold mb-1 flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-d2-unique" /> 打寶致富首選：完美黃寶石
+                  <CheckCircle2 className="w-3.5 h-3.5 text-d2-unique" /> {isEn ? "MF Riches: Perfect Topaz" : "打寶致富首選：完美黃寶石"}
                 </div>
                 <p className="text-sanctuary-300 leading-relaxed">
-                  頭盔與衣服鑲嵌每顆提供 <strong>+24% MF</strong>。4孔白甲鑲滿直接白嫖 +96% MF，成本極低，是開荒刷墨菲斯托的最佳搭檔。
+                  {isEn ? "+24% MF per gem in helms/body armor. A 4-socket armor full of Topazes grants +96% MF at minimal cost." : "頭盔與衣服鑲嵌每顆提供 +24% MF。4孔白甲鑲滿直接白嫖 +96% MF，成本極低，是開荒刷墨菲斯托的最佳搭檔。"}
                 </p>
               </div>
               <div className="bg-sanctuary-950/90 p-3.5 rounded-xl border border-sanctuary-800">
                 <div className="text-d2-magic font-bold mb-1 flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-d2-magic" /> 洗大板與手工施法：完紫與完骷
+                  <CheckCircle2 className="w-3.5 h-3.5 text-d2-magic" /> {isEn ? "Rerolling & Crafting: P-Amethyst & P-Skull" : "洗大板與手工施法：完紫與完骷"}
                 </div>
                 <p className="text-sanctuary-300 leading-relaxed">
-                  3顆完美寶石 + 巴爾/暗黑特大咒符可洗出 <strong>+1技能 +45生命</strong> 極品板；6顆完美骷髏石可無限洗金色裝備。
+                  {isEn ? "3 Perfect Gems rerolls Grand Charms for up to +1 Skill / +45 Life. 6 Perfect Skulls reroll Rare items." : "3顆完美寶石 + 巴爾/暗黑特大咒符可洗出 +1技能 +45生命 極品板；6顆完美骷髏石可無限洗金色裝備。"}
                 </p>
               </div>
             </div>
@@ -173,7 +175,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                 type="text"
                 value={gemSearchQuery}
                 onChange={(e) => setGemSearchQuery(e.target.value)}
-                placeholder="搜尋寶石名稱、鑲嵌效果或配方..."
+                placeholder={isEn ? "Search gem name, socket effects or recipes..." : "搜尋寶石名稱、鑲嵌效果或配方..."}
                 className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-xl pl-9 pr-4 py-2 text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-magic"
               />
             </div>
@@ -217,22 +219,22 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                       </div>
                     </div>
                     <span className="text-[10px] px-2 py-0.5 rounded bg-d2-magic/15 text-d2-magic border border-d2-magic/30 font-medium">
-                      需求 Lv {gem.requiredLevel}
+                      {isEn ? `Req Lv ${gem.requiredLevel}` : `需求 Lv ${gem.requiredLevel}`}
                     </span>
                   </div>
 
                   {/* Sockets Breakdown */}
                   <div className="space-y-2.5 py-4 text-xs font-sans">
                     <div className="flex items-start gap-2">
-                      <span className="text-sanctuary-500 font-medium shrink-0 w-16">武器效果：</span>
+                      <span className="text-sanctuary-500 font-medium shrink-0 w-16">{isEn ? "Weapons:" : "武器效果："}</span>
                       <span className="text-d2-blood font-semibold">{gem.weaponEffect}</span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span className="text-sanctuary-500 font-medium shrink-0 w-16">衣服頭盔：</span>
+                      <span className="text-sanctuary-500 font-medium shrink-0 w-16">{isEn ? "Armor / Helms:" : "衣服頭盔："}</span>
                       <span className="text-d2-gold font-semibold">{gem.armorHelmEffect}</span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span className="text-sanctuary-500 font-medium shrink-0 w-16">盾牌效果：</span>
+                      <span className="text-sanctuary-500 font-medium shrink-0 w-16">{isEn ? "Shields:" : "盾牌效果："}</span>
                       <span className="text-d2-set font-semibold">{gem.shieldEffect}</span>
                     </div>
                   </div>
@@ -242,7 +244,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                 <div className="pt-3 border-t border-sanctuary-850 space-y-2 text-xs">
                   <div className="text-[11px] font-mono text-sanctuary-400 flex items-center gap-1">
                     <ArrowRight className="w-3 h-3 text-d2-magic" />
-                    <span>核心用途與方塊配方：</span>
+                    <span>{isEn ? "Core Uses & Cube Recipes:" : "核心用途與方塊配方："}</span>
                   </div>
                   <ul className="space-y-1.5">
                     {gem.craftingUses.map((use, uIdx) => (
@@ -324,12 +326,12 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
 
                   <div className="py-3 space-y-2 text-xs font-sans">
                     <div>
-                      <span className="text-sanctuary-500">掉落來源：</span>
+                      <span className="text-sanctuary-500">{isEn ? "Drop Source: " : "掉落來源："}</span>
                       <strong className="text-sanctuary-200">{item.dropSource}</strong>
                       <span className="text-d2-gold font-mono ml-2">({item.dropRate})</span>
                     </div>
                     <div>
-                      <span className="text-sanctuary-500">所在場景：</span>
+                      <span className="text-sanctuary-500">{isEn ? "Location: " : "所在場景："}</span>
                       <span className="text-sanctuary-300">{item.location}</span>
                     </div>
                     <p className="text-sanctuary-400 text-xs leading-relaxed pt-1">
@@ -340,7 +342,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
 
                 <div className="pt-3 border-t border-sanctuary-850/80 space-y-2 text-xs">
                   <div className="bg-sanctuary-900/60 p-2.5 rounded-xl border border-sanctuary-800 text-[11px] text-sanctuary-300">
-                    <span className="text-d2-fire font-bold">💡 實戰要訣：</span>
+                    <span className="text-d2-fire font-bold">{isEn ? "💡 Tactical Tips: " : "💡 實戰要訣："}</span>
                     {item.tacticalTips}
                   </div>
                 </div>
@@ -412,11 +414,11 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
 
                   <div className="space-y-1.5 text-xs text-sanctuary-300">
                     <div>
-                      <span className="text-sanctuary-500">來源魔王：</span>
+                      <span className="text-sanctuary-500">{isEn ? "Boss Source: " : "來源魔王："}</span>
                       <strong className="text-sanctuary-200">{ess.bossSource}</strong>
                     </div>
                     <div>
-                      <span className="text-sanctuary-500">掉落幾率：</span>
+                      <span className="text-sanctuary-500">{isEn ? "Drop Chance: " : "掉落幾率："}</span>
                       <span className="text-d2-gold font-mono">{ess.dropChance}</span>
                     </div>
                     <div className="text-[11px] text-sanctuary-400 pt-1">
@@ -463,25 +465,25 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
 
                   <div className="py-3 space-y-2 text-xs font-sans">
                     <div className="p-2.5 rounded-xl bg-sanctuary-900/80 border border-sanctuary-800 text-sanctuary-200 leading-snug">
-                      <strong className="text-d2-gold">效果：</strong>{pot.effect}
+                      <strong className="text-d2-gold">{isEn ? "Effect: " : "效果："}</strong>{pot.effect}
                     </div>
 
                     {pot.hiddenMechanic && (
                       <div className="p-2.5 rounded-xl bg-d2-magic/10 border border-d2-magic/30 text-sanctuary-300 text-xs leading-relaxed">
-                        <strong className="text-d2-magic">⚡ 隱藏機制：</strong>{pot.hiddenMechanic}
+                        <strong className="text-d2-magic">{isEn ? "⚡ Hidden Mechanic: " : "⚡ 隱藏機制："}</strong>{pot.hiddenMechanic}
                       </div>
                     )}
 
                     {pot.recipe && (
                       <div className="text-[11px] text-sanctuary-400 font-mono">
-                        <span className="text-sanctuary-500">合成/取得：</span>{pot.recipe}
+                        <span className="text-sanctuary-500">{isEn ? "Recipe: " : "合成/取得："}</span>{pot.recipe}
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div className="pt-2 border-t border-sanctuary-850 text-xs text-sanctuary-400">
-                  <span className="text-d2-gold font-bold">💡 專家提示：</span>{pot.proTips}
+                  <span className="text-d2-gold font-bold">{isEn ? "💡 Pro Tips: " : "💡 專家提示："}</span>{pot.proTips}
                 </div>
               </div>
             ))}
@@ -529,7 +531,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                       </div>
                     </div>
                     <span className="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold bg-d2-gold/20 text-d2-gold border border-d2-gold/40 shrink-0">
-                      階級 {charm.tradeValueTier}
+                      {isEn ? `Tier ${charm.tradeValueTier}` : `階級 ${charm.tradeValueTier}`}
                     </span>
                   </div>
 
@@ -542,7 +544,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
 
                 <div className="pt-3 border-t border-sanctuary-850 text-xs">
                   <div className="text-[11px] text-sanctuary-400 mb-1">
-                    <span className="text-sanctuary-500">來源：</span>{charm.dropSource}
+                    <span className="text-sanctuary-500">{isEn ? "Source: " : "來源："}</span>{charm.dropSource}
                   </div>
                   <div className="text-[11px] text-sanctuary-300 leading-relaxed bg-sanctuary-900/50 p-2 rounded-lg">
                     {charm.guide}

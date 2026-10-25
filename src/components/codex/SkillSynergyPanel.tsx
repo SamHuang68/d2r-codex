@@ -4,6 +4,7 @@ import {
   calculateSkillSynergies, 
   SkillSynergyProfile 
 } from '../../data/skills/synergies';
+import { useLanguage } from '../../context/LanguageContext';
 import { 
   Sparkles, 
   Zap, 
@@ -35,13 +36,19 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
   isPrerequisitesMet,
   remainingPoints,
 }) => {
+  const { isEn } = useLanguage();
+
   if (!skill) {
     return (
       <div className="bg-sanctuary-900/60 rounded-3xl border border-sanctuary-800 p-6 text-center space-y-3">
         <Sparkles className="w-8 h-8 text-d2-gold mx-auto opacity-40 animate-pulse" />
-        <h3 className="font-diablo text-lg text-sanctuary-300">請選取技能以檢視全息協同矩陣</h3>
+        <h3 className="font-diablo text-lg text-sanctuary-300">
+          {isEn ? 'Select a skill to view the synergy matrix' : '請選取技能以檢視全息協同矩陣'}
+        </h3>
         <p className="text-xs text-sanctuary-500 max-w-sm mx-auto">
-          在左側遊戲技能樹點擊任一技能，即可立即查看即時協同公式、雙向增傷百分比、前置路徑與實戰戰術圖說。
+          {isEn
+            ? 'Click any skill in the skill tree to view real-time synergy formulas, scaling percentages, prerequisites, and tactical guides.'
+            : '在左側遊戲技能樹點擊任一技能，即可立即查看即時協同公式、雙向增傷百分比、前置路徑與實戰戰術圖說。'}
         </p>
       </div>
     );
@@ -67,13 +74,13 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
               {skill.tree}
             </span>
             <span className="text-xs font-mono text-sanctuary-400">
-              需求等級: Lv {skill.requiredLevel}
+              {isEn ? `Required Level: Lv ${skill.requiredLevel}` : `需求等級: Lv ${skill.requiredLevel}`}
             </span>
           </div>
           <h2 className="text-2xl font-diablo font-bold text-sanctuary-100 mt-1 flex items-center gap-2">
-            {skill.name}
+            {isEn ? (skill.nameEn || skill.name) : skill.name}
             <span className="text-xs font-mono font-normal text-sanctuary-400">
-              ({skill.nameEn})
+              ({isEn ? skill.name : skill.nameEn})
             </span>
           </h2>
         </div>
@@ -84,7 +91,7 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
             onClick={() => onRemovePoint(skill, 1)}
             disabled={points <= 0}
             className="w-7 h-7 rounded-lg bg-sanctuary-850 hover:bg-sanctuary-750 text-sanctuary-200 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
-            title="扣除 1 點"
+            title={isEn ? "Remove 1 point" : "扣除 1 點"}
           >
             <Minus className="w-3.5 h-3.5" />
           </button>
@@ -100,7 +107,7 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
             onClick={() => onAddPoint(skill, 1)}
             disabled={!isUnlocked || isMax || remainingPoints <= 0}
             className="w-7 h-7 rounded-lg bg-d2-gold text-sanctuary-950 hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors font-bold"
-            title="增加 1 點"
+            title={isEn ? "Add 1 point" : "增加 1 點"}
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
@@ -109,7 +116,7 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
             onClick={() => onAddPoint(skill, 20)}
             disabled={!isUnlocked || isMax || remainingPoints <= 0}
             className="px-2 py-1 text-[10px] font-mono font-bold rounded-lg bg-d2-gold/20 text-d2-gold hover:bg-d2-gold/30 disabled:opacity-30 disabled:cursor-not-allowed border border-d2-gold/30"
-            title="加滿至 20 點"
+            title={isEn ? "Max out to 20 points" : "加滿至 20 點"}
           >
             MAX
           </button>
@@ -126,14 +133,18 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
         {!isUnlocked && (
           <div className="flex items-center gap-2 p-3 rounded-xl bg-d2-blood/10 border border-d2-blood/30 text-xs text-rose-300">
             <AlertCircle className="w-4 h-4 shrink-0 text-d2-blood" />
-            <span>尚未解鎖！必須先在上方所有前置技能各投入至少 1 點數。</span>
+            <span>
+              {isEn
+                ? 'Locked! You must allocate at least 1 point into all prerequisites above.'
+                : '尚未解鎖！必須先在上方所有前置技能各投入至少 1 點數。'}
+            </span>
           </div>
         )}
 
         {/* 前置列表 */}
         {prereqSkills.length > 0 && (
           <div className="flex items-center gap-2 flex-wrap text-xs pt-1">
-            <span className="text-sanctuary-400 font-mono">前置依賴:</span>
+            <span className="text-sanctuary-400 font-mono">{isEn ? 'Prerequisites:' : '前置依賴:'}</span>
             {prereqSkills.map(pre => {
               const prePoints = skillPoints[pre.id] || 0;
               const met = prePoints > 0;
@@ -147,7 +158,7 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
                       : 'bg-d2-blood/15 border-d2-blood/40 text-rose-300 hover:bg-d2-blood/25'
                   }`}
                 >
-                  <span>{pre.name}</span>
+                  <span>{isEn && pre.nameEn ? pre.nameEn : pre.name}</span>
                   <span className="text-[10px] opacity-75">({prePoints}/20)</span>
                 </button>
               );
@@ -162,12 +173,14 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-cyan-400 animate-pulse" />
             <span className="font-diablo font-bold text-sm text-cyan-300">
-              協同效應全息矩陣 (Synergy Scaling)
+              {isEn ? 'Synergy Scaling' : '協同效應全息矩陣 (Synergy Scaling)'}
             </span>
           </div>
           {synergyProfile.totalIncomingPercent > 0 && (
             <span className="text-xs font-mono font-bold text-cyan-300 bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-800">
-              已累積 +{synergyProfile.totalIncomingPercent}% 協同增幅
+              {isEn
+                ? `+${synergyProfile.totalIncomingPercent}% Total Synergy Bonus`
+                : `已累積 +${synergyProfile.totalIncomingPercent}% 協同增幅`}
             </span>
           )}
         </div>
@@ -176,7 +189,11 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
         <div className="space-y-2">
           <div className="text-xs font-mono text-sanctuary-400 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-cyan-400 inline-block" />
-            <span>接收加成（投資以下技能可增強【{skill.name}】）：</span>
+            <span>
+              {isEn
+                ? `Receiving Bonus (Investing in skills below boosts [${skill.nameEn || skill.name}]):`
+                : `接收加成（投資以下技能可增強【${skill.name}】）：`}
+            </span>
           </div>
 
           {synergyProfile.incoming.length > 0 ? (
@@ -194,7 +211,7 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <span className="font-diablo font-bold text-sm text-sanctuary-100">
-                          {item.skillName}
+                          {isEn && targetObj?.nameEn ? targetObj.nameEn : item.skillName}
                         </span>
                         {targetObj && (
                           <span className="text-[10px] font-mono text-sanctuary-500">
@@ -210,7 +227,7 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
                         onClick={() => onNavigateToSkill(item.skillId)}
                         className="text-[11px] text-sanctuary-400 hover:text-cyan-300 flex items-center gap-1 transition-colors"
                       >
-                        <span>前往加點</span>
+                        <span>{isEn ? 'Invest Points' : '前往加點'}</span>
                         <ArrowRight className="w-3 h-3" />
                       </button>
                     </div>
@@ -219,7 +236,9 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
                     <div className="space-y-1">
                       <div className="flex justify-between text-[11px] font-mono">
                         <span className="text-sanctuary-400">
-                          已投資 {item.points} 點 × {item.percentPerPoint}%
+                          {isEn
+                            ? `Invested ${item.points} pts × ${item.percentPerPoint}%`
+                            : `已投資 ${item.points} 點 × ${item.percentPerPoint}%`}
                         </span>
                         <span className="text-cyan-300 font-bold">
                           +{item.totalPercent}% {item.bonusType}
@@ -238,7 +257,9 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
             </div>
           ) : (
             <div className="p-3 rounded-xl bg-sanctuary-900/40 border border-sanctuary-800/60 text-xs text-sanctuary-400">
-              此技能無接收協同加成（基礎傷害完全隨技能自身等級成長，單修即可達到上限）。
+              {isEn
+                ? 'This skill receives no synergy bonuses (damage scales purely with its own level).'
+                : '此技能無接收協同加成（基礎傷害完全隨技能自身等級成長，單修即可達到上限）。'}
             </div>
           )}
         </div>
@@ -247,34 +268,43 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
         <div className="space-y-2 pt-2">
           <div className="text-xs font-mono text-sanctuary-400 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-d2-gold inline-block" />
-            <span>輸出加成（投資【{skill.name}】可增益以下技能）：</span>
+            <span>
+              {isEn
+                ? `Outgoing Bonus (Investing in [${skill.nameEn || skill.name}] boosts the following):`
+                : `輸出加成（投資【${skill.name}】可增益以下技能）：`}
+            </span>
           </div>
 
           {synergyProfile.outgoing.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {synergyProfile.outgoing.map(item => (
-                <button
-                  key={item.skillId}
-                  onClick={() => onNavigateToSkill(item.skillId)}
-                  className="text-left bg-sanctuary-900/50 hover:bg-sanctuary-850 p-2.5 rounded-xl border border-sanctuary-800/80 hover:border-d2-gold/50 transition-all group"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-diablo font-bold text-xs text-sanctuary-200 group-hover:text-d2-gold">
-                      {item.skillName}
-                    </span>
-                    <span className="text-[10px] font-mono text-d2-gold font-bold">
-                      +{item.totalPercent}%
-                    </span>
-                  </div>
-                  <div className="text-[10px] font-mono text-sanctuary-400 mt-0.5">
-                    每點提供: {item.displayText}
-                  </div>
-                </button>
-              ))}
+              {synergyProfile.outgoing.map(item => {
+                const outgoingObj = allSkills.find(s => s.id === item.skillId);
+                return (
+                  <button
+                    key={item.skillId}
+                    onClick={() => onNavigateToSkill(item.skillId)}
+                    className="text-left bg-sanctuary-900/50 hover:bg-sanctuary-850 p-2.5 rounded-xl border border-sanctuary-800/80 hover:border-d2-gold/50 transition-all group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-diablo font-bold text-xs text-sanctuary-200 group-hover:text-d2-gold">
+                        {isEn && outgoingObj?.nameEn ? outgoingObj.nameEn : item.skillName}
+                      </span>
+                      <span className="text-[10px] font-mono text-d2-gold font-bold">
+                        +{item.totalPercent}%
+                      </span>
+                    </div>
+                    <div className="text-[10px] font-mono text-sanctuary-400 mt-0.5">
+                      {isEn ? `Per Point: ${item.displayText}` : `每點提供: ${item.displayText}`}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           ) : (
             <div className="p-3 rounded-xl bg-sanctuary-900/40 border border-sanctuary-800/60 text-xs text-sanctuary-400">
-              投資此技能不為其他技能提供額外數值加成。
+              {isEn
+                ? 'Investing in this skill does not provide synergy bonuses to other skills.'
+                : '投資此技能不為其他技能提供額外數值加成。'}
             </div>
           )}
         </div>
@@ -284,7 +314,7 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
       <div className="bg-sanctuary-900/70 p-4 rounded-2xl border border-sanctuary-800 space-y-1.5">
         <div className="flex items-center gap-1.5 text-xs font-mono text-d2-gold font-bold">
           <BookOpen className="w-3.5 h-3.5 text-d2-gold" />
-          <span>天梯實戰圖說與機制解析</span>
+          <span>{isEn ? 'Tactical Guide & Mechanics' : '天梯實戰圖說與機制解析'}</span>
         </div>
         <p className="text-xs text-sanctuary-300 leading-relaxed">
           {skill.details}

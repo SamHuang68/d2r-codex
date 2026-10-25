@@ -21,6 +21,7 @@ import { ItemTooltipBody } from './ItemTooltip';
 import { slotPlacementError } from './equipRules';
 import { engineItemsOf } from './engineItems';
 import './d2skin.css';
+import { useLanguage } from '../../../context/LanguageContext';
 import { DEFAULT_MERC, MERC_SLOT_ZH, DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type MercSlot, type MercState, type Quests, type TabKey } from './types';
 
 const CLASSES: { zh: string; en: string; code: string }[] = [
@@ -29,6 +30,7 @@ const CLASSES: { zh: string; en: string; code: string }[] = [
   { zh: '刺客', en: 'Assassin', code: 'ass' }, { zh: '術士', en: 'Warlock', code: 'war' },
 ];
 const DIFF_ZH: Record<Difficulty, string> = { normal: '普通', nightmare: '惡夢', hell: '地獄' };
+const DIFF_EN: Record<Difficulty, string> = { normal: 'Normal', nightmare: 'Nightmare', hell: 'Hell' };
 const ZERO: Alloc = { str: 0, dex: 0, vit: 0, ene: 0 };
 const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
 
@@ -51,6 +53,7 @@ const NumSelect: React.FC<{ label: string; value: number; max: number; onChange:
 );
 
 export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法使', initialTab, onNavigateItem, onClassChange }) => {
+  const { isEn } = useLanguage();
   // 離開再回來：若暫存的職業與要開啟的職業相同，還原上次的配裝（從其他頁面指定了別的職業時，不蓋掉使用者的選擇）
   const restored = useMemo(() => {
     const want = CLASSES.find((c) => c.zh === initialClass) ?? CLASSES[1];
@@ -279,36 +282,36 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="職業">
               {CLASSES.map((c) => (
-                <button key={c.code} type="button" role="tab" aria-selected={c.code === cls.code} onClick={() => selectClass(c)} className="d2-class">{c.zh}</button>
+                <button key={c.code} type="button" role="tab" aria-selected={c.code === cls.code} onClick={() => selectClass(c)} className="d2-class">{isEn ? c.en : c.zh}</button>
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <button type="button" onClick={() => setProfileOpen((v) => !v)} aria-expanded={profileOpen} className="d2-btn" title="套用職業主流流派（入門／頂裝），或儲存、套用自己的配裝 Profile">流派與 Profile {profileOpen ? '▲' : '▼'}</button>
-              <button type="button" onClick={share} className="d2-btn is-quiet">分享</button>
-              <button type="button" onClick={clearAll} className="d2-btn is-danger">清空</button>
+              <button type="button" onClick={() => setProfileOpen((v) => !v)} aria-expanded={profileOpen} className="d2-btn" title={isEn ? "Load meta build profiles or manage your custom profiles" : "套用職業主流流派（入門／頂裝），或儲存、套用自己的配裝 Profile"}>{isEn ? "Profiles" : "流派與 Profile"} {profileOpen ? '▲' : '▼'}</button>
+              <button type="button" onClick={share} className="d2-btn is-quiet">{isEn ? "Share" : "分享"}</button>
+              <button type="button" onClick={clearAll} className="d2-btn is-danger">{isEn ? "Clear" : "清空"}</button>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2" style={{ borderTop: '1px solid #2e271c', paddingTop: 10 }}>
-            <label className="d2-field">等級
+            <label className="d2-field">{isEn ? "Level" : "等級"}
               <input type="number" min={1} max={99} value={level} onChange={(e) => setLevel(Math.max(1, Math.min(99, Number(e.target.value) || 1)))} className="d2-input" style={{ width: 62 }} />
             </label>
-            <label className="d2-field">難度
+            <label className="d2-field">{isEn ? "Difficulty" : "難度"}
               <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as Difficulty)} className="d2-select">
-                {(Object.keys(DIFF_ZH) as Difficulty[]).map((d) => <option key={d} value={d}>{DIFF_ZH[d]}</option>)}
+                {(Object.keys(DIFF_ZH) as Difficulty[]).map((d) => <option key={d} value={d}>{isEn ? DIFF_EN[d] : DIFF_ZH[d]}</option>)}
               </select>
             </label>
-            <span className="d2-sub" style={{ letterSpacing: '.2em' }}>任務</span>
-            <NumSelect label="生命藥水" value={quests.lifePotions} max={3} onChange={(n) => setQuests((q) => ({ ...q, lifePotions: n }))} title="第三章「金鳥」，每難度 +20 最大生命" />
-            <NumSelect label="安亞卷軸" value={quests.anya} max={3} onChange={(n) => setQuests((q) => ({ ...q, anya: n }))} title="第五章，每難度 +10 全抗" />
-            <NumSelect label="拉姆艾森之書" value={quests.lamEsen} max={3} onChange={(n) => setQuests((q) => ({ ...q, lamEsen: n }))} title="第三章，每難度 +5 屬性點" />
-            <NumSelect label="技能點任務" value={quests.skillPts} max={3} onChange={(n) => setQuests((q) => ({ ...q, skillPts: n }))} title="魔物巢穴 1、拉瑪達 1、伊卒爾 2，每難度共 +4 技能點（社群共識，未於遊戲內核對）" />
-            <label className="d2-field" title="裝備詞綴範圍值取上限或下限">屬性取值
+            <span className="d2-sub" style={{ letterSpacing: '.2em' }}>{isEn ? "Quests" : "任務"}</span>
+            <NumSelect label={isEn ? "Life Pot" : "生命藥水"} value={quests.lifePotions} max={3} onChange={(n) => setQuests((q) => ({ ...q, lifePotions: n }))} title="第三章「金鳥」，每難度 +20 最大生命" />
+            <NumSelect label={isEn ? "Anya" : "安亞卷軸"} value={quests.anya} max={3} onChange={(n) => setQuests((q) => ({ ...q, anya: n }))} title="第五章，每難度 +10 全抗" />
+            <NumSelect label={isEn ? "Lam Esen" : "拉姆艾森之書"} value={quests.lamEsen} max={3} onChange={(n) => setQuests((q) => ({ ...q, lamEsen: n }))} title="第三章，每難度 +5 屬性點" />
+            <NumSelect label={isEn ? "Skill Quests" : "技能點任務"} value={quests.skillPts} max={3} onChange={(n) => setQuests((q) => ({ ...q, skillPts: n }))} title="魔物巢穴 1、拉瑪達 1、伊卒爾 2，每難度共 +4 技能點（社群共識，未於遊戲內核對）" />
+            <label className="d2-field" title={isEn ? "Affix rolls min/max values" : "裝備詞綴範圍值取上限或下限"}>{isEn ? "Rolls" : "屬性取值"}
               <select value={rollMax ? 'max' : 'min'} onChange={(e) => setRollMax(e.target.value === 'max')} className="d2-select">
-                <option value="max">上限</option><option value="min">下限</option>
+                <option value="max">{isEn ? "Max" : "上限"}</option><option value="min">{isEn ? "Min" : "下限"}</option>
               </select>
             </label>
             <span className="flex-1" />
-            <span className="d2-field">剩餘屬性點 <b style={{ color: remaining ? 'var(--bad)' : 'var(--gold-bright)', fontSize: 16 }}>{remaining}</b></span>
+            <span className="d2-field">{isEn ? "Remaining Stats " : "剩餘屬性點 "}<b style={{ color: remaining ? 'var(--bad)' : 'var(--gold-bright)', fontSize: 16 }}>{remaining}</b></span>
           </div>
         </div>
       </div>
@@ -320,7 +323,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         {/* 左半：物品欄 */}
         <div className="d2-panel min-w-0">
-          <div className="d2-title">物 品 欄</div>
+          <div className="d2-title">{isEn ? "INVENTORY" : "物 品 欄"}</div>
           <div className="d2-panel-body">
             <PaperDollV2 engineClass={cls.en} equipped={equipped} charms={charms} swap={swap} onSwap={setSwap} dragging={dragging}
               canDrop={canDrop} onDropItem={place} onRemoveCharm={(i) => setCharms((c) => c.filter((_, j) => j !== i))}
@@ -330,10 +333,10 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
                 <div className="d2-tip"><ItemTooltipBody eq={selEq} level={level} rollMax={rollMax} attrs={tipAttrs} equippedSetNames={setNamesOf(equipped, selEq.entry.setId)} /></div>
                 <div className="flex flex-wrap items-center justify-center gap-4 mt-2">
                   {(selEq.entry.group === 'armor' || selEq.entry.group === 'weapon') && (
-                    <label className="d2-field"><input type="checkbox" className="d2-check" checked={!!selEq.ethereal} onChange={(e) => setEquipped((m) => ({ ...m, [selected]: { ...m[selected]!, ethereal: e.target.checked } }))} />無形</label>
+                    <label className="d2-field"><input type="checkbox" className="d2-check" checked={!!selEq.ethereal} onChange={(e) => setEquipped((m) => ({ ...m, [selected]: { ...m[selected]!, ethereal: e.target.checked } }))} />{isEn ? "Eth" : "無形"}</label>
                   )}
-                  {onNavigateItem && selEq.entry.kind !== 'base' && <button type="button" onClick={() => onNavigateItem(selEq.entry.name)} className="d2-btn is-quiet" title="到百科頁查看這件物品（配裝會自動暫存，回來時還原）">在百科中查看</button>}
-                  <button type="button" onClick={() => unequip(selected)} className="d2-btn is-danger">卸下</button>
+                  {onNavigateItem && selEq.entry.kind !== 'base' && <button type="button" onClick={() => onNavigateItem(selEq.entry.name)} className="d2-btn is-quiet" title="到百科頁查看這件物品（配裝會自動暫存，回來時還原）">{isEn ? "View Codex" : "在百科中查看"}</button>}
+                  <button type="button" onClick={() => unequip(selected)} className="d2-btn is-danger">{isEn ? "Unequip" : "卸下"}</button>
                 </div>
                 {(() => {
                   const rs = selEq.entry.mods.find((m) => m.code.toLowerCase() === 'skill-rand');
@@ -357,7 +360,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
         {/* 右半：三個 tab */}
         <div className="d2-panel min-w-0">
           <div className="d2-tabs" role="tablist">
-            {([['stats', '屬性頁'], ['gear', '樹狀裝備庫'], ['skills', '技能樹'], ['merc', '傭兵']] as [TabKey, string][]).map(([k, label]) => (
+            {([['stats', isEn ? 'Attributes' : '屬性頁'], ['gear', isEn ? 'Gear Library' : '樹狀裝備庫'], ['skills', isEn ? 'Skill Trees' : '技能樹'], ['merc', isEn ? 'Mercenary' : '傭兵']] as [TabKey, string][]).map(([k, label]) => (
               <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => { setTab(k); if (k === 'gear') setPickerOpen(true); }} className="d2-tab">{label}</button>
             ))}
           </div>
@@ -389,19 +392,19 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
       {/* 底部：生命球／摘要／法力球 */}
       <div className="d2-panel" aria-live="polite">
         <div className="d2-panel-body flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
-          <div className="d2-orb is-life" title="生命"><b>{result.life.toLocaleString()}</b><span>生命</span></div>
+          <div className="d2-orb is-life" title={isEn ? "Life" : "生命"}><b>{result.life.toLocaleString()}</b><span>{isEn ? "Life" : "生命"}</span></div>
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 flex-1 min-w-[220px]">
-            <div className="d2-stat"><span className="k">防禦</span><span className="v">{result.defense.toLocaleString()}</span></div>
-            <div className="d2-stat"><span className="k">格擋</span><span className="v">{result.blockChance}%</span></div>
-            <div className="d2-stat"><span className="k">抗性</span>
+            <div className="d2-stat"><span className="k">{isEn ? "Defense" : "防禦"}</span><span className="v">{result.defense.toLocaleString()}</span></div>
+            <div className="d2-stat"><span className="k">{isEn ? "Block" : "格擋"}</span><span className="v">{result.blockChance}%</span></div>
+            <div className="d2-stat"><span className="k">{isEn ? "Resists" : "抗性"}</span>
               <span className="v" style={{ fontSize: 15 }}>
                 <span className="t-fire">{result.resist.fire}</span> / <span className="t-cold">{result.resist.cold}</span> / <span className="t-lightning">{result.resist.lightning}</span> / <span className="t-poison">{result.resist.poison}</span>
               </span>
             </div>
-            {result.weaponDamage && <div className="d2-stat"><span className="k">武器傷害</span><span className="v">{result.weaponDamage.min}–{result.weaponDamage.max}</span></div>}
-            <div className="d2-sub w-full text-center">光環與戰吼計入 lnXY／dmXY 公式；變身類技能未計入</div>
+            {result.weaponDamage && <div className="d2-stat"><span className="k">{isEn ? "Weapon Dmg" : "武器傷害"}</span><span className="v">{result.weaponDamage.min}–{result.weaponDamage.max}</span></div>}
+            <div className="d2-sub w-full text-center">{isEn ? "Auras & Warcries calculate lnXY/dmXY formulas; shapeshifting skills not factored" : "光環與戰吼計入 lnXY／dmXY 公式；變身類技能未計入"}</div>
           </div>
-          <div className="d2-orb is-mana" title="法力"><b>{result.mana.toLocaleString()}</b><span>法力</span></div>
+          <div className="d2-orb is-mana" title={isEn ? "Mana" : "法力"}><b>{result.mana.toLocaleString()}</b><span>{isEn ? "Mana" : "法力"}</span></div>
         </div>
       </div>
 

@@ -4,21 +4,23 @@ import { ItemIcon } from '../common/ItemIcon';
 import { BookOpen, Plus, ArrowRight } from 'lucide-react';
 import { CubeRecipeData } from '../../types';
 import { SectionHead } from '../common/TreeIndex';
+import { useLanguage } from '../../context/LanguageContext';
 
 export interface CubeLabProps {
   onNavigateToRune?: (runeNumber: number) => void;
 }
 
 export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
+  const { t, isEn } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<'all' | CubeRecipeData['category']>('all');
 
   const categories = [
-    { id: 'all', label: '全部配方' },
-    { id: 'socket', label: '裝備打孔' },
-    { id: 'upgrade', label: '裝備階級升級' },
-    { id: 'craft', label: '手工神裝工藝' },
-    { id: 'repair', label: '免錢修理充能' },
-    { id: 'misc', label: '洗裝與洗點' },
+    { id: 'all', label: isEn ? 'All Recipes' : '全部配方' },
+    { id: 'socket', label: isEn ? 'Socketing' : '裝備打孔' },
+    { id: 'upgrade', label: isEn ? 'Item Upgrades' : '裝備階級升級' },
+    { id: 'craft', label: isEn ? 'Crafted Items' : '手工神裝工藝' },
+    { id: 'repair', label: isEn ? 'Repairs & Recharging' : '免錢修理充能' },
+    { id: 'misc', label: isEn ? 'Rerolling & Respec' : '洗裝與洗點' },
   ];
 
   const filteredRecipes = CUBE_RECIPES_DATA.filter((recipe) => {
@@ -35,10 +37,10 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
         <div>
           <h2 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-magic flex items-center gap-2">
             <BookOpen className="w-6 h-6 text-d2-magic" />
-            <span>赫拉迪姆方塊煉金工坊 (Cube Recipes)</span>
+            <span>{t('赫拉迪姆方塊煉金工坊 (Cube Recipes)', 'Horadric Cube Alchemy Lab')}</span>
           </h2>
           <p className="text-xs sm:text-sm text-sanctuary-400 mt-1">
-            白裝打孔隨機公式、暗金防具/武器底材升級、施法/血腥手工飾品與赦免徽章洗點全收錄。
+            {t('白裝打孔隨機公式、暗金防具/武器底材升級、施法/血腥手工飾品與赦免徽章洗點全收錄。', 'Comprehensive recipes for socketing white bases, upgrading Unique armor/weapons, Blood & Caster crafts, and Token of Absolution respecs.')}
           </p>
         </div>
 
@@ -82,10 +84,10 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
               <div className="flex items-start justify-between gap-2 pb-3 border-b border-sanctuary-850">
                 <div>
                   <h3 className="font-diablo text-base font-bold text-d2-magic">
-                    {recipe.title}
+                    {isEn && recipe.titleEn ? recipe.titleEn : recipe.title}
                   </h3>
                   <div className="text-[11px] text-sanctuary-400 font-mono italic">
-                    {recipe.titleEn}
+                    {isEn && recipe.titleEn ? recipe.title : recipe.titleEn}
                   </div>
                 </div>
                 <span className="text-[10px] px-2 py-0.5 rounded bg-d2-magic/10 text-d2-magic border border-d2-magic/30 font-medium">
@@ -95,7 +97,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
 
               {/* Recipe Formula Visualizer */}
               <div className="py-4 space-y-3">
-                <div className="text-xs text-sanctuary-400 font-medium">投入材料 (Inputs)：</div>
+                <div className="text-xs text-sanctuary-400 font-medium">{isEn ? 'Inputs:' : '投入材料 (Inputs)：'}</div>
                 <div className="flex flex-wrap items-center gap-2">
                   {recipe.inputs.map((inp, idx) => {
                     const runeMatch = inp.match(/(\d+)#/);
@@ -108,7 +110,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
                             type="button"
                             onClick={() => onNavigateToRune(runeNum)}
                             className="px-2.5 py-1 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-800 border border-d2-rune/40 hover:border-d2-rune text-xs text-d2-rune hover:text-white font-mono font-medium transition-all cursor-pointer shadow-sm flex items-center gap-1.5 group/rune"
-                            title={`點擊查看 ${runeNum}# 符文詳細屬性與升級配方`}
+                            title={isEn ? `View Rune #${runeNum} details & upgrade recipe` : `點擊查看 ${runeNum}# 符文詳細屬性與升級配方`}
                           >
                             <ItemIcon runeNumber={runeNum} size="sm" showBorder={false} />
                             <span>{inp}</span>
@@ -130,7 +132,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
 
                 <div className="pt-2 flex items-center gap-2 text-xs font-semibold text-sanctuary-300">
                   <ArrowRight className="w-4 h-4 text-d2-unique shrink-0" />
-                  <span>轉化產出：</span>
+                  <span>{isEn ? "Output: " : "轉化產出："}</span>
                   <div className="flex items-center gap-1.5">
                     <ItemIcon name={recipe.output} size="sm" showBorder={false} />
                     <span className="text-d2-unique font-bold">{recipe.output}</span>

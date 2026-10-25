@@ -5,6 +5,8 @@ import { gameData } from '../../../engine/data';
 import { EQUIP_DEFS, JEWELRY_DEF, leafOfBase, type TaxDef } from '../../../utils/equipTaxonomy';
 import { ItemIcon } from '../../common/ItemIcon';
 import { imageForEntry } from '../../../utils/catalogImage';
+import { useLanguage } from '../../../context/LanguageContext';
+import type { SlotKind } from '../../../engine/slots';
 
 interface Props {
   open: boolean;
@@ -17,6 +19,10 @@ interface Props {
   jump?: { group: Group; seq: number } | null;
 }
 
+const SLOT_EN: Record<SlotKind, string> = { head: 'Helm', body: 'Armor', shield: 'Shield', gloves: 'Gloves', belt: 'Belt', boots: 'Boots', neck: 'Amulet', ring: 'Ring', weapon: 'Weapon', charm: 'Charm' };
+const RARITY_EN: Record<Rarity, string> = { unique: 'Unique', set: 'Set', runeword: 'Runeword', base: 'Base' };
+const TIER_EN: Record<Tier, string> = { normal: 'Normal', exceptional: 'Exceptional', elite: 'Elite' };
+const CLASS_EN: Record<string, string> = { ama: 'Amazon', sor: 'Sorceress', nec: 'Necromancer', pal: 'Paladin', bar: 'Barbarian', dru: 'Druid', asn: 'Assassin' };
 const RARITIES: Rarity[] = ['unique', 'set', 'runeword', 'base'];
 const TIERS: Tier[] = ['normal', 'exceptional', 'elite'];
 const KINDS = ['一般', '職業專屬'];
@@ -96,6 +102,7 @@ const Chip: React.FC<{ on: boolean; label: string; onClick: () => void }> = ({ o
 );
 
 export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassCode, onEquip, onDragStart, jump }) => {
+  const { isEn } = useLanguage();
   const wide = useWide();
   const sideW = useSideNavWidth(!wide);
   const [rarity, setRarity] = useState<Record<Rarity, boolean>>({ unique: true, set: true, runeword: true, base: false });
@@ -199,8 +206,8 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
         onKeyDown={(e) => { if (e.key === 'Escape') onClose(); }}
       >
         <div className="d2-float-title" onPointerDown={onTitleDown} onPointerMove={onTitleMove} onPointerUp={onTitleUp} onPointerCancel={onTitleUp}>
-          <span className="d2-float-name">裝 備 庫</span>
-          <span className="d2-sub" style={{ marginRight: 'auto' }}>{wide ? '可拖曳標題移動' : '底部抽屜'}</span>
+          <span className="d2-float-name">{isEn ? "Gear Library" : "裝 備 庫"}</span>
+          <span className="d2-sub" style={{ marginRight: 'auto' }}>{wide ? (isEn ? 'Drag title to move' : '可拖曳標題移動') : (isEn ? 'Bottom drawer' : '底部抽屜')}</span>
           <button type="button" className="d2-icon-btn" onClick={() => setMinimized((v) => !v)} aria-label={minimized ? '展開裝備庫' : '收合裝備庫'} title={minimized ? '展開' : '收合'}>{minimized ? '▢' : '—'}</button>
           <button type="button" className="d2-icon-btn" onClick={onClose} aria-label="關閉裝備庫" title="關閉（Esc）">✕</button>
         </div>
@@ -208,17 +215,17 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
         {!minimized && (
           <>
             <div className="d2-float-tools">
-              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜尋名稱（中／英）、底材…" className="d2-input w-full" aria-label="搜尋裝備" />
+              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={isEn ? "Search name (EN / ZH), base..." : "搜尋名稱（中／英）、底材…"} className="d2-input w-full" aria-label="搜尋裝備" />
               <button type="button" className="d2-filter-toggle" aria-expanded={filtersOpen} onClick={() => setFiltersOpen((v) => !v)}>
-                <span>篩選</span>
+                <span>{isEn ? "Filters" : "篩選"}</span>
                 <span className="d2-filter-sum">{rarityText}｜{tierText}{onlyMyClass ? '｜隱藏他職專屬' : ''}</span>
                 <span aria-hidden>{filtersOpen ? '▲' : '▼'}</span>
               </button>
               {filtersOpen && (
                 <div className="d2-filter-box">
-                  <div className="d2-filter-row"><span className="k">稀有度</span>{RARITIES.map((r) => <Chip key={r} on={rarity[r]} label={RARITY_ZH[r]} onClick={() => setRarity((o) => ({ ...o, [r]: !o[r] }))} />)}</div>
-                  <div className="d2-filter-row"><span className="k">品質</span>{TIERS.map((t) => <Chip key={t} on={tiers[t]} label={TIER_ZH[t]} onClick={() => setTiers((o) => ({ ...o, [t]: !o[t] }))} />)}</div>
-                  <div className="d2-filter-row"><span className="k">職業</span><Chip on={onlyMyClass} label="隱藏其他職業專屬" onClick={() => setOnlyMyClass((v) => !v)} /></div>
+                  <div className="d2-filter-row"><span className="k">{isEn ? "Rarity" : "稀有度"}</span>{RARITIES.map((r) => <Chip key={r} on={rarity[r]} label={isEn ? RARITY_EN[r] : RARITY_ZH[r]} onClick={() => setRarity((o) => ({ ...o, [r]: !o[r] }))} />)}</div>
+                  <div className="d2-filter-row"><span className="k">{isEn ? "Quality" : "品質"}</span>{TIERS.map((t) => <Chip key={t} on={tiers[t]} label={isEn ? TIER_EN[t] : TIER_ZH[t]} onClick={() => setTiers((o) => ({ ...o, [t]: !o[t] }))} />)}</div>
+                  <div className="d2-filter-row"><span className="k">{isEn ? "Class" : "職業"}</span><Chip on={onlyMyClass} label={isEn ? "Hide other class specific" : "隱藏其他職業專屬"} onClick={() => setOnlyMyClass((v) => !v)} /></div>
                 </div>
               )}
             </div>
@@ -226,20 +233,20 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
             <nav className="d2-crumbs" aria-label="目前層級">
               <button type="button" className="d2-icon-btn" disabled={searching || (path.length === 0 && !flat)} onClick={goUp} aria-label="回上一層" title="回上一層">←</button>
               {searching ? (
-                <span className="t-gold">搜尋結果</span>
+                <span className="t-gold">{isEn ? "Search Results" : "搜尋結果"}</span>
               ) : (
                 <>
-                  <button type="button" className={`d2-crumb ${path.length === 0 ? 'is-here' : ''}`} onClick={() => { setPath([]); setFlat(false); }}>全部</button>
+                  <button type="button" className={`d2-crumb ${path.length === 0 ? 'is-here' : ''}`} onClick={() => { setPath([]); setFlat(false); }}>{isEn ? "All" : "全部"}</button>
                   {crumbLabels.map((l, i) => (
                     <React.Fragment key={i}>
                       <span className="t-dim" aria-hidden>›</span>
                       <button type="button" className={`d2-crumb ${i === path.length - 1 && !flat ? 'is-here' : ''}`} onClick={() => { setPath(path.slice(0, i + 1)); setFlat(false); }}>{l}</button>
                     </React.Fragment>
                   ))}
-                  {flat && <><span className="t-dim" aria-hidden>›</span><span className="t-gold">全部列出</span></>}
+                  {flat && <><span className="t-dim" aria-hidden>›</span><span className="t-gold">{isEn ? "List All" : "全部列出"}</span></>}
                 </>
               )}
-              <span className="d2-crumbs-n">{showList ? list.length : countUnder(path)} 項</span>
+              <span className="d2-crumbs-n">{showList ? list.length : countUnder(path)} {isEn ? "items" : "項"}</span>
             </nav>
 
             <div ref={bodyRef} className="d2-float-body">
@@ -247,7 +254,7 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
                 <div className="space-y-1.5">
                   {path.length > 0 && countUnder(path) > 0 && (
                     <button type="button" className="d2-node is-all" onClick={() => setFlat(true)}>
-                      <span>直接列出此層全部</span><span className="n">{countUnder(path)} 項</span><span className="chev">☰</span>
+                      <span>{isEn ? "List all in this category" : "直接列出此層全部"}</span><span className="n">{countUnder(path)} 項</span><span className="chev">☰</span>
                     </button>
                   )}
                   {levelOptions.map((o) => (
@@ -273,11 +280,11 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
                           <ItemIcon name={e.name} nameEn={e.nameEn} baseItem={e.baseNameEn} slot={e.slot} rarity={iconRarity(e)} imageUrl={imageForEntry(e)} noGuess fit="fill" showBorder={false} />
                         </div>
                         <div className="min-w-0 flex-1 cursor-pointer" onClick={() => setDetail(detail === e.id ? null : e.id)}>
-                          <div className={`truncate font-semibold ${tone(e.kind)}`}>{e.name}</div>
-                          <div className="truncate text-xs t-dim">{e.nameEn}</div>
-                          <div className="truncate text-xs t-dim">{SLOT_ZH[e.slot]} · {e.baseName}{e.classCode ? ` · ${CLASS_ZH[e.classCode]}專用` : ''}{e.levelReq ? ` · Lv${e.levelReq}` : ''}{e.setName ? ` · ${e.setName}` : ''}</div>
+                          <div className={`truncate font-semibold ${tone(e.kind)}`}>{isEn ? (e.nameEn || e.name) : e.name}</div>
+                          <div className="truncate text-xs t-dim">{isEn ? e.name : e.nameEn}</div>
+                          <div className="truncate text-xs t-dim">{isEn ? (SLOT_EN[e.slot] ?? e.slot) : SLOT_ZH[e.slot]} · {isEn ? (e.baseNameEn || e.baseName) : e.baseName}{e.classCode ? (isEn ? ` · ${CLASS_EN[e.classCode] ?? e.classCode} Only` : ` · ${CLASS_ZH[e.classCode]}專用`) : ''}{e.levelReq ? ` · Lv${e.levelReq}` : ''}{e.setName ? ` · ${e.setName}` : ''}</div>
                         </div>
-                        <button type="button" onClick={() => onEquip(e)} className="d2-btn shrink-0" style={{ padding: '3px 12px' }}>穿戴</button>
+                        <button type="button" onClick={() => onEquip(e)} className="d2-btn shrink-0" style={{ padding: '3px 12px' }}>{isEn ? "Equip" : "穿戴"}</button>
                       </div>
                       {detail === e.id && (
                         <div className="d2-tip my-1">
@@ -290,13 +297,13 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
                       )}
                     </li>
                   ))}
-                  {list.length === 0 && <li className="d2-empty">沒有符合的項目。</li>}
+                  {list.length === 0 && <li className="d2-empty">{isEn ? "No items found." : "沒有符合的項目。"}</li>}
                   {list.length > MAX_LIST && <li className="text-xs t-dim px-2 py-1">僅顯示前 {MAX_LIST} 項，請用搜尋縮小範圍</li>}
                 </ul>
               )}
             </div>
 
-            <div className="d2-float-foot">把項目拖到左側物品欄槽位，或按「穿戴」。</div>
+            <div className="d2-float-foot">{isEn ? "Drag item to inventory slot on the left, or click Equip." : "把項目拖到左側物品欄槽位，或按「穿戴」。"}</div>
           </>
         )}
       </div>

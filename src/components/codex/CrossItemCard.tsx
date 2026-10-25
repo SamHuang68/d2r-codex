@@ -1,6 +1,7 @@
 import React from 'react';
 import type { UnifiedGearItem, SpecialPropertyDef } from '../../utils/propertyFilter';
 import { ItemIcon } from '../common/ItemIcon';
+import { useLanguage } from '../../context/LanguageContext';
 
 export interface CrossItemCardProps {
   item: UnifiedGearItem;
@@ -9,12 +10,24 @@ export interface CrossItemCardProps {
   onNavigateToRune?: (runeNumber: number) => void;
 }
 
+const CLASS_NAME_EN: Record<string, string> = {
+  '亞馬遜': 'Amazon',
+  '刺客': 'Assassin',
+  '野蠻人': 'Barbarian',
+  '德魯伊': 'Druid',
+  '聖騎士': 'Paladin',
+  '死靈法師': 'Necromancer',
+  '魔法使': 'Sorceress',
+  '術士': 'Warlock',
+};
+
 export const CrossItemCard: React.FC<CrossItemCardProps> = ({
   item,
   activePropertyDefs = [],
   onNavigateToBase,
   onNavigateToRune,
 }) => {
+  const { isEn } = useLanguage();
   // 檢查某條屬性是否匹配任何目前已選取的特殊屬性
   const isAttrHighlighted = (attrText: string): boolean => {
     if (activePropertyDefs.length === 0) return false;
@@ -41,14 +54,14 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h4 className="font-diablo text-base font-bold text-d2-unique group-hover:text-amber-300 transition-colors">
-                    {item.name}
+                    {isEn && item.nameEn ? item.nameEn : item.name}
                   </h4>
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-mono">
-                    暗金
+                    {isEn ? 'Unique' : '暗金'}
                   </span>
                 </div>
                 <div className="text-xs text-sanctuary-400 font-mono italic">
-                  {item.nameEn}
+                  {isEn && item.nameEn ? item.name : item.nameEn}
                   {item.nameClassic && item.nameClassic !== item.name && (
                     <span className="text-sanctuary-500 font-sans ml-1">
                       (舊譯: {item.nameClassic})
@@ -67,12 +80,12 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
               )}
               {item.ladderOnly && (
                 <span className="text-[10px] px-2 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-medium">
-                  天梯限定
+                  {isEn ? 'Ladder Only' : '天梯限定'}
                 </span>
               )}
               {item.classOnly && (
                 <span className="text-[10px] px-2 py-0.5 rounded bg-sanctuary-900 text-d2-magic border border-d2-magic/30 font-medium">
-                  {item.classOnly}專用
+                  {isEn ? `${CLASS_NAME_EN[item.classOnly] || item.classOnly} Only` : `${item.classOnly}專用`}
                 </span>
               )}
             </div>
@@ -80,7 +93,7 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
 
           {/* 底材與需求等級 */}
           <div className="text-xs text-sanctuary-400 mb-3 flex items-center gap-2 flex-wrap font-medium">
-            <span className="text-sanctuary-300 font-semibold">{item.slotLabel}</span>
+            <span className="text-sanctuary-300 font-semibold">{isEn && item.slotLabelEn ? item.slotLabelEn : item.slotLabel}</span>
             <span>•</span>
             {onNavigateToBase ? (
               <button
@@ -97,13 +110,13 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
             )}
             <span>•</span>
             <span>
-              需求等級: <strong className="text-sanctuary-100">{item.requiredLevel}</strong>
+              {isEn ? 'Req Level:' : '需求等級:'} <strong className="text-sanctuary-100">{item.requiredLevel}</strong>
             </span>
             {item.requiredStr ? (
-              <span>力量: <strong className="text-sanctuary-200">{item.requiredStr}</strong></span>
+              <span>{isEn ? 'Str:' : '力量:'} <strong className="text-sanctuary-200">{item.requiredStr}</strong></span>
             ) : null}
             {item.requiredDex ? (
-              <span>敏捷: <strong className="text-sanctuary-200">{item.requiredDex}</strong></span>
+              <span>{isEn ? 'Dex:' : '敏捷:'} <strong className="text-sanctuary-200">{item.requiredDex}</strong></span>
             ) : null}
           </div>
 
@@ -153,14 +166,14 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h4 className="font-diablo text-base font-bold text-d2-set group-hover:text-green-300 transition-colors">
-                    {item.name}
+                    {isEn && item.nameEn ? item.nameEn : item.name}
                   </h4>
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-d2-set/20 text-d2-set border border-d2-set/40 font-mono">
-                    套裝配件
+                    {isEn ? 'Set Piece' : '套裝配件'}
                   </span>
                 </div>
                 <div className="text-xs text-sanctuary-400 font-mono italic">
-                  {item.nameEn}
+                  {isEn && item.nameEn ? item.name : item.nameEn}
                   {item.setName && (
                     <span className="text-d2-set/80 font-sans ml-1.5 font-medium">
                       [{item.setName}]
@@ -173,14 +186,14 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
             {/* 專用標籤 */}
             {item.classOnly && (
               <span className="text-[10px] px-2 py-0.5 rounded bg-sanctuary-900 text-d2-set border border-d2-set/30 font-medium">
-                {item.classOnly}專用
+                {isEn ? `${CLASS_NAME_EN[item.classOnly] || item.classOnly} Only` : `${item.classOnly}專用`}
               </span>
             )}
           </div>
 
           {/* 底材與需求等級 */}
           <div className="text-xs text-sanctuary-400 mb-3 flex items-center gap-2 flex-wrap font-medium">
-            <span className="text-sanctuary-300 font-semibold">{item.slotLabel}</span>
+            <span className="text-sanctuary-300 font-semibold">{isEn && item.slotLabelEn ? item.slotLabelEn : item.slotLabel}</span>
             <span>•</span>
             {onNavigateToBase ? (
               <button
@@ -197,13 +210,13 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
             )}
             <span>•</span>
             <span>
-              需求等級: <strong className="text-sanctuary-100">{item.requiredLevel}</strong>
+              {isEn ? 'Req Level:' : '需求等級:'} <strong className="text-sanctuary-100">{item.requiredLevel}</strong>
             </span>
             {item.requiredStr ? (
-              <span>力量: <strong className="text-sanctuary-200">{item.requiredStr}</strong></span>
+              <span>{isEn ? 'Str:' : '力量:'} <strong className="text-sanctuary-200">{item.requiredStr}</strong></span>
             ) : null}
             {item.requiredDex ? (
-              <span>敏捷: <strong className="text-sanctuary-200">{item.requiredDex}</strong></span>
+              <span>{isEn ? 'Dex:' : '敏捷:'} <strong className="text-sanctuary-200">{item.requiredDex}</strong></span>
             ) : null}
           </div>
 
@@ -277,7 +290,7 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
             )}
             {item.ladderOnly && (
               <span className="text-[10px] px-2 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-medium">
-                天梯限定
+                {isEn ? 'Ladder Only' : '天梯限定'}
               </span>
             )}
           </div>
@@ -288,7 +301,7 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
           <span className="text-d2-rune font-semibold">{item.slotLabel}</span>
           <span>•</span>
           <span>
-            需求等級: <strong className="text-sanctuary-100">{item.requiredLevel}</strong>
+            {isEn ? 'Req Level:' : '需求等級:'} <strong className="text-sanctuary-100">{item.requiredLevel}</strong>
           </span>
           <span>•</span>
           <span className="text-sanctuary-300">適用底材: {item.baseItem}</span>

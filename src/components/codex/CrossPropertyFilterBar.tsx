@@ -6,6 +6,7 @@ import {
 } from '../../utils/propertyFilter';
 import type { GearSlot } from '../../types';
 import { X, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 export interface CrossPropertyFilterBarProps {
   selectedPropertyIds: string[];
@@ -32,6 +33,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
   propertyCounts,
   rarityCounts,
 }) => {
+  const { t, isEn } = useLanguage();
   const [showAllProps, setShowAllProps] = useState(false);
 
   const hasActiveFilters =
@@ -47,26 +49,26 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
   );
 
   const rarityTabs: { id: 'all' | UnifiedItemRarity; label: string; count: number; tone: string }[] = [
-    { id: 'all', label: '全部品質', count: rarityCounts.all, tone: 'text-sanctuary-100 hover:border-sanctuary-500' },
-    { id: 'unique', label: '暗金 (Unique)', count: rarityCounts.unique, tone: 'text-d2-unique hover:border-d2-unique' },
-    { id: 'set', label: '套裝 (Set)', count: rarityCounts.set, tone: 'text-d2-set hover:border-d2-set' },
-    { id: 'runeword', label: '符文之語 (Runewords)', count: rarityCounts.runeword, tone: 'text-d2-rune hover:border-d2-rune' },
+    { id: 'all', label: isEn ? 'All Qualities' : '全部品質', count: rarityCounts.all, tone: 'text-sanctuary-100 hover:border-sanctuary-500' },
+    { id: 'unique', label: isEn ? 'Uniques' : '暗金 (Unique)', count: rarityCounts.unique, tone: 'text-d2-unique hover:border-d2-unique' },
+    { id: 'set', label: isEn ? 'Sets' : '套裝 (Set)', count: rarityCounts.set, tone: 'text-d2-set hover:border-d2-set' },
+    { id: 'runeword', label: isEn ? 'Runewords' : '符文之語 (Runewords)', count: rarityCounts.runeword, tone: 'text-d2-rune hover:border-d2-rune' },
   ];
 
   const slotOptions: { id: 'all' | GearSlot | 'multiple'; label: string }[] = [
-    { id: 'all', label: '全部部位' },
-    { id: 'weapon', label: '武器' },
-    { id: 'helm', label: '頭盔' },
-    { id: 'armor', label: '護甲' },
-    { id: 'shield', label: '盾牌' },
-    { id: 'gloves', label: '手套' },
-    { id: 'boots', label: '靴子' },
-    { id: 'belt', label: '腰帶' },
-    { id: 'amulet', label: '護身符' },
-    { id: 'ring', label: '戒指' },
-    { id: 'charm', label: '咒符' },
-    { id: 'jewel', label: '珠寶' },
-    { id: 'multiple', label: '多部位符文組' },
+    { id: 'all', label: isEn ? 'All Slots' : '全部部位' },
+    { id: 'weapon', label: isEn ? 'Weapons' : '武器' },
+    { id: 'helm', label: isEn ? 'Helms' : '頭盔' },
+    { id: 'armor', label: isEn ? 'Body Armors' : '護甲' },
+    { id: 'shield', label: isEn ? 'Shields' : '盾牌' },
+    { id: 'gloves', label: isEn ? 'Gloves' : '手套' },
+    { id: 'boots', label: isEn ? 'Boots' : '靴子' },
+    { id: 'belt', label: isEn ? 'Belts' : '腰帶' },
+    { id: 'amulet', label: isEn ? 'Amulets' : '護身符' },
+    { id: 'ring', label: isEn ? 'Rings' : '戒指' },
+    { id: 'charm', label: isEn ? 'Charms' : '咒符' },
+    { id: 'jewel', label: isEn ? 'Jewels' : '珠寶' },
+    { id: 'multiple', label: isEn ? 'Multi-slot Runewords' : '多部位符文組' },
   ];
 
   return (
@@ -79,13 +81,13 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
           </div>
           <div>
             <h3 className="font-diablo text-base font-bold text-sanctuary-100 flex items-center gap-2">
-              <span>跨裝備特殊屬性篩選</span>
+              <span>{t('跨裝備特殊屬性篩選', 'Cross-Equipment Special Property Filter')}</span>
               <span className="text-xs px-2 py-0.5 rounded-full bg-d2-unique/15 text-d2-unique border border-d2-unique/30 font-sans font-semibold">
-                暗金 · 套裝 · 符文組
+                {t('暗金 · 套裝 · 符文組', 'Uniques · Sets · Runewords')}
               </span>
             </h3>
             <p className="text-xs text-sanctuary-400 mt-0.5">
-              快速定位擁有關鍵 Meta 屬性（永不毀損、+全技能、全抗、MF 等）的代表性神裝
+              {t('快速定位擁有關鍵 Meta 屬性（永不毀損、+全技能、全抗、MF 等）的代表性神裝', 'Filter iconic endgame gear by key meta properties like Indestructible, +All Skills, All Res, MF, etc.')}
             </p>
           </div>
         </div>
@@ -98,7 +100,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
             className="self-start sm:self-center px-3 py-1.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 text-sanctuary-300 hover:text-sanctuary-100 border border-sanctuary-750 text-xs flex items-center gap-1.5 transition-all cursor-pointer"
           >
             <X className="w-3.5 h-3.5 text-d2-fire" />
-            <span>重置篩選</span>
+            <span>{t('重置篩選', 'Reset Filters')}</span>
           </button>
         )}
       </div>
@@ -149,10 +151,10 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
       {/* 第二行：核心特殊屬性 Chips */}
       <div>
         <div className="text-xs text-sanctuary-400 mb-2 font-medium flex items-center justify-between">
-          <span>精選核心屬性 (點擊切換篩選，可複選):</span>
+          <span>{isEn ? 'Featured Properties (Click to filter):' : '精選核心屬性 (點擊切換篩選，可複選):'}</span>
           {selectedPropertyIds.length > 0 && (
             <span className="text-d2-unique text-xs font-mono">
-              已選取 {selectedPropertyIds.length} 項屬性 · 符合 {totalHits} 件
+              {isEn ? `${selectedPropertyIds.length} properties selected · ${totalHits} matched` : `已選取 ${selectedPropertyIds.length} 項屬性 · 符合 ${totalHits} 件`}
             </span>
           )}
         </div>
@@ -166,7 +168,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
                 key={prop.id}
                 type="button"
                 onClick={() => onToggleProperty(prop.id)}
-                title={prop.description}
+                title={isEn ? (prop.descriptionEn || prop.labelEn) : prop.description}
                 className={`px-2.5 py-1.2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer border ${
                   isSelected
                     ? 'bg-d2-unique/20 text-d2-unique border-d2-unique shadow-sm ring-1 ring-d2-unique/40'
@@ -175,7 +177,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
                     : 'bg-sanctuary-900/30 text-sanctuary-550 border-sanctuary-850 cursor-not-allowed opacity-60'
                 }`}
               >
-                <span>{prop.shortLabel}</span>
+                <span>{isEn && prop.shortLabelEn ? prop.shortLabelEn : prop.shortLabel}</span>
                 <span
                   className={`text-[10px] px-1.2 py-0.2 rounded-full font-mono ${
                     isSelected
@@ -195,7 +197,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
             onClick={() => setShowAllProps(!showAllProps)}
             className="px-2.5 py-1.2 rounded-lg text-xs font-medium bg-sanctuary-900 hover:bg-sanctuary-850 text-d2-magic border border-sanctuary-750 hover:border-d2-magic/60 transition-all flex items-center gap-1 cursor-pointer"
           >
-            <span>{showAllProps ? '收起更多' : `更多屬性 (${remainingProps.length})`}</span>
+            <span>{showAllProps ? (isEn ? 'Show Less' : '收起更多') : (isEn ? `More Properties (${remainingProps.length})` : `更多屬性 (${remainingProps.length})`)}</span>
             {showAllProps ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
         </div>
@@ -203,7 +205,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
         {/* 展開之更多屬性清單 */}
         {showAllProps && (
           <div className="mt-3 p-3 bg-sanctuary-900/50 rounded-xl border border-sanctuary-800/80 space-y-2 animate-fade-in">
-            <div className="text-[11px] text-sanctuary-400 font-medium">其他機制屬性:</div>
+            <div className="text-[11px] text-sanctuary-400 font-medium">{isEn ? 'Other Properties:' : '其他機制屬性:'}</div>
             <div className="flex flex-wrap gap-1.5">
               {remainingProps.map((prop) => {
                 const isSelected = selectedPropertyIds.includes(prop.id);
@@ -213,7 +215,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
                     key={prop.id}
                     type="button"
                     onClick={() => onToggleProperty(prop.id)}
-                    title={prop.description}
+                    title={isEn ? (prop.descriptionEn || prop.labelEn) : prop.description}
                     className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer border ${
                       isSelected
                         ? 'bg-d2-magic/20 text-d2-magic border-d2-magic shadow-sm ring-1 ring-d2-magic/40'
@@ -222,7 +224,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
                         : 'bg-sanctuary-900/30 text-sanctuary-550 border-sanctuary-850 opacity-60'
                     }`}
                   >
-                    <span>{prop.shortLabel}</span>
+                    <span>{isEn && prop.shortLabelEn ? prop.shortLabelEn : prop.shortLabel}</span>
                     <span
                       className={`text-[10px] px-1.2 py-0.2 rounded-full font-mono ${
                         isSelected

@@ -4,7 +4,8 @@ import type { CatalogEntry } from '../../../engine/catalog';
 import { ItemIcon } from '../../common/ItemIcon';
 import { imageForEntry } from '../../../utils/catalogImage';
 import { FloatingItemTip } from './ItemTooltip';
-import { DOLL_SLOT_ZH, type DollSlot, type Equipped, type EquippedMap } from './types';
+import { DOLL_SLOT_ZH, DOLL_SLOT_EN, type DollSlot, type Equipped, type EquippedMap } from './types';
+import { useLanguage } from '../../../context/LanguageContext';
 
 interface InvRow { class: string; [k: string]: string | number }
 const INV = inventory as unknown as InvRow[];
@@ -78,6 +79,7 @@ const SwapTabs: React.FC<{ swap: 'I' | 'II'; onSwap: (s: 'I' | 'II') => void; st
 export const setNamesOf = (equipped: EquippedMap, setId?: string): string[] => (setId ? [...new Set((Object.values(equipped) as (Equipped | undefined)[]).filter((x): x is Equipped => !!x && x.entry.setId === setId).map((x) => x.entry.name))] : []);
 
 export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, swap, onSwap, dragging, canDrop, onDropItem, onRemoveCharm, selected, onSelect, unmet, level, rollMax, attrs }) => {
+  const { isEn } = useLanguage();
   const row = INV.find((r) => r.class === engineClass) ?? INV.find((r) => r.class === 'Sorceress') ?? INV[0];
   const slots: { key: DollSlot; b: Box }[] = [
     { key: 'head', b: box(row, 'head') }, { key: 'neck', b: box(row, 'neck') }, { key: 'body', b: box(row, 'torso') },
@@ -136,8 +138,8 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
             <div
               key={key}
               role="button" tabIndex={0}
-              aria-label={eq ? `${DOLL_SLOT_ZH[key]}：${eq.entry.name}` : DOLL_SLOT_ZH[key]}
-              title={eq ? undefined : DOLL_SLOT_ZH[key]}
+              aria-label={eq ? `${isEn ? DOLL_SLOT_EN[key] : DOLL_SLOT_ZH[key]}：${isEn ? eq.entry.nameEn : eq.entry.name}` : (isEn ? DOLL_SLOT_EN[key] : DOLL_SLOT_ZH[key])}
+              title={eq ? undefined : (isEn ? DOLL_SLOT_EN[key] : DOLL_SLOT_ZH[key])}
               onPointerEnter={pointerOnly((ev) => showTip(eq, { x: ev.clientX, y: ev.clientY }))}
               onPointerMove={pointerOnly((ev) => { if (eq) showTip(eq, { x: ev.clientX, y: ev.clientY }); })}
               onPointerLeave={hideTip}
@@ -154,10 +156,10 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
                   <div className="flex-1 min-h-0 w-full" style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,.8))' }}>
                     <ItemIcon name={eq.entry.name} nameEn={eq.entry.nameEn} baseItem={eq.entry.baseNameEn} slot={eq.entry.slot} rarity={rarityOf(eq.entry)} imageUrl={imageForEntry(eq.entry)} noGuess fit="fill" showBorder={false} />
                   </div>
-                  {b.h > 60 && <span className={`d2-slot-name ${toneOf(eq.entry)}`}>{eq.entry.name}{eq.ethereal ? '（無形）' : ''}</span>}
+                  {b.h > 60 && <span className={`d2-slot-name ${toneOf(eq.entry)}`}>{isEn ? eq.entry.nameEn : eq.entry.name}{eq.ethereal ? (isEn ? ' (Eth)' : '（無形）') : ''}</span>}
                 </div>
               ) : (
-                <span className="d2-slot-empty">{DOLL_SLOT_ZH[key].replace(/ [I]+$/, '')}</span>
+                <span className="d2-slot-empty">{(isEn ? DOLL_SLOT_EN[key] : DOLL_SLOT_ZH[key]).replace(/ [I]+$/, '')}</span>
               )}
             </div>
           );
@@ -169,7 +171,7 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
           style={{ left: gridL, top: gridT, width: cell * GRID_COLS, height: cell * GRID_ROWS, gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`, gridTemplateRows: `repeat(${GRID_ROWS}, 1fr)`,
             outline: gridRing === 'is-valid' ? '1px solid var(--gold)' : gridRing === 'is-over-ok' ? '2px solid #6fe06f' : gridRing === 'is-over-bad' ? '2px solid #ff5e50' : 'none' }}
           {...dropHandlers('charms')}
-          aria-label="背包（咒符）"
+          aria-label={isEn ? "Inventory (Charms)" : "背包（咒符）"}
         >
           {Array.from({ length: GRID_COLS * GRID_ROWS }, (_, i) => <i key={i} style={{ boxShadow: 'inset 0 0 0 1px #1f1a12' }} />)}
         </div>
@@ -177,7 +179,7 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
           <div key={`${p.entry.id}-${i}`} className="absolute flex items-center justify-center cursor-pointer"
             style={{ left: gridL + p.x * cell + 1, top: gridT + p.y * cell + 1, width: cell * (p.entry.width || 1) - 2, height: cell * (p.entry.height || 1) - 2,
               background: 'rgba(30, 30, 80, .35)', boxShadow: 'inset 0 0 0 1px #5a5ad0, inset 0 0 10px rgba(80,80,255,.25)' }}
-            aria-label={`${p.entry.name}（點擊卸下）`}
+            aria-label={isEn ? `${p.entry.nameEn} (Click to remove)` : `${p.entry.name}（點擊卸下）`}
             onPointerEnter={pointerOnly((ev) => showTip({ entry: p.entry }, { x: ev.clientX, y: ev.clientY }))}
             onPointerMove={pointerOnly((ev) => showTip({ entry: p.entry }, { x: ev.clientX, y: ev.clientY }))}
             onPointerLeave={hideTip}
@@ -185,8 +187,8 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
             <ItemIcon name={p.entry.name} nameEn={p.entry.nameEn} baseItem={p.entry.baseNameEn} slot="charm" rarity={rarityOf(p.entry)} imageUrl={imageForEntry(p.entry)} noGuess fit="fill" showBorder={false} />
           </div>
         ))}
-        <div className="absolute d2-well flex items-center justify-center t-dim" style={{ right: 20, bottom: 20, width: 60, height: 60, fontSize: 12, letterSpacing: '.2em' }}>方塊</div>
-        <div className="absolute t-dim" style={{ left: 28, bottom: 14, fontSize: 11 }}>咒符只有放在背包內才生效（遊戲規則）</div>
+        <div className="absolute d2-well flex items-center justify-center t-dim" style={{ right: 20, bottom: 20, width: 60, height: 60, fontSize: 12, letterSpacing: '.2em' }}>{isEn ? "Cube" : "方塊"}</div>
+        <div className="absolute t-dim" style={{ left: 28, bottom: 14, fontSize: 11 }}>{isEn ? "Charms only take effect inside inventory (Game rule)" : "咒符只有放在背包內才生效（遊戲規則）"}</div>
       </div>
       {tip && tipHost && <FloatingItemTip host={tipHost} at={tip.at} eq={tip.eq} level={level} rollMax={rollMax} attrs={attrs} equippedSetNames={setNamesOf(equipped, tip.eq.entry.setId)} />}
     </div>

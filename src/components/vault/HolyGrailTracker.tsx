@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { HolyGrailState } from '../../types';
+import { useLanguage } from '../../context/LanguageContext';
 import { loadHolyGrailState, saveHolyGrailState, exportAllUserData, importUserData } from '../../utils/storage';
 import { ItemIcon } from '../common/ItemIcon';
 import { TreeIndex, Crumbs, SectionHead, crumbsOf } from '../common/TreeIndex';
@@ -29,6 +30,7 @@ const TC87_IDENTIFIERS = [
 ];
 
 export const HolyGrailTracker: React.FC = () => {
+  const { isEn } = useLanguage();
   const [grailState, setGrailState] = useState<HolyGrailState>(loadHolyGrailState());
   const [filterMode, setFilterMode] = useState<'all' | 'missing' | 'obtained' | 'tc87'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -138,12 +140,12 @@ export const HolyGrailTracker: React.FC = () => {
   // Slot Breakdown Stats
   const slotStats = useMemo(() => {
     const slots = [
-      { id: 'weapon', label: '武器類' },
-      { id: 'armor', label: '衣服護甲' },
-      { id: 'helm', label: '頭盔' },
-      { id: 'shield', label: '盾牌類' },
-      { id: 'jewelry', label: '首飾護符' },
-      { id: 'set', label: '綠色套裝' },
+      { id: 'weapon', label: isEn ? 'Weapons' : '武器類' },
+      { id: 'armor', label: isEn ? 'Armor' : '衣服護甲' },
+      { id: 'helm', label: isEn ? 'Helms' : '頭盔' },
+      { id: 'shield', label: isEn ? 'Shields' : '盾牌類' },
+      { id: 'jewelry', label: isEn ? 'Jewelry' : '首飾護符' },
+      { id: 'set', label: isEn ? 'Set Items' : '綠色套裝' },
     ];
 
     return slots.map(slot => {
@@ -200,7 +202,7 @@ export const HolyGrailTracker: React.FC = () => {
     displayedItems.forEach((i) => counts.set(i.leaf, (counts.get(i.leaf) ?? 0) + 1));
     return recount(baseTree, counts);
   }, [baseTree, displayedItems]);
-  const root: TreeNode = useMemo(() => ({ id: 'all', label: '全部聖杯', count: displayedItems.length, children: tree }), [tree, displayedItems.length]);
+  const root: TreeNode = useMemo(() => ({ id: 'all', label: isEn ? 'All Holy Grail' : '全部聖杯', count: displayedItems.length, children: tree }), [tree, displayedItems.length]);
   const node = sel === 'all' ? root : findNode(tree, sel) ?? root;
   // 目前節點一筆都沒有、但別處有符合（搜尋或篩選的結果落在別的分類）時，自動放寬到全部
   React.useEffect(() => {
@@ -213,7 +215,7 @@ export const HolyGrailTracker: React.FC = () => {
     return { done: all.filter((i) => grailState.obtainedItemIds[i.id]).length, total: all.length };
   };
   const nodeProgress = progressOf(node.id);
-  const crumbs = crumbsOf('全部聖杯', tree, sel);
+  const crumbs = crumbsOf(isEn ? 'All Holy Grail' : '全部聖杯', tree, sel);
 
   // Export JSON
   const handleExport = () => {
@@ -257,10 +259,10 @@ export const HolyGrailTracker: React.FC = () => {
             Diablo II: Resurrected Holy Grail Checklist
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            暗黑聖杯挑戰進度追蹤 (Holy Grail Tracker)
+            {isEn ? "Diablo II: Resurrected Holy Grail Checklist" : "暗黑聖杯挑戰進度追蹤 (Holy Grail Tracker)"}
           </h1>
           <p className="text-xs sm:text-sm text-sanctuary-400 mt-1 max-w-2xl">
-            純本地無痕紀錄遊戲內全數暗金與成套套裝掉落，挑戰 100% 圓滿收藏！支援 TC87 殿堂神物專屬篩選與分類進度分析。
+            {isEn ? "Local-only offline tracking of all unique and set items in Diablo II: Resurrected. Challenge yourself to 100% complete collection! Includes TC87 hall of fame filters." : "純本地無痕紀錄遊戲內全數暗金與成套套裝掉落，挑戰 100% 圓滿收藏！支援 TC87 殿堂神物專屬篩選與分類進度分析。"}
           </p>
         </div>
 
@@ -271,11 +273,11 @@ export const HolyGrailTracker: React.FC = () => {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-sanctuary-300 hover:text-white transition-colors shadow-sm"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>匯出備份 JSON</span>
+            <span>{isEn ? "Export Backup JSON" : "匯出備份 JSON"}</span>
           </button>
           <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-sanctuary-300 hover:text-white cursor-pointer transition-colors shadow-sm">
             <Upload className="w-3.5 h-3.5" />
-            <span>匯入進度</span>
+            <span>{isEn ? "Import Backup" : "匯入進度"}</span>
             <input type="file" accept=".json" onChange={handleImport} className="hidden" />
           </label>
         </div>
@@ -285,27 +287,27 @@ export const HolyGrailTracker: React.FC = () => {
       <div className="p-6 rounded-3xl bg-sanctuary-950 border border-sanctuary-800 shadow-2xl space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="text-xs text-sanctuary-400 font-medium">總體聖杯收集完成率</div>
+            <div className="text-xs text-sanctuary-400 font-medium">{isEn ? "Holy Grail Completion Rate" : "總體聖杯收集完成率"}</div>
             <div className="font-diablo text-4xl font-black text-d2-gold mt-1 flex items-baseline gap-2">
               <span>{progressPercent}%</span>
               <span className="text-xs font-mono font-normal text-sanctuary-500">
-                ({obtainedCount} / {totalCount} 件)
+                {isEn ? `(${obtainedCount} / ${totalCount} items)` : `(${obtainedCount} / ${totalCount} 件)`}
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-3 text-xs font-mono">
             <div className="text-center px-3 py-2 rounded-xl bg-sanctuary-900/80 border border-sanctuary-800">
-              <div className="text-sanctuary-400 text-[10px]">TC87 殿堂級神物</div>
+              <div className="text-sanctuary-400 text-[10px]">{isEn ? "TC87 Hall of Fame" : "TC87 殿堂級神物"}</div>
               <div className="text-amber-400 font-bold text-sm mt-0.5">{tc87Obtained} / {tc87Items.length}</div>
             </div>
             <div className="text-center px-3 py-2 rounded-xl bg-sanctuary-900/80 border border-sanctuary-800">
-              <div className="text-sanctuary-400 text-[10px]">尚缺件數</div>
-              <div className="text-d2-fire font-bold text-sm mt-0.5">{totalCount - obtainedCount} 件</div>
+              <div className="text-sanctuary-400 text-[10px]">{isEn ? "Missing Items" : "尚缺件數"}</div>
+              <div className="text-d2-fire font-bold text-sm mt-0.5">{totalCount - obtainedCount} {isEn ? "items" : "件"}</div>
             </div>
             <div className="text-center px-3 py-2 rounded-xl bg-sanctuary-900/80 border border-sanctuary-800">
-              <div className="text-sanctuary-400 text-[10px]">無形 (ETH) 收藏</div>
-              <div className="text-cyan-400 font-bold text-sm mt-0.5">{ethCount} 件</div>
+              <div className="text-sanctuary-400 text-[10px]">{isEn ? "Ethereal (ETH)" : "無形 (ETH) 收藏"}</div>
+              <div className="text-cyan-400 font-bold text-sm mt-0.5">{ethCount} {isEn ? "items" : "件"}</div>
             </div>
           </div>
         </div>
@@ -349,7 +351,7 @@ export const HolyGrailTracker: React.FC = () => {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="搜尋聖杯清單裝備名稱、英文或底材..."
+          placeholder={isEn ? "Search grail item name, English or base..." : "搜尋聖杯清單裝備名稱、英文或底材..."}
           className="w-full sm:w-80 bg-sanctuary-950 border border-sanctuary-800 rounded-xl px-4 py-2 text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-gold"
         />
 
@@ -360,7 +362,7 @@ export const HolyGrailTracker: React.FC = () => {
               filterMode === 'all' ? 'bg-sanctuary-800 text-d2-gold font-bold shadow' : 'text-sanctuary-400 hover:text-white'
             }`}
           >
-            全部 ({allGrailItems.length})
+            {isEn ? `All (${allGrailItems.length})` : `全部 (${allGrailItems.length})`}
           </button>
           <button
             onClick={() => setFilterMode('tc87')}
@@ -369,7 +371,7 @@ export const HolyGrailTracker: React.FC = () => {
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>TC87 殿堂 ({tc87Items.length})</span>
+            <span>{isEn ? `TC87 (${tc87Items.length})` : `TC87 殿堂 (${tc87Items.length})`}</span>
           </button>
           <button
             onClick={() => setFilterMode('missing')}
@@ -377,7 +379,7 @@ export const HolyGrailTracker: React.FC = () => {
               filterMode === 'missing' ? 'bg-sanctuary-800 text-d2-fire font-bold shadow' : 'text-sanctuary-400 hover:text-white'
             }`}
           >
-            未獲得 ({totalCount - obtainedCount})
+            {isEn ? `Missing (${totalCount - obtainedCount})` : `未獲得 (${totalCount - obtainedCount})`}
           </button>
           <button
             onClick={() => setFilterMode('obtained')}
@@ -385,18 +387,18 @@ export const HolyGrailTracker: React.FC = () => {
               filterMode === 'obtained' ? 'bg-sanctuary-800 text-d2-set font-bold shadow' : 'text-sanctuary-400 hover:text-white'
             }`}
           >
-            已收集 ({obtainedCount})
+            {isEn ? `Obtained (${obtainedCount})` : `已收集 (${obtainedCount})`}
           </button>
         </div>
       </div>
 
       {/* Items Checklist：樹狀索引 + 依分類分段的清單 */}
-      <TreeIndex title="聖杯索引" rootLabel="全部聖杯" rootCount={root.count} nodes={tree} activeId={node.id} onSelect={setSel} tone="unique">
+      <TreeIndex title={isEn ? "Holy Grail Index" : "聖杯索引"} rootLabel={isEn ? "All Holy Grail" : "全部聖杯"} rootCount={root.count} nodes={tree} activeId={node.id} onSelect={setSel} tone="unique">
         <div className="space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <Crumbs crumbs={crumbs} onSelect={setSel} />
             <div className="text-xs font-mono text-sanctuary-400">
-              本層進度 <span className="text-d2-gold font-bold">{nodeProgress.done} / {nodeProgress.total}</span>
+              {isEn ? "Section Progress" : "本層進度"} <span className="text-d2-gold font-bold">{nodeProgress.done} / {nodeProgress.total}</span>
               {nodeProgress.total > 0 && <span className="ml-1">（{Math.round((nodeProgress.done / nodeProgress.total) * 100)}%）</span>}
             </div>
           </div>
@@ -410,7 +412,7 @@ export const HolyGrailTracker: React.FC = () => {
               </div>
               {root.count > 0 && node.id !== 'all' && (
                 <button type="button" onClick={() => setSel('all')} className="px-4 py-2 rounded-lg bg-sanctuary-800 border border-sanctuary-700 text-sm text-sanctuary-100 hover:border-d2-gold">
-                  回到「全部聖杯」
+                  {isEn ? "Back to All Holy Grail" : "回到「全部聖杯」"}
                 </button>
               )}
             </div>
@@ -430,12 +432,12 @@ export const HolyGrailTracker: React.FC = () => {
                 <section key={leaf.id} id={`sec-${leaf.id}`} className="mb-8 scroll-mt-20">
                   <SectionHead
                     title={isLeaf ? leaf.label : relPath(tree, leaf.id, node.id)}
-                    sub={`${prog.done}/${prog.total} 已收集`}
+                    sub={`${prog.done}/${prog.total} ${isEn ? 'obtained' : '已收集'}`}
                     count={rows.length}
                     tone={isSetLeaf ? 'set' : 'unique'}
                     tag="h2"
                     onOpen={isLeaf ? undefined : () => setSel(leaf.id)}
-                    openLabel={`進入「${leaf.label}」`}
+                    openLabel={isEn ? `Enter "${leaf.label}"` : `進入「${leaf.label}」`}
                   />
                   {groups.map((g) => {
                     const gProg = g.key ? (() => {
@@ -519,7 +521,7 @@ export const HolyGrailTracker: React.FC = () => {
                                   onClick={() => toggleEthereal(item.id)}
                                   aria-label={`${item.name}（${item.nameEn}）無形 (ETH) 收藏`}
                                   aria-pressed={isEth}
-                                  title="標記是否打到無形 (ETH) 版本"
+                                  title={isEn ? "Mark as obtained in Ethereal (ETH)" : "標記是否打到無形 (ETH) 版本"}
                                   className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold border transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold focus-visible:ring-offset-2 focus-visible:ring-offset-sanctuary-950 ${
                                     isEth
                                       ? 'bg-cyan-950 text-cyan-300 border-cyan-500 shadow-sm'

@@ -6,6 +6,7 @@ import { buildEngineItem } from '../../../engine/build';
 import { gameData } from '../../../engine/data';
 import { describeModifiers } from '../../../engine/describe';
 import { skillByName } from '../../../engine/skills';
+import { useLanguage } from '../../../context/LanguageContext';
 import type { Equipped } from './types';
 
 const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
@@ -24,6 +25,7 @@ interface BodyProps {
 
 /** 物品提示框內容：依遊戲提示框的順序——名稱、底材、防禦／傷害、需求、屬性、鑲孔 */
 export const ItemTooltipBody: React.FC<BodyProps> = ({ eq, level, rollMax, attrs, equippedSetNames }) => {
+  const { isEn } = useLanguage();
   const e = eq.entry;
   const base = baseByCode.get(e.baseCode);
   const own = useMemo(() => itemOwnStats(gameData, buildEngineItem(eq, 'tip', rollMax), level, attrs), [eq, level, rollMax, attrs]);
@@ -44,35 +46,35 @@ export const ItemTooltipBody: React.FC<BodyProps> = ({ eq, level, rollMax, attrs
 
   return (
     <>
-      <div className={`nm ${e.custom ? 't-magic' : tone(e.kind)}`}>{e.name}</div>
-      <div className={`base ${e.kind === 'base' ? '' : tone(e.kind)}`}>{e.baseName}{base?.tier && e.kind !== 'base' ? `（${TIER_ZH[base.tier]}）` : ''}</div>
-      {own.defense !== undefined && stat('防禦', own.defense)}
-      {base?.block !== undefined && base.block > 0 && base.ancestors.includes('shld') && stat('格擋機率', `${base.block}%`)}
-      {own.damage && stat(own.damage.twoHanded ? '雙手傷害' : '單手傷害', `${own.damage.min} 至 ${own.damage.max}`)}
-      {req('需求力量', reqStr, attrs.str)}
-      {req('需求敏捷', reqDex, attrs.dex)}
-      {req('需求等級', reqLv, level)}
-      {eq.ethereal && <div className="mod">無形（無法修復）</div>}
+      <div className={`nm ${e.custom ? 't-magic' : tone(e.kind)}`}>{isEn ? (e.nameEn || e.name) : e.name}</div>
+      <div className={`base ${e.kind === 'base' ? '' : tone(e.kind)}`}>{isEn ? (e.baseNameEn || e.baseName) : e.baseName}{base?.tier && e.kind !== 'base' ? (isEn ? ` (${base.tier.toUpperCase()})` : `（${TIER_ZH[base.tier]}）`) : ''}</div>
+      {own.defense !== undefined && stat(isEn ? 'Defense' : '防禦', own.defense)}
+      {base?.block !== undefined && base.block > 0 && base.ancestors.includes('shld') && stat(isEn ? 'Chance to Block' : '格擋機率', `${base.block}%`)}
+      {own.damage && stat(own.damage.twoHanded ? (isEn ? 'Two-Hand Damage' : '雙手傷害') : (isEn ? 'One-Hand Damage' : '單手傷害'), isEn ? `${own.damage.min} to ${own.damage.max}` : `${own.damage.min} 至 ${own.damage.max}`)}
+      {req(isEn ? 'Required Strength' : '需求力量', reqStr, attrs.str)}
+      {req(isEn ? 'Required Dexterity' : '需求敏捷', reqDex, attrs.dex)}
+      {req(isEn ? 'Required Level' : '需求等級', reqLv, level)}
+      {eq.ethereal && <div className="mod">{isEn ? "Ethereal (Cannot be Repaired)" : "無形（無法修復）"}</div>}
       {mods.map((l, i) => <div key={i} className={`mod ${l.known ? '' : 'is-unknown'}`}>{l.text}</div>)}
-      {e.kind === 'runeword' && e.sockets && <div className="hint">符文之語：{e.sockets.map(runeName).join(' + ')}</div>}
-      {e.mods.some((m) => m.code.toLowerCase() === 'skill-rand') && <div className="hint">{eq.randomSkill ? `隨機技能：${skillByName(eq.randomSkill)?.name ?? eq.randomSkill}` : '尚未選擇隨機技能，該項加成未計入'}</div>}
+      {e.kind === 'runeword' && e.sockets && <div className="hint">{isEn ? "Runeword: " : "符文之語："}{e.sockets.map(runeName).join(' + ')}</div>}
+      {e.mods.some((m) => m.code.toLowerCase() === 'skill-rand') && <div className="hint">{eq.randomSkill ? (isEn ? `Random Skill: ${(skillByName(eq.randomSkill) as any)?.nameEn ?? skillByName(eq.randomSkill)?.name ?? eq.randomSkill}` : `隨機技能：${skillByName(eq.randomSkill)?.name ?? eq.randomSkill}`) : (isEn ? 'Random skill not chosen yet; bonus not included' : '尚未選擇隨機技能，該項加成未計入')}</div>}
       {setDef && (
         <div className="set-block">
-          <div className="t-set">{setDef.name ?? e.setName}（{setCount}/{setDef.size}）</div>
-          {setMembers.map((m) => <div key={m.id} className={have.has(m.name) ? 't-set' : 't-dim'}>{m.name}</div>)}
-          {(e.setBonus ?? []).flatMap((b) => setLines(b.mods).map((l, i) => <div key={`i${b.pieces}-${i}`} className={setCount >= b.pieces ? 't-set' : 't-dim'}>（{b.pieces} 件）{l.text}</div>))}
-          {setDef.partial.flatMap((p) => setLines(p.mods).map((l, i) => <div key={`p${p.pieces}-${i}`} className={setCount >= p.pieces ? 't-set' : 't-dim'}>（{p.pieces} 件）{l.text}</div>))}
-          {setLines(setDef.full).map((l, i) => <div key={`f${i}`} className={setDef.size > 0 && setCount >= setDef.size ? 't-set' : 't-dim'}>（全套）{l.text}</div>)}
+          <div className="t-set">{isEn ? (setDef.nameEn ?? setDef.name ?? e.setName) : (setDef.name ?? e.setName)} ({setCount}/{setDef.size})</div>
+          {setMembers.map((m) => <div key={m.id} className={have.has(m.name) ? 't-set' : 't-dim'}>{isEn && m.nameEn ? m.nameEn : m.name}</div>)}
+          {(e.setBonus ?? []).flatMap((b) => setLines(b.mods).map((l, i) => <div key={`i${b.pieces}-${i}`} className={setCount >= b.pieces ? 't-set' : 't-dim'}>{isEn ? `(${b.pieces} Pieces) ` : `（${b.pieces} 件）`}{l.text}</div>))}
+          {setDef.partial.flatMap((p) => setLines(p.mods).map((l, i) => <div key={`p${p.pieces}-${i}`} className={setCount >= p.pieces ? 't-set' : 't-dim'}>{isEn ? `(${p.pieces} Pieces) ` : `（${p.pieces} 件）`}{l.text}</div>))}
+          {setLines(setDef.full).map((l, i) => <div key={`f${i}`} className={setDef.size > 0 && setCount >= setDef.size ? 't-set' : 't-dim'}>{isEn ? '(Full Set) ' : '（全套）'}{l.text}</div>)}
         </div>
       )}
       {socketed.map((s, i) => (
         <div key={i} className="sock">
-          <span className="t-dim">鑲嵌 {s.name}：</span>
-          {describeModifiers(socketEffectMods(s, cat), 1, level).map((l) => l.text).join('，') || '無效果'}
+          <span className="t-dim">{isEn ? `Socketed (${s.nameEn || s.name}): ` : `鑲嵌 ${s.name}：`}</span>
+          {describeModifiers(socketEffectMods(s, cat), 1, level).map((l) => l.text).join('，') || (isEn ? 'No Effect' : '無效果')}
         </div>
       ))}
-      {total > 0 && <div className="mod">鑲孔 ({e.kind === 'runeword' ? total : `${socketed.length}/${total}`})</div>}
-      {e.kind === 'base' && mods.length === 0 && !eq.ethereal && <div className="hint">基礎底材，無額外屬性</div>}
+      {total > 0 && <div className="mod">{isEn ? "Sockets" : "鑲孔"} ({e.kind === 'runeword' ? total : `${socketed.length}/${total}`})</div>}
+      {e.kind === 'base' && mods.length === 0 && !eq.ethereal && <div className="hint">{isEn ? "Normal base item, no extra modifiers" : "基礎底材，無額外屬性"}</div>}
     </>
   );
 };

@@ -11,6 +11,7 @@ import { TIER_LABEL, DEFAULT_TIER, TreeNode, buildTree, recount, findNode, leave
 import { ITEM_TREE_DEFS, CHARM_LABEL, U_ENTRIES, S_ENTRIES, UEntry, SEntry } from '../../utils/itemIndex';
 import { CrossPropertyFilterBar } from './CrossPropertyFilterBar';
 import { CrossItemCard } from './CrossItemCard';
+import { useLanguage } from '../../context/LanguageContext';
 import {
   getAllUnifiedItems,
   filterUnifiedItems,
@@ -68,12 +69,24 @@ const makeSetMatcher = (q: string) => {
   };
 };
 
+const CLASS_NAME_EN: Record<string, string> = {
+  '亞馬遜': 'Amazon',
+  '刺客': 'Assassin',
+  '野蠻人': 'Barbarian',
+  '德魯伊': 'Druid',
+  '聖騎士': 'Paladin',
+  '死靈法師': 'Necromancer',
+  '魔法使': 'Sorceress',
+  '術士': 'Warlock',
+};
+
 export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   initialQuery = '',
   initialNode,
   onNavigateToBase,
   onNavigateToRune,
 }) => {
+  const { t, isEn } = useLanguage();
   const [sel, setSel] = useState<string>(initialNode ?? `u/${DEFAULT_TIER}`);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
 
@@ -303,9 +316,9 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
       {/* Set Header */}
       <div className="border-b border-sanctuary-800 pb-3 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <h4 className="font-diablo text-xl font-bold text-d2-set">{set.name}</h4>
+          <h4 className="font-diablo text-xl font-bold text-d2-set">{isEn && set.nameEn ? set.nameEn : set.name}</h4>
           <div className="text-xs text-sanctuary-400 font-mono italic">
-            {set.nameEn} • {set.pieces.length} 件套裝{set.class ? ` • ${set.class}專用` : ''}
+            {isEn && set.nameEn ? set.name : set.nameEn} • {isEn ? `${set.pieces.length} Pieces` : `${set.pieces.length} 件套裝`}{set.class ? ` • ${isEn ? `${CLASS_NAME_EN[set.class] || set.class} Only` : `${set.class}專用`}` : ''}
           </div>
         </div>
       </div>
@@ -324,7 +337,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
               imageUrl={piece.imageUrl}
             />
             <div className="flex-1 min-w-0">
-              <div className="font-diablo font-bold text-d2-set text-sm">{piece.name}</div>
+              <div className="font-diablo font-bold text-d2-set text-sm">{isEn && piece.nameEn ? piece.nameEn : piece.name} {isEn && piece.nameEn && <span className="font-sans text-xs text-sanctuary-400 font-normal">({piece.name})</span>}</div>
               <div className="text-[11px] text-sanctuary-400 mb-2 font-medium">
                 {onNavigateToBase ? (
                   <button
@@ -339,7 +352,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                 ) : (
                   <span>{piece.baseItem}</span>
                 )}{' '}
-                (需求等級: {piece.requiredLevel})
+                ({isEn ? 'Req Level:' : '需求等級:'} {piece.requiredLevel})
               </div>
               <div className="space-y-0.5 text-d2-magic">
                 {piece.attributes.map((attr, i) => (
@@ -354,13 +367,13 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
       {/* Set Bonuses Footer */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 rounded-lg bg-sanctuary-900 border border-sanctuary-800 text-xs">
         <div>
-          <div className="text-d2-set font-bold mb-1">部分套裝加成效果:</div>
+          <div className="text-d2-set font-bold mb-1">{isEn ? 'Partial Set Bonuses:' : '部分套裝加成效果:'}</div>
           {set.partialBonuses.map((pb, idx) => (
-            <div key={idx} className="text-sanctuary-300">({pb.count} 件) {pb.bonus}</div>
+            <div key={idx} className="text-sanctuary-300">({pb.count} {isEn ? 'Pieces' : '件'}) {pb.bonus}</div>
           ))}
         </div>
         <div>
-          <div className="text-d2-set font-bold mb-1">完整全套套裝加成:</div>
+          <div className="text-d2-set font-bold mb-1">{isEn ? 'Complete Set Bonuses:' : '完整全套套裝加成:'}</div>
           {set.fullBonuses.map((fb, idx) => (
             <div key={idx} className="text-d2-set font-medium">• {fb}</div>
           ))}
@@ -466,13 +479,13 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     <div className="py-8 max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
       <PageHeader
         icon={<Sword className="w-6 h-6" />}
-        title="裝備寶典 (暗金 · 套裝 · 符文之語)"
-        desc="收錄暗黑破壞神二代各部位指標性暗金裝備、全套套裝與經典符文之語，支援跨裝備特殊屬性（永不毀損、+全技能、全抗、MF 等）一鍵篩選。未選取特殊屬性時保留階層式分類樹。"
+        title={t('裝備寶典 (暗金 · 套裝 · 符文之語)', 'Equipment Codex (Uniques · Sets · Runewords)')}
+        desc={t('收錄暗黑破壞神二代各部位指標性暗金裝備、全套套裝與經典符文之語，支援跨裝備特殊屬性（永不毀損、+全技能、全抗、MF 等）一鍵篩選。未選取特殊屬性時保留階層式分類樹。', 'Comprehensive codex of iconic Unique gear, complete Sets, and Runewords. Supports one-click cross-equipment filtering by key special properties (Indestructible, +All Skills, All Res, MF, etc.).')}
         right={
           <div className="text-xs text-sanctuary-400 font-mono px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800 self-start shrink-0 whitespace-nowrap">
-            isCrossPropertyMode
-              ? `跨裝備符合: ${filteredCrossItems.length} (暗金 ${rarityCounts.unique} · 套裝 ${rarityCounts.set} · 符文組 ${rarityCounts.runeword})`
-              : `暗金 ${uHere.length} ・ 套裝 ${sHere.length}`
+            {isCrossPropertyMode
+              ? (isEn ? `Matched: ${filteredCrossItems.length} (Uniques ${rarityCounts.unique} · Sets ${rarityCounts.set} · Runewords ${rarityCounts.runeword})` : `跨裝備符合: ${filteredCrossItems.length} (暗金 ${rarityCounts.unique} · 套裝 ${rarityCounts.set} · 符文組 ${rarityCounts.runeword})`)
+              : (isEn ? `Uniques ${uHere.length} · Sets ${sHere.length}` : `暗金 ${uHere.length} ・ 套裝 ${sHere.length}`)}
           </div>
         }
       />
@@ -483,7 +496,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="搜尋暗金、套裝或符文之語名稱、底材或屬性 (例如：軍帽、獅鷲、塔拉夏、精神、謎團、SOJ...)；索引數量會即時對應"
+          placeholder={t('搜尋暗金、套裝或符文之語名稱、底材或屬性 (例如：軍帽、獅鷲、塔拉夏、精神、謎團、SOJ...)；索引數量會即時對應', 'Search Uniques, Sets, Runewords, Bases, or Affixes (e.g. Shako, Griffon, Tal Rasha, Spirit, Enigma, SOJ...)')}
           className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-4 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
         />
         {searchQuery && (
@@ -513,10 +526,10 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-sanctuary-950/60 p-3 rounded-xl border border-sanctuary-800 text-xs">
             <div className="flex items-center gap-2">
               <span className="font-semibold text-sanctuary-200">
-                共找到 {filteredCrossItems.length} 件符合條件的裝備
+                {isEn ? `Found ${filteredCrossItems.length} matching items` : `共找到 ${filteredCrossItems.length} 件符合條件的裝備`}
               </span>
               <span className="text-sanctuary-400">
-                (暗金 {rarityCounts.unique} · 套裝 {rarityCounts.set} · 符文組 {rarityCounts.runeword})
+                {isEn ? `(Uniques ${rarityCounts.unique} · Sets ${rarityCounts.set} · Runewords ${rarityCounts.runeword})` : `(暗金 ${rarityCounts.unique} · 套裝 ${rarityCounts.set} · 符文組 ${rarityCounts.runeword})`}
               </span>
             </div>
 
@@ -527,7 +540,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                 className="px-2.5 py-1 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-800 text-sanctuary-300 border border-sanctuary-750 flex items-center gap-1 cursor-pointer transition-colors"
               >
                 <RotateCcw className="w-3 h-3 text-d2-unique" />
-                <span>返回分類樹</span>
+                <span>{t('返回分類樹', 'Back to Tree')}</span>
               </button>
 
               <div className="flex items-center gap-1 border-l border-sanctuary-800 pl-2">

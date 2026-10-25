@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useLanguage } from '../../context/LanguageContext';
 import { AREA_LEVELS_DATA, TERROR_ZONE_GUIDE } from '../../data/areaLevels';
 import { 
   MapPin, 
@@ -10,6 +11,7 @@ import {
 } from 'lucide-react';
 
 export const AreaGuide: React.FC = () => {
+  const { t, isEn } = useLanguage();
   const [selectedAct, setSelectedAct] = useState<number | 'all'>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [onlyAlvl85, setOnlyAlvl85] = useState<boolean>(false);
@@ -50,10 +52,10 @@ export const AreaGuide: React.FC = () => {
             Endgame Farming & Terror Zones
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            場景寶典與邪惡威脅區域
+            {t('場景寶典與邪惡威脅區域', 'Area Levels & Terror Zones Guide')}
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-2xl">
-            收錄 D2R 全 85 級頂級打寶場景 (TC87 掉落聖地)、原生怪物免疫分佈，以及 2.5 邪惡威脅區域 (Terror Zone) 縮放機制與梯隊評級。
+            {t('收錄 D2R 全 85 級頂級打寶場景 (TC87 掉落聖地)、原生怪物免疫分佈，以及 2.5 邪惡威脅區域 (Terror Zone) 縮放機制與梯隊評級。', 'Database of Area Level 85 zones (TC87 drop tables), monster immunities, and Terror Zone scaling tiers.')}
           </p>
         </div>
 
@@ -68,7 +70,7 @@ export const AreaGuide: React.FC = () => {
             }`}
           >
             <MapPin className="w-4 h-4" />
-            85 級打寶場景
+            {isEn ? 'Level 85 Areas' : '85 級打寶場景'}
           </button>
           <button
             onClick={() => setActiveSubTab('terror_zone')}
@@ -79,7 +81,7 @@ export const AreaGuide: React.FC = () => {
             }`}
           >
             <Sparkles className="w-4 h-4" />
-            邪惡威脅區域攻略指南
+            {isEn ? 'Terror Zones Guide' : '邪惡威脅區域攻略指南'}
           </button>
         </div>
       </div>
@@ -91,7 +93,7 @@ export const AreaGuide: React.FC = () => {
           <div className="bg-sanctuary-900/60 p-4 rounded-2xl border border-sanctuary-800 flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Act Filter */}
             <div className="flex items-center gap-1.5 flex-wrap w-full md:w-auto">
-              <span className="text-xs text-sanctuary-400 font-mono mr-1">章節：</span>
+              <span className="text-xs text-sanctuary-400 font-mono mr-1">{isEn ? 'Acts: ' : '章節：'}</span>
               {(['all', 1, 2, 3, 4, 5] as const).map((act) => (
                 <button
                   key={act}
@@ -102,7 +104,7 @@ export const AreaGuide: React.FC = () => {
                       : 'bg-sanctuary-950/80 text-sanctuary-300 hover:text-sanctuary-100 border border-sanctuary-800'
                   }`}
                 >
-                  {act === 'all' ? '全部章節' : `第 ${act} 章 (Act ${act})`}
+                  {act === 'all' ? (isEn ? 'All Acts' : '全部章節') : (isEn ? `Act ${act}` : `第 ${act} 章 (Act ${act})`)}
                 </button>
               ))}
             </div>
@@ -118,14 +120,14 @@ export const AreaGuide: React.FC = () => {
                 }`}
               >
                 <Award className="w-3.5 h-3.5" />
-                僅顯示 85 級場景 ({AREA_LEVELS_DATA.filter((a) => a.isAlvl85).length})
+                {isEn ? `Level 85 Only (${AREA_LEVELS_DATA.filter((a) => a.isAlvl85).length})` : `僅顯示 85 級場景 (${AREA_LEVELS_DATA.filter((a) => a.isAlvl85).length})`}
               </button>
 
               <div className="relative w-full md:w-64">
                 <Search className="w-4 h-4 text-sanctuary-500 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="搜尋場景名稱或免疫..."
+                  placeholder={t('搜尋場景名稱或免疫...', 'Search area name or immunities...')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-fire/50"
@@ -145,7 +147,7 @@ export const AreaGuide: React.FC = () => {
                   {/* Top tags */}
                   <div className="flex items-center justify-between gap-2 mb-2">
                     <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-sanctuary-800 text-sanctuary-300">
-                      第 {area.act} 章
+                      {isEn ? `Act ${area.act}` : `第 ${area.act} 章`}
                     </span>
                     <div className="flex items-center gap-1.5">
                       {area.isAlvl85 && (
@@ -162,18 +164,18 @@ export const AreaGuide: React.FC = () => {
 
                   {/* Name */}
                   <h3 className="text-lg font-bold text-sanctuary-100 group-hover:text-d2-fire transition-colors">
-                    {area.name}
+                    {isEn && area.nameEn ? area.nameEn : area.name}
                   </h3>
                   <div className="text-xs font-mono text-sanctuary-400 mb-3">
-                    {area.nameEn}
+                    {isEn && area.nameEn ? area.name : area.nameEn}
                   </div>
 
                   {/* Immunities */}
                   <div className="space-y-1 mb-3">
-                    <div className="text-[11px] font-mono text-sanctuary-500">原生怪物免疫：</div>
+                    <div className="text-[11px] font-mono text-sanctuary-500">{isEn ? 'Monster Immunities:' : '原生怪物免疫：'}</div>
                     <div className="flex flex-wrap gap-1.5">
                       {area.immunities.length === 0 ? (
-                        <span className="text-xs text-sanctuary-500">無明顯固定免疫</span>
+                        <span className="text-xs text-sanctuary-500">{isEn ? 'No fixed immunities' : '無明顯固定免疫'}</span>
                       ) : (
                         area.immunities.map((im, i) => {
                           let colorClass = "bg-sanctuary-800 text-sanctuary-300 border-sanctuary-700";
@@ -200,7 +202,7 @@ export const AreaGuide: React.FC = () => {
                 {/* Notes & Bosses */}
                 {area.chestsAndBosses && (
                   <div className="mt-3 pt-3 border-t border-sanctuary-800/60 text-xs text-sanctuary-400 leading-relaxed bg-sanctuary-950/40 p-2.5 rounded-xl">
-                    <span className="text-d2-unique font-medium font-mono">特色：</span> {area.chestsAndBosses}
+                    <span className="text-d2-unique font-medium font-mono">{isEn ? "Features: " : "特色："}</span> {area.chestsAndBosses}
                   </div>
                 )}
               </div>
@@ -238,7 +240,7 @@ export const AreaGuide: React.FC = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-diablo font-bold text-sanctuary-100 flex items-center gap-2">
               <Award className="w-5 h-5 text-d2-gold" />
-              邪惡威脅區域 (TZ) 輪替刷取效率梯隊排行榜
+              {isEn ? "Terror Zones (TZ) Farming Efficiency Tier List" : "邪惡威脅區域 (TZ) 輪替刷取效率梯隊排行榜"}
             </h3>
 
             <div className="space-y-4">

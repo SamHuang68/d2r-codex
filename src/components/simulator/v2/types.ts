@@ -26,6 +26,11 @@ export const DOLL_SLOT_ZH: Record<DollSlot, string> = {
   weaponI: '主手武器 I', shieldI: '副手 I', weaponII: '主手武器 II', shieldII: '副手 II',
 };
 
+export const DOLL_SLOT_EN: Record<DollSlot, string> = {
+  head: 'Helm', neck: 'Amulet', body: 'Armor', gloves: 'Gloves', belt: 'Belt', ring1: 'Left Ring', ring2: 'Right Ring', boots: 'Boots',
+  weaponI: 'Main Hand I', shieldI: 'Off Hand I', weaponII: 'Main Hand II', shieldII: 'Off Hand II',
+};
+
 export type TabKey = 'stats' | 'gear' | 'skills' | 'merc';
 export type Difficulty = 'normal' | 'nightmare' | 'hell';
 export interface Quests { lifePotions: number; anya: number; lamEsen: number; skillPts: number }
@@ -39,4 +44,5 @@ export interface MercState { on: boolean; id: number; level: number; equipped: E
 export const MERC_SLOTS = ['head', 'body', 'weaponI'] as const;
 export type MercSlot = (typeof MERC_SLOTS)[number];
 export const MERC_SLOT_ZH: Record<MercSlot, string> = { head: '頭盔', body: '護甲', weaponI: '武器' };
+export const MERC_SLOT_EN: Record<MercSlot, string> = { head: 'Helm', body: 'Armor', weaponI: 'Weapon' };
 export const DEFAULT_MERC: MercState = { on: false, id: 35, level: 80, equipped: {} };

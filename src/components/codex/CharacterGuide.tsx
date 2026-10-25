@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CHARACTER_CLASSES_DATA } from '../../data/classes';
+import { useLanguage } from '../../context/LanguageContext';
 import { 
   Users, 
   Shield, 
@@ -27,6 +28,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
   onNavigateToRunewords,
   onNavigateToItems,
 }) => {
+  const { t, isEn } = useLanguage();
   const [selectedClassId, setSelectedClassId] = useState<string>('sorceress');
 
   const currentClass = CHARACTER_CLASSES_DATA.find((c) => c.id === selectedClassId) || CHARACTER_CLASSES_DATA[0];
@@ -101,10 +103,10 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
             Character Classes & Mechanics Compendium
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            八大英雄角色寶典與機制圖解
+            {t('八大英雄角色寶典與機制圖解', 'Character Classes & Mechanics Compendium')}
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-3xl">
-            收錄全職業屬性成長曲線、加點黃金律、專屬底材與裝備分析、幀數斷點基底，以及終局主流流派圖解。
+            {t('收錄全職業屬性成長曲線、加點黃金律、專屬底材與裝備分析、幀數斷點基底，以及終局主流流派圖解。', 'Stat progression curves, stat allocation rules, class-specific gear mechanics, and frame breakpoints.')}
           </p>
         </div>
 
@@ -116,7 +118,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
               className="px-3.5 py-2 rounded-xl bg-d2-gold text-sanctuary-950 font-bold text-xs hover:bg-amber-400 flex items-center gap-1.5 transition-all shadow-md shadow-d2-gold/20"
             >
               <Sparkles className="w-3.5 h-3.5 text-sanctuary-950" />
-              <span>技能樹模擬器</span>
+              <span>{t('技能樹模擬器', 'Skill Tree Simulator')}</span>
             </button>
           )}
           {onNavigateToBreakpoints && (
@@ -125,7 +127,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
               className="px-3.5 py-2 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-d2-unique text-xs font-semibold flex items-center gap-1.5 transition-all"
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>檔位斷點表</span>
+              <span>{t('檔位斷點表', 'Breakpoints Table')}</span>
             </button>
           )}
         </div>
@@ -146,7 +148,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
               }`}
             >
               <span>{getClassIcon(cls.id)}</span>
-              <span>{cls.name}</span>
+              <span>{isEn && cls.nameEn ? cls.nameEn : cls.name}</span>
               {cls.isDLC && (
                 <span className="text-[9px] px-1.5 py-0.2 rounded bg-d2-fire/20 text-d2-fire font-mono font-bold">
                   RotW
@@ -181,7 +183,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
             <div className="p-4 rounded-2xl bg-sanctuary-950/80 border border-d2-gold/30 text-xs space-y-1.5">
               <div className="text-d2-gold font-bold flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-d2-gold" />
-                <span>暗黑 II 角色屬性點分配「黃金守則」：</span>
+                <span>{isEn ? "Diablo II Stat Points Allocation Golden Rules:" : "暗黑 II 角色屬性點分配「黃金守則」："}</span>
               </div>
               <p className="text-sanctuary-300 leading-relaxed pl-5 font-sans">
                 • <strong>力量 (Str)</strong>：點到剛好能穿戴核心裝備即可（通常以統盾 156 力量或謎團加成後為基準）。<br />
@@ -195,25 +197,25 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
           {/* Right Stat Growth Dashboard */}
           <div className="lg:col-span-4 bg-sanctuary-950 p-5 rounded-2xl border border-sanctuary-800 space-y-4 shadow-xl">
             <div className="text-xs font-mono text-sanctuary-400 font-bold uppercase tracking-wider pb-2 border-b border-sanctuary-850 flex items-center justify-between">
-              <span>每點屬性增量成長</span>
+              <span>{isEn ? "Stat Gain per Point" : "每點屬性增量成長"}</span>
               <Shield className="w-3.5 h-3.5 text-d2-unique" />
             </div>
 
             <div className="space-y-3 text-xs">
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800/80">
-                <span className="text-sanctuary-400">每點活力 ➔ 生命</span>
+                <span className="text-sanctuary-400">{isEn ? "Vitality ➔ Life" : "每點活力 ➔ 生命"}</span>
                 <span className="text-d2-blood font-bold font-mono text-sm">
                   +{currentClass.statGains.lifePerVit} Life
                 </span>
               </div>
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800/80">
-                <span className="text-sanctuary-400">每點精力 ➔ 法力</span>
+                <span className="text-sanctuary-400">{isEn ? "Energy ➔ Mana" : "每點精力 ➔ 法力"}</span>
                 <span className="text-d2-magic font-bold font-mono text-sm">
                   +{currentClass.statGains.manaPerEne} Mana
                 </span>
               </div>
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800/80">
-                <span className="text-sanctuary-400">每點活力 ➔ 體力</span>
+                <span className="text-sanctuary-400">{isEn ? "Vitality ➔ Stamina" : "每點活力 ➔ 體力"}</span>
                 <span className="text-d2-set font-bold font-mono text-sm">
                   +{currentClass.statGains.staminaPerVit} Stamina
                 </span>
@@ -221,7 +223,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
             </div>
 
             <div className="pt-2 text-[11px] text-sanctuary-500 font-mono">
-              初始數值：生命 {currentClass.startingStats.life} | 法力 {currentClass.startingStats.mana} | 力 {currentClass.startingStats.str} | 敏 {currentClass.startingStats.dex}
+              {isEn ? `Base: Life ${currentClass.startingStats.life} | Mana ${currentClass.startingStats.mana} | Str ${currentClass.startingStats.str} | Dex ${currentClass.startingStats.dex}` : `初始數值：生命 ${currentClass.startingStats.life} | 法力 ${currentClass.startingStats.mana} | 力 ${currentClass.startingStats.str} | 敏 ${currentClass.startingStats.dex}`}
             </div>
           </div>
         </div>
@@ -234,14 +236,14 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
           <div className="p-6 rounded-2xl bg-sanctuary-950 border border-sanctuary-800 space-y-4">
             <h3 className="font-diablo text-lg font-bold text-d2-unique flex items-center gap-2">
               <Shield className="w-4 h-4 text-d2-unique" />
-              <span>{currentClass.name} 專屬裝備與極品底材</span>
+              <span>{isEn ? `${currentClass.nameEn || currentClass.name} Exclusive Gear & Bases` : `${currentClass.name} 專屬裝備與極品底材`}</span>
             </h3>
             <p className="text-xs text-sanctuary-300 leading-relaxed">
               {gearInfo.desc}
             </p>
 
             <div className="space-y-2 pt-2">
-              <div className="text-[11px] font-mono text-sanctuary-400">代表性指標底材與神裝：</div>
+              <div className="text-[11px] font-mono text-sanctuary-400">{isEn ? "Signature Bases & Trophies:" : "代表性指標底材與神裝："}</div>
               <div className="space-y-2">
                 {gearInfo.topBases.map((base, idx) => (
                   <div
@@ -254,7 +256,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
                       onClick={() => onNavigateToItems?.(base.split(' ')[0])}
                       className="text-d2-unique hover:text-amber-300 text-[11px] font-mono flex items-center gap-0.5 cursor-pointer"
                     >
-                      <span>查裝備</span>
+                      <span>{isEn ? "View" : "查裝備"}</span>
                       <span>↗</span>
                     </button>
                   </div>
@@ -269,7 +271,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
           <div className="p-6 rounded-2xl bg-sanctuary-950 border border-sanctuary-800 space-y-4">
             <h3 className="font-diablo text-lg font-bold text-d2-gold flex items-center gap-2">
               <Flame className="w-4 h-4 text-d2-gold" />
-              <span>{currentClass.name} 天梯主流終局流派 (Meta Builds)</span>
+              <span>{isEn ? `${currentClass.nameEn || currentClass.name} Ladder Meta Builds` : `${currentClass.name} 天梯主流終局流派 (Meta Builds)`}</span>
             </h3>
 
             <div className="space-y-4">
@@ -289,11 +291,11 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
 
                   <div className="text-xs font-sans space-y-1">
                     <div>
-                      <span className="text-sanctuary-500 font-medium">核心技能組合：</span>
+                      <span className="text-sanctuary-500 font-medium">{isEn ? "Core Skills: " : "核心技能組合："}</span>
                       <span className="text-sanctuary-200">{b.coreSkills}</span>
                     </div>
                     <div>
-                      <span className="text-sanctuary-500 font-medium">代表性配裝：</span>
+                      <span className="text-sanctuary-500 font-medium">{isEn ? "Signature Gear: " : "代表性配裝："}</span>
                       <span className="text-d2-unique font-medium">
                         {b.gearSummary.split('+').map((gearItem, gIdx, arr) => {
                           const cleanItem = gearItem.trim();
