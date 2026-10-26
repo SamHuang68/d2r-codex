@@ -39,7 +39,7 @@ const ACT_GEOGRAPHY_HUBS: ActGeographyHub[] = [
     act: 1,
     titleZh: '第 1 章',
     titleEn: 'Act I',
-    hubNameZh: '蘿格營地',
+    hubNameZh: '俠盜營地',
     hubNameEn: 'Rogue Encampment',
     environmentZh: '盲目之眼姐妹會修道院 · 潮濕荒野與幽暗密林',
     environmentEn: 'Sisterhood of the Sightless Eye Monastery · Moor & Deep Forest',
@@ -71,7 +71,7 @@ const ACT_GEOGRAPHY_HUBS: ActGeographyHub[] = [
     act: 3,
     titleZh: '第 3 章',
     titleEn: 'Act III',
-    hubNameZh: '庫拉斯特海港',
+    hubNameZh: '庫拉斯特港口',
     hubNameEn: 'Kurast Docks',
     environmentZh: '雨林古都 · 泥濘沼澤、薩卡蘭姆神廟與憎恨囚牢',
     environmentEn: 'Jungle Port of Kurast · Swamps, Zakarum Temples & Durance of Hate',
@@ -87,7 +87,7 @@ const ACT_GEOGRAPHY_HUBS: ActGeographyHub[] = [
     act: 4,
     titleZh: '第 4 章',
     titleEn: 'Act IV',
-    hubNameZh: '群魔堡壘',
+    hubNameZh: '混沌界要塞',
     hubNameEn: 'The Pandemonium Fortress',
     environmentZh: '天堂前哨 · 絕望平原、地獄熔岩血河與混沌魔殿',
     environmentEn: 'Heavenly Outpost · Plains of Despair, River of Flame & Chaos Sanctuary',
@@ -183,7 +183,7 @@ const SUPER_FARMING_AREAS: SuperFarmingArea[] = [
       { name: '純冰暴風雪法師', tag: 'Blizzard Sorc', icon: '❄️' },
       { name: '冰封球法師', tag: 'Orb Sorc', icon: '🧊' },
       { name: '純骨死靈', tag: 'Bone Necro', icon: '☠️' },
-      { name: '祝福之槌聖騎', tag: 'Hammerdin', icon: '🔨' },
+      { name: '祝福之鎚聖騎', tag: 'Hammerdin', icon: '🔨' },
     ],
     recommendedBuildsEn: [
       { name: 'Blizzard Sorceress', tag: 'Blizzard Sorc', icon: '❄️' },
@@ -210,7 +210,7 @@ const SUPER_FARMING_AREAS: SuperFarmingArea[] = [
     recommendedBuildsZh: [
       { name: '打錢翻屍野蠻人', tag: 'Horker Barb', icon: '💰' },
       { name: '盾擊/雙熱聖騎', tag: 'Smiter / Zeal', icon: '🛡️' },
-      { name: '祝福之槌聖騎', tag: 'Hammerdin', icon: '🔨' },
+      { name: '祝福之鎚聖騎', tag: 'Hammerdin', icon: '🔨' },
     ],
     recommendedBuildsEn: [
       { name: 'Find Item Horker Barb', tag: 'Horker Barb', icon: '💰' },
@@ -234,7 +234,7 @@ const SUPER_FARMING_AREAS: SuperFarmingArea[] = [
     immunitiesZh: ['火焰免疫 (深淵騎士)', '冰寒免疫 (遺忘騎士)', '閃電免疫 (暴風施術者)'],
     immunitiesEn: ['Fire (Doom Knight)', 'Cold (Oblivion Knight)', 'Light (Storm Caster)'],
     recommendedBuildsZh: [
-      { name: '祝福之槌聖騎', tag: 'Hammerdin', icon: '🔨' },
+      { name: '祝福之鎚聖騎', tag: 'Hammerdin', icon: '🔨' },
       { name: '無限電標馬', tag: 'Infinity Javazon', icon: '⚡' },
       { name: '新星/電法', tag: 'Nova / Light Sorc', icon: '⚡' },
       { name: '雙夢熱誠聖騎', tag: 'Dual Dream', icon: '🐲' },
