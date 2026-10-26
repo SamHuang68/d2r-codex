@@ -1329,7 +1329,7 @@ export function resolveItemImagePath({
   if ((n.includes('神聖小盾') || n.includes('sacred targe') || n.includes('聖騎士') || n.includes('paladin shield') || n.includes('亞特瑪') || n.includes('庫拉斯特') || n.includes('撒卡蘭姆')) && !isWeaponSlot && !isArmorSlot) {
     return `${base}images/items/bases/sacred_targe.gif`;
   }
-  if (n.includes('統治者大盾') || n.includes('monarch')) {
+  if (n.includes('統治者大盾') || n.includes('君主盾') || n.includes('monarch') || n.includes('jmod')) {
     return `${base}images/items/bases/monarch.gif`;
   }
   if (n.includes('骨盾') || n.includes('boneshield')) {
@@ -1439,7 +1439,7 @@ export function resolveItemImagePath({
   if (n.includes('戒指') || (/\bring\b/.test(n) && !n.includes('ring mail') && !n.includes('ringmail')) || slot === 'ring' || slot === 'ring1' || slot === 'ring2') {
     return `${base}images/items/uniques/ring1.gif`;
   }
-  if (n.includes('項鍊') || n.includes('amulet') || slot === 'amulet') {
+  if (n.includes('項鍊') || n.includes('amulet') || slot === 'amulet' || (n.includes('護身符') && !n.includes('咒符') && !n.includes('小護身符') && !n.includes('大護身符') && !n.includes('特大護身符') && !n.includes('超大護身符') && !n.includes('毀滅小護身符'))) {
     return `${base}images/items/uniques/amu1.gif`;
   }
 

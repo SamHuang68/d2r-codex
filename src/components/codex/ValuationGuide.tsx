@@ -283,19 +283,22 @@ export const ValuationGuide: React.FC = () => {
               return (
                 <div
                   key={item.id}
-                  className={`bg-sanctuary-900/50 rounded-3xl border ${rarityBorder} p-6 sm:p-7 flex flex-col justify-between transition-all duration-200 group shadow-lg`}
+                  className={`bg-gradient-to-b from-sanctuary-900/60 to-sanctuary-950/80 rounded-3xl border ${rarityBorder} p-6 sm:p-7 flex flex-col justify-between transition-all duration-200 group shadow-xl hover:shadow-[0_0_25px_rgba(0,0,0,0.5)]`}
                 >
                   <div className="space-y-4">
                     {/* Header */}
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-start gap-3.5">
-                        <ItemIcon
-                          name={item.name}
-                          nameEn={item.nameEn}
-                          baseItem={item.itemType}
-                          rarity={item.category === 'magic' ? 'magic' : 'rare'}
-                          size="lg"
-                        />
+                        <div className="relative shrink-0 p-1.5 rounded-2xl bg-sanctuary-950/90 border border-sanctuary-750 shadow-inner flex items-center justify-center">
+                          <ItemIcon
+                            name={item.name}
+                            nameEn={item.nameEn}
+                            baseItem={item.itemType}
+                            slot={item.category}
+                            rarity={item.rarity}
+                            size="lg"
+                          />
+                        </div>
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold ${rarityBadge}`}>
