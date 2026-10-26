@@ -658,8 +658,8 @@ export function resolveItemImagePath({
   if (n.includes('獅鷲之眼') || n.includes('格利風') || n.includes('griffon')) {
     return `${base}images/items/bases/diadem.gif`;
   }
-  if (n.includes('安達利爾的面容') || n.includes('安頭') || n.includes('andariel')) {
-    return `${base}images/items/bases/demonhead.gif`;
+  if (n.includes('安達莉爾的面貌') || n.includes('安達利爾的面容') || n.includes('安頭') || n.includes('andariel')) {
+    return `${base}images/items/uniques/mask.gif`;
   }
   if (n.includes('奇拉的守護') || n.includes('奇拉圈') || n.includes('kira')) {
     return `${base}images/items/bases/tiara.gif`;

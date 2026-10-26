@@ -142,6 +142,12 @@ assertEqual(
 );
 
 assertEqual(
+  resolveItemImagePath({ name: '安達莉爾的面貌', nameEn: "Andariel's Visage", slot: 'helm' }),
+  'images/items/uniques/mask.gif',
+  "Andariel's Visage (安達莉爾的面貌) must resolve to unique mask.gif, never demonhead.gif"
+);
+
+assertEqual(
   resolveItemImagePath({ name: '皮手套', nameEn: 'Leather Gloves', slot: 'gloves' }),
   'images/items/bases/leathergloves.gif',
   'Leather Gloves must resolve to glove sprite, not leather armor'
