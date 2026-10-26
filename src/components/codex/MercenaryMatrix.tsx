@@ -8,11 +8,12 @@ import {
 } from '../../data/mercenaryMatrix';
 import { applyMercenaryPresetToSimulator } from '../../utils/mercPresetBridge';
 import { useLanguage } from '../../context/LanguageContext';
+import { ItemIcon } from '../common/ItemIcon';
+import { getMercenaryVisual } from '../../utils/mercenaryImages';
 import {
   Search,
   Sparkles,
   Zap,
-  Shield,
   Check,
   CheckCircle2,
   ExternalLink,
@@ -147,6 +148,7 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
     const itemName = isEn ? item.nameEn : item.name;
     const itemSub = isEn ? item.name : item.nameEn;
     const base = isEn && item.baseNameEn ? item.baseNameEn : item.baseName;
+    const slotKey = labelZh === '武器' || labelZh === '副手武器' ? 'weapon' : labelZh === '頭盔' ? 'head' : 'body';
 
     return (
       <div className="flex items-start justify-between gap-2 py-1.5 border-b border-sanctuary-800/50 last:border-0 group">
@@ -155,6 +157,14 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
             <span className="text-[11px] font-medium text-sanctuary-400 shrink-0">
               {t(labelZh, labelEn)}：
             </span>
+            <ItemIcon
+              name={item.name}
+              nameEn={item.nameEn}
+              baseItem={item.baseName}
+              slot={slotKey}
+              size="xs"
+              showBorder={false}
+            />
             <button
               type="button"
               onClick={() => onNavigateItem?.(item.name)}
@@ -218,14 +228,21 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
           </div>
 
           {/* 推薦傭兵類型 */}
-          <div className="mb-2.5 px-2 py-1.5 rounded-lg bg-sanctuary-950/70 border border-sanctuary-800/80 flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-sanctuary-400 shrink-0" />
+          <div className="mb-2.5 px-2.5 py-1.5 rounded-lg bg-sanctuary-950/70 border border-sanctuary-800/80 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-md overflow-hidden shrink-0 border border-sanctuary-700 bg-sanctuary-950">
+                <img
+                  src={getMercenaryVisual(`act${tier.mercAct === 1 ? '1_rogue' : tier.mercAct === 2 ? '2_desert' : tier.mercAct === 3 ? '3_ironwolf' : '5_barbarian'}`).image}
+                  alt=""
+                  className="w-full h-full object-cover object-top"
+                  loading="lazy"
+                />
+              </div>
               <span className="text-xs font-medium text-sanctuary-200">
                 {tier.mercTypeZh}
               </span>
             </div>
-            <span className="text-[10px] text-sanctuary-400 uppercase tracking-wide">
+            <span className="text-[10px] text-sanctuary-400 uppercase tracking-wide font-mono">
               Act {tier.mercAct}
             </span>
           </div>

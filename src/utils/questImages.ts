@@ -72,7 +72,7 @@ const QUEST_VISUAL_MAP: Record<string, QuestVisualInfo> = {
   },
   act2_q5: {
     image: 'images/monsters/summoner.webp',
-    subjectZh: '召喚者 (赫拉森法師)',
+    subjectZh: '召喚師 (赫拉森法師)',
     subjectEn: 'The Summoner',
     isBoss: true,
   },
@@ -120,7 +120,7 @@ const QUEST_VISUAL_MAP: Record<string, QuestVisualInfo> = {
   // ── ACT 4 ──
   act4_q1: {
     image: 'images/monsters/izual.webp',
-    subjectZh: '墮落大天使 衣卒爾',
+    subjectZh: '墮落大天使 伊卒爾',
     subjectEn: 'Izual (Fallen Angel)',
     isBoss: true,
   },

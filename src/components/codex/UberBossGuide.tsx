@@ -122,7 +122,7 @@ export const UberBossGuide: React.FC = () => {
                 <div className="min-w-0">
                   <div className="text-[11px] font-mono text-d2-fire font-bold">{isEn ? 'Step 2' : '第 2 階段'}</div>
                   <div className="text-xs font-bold text-sanctuary-100 truncate">{isEn ? '3 Red Portals' : '開啟三紅門'}</div>
-                  <div className="text-[10px] text-sanctuary-400 truncate">{isEn ? 'Lilith, Duriel, Izual' : '莉莉絲/督瑞爾/衣卒爾'}</div>
+                  <div className="text-[10px] text-sanctuary-400 truncate">{isEn ? 'Lilith, Duriel, Izual' : '莉莉絲/都瑞爾/伊卒爾'}</div>
                 </div>
               </div>
 
@@ -197,7 +197,7 @@ export const UberBossGuide: React.FC = () => {
                         <div className="w-12 h-12 rounded-lg overflow-hidden border border-sanctuary-700 bg-sanctuary-950 mb-1">
                           <img src={imgSummoner} alt="The Summoner" className="w-full h-full object-cover object-top" />
                         </div>
-                        <span className="text-[11px] font-bold text-sanctuary-200 truncate w-full">{isEn ? 'Summoner' : '召喚者'}</span>
+                        <span className="text-[11px] font-bold text-sanctuary-200 truncate w-full">{isEn ? 'Summoner' : '召喚師'}</span>
                         <span className="text-[10px] text-d2-gold font-mono">{isEn ? 'Hate Key' : '憎恨之鑰'}</span>
                       </div>
 

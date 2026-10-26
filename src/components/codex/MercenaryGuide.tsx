@@ -4,16 +4,20 @@ import { MercenaryStats } from './MercenaryStats';
 import { MercenaryMatrix } from './MercenaryMatrix';
 import type { MercTierBuild } from '../../data/mercenaryMatrix';
 import { useLanguage } from '../../context/LanguageContext';
+import { getMercenaryVisual } from '../../utils/mercenaryImages';
+import { ItemIcon } from '../common/ItemIcon';
 import { 
   Users, 
   ShieldCheck, 
   Sparkles, 
   Sword, 
-  Award,
-  Zap,
-  Info,
-  Grid3X3,
-  BookOpen
+  Award, 
+  Zap, 
+  Info, 
+  Grid3X3, 
+  BookOpen,
+  MapPin,
+  Shield
 } from 'lucide-react';
 
 export interface MercenaryGuideProps {
@@ -22,31 +26,34 @@ export interface MercenaryGuideProps {
 }
 
 export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, onNavigateToSimulator }) => {
-  const { t } = useLanguage();
+  const { t, isEn } = useLanguage();
   const [viewMode, setViewMode] = useState<'matrix' | 'act_guide'>('matrix');
   const [selectedActId, setSelectedActId] = useState<string>('act2_desert');
 
   const currentMerc = MERCENARIES_DATA.find((m) => m.id === selectedActId) || MERCENARIES_DATA[0];
+  const currentVisual = getMercenaryVisual(currentMerc.id);
 
-  const renderParsedItemLinks = (rawText: string, colorClass: string) => {
+  const renderParsedItemLinks = (rawText: string, colorClass: string, slot?: string) => {
     if (rawText.includes('【') && rawText.includes('】')) {
       const parts = rawText.split(/(【[^】]+】)/g);
       return (
-        <span className="flex items-center gap-1 flex-wrap justify-end">
+        <span className="flex items-center gap-1.5 flex-wrap justify-end">
           {parts.map((part, idx) => {
             if (part.startsWith('【') && part.endsWith('】')) {
               const itemName = part.slice(1, -1);
               return (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => onNavigateItem?.(itemName)}
-                  className={`${colorClass} hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5 transition-colors`}
-                  title={`點擊查看【${itemName}】詳細屬性`}
-                >
-                  <span>【{itemName}】</span>
-                  <span className="text-[9px] opacity-70">↗</span>
-                </button>
+                <span key={idx} className="inline-flex items-center gap-1">
+                  <ItemIcon name={itemName} slot={slot} size="xs" showBorder={false} />
+                  <button
+                    type="button"
+                    onClick={() => onNavigateItem?.(itemName)}
+                    className={`${colorClass} hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5 transition-colors`}
+                    title={`點擊查看【${itemName}】詳細屬性`}
+                  >
+                    <span>【{itemName}】</span>
+                    <span className="text-[9px] opacity-70">↗</span>
+                  </button>
+                </span>
               );
             }
             return (
@@ -60,15 +67,18 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
     }
 
     return (
-      <button
-        type="button"
-        onClick={() => onNavigateItem?.(rawText)}
-        className={`${colorClass} font-bold hover:underline cursor-pointer transition-colors flex items-center gap-1`}
-        title={`點擊跳轉查看【${rawText}】詳細屬性`}
-      >
-        <span>{rawText}</span>
-        <span className="text-[9px] opacity-70">↗</span>
-      </button>
+      <span className="inline-flex items-center gap-1">
+        <ItemIcon name={rawText} slot={slot} size="xs" showBorder={false} />
+        <button
+          type="button"
+          onClick={() => onNavigateItem?.(rawText)}
+          className={`${colorClass} font-bold hover:underline cursor-pointer transition-colors flex items-center gap-1`}
+          title={`點擊跳轉查看【${rawText}】詳細屬性`}
+        >
+          <span>{rawText}</span>
+          <span className="text-[9px] opacity-70">↗</span>
+        </button>
+      </span>
     );
   };
 
@@ -129,18 +139,20 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
         />
       ) : (
         <div className="space-y-6">
-          {/* Act Selection Tabs */}
+          {/* Act Selection Tabs with Mercenary Portraits */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {MERCENARIES_DATA.map((merc) => {
               const isSelected = merc.id === selectedActId;
+              const visual = getMercenaryVisual(merc.id);
+
               return (
                 <button
                   key={merc.id}
                   onClick={() => setSelectedActId(merc.id)}
-                  className={`p-4 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between ${
+                  className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between group cursor-pointer ${
                     isSelected
-                      ? 'bg-sanctuary-900 border-d2-fire/80 shadow-glow-gold'
-                      : 'bg-sanctuary-900/40 border-sanctuary-800/80 hover:border-sanctuary-700 hover:bg-sanctuary-900/60'
+                      ? 'bg-sanctuary-900 border-d2-fire shadow-glow-gold ring-1 ring-d2-fire/50'
+                      : 'bg-sanctuary-900/40 border-sanctuary-800/80 hover:border-sanctuary-700 hover:bg-sanctuary-900/70'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -150,23 +162,34 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
                       Act {merc.act}
                     </span>
                     {merc.id === 'act2_desert' && (
-                      <span className="text-[10px] text-d2-gold font-mono flex items-center gap-0.5">
-                        <Award className="w-3 h-3" /> 最熱門
+                      <span className="text-[10px] text-d2-gold font-mono flex items-center gap-0.5 font-bold">
+                        <Award className="w-3 h-3" /> {isEn ? 'Top Pick' : '最熱門'}
                       </span>
                     )}
                     {merc.id === 'act5_barbarian' && (
-                      <span className="text-[10px] text-d2-unique font-mono flex items-center gap-0.5">
-                        <Zap className="w-3 h-3" /> 2.4戰神
+                      <span className="text-[10px] text-d2-unique font-mono flex items-center gap-0.5 font-bold">
+                        <Zap className="w-3 h-3" /> {isEn ? 'Patch 2.4' : '2.4戰神'}
                       </span>
                     )}
                   </div>
-                  <div>
-                    <h3 className={`font-bold text-sm sm:text-base ${isSelected ? 'text-d2-fire' : 'text-sanctuary-100'}`}>
-                      {merc.name}
-                    </h3>
-                    <p className="text-xs text-sanctuary-400 line-clamp-1 mt-0.5 font-mono">
-                      {merc.type}
-                    </p>
+
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-sanctuary-700/80 bg-sanctuary-950 shadow-inner">
+                      <img
+                        src={visual.image}
+                        alt={merc.name}
+                        className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-110"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className={`font-bold text-sm sm:text-base truncate transition-colors ${isSelected ? 'text-d2-fire' : 'text-sanctuary-100 group-hover:text-white'}`}>
+                        {isEn ? merc.nameEn : merc.name}
+                      </h3>
+                      <p className="text-xs text-sanctuary-400 line-clamp-1 mt-0.5 font-mono">
+                        {isEn ? visual.roleTagEn : merc.type}
+                      </p>
+                    </div>
                   </div>
                 </button>
               );
@@ -175,29 +198,50 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
 
           {/* Detailed View of Current Mercenary */}
           <div className="space-y-6">
-            {/* Overview Banner */}
-            <div className="bg-sanctuary-900/60 border border-sanctuary-800 rounded-3xl p-6 sm:p-8 space-y-4">
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                <div>
-                  <div className="text-xs font-mono text-d2-fire">
-                    第 {currentMerc.act} 章 · {currentMerc.nameEn}
-                  </div>
-                  <h2 className="text-2xl sm:text-3xl font-diablo font-bold text-sanctuary-100 mt-1">
-                    {currentMerc.name}
-                  </h2>
-                  <div className="text-xs text-d2-gold font-mono mt-0.5">
-                    定位：{currentMerc.type}
+            {/* Overview Banner with Large Mercenary Portrait & Badges */}
+            <div className="bg-gradient-to-r from-sanctuary-900/90 via-sanctuary-950/95 to-sanctuary-900/90 border border-sanctuary-800 rounded-3xl p-6 sm:p-8 space-y-5 shadow-xl">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+                {/* Large Portrait Card */}
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shrink-0 border-2 border-d2-fire/50 bg-sanctuary-950 shadow-[0_0_20px_rgba(255,100,50,0.2)]">
+                  <img
+                    src={currentVisual.image}
+                    alt={currentMerc.name}
+                    className="w-full h-full object-cover object-top"
+                  />
+                  <div className="absolute top-1 right-1 px-1.5 py-0.2 rounded bg-d2-fire text-sanctuary-950 text-[9px] font-bold font-mono tracking-wider">
+                    ACT {currentMerc.act}
                   </div>
                 </div>
-                
-                <div className="flex flex-wrap gap-2 text-xs">
-                  <span className="px-3 py-1 rounded-xl bg-sanctuary-950 border border-sanctuary-800 text-sanctuary-300">
-                    可穿戴：{currentMerc.equipmentTypes.join('、')}
-                  </span>
+
+                {/* Info Block */}
+                <div className="min-w-0 flex-1 space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-mono text-d2-fire font-bold">
+                      {isEn ? `Act ${currentMerc.act} · ${currentMerc.nameEn}` : `第 ${currentMerc.act} 章 · ${currentMerc.nameEn}`}
+                    </span>
+                    <span className="text-xs font-mono px-2 py-0.5 rounded bg-sanctuary-800/90 text-sanctuary-300 border border-sanctuary-700 flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-d2-gold" />
+                      {isEn ? `Recruit from: ${currentVisual.captainEn}` : `招募長官：${currentVisual.captainZh}`}
+                    </span>
+                  </div>
+
+                  <h2 className="text-2xl sm:text-3xl font-diablo font-bold text-sanctuary-100">
+                    {isEn ? currentMerc.nameEn : currentMerc.name}
+                  </h2>
+
+                  <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+                    <span className="text-d2-gold font-bold">
+                      {isEn ? "Role: " : "戰術定位："}{isEn ? currentVisual.roleTagEn : currentMerc.type}
+                    </span>
+                    <span className="text-sanctuary-600">·</span>
+                    <span className="text-sanctuary-300">
+                      {isEn ? "Equip: " : "可穿戴："}{currentMerc.equipmentTypes.join('、')}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              <p className="text-sm text-sanctuary-300 leading-relaxed border-t border-sanctuary-800/80 pt-4">
+              <p className="text-sm text-sanctuary-300 leading-relaxed border-t border-sanctuary-800/80 pt-4 font-sans">
                 {currentMerc.description}
               </p>
 
@@ -205,15 +249,16 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
               <div className="bg-sanctuary-950/80 border border-d2-gold/30 rounded-2xl p-4 flex gap-3 items-start">
                 <Info className="w-5 h-5 text-d2-gold shrink-0 mt-0.5" />
                 <div className="text-xs text-sanctuary-300 leading-relaxed">
-                  <span className="font-bold text-d2-gold font-mono">【Patch 2.4 重生改版亮點】：</span>
+                  <span className="font-bold text-d2-gold font-mono">{isEn ? "[Patch 2.4 Resurrected Highlights]: " : "【Patch 2.4 重生改版亮點】："}</span>
                   {currentMerc.patch24Updates}
                 </div>
               </div>
 
               {/* Native skills/auras list */}
               <div className="space-y-2">
-                <h4 className="text-xs font-mono font-bold text-sanctuary-400 uppercase tracking-wider">
-                  原生技能與光環靈氣：
+                <h4 className="text-xs font-mono font-bold text-sanctuary-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Shield className="w-3.5 h-3.5 text-d2-fire" />
+                  {isEn ? "Native Skills & Granted Auras:" : "原生技能與光環靈氣："}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {currentMerc.nativeAurasOrSkills.map((sk, idx) => (
@@ -237,7 +282,7 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
               <div className="flex items-center gap-2">
                 <Sword className="w-5 h-5 text-d2-fire" />
                 <h3 className="text-xl font-diablo font-bold text-sanctuary-100">
-                  主流 S 級畢業配裝配置 (Meta Builds)
+                  {isEn ? "Recommended S-Tier Meta Builds" : "主流 S 級畢業配裝配置 (Meta Builds)"}
                 </h3>
               </div>
 
@@ -250,7 +295,7 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-2">
                         <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-d2-fire/15 text-d2-fire border border-d2-fire/30 font-bold">
-                          推薦配置 #{idx + 1}
+                          {isEn ? `Build Setup #${idx + 1}` : `推薦配置 #${idx + 1}`}
                         </span>
                         <span className="text-xs font-mono text-sanctuary-400">
                           {build.role}
@@ -261,19 +306,19 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
                         {build.name}
                       </h4>
 
-                      {/* Gear Slots */}
+                      {/* Gear Slots with Item Icons */}
                       <div className="space-y-2 bg-sanctuary-950/70 p-3.5 rounded-xl border border-sanctuary-800/80 mb-4 text-xs font-mono">
                         <div className="flex items-center justify-between gap-2">
-                          <span className="text-sanctuary-500 shrink-0">武器：</span>
-                          {renderParsedItemLinks(build.weapon, 'text-d2-unique hover:text-amber-300')}
+                          <span className="text-sanctuary-500 shrink-0">{isEn ? "Weapon: " : "武器："}</span>
+                          {renderParsedItemLinks(build.weapon, 'text-d2-unique hover:text-amber-300', 'weapon')}
                         </div>
                         <div className="flex items-center justify-between gap-2">
-                          <span className="text-sanctuary-500 shrink-0">頭盔：</span>
-                          {renderParsedItemLinks(build.helm, 'text-d2-set hover:text-green-300')}
+                          <span className="text-sanctuary-500 shrink-0">{isEn ? "Helm: " : "頭盔："}</span>
+                          {renderParsedItemLinks(build.helm, 'text-d2-set hover:text-green-300', 'head')}
                         </div>
                         <div className="flex items-center justify-between gap-2">
-                          <span className="text-sanctuary-500 shrink-0">盔甲：</span>
-                          {renderParsedItemLinks(build.armor, 'text-d2-rune hover:text-orange-300')}
+                          <span className="text-sanctuary-500 shrink-0">{isEn ? "Armor: " : "盔甲："}</span>
+                          {renderParsedItemLinks(build.armor, 'text-d2-rune hover:text-orange-300', 'body')}
                         </div>
                       </div>
 
@@ -284,7 +329,7 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
 
                     {/* Strengths tags */}
                     <div className="border-t border-sanctuary-800/80 pt-3">
-                      <div className="text-[10px] font-mono text-sanctuary-500 mb-1.5">核心優勢：</div>
+                      <div className="text-[10px] font-mono text-sanctuary-500 mb-1.5">{isEn ? "Key Strengths:" : "核心優勢："}</div>
                       <div className="flex flex-wrap gap-1.5">
                         {build.strengths.map((str, sIdx) => (
                           <span
