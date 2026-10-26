@@ -3,6 +3,7 @@ import { Ghost, MapPin, Search, ShieldOff, Flame } from 'lucide-react';
 import { PageHeader } from '../common/PageHeader';
 import { useLanguage } from '../../context/LanguageContext';
 import { getMonsterImage, MAJOR_BOSS_SPOTLIGHT, type BossSpotlightItem } from '../../utils/monsterImages';
+import { BossTacticsShowcase } from './BossTacticsShowcase';
 import {
   AREAS, DIFF_ZH, ELEMS, ELEM_ZH, KIND_ZH, MONSTERS, areaImmunity, areaLevel, areasOfMonster, immunitiesOf, isImmune, resistOf,
   type Area, type Diff, type ElemKey, type Monster,
@@ -66,7 +67,10 @@ const MonsterRow: React.FC<{ m: Monster; diff: Diff; open: boolean; onToggle: ()
   const imgSrc = getMonsterImage(m);
 
   return (
-    <div className={`rounded-xl border transition-all duration-200 ${open ? 'border-sanctuary-700 bg-sanctuary-900/60 shadow-lg' : 'border-sanctuary-800/80 bg-sanctuary-900/40 hover:border-sanctuary-700/70'}`}>
+    <div
+      id={`monster-${m.id}`}
+      className={`rounded-xl border transition-all duration-200 scroll-mt-24 ${open ? 'border-sanctuary-700 bg-sanctuary-900/60 shadow-lg ring-1 ring-d2-fire/40' : 'border-sanctuary-800/80 bg-sanctuary-900/40 hover:border-sanctuary-700/70'}`}
+    >
       <button
         type="button"
         onClick={onToggle}
@@ -255,8 +259,30 @@ const MonstersTab: React.FC<{ initialQuery?: string }> = ({ initialQuery }) => {
     setOpen(boss.id);
   };
 
+  const handleSelectBossById = (bossId: string) => {
+    const boss = MAJOR_BOSS_SPOTLIGHT.find((b) => b.id === bossId) || {
+      id: bossId,
+      name: bossId === 'baalcrab' ? '巴爾' : bossId,
+      nameEn: bossId === 'baalcrab' ? 'Baal' : bossId,
+    };
+    setImmune([]);
+    setKind('boss');
+    setQ(isEn ? (boss.nameEn || boss.name) : boss.name);
+    setOpen(boss.id);
+
+    setTimeout(() => {
+      const el = document.getElementById(`monster-${boss.id}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 150);
+  };
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* 五大章節核心首領弱點、逃課與打寶提款聖典展廳 */}
+      <BossTacticsShowcase onSelectBoss={handleSelectBossById} />
+
       {/* Prime Evils & Act Bosses Spotlight */}
       <div className="bg-sanctuary-900/60 p-4 rounded-2xl border border-sanctuary-800 space-y-3">
         <div className="flex items-center justify-between">
