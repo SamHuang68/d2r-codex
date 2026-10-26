@@ -6,7 +6,22 @@ import { ItemIcon } from '../common/ItemIcon';
 import { TreeIndex, Crumbs, SectionHead, crumbsOf } from '../common/TreeIndex';
 import { TreeNode, buildTree, recount, findNode, leavesOf, inNode, relPath } from '../../utils/equipTaxonomy';
 import { ITEM_TREE_DEFS, CHARM_LABEL, U_ENTRIES, S_ENTRIES } from '../../utils/itemIndex';
-import { Trophy, CheckCircle2, Circle, Download, Upload, Sparkles } from 'lucide-react';
+import { 
+  Trophy, 
+  CheckCircle2, 
+  Circle, 
+  Download, 
+  Upload, 
+  Sparkles, 
+  Sword, 
+  Shield, 
+  Crown, 
+  Gem, 
+  Layers, 
+  Award,
+  Lock,
+  Unlock
+} from 'lucide-react';
 
 const TC87_IDENTIFIERS = [
   "tyraels_might",
@@ -27,6 +42,75 @@ const TC87_IDENTIFIERS = [
   "cranial_basher",
   "earth_shifter",
   "the_reapers_toll"
+];
+
+interface BigFourTrophy {
+  id: string;
+  name: string;
+  nameEn: string;
+  baseItem: string;
+  slot: string;
+  taglineZh: string;
+  taglineEn: string;
+  keyStatsZh: string;
+  keyStatsEn: string;
+  dropRarityZh: string;
+  dropRarityEn: string;
+}
+
+const BIG_FOUR_TROPHIES: BigFourTrophy[] = [
+  {
+    id: 'tyraels_might',
+    name: '泰瑞爾之力',
+    nameEn: "Tyrael's Might",
+    baseItem: '神聖戰甲 (Sacred Armor)',
+    slot: 'armor',
+    taglineZh: '全暗黑掉落率最低之神物 • 聖杯終極大魔王',
+    taglineEn: 'Lowest drop rate in D2R • The Ultimate Holy Grail Boss',
+    keyStatsZh: '無法破壞 · 裝備需求 -100% · 無法凍結 · 全抗 +20-30',
+    keyStatsEn: 'Indestructible · -100% Req · Cannot Be Frozen · All Res +20-30',
+    dropRarityZh: '掉落率約 1/400,000 (限巴爾/迪亞布羅/85場景)',
+    dropRarityEn: '~1/400,000 drop chance from Baal/Diablo/alvl85',
+  },
+  {
+    id: 'windforce',
+    name: '風之力',
+    nameEn: 'Windforce',
+    baseItem: '多頭蛇弓 (Hydra Bow)',
+    slot: 'weapon',
+    taglineZh: '物理弓馬信仰神兵 • 二十載不墜之傳奇',
+    taglineEn: 'Physical Bowazon Legend • Iconic 20-Year Heritage',
+    keyStatsZh: '+依等級最大傷害 · 擊退 · 20% 攻擊速度 · 8% 偷取法力',
+    keyStatsEn: '+Max Dmg/Lvl · Knockback · 20% IAS · 8% Mana Leech',
+    dropRarityZh: 'TC87 武器精華 (地穴/古代通道/混沌魔殿)',
+    dropRarityEn: 'TC87 Weapon (The Pit / Ancient Tunnels)',
+  },
+  {
+    id: 'deaths_web',
+    name: '死亡之網',
+    nameEn: "Death's Web",
+    baseItem: '埋骨魔杖 (Unearthed Wand)',
+    slot: 'weapon',
+    taglineZh: '劇毒死靈唯一真神 • 毒系破免必備權杖',
+    taglineEn: 'Poison Necromancer God Tier • Crucial -50% Poison Res',
+    keyStatsZh: '-40% 至 -50% 敵人毒素抗性 · +1-2 毒素與白骨技能',
+    keyStatsEn: '-40% to -50% Enemy Poison Res · +1-2 Poison & Bone',
+    dropRarityZh: 'TC87 最稀有法杖 (極度罕見掉落)',
+    dropRarityEn: 'Rarest Wand in D2R (TC87 Unearthed Wand)',
+  },
+  {
+    id: 'griffons_eye',
+    name: '獅鷲之眼',
+    nameEn: "Griffon's Eye",
+    baseItem: '權冠 (Diadem)',
+    slot: 'helm',
+    taglineZh: '閃電系流派終極畢業冠冕 • 標馬/電法神頂配',
+    taglineEn: 'Endgame Lightning Crown • Javazon & Light Sorc Dream',
+    keyStatsZh: '-15% 至 -20% 敵人閃電抗性 · +10-15% 閃電技能傷害 · 25% 快速施法',
+    keyStatsEn: '-15% to -20% Enemy Light Res · +10-15% Light Dmg · 25% FCR',
+    dropRarityZh: 'TC87 權冠掉落 (限 85 場景/巴爾)',
+    dropRarityEn: 'TC87 Diadem (Only Level 85 Zones & Hell Baal)',
+  },
 ];
 
 export const HolyGrailTracker: React.FC = () => {
@@ -132,6 +216,16 @@ export const HolyGrailTracker: React.FC = () => {
   const obtainedCount = Object.keys(grailState.obtainedItemIds).length;
   const ethCount = Object.keys(grailState.etherealItemIds).length;
   const progressPercent = totalCount > 0 ? ((obtainedCount / totalCount) * 100).toFixed(1) : '0';
+  const progressNum = parseFloat(progressPercent);
+
+  // 榮譽稱號階級
+  const rankInfo = useMemo(() => {
+    if (progressNum >= 100) return { title: isEn ? "Lord of the Holy Grail" : "萬物歸一 • 白金至高神", color: "text-d2-gold", border: "border-d2-gold" };
+    if (progressNum >= 80) return { title: isEn ? "Chosen of Tyrael" : "泰瑞爾之選 • 傳奇宗師", color: "text-amber-400", border: "border-amber-400/60" };
+    if (progressNum >= 50) return { title: isEn ? "Master Treasure Hunter" : "傳奇尋寶大師", color: "text-d2-unique", border: "border-d2-unique/50" };
+    if (progressNum >= 20) return { title: isEn ? "Sanctuary Explorer" : "庇護冒險家", color: "text-d2-magic", border: "border-d2-magic/40" };
+    return { title: isEn ? "Treasure Seeker" : "初醒探求者", color: "text-sanctuary-400", border: "border-sanctuary-800" };
+  }, [progressNum, isEn]);
 
   // TC87 Stats
   const tc87Items = useMemo(() => allGrailItems.filter(i => i.isTC87), [allGrailItems]);
@@ -140,12 +234,12 @@ export const HolyGrailTracker: React.FC = () => {
   // Slot Breakdown Stats
   const slotStats = useMemo(() => {
     const slots = [
-      { id: 'weapon', label: isEn ? 'Weapons' : '武器類' },
-      { id: 'armor', label: isEn ? 'Armor' : '衣服護甲' },
-      { id: 'helm', label: isEn ? 'Helms' : '頭盔' },
-      { id: 'shield', label: isEn ? 'Shields' : '盾牌類' },
-      { id: 'jewelry', label: isEn ? 'Jewelry' : '首飾護符' },
-      { id: 'set', label: isEn ? 'Set Items' : '綠色套裝' },
+      { id: 'weapon', label: isEn ? 'Weapons' : '武器類', icon: <Sword className="w-3.5 h-3.5 text-d2-fire" /> },
+      { id: 'armor', label: isEn ? 'Armor' : '衣服護甲', icon: <Shield className="w-3.5 h-3.5 text-d2-gold" /> },
+      { id: 'helm', label: isEn ? 'Helms' : '頭盔類', icon: <Crown className="w-3.5 h-3.5 text-amber-300" /> },
+      { id: 'shield', label: isEn ? 'Shields' : '盾牌類', icon: <Shield className="w-3.5 h-3.5 text-blue-400" /> },
+      { id: 'jewelry', label: isEn ? 'Jewelry' : '首飾護符', icon: <Gem className="w-3.5 h-3.5 text-d2-magic" /> },
+      { id: 'set', label: isEn ? 'Set Items' : '綠色套裝', icon: <Layers className="w-3.5 h-3.5 text-d2-set" /> },
     ];
 
     return slots.map(slot => {
@@ -169,7 +263,7 @@ export const HolyGrailTracker: React.FC = () => {
         pct
       };
     });
-  }, [allGrailItems, grailState]);
+  }, [allGrailItems, grailState, isEn]);
 
   // Filter items
   const displayedItems = useMemo(() => {
@@ -204,10 +298,11 @@ export const HolyGrailTracker: React.FC = () => {
   }, [baseTree, displayedItems]);
   const root: TreeNode = useMemo(() => ({ id: 'all', label: isEn ? 'All Holy Grail' : '全部聖杯', count: displayedItems.length, children: tree }), [tree, displayedItems.length]);
   const node = sel === 'all' ? root : findNode(tree, sel) ?? root;
-  // 目前節點一筆都沒有、但別處有符合（搜尋或篩選的結果落在別的分類）時，自動放寬到全部
+
   React.useEffect(() => {
     if (node.id !== 'all' && node.count === 0 && root.count > 0) setSel('all');
   }, [node.id, node.count, root.count]);
+
   const isLeaf = !node.children;
   const leaves = useMemo(() => leavesOf(node).filter((l) => l.count > 0), [node]);
   const progressOf = (nodeId: string) => {
@@ -262,7 +357,9 @@ export const HolyGrailTracker: React.FC = () => {
             {isEn ? "Diablo II: Resurrected Holy Grail Checklist" : "暗黑聖杯挑戰進度追蹤 (Holy Grail Tracker)"}
           </h1>
           <p className="text-xs sm:text-sm text-sanctuary-400 mt-1 max-w-2xl">
-            {isEn ? "Local-only offline tracking of all unique and set items in Diablo II: Resurrected. Challenge yourself to 100% complete collection! Includes TC87 hall of fame filters." : "純本地無痕紀錄遊戲內全數暗金與成套套裝掉落，挑戰 100% 圓滿收藏！支援 TC87 殿堂神物專屬篩選與分類進度分析。"}
+            {isEn 
+              ? "Local-only offline tracking of all unique and set items in Diablo II: Resurrected. Challenge yourself to 100% complete collection! Includes TC87 hall of fame filters." 
+              : "純本地無痕紀錄遊戲內全數暗金與成套套裝掉落，挑戰 100% 圓滿收藏！支援 TC87 殿堂神物專屬篩選與分類進度分析。"}
           </p>
         </div>
 
@@ -287,7 +384,13 @@ export const HolyGrailTracker: React.FC = () => {
       <div className="p-6 rounded-3xl bg-sanctuary-950 border border-sanctuary-800 shadow-2xl space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="text-xs text-sanctuary-400 font-medium">{isEn ? "Holy Grail Completion Rate" : "總體聖杯收集完成率"}</div>
+            <div className="text-xs text-sanctuary-400 font-medium flex items-center gap-2">
+              <span>{isEn ? "Holy Grail Completion Rate" : "總體聖杯收集完成率"}</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${rankInfo.border} ${rankInfo.color} bg-sanctuary-900/60 flex items-center gap-1`}>
+                <Award className="w-3 h-3" />
+                <span>{rankInfo.title}</span>
+              </span>
+            </div>
             <div className="font-diablo text-4xl font-black text-d2-gold mt-1 flex items-baseline gap-2">
               <span>{progressPercent}%</span>
               <span className="text-xs font-mono font-normal text-sanctuary-500">
@@ -320,15 +423,18 @@ export const HolyGrailTracker: React.FC = () => {
           />
         </div>
 
-        {/* Category Breakdown Progress Mini-Cards */}
+        {/* Category Breakdown Progress Mini-Cards with Icons */}
         <div className="pt-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
           {slotStats.map((slot) => (
             <div
               key={slot.id}
-              className="bg-sanctuary-900/50 p-2.5 rounded-xl border border-sanctuary-800/80 space-y-1.5"
+              className="bg-sanctuary-900/50 p-2.5 rounded-xl border border-sanctuary-800/80 space-y-1.5 hover:border-sanctuary-700 transition-colors"
             >
               <div className="flex justify-between items-center text-[11px] font-mono">
-                <span className="text-sanctuary-300 font-medium">{slot.label}</span>
+                <span className="text-sanctuary-300 font-medium flex items-center gap-1.5">
+                  {slot.icon}
+                  <span>{slot.label}</span>
+                </span>
                 <span className="text-d2-gold font-bold">{slot.pct}%</span>
               </div>
               <div className="w-full h-1.5 bg-sanctuary-950 rounded-full overflow-hidden border border-sanctuary-800">
@@ -342,6 +448,128 @@ export const HolyGrailTracker: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* ── 聖杯榮譽殿堂 • 四大終極天王 (The Holy Grail Wall of Fame • The Big Four) ── */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 rounded-xl bg-d2-gold/15 text-d2-gold border border-d2-gold/30">
+              <Trophy className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="font-diablo text-lg sm:text-xl font-bold text-sanctuary-100 flex items-center gap-2">
+                <span>{isEn ? "The Holy Grail - Hall of the Big Four" : "聖杯榮譽殿堂 • 四大終極天王"}</span>
+                <span className="text-xs font-mono font-normal text-d2-gold">
+                  ({BIG_FOUR_TROPHIES.filter(t => Boolean(grailState.obtainedItemIds[t.id])).length} / 4)
+                </span>
+              </h2>
+              <p className="text-xs text-sanctuary-400">
+                {isEn 
+                  ? "The lowest drop rates in Diablo II: Resurrected. Click a card to toggle collection status!" 
+                  : "全暗黑掉落率最極限的四大神裝。點擊卡片即可快速標記/切換收集狀態！"}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {BIG_FOUR_TROPHIES.map((trophy) => {
+            const isClaimed = Boolean(grailState.obtainedItemIds[trophy.id]);
+
+            return (
+              <div
+                key={trophy.id}
+                role="button"
+                tabIndex={0}
+                aria-pressed={isClaimed}
+                aria-label={`${trophy.name} (${trophy.nameEn}) ${isClaimed ? (isEn ? 'Claimed' : '已收集') : (isEn ? 'Unfound' : '未收集')}`}
+                onClick={() => toggleObtained(trophy.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleObtained(trophy.id);
+                  }
+                }}
+                className={`relative cursor-pointer p-4 rounded-2xl border transition-all duration-300 group flex flex-col justify-between select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold focus-visible:ring-offset-2 focus-visible:ring-offset-sanctuary-950 ${
+                  isClaimed
+                    ? 'bg-gradient-to-b from-sanctuary-900/90 via-sanctuary-950 to-sanctuary-900/90 border-d2-unique/80 shadow-[0_0_20px_rgba(200,165,100,0.25)] hover:border-d2-gold'
+                    : 'bg-sanctuary-950/70 border-sanctuary-800/80 hover:border-sanctuary-700 opacity-65 hover:opacity-90'
+                }`}
+              >
+                <div>
+                  {/* Status Badge */}
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold flex items-center gap-1 border ${
+                      isClaimed
+                        ? 'bg-d2-gold/20 text-d2-gold border-d2-gold/50'
+                        : 'bg-sanctuary-900 text-sanctuary-400 border-sanctuary-800'
+                    }`}>
+                      {isClaimed ? (
+                        <>
+                          <Unlock className="w-3 h-3 text-d2-gold" />
+                          <span>{isEn ? "Grail Claimed" : "🏆 已刻入聖杯"}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Lock className="w-3 h-3 text-sanctuary-500" />
+                          <span>{isEn ? "Sealed / Unfound" : "🔒 封印尋獲中"}</span>
+                        </>
+                      )}
+                    </span>
+                    <span className="text-[10px] font-mono text-sanctuary-400">TC87</span>
+                  </div>
+
+                  {/* Icon & Title */}
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`p-1.5 rounded-xl border flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${
+                      isClaimed 
+                        ? 'bg-sanctuary-900 border-d2-unique/60 shadow-[0_0_12px_rgba(200,165,100,0.3)]' 
+                        : 'bg-sanctuary-900/50 border-sanctuary-800 grayscale'
+                    }`}>
+                      <ItemIcon
+                        name={trophy.name}
+                        nameEn={trophy.nameEn}
+                        slot={trophy.slot}
+                        rarity="unique"
+                        size="md"
+                      />
+                    </div>
+
+                    <div className="min-w-0">
+                      <h3 className={`font-diablo text-base font-bold truncate transition-colors ${
+                        isClaimed ? 'text-d2-unique group-hover:text-amber-200' : 'text-sanctuary-300'
+                      }`}>
+                        {trophy.name}
+                      </h3>
+                      <div className="text-[11px] font-mono text-sanctuary-400 truncate">
+                        {trophy.nameEn}
+                      </div>
+                      <div className="text-[10px] text-sanctuary-500 font-mono truncate">
+                        {trophy.baseItem}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tagline */}
+                  <div className="text-[11px] text-sanctuary-300 font-medium mb-2 leading-snug">
+                    {isEn ? trophy.taglineEn : trophy.taglineZh}
+                  </div>
+
+                  {/* Key Stats */}
+                  <div className="p-2 rounded-xl bg-sanctuary-900/60 border border-sanctuary-850 text-[10px] text-sanctuary-300 leading-relaxed font-sans mb-2">
+                    {isEn ? trophy.keyStatsEn : trophy.keyStatsZh}
+                  </div>
+                </div>
+
+                {/* Drop Rarity Footer */}
+                <div className="pt-2 border-t border-sanctuary-850/80 flex items-center justify-between text-[10px] font-mono text-sanctuary-500">
+                  <span>{isEn ? trophy.dropRarityEn : trophy.dropRarityZh}</span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -451,7 +679,7 @@ export const HolyGrailTracker: React.FC = () => {
                         )}
                         <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-3">
                           {g.rows.map((item) => {
-          const isObtained = Boolean(grailState.obtainedItemIds[item.id]);
+                            const isObtained = Boolean(grailState.obtainedItemIds[item.id]);
                             const isEth = Boolean(grailState.etherealItemIds[item.id]);
 
                             return (
