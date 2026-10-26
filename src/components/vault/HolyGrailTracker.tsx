@@ -49,6 +49,7 @@ interface BigFourTrophy {
   name: string;
   nameEn: string;
   baseItem: string;
+  baseItemEn?: string;
   slot: string;
   taglineZh: string;
   taglineEn: string;
@@ -64,6 +65,7 @@ const BIG_FOUR_TROPHIES: BigFourTrophy[] = [
     name: '泰瑞爾之力',
     nameEn: "Tyrael's Might",
     baseItem: '神聖戰甲 (Sacred Armor)',
+    baseItemEn: 'Sacred Armor',
     slot: 'armor',
     taglineZh: '全暗黑掉落率最低之神物 • 聖杯終極大魔王',
     taglineEn: 'Lowest drop rate in D2R • The Ultimate Holy Grail Boss',
@@ -77,6 +79,7 @@ const BIG_FOUR_TROPHIES: BigFourTrophy[] = [
     name: '風之力',
     nameEn: 'Windforce',
     baseItem: '多頭蛇弓 (Hydra Bow)',
+    baseItemEn: 'Hydra Bow',
     slot: 'weapon',
     taglineZh: '物理弓馬信仰神兵 • 二十載不墜之傳奇',
     taglineEn: 'Physical Bowazon Legend • Iconic 20-Year Heritage',
@@ -90,6 +93,7 @@ const BIG_FOUR_TROPHIES: BigFourTrophy[] = [
     name: '死亡之網',
     nameEn: "Death's Web",
     baseItem: '埋骨魔杖 (Unearthed Wand)',
+    baseItemEn: 'Unearthed Wand',
     slot: 'weapon',
     taglineZh: '劇毒死靈唯一真神 • 毒系破免必備權杖',
     taglineEn: 'Poison Necromancer God Tier • Crucial -50% Poison Res',
@@ -103,6 +107,7 @@ const BIG_FOUR_TROPHIES: BigFourTrophy[] = [
     name: '獅鷲之眼',
     nameEn: "Griffon's Eye",
     baseItem: '權冠 (Diadem)',
+    baseItemEn: 'Diadem',
     slot: 'helm',
     taglineZh: '閃電系流派終極畢業冠冕 • 標馬/電法神頂配',
     taglineEn: 'Endgame Lightning Crown • Javazon & Light Sorc Dream',
@@ -541,13 +546,13 @@ export const HolyGrailTracker: React.FC = () => {
                       <h3 className={`font-diablo text-base font-bold truncate transition-colors ${
                         isClaimed ? 'text-d2-unique group-hover:text-amber-200' : 'text-sanctuary-300'
                       }`}>
-                        {trophy.name}
+                        {isEn ? trophy.nameEn : trophy.name}
                       </h3>
                       <div className="text-[11px] font-mono text-sanctuary-400 truncate">
-                        {trophy.nameEn}
+                        {isEn ? trophy.name : trophy.nameEn}
                       </div>
                       <div className="text-[10px] text-sanctuary-500 font-mono truncate">
-                        {trophy.baseItem}
+                        {isEn ? (trophy.baseItemEn || trophy.baseItem) : trophy.baseItem}
                       </div>
                     </div>
                   </div>

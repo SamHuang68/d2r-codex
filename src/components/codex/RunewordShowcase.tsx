@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ItemIcon } from '../common/ItemIcon';
 import { BASE_ITEMS_DATA } from '../../data/bases';
-import { Crown, ShieldCheck, Sparkles, ArrowRight, ChevronDown, ChevronUp, Zap, Flame, Award } from 'lucide-react';
+import { Crown, ShieldCheck, Sparkles, ArrowRight, ChevronDown, ChevronUp, Zap, Flame } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
 export interface RunewordShowcaseProps {
@@ -19,11 +19,16 @@ interface ShowcaseItem {
   sockets: number;
   runes: { num: number; nameZh: string; nameEn: string }[];
   allowedBasesZh: string;
+  allowedBasesEn: string;
   reqLevel: number;
   highlightTag: string;
+  highlightTagEn: string;
   quote: string;
+  quoteEn: string;
   keyAffixes: string[];
+  keyAffixesEn: string[];
   recommendedBase: string;
+  recommendedBaseEn: string;
   baseRepEn: string;
   accentColor: 'gold' | 'emerald' | 'cyan' | 'purple';
 }
@@ -42,9 +47,12 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       { num: 30, nameZh: '貝', nameEn: 'Ber' },
     ],
     allowedBasesZh: '護甲 (3 孔)',
+    allowedBasesEn: 'Body Armor (3 Sockets)',
     reqLevel: 65,
     highlightTag: '全職業自由傳送・刷怪質變天花板',
+    highlightTagEn: 'Universal Teleportation & Endgame Quality of Life',
     quote: '賦予所有職業法師專屬的傳送術，改寫暗黑破壞神二代生態的無上神甲。',
+    quoteEn: 'Grants Teleport to any class, completely redefining the Diablo II endgame meta.',
     keyAffixes: [
       '+1 傳送 (Teleport)',
       '+2 所有技能',
@@ -52,7 +60,15 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       '受到的物理傷害降低 8%',
       '尋獲魔法物品機率提高 1% 每級 (MF)',
     ],
+    keyAffixesEn: [
+      '+1 to Teleport',
+      '+2 to All Skills',
+      '+0.75 to Strength (Based on Character Level)',
+      'Damage Reduced by 8%',
+      '1% Better Chance of Getting Magic Items per Level (MF)',
+    ],
     recommendedBase: '法師鎧甲 / 統御者鎧甲',
+    recommendedBaseEn: 'Mage Plate / Archon Plate',
     baseRepEn: 'Archon Plate',
     accentColor: 'gold',
   },
@@ -69,9 +85,12 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       { num: 24, nameZh: '伊斯特', nameEn: 'Ist' },
     ],
     allowedBasesZh: '長柄武器 / 長矛 (4 孔)',
+    allowedBasesEn: 'Polearms / Spears (4 Sockets)',
     reqLevel: 63,
     highlightTag: '12 級審判靈氣・元素破免終極神兵',
+    highlightTagEn: 'Level 12 Conviction Aura & Elemental Resistance Breaker',
     quote: '法系純電與元素流派的絕對終點，極大化傭兵輸出與全屏破抗能力。',
+    quoteEn: 'The pinnacle weapon for lightning & elemental builds, stripping enemy immunities across the screen.',
     keyAffixes: [
       '裝備時賦予 12 級審判靈氣 (降低敵人抗性與防禦)',
       '-45% 至 -55% 敵人電擊抗性',
@@ -79,7 +98,15 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       '+35% 高速跑步 / 行走',
       '+255-325% 強化傷害',
     ],
+    keyAffixesEn: [
+      'Level 12 Conviction Aura When Equipped (-85% Enemy Resists)',
+      '-45% to -55% to Enemy Lightning Resistance',
+      '40% Chance of Crushing Blow (CB)',
+      '+35% Faster Run/Walk',
+      '+255-325% Enhanced Damage (ED)',
+    ],
     recommendedBase: '無形斬鐮 / 無形巨長斧',
+    recommendedBaseEn: 'Eth Thresher / Eth Giant Thresher',
     baseRepEn: 'Thresher',
     accentColor: 'purple',
   },
@@ -97,9 +124,12 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       { num: 14, nameZh: '多爾', nameEn: 'Dol' },
     ],
     allowedBasesZh: '刀劍 / 斧 (5 孔)',
+    allowedBasesEn: 'Swords / Axes (5 Sockets)',
     reqLevel: 59,
     highlightTag: '近戰白字直傷之神・熱誠狂熱雙天花板',
+    highlightTagEn: '+400 Flat Damage & Melee Physical Apex',
     quote: '直接賦予高達 +400 點絕對傷害疊加，近戰物理系無可爭議的唯一頂級神器。',
+    quoteEn: 'Adds massive +400 flat damage directly to attacks and Smite, unrivaled by any other melee weapon.',
     keyAffixes: [
       '傷害 +340 到 +400 (白字實傷直接疊加)',
       '+30% 到 +40% 攻擊速度 (IAS)',
@@ -107,7 +137,15 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       '20% 機率造成致命打擊 (DS)',
       '-25% 目標防禦',
     ],
+    keyAffixesEn: [
+      'Damage +340 to +400 (Flat Damage added to attacks/Smite)',
+      '+30% to +40% Increased Attack Speed (IAS)',
+      'Ignore Target\'s Defense',
+      '20% Deadly Strike (DS)',
+      '-25% Target Defense',
+    ],
     recommendedBase: '幻化之刃 / 狂戰斧',
+    recommendedBaseEn: 'Phase Blade / Berserker Axe',
     baseRepEn: 'Phase Blade',
     accentColor: 'emerald',
   },
@@ -124,9 +162,12 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       { num: 28, nameZh: '羅', nameEn: 'Lo' },
     ],
     allowedBasesZh: '武器 / 護甲 (4 孔)',
+    allowedBasesEn: 'Weapons / Body Armor (4 Sockets)',
     reqLevel: 59,
     highlightTag: '+300% 強化傷害・近戰與傭兵不敗堡壘',
+    highlightTagEn: '+300% Enhanced Damage & Ironclad Defense',
     quote: '無可比擬的 300% 強化傷害、巨額全抗與寒冰裝甲，兼顧極致輸出與鋼鐵生存。',
+    quoteEn: 'Colossal +300% ED, massive All Resistances, and Chilling Armor proc: the ultimate armor for mercenaries and physical warriors.',
     keyAffixes: [
       '+300% 強化傷害 (ED)',
       '全屬性抗性 +25 到 +30',
@@ -134,7 +175,15 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       '+1 到 1.5 生命 (依角色等級)',
       '+200% 防禦強化',
     ],
+    keyAffixesEn: [
+      '+300% Enhanced Damage (ED)',
+      'All Resistances +25 to +30',
+      '20% Chance to Cast Level 15 Chilling Armor When Struck',
+      '+1 to 1.5 Life per Level',
+      '+200% Enhanced Defense',
+    ],
     recommendedBase: '無形神聖鎧甲 / 統御者鎧甲',
+    recommendedBaseEn: 'Eth Sacred Armor / Archon Plate',
     baseRepEn: 'Archon Plate',
     accentColor: 'cyan',
   },
@@ -153,9 +202,12 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       { num: 11, nameZh: '安姆', nameEn: 'Amn' },
     ],
     allowedBasesZh: '刀劍 / 盾牌 (4 孔)',
+    allowedBasesEn: 'Swords / Shields (4 Sockets)',
     reqLevel: 25,
     highlightTag: '雙精神成形質變・全法系拓荒無冕之王',
+    highlightTagEn: '+2 All Skills & 35% FCR Caster Milestone',
     quote: '25 級即可裝備，超平民符文卻擁有媲美頂級暗金的 +2 全技能與巨額施法速度。',
+    quoteEn: 'Wearable at level 25 using common runes, yet rivaling elite uniques with +2 Skills, 35% FCR, and 55% FHR.',
     keyAffixes: [
       '+2 所有技能',
       '+25% 到 +35% 快速施法速度 (FCR)',
@@ -163,7 +215,15 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       '+89 到 +112 法力',
       '盾牌版：電/冰/毒抗各 +35% (劍版含物理吸血與元素傷)',
     ],
+    keyAffixesEn: [
+      '+2 to All Skills',
+      '+25% to +35% Faster Cast Rate (FCR)',
+      '+55% Faster Hit Recovery (FHR)',
+      '+89 to +112 Mana',
+      'Shield: Cold/Lightning/Poison Res +35% (Sword: Leech & Elemental Dmg)',
+    ],
     recommendedBase: '水晶劍 (4孔) / 君主盾',
+    recommendedBaseEn: 'Crystal Sword (4s) / Monarch',
     baseRepEn: 'Monarch',
     accentColor: 'cyan',
   },
@@ -181,9 +241,12 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       { num: 12, nameZh: '索爾', nameEn: 'Sol' },
     ],
     allowedBasesZh: '長柄武器 / 法杖 / 弓 (4 孔)',
+    allowedBasesEn: 'Polearms / Staves / Bows (4 Sockets)',
     reqLevel: 27,
     highlightTag: '冥想靈氣無限泉湧・拓荒必備永動機',
+    highlightTagEn: 'Meditation Aura Infinite Mana & Starter MVP',
     quote: '讓米山傭兵為全隊提供每秒巨額法力回復，徹底告別拓荒回魔焦慮。',
+    quoteEn: 'Gives your hireling Meditation aura for rapid mana regeneration, ending potion dependency forever.',
     keyAffixes: [
       '裝備時賦予 12 到 17 級冥想靈氣 (法力回復 +575~700%)',
       '+200% 到 +260% 強化傷害 (ED)',
@@ -191,7 +254,15 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       '+35% 快速施法速度 (FCR)',
       '23% 尋獲魔法物品機率提高 (MF)',
     ],
+    keyAffixesEn: [
+      'Level 12 to 17 Meditation Aura When Equipped (+575-700% Mana Regen)',
+      '+200% to +260% Enhanced Damage (ED)',
+      '+1 to +6 to Critical Strike',
+      '+35% Faster Cast Rate (FCR)',
+      '23% Better Chance of Getting Magic Items (MF)',
+    ],
     recommendedBase: '巨神之斧 / 戰鬥長柄武器 / 巨神之弩',
+    recommendedBaseEn: 'Colossus Voulge / Thresher / Mancatcher',
     baseRepEn: 'Thresher',
     accentColor: 'emerald',
   },
@@ -206,9 +277,12 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       { num: 17, nameZh: '盧姆', nameEn: 'Lum' },
     ],
     allowedBasesZh: '護甲 (2 孔)',
+    allowedBasesEn: 'Body Armor (2 Sockets)',
     reqLevel: 37,
     highlightTag: '+50 全抗救急・進軍地獄首選防暴斃甲',
+    highlightTagEn: '+50 All Resistances & Hell Survival Armor',
     quote: '僅需一顆 17 號中階符文，立即補足進入地獄難度時急缺的 50 點全屬性抗性。',
+    quoteEn: 'Using only a mid Lum rune, instantly supplies +50 All Resistances to survive entering Hell difficulty.',
     keyAffixes: [
       '所有屬性抗性 +50',
       '+20% 快速打擊恢復 (FHR)',
@@ -216,7 +290,15 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       '+10 活力',
       '-1 照亮範圍 (弱化受敵視距)',
     ],
+    keyAffixesEn: [
+      'All Resistances +50',
+      '+20% Faster Hit Recovery (FHR)',
+      '+280 Defense vs. Missile',
+      '+10 to Energy',
+      '-1 to Light Radius',
+    ],
     recommendedBase: '法師鎧甲 / 幽靈之鎧 / 統御者鎧甲',
+    recommendedBaseEn: 'Mage Plate / Ghost Armor / Archon Plate',
     baseRepEn: 'Archon Plate',
     accentColor: 'gold',
   },
@@ -233,9 +315,12 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       { num: 20, nameZh: '藍姆', nameEn: 'Lem' },
     ],
     allowedBasesZh: '護甲 (3 孔)',
+    allowedBasesEn: 'Body Armor (3 Sockets)',
     reqLevel: 43,
     highlightTag: '45% 攻速狂飆・受擊觸發影散',
+    highlightTagEn: '+45% IAS & Fade Proc Mercenary Armor',
     quote: '受擊時 5% 觸發 15 級影散，提供高達 15% 物理減傷與 60 點全抗，傭兵終極戰甲。',
+    quoteEn: 'Procs Level 15 Fade (+60 All Res & 15% Physical DR) with +45% IAS, making it an extraordinary mercenary armor.',
     keyAffixes: [
       '受擊時 5% 機率施展 15 級影散 (Fade)',
       '【影散效果】+60 全抗性、15% 物理減傷、縮短詛咒時間 79%',
@@ -243,7 +328,15 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       '+20% 快速打擊恢復 (FHR)',
       '+2 刺客技能',
     ],
+    keyAffixesEn: [
+      '5% Chance to Cast Level 15 Fade When Struck',
+      '[Fade Buff] +60 All Res, 15% Damage Reduction, -79% Curse Duration',
+      '+45% Increased Attack Speed (IAS)',
+      '+20% Faster Hit Recovery (FHR)',
+      '+2 to Assassin Skills',
+    ],
     recommendedBase: '無形漆甲 / 灰暮罩衣 / 法師鎧甲',
+    recommendedBaseEn: 'Eth Lacquered Plate / Dusk Shroud / Mage Plate',
     baseRepEn: 'Archon Plate',
     accentColor: 'purple',
   },
@@ -312,19 +405,19 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
   };
 
   return (
-    <div className="mb-8 rounded-2xl bg-sanctuary-900/80 border border-sanctuary-800 shadow-2xl overflow-hidden transition-all duration-300">
-      {/* 展廳頂部導航列與狀態切換 */}
+    <div className="mb-8 rounded-3xl bg-sanctuary-900/80 border border-sanctuary-800 shadow-2xl overflow-hidden transition-all duration-300">
+      {/* 展廳頂部導航列 */}
       <div className="p-4 sm:p-5 border-b border-sanctuary-800/80 bg-gradient-to-r from-sanctuary-950 via-sanctuary-900 to-sanctuary-950 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0 shadow-glow-gold/20">
-            <Crown className="w-5 h-5 text-d2-gold animate-pulse" />
+          <div className="w-10 h-10 rounded-xl bg-d2-gold/10 border border-d2-gold/30 flex items-center justify-center shrink-0 shadow-glow-gold/20">
+            <Zap className="w-5 h-5 text-d2-gold animate-pulse" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h2 className="font-diablo text-lg sm:text-xl font-bold text-sanctuary-100 flex items-center gap-2">
-                <span>{isEn ? 'Legendary Runewords Hall of Fame' : '符文之語信仰與開荒名人堂'}</span>
+                <span>{isEn ? 'Runeword Hall of Fame & Inscription Orders' : '符文之語殿堂神裝與拓荒神器展廳'}</span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-d2-gold/20 text-d2-gold border border-d2-gold/40 font-mono font-bold">
-                  TOP 8 ICONIC
+                  HALL OF RUNES
                 </span>
               </h2>
             </div>
@@ -422,19 +515,19 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
                       <div>
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <h3 className={`font-diablo text-xl font-bold ${styles.titleColor} tracking-wide`}>
-                            {item.name}
+                            {isEn ? item.nameEn : item.name}
                           </h3>
                           <span className="text-xs text-sanctuary-400 font-mono italic">
-                            ({item.nameEn})
+                            ({isEn ? item.name : item.nameEn})
                           </span>
-                          {item.alias && (
+                          {item.alias && !isEn && (
                             <span className="text-[10px] px-1.5 py-0.2 rounded bg-sanctuary-800 text-sanctuary-300 font-medium">
                               俗稱 {item.alias}
                             </span>
                           )}
                         </div>
                         <div className="text-[11px] text-sanctuary-400 font-mono mt-0.5">
-                          {item.allowedBasesZh} • Lv {item.reqLevel}
+                          {isEn ? item.allowedBasesEn : item.allowedBasesZh} • Lv {item.reqLevel}
                         </div>
                       </div>
                     </div>
@@ -448,83 +541,83 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
                   <div className="my-3">
                     <div className="text-xs font-bold text-sanctuary-200 flex items-center gap-1.5 bg-sanctuary-900/80 px-2.5 py-1.5 rounded-lg border border-sanctuary-800">
                       {item.category === 'iconic' ? (
-                        <Flame className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                        <Flame className="w-3.5 h-3.5 text-d2-fire shrink-0" />
                       ) : (
-                        <Zap className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       )}
-                      <span className="truncate">{item.highlightTag}</span>
+                      <span className="truncate">{isEn ? item.highlightTagEn : item.highlightTag}</span>
                     </div>
-                    <p className="text-[11px] text-sanctuary-400 italic mt-1.5 px-0.5 leading-relaxed line-clamp-2">
-                      「{item.quote}」
+                    <p className="text-[11px] text-sanctuary-400 mt-2 line-clamp-2 leading-relaxed">
+                      {isEn ? item.quoteEn : item.quote}
                     </p>
                   </div>
 
-                  {/* 符文鑲嵌先後順序槽位視覺化 (Socket Slots Sequence) */}
+                  {/* 核心符文插槽依序排列 (Inscription Sockets Bar) */}
                   <div className="my-3 p-2.5 rounded-xl bg-sanctuary-950/90 border border-sanctuary-800/80 shadow-inner">
-                    <div className="flex items-center justify-between text-[10px] text-sanctuary-400 font-mono mb-2">
-                      <span className="flex items-center gap-1 text-d2-rune font-bold">
-                        <Award className="w-3 h-3 text-d2-rune" />
-                        {isEn ? 'Socket Inscription Order' : '符文鑲嵌嚴格順序'}
-                      </span>
-                      <span className="text-[9px] text-sanctuary-500">⚠ 順序不可錯</span>
+                    <div className="text-[10px] text-sanctuary-400 font-mono mb-2 flex items-center justify-between">
+                      <span>{isEn ? `${item.sockets} Inscription Sockets Order:` : `${item.sockets} 孔符文鑲嵌插槽順序：`}</span>
+                      <span className="text-[9px] text-d2-gold">{isEn ? 'Strict Order' : '嚴格順序'}</span>
                     </div>
-
-                    <div className="flex items-center justify-center gap-1.5 flex-wrap">
-                      {item.runes.map((rune, rIdx) => (
-                        <React.Fragment key={rune.num}>
-                          {rIdx > 0 && (
-                            <ArrowRight className={`w-3.5 h-3.5 ${styles.arrowColor} shrink-0 opacity-70`} />
-                          )}
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {item.runes.map((rune, idx) => (
+                        <React.Fragment key={idx}>
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
                               onNavigateToRune?.(rune.num);
                             }}
-                            className={`group/slot flex flex-col items-center justify-center p-1.5 rounded-lg bg-sanctuary-900/90 border ${styles.slotBorder} hover:border-d2-rune hover:bg-sanctuary-800 transition-all cursor-pointer min-w-[50px] shadow-sm`}
-                            title={`點擊跳轉至 ${rune.num}# ${rune.nameZh} (${rune.nameEn}) 符文寶庫屬性`}
+                            className={`group/slot relative flex items-center gap-1 px-2 py-1 rounded-lg bg-sanctuary-900 border ${styles.slotBorder} hover:border-d2-unique transition-all cursor-pointer shadow-sm`}
+                            title={isEn ? `View Rune #${rune.num} ${rune.nameEn}` : `點擊查看 ${rune.num}# 符文【${rune.nameZh}】`}
                           >
-                            <span className="text-[9px] font-mono text-sanctuary-500 leading-none mb-1 group-hover/slot:text-amber-300">
-                              #{rIdx + 1}
+                            <span className="text-[10px] text-sanctuary-500 font-mono font-bold mr-0.5">
+                              {idx + 1}.
                             </span>
-                            <ItemIcon runeNumber={rune.num} size="xs" showBorder={false} />
-                            <span className="text-[10px] font-mono font-bold text-d2-rune group-hover/slot:text-white leading-none mt-1">
-                              {rune.num}# {rune.nameZh}
+                            <ItemIcon
+                              runeNumber={rune.num}
+                              size="xs"
+                              showBorder={false}
+                            />
+                            <span className="text-xs font-mono font-bold text-sanctuary-200 group-hover/slot:text-d2-gold transition-colors">
+                              {isEn ? rune.nameEn : rune.nameZh}
+                            </span>
+                            <span className="text-[10px] font-mono text-sanctuary-400">
+                              #{rune.num}
                             </span>
                           </button>
+                          {idx < item.runes.length - 1 && (
+                            <ArrowRight className={`w-3 h-3 ${styles.arrowColor} opacity-70 shrink-0`} />
+                          )}
                         </React.Fragment>
                       ))}
                     </div>
                   </div>
 
-                  {/* 核心詞綴清單 */}
-                  <div className="space-y-1 text-xs text-d2-magic font-sans pt-1 mb-4">
-                    <div className="text-[11px] font-mono text-sanctuary-400 font-semibold mb-1">
-                      {isEn ? 'Core Affixes:' : '核心質變屬性：'}
+                  {/* 核心詞綴亮點 */}
+                  <div className="space-y-1 mb-4 p-2.5 rounded-xl bg-sanctuary-900/60 border border-sanctuary-850">
+                    <div className="text-[10px] font-mono text-sanctuary-400 font-bold mb-1">
+                      {isEn ? 'Key Attributes & Auras:' : '核心特效與靈氣：'}
                     </div>
-                    {item.keyAffixes.map((affix, aIdx) => (
-                      <div key={aIdx} className="leading-snug text-[11px] flex items-start gap-1">
-                        <span className="text-sanctuary-500 shrink-0">•</span>
+                    {(isEn ? item.keyAffixesEn : item.keyAffixes).map((affix, idx) => (
+                      <div key={idx} className="text-[11px] text-sanctuary-200 leading-snug flex items-center gap-1">
+                        <span className="text-d2-unique font-bold">•</span>
                         <span>{affix}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* 底部動作列：推薦底材與跳轉按鈕 */}
-                <div className="pt-3 border-t border-sanctuary-850 flex flex-col gap-2">
-                  <div className="text-[10px] text-sanctuary-400 flex items-center justify-between">
-                    <span>{isEn ? 'Best Base:' : '推薦底材：'}</span>
+                {/* 底部首選底材與操作列 */}
+                <div className="pt-3 border-t border-sanctuary-800/80 space-y-2">
+                  <div className="flex items-center justify-between text-[11px] font-mono">
+                    <span className="text-sanctuary-400">{isEn ? 'BiS Base:' : '首選底材：'}</span>
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onNavigateToBase?.(item.recommendedBase.split(' / ')[0].replace(/^無形/, ''));
-                      }}
-                      className="text-sanctuary-200 hover:text-d2-socket hover:underline font-mono font-medium truncate max-w-[170px] cursor-pointer text-right"
-                      title={`點擊查看【${item.recommendedBase}】頂級底材指南`}
+                      onClick={() => onNavigateToBase?.(item.recommendedBase.split('/')[0].trim())}
+                      className="text-d2-socket hover:underline font-medium truncate max-w-[170px] text-right"
+                      title={isEn ? "View base item in Codex" : "在底材寶典中查看此底材"}
                     >
-                      {item.recommendedBase}
+                      {isEn ? item.recommendedBaseEn : item.recommendedBase}
                     </button>
                   </div>
 
@@ -533,7 +626,7 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
                     onClick={() => onSelectRuneword(item.id, item.sockets)}
                     className="w-full py-1.5 px-3 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-800 border border-sanctuary-750 hover:border-d2-unique text-xs text-d2-unique font-medium flex items-center justify-center gap-1.5 transition-all shadow group/btn"
                   >
-                    <span>{isEn ? 'View Full Attributes & Recipes' : '查看完整配方與全詞綴'}</span>
+                    <span>{isEn ? 'Inspect Runeword Details' : '查看符文之語完整數據'}</span>
                     <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-1" />
                   </button>
                 </div>

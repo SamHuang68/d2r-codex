@@ -6,6 +6,12 @@ import {
   type MercTierBuild,
   type MercGearItemRef,
 } from '../../data/mercenaryMatrix';
+import {
+  BUILD_I18N,
+  MERC_TYPE_EN,
+  AURA_EN,
+  GEAR_NOTE_EN,
+} from '../../data/mercenaryMatrixEn';
 import { applyMercenaryPresetToSimulator } from '../../utils/mercPresetBridge';
 import { useLanguage } from '../../context/LanguageContext';
 import { ItemIcon } from '../common/ItemIcon';
@@ -169,14 +175,18 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
               type="button"
               onClick={() => onNavigateItem?.(item.name)}
               className="text-xs font-semibold text-d2-unique hover:text-amber-300 hover:underline transition-colors cursor-pointer text-left inline-flex items-center gap-1"
-              title={`在百科中查看【${item.name}】（${item.nameEn}）詳細數值`}
+              title={
+                isEn
+                  ? `View ${item.nameEn} details in Codex`
+                  : `在百科中查看【${item.name}】（${item.nameEn}）詳細數值`
+              }
             >
               <span>{itemName}</span>
               {itemSub && <span className="text-[11px] text-sanctuary-400 font-mono italic">({itemSub})</span>}
               <ExternalLink className="w-2.5 h-2.5 opacity-60 group-hover:opacity-100" />
             </button>
             {item.ethereal && (
-              <span className="text-[10px] px-1 py-0.2 rounded bg-cyan-950/70 border border-cyan-500/40 text-cyan-300 font-mono" title={t('無形裝備（傭兵不消耗耐久，數值高1.5倍）', 'Ethereal Item')}>
+              <span className="text-[10px] px-1 py-0.2 rounded bg-cyan-950/70 border border-cyan-500/40 text-cyan-300 font-mono" title={t('無形裝備（傭兵不消耗耐久，數值高1.5倍）', 'Ethereal Item (Indestructible on merc & 1.5x stats)')}>
                 {t('無形', 'Eth')}
               </span>
             )}
@@ -188,7 +198,7 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
           </div>
           {item.note && (
             <p className="text-[11px] text-sanctuary-400/90 mt-0.5 leading-relaxed pl-3.5 border-l border-sanctuary-800">
-              {item.note}
+              {isEn ? (GEAR_NOTE_EN[item.note] || item.note) : item.note}
             </p>
           )}
         </div>
@@ -220,7 +230,9 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
                     {t(meta.label, meta.labelEn)}
                   </span>
                   <span className="text-[11px] text-sanctuary-400 font-diablo">
-                    {t(meta.sub, meta.subEn)}
+                    {isEn
+                      ? (BUILD_I18N[entry.id]?.tiers[tierKey]?.summaryEn || meta.subEn)
+                      : (tier.summary || meta.sub)}
                   </span>
                 </div>
               </div>
@@ -239,7 +251,7 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
                 />
               </div>
               <span className="text-xs font-medium text-sanctuary-200">
-                {tier.mercTypeZh}
+                {isEn ? (MERC_TYPE_EN[tier.mercTypeZh] || tier.mercTypeZh) : tier.mercTypeZh}
               </span>
             </div>
             <span className="text-[10px] text-sanctuary-400 uppercase tracking-wide font-mono">
@@ -267,7 +279,7 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
                   key={idx}
                   className="text-[10px] px-2 py-0.5 rounded-full bg-d2-gold/10 border border-d2-gold/30 text-amber-200 font-mono shadow-xs"
                 >
-                  ⚡ {aura}
+                  ⚡ {isEn ? (AURA_EN[aura] || aura) : aura}
                 </span>
               ))}
             </div>
@@ -276,7 +288,9 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
           {/* 流派協同效應 */}
           <div className="p-2 rounded bg-sanctuary-950/60 border border-sanctuary-800/70 mb-3 text-[11px] text-sanctuary-300 leading-relaxed">
             <span className="text-amber-400 font-medium">{t('戰術協同：', 'Combat Synergy: ')}</span>
-            {tier.synergyNote}
+            {isEn
+              ? (BUILD_I18N[entry.id]?.tiers[tierKey]?.synergyNoteEn || tier.synergyNote)
+              : tier.synergyNote}
           </div>
         </div>
 
@@ -480,10 +494,10 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
                         {t(entry.classZh, entry.classEn)}
                       </span>
                       <h3 className="text-lg font-bold font-diablo text-sanctuary-100">
-                        {entry.buildName}
+                        {isEn ? (BUILD_I18N[entry.id]?.buildNameEn || entry.buildName) : entry.buildName}
                       </h3>
                       <span className="text-xs text-sanctuary-400">
-                        ({entry.role})
+                        ({isEn ? (BUILD_I18N[entry.id]?.roleEn || entry.role) : entry.role})
                       </span>
                     </div>
                     {/* 痛點與最佳解 */}
@@ -492,13 +506,17 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
                         <span className="text-rose-400 font-bold shrink-0">
                           {t('◆ 流派痛點：', '◆ Core Need: ')}
                         </span>
-                        <span className="leading-relaxed">{entry.coreProblem}</span>
+                        <span className="leading-relaxed">
+                          {isEn ? (BUILD_I18N[entry.id]?.coreProblemEn || entry.coreProblem) : entry.coreProblem}
+                        </span>
                       </div>
                       <div className="flex items-start gap-1.5 text-sanctuary-300 bg-sanctuary-950/70 p-2 rounded-lg border border-sanctuary-800/80">
                         <span className="text-d2-unique font-bold shrink-0">
                           {t('★ 推薦傭兵：', '★ Best Merc: ')}
                         </span>
-                        <span className="leading-relaxed">{entry.bestMercSummary}</span>
+                        <span className="leading-relaxed">
+                          {isEn ? (BUILD_I18N[entry.id]?.bestMercSummaryEn || entry.bestMercSummary) : entry.bestMercSummary}
+                        </span>
                       </div>
                     </div>
                   </div>

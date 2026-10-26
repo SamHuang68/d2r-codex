@@ -42,58 +42,58 @@ export const ValuationGuide: React.FC = () => {
   const [selectedAffixes, setSelectedAffixes] = useState<Record<string, boolean>>({});
 
   // 各部位常見高價值詞綴清單
-  const slotAffixOptions: Record<string, { id: string; label: string; score: number; isCrucial?: boolean }[]> = {
+  const slotAffixOptions: Record<string, { id: string; label: string; labelEn: string; score: number; isCrucial?: boolean }[]> = {
     ring: [
-      { id: 'fcr', label: '+10% 快速施法速度 (FCR)', score: 35, isCrucial: true },
-      { id: 'dual_leech', label: '雙吸 (吸血 5-6% + 吸魔 5-6%)', score: 30 },
-      { id: 'strength', label: '+15-20 高力量', score: 20 },
-      { id: 'dexterity', label: '+12-15 高敏捷', score: 18 },
-      { id: 'life', label: '+30-40 高生命', score: 20 },
-      { id: 'mana', label: '+60-90 高法力', score: 15 },
-      { id: 'all_res', label: '所有抗性 +10-11%', score: 25 },
-      { id: 'single_res', label: '單抗 +25-30% (火或電)', score: 15 },
-      { id: 'ar', label: '+100-120 攻擊準確率 (AR)', score: 12 },
+      { id: 'fcr', label: '+10% 快速施法速度 (FCR)', labelEn: '+10% Faster Cast Rate (FCR)', score: 35, isCrucial: true },
+      { id: 'dual_leech', label: '雙吸 (吸血 5-6% + 吸魔 5-6%)', labelEn: 'Dual Leech (5-6% Life + 5-6% Mana)', score: 30 },
+      { id: 'strength', label: '+15-20 高力量', labelEn: '+15-20 High Strength', score: 20 },
+      { id: 'dexterity', label: '+12-15 高敏捷', labelEn: '+12-15 High Dexterity', score: 18 },
+      { id: 'life', label: '+30-40 高生命', labelEn: '+30-40 High Life', score: 20 },
+      { id: 'mana', label: '+60-90 高法力', labelEn: '+60-90 High Mana', score: 15 },
+      { id: 'all_res', label: '所有抗性 +10-11%', labelEn: 'All Resistances +10-11%', score: 25 },
+      { id: 'single_res', label: '單抗 +25-30% (火或電)', labelEn: 'Single Res +25-30% (Fire or Light)', score: 15 },
+      { id: 'ar', label: '+100-120 攻擊準確率 (AR)', labelEn: '+100-120 Attack Rating (AR)', score: 12 },
     ],
     amulet: [
-      { id: 'plus_2_skill', label: '+2 職業全技能等級', score: 40, isCrucial: true },
-      { id: 'fcr_15_20', label: '+15-20% 快速施法速度 (手工專屬)', score: 40, isCrucial: true },
-      { id: 'fcr_10', label: '+10% 快速施法速度 (黃色普通)', score: 20 },
-      { id: 'strength', label: '+20-30 高力量', score: 25 },
-      { id: 'dexterity', label: '+15-20 高敏捷', score: 20 },
-      { id: 'life', label: '+40-60 高生命', score: 20 },
-      { id: 'mana', label: '+80-110 高法力', score: 15 },
-      { id: 'all_res', label: '全抗性 +15-20%', score: 25 },
+      { id: 'plus_2_skill', label: '+2 職業全技能等級', labelEn: '+2 All Class Skills', score: 40, isCrucial: true },
+      { id: 'fcr_15_20', label: '+15-20% 快速施法速度 (手工專屬)', labelEn: '+15-20% Faster Cast Rate (Crafted)', score: 40, isCrucial: true },
+      { id: 'fcr_10', label: '+10% 快速施法速度 (黃色普通)', labelEn: '+10% Faster Cast Rate (Rare)', score: 20 },
+      { id: 'strength', label: '+20-30 高力量', labelEn: '+20-30 High Strength', score: 25 },
+      { id: 'dexterity', label: '+15-20 高敏捷', labelEn: '+15-20 High Dexterity', score: 20 },
+      { id: 'life', label: '+40-60 高生命', labelEn: '+40-60 High Life', score: 20 },
+      { id: 'mana', label: '+80-110 高法力', labelEn: '+80-110 High Mana', score: 15 },
+      { id: 'all_res', label: '全抗性 +15-20%', labelEn: 'All Resistances +15-20%', score: 25 },
     ],
     helm: [
-      { id: 'plus_2_skill', label: '+2 職業全技能等級', score: 35, isCrucial: true },
-      { id: 'fcr_20', label: '+20% 快速施法速度 (FCR)', score: 35, isCrucial: true },
-      { id: 'frw_30', label: '+30% 高速跑步/步行 (FRW)', score: 25 },
-      { id: 'sockets_2', label: '天然 2 鑲孔 (2 Sockets)', score: 30, isCrucial: true },
-      { id: 'strength', label: '+20-30 力量', score: 18 },
-      { id: 'dexterity', label: '+15-20 敏捷', score: 18 },
-      { id: 'all_res', label: '全抗性 +15-20%', score: 20 },
+      { id: 'plus_2_skill', label: '+2 職業全技能等級', labelEn: '+2 All Class Skills', score: 35, isCrucial: true },
+      { id: 'fcr_20', label: '+20% 快速施法速度 (FCR)', labelEn: '+20% Faster Cast Rate (FCR)', score: 35, isCrucial: true },
+      { id: 'frw_30', label: '+30% 高速跑步/步行 (FRW)', labelEn: '+30% Faster Run/Walk (FRW)', score: 25 },
+      { id: 'sockets_2', label: '天然 2 鑲孔 (2 Sockets)', labelEn: 'Natural 2 Sockets', score: 30, isCrucial: true },
+      { id: 'strength', label: '+20-30 力量', labelEn: '+20-30 Strength', score: 18 },
+      { id: 'dexterity', label: '+15-20 敏捷', labelEn: '+15-20 Dexterity', score: 18 },
+      { id: 'all_res', label: '全抗性 +15-20%', labelEn: 'All Resistances +15-20%', score: 20 },
     ],
     boots: [
-      { id: 'frw_30', label: '+30% 高速跑步/步行 (FRW 滿變)', score: 35, isCrucial: true },
-      { id: 'fhr_10', label: '+10% 快速打擊恢復 (FHR 滿變)', score: 25 },
-      { id: 'res_fire_35', label: '抗火 +35-40%', score: 30, isCrucial: true },
-      { id: 'res_light_35', label: '抗電 +35-40%', score: 30, isCrucial: true },
-      { id: 'res_poison_or_cold', label: '抗毒或抗寒 +35-40%', score: 25 },
-      { id: 'mf_plr', label: '打寶率 (MF) 或 較低毒素持續時間 (PLR)', score: 15 },
+      { id: 'frw_30', label: '+30% 高速跑步/步行 (FRW 滿變)', labelEn: '+30% Faster Run/Walk (Max FRW Roll)', score: 35, isCrucial: true },
+      { id: 'fhr_10', label: '+10% 快速打擊恢復 (FHR 滿變)', labelEn: '+10% Faster Hit Recovery (Max FHR Roll)', score: 25 },
+      { id: 'res_fire_35', label: '抗火 +35-40%', labelEn: 'Fire Resistance +35-40%', score: 30, isCrucial: true },
+      { id: 'res_light_35', label: '抗電 +35-40%', labelEn: 'Lightning Resistance +35-40%', score: 30, isCrucial: true },
+      { id: 'res_poison_or_cold', label: '抗毒或抗寒 +35-40%', labelEn: 'Poison or Cold Resistance +35-40%', score: 25 },
+      { id: 'mf_plr', label: '打寶率 (MF) 或 較低毒素持續時間 (PLR)', labelEn: 'Magic Find (MF) or Poison Length Reduced (PLR)', score: 15 },
     ],
     gloves: [
-      { id: 'plus_2_skill', label: '+2 標槍與長矛或武學技藝技能', score: 35, isCrucial: true },
-      { id: 'ias_20', label: '+20% 攻擊速度 (IAS)', score: 35, isCrucial: true },
-      { id: 'strength', label: '+10-15 力量', score: 18 },
-      { id: 'dexterity', label: '+10-15 敏捷', score: 18 },
-      { id: 'res_fire_or_light', label: '抗火或抗電 +20-30%', score: 20 },
-      { id: 'leech', label: '每次命中偷取 3% 生命', score: 12 },
+      { id: 'plus_2_skill', label: '+2 標槍與長矛或武學技藝技能', labelEn: '+2 Javelin & Spear or Martial Arts Skills', score: 35, isCrucial: true },
+      { id: 'ias_20', label: '+20% 攻擊速度 (IAS)', labelEn: '+20% Increased Attack Speed (IAS)', score: 35, isCrucial: true },
+      { id: 'strength', label: '+10-15 力量', labelEn: '+10-15 Strength', score: 18 },
+      { id: 'dexterity', label: '+10-15 敏捷', labelEn: '+10-15 Dexterity', score: 18 },
+      { id: 'res_fire_or_light', label: '抗火或抗電 +20-30%', labelEn: 'Fire or Lightning Resistance +20-30%', score: 20 },
+      { id: 'leech', label: '每次命中偷取 3% 生命', labelEn: '3% Life Stolen per Hit', score: 12 },
     ],
     shield: [
-      { id: 'jewelers_4s', label: '天然 4 鑲孔 (Jeweler\'s 珠寶匠)', score: 45, isCrucial: true },
-      { id: 'deflecting', label: '偏折 (30% FBR + 20% 格擋率)', score: 45, isCrucial: true },
-      { id: 'eth_rep', label: '無形 + 自動修復耐久度', score: 35 },
-      { id: 'life_60', label: '+50-60 生命 (巨鯨詞綴)', score: 25 },
+      { id: 'jewelers_4s', label: '天然 4 鑲孔 (Jeweler\'s 珠寶匠)', labelEn: 'Natural 4 Sockets (Jeweler\'s)', score: 45, isCrucial: true },
+      { id: 'deflecting', label: '偏折 (30% FBR + 20% 格擋率)', labelEn: 'Deflecting (30% FBR + 20% Block)', score: 45, isCrucial: true },
+      { id: 'eth_rep', label: '無形 + 自動修復耐久度', labelEn: 'Ethereal + Repairs Durability', score: 35 },
+      { id: 'life_60', label: '+50-60 生命 (巨鯨詞綴)', labelEn: '+50-60 Life (of the Whale)', score: 25 },
     ]
   };
 
@@ -127,48 +127,58 @@ export const ValuationGuide: React.FC = () => {
 
   if (calculatedScore >= 85) {
     appraisalGrade = {
-      tier: "GG TIER (超越想像神物)",
-      label: "👑 拍賣行頂級傳世珍品 (GG Tier)",
+      tier: isEn ? "GG TIER (Priceless Trophy)" : "GG TIER (超越想像神物)",
+      label: isEn ? "👑 Auction House Top Trophy (GG Tier)" : "👑 拍賣行頂級傳世珍品 (GG Tier)",
       color: "text-amber-300",
       borderColor: "border-amber-400 shadow-amber-400/20",
-      estValue: "身價 50 ~ 150+ 顆貝符文 (Ber / Jah)！",
-      advice: "命中全套核心滿變詞綴！在 JSP 或頂級拍賣行屬於天價競標品，請勿急於一口價出售，建議開標讓買家公開競價。"
+      estValue: isEn ? "Valued at 50 ~ 150+ Ber / Jah Runes!" : "身價 50 ~ 150+ 顆貝符文 (Ber / Jah)！",
+      advice: isEn
+        ? "All core affixes hit near-max rolls! Highly sought-after in JSP / top auctions. Do not settle for a buy-it-now price; hold an open public auction."
+        : "命中全套核心滿變詞綴！在 JSP 或頂級拍賣行屬於天價競標品，請勿急於一口價出售，建議開標讓買家公開競價。"
     };
   } else if (calculatedScore >= 60) {
     appraisalGrade = {
-      tier: "TROPHY TIER (極品硬通貨)",
-      label: "💎 極品硬通貨 (Trophy Tier)",
+      tier: isEn ? "TROPHY TIER (Hard Currency)" : "TROPHY TIER (極品硬通貨)",
+      label: isEn ? "💎 Top Hard Currency (Trophy Tier)" : "💎 極品硬通貨 (Trophy Tier)",
       color: "text-d2-fire",
       borderColor: "border-d2-fire/70 shadow-d2-fire/20",
-      estValue: "身價 10 ~ 40 顆貝符文！",
-      advice: "核心關鍵詞綴齊全，能完美超越絕大多數暗金過渡裝備，天梯中後期大熱流通神物。"
+      estValue: isEn ? "Valued at 10 ~ 40 Ber Runes!" : "身價 10 ~ 40 顆貝符文！",
+      advice: isEn
+        ? "Core essential affixes are present, comfortably outperforming most unique transition gear. A prime trade trophy in mid-to-late ladder."
+        : "核心關鍵詞綴齊全，能完美超越絕大多數暗金過渡裝備，天梯中後期大熱流通神物。"
     };
   } else if (calculatedScore >= 40) {
     appraisalGrade = {
-      tier: "HIGH TIER (天梯實用良品)",
-      label: "⚔️ 天梯實用良品 (High Tier)",
+      tier: isEn ? "HIGH TIER (High Ladder Utility)" : "HIGH TIER (天梯實用良品)",
+      label: isEn ? "⚔️ High Ladder Utility (High Tier)" : "⚔️ 天梯實用良品 (High Tier)",
       color: "text-d2-unique",
       borderColor: "border-d2-unique/60",
-      estValue: "身價 1 ~ 5 顆中高階符文 (Vex ~ Lo)！",
-      advice: "具備核心關鍵屬性，非常適合主流配裝（如補抗性或過渡檔位），能換取不錯的自用符文。"
+      estValue: isEn ? "Valued at 1 ~ 5 High Runes (Vex ~ Lo)!" : "身價 1 ~ 5 顆中高階符文 (Vex ~ Lo)！",
+      advice: isEn
+        ? "Possesses key functional stats, ideal for mainstream builds (fixing resistances or reaching breakpoints). Easily traded for self-use high runes."
+        : "具備核心關鍵屬性，非常適合主流配裝（如補抗性或過渡檔位），能換取不錯的自用符文。"
     };
   } else if (calculatedScore >= 20) {
     appraisalGrade = {
-      tier: "MID TIER (拓荒過渡好物)",
-      label: "🪙 拓荒過渡好物 (Mid Tier)",
+      tier: isEn ? "MID TIER (Progression Keeper)" : "MID TIER (拓荒過渡好物)",
+      label: isEn ? "🪙 Progression Keeper (Mid Tier)" : "🪙 拓荒過渡好物 (Mid Tier)",
       color: "text-d2-magic",
       borderColor: "border-d2-magic/50",
-      estValue: "身價約為數顆 20-24 號符文 (Pul ~ Ist) 或自用。",
-      advice: "有 1-2 條可用屬性，開荒期自用很舒服，但在畢業交易市場競爭力有限。"
+      estValue: isEn ? "Valued at a few mid runes (Pul ~ Ist) or self-use." : "身價約為數顆 20-24 號符文 (Pul ~ Ist) 或自用。",
+      advice: isEn
+        ? "Has 1-2 useful attributes. Great for personal progression, but limited commercial appeal on endgame trade boards."
+        : "有 1-2 條可用屬性，開荒期自用很舒服，但在畢業交易市場競爭力有限。"
     };
   } else {
     appraisalGrade = {
-      tier: "CHARSI FOOD (無交易價值)",
-      label: "🗑️ 丟恰西回收 / 缺乏核心詞綴 (Charsi Food)",
+      tier: isEn ? "CHARSI FOOD (Vendor Trash)" : "CHARSI FOOD (無交易價值)",
+      label: isEn ? "🗑️ Vendor to Charsi / Missing Key Affixes (Charsi Food)" : "🗑️ 丟恰西回收 / 缺乏核心詞綴 (Charsi Food)",
       color: "text-sanctuary-400",
       borderColor: "border-sanctuary-800",
-      estValue: "無流通交易價值 (金幣 35,000)。",
-      advice: "缺少該部位最關鍵的質變詞綴（如 FCR、技能、30FRW 或三抗），建議直接賣給 NPC 換錢或餵給赫拉迪姆方塊。"
+      estValue: isEn ? "No trade value (Gold 35,000)." : "無流通交易價值 (金幣 35,000)。",
+      advice: isEn
+        ? "Lacks crucial transformative affixes (such as FCR, +Skills, 30FRW, or Tri-Res). Vendor to NPC for 35k gold or reroll in the Horadric Cube."
+        : "缺少該部位最關鍵的質變詞綴（如 FCR、技能、30FRW 或三抗），建議直接賣給 NPC 換錢或餵給赫拉迪姆方塊。"
     };
   }
 
@@ -196,10 +206,12 @@ export const ValuationGuide: React.FC = () => {
             Trophy Item Price & Affix Valuation Guide
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            極品藍黃詞綴與鑑寶估價指南
+            {isEn ? 'Trophy Item & Affix Valuation Guide' : '極品藍黃詞綴與鑑寶估價指南'}
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-2xl">
-            「丟商店還是天價賣出？」收錄 JMoD 偏折盾、3/20/20、45血大板、2/20/30 極品頭、三抗鞋等破百貝神物，內建互動式線上鑑寶評級器。
+            {isEn
+              ? 'Comprehensive appraisal guide for D2R high-tier trophies: JMoD, 3/20/20 charms, 45-life skillers, 2/20/30 circlets, and tri-res boots, with an interactive online appraiser.'
+              : '「丟商店還是天價賣出？」收錄 JMoD 偏折盾、3/20/20、45血大板、2/20/30 極品頭、三抗鞋等破百貝神物，內建互動式線上鑑寶評級器。'}
           </p>
         </div>
 
@@ -309,10 +321,10 @@ export const ValuationGuide: React.FC = () => {
                             </span>
                           </div>
                           <h3 className={`text-xl sm:text-2xl font-bold ${rarityColor} group-hover:brightness-125 transition-all`}>
-                            {item.name}
+                            {isEn ? item.nameEn : item.name}
                           </h3>
                         <div className="text-xs font-mono text-sanctuary-400 mt-0.5">
-                          {item.nameEn}
+                          {isEn ? item.name : item.nameEn}
                         </div>
                       </div>
                     </div>
@@ -335,7 +347,7 @@ export const ValuationGuide: React.FC = () => {
                     <div className="space-y-2">
                       <div className="text-xs font-mono text-sanctuary-400 font-bold flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5 text-d2-gold" />
-                        頂級詞綴組合 (Ideal Stats)
+                        {isEn ? 'Ideal Stats Combination' : '頂級詞綴組合 (Ideal Stats)'}
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                         {item.idealStats.map((stat, sIdx) => (
@@ -360,11 +372,11 @@ export const ValuationGuide: React.FC = () => {
                   <div className="mt-6 pt-4 border-t border-sanctuary-800/80 space-y-2">
                     <div className="text-xs text-sanctuary-400 flex items-start gap-1.5">
                       <BookOpen className="w-3.5 h-3.5 text-sanctuary-500 shrink-0 mt-0.5" />
-                      <span><strong>獲取途徑：</strong>{item.farmingSources}</span>
+                      <span><strong>{isEn ? 'Farming Sources: ' : '獲取途徑：'}</strong>{item.farmingSources}</span>
                     </div>
                     <div className="text-xs text-amber-300/90 flex items-start gap-1.5 bg-amber-950/20 p-2.5 rounded-xl border border-amber-800/40">
                       <AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
-                      <span><strong>鑑寶鐵律：</strong>{item.keyRule}</span>
+                      <span><strong>{isEn ? 'Valuation Rule: ' : '鑑寶鐵律：'}</strong>{item.keyRule}</span>
                     </div>
                   </div>
                 </div>
@@ -388,12 +400,12 @@ export const ValuationGuide: React.FC = () => {
               </h2>
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-3">
                 {[
-                  { id: 'ring', label: '黃戒指' },
-                  { id: 'amulet', label: '手工護身符' },
-                  { id: 'helm', label: '黃頭飾' },
-                  { id: 'boots', label: '三抗鞋' },
-                  { id: 'gloves', label: '黃手套' },
-                  { id: 'shield', label: '藍盾牌' },
+                  { id: 'ring', label: '黃戒指', labelEn: 'Rare Ring' },
+                  { id: 'amulet', label: '手工護身符', labelEn: 'Caster Amulet' },
+                  { id: 'helm', label: '黃頭飾', labelEn: 'Rare Circlet' },
+                  { id: 'boots', label: '三抗鞋', labelEn: 'Tri-Res Boots' },
+                  { id: 'gloves', label: '黃手套', labelEn: 'Rare Gloves' },
+                  { id: 'shield', label: '藍盾牌', labelEn: 'Magic Shield' },
                 ].map(s => (
                   <button
                     key={s.id}
@@ -407,7 +419,7 @@ export const ValuationGuide: React.FC = () => {
                         : 'bg-sanctuary-900 text-sanctuary-300 border-sanctuary-800 hover:text-white'
                     }`}
                   >
-                    {s.label}
+                    {isEn ? s.labelEn : s.label}
                   </button>
                 ))}
               </div>
@@ -419,7 +431,7 @@ export const ValuationGuide: React.FC = () => {
                 <span>{isEn ? 'Step 2: Check Spawned Affixes' : '步驟 2：勾選實際開出的詞綴'}</span>
               </h2>
               <p className="text-xs text-sanctuary-400 mt-1">
-                請根據您撿到的亮黃色/魔法裝備屬性，點選有出現的詞綴項目：
+                {isEn ? 'Select the affixes present on your rare or magic item:' : '請根據您撿到的亮黃色/魔法裝備屬性，點選有出現的詞綴項目：'}
               </p>
 
               <div className="space-y-2 mt-4">
@@ -442,7 +454,7 @@ export const ValuationGuide: React.FC = () => {
                           {isChecked && <CheckCircle2 className="w-3.5 h-3.5" />}
                         </div>
                         <span className={`text-xs sm:text-sm font-medium ${isChecked ? 'text-sanctuary-100 font-bold' : 'text-sanctuary-300'}`}>
-                          {affix.label}
+                          {isEn ? affix.labelEn : affix.label}
                         </span>
                       </div>
 
@@ -473,8 +485,8 @@ export const ValuationGuide: React.FC = () => {
             {/* 綜合評分進度條 */}
             <div className="space-y-1.5 bg-sanctuary-900/80 p-4 rounded-2xl border border-sanctuary-800">
               <div className="flex justify-between text-xs font-mono">
-                <span className="text-sanctuary-400">詞綴純度評分：</span>
-                <span className="font-bold text-d2-gold">{calculatedScore} / 100 分</span>
+                <span className="text-sanctuary-400">{isEn ? 'Affix Score:' : '詞綴純度評分：'}</span>
+                <span className="font-bold text-d2-gold">{calculatedScore} / 100 {isEn ? 'Pts' : '分'}</span>
               </div>
               <div className="w-full h-2.5 bg-sanctuary-950 rounded-full overflow-hidden border border-sanctuary-800">
                 <div

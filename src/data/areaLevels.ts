@@ -271,67 +271,110 @@ export const TERROR_ZONE_GUIDE = {
   mechanics: [
     {
       title: "等級動態縮放公式",
-      content: "邪惡威脅區域中的怪物等級 (Monster Level) 取決於房主 (或建立遊戲者) 當前角色等級 (clvl)：普通怪 = clvl + 2 (地獄上限 96)；精英怪 (Champion) = clvl + 4 (地獄上限 98)；暗金頭目與僕從 (Unique/Minion) = clvl + 5 (地獄上限 99)。"
+      titleEn: "Dynamic Level Scaling Formula",
+      content: "邪惡威脅區域中的怪物等級 (Monster Level) 取決於房主 (或建立遊戲者) 當前角色等級 (clvl)：普通怪 = clvl + 2 (地獄上限 96)；精英怪 (Champion) = clvl + 4 (地獄上限 98)；暗金頭目與僕從 (Unique/Minion) = clvl + 5 (地獄上限 99)。",
+      contentEn: "Monster Level in Terror Zones scales with game creator clvl: Regular = clvl + 2 (Hell cap 96); Champion = clvl + 4 (Hell cap 98); Unique/Minion = clvl + 5 (Hell cap 99)."
     },
     {
       title: "破除 TC87 裝備掉落天花板",
-      content: "當角色等級達到 85 級以上時，邪惡威脅區域內所有怪物皆能掉落全遊戲最頂級的 87 財寶階層 (TC87) 裝備，包含泰瑞爾之力、死亡之網、死亡深度、獅鷲之眼與風之力！"
+      titleEn: "Unlocks TC87 Drop Ceiling Everywhere",
+      content: "當角色等級達到 85 級以上時，邪惡威脅區域內所有怪物皆能掉落全遊戲最頂級的 87 財寶階層 (TC87) 裝備，包含泰瑞爾之力、死亡之網、死亡深度、獅鷲之眼與風之力！",
+      contentEn: "Once clvl reaches 85+, every monster in the Terror Zone can drop TC87 endgame items, including Tyrael's Might, Death's Web, Fathom, Griffon's Eye, and Windforce!"
     },
     {
       title: "破免咒符 (Sunder Charms) 唯一來源",
-      content: "全 6 款破除免疫特大咒符 (破冰/破電/破火/破毒/破物/破魔) 僅能由地獄難度邪惡威脅區域中的精英怪、暗金怪以及 Boss 掉落 (角色需達 75 級以上)。"
+      titleEn: "Exclusive Source of Sunder Charms",
+      content: "全 6 款破除免疫特大咒符 (破冰/破電/破火/破毒/破物/破魔) 僅能由地獄難度邪惡威脅區域中的精英怪、暗金怪以及 Boss 掉落 (角色需達 75 級以上)。",
+      contentEn: "All 6 Sunder Grand Charms (Cold, Light, Fire, Poison, Physical, Magic) drop exclusively from Champions, Uniques, and Bosses in Hell Terror Zones (req clvl 75+)."
     },
     {
       title: "沖級 99 等級質變",
-      content: "在 2.5 之前，98 級升 99 級僅有巴爾、迪亞布羅與尼拉塞克有經驗值收益；邪惡威脅區域推出後，99 級怪物提供全額經驗，升級速度提升 5 至 10 倍！"
+      titleEn: "Level 99 Grind Revolution",
+      content: "在 2.5 之前，98 級升 99 級僅有巴爾、迪亞布羅與尼拉塞克有經驗值收益；邪惡威脅區域推出後，99 級怪物提供全額經驗，升級速度提升 5 至 10 倍！",
+      contentEn: "Prior to Patch 2.5, only Baal, Diablo, and Nihlathak granted XP at lvl 98. With Terror Zones, lvl 99 monsters grant full XP, accelerating the 99 grind by 5-10x!"
     }
   ],
   tiers: [
     {
       tier: "S",
       title: "S 級 · 絕對必刷神區",
+      titleEn: "S Tier · Absolute Must-Farm",
       description: "怪物極度密集、跑圖極快、經驗值與掉寶率頂天，開了立刻進！",
+      descriptionEn: "Extreme monster density, rapid traversal, and maximum XP/drop rates. Drop everything and farm!",
       areas: [
         "秘密乳牛關 (The Secret Cow Level) - 全遊戲怪物密度之王",
         "混沌魔殿 (Chaos Sanctuary) - 惡魔群集 + 迪亞布羅",
         "世界之石要塞 1-3 層 & 毀滅王座 - 經驗最高 + 巴爾五小隊",
         "賢者之谷 & 塔拉夏的古墓 (全部 7 座古墓) - 怪物海洋",
         "崔凡克 (Travincal) - 最高議會瘸子打錢打符文極致"
+      ],
+      areasEn: [
+        "The Secret Cow Level - Undisputed king of monster pack density",
+        "Chaos Sanctuary - Dense demon clusters + Diablo",
+        "Worldstone Keep 1-3 & Throne - Highest XP + Baal minion waves",
+        "Canyon of the Magi & Tal Rasha's Tombs (7 Tombs) - Ocean of mobs",
+        "Travincal - High Council gold, jewel, and high rune powerhouse"
       ]
     },
     {
       tier: "A",
       title: "A 級 · 高效率熱點",
+      titleEn: "A Tier · High Efficiency Hotspots",
       description: "地圖動線清晰、精英怪量多、容易打出高級符文與破免板。",
+      descriptionEn: "Clear pathing, abundant elite packs, and excellent rune/sunder charm yield.",
       areas: [
         "地穴 1-2 層 (The Pit) - 怪物脆皮且 2 層必出金箱子",
         "古代通道 (Ancient Tunnels) - 無原生冰免，冰法首選",
         "遺忘之塔 (The Forgotten Tower) - 女伯爵符文與恐懼之鑰",
         "崔斯特姆 (Tristram) - 傳送門直達，精英小隊扎堆",
         "尼拉塞克的神殿 (暴皮 & 沃特之廳) - 快速擊殺"
+      ],
+      areasEn: [
+        "The Pit Lvl 1-2 - Fragile mobs with guaranteed Level 2 golden chest",
+        "Ancient Tunnels - Zero native cold immunes, ideal for Blizzard",
+        "The Forgotten Tower - Countess runes and Key of Terror",
+        "Tristram - Instant portal access with clustered champion packs",
+        "Nihlathak's Temple (Pindleskin & Halls of Vaught) - Fast runs"
       ]
     },
     {
       tier: "B",
       title: "B 級 · 中規中矩",
+      titleEn: "B Tier · Decent Options",
       description: "怪物分佈較散或有電鬼/女妖等危險威脅，可視裝備強度選擇刷取。",
+      descriptionEn: "Spread-out spawns or dangerous souls/succubi; farm depending on gear strength.",
       areas: [
         "亂石曠野 (Stony Field)",
         "黑暗森林 (Dark Wood)",
         "失落古城 (Lost City)",
         "庫拉斯特市集與廢墟 (Kurast Bazaar)",
         "冰凍高地與亞瑞特高原 (Frigid Highlands)"
+      ],
+      areasEn: [
+        "Stony Field",
+        "Dark Wood",
+        "Lost City",
+        "Kurast Bazaar & Ruined Temple",
+        "Frigid Highlands & Arreat Plateau"
       ]
     },
     {
       tier: "C",
       title: "C 級 · 避雷糞區",
+      titleEn: "C Tier · Avoid / Skip",
       description: "地圖極大怪物極稀疏、地形繞路障礙多、效率極低，建議趁這 1 小時休息或換房。",
+      descriptionEn: "Sprawling maps with sparse mobs and tedious obstacles. Take a break or reset games.",
       areas: [
         "鮮血荒地 & 邪惡洞窟 (Blood Moor)",
         "大沼澤 (Great Marsh) - 地圖又繞又多小矮人吹箭",
         "庫拉斯特下水道 (Sewers)",
         "水晶通道與冰凍之河 (Crystal Passage)"
+      ],
+      areasEn: [
+        "Blood Moor & Den of Evil",
+        "Great Marsh - Maze-like winding paths and fetid blowdarts",
+        "Kurast Sewers",
+        "Crystal Passage & Frozen River"
       ]
     }
   ]

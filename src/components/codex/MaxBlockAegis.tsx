@@ -20,11 +20,11 @@ export const MaxBlockAegis: React.FC<MaxBlockAegisProps> = ({
   const { isEn } = useLanguage();
 
   const shieldPresets = [
-    { labelZh: '聖騎神聖之盾開啟', labelEn: 'Paladin Holy Shield', val: 75, rep: '神聖小盾' },
-    { labelZh: '撒卡蘭姆使者', labelEn: 'Herald of Zakarum', val: 82, rep: '飾金聖盾' },
-    { labelZh: '暴風之盾', labelEn: 'Stormshield', val: 67, rep: '物免盾' },
-    { labelZh: '侏儒 (魔胎)', labelEn: 'Homunculus', val: 60, rep: '死靈專用盾' },
-    { labelZh: '君主盾 (精神盾)', labelEn: 'Monarch Spirit', val: 42, rep: '法系標配' },
+    { labelZh: '聖騎神聖之盾開啟', labelEn: 'Paladin Holy Shield', val: 75, repZh: '神聖小盾', repEn: 'Sacred Targe' },
+    { labelZh: '撒卡蘭姆使者', labelEn: 'Herald of Zakarum', val: 82, repZh: '飾金聖盾', repEn: 'HoZ' },
+    { labelZh: '暴風之盾', labelEn: 'Stormshield', val: 67, repZh: '物免盾', repEn: 'Stormshield' },
+    { labelZh: '侏儒 (魔胎)', labelEn: 'Homunculus', val: 60, repZh: '死靈專用盾', repEn: 'Necro Shield' },
+    { labelZh: '君主盾 (精神盾)', labelEn: 'Monarch Spirit', val: 42, repZh: '法系標配', repEn: 'Monarch Spirit' },
   ];
 
   const levelPresets = [75, 80, 85, 90, 95, 99];
@@ -109,7 +109,9 @@ export const MaxBlockAegis: React.FC<MaxBlockAegisProps> = ({
 
             {/* 常見等級快捷按鈕 */}
             <div className="flex items-center gap-1.5 flex-wrap pt-1">
-              <span className="text-[11px] text-sanctuary-400 font-mono mr-1">快捷等級：</span>
+              <span className="text-[11px] text-sanctuary-400 font-mono mr-1">
+                {isEn ? 'Quick Levels:' : '快捷等級：'}
+              </span>
               {levelPresets.map((lvl) => (
                 <button
                   key={lvl}
@@ -156,7 +158,9 @@ export const MaxBlockAegis: React.FC<MaxBlockAegisProps> = ({
 
             {/* 經典名盾快捷選單 */}
             <div className="space-y-1.5 pt-1">
-              <span className="text-[11px] text-sanctuary-400 font-mono block">經典名盾格擋率一鍵套用：</span>
+              <span className="text-[11px] text-sanctuary-400 font-mono block">
+                {isEn ? 'Classic Shields One-Click Block %:' : '經典名盾格擋率一鍵套用：'}
+              </span>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                 {shieldPresets.map((sp) => (
                   <button
@@ -170,10 +174,10 @@ export const MaxBlockAegis: React.FC<MaxBlockAegisProps> = ({
                     }`}
                   >
                     <span className="text-[11px] font-bold font-mono text-amber-300 truncate">
-                      {sp.labelZh}
+                      {isEn ? sp.labelEn : sp.labelZh}
                     </span>
                     <span className="text-[10px] text-sanctuary-400 font-mono">
-                      {sp.val}% ({sp.rep})
+                      {sp.val}% ({isEn ? sp.repEn : sp.repZh})
                     </span>
                   </button>
                 ))}
@@ -239,10 +243,12 @@ export const MaxBlockAegis: React.FC<MaxBlockAegisProps> = ({
           <div className="mt-4 text-center space-y-1">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-950/80 border border-amber-600/50 text-xs font-bold text-amber-300 font-mono">
               <Sparkles className="w-3.5 h-3.5 text-d2-gold" />
-              <span>75% 物理硬減免達成</span>
+              <span>{isEn ? '75% Max Physical Block Cap Reached' : '75% 物理硬減免達成'}</span>
             </div>
             <p className="text-[11px] text-sanctuary-400 font-mono">
-              角色 {charLevel} 級 • 盾牌 {shieldBlockPercent}% • 基礎補償 +15
+              {isEn
+                ? `Level ${charLevel} • Shield ${shieldBlockPercent}% • Base Offset +15`
+                : `角色 ${charLevel} 級 • 盾牌 ${shieldBlockPercent}% • 基礎補償 +15`}
             </p>
           </div>
         </div>
@@ -253,20 +259,24 @@ export const MaxBlockAegis: React.FC<MaxBlockAegisProps> = ({
         <div className="space-y-1">
           <div className="font-bold text-amber-300 flex items-center gap-1.5 font-mono">
             <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>【滿格擋流 (Max Block)】戰略解析：</span>
+            <span>{isEn ? '[Max Block Strategy] Analysis:' : '【滿格擋流 (Max Block)】戰略解析：'}</span>
           </div>
           <p className="text-sanctuary-300 leading-relaxed pl-5">
-            強制將敵方近戰攻擊與遠程箭矢的命中率壓至 25% 下限。<strong>專家級 (Hardcore)</strong> 模式與近戰聖騎士的必備生存鐵律；面對狂暴牛群、死靈法師骨矛與狂怒近戰怪物時擁有不可撼動的防猝死容錯率。
+            {isEn
+              ? 'Forces enemy melee and ranged physical hit chance down to the 25% floor (75% attacks blocked). A golden survival rule for Hardcore mode and melee Paladins, providing supreme protection against frenzy mobs and archers.'
+              : '強制將敵方近戰攻擊與遠程箭矢的命中率壓至 25% 下限。專家級 (Hardcore) 模式與近戰聖騎士的必備生存鐵律；面對狂暴牛群、死靈法師骨矛與狂怒近戰怪物時擁有不可撼動的防猝死容錯率。'}
           </p>
         </div>
 
         <div className="space-y-1">
           <div className="font-bold text-cyan-300 flex items-center gap-1.5 font-mono">
             <Info className="w-4 h-4 text-cyan-400 shrink-0" />
-            <span>【純體力血牛流 (Max Vita)】權衡提醒：</span>
+            <span>{isEn ? '[Max Vitality Strategy] Trade-off:' : '【純體力血牛流 (Max Vita)】權衡提醒：'}</span>
           </div>
           <p className="text-sanctuary-300 leading-relaxed pl-5">
-            若法系角色裝備<strong>君主盾 (精神盾)</strong>（基礎格擋僅約 42%），90 級時撐滿格擋需投資高達 337 點敏捷，會劇烈犧牲約 400~600 點基礎生命。法師與死靈若走遠程拉打路線，多數推薦敏捷僅點至裝備需求，其餘全加體力。
+            {isEn
+              ? 'If casters equip Monarch Spirit (42% base block), achieving 75% block at Lv90 demands 337 Dexterity, heavily sacrificing 400-600 base life. Ranged casters (Sorceress, Necromancer) are strongly recommended to invest Dexterity only for gear requirements and funnel the rest into Vitality.'
+              : '若法系角色裝備君主盾 (精神盾)（基礎格擋僅約 42%），90 級時撐滿格擋需投資高達 337 點敏捷，會劇烈犧牲約 400~600 點基礎生命。法師與死靈若走遠程拉打路線，多數推薦敏捷僅點至裝備需求，其餘全加體力。'}
           </p>
         </div>
       </div>

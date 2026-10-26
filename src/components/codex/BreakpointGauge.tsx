@@ -12,7 +12,9 @@ export interface BreakpointGaugeProps {
   characterClass: string;
   type: 'FCR' | 'FHR' | 'FBR' | 'IAS' | string;
   variant?: string;
+  variantEn?: string;
   notes?: string;
+  notesEn?: string;
   currentValue: number;
   breakpoints: BreakpointItem[];
   onSetValue: (value: number) => void;
@@ -22,7 +24,9 @@ export const BreakpointGauge: React.FC<BreakpointGaugeProps> = ({
   characterClass,
   type,
   variant,
+  variantEn,
   notes,
+  notesEn,
   currentValue,
   breakpoints,
   onSetValue,
@@ -47,6 +51,9 @@ export const BreakpointGauge: React.FC<BreakpointGaugeProps> = ({
   // 進度百分比計算 (以最頂檔數值為 100%)
   const progressPercent = Math.min(100, Math.max(0, Math.round((currentValue / Math.max(1, maxReq)) * 100)));
 
+  const displayVariant = isEn ? (variantEn || variant) : variant;
+  const displayNotes = isEn ? (notesEn || notes) : notes;
+
   return (
     <div className="p-5 rounded-2xl bg-sanctuary-950 border border-sanctuary-800 shadow-xl space-y-5">
       {/* 檔位標題與即時達成狀態 */}
@@ -55,16 +62,16 @@ export const BreakpointGauge: React.FC<BreakpointGaugeProps> = ({
           <div className="flex items-center gap-2">
             <h3 className="font-diablo text-lg font-bold text-sanctuary-100">
               {isEn ? (CLASS_ZH_TO_EN[characterClass] || characterClass) : characterClass} • {type}{' '}
-              {variant ? `(${variant})` : ''}
+              {displayVariant ? `(${displayVariant})` : ''}
             </h3>
             <span className="text-[10px] px-2 py-0.5 rounded-full bg-sanctuary-900 border border-sanctuary-750 text-sanctuary-300 font-mono">
               {sortedBps.length} {isEn ? 'Breakpoints' : '個幀數階層'}
             </span>
           </div>
-          {notes && (
+          {displayNotes && (
             <p className="text-xs text-d2-unique mt-1 flex items-center gap-1 font-medium">
               <span>💡</span>
-              <span>{notes}</span>
+              <span>{displayNotes}</span>
             </p>
           )}
         </div>
@@ -96,7 +103,7 @@ export const BreakpointGauge: React.FC<BreakpointGaugeProps> = ({
                   type="button"
                   onClick={() => onSetValue(nextBp.requiredValue)}
                   className="px-2 py-0.5 rounded bg-d2-fire/20 hover:bg-d2-fire/30 border border-d2-fire/40 text-[10px] font-mono text-d2-fire flex items-center gap-1 transition-all cursor-pointer"
-                  title={`一鍵將數值調至 ${nextBp.requiredValue}% 達成 ${nextBp.frames} 幀`}
+                  title={isEn ? `Step to ${nextBp.requiredValue}% for ${nextBp.frames} frames` : `一鍵將數值調至 ${nextBp.requiredValue}% 達成 ${nextBp.frames} 幀`}
                 >
                   <Sparkles className="w-2.5 h-2.5" />
                   <span>{isEn ? `Step to ${nextBp.requiredValue}%` : `一鍵對齊 ${nextBp.requiredValue}%`}</span>
@@ -147,7 +154,7 @@ export const BreakpointGauge: React.FC<BreakpointGaugeProps> = ({
                       ? 'scale-105'
                       : 'opacity-80 hover:opacity-100'
                   }`}
-                  title={`點擊將 ${type} 數值設為 ${bp.requiredValue}% (${bp.frames} 幀)`}
+                  title={isEn ? `Set ${type} to ${bp.requiredValue}% (${bp.frames} frames)` : `點擊將 ${type} 數值設為 ${bp.requiredValue}% (${bp.frames} 幀)`}
                 >
                   {/* 節點圓點 */}
                   <div

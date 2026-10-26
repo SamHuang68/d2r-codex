@@ -129,8 +129,10 @@ export interface BreakpointData {
   classNameEn: string;
   type: 'FCR' | 'FHR' | 'FBR' | 'IAS';
   variant?: string; // e.g. "Sorceress - Lightning/Chain Lightning" or "Paladin - Holy Shield"
+  variantEn?: string;
   breakpoints: { frames: number; requiredValue: number }[];
   notes?: string;
+  notesEn?: string;
 }
 
 export interface AreaLevelData {

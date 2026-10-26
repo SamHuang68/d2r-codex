@@ -40,32 +40,32 @@ const ATTRS: { key: keyof Alloc; label: string; labelEn: string }[] = [
   { key: 'str', label: '力量', labelEn: 'Strength' }, { key: 'dex', label: '敏捷', labelEn: 'Dexterity' }, { key: 'vit', label: '體能', labelEn: 'Vitality' }, { key: 'ene', label: '能量', labelEn: 'Energy' },
 ];
 
-const MORE: { label: string; stat: string; suffix?: string }[] = [
-  { label: '快速施法速度 (FCR)', stat: 'item_fastercastrate', suffix: '%' },
-  { label: '快速打擊恢復 (FHR)', stat: 'item_fastergethitrate', suffix: '%' },
-  { label: '快速格擋速度 (FBR)', stat: 'item_fasterblockrate', suffix: '%' },
-  { label: '攻擊速度 (IAS)', stat: 'item_fasterattackrate', suffix: '%' },
-  { label: '跑步／行走速度', stat: 'item_fastermovevelocity', suffix: '%' },
-  { label: '技能：跑步／行走速度', stat: 'skill_frw', suffix: '%' },
-  { label: '技能：攻擊速度（光環、狂亂連擊等）', stat: 'skill_ias', suffix: '%' },
-  { label: '尋獲魔法物品 (MF)', stat: 'item_magicbonus', suffix: '%' },
-  { label: '金幣掉落', stat: 'item_goldbonus', suffix: '%' },
-  { label: '生命偷取', stat: 'lifedrainmindam', suffix: '%' },
-  { label: '法力偷取', stat: 'manadrainmindam', suffix: '%' },
-  { label: '粉碎打擊 (CB)', stat: 'item_crushingblow', suffix: '%' },
-  { label: '致命打擊 (DS)', stat: 'item_deadlystrike', suffix: '%' },
-  { label: '開放傷口 (OW)', stat: 'item_openwounds', suffix: '%' },
-  { label: '物理傷害降低（%）', stat: 'damageresist', suffix: '%' },
-  { label: '物理傷害降低（固定）', stat: 'normal_damage_reduction' },
-  { label: '魔法傷害降低', stat: 'magic_damage_reduction' },
-  { label: '生命回復／秒', stat: 'hpregen' },
-  { label: '無法凍結', stat: 'item_cannotbefrozen' },
+const MORE: { label: string; labelEn: string; stat: string; suffix?: string }[] = [
+  { label: '快速施法速度 (FCR)', labelEn: 'Faster Cast Rate (FCR)', stat: 'item_fastercastrate', suffix: '%' },
+  { label: '快速打擊恢復 (FHR)', labelEn: 'Faster Hit Recovery (FHR)', stat: 'item_fastergethitrate', suffix: '%' },
+  { label: '快速格擋速度 (FBR)', labelEn: 'Faster Block Rate (FBR)', stat: 'item_fasterblockrate', suffix: '%' },
+  { label: '攻擊速度 (IAS)', labelEn: 'Increased Attack Speed (IAS)', stat: 'item_fasterattackrate', suffix: '%' },
+  { label: '跑步／行走速度', labelEn: 'Faster Run/Walk (FRW)', stat: 'item_fastermovevelocity', suffix: '%' },
+  { label: '技能：跑步／行走速度', labelEn: 'Skill: Faster Run/Walk', stat: 'skill_frw', suffix: '%' },
+  { label: '技能：攻擊速度（光環、狂亂連擊等）', labelEn: 'Skill: Attack Speed (Auras/Frenzy)', stat: 'skill_ias', suffix: '%' },
+  { label: '尋獲魔法物品 (MF)', labelEn: 'Magic Find (MF)', stat: 'item_magicbonus', suffix: '%' },
+  { label: '金幣掉落', labelEn: 'Extra Gold from Monsters', stat: 'item_goldbonus', suffix: '%' },
+  { label: '生命偷取', labelEn: 'Life Stolen per Hit', stat: 'lifedrainmindam', suffix: '%' },
+  { label: '法力偷取', labelEn: 'Mana Stolen per Hit', stat: 'manadrainmindam', suffix: '%' },
+  { label: '粉碎打擊 (CB)', labelEn: 'Crushing Blow (CB)', stat: 'item_crushingblow', suffix: '%' },
+  { label: '致命打擊 (DS)', labelEn: 'Deadly Strike (DS)', stat: 'item_deadlystrike', suffix: '%' },
+  { label: '開放傷口 (OW)', labelEn: 'Open Wounds (OW)', stat: 'item_openwounds', suffix: '%' },
+  { label: '物理傷害降低（%）', labelEn: 'Damage Reduced by % (DR)', stat: 'damageresist', suffix: '%' },
+  { label: '物理傷害降低（固定）', labelEn: 'Damage Reduced by (Flat DR)', stat: 'normal_damage_reduction' },
+  { label: '魔法傷害降低', labelEn: 'Magic Damage Reduced (MDR)', stat: 'magic_damage_reduction' },
+  { label: '生命回復／秒', labelEn: 'Replenish Life', stat: 'hpregen' },
+  { label: '無法凍結', labelEn: 'Cannot Be Frozen', stat: 'item_cannotbefrozen' },
 ];
 
-const BP_ROWS: { kind: BpKind; label: string; stat: string; unit: string }[] = [
-  { kind: 'fcr', label: '快速施法 FCR', stat: 'item_fastercastrate', unit: '施法影格' },
-  { kind: 'fhr', label: '快速打擊恢復 FHR', stat: 'item_fastergethitrate', unit: '受擊恢復影格' },
-  { kind: 'fbr', label: '快速格擋 FBR', stat: 'item_fasterblockrate', unit: '格擋影格' },
+const BP_ROWS: { kind: BpKind; label: string; labelEn: string; stat: string; unit: string; unitEn: string }[] = [
+  { kind: 'fcr', label: '快速施法 FCR', labelEn: 'Faster Cast Rate FCR', stat: 'item_fastercastrate', unit: '施法影格', unitEn: 'frames' },
+  { kind: 'fhr', label: '快速打擊恢復 FHR', labelEn: 'Faster Hit Recovery FHR', stat: 'item_fastergethitrate', unit: '受擊恢復影格', unitEn: 'frames' },
+  { kind: 'fbr', label: '快速格擋 FBR', labelEn: 'Faster Block Rate FBR', stat: 'item_fasterblockrate', unit: '格擋影格', unitEn: 'frames' },
 ];
 
 /** 斷點：目前的百分比落在哪一格、下一格還差多少。同一職業有多種動作（武器、型態）時可切換 */
@@ -150,9 +150,11 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
   const a = result.attributes;
   const unmet: Record<string, boolean> = { str: a.str < needStr, dex: a.dex < needDex };
   const res = result.resist; const raw = result.rawResist; const mx = result.maxResist;
-  const resRows: [string, number, number, number, string][] = [
-    ['火焰抗性', res.fire, raw.fire, mx.fire, 't-fire'], ['電擊抗性', res.lightning, raw.lightning, mx.lightning, 't-lightning'],
-    ['冰寒抗性', res.cold, raw.cold, mx.cold, 't-cold'], ['毒素抗性', res.poison, raw.poison, mx.poison, 't-poison'],
+  const resRows: [string, string, number, number, number, string][] = [
+    ['火焰抗性', 'Fire Resistance', res.fire, raw.fire, mx.fire, 't-fire'],
+    ['電擊抗性', 'Lightning Resistance', res.lightning, raw.lightning, mx.lightning, 't-lightning'],
+    ['冰寒抗性', 'Cold Resistance', res.cold, raw.cold, mx.cold, 't-cold'],
+    ['毒素抗性', 'Poison Resistance', res.poison, raw.poison, mx.poison, 't-poison'],
   ];
   const wd = result.weaponDamage;
   const s = result.stats;
@@ -212,9 +214,9 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
           <Row label={isEn ? "Mana" : "法力"} value={`${fmt(result.mana)} / ${fmt(result.mana)}`} tone="t-magic" />
           <Row label={isEn ? "Block Chance" : "格擋機率"} value={`${result.blockChance}%`} />
           <div className="grid grid-cols-2 gap-1.5 pt-1">
-            {resRows.map(([n, v, r, m, c]) => (
+            {resRows.map(([n, nEn, v, r, m, c]) => (
               <div key={n} className="d2-row" title={`未截斷 ${r}%，上限 ${m}%`}>
-                <span className={`k ${c}`}>{n}</span>
+                <span className={`k ${c}`}>{isEn ? nEn : n}</span>
                 <span className={`v ${v < 0 ? 't-bad' : v >= m ? 't-set' : ''}`}>{v}%</span>
               </div>
             ))}
@@ -272,7 +274,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
         <div className="mt-5" aria-label="斷點">
           <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "BREAKPOINTS" : "斷 點"}</div>
           <div className="grid grid-cols-1 gap-1.5">
-            {BP_ROWS.map((r) => <BreakpointRow key={`${classCode}-${r.kind}`} kind={r.kind} label={r.label} unit={r.unit} classCode={classCode} value={s[r.stat] ?? 0} />)}
+            {BP_ROWS.map((r) => <BreakpointRow key={`${classCode}-${r.kind}`} kind={r.kind} label={isEn ? r.labelEn : r.label} unit={isEn ? r.unitEn : r.unit} classCode={classCode} value={s[r.stat] ?? 0} />)}
           </div>
           <div className="d2-sub mt-1">斷點表來自社群整理（Maxroll 2026-02，主要斷點另與 DiabloBytes、PureDiablo 比對），不是遊戲資料表；實際影格還受武器與技能影響。只含裝備提供的百分比，不含技能或光環。</div>
         </div>
@@ -326,9 +328,9 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
       </button>
       {more && (
         <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-          {moreRows.length === 0 && <div className="t-dim text-sm">目前沒有這類加成</div>}
-          {moreRows.map((m) => <Row key={m.stat} label={m.label} value={`${m.v}${m.suffix ?? ''}`} />)}
-          {skillRows.length > 0 && <div className="sm:col-span-2 d2-row text-sm"><span className="k">技能加成</span><span className="t-magic text-right">{skillRows.join('、')}</span></div>}
+          {moreRows.length === 0 && <div className="t-dim text-sm">{isEn ? 'No additional bonuses active' : '目前沒有這類加成'}</div>}
+          {moreRows.map((m) => <Row key={m.stat} label={isEn ? m.labelEn : m.label} value={`${m.v}${m.suffix ?? ''}`} />)}
+          {skillRows.length > 0 && <div className="sm:col-span-2 d2-row text-sm"><span className="k">{isEn ? 'Skill Bonuses' : '技能加成'}</span><span className="t-magic text-right">{skillRows.join('、')}</span></div>}
           <div className="sm:col-span-2 d2-sub">FCR／FHR 斷點影格、光環／戰吼／BO／變身、元素專精尚未實作，數值不含這些來源。</div>
         </div>
       )}

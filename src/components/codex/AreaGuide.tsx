@@ -34,6 +34,16 @@ interface ActGeographyHub {
   alvl85Count: number;
 }
 
+const translateImmunity = (im: string): string => {
+  if (im.includes('冰寒')) return 'Cold';
+  if (im.includes('火焰')) return 'Fire';
+  if (im.includes('閃電')) return 'Light';
+  if (im.includes('毒素')) return 'Poison';
+  if (im.includes('物理')) return 'Physical';
+  if (im.includes('魔法')) return 'Magic';
+  return im;
+};
+
 const ACT_GEOGRAPHY_HUBS: ActGeographyHub[] = [
   {
     act: 1,
@@ -683,7 +693,7 @@ export const AreaGuide: React.FC = () => {
                           {area.isAlvl85 && (
                             <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-d2-gold/15 text-d2-gold border border-d2-gold/30 flex items-center gap-1">
                               <Award className="w-3 h-3" />
-                              TC87 85級
+                              {isEn ? 'TC87 Lvl 85' : 'TC87 85級'}
                             </span>
                           )}
                           <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sanctuary-950 text-sanctuary-400 border border-sanctuary-800">
@@ -720,7 +730,7 @@ export const AreaGuide: React.FC = () => {
                                   key={i}
                                   className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${colorClass}`}
                                 >
-                                  {im}
+                                  {isEn ? translateImmunity(im) : im}
                                 </span>
                               );
                             })
@@ -758,10 +768,10 @@ export const AreaGuide: React.FC = () => {
                 </div>
                 <div>
                   <h4 className="text-base font-bold text-sanctuary-100 mb-1">
-                    {item.title}
+                    {isEn ? (item.titleEn || item.title) : item.title}
                   </h4>
                   <p className="text-xs text-sanctuary-400 leading-relaxed">
-                    {item.content}
+                    {isEn ? (item.contentEn || item.content) : item.content}
                   </p>
                 </div>
               </div>
@@ -795,17 +805,17 @@ export const AreaGuide: React.FC = () => {
                         </span>
                         <div>
                           <h4 className="text-base font-bold text-sanctuary-100">
-                            {tierData.title}
+                            {isEn ? (tierData.titleEn || tierData.title) : tierData.title}
                           </h4>
                           <p className="text-xs text-sanctuary-400">
-                            {tierData.description}
+                            {isEn ? (tierData.descriptionEn || tierData.description) : tierData.description}
                           </p>
                         </div>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-3 pt-3 border-t border-sanctuary-800/60">
-                      {tierData.areas.map((areaName, i) => (
+                      {(isEn && tierData.areasEn ? tierData.areasEn : tierData.areas).map((areaName, i) => (
                         <div
                           key={i}
                           className="bg-sanctuary-950/60 px-3 py-2 rounded-xl border border-sanctuary-800/80 text-xs text-sanctuary-200 flex items-center gap-2"

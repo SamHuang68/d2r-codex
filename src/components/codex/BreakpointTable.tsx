@@ -23,6 +23,17 @@ const CLASS_ROLE_TAGS: Record<string, string> = {
   '德魯伊': '元素變形',
 };
 
+const CLASS_ROLE_TAGS_EN: Record<string, string> = {
+  '魔法使': 'Casting Speed',
+  '聖騎士': 'Holy Shield',
+  '死靈法師': 'Bones & Curses',
+  '術士': 'Forbidden Arts',
+  '亞馬遜': 'Javelins & Bows',
+  '野蠻人': 'Warcries & Melee',
+  '刺客': 'Traps & Shadows',
+  '德魯伊': 'Elemental & Shift',
+};
+
 export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass = '魔法使' }) => {
   const { t, isEn } = useLanguage();
   const [selectedClass, setSelectedClass] = useState<string>(initialClass);
@@ -59,109 +70,120 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
       FBR: [15, 30, 55],
     },
     '亞馬遜': {
-      FCR: [32, 68, 99, 152],
-      FHR: [13, 20, 32, 52, 86],
-      FBR: [13, 29, 56],
+      FCR: [32, 48, 68, 99, 152],
+      FHR: [20, 32, 52, 86],
+      FBR: [11, 20, 40],
     },
     '野蠻人': {
       FCR: [37, 63, 105, 200],
       FHR: [15, 27, 48, 86],
-      FBR: [9, 20, 42, 86],
+      FBR: [9, 20, 42],
     },
     '刺客': {
-      FCR: [42, 65, 102, 174],
+      FCR: [27, 42, 65, 102, 174],
       FHR: [15, 27, 48, 86],
       FBR: [13, 27, 48],
     },
     '德魯伊': {
-      FCR: [46, 68, 99, 163],
-      FHR: [13, 20, 32, 54, 99],
-      FBR: [15, 32, 67],
+      FCR: [30, 46, 68, 99, 163],
+      FHR: [20, 32, 54, 86],
+      FBR: [11, 20, 40],
     },
   };
 
-  const currentPresets = classPresets[selectedClass]?.[selectedType] || [0, 50, 100];
-
-  // 計算 75% 滿格擋所需敏捷: Dex = ceil( (150 * Level) / ShieldBlock ) + 15
-  const requiredDexForMaxBlock = Math.ceil((150 * charLevel) / Math.max(1, shieldBlockPercent)) + 15;
-
-  // Current Breakpoint Sets
+  // 當前職業與類別所屬的所有檔位配置
   const currentBpConfigs = BREAKPOINTS_DATA.filter(
     (bp) => bp.characterClass === selectedClass && bp.type === selectedType
   );
 
+  const currentPresets = classPresets[selectedClass]?.[selectedType] || [30, 60, 105];
+
+  // 滿格擋所需敏捷公式：Dex = ceil((150 * Level) / ShieldBlock%) + 15
+  const requiredDexForMaxBlock = Math.ceil((150 * charLevel) / Math.max(1, shieldBlockPercent)) + 15;
+
   return (
-    <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 animate-fade-in">
-      {/* 頂部標題 */}
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
+      {/* 標題與導言 */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-sanctuary-800 pb-6">
         <div>
           <div className="flex items-center gap-2 text-d2-fire text-xs font-mono tracking-widest uppercase">
-            <Compass className="w-4 h-4 text-d2-fire animate-pulse" />
-            Combat Mechanics, Frame Breakpoints & Area Levels
+            <Zap className="w-4 h-4 text-d2-fire animate-pulse" />
+            Mechanic Breakpoints & Defenses
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            {t('核心機制斷點與 85 級打寶場景表', 'Combat Breakpoints & Action Frames Guide')}
+            {t('機制斷點與動作幀數寶典', 'Action Breakpoints & Frame Engine')}
           </h1>
-          <p className="text-xs sm:text-sm text-sanctuary-400 mt-1 max-w-2xl">
+          <p className="text-sanctuary-400 text-sm mt-1 max-w-2xl">
             {t(
-              '精準查詢施法速度 (FCR)、打擊恢復 (FHR)、格擋速度 (FBR) 幀數檔位與 75% 滿格擋敏捷試算，掌握 85 級地獄場景原生怪物免疫分佈。',
-              'Look up frame breakpoints for Faster Cast Rate (FCR), Faster Hit Recovery (FHR), and Faster Block Rate (FBR) alongside a 75% Max Block Dex calculator.'
+              '8 大職業施法 (FCR)、打擊恢復 (FHR) 與格擋 (FBR) 幀數斷點速查，並整合 75% 滿格擋敏捷儀表與 TC87 85 級場景等級對照表。',
+              'Breakpoints for FCR, FHR, and FBR across all 8 classes with interactive 75% Max Block Aegis and Level 85 area tables.'
             )}
           </p>
         </div>
 
-        {/* View Toggle */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-sanctuary-900 border border-sanctuary-800 shrink-0 text-xs">
+        {/* 子分頁切換：動作斷點 vs 場景等級 */}
+        <div className="flex items-center gap-1 bg-sanctuary-900/80 p-1 rounded-xl border border-sanctuary-800 shrink-0">
           <button
-            type="button"
             onClick={() => setActiveSubTab('breakpoints')}
-            className={`px-3.5 py-2 rounded-lg font-medium transition-colors flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
               activeSubTab === 'breakpoints'
-                ? 'bg-sanctuary-800 text-d2-fire font-bold shadow'
-                : 'text-sanctuary-400 hover:text-white'
+                ? 'bg-d2-fire text-sanctuary-950 font-bold shadow-lg shadow-d2-fire/20'
+                : 'text-sanctuary-300 hover:text-sanctuary-100 hover:bg-sanctuary-800/50'
             }`}
           >
-            <Zap className="w-3.5 h-3.5" />
-            <span>幀數斷點計算 (Breakpoints)</span>
+            <Zap className="w-4 h-4" />
+            {isEn ? 'Breakpoints Engine' : '動作機制斷點'}
           </button>
           <button
-            type="button"
             onClick={() => setActiveSubTab('areas')}
-            className={`px-3.5 py-2 rounded-lg font-medium transition-colors flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
               activeSubTab === 'areas'
-                ? 'bg-sanctuary-800 text-d2-fire font-bold shadow'
-                : 'text-sanctuary-400 hover:text-white'
+                ? 'bg-d2-fire text-sanctuary-950 font-bold shadow-lg shadow-d2-fire/20'
+                : 'text-sanctuary-300 hover:text-sanctuary-100 hover:bg-sanctuary-800/50'
             }`}
           >
-            <MapPin className="w-3.5 h-3.5" />
-            <span>85 場景與邪惡威脅區域 (Area Levels)</span>
+            <MapPin className="w-4 h-4" />
+            {isEn ? 'Area Levels (85)' : '85 級打寶場景表'}
           </button>
         </div>
       </div>
 
       {activeSubTab === 'breakpoints' ? (
-        <div className="space-y-6">
-          {/* 八大職業原版原畫英雄卡片導航 (8 Class Avatar Hero Cards Navigation) */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs font-mono text-sanctuary-400">
-              <span className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-d2-fire" />
-                {isEn ? 'Select Character Class' : '選擇欲查詢之職業原版頭像卡：'}
+        <div className="space-y-8">
+          {/* ── 75% 滿格擋防禦圓盤儀表 (Max Block Aegis) ── */}
+          <MaxBlockAegis
+            charLevel={charLevel}
+            onChangeLevel={setCharLevel}
+            shieldBlockPercent={shieldBlockPercent}
+            onChangeShieldBlock={setShieldBlockPercent}
+            requiredDexForMaxBlock={requiredDexForMaxBlock}
+          />
+
+          {/* ── 職業頭像導航列 (Class Avatar Grid) ── */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-xs text-sanctuary-400 font-mono">
+              <span className="flex items-center gap-1.5 text-sanctuary-300 font-bold">
+                <Compass className="w-4 h-4 text-d2-fire" />
+                <span>{isEn ? 'Select Hero Class:' : '選擇英雄職業：'}</span>
               </span>
-              <span className="text-d2-fire font-bold font-mono">
-                {selectedClass} ({CLASS_ZH_TO_EN[selectedClass] || selectedClass})
+              <span className="text-sanctuary-500">
+                {isEn ? 'Showing: ' : '當前選定：'}
+                <strong className="text-d2-gold">{isEn ? (CLASS_ZH_TO_EN[selectedClass] || selectedClass) : selectedClass}</strong>
               </span>
             </div>
+
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
               {classesList.map((cls) => {
                 const isActive = selectedClass === cls;
-                const roleZh = CLASS_ROLE_TAGS[cls] || '戰鬥大師';
+                const roleZh = CLASS_ROLE_TAGS[cls] || '核心檔位';
+                const roleEn = CLASS_ROLE_TAGS_EN[cls] || 'Breakpoints';
+
                 return (
                   <button
                     key={cls}
                     type="button"
                     onClick={() => setSelectedClass(cls)}
-                    className={`group relative rounded-xl p-2.5 flex flex-col items-center text-center transition-all cursor-pointer border ${
+                    className={`group relative p-3 rounded-2xl border transition-all duration-300 flex flex-col items-center text-center cursor-pointer ${
                       isActive
                         ? 'bg-gradient-to-b from-sanctuary-850 to-sanctuary-950 border-d2-fire ring-2 ring-d2-fire/50 shadow-glow-red/30 scale-[1.03]'
                         : 'bg-sanctuary-950/80 border-sanctuary-800 hover:border-sanctuary-700 hover:bg-sanctuary-900/60'
@@ -182,10 +204,10 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                         isActive ? 'text-d2-fire' : 'text-sanctuary-200 group-hover:text-white'
                       }`}
                     >
-                      {cls}
+                      {isEn ? CLASS_ZH_TO_EN[cls] : cls}
                     </span>
                     <span className="text-[10px] font-mono text-sanctuary-400 truncate w-full">
-                      {CLASS_ZH_TO_EN[cls]}
+                      {isEn ? cls : CLASS_ZH_TO_EN[cls]}
                     </span>
                     <span
                       className={`text-[9px] px-1.5 py-0.2 rounded-full mt-1 font-mono ${
@@ -194,7 +216,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                           : 'bg-sanctuary-900 text-sanctuary-500'
                       }`}
                     >
-                      {roleZh}
+                      {isEn ? roleEn : roleZh}
                     </span>
                   </button>
                 );
@@ -260,7 +282,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                     onClick={() => setCurrentValInput(0)}
                     className="text-xs text-sanctuary-500 hover:text-sanctuary-300 font-mono px-2 py-1 rounded bg-sanctuary-900 border border-sanctuary-800"
                   >
-                    歸零
+                    {isEn ? 'Reset' : '歸零'}
                   </button>
                 </div>
               </div>
@@ -299,49 +321,51 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                 characterClass={cfg.characterClass}
                 type={cfg.type}
                 variant={cfg.variant}
+                variantEn={cfg.variantEn}
                 notes={cfg.notes}
+                notesEn={cfg.notesEn}
                 currentValue={currentValInput}
                 breakpoints={cfg.breakpoints}
-                onSetValue={(v) => setCurrentValInput(v)}
+                onSetValue={setCurrentValInput}
               />
             ))}
           </div>
-
-          {/* 75% 滿格擋防禦圓盤儀表 (Max Block Aegis Defense Station) */}
-          <MaxBlockAegis
-            charLevel={charLevel}
-            onChangeLevel={setCharLevel}
-            shieldBlockPercent={shieldBlockPercent}
-            onChangeShieldBlock={setShieldBlockPercent}
-            requiredDexForMaxBlock={requiredDexForMaxBlock}
-          />
         </div>
       ) : (
         /* Area Levels Table (100% 完整保全) */
         <div className="bg-sanctuary-950 border border-sanctuary-800 rounded-2xl overflow-hidden shadow-2xl">
           <div className="p-4 border-b border-sanctuary-850 bg-sanctuary-900/60 flex items-center justify-between text-xs text-sanctuary-300">
             <span>
-              ⭐ <strong>85 級場景 (Area Level 85)</strong> 怪物能掉落遊戲中全數暗金裝備 (包含泰瑞爾之力、獅鷲之眼、風之力)。
+              ⭐ <strong>{isEn ? 'Area Level 85 Zones: ' : '85 級場景 (Area Level 85)：'}</strong>
+              {isEn
+                ? 'Monsters in alvl 85 zones can drop all unique items in D2R (including Tyrael\'s Might, Griffon\'s Eye, and Windforce).'
+                : '怪物能掉落遊戲中全數暗金裝備 (包含泰瑞爾之力、獅鷲之眼、風之力)。'}
             </span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-sanctuary-900 text-sanctuary-400 font-semibold border-b border-sanctuary-800">
                 <tr>
-                  <th className="py-3 px-4">章節</th>
-                  <th className="py-3 px-4">場景名稱 (中文/英文)</th>
-                  <th className="py-3 px-4 text-center">場景等級</th>
-                  <th className="py-3 px-4">常見原生免疫抗性</th>
-                  <th className="py-3 px-4">打寶特色與備註</th>
+                  <th className="py-3 px-4">{isEn ? 'Act' : '章節'}</th>
+                  <th className="py-3 px-4">{isEn ? 'Area Name' : '場景名稱 (中文/英文)'}</th>
+                  <th className="py-3 px-4 text-center">{isEn ? 'Area Level' : '場景等級'}</th>
+                  <th className="py-3 px-4">{isEn ? 'Native Immunities' : '常見原生免疫抗性'}</th>
+                  <th className="py-3 px-4">{isEn ? 'Drop Features & Notes' : '打寶特色與備註'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-sanctuary-850">
                 {AREA_LEVELS_DATA.map((area, idx) => (
                   <tr key={idx} className="hover:bg-sanctuary-900/40 transition-colors">
-                    <td className="py-3 px-4 font-bold text-sanctuary-400">第 {area.act} 章</td>
+                    <td className="py-3 px-4 font-bold text-sanctuary-400">
+                      {isEn ? `Act ${area.act}` : `第 ${area.act} 章`}
+                    </td>
                     <td className="py-3 px-4">
-                      <div className="font-bold text-sanctuary-100">{area.name}</div>
-                      <div className="text-[11px] text-sanctuary-500 font-mono">{area.nameEn}</div>
+                      <div className="font-bold text-sanctuary-100">
+                        {isEn ? area.nameEn : area.name}
+                      </div>
+                      <div className="text-[11px] text-sanctuary-500 font-mono">
+                        {isEn ? area.name : area.nameEn}
+                      </div>
                     </td>
                     <td className="py-3 px-4 text-center">
                       <span
@@ -356,14 +380,27 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex flex-wrap gap-1">
-                        {area.immunities.map((imm, i) => (
-                          <span
-                            key={i}
-                            className="px-1.5 py-0.5 text-[10px] rounded bg-sanctuary-900 text-sanctuary-300 border border-sanctuary-800"
-                          >
-                            {imm}
-                          </span>
-                        ))}
+                        {area.immunities.map((imm, i) => {
+                          const immDisplay = isEn
+                            ? imm
+                                .replace('冰寒免疫', 'Cold Immune')
+                                .replace('寒冷免疫', 'Cold Immune')
+                                .replace('火焰免疫', 'Fire Immune')
+                                .replace('閃電免疫', 'Lightning Immune')
+                                .replace('毒素免疫', 'Poison Immune')
+                                .replace('物理免疫', 'Physical Immune')
+                                .replace('魔法免疫', 'Magic Immune')
+                                .replace('無原生免疫 (非金怪)', 'No fixed immunities')
+                            : imm;
+                          return (
+                            <span
+                              key={i}
+                              className="px-1.5 py-0.5 text-[10px] rounded bg-sanctuary-900 text-sanctuary-300 border border-sanctuary-800"
+                            >
+                              {immDisplay}
+                            </span>
+                          );
+                        })}
                       </div>
                     </td>
                     <td className="py-3 px-4 text-sanctuary-300 max-w-xs">
