@@ -5,6 +5,7 @@ import { BookOpen, Plus, ArrowRight, Sparkles, Flame } from 'lucide-react';
 import { CubeRecipeData } from '../../types';
 import { SectionHead } from '../common/TreeIndex';
 import { useLanguage } from '../../context/LanguageContext';
+import { CubeCraftShowcase } from './CubeCraftShowcase';
 
 export interface CubeLabProps {
   onNavigateToRune?: (runeNumber: number) => void;
@@ -29,6 +30,24 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
     }
     return true;
   });
+
+  const handleScrollToRecipe = (recipeId: string) => {
+    // 若特定配方被類別篩選隱藏，先還原至全部配方
+    if (activeCategory !== 'all') {
+      setActiveCategory('all');
+    }
+
+    setTimeout(() => {
+      const el = document.getElementById(`recipe-${recipeId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.add('ring-2', 'ring-d2-magic', 'border-d2-magic');
+        setTimeout(() => {
+          el.classList.remove('ring-2', 'ring-d2-magic', 'border-d2-magic');
+        }, 2000);
+      }
+    }, 120);
+  };
 
   const env = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || './';
   const baseUrl = env.endsWith('/') ? env : `${env}/`;
@@ -58,8 +77,9 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
             return (
               <button
                 key={cat.id}
+                type="button"
                 onClick={() => setActiveCategory(cat.id as any)}
-                className={`px-3 py-1.5 rounded-lg font-medium shrink-0 transition-colors border ${
+                className={`px-3 py-1.5 rounded-lg font-medium shrink-0 transition-colors border cursor-pointer ${
                   isActive
                     ? 'bg-sanctuary-800 text-d2-magic border-d2-magic/50 shadow'
                     : 'bg-sanctuary-950 text-sanctuary-400 border-sanctuary-800 hover:text-white'
@@ -97,7 +117,9 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
         <div className="flex items-center gap-3 shrink-0 text-xs">
           <div className="px-3 py-2 rounded-xl bg-sanctuary-950/70 border border-sanctuary-800 text-center">
             <div className="text-sanctuary-400 text-[10px]">{isEn ? 'Total Recipes' : '總配方數'}</div>
-            <div className="text-d2-magic font-bold font-mono text-sm">{CUBE_RECIPES_DATA.length} {isEn ? 'Sets' : '條'}</div>
+            <div className="text-d2-magic font-bold font-mono text-sm">
+              {CUBE_RECIPES_DATA.length} {isEn ? 'Sets' : '條'}
+            </div>
           </div>
           <div className="px-3 py-2 rounded-xl bg-sanctuary-950/70 border border-sanctuary-800 text-center">
             <div className="text-sanctuary-400 text-[10px]">{isEn ? 'Craft Level' : '工藝機制'}</div>
@@ -108,6 +130,12 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
           </div>
         </div>
       </div>
+
+      {/* 展廳：四大極品手工藝神裝、經典暗金跨階升級與打孔博弈輪盤 */}
+      <CubeCraftShowcase
+        onNavigateToRune={onNavigateToRune}
+        onScrollToRecipe={handleScrollToRecipe}
+      />
 
       {/* Recipes Cards：依配方類別分段，每段有標題與數量 */}
       <div className="space-y-9">
@@ -123,7 +151,8 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
                   {rows.map((recipe) => (
                     <div
                       key={recipe.id}
-                      className="p-5 rounded-2xl bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-magic/40 shadow-xl transition-all duration-150 flex flex-col justify-between group"
+                      id={`recipe-${recipe.id}`}
+                      className="p-5 rounded-2xl bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-magic/50 shadow-xl transition-all duration-200 flex flex-col justify-between group scroll-mt-24"
                     >
                       <div>
                         {/* Title & Badge */}
@@ -141,12 +170,16 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
                           </span>
                         </div>
 
-                        {/* Recipe Formula Visualizer */}
+                        {/* Recipe Formula Visualizer: 升級為立體轉化槽位 */}
                         <div className="py-4 space-y-3">
-                          <div className="text-xs text-sanctuary-400 font-medium">
-                            {isEn ? 'Inputs:' : '投入材料 (Inputs)：'}
+                          <div className="text-xs text-sanctuary-400 font-medium flex items-center justify-between">
+                            <span>{isEn ? 'Transmutation Inputs:' : '方塊投入材料 (Inputs)：'}</span>
+                            <span className="text-[10px] text-sanctuary-500 font-mono">
+                              {recipe.inputs.length} 件材料
+                            </span>
                           </div>
-                          <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-xl bg-sanctuary-900/40 border border-sanctuary-850">
+
+                          <div className="flex flex-wrap items-center gap-2 p-3 rounded-xl bg-sanctuary-900/60 border border-sanctuary-850 shadow-inner">
                             {recipe.inputs.map((inp, idx) => {
                               const runeMatch = inp.match(/(\d+)#/);
                               const runeNum = runeMatch ? parseInt(runeMatch[1], 10) : null;
@@ -157,7 +190,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
                                     <button
                                       type="button"
                                       onClick={() => onNavigateToRune(runeNum)}
-                                      className="px-2.5 py-1 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-800 border border-d2-rune/40 hover:border-d2-rune text-xs text-d2-rune hover:text-white font-mono font-medium transition-all cursor-pointer shadow-sm flex items-center gap-1.5 group/rune"
+                                      className="px-2.5 py-1.5 rounded-lg bg-sanctuary-950 hover:bg-d2-rune/20 border border-d2-rune/40 hover:border-d2-rune text-xs text-d2-rune hover:text-white font-mono font-medium transition-all cursor-pointer shadow-sm flex items-center gap-1.5 group/rune"
                                       title={
                                         isEn
                                           ? `View Rune #${runeNum} details & upgrade recipe`
@@ -169,25 +202,26 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
                                       <span className="text-[9px] opacity-60 group-hover/rune:opacity-100">↗</span>
                                     </button>
                                   ) : (
-                                    <span className="px-2.5 py-1 rounded-lg bg-sanctuary-900 border border-sanctuary-750 text-xs text-sanctuary-200 font-medium flex items-center gap-1.5">
+                                    <span className="px-2.5 py-1.5 rounded-lg bg-sanctuary-950 border border-sanctuary-800 text-xs text-sanctuary-200 font-medium flex items-center gap-1.5 shadow-sm">
                                       <ItemIcon name={inp} size="sm" showBorder={false} />
-                                      <span>{inp}</span>
+                                      <span className="truncate max-w-[160px]">{inp}</span>
                                     </span>
                                   )}
                                   {idx < recipe.inputs.length - 1 && (
-                                    <Plus className="w-3 h-3 text-sanctuary-500" />
+                                    <Plus className="w-3.5 h-3.5 text-sanctuary-500 shrink-0" />
                                   )}
                                 </React.Fragment>
                               );
                             })}
                           </div>
 
-                          <div className="pt-2 flex items-center gap-2 text-xs font-semibold text-sanctuary-300">
-                            <ArrowRight className="w-4 h-4 text-d2-unique shrink-0" />
-                            <span>{isEn ? 'Output: ' : '轉化產出：'}</span>
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sanctuary-900/60 border border-d2-unique/30">
+                          {/* 產出成果槽位 */}
+                          <div className="pt-2 flex items-center gap-2.5 text-xs font-semibold text-sanctuary-300">
+                            <ArrowRight className="w-4 h-4 text-d2-unique shrink-0 animate-pulse" />
+                            <span className="shrink-0">{isEn ? 'Transmuted Output: ' : '煉金轉化產出：'}</span>
+                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-sanctuary-900/90 border border-d2-unique/40 shadow-sm text-d2-unique font-bold flex-wrap">
                               <ItemIcon name={recipe.output} size="sm" showBorder={false} />
-                              <span className="text-d2-unique font-bold">{recipe.output}</span>
+                              <span>{recipe.output}</span>
                             </div>
                           </div>
                         </div>
