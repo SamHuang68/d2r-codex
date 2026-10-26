@@ -7,7 +7,8 @@ import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
 import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, crumbsOf, useDirectory } from '../common/TreeIndex';
 import { TaxDef, TreeNode, buildTree, recount, findNode } from '../../utils/equipTaxonomy';
-import { Search, Sparkles, Filter, X } from 'lucide-react';
+import { Search, Sparkles, Filter, X, ArrowRight } from 'lucide-react';
+import { RunewordShowcase } from './RunewordShowcase';
 import { useLanguage } from '../../context/LanguageContext';
 
 export interface RunewordFinderProps {
@@ -263,26 +264,44 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                   </div>
                 </div>
 
-                {/* Rune Sequence */}
-                <div className="py-3 flex items-end gap-2 flex-wrap">
-                  <span className="text-xs text-sanctuary-400 font-semibold mr-1 self-center">{isEn ? 'Socket Order:' : '鑲嵌順序:'}</span>
-                  {rw.runes.map((r, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onNavigateToRune?.(rw.runeNumbers[i]);
-                      }}
-                      className="group/rune flex flex-col items-center gap-1 px-2 pt-2 pb-1.5 rounded-lg bg-d2-rune/10 hover:bg-d2-rune/25 border border-d2-rune/30 hover:border-d2-rune transition-all hover:scale-105 cursor-pointer min-w-[64px]"
-                      title={`點擊跳轉查看 ${rw.runeNumbers[i]}號 符文詳細屬性與方塊合成`}
-                    >
-                      <ItemIcon runeNumber={rw.runeNumbers[i]} size="sm" showBorder={false} />
-                      <span className="text-[11px] font-mono font-bold text-d2-rune group-hover/rune:text-white leading-none">
-                        {rw.runeNumbers[i]}# {r}
-                      </span>
-                    </button>
-                  ))}
+                {/* Rune Inscription Sockets Sequence */}
+                <div className="my-3 p-3 rounded-xl bg-sanctuary-950/90 border border-sanctuary-800 shadow-inner">
+                  <div className="flex items-center justify-between text-xs text-sanctuary-400 font-mono mb-2">
+                    <span className="flex items-center gap-1.5 font-bold text-d2-rune">
+                      <Sparkles className="w-3.5 h-3.5 text-d2-rune" />
+                      {isEn ? 'Socket Inscription Order:' : '符文鑲嵌槽位先後順序：'}
+                    </span>
+                    <span className="text-[10px] text-amber-500/80 font-mono">
+                      {isEn ? '⚠ Strict Order Required' : '⚠ 必須依序鑲嵌・順序錯誤無法成形'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {rw.runes.map((r, i) => (
+                      <React.Fragment key={i}>
+                        {i > 0 && (
+                          <ArrowRight className="w-3.5 h-3.5 text-d2-rune/60 shrink-0" />
+                        )}
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onNavigateToRune?.(rw.runeNumbers[i]);
+                          }}
+                          className="group/rune flex flex-col items-center gap-1 px-2.5 pt-1.5 pb-2 rounded-lg bg-sanctuary-900/90 hover:bg-d2-rune/20 border border-sanctuary-750 hover:border-d2-rune transition-all hover:scale-105 cursor-pointer min-w-[66px] shadow-sm"
+                          title={`點擊跳轉查看 ${rw.runeNumbers[i]}號 符文詳細屬性與方塊合成`}
+                        >
+                          <span className="text-[9px] font-mono text-sanctuary-500 leading-none group-hover/rune:text-amber-300">
+                            #{i + 1}
+                          </span>
+                          <ItemIcon runeNumber={rw.runeNumbers[i]} size="sm" showBorder={false} />
+                          <span className="text-[11px] font-mono font-bold text-d2-rune group-hover/rune:text-white leading-none mt-0.5">
+                            {rw.runeNumbers[i]}# {r}
+                          </span>
+                        </button>
+                      </React.Fragment>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Description / Playstyle */}
@@ -346,6 +365,19 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
             )}
           </div>
         }
+      />
+
+      {/* 四大終極信仰神裝名人堂 & 四大平民拓荒神器展廳 */}
+      <RunewordShowcase
+        onSelectRuneword={(rwId, sockets) => {
+          const targetRw = RUNEWORDS_DATA.find((r) => r.id === rwId);
+          if (!targetRw) return;
+          resetFilters();
+          const g = groupsOf(targetRw)[0];
+          dir.jump(`rw-${targetRw.id}`, `${g?.id ?? 'melee'}/${sockets}`, go);
+        }}
+        onNavigateToRune={onNavigateToRune}
+        onNavigateToBase={onNavigateToBase}
       />
 
       {/* Filter Toolbar */}

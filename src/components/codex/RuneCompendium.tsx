@@ -72,6 +72,44 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
         className="grid-cols-2 sm:grid-cols-4"
       />
 
+      {/* 四大頂級神符傳奇榮譽展廳 (Big 4 High Runes Spotlight) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        {[
+          { num: 31, nameZh: '喬', nameEn: 'Jah', roleZh: '神符之王・謎團核心', descZh: '全遊戲價值第一硬通貨，解鎖全職業傳送術與最後遺願。' },
+          { num: 30, nameZh: '貝', nameEn: 'Ber', roleZh: '元素破免・壓碎之尊', descZh: '組成「無限」與「謎團」的雙重基石，提供 20% 壓碎與 8% 物理減傷。' },
+          { num: 28, nameZh: '羅', nameEn: 'Lo', roleZh: '物理質變・致命極限', descZh: '「剛毅」與「悔恨」雙神裝核心，賦予 20% 致命打擊與抗性上限。' },
+          { num: 33, nameZh: '薩德', nameEn: 'Zod', roleZh: '萬劫不滅・永不毀損', descZh: '聖休亞瑞最稀有的終極神符，賦予無形極品武器裝備永生。' },
+        ].map((hr) => (
+          <button
+            key={hr.num}
+            type="button"
+            onClick={() => {
+              setTierFilter('high');
+              setTimeout(() => document.getElementById(`rune-${hr.num}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
+            }}
+            className="group/hr p-3.5 rounded-xl bg-gradient-to-b from-sanctuary-900/90 to-sanctuary-950 border border-amber-600/30 hover:border-amber-400/70 text-left transition-all hover:scale-[1.02] shadow-md cursor-pointer"
+          >
+            <div className="flex items-center justify-between pb-2 border-b border-sanctuary-800">
+              <div className="flex items-center gap-2">
+                <ItemIcon runeNumber={hr.num} size="sm" showBorder={false} />
+                <div>
+                  <div className="font-diablo text-base font-bold text-amber-300 group-hover/hr:text-white">
+                    {hr.num}# {hr.nameZh} <span className="text-xs font-mono font-normal text-sanctuary-400">({hr.nameEn})</span>
+                  </div>
+                  <div className="text-[10px] text-d2-gold font-mono">{hr.roleZh}</div>
+                </div>
+              </div>
+              <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-950/70 text-amber-300 border border-amber-700/50">
+                TOP
+              </span>
+            </div>
+            <p className="text-[11px] text-sanctuary-400 mt-2 leading-relaxed line-clamp-2">
+              {hr.descZh}
+            </p>
+          </button>
+        ))}
+      </div>
+
       {/* 33 枚符文快速跳轉牆 */}
       <div className="flex flex-wrap gap-1.5 p-3 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800">
         {RUNES_DATA.map((r) => (
@@ -163,18 +201,24 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                 </div>
 
                 {/* Sockets Details */}
-                <div className="space-y-2 text-xs">
-                  <div>
-                    <span className="text-sanctuary-400 font-medium">{isEn ? 'Weapons: ' : '武器鑲嵌：'}</span>
-                    <span className="text-sanctuary-200 ml-1">{rune.weaponEffect}</span>
+                <div className="space-y-2 text-xs bg-sanctuary-900/40 p-2.5 rounded-xl border border-sanctuary-850">
+                  <div className="flex items-start gap-1.5">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-sanctuary-800 text-sanctuary-300 font-mono shrink-0">
+                      ⚔️ {isEn ? 'Weapons' : '武器'}
+                    </span>
+                    <span className="text-sanctuary-200">{rune.weaponEffect}</span>
                   </div>
-                  <div>
-                    <span className="text-sanctuary-400 font-medium">{isEn ? 'Armor / Helms: ' : '防具/頭盔：'}</span>
-                    <span className="text-sanctuary-200 ml-1">{rune.armorHelmEffect}</span>
+                  <div className="flex items-start gap-1.5">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-sanctuary-800 text-sanctuary-300 font-mono shrink-0">
+                      🛡️ {isEn ? 'Armor/Helm' : '防具/頭'}
+                    </span>
+                    <span className="text-sanctuary-200">{rune.armorHelmEffect}</span>
                   </div>
-                  <div>
-                    <span className="text-sanctuary-400 font-medium">{isEn ? 'Shields: ' : '盾牌鑲嵌：'}</span>
-                    <span className="text-sanctuary-200 ml-1">{rune.shieldEffect}</span>
+                  <div className="flex items-start gap-1.5">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-sanctuary-800 text-sanctuary-300 font-mono shrink-0">
+                      🔰 {isEn ? 'Shields' : '盾牌'}
+                    </span>
+                    <span className="text-sanctuary-200">{rune.shieldEffect}</span>
                   </div>
                 </div>
               </div>
