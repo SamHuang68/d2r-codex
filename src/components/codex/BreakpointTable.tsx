@@ -82,8 +82,8 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
 
   const currentPresets = classPresets[selectedClass]?.[selectedType] || [0, 50, 100];
 
-  // 計算 75% 滿格擋所需敏捷: Dex = ceil( (75 * Level) / ShieldBlock ) + 15
-  const requiredDexForMaxBlock = Math.ceil((75 * charLevel) / Math.max(1, shieldBlockPercent)) + 15;
+  // 計算 75% 滿格擋所需敏捷: Dex = ceil( (150 * Level) / ShieldBlock ) + 15
+  const requiredDexForMaxBlock = Math.ceil((150 * charLevel) / Math.max(1, shieldBlockPercent)) + 15;
 
   // Current Breakpoint Sets
   const currentBpConfigs = BREAKPOINTS_DATA.filter(

@@ -58,7 +58,7 @@ export const MaxBlockAegis: React.FC<MaxBlockAegisProps> = ({
             {isEn ? 'Classic Formula:' : '經典格擋公式：'}
           </div>
           <div className="text-xs font-mono font-bold text-amber-300">
-            Dex = ⌈(75 × Lv) ÷ Shield%⌉ + 15
+            Dex = ⌈(150 × Lv) ÷ Shield%⌉ + 15
           </div>
         </div>
       </div>
