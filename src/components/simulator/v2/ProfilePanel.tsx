@@ -62,6 +62,15 @@ const BUILD_NAME_EN: Record<string, string> = {
   'dru-fire': 'Fire Druid',
   'ass-lightning-trap': 'Lightning Trapper Assassin',
   'ass-mosaic': 'Mosaic Martial Assassin',
+  'ama-multishot': 'Multiple Shot Bowazon',
+  'nec-poison-nova': 'Poison Nova Necromancer',
+  'pal-foh': 'Fist of the Heavens Paladin (FoHdin)',
+  'bar-berserk': 'Berserk Barbarian (Pit Zerker)',
+  'dru-fury': 'Fury Werewolf Druid',
+  'ass-blade-fury': 'Blade Fury Assassin',
+  'war-demon-enslavement': 'Demon Enslavement Warlock',
+  'war-chaos-apocalypse': 'Chaos Apocalypse Warlock',
+  'war-eldritch-blade': 'Eldritch Blade Warlock',
 };
 
 const BUILD_SUMMARY_EN: Record<string, string> = {
@@ -80,6 +89,15 @@ const BUILD_SUMMARY_EN: Record<string, string> = {
   'dru-fire': 'Calls down Fissures and Volcanoes to create fields of fire and molten rock across the battlefield.',
   'ass-lightning-trap': 'Lays automated Lightning Sentries and Death Sentries that fire bolts and detonate corpses from safe distances.',
   'ass-mosaic': 'Charges martial arts finishing moves that never expire thanks to dual Mosaic runewords, unleashing permanent elemental fireworks.',
+  'ama-multishot': 'Fires a wide cone of arrows across the entire screen, utilizing Critical Strike and Pierce for massive physical area clear.',
+  'nec-poison-nova': 'Releases expanding rings of lethal toxic clouds, combined with Lower Resist curses and Corpse Explosion to rapidly melt packs.',
+  'pal-foh': 'Calls down divine lightning bolts that shatter into waves of holy bolts against undead and demon hordes.',
+  'bar-berserk': 'Channels pure magical damage strikes that bypass all physical immunities, ideal for sniping elite champions and magic finding.',
+  'dru-fury': 'Transforms into a ferocious werewolf delivering blazing fast multi-hit claw attacks with massive life leech.',
+  'ass-blade-fury': 'Rapidly channels flying blades that carry weapon damage, deadly strikes, and crushing blow effects from a safe distance.',
+  'war-demon-enslavement': 'Binds formidable greater demons and summons defilers to overwhelm battlefields while supporting with curses and blood rites.',
+  'war-chaos-apocalypse': 'Rains apocalyptic hellfire and tear reality with abyssal rifts, devastating wide battlefields with high cast rate chaos spells.',
+  'war-eldritch-blade': 'Empowers melee weapons with eldritch void energy and psychic shielding to slice through demonic legions with deadly cleaved strikes.',
 };
 
 export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUndo, onUndo, say }) => {

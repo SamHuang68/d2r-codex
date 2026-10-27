@@ -51,6 +51,12 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
         tier: "S",
         coreSkills: "暗影裂隙 + 地獄熾焰 + 混沌崩解",
         gearSummary: "巫師之刺 + 謎團 + 獅鷲之眼"
+      },
+      {
+        name: "邪異虛空近戰流 (Eldritch Blade)",
+        tier: "A",
+        coreSkills: "邪異轟擊 + 靈能護盾 + 鏡像之刃 + 迴響打擊",
+        gearSummary: "悔恨/巫師之刺 + 暴風之盾 + 謎團 + 德古拉之握"
       }
     ]
   },
@@ -103,6 +109,12 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
         tier: "S",
         coreSkills: "閃電箭 + 連鎖閃電 + 閃電專精 + 靜電力場",
         gearSummary: "獅鷲之眼 + 無限長柄 (自持或傭兵) + 謎團"
+      },
+      {
+        name: "隕石火球法 (Meteor & Fireball)",
+        tier: "A",
+        coreSkills: "隕石術 + 火球術 + 火焰專精 + 暖流滿",
+        gearSummary: "艾斯屈塔的脾氣/橡樹之心 + 鳳凰/精神盾 + 蛇魔法師之皮 + 破火咒符"
       }
     ]
   },
@@ -155,6 +167,12 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
         tier: "S",
         coreSkills: "盾牌重擊 (Smite) + 神聖之盾 + 狂熱靈氣",
         gearSummary: "悔恨 + 撒卡蘭姆使者 + 剛毅/背信 + 德古拉之握"
+      },
+      {
+        name: "天神之拳聖騎士 (FoHdin)",
+        tier: "S",
+        coreSkills: "天神之拳 + 神聖之箭 + 信念靈氣滿",
+        gearSummary: "橡樹之心 + 撒卡蘭姆使者/精神盾 + 謎團 + 蜘蛛之網"
       }
     ]
   },
@@ -207,6 +225,12 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
         tier: "S",
         coreSkills: "劇毒新星 + 毒爆 + 淬毒匕首滿",
         gearSummary: "死亡之網 (Death's Web) + 塔格奧三件套 + 謎團"
+      },
+      {
+        name: "純骨矛死靈 (Bone Spear Necro)",
+        tier: "A",
+        coreSkills: "骨矛 + 骸骨之魂 + 剔骨之牙 + 骨牢滿",
+        gearSummary: "白色法杖/死亡之網 + 侏儒/精神盾 + 謎團 + 軍帽"
       }
     ]
   },
@@ -255,10 +279,16 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
         gearSummary: "無形泰坦的復仇 + 獅鷲之眼 + 謎團 + 鳳凰/君主盾"
       },
       {
-        name: "信心物理弓馬 (Physical Bowazon)",
+        name: "信心多重箭弓馬 (Multi-Shot Bowazon)",
         tier: "A",
-        coreSkills: "多重箭 + 掃射 + 導引箭 + 女武神",
+        coreSkills: "多重箭 + 導引箭 + 致命攻勢 + 女武神滿",
         gearSummary: "信心 (Faith GMB) + 剛毅甲 + 巨大顱骨/安頭 + 戰旅"
+      },
+      {
+        name: "砲轟弓馬 (Strafe Bowazon)",
+        tier: "A",
+        coreSkills: "砲轟 (掃射) + 致命攻勢 + 貫穿攻勢 + 穿透",
+        gearSummary: "風之力 (Windforce) / 信心 + 剛毅甲 + 亞特瑪的聖甲蟲 (觸發傷害加深) + 蝕肉騎士"
       }
     ]
   },
@@ -311,6 +341,12 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
         tier: "A",
         coreSkills: "狂暴之擊 (100% 魔法傷害) + 戰鬥命令 + 吶喊",
         gearSummary: "悔恨 + 暴風之盾 (物免盾) + 剛毅 + 蝕肉騎士"
+      },
+      {
+        name: "雙悔恨旋風野蠻人 (Whirlwind Barb)",
+        tier: "S",
+        coreSkills: "旋風斬 + 劍專精 + 戰鬥命令 + 鋼鐵之膚滿",
+        gearSummary: "雙持悔恨 (雙悔恨) + 剛毅/謎團 + 亞瑞特的面容 + 蝕肉騎士"
       }
     ]
   },
@@ -363,6 +399,12 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
         tier: "A",
         coreSkills: "雷光衛哨 + 死亡衛哨 + 電系連鎖滿",
         gearSummary: "巨鷹爪 (+3陷阱) + 精神盾 + 謎團 + 蜘蛛之網"
+      },
+      {
+        name: "狂怒旋刃飛鏢刺客 (Blade Fury Sin)",
+        tier: "A",
+        coreSkills: "狂怒旋刃 + 影散 + 暗影宗師 + 爪專精",
+        gearSummary: "悔恨/死神 + 暴風之盾 + 剛毅 + 吉永之臉"
       }
     ]
   },
@@ -415,6 +457,12 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
         tier: "A",
         coreSkills: "狼人變化 + 變形術 + 狂怒 + 狼獾之心滿",
         gearSummary: "變化 (Metamorphosis) + 死亡呼吸/盜墓者 + 剛毅"
+      },
+      {
+        name: "裂地火德 (Fire Druid)",
+        tier: "A",
+        coreSkills: "裂地之火 + 火山噴發 + 毀天滅地 + 橡木智者滿",
+        gearSummary: "橡樹之心/掠鴉之霜 + 精神盾 + 謎團 + 破火咒符"
       }
     ]
   }
