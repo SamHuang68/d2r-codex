@@ -11,6 +11,7 @@ import {
   MERC_TYPE_EN,
   AURA_EN,
   GEAR_NOTE_EN,
+  BASE_NAME_EN,
 } from '../../data/mercenaryMatrixEn';
 import { applyMercenaryPresetToSimulator } from '../../utils/mercPresetBridge';
 import { useLanguage } from '../../context/LanguageContext';
@@ -152,8 +153,8 @@ export const MercenaryMatrix: React.FC<MercenaryMatrixProps> = ({
   const renderGearRow = (labelZh: string, labelEn: string, item: MercGearItemRef | undefined) => {
     if (!item) return null;
     const itemName = isEn ? item.nameEn : item.name;
-    const itemSub = isEn ? item.name : item.nameEn;
-    const base = isEn && item.baseNameEn ? item.baseNameEn : item.baseName;
+    const itemSub = isEn ? undefined : item.nameEn;
+    const base = isEn ? (item.baseName ? (BASE_NAME_EN[item.baseName] ?? item.baseNameEn ?? item.baseName) : item.baseNameEn) : item.baseName;
     const slotKey = labelZh === '武器' || labelZh === '副手武器' ? 'weapon' : labelZh === '頭盔' ? 'head' : 'body';
 
     return (

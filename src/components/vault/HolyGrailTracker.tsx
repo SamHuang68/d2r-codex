@@ -5,7 +5,7 @@ import { loadHolyGrailState, saveHolyGrailState, exportAllUserData, importUserDa
 import { ItemIcon } from '../common/ItemIcon';
 import { TreeIndex, Crumbs, SectionHead, crumbsOf } from '../common/TreeIndex';
 import { TreeNode, buildTree, recount, findNode, leavesOf, inNode, relPath } from '../../utils/equipTaxonomy';
-import { ITEM_TREE_DEFS, CHARM_LABEL, U_ENTRIES, S_ENTRIES } from '../../utils/itemIndex';
+import { ITEM_TREE_DEFS, CHARM_LABEL, CHARM_LABEL_EN, U_ENTRIES, S_ENTRIES } from '../../utils/itemIndex';
 import { 
   Trophy, 
   CheckCircle2, 
@@ -132,6 +132,7 @@ export const HolyGrailTracker: React.FC = () => {
       name: string;
       nameEn: string;
       category: string;
+      categoryEn: string;
       slot: string;
       isSet: boolean;
       isTC87: boolean;
@@ -139,6 +140,7 @@ export const HolyGrailTracker: React.FC = () => {
       leaf: string;
       /** 同一段內的小標（咒符尺寸、套裝名稱）；沒有則為空字串 */
       group: string;
+      groupEn: string;
     }[] = [];
 
     // Unique Items
@@ -157,12 +159,14 @@ export const HolyGrailTracker: React.FC = () => {
         name: item.name,
         nameEn: item.nameEn,
         category: item.baseItem,
+        categoryEn: item.baseItemEn || item.baseItem,
         slot: item.slot,
         isSet: false,
         isTC87,
         imageUrl: item.imageUrl,
         leaf,
         group: CHARM_LABEL[sec] ?? '',
+        groupEn: CHARM_LABEL_EN[sec] ?? '',
       });
     });
 
@@ -174,12 +178,14 @@ export const HolyGrailTracker: React.FC = () => {
           name: piece.name,
           nameEn: piece.nameEn,
           category: piece.baseItem,
+          categoryEn: piece.baseItemEn || piece.baseItem,
           slot: piece.slot,
           isSet: true,
           isTC87: false,
           imageUrl: piece.imageUrl,
           leaf,
           group: set.name,
+          groupEn: set.nameEn,
         });
       });
     });
@@ -315,7 +321,7 @@ export const HolyGrailTracker: React.FC = () => {
     return { done: all.filter((i) => grailState.obtainedItemIds[i.id]).length, total: all.length };
   };
   const nodeProgress = progressOf(node.id);
-  const crumbs = crumbsOf(isEn ? 'All Holy Grail' : '全部聖杯', tree, sel);
+  const crumbs = crumbsOf(isEn ? 'All Holy Grail' : '全部聖杯', tree, sel, isEn);
 
   // Export JSON
   const handleExport = () => {
@@ -489,7 +495,7 @@ export const HolyGrailTracker: React.FC = () => {
                 role="button"
                 tabIndex={0}
                 aria-pressed={isClaimed}
-                aria-label={`${trophy.name} (${trophy.nameEn}) ${isClaimed ? (isEn ? 'Claimed' : '已收集') : (isEn ? 'Unfound' : '未收集')}`}
+                aria-label={isEn ? `${trophy.nameEn} ${isClaimed ? 'Claimed' : 'Unfound'}` : `${trophy.name} (${trophy.nameEn}) ${isClaimed ? '已收集' : '未收集'}`}
                 onClick={() => toggleObtained(trophy.id)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -548,9 +554,11 @@ export const HolyGrailTracker: React.FC = () => {
                       }`}>
                         {isEn ? trophy.nameEn : trophy.name}
                       </h3>
-                      <div className="text-[11px] font-mono text-sanctuary-400 truncate">
-                        {isEn ? trophy.name : trophy.nameEn}
-                      </div>
+                      {!isEn && (
+                        <div className="text-[11px] font-mono text-sanctuary-400 truncate">
+                          {trophy.nameEn}
+                        </div>
+                      )}
                       <div className="text-[10px] text-sanctuary-500 font-mono truncate">
                         {isEn ? (trophy.baseItemEn || trophy.baseItem) : trophy.baseItem}
                       </div>
@@ -640,8 +648,8 @@ export const HolyGrailTracker: React.FC = () => {
             <div className="p-12 text-center text-sanctuary-400 bg-sanctuary-900/40 rounded-xl border border-sanctuary-800 space-y-3">
               <div>
                 {root.count > 0 && node.id !== 'all'
-                  ? `「${node.label}」底下沒有符合目前篩選的項目，其他分類共 ${root.count} 件符合，請看分類索引的數量。`
-                  : '沒有符合目前條件的項目。'}
+                  ? (isEn ? `No items in "${node.en || node.label}" matching current filters, ${root.count} items match in other categories.` : `「${node.label}」底下沒有符合目前篩選的項目，其他分類共 ${root.count} 件符合，請看分類索引的數量。`)
+                  : (isEn ? 'No items matching current filters.' : '沒有符合目前條件的項目。')}
               </div>
               {root.count > 0 && node.id !== 'all' && (
                 <button type="button" onClick={() => setSel('all')} className="px-4 py-2 rounded-lg bg-sanctuary-800 border border-sanctuary-700 text-sm text-sanctuary-100 hover:border-d2-gold">
@@ -654,23 +662,23 @@ export const HolyGrailTracker: React.FC = () => {
               const rows = displayedItems.filter((i) => i.leaf === leaf.id);
               if (rows.length === 0) return null;
               const prog = progressOf(leaf.id);
-              const groups: { key: string; rows: typeof rows }[] = [];
+              const groups: { key: string; keyEn: string; rows: typeof rows }[] = [];
               rows.forEach((r) => {
                 let g = groups.find((x) => x.key === r.group);
-                if (!g) { g = { key: r.group, rows: [] }; groups.push(g); }
+                if (!g) { g = { key: r.group, keyEn: r.groupEn, rows: [] }; groups.push(g); }
                 g.rows.push(r);
               });
               const isSetLeaf = leaf.id.startsWith('s/');
               return (
                 <section key={leaf.id} id={`sec-${leaf.id}`} className="mb-8 scroll-mt-20">
                   <SectionHead
-                    title={isLeaf ? leaf.label : relPath(tree, leaf.id, node.id)}
+                    title={isEn ? (leaf.en || leaf.label) : (isLeaf ? leaf.label : relPath(tree, leaf.id, node.id))}
                     sub={`${prog.done}/${prog.total} ${isEn ? 'obtained' : '已收集'}`}
                     count={rows.length}
                     tone={isSetLeaf ? 'set' : 'unique'}
                     tag="h2"
                     onOpen={isLeaf ? undefined : () => setSel(leaf.id)}
-                    openLabel={isEn ? `Enter "${leaf.label}"` : `進入「${leaf.label}」`}
+                    openLabel={isEn ? `Enter "${leaf.en || leaf.label}"` : `進入「${leaf.label}」`}
                   />
                   {groups.map((g) => {
                     const gProg = g.key ? (() => {
@@ -680,7 +688,7 @@ export const HolyGrailTracker: React.FC = () => {
                     return (
                       <div key={g.key || 'all'} className="mb-5 last:mb-0">
                         {g.key && gProg && (
-                          <SectionHead title={g.key} sub={`${gProg.done}/${gProg.total}`} count={g.rows.length} tone={isSetLeaf ? 'set' : 'unique'} level={3} tag="h3" />
+                          <SectionHead title={isEn ? (g.keyEn || g.key) : g.key} sub={`${gProg.done}/${gProg.total}`} count={g.rows.length} tone={isSetLeaf ? 'set' : 'unique'} level={3} tag="h3" />
                         )}
                         <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-3">
                           {g.rows.map((item) => {
@@ -700,7 +708,7 @@ export const HolyGrailTracker: React.FC = () => {
                               >
                                 <button
                                   type="button"
-                                  aria-label={`${item.name}（${item.nameEn}）收藏`}
+                                  aria-label={isEn ? `${item.nameEn} collected` : `${item.name}（${item.nameEn}）收藏`}
                                   aria-pressed={isObtained}
                                   onClick={() => toggleObtained(item.id)}
                                   className="flex items-center gap-3 cursor-pointer min-w-0 flex-1 text-left rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold focus-visible:ring-offset-2 focus-visible:ring-offset-sanctuary-950"
@@ -734,7 +742,7 @@ export const HolyGrailTracker: React.FC = () => {
                                             : 'text-d2-unique'
                                         }`}
                                       >
-                                        {item.name}
+                                        {isEn ? item.nameEn : item.name}
                                       </span>
                                       {item.isTC87 && (
                                         <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-amber-950 text-amber-300 border border-amber-700">
@@ -743,7 +751,7 @@ export const HolyGrailTracker: React.FC = () => {
                                       )}
                                     </span>
                                     <span className="block text-[10px] font-mono text-sanctuary-400 truncate">
-                                      {item.nameEn} • {item.category}
+                                      {isEn ? item.categoryEn : `${item.nameEn} • ${item.category}`}
                                     </span>
                                   </span>
                                 </button>
@@ -752,7 +760,7 @@ export const HolyGrailTracker: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() => toggleEthereal(item.id)}
-                                  aria-label={`${item.name}（${item.nameEn}）無形 (ETH) 收藏`}
+                                  aria-label={isEn ? `${item.nameEn} Ethereal (ETH) collection` : `${item.name}（${item.nameEn}）無形 (ETH) 收藏`}
                                   aria-pressed={isEth}
                                   title={isEn ? "Mark as obtained in Ethereal (ETH)" : "標記是否打到無形 (ETH) 版本"}
                                   className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold border transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold focus-visible:ring-offset-2 focus-visible:ring-offset-sanctuary-950 ${

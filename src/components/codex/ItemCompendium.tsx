@@ -9,7 +9,7 @@ import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, crumbsOf, useDirec
 import type { SetItemCollection, UniqueItemData, GearSlot } from '../../types';
 import { CLASS_ZH_TO_EN } from '../../engine/slots';
 import { TIER_LABEL, DEFAULT_TIER, TreeNode, buildTree, recount, findNode, leavesOf, inNode, relPath } from '../../utils/equipTaxonomy';
-import { ITEM_TREE_DEFS, CHARM_LABEL, U_ENTRIES, S_ENTRIES, UEntry, SEntry } from '../../utils/itemIndex';
+import { ITEM_TREE_DEFS, CHARM_LABEL, CHARM_LABEL_EN, U_ENTRIES, S_ENTRIES, UEntry, SEntry } from '../../utils/itemIndex';
 import { CrossPropertyFilterBar } from './CrossPropertyFilterBar';
 import { CrossItemCard } from './CrossItemCard';
 import { useLanguage } from '../../context/LanguageContext';
@@ -200,8 +200,8 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   }, [q, baseTree, uList, sList]);
 
   const root: TreeNode = useMemo(
-    () => ({ id: 'all', label: '全部裝備', count: tree.reduce((s, n) => s + n.count, 0), children: tree }),
-    [tree],
+    () => ({ id: 'all', label: isEn ? 'All Equipment' : '全部裝備', count: tree.reduce((s, n) => s + n.count, 0), children: tree }),
+    [tree, isEn],
   );
   const node = sel === 'all' ? root : findNode(tree, sel) ?? root;
   // 目前節點一筆都沒有、但別處有符合（例如在預設的精英底下搜尋套裝名或戒指）時，自動放寬到全部，搜尋才不會死在預設節點
@@ -268,9 +268,9 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
           imageUrl={item.imageUrl}
           badges={[
             // 飾品的 grade 只是資料裡的預設值，樹裡飾品不分品階，所以不顯示品階標籤
-            ...(item.grade && !e.leaf.startsWith('u/jewelry/') ? [TIER_LABEL[item.grade] || item.grade] : []),
-            ...(item.classOnly ? [`${item.classOnly}專用`] : []),
-            ...(item.ladderOnly ? ['天梯限定'] : []),
+            ...(item.grade && !e.leaf.startsWith('u/jewelry/') ? [isEn ? (item.grade.charAt(0).toUpperCase() + item.grade.slice(1)) : (TIER_LABEL[item.grade] || item.grade)] : []),
+            ...(item.classOnly ? [isEn ? `${CLASS_ZH_TO_EN[item.classOnly] || item.classOnly} Only` : `${item.classOnly}專用`] : []),
+            ...(item.ladderOnly ? [isEn ? 'Ladder Only' : '天梯限定'] : []),
             ...(item.isNewDLC ? ['RotW DLC'] : []),
           ]}
           className="h-full hover:border-d2-unique"
@@ -286,9 +286,9 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
       <DirChip
         key={item.id}
         icon={<ItemIcon name={item.name} nameEn={item.nameEn} baseItem={item.baseItem} slot={item.slot} rarity="unique" size="sm" imageUrl={item.imageUrl} showBorder={false} />}
-        title={item.name}
+        title={isEn ? item.nameEn : item.name}
         sub={`Lv${item.requiredLevel} · ${isEn && item.baseItemEn ? item.baseItemEn : item.baseItem}${item.classOnly ? (isEn ? ` · ${CLASS_ZH_TO_EN[item.classOnly] || item.classOnly}` : ` · ${item.classOnly}`) : ''}`}
-        hint={`${item.name}（${item.nameEn}）｜${item.baseItem}`}
+        hint={isEn ? `${item.nameEn} | ${item.baseItemEn || item.baseItem}` : `${item.name}（${item.nameEn}）｜${item.baseItem}`}
         onClick={() => dir.jump(`item-${item.id}`, e.leaf, go)}
       />
     );
@@ -301,9 +301,9 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         key={r.set.id}
         tone="set"
         icon={<ItemIcon name={p?.name} nameEn={p?.nameEn} baseItem={p?.baseItem} slot={p?.slot} rarity="set" size="sm" imageUrl={p?.imageUrl} showBorder={false} />}
-        title={r.set.name}
+        title={isEn ? r.set.nameEn : r.set.name}
         sub={isEn ? `${r.set.pieces.length} Pieces · Req Lv${r.minLv}${r.set.class ? ` · ${CLASS_ZH_TO_EN[r.set.class] || r.set.class}` : ''}` : `${r.set.pieces.length} 件 · Lv${r.minLv} 起${r.set.class ? ` · ${r.set.class}` : ''}`}
-        hint={`${r.set.name}（${r.set.nameEn}）`}
+        hint={isEn ? r.set.nameEn : `${r.set.name}（${r.set.nameEn}）`}
         onClick={() => dir.jump(`set-${r.set.id}`, r.leaf, go)}
       />
     );
@@ -316,7 +316,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         <div>
           <h4 className="font-diablo text-xl font-bold text-d2-set">{isEn && set.nameEn ? set.nameEn : set.name}</h4>
           <div className="text-xs text-sanctuary-400 font-mono italic">
-            {isEn && set.nameEn ? set.name : set.nameEn} • {isEn ? `${set.pieces.length} Pieces` : `${set.pieces.length} 件套裝`}{set.class ? ` • ${isEn ? `${CLASS_NAME_EN[set.class] || set.class} Only` : `${set.class}專用`}` : ''}
+            {isEn ? '' : (set.nameEn ? `${set.nameEn} • ` : '')}{isEn ? `${set.pieces.length} Pieces` : `${set.pieces.length} 件套裝`}{set.class ? ` • ${isEn ? `${CLASS_NAME_EN[set.class] || set.class} Only` : `${set.class}專用`}` : ''}
           </div>
         </div>
       </div>
@@ -335,20 +335,20 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
               imageUrl={piece.imageUrl}
             />
             <div className="flex-1 min-w-0">
-              <div className="font-diablo font-bold text-d2-set text-sm">{isEn && piece.nameEn ? piece.nameEn : piece.name} {isEn && piece.nameEn && <span className="font-sans text-xs text-sanctuary-400 font-normal">({piece.name})</span>}</div>
+              <div className="font-diablo font-bold text-d2-set text-sm">{isEn && piece.nameEn ? piece.nameEn : piece.name} {!isEn && piece.nameEn && <span className="font-sans text-xs text-sanctuary-400 font-normal">({piece.nameEn})</span>}</div>
               <div className="text-[11px] text-sanctuary-400 mb-2 font-medium">
                 {onNavigateToBase ? (
                   <button
                     type="button"
                     onClick={() => onNavigateToBase(piece.baseItem)}
                     className="hover:text-d2-socket hover:underline cursor-pointer transition-colors inline-flex items-center gap-0.5"
-                    title={`點擊查看【${piece.baseItem}】符文底材指南`}
+                    title={isEn ? `Click to view base item guide` : `點擊查看【${piece.baseItem}】符文底材指南`}
                   >
-                    <span>{piece.baseItem}</span>
+                    <span>{isEn && piece.baseItemEn ? piece.baseItemEn : piece.baseItem}</span>
                     <span className="text-[9px] text-d2-socket">↗</span>
                   </button>
                 ) : (
-                  <span>{piece.baseItem}</span>
+                  <span>{isEn && piece.baseItemEn ? piece.baseItemEn : piece.baseItem}</span>
                 )}{' '}
                 ({isEn ? 'Req Level:' : '需求等級:'} {piece.requiredLevel})
               </div>
@@ -391,7 +391,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     for (const e of rows) {
       let sec = secs.find((x) => x.key === e.sec);
       if (!sec) {
-        sec = { key: e.sec, label: CHARM_LABEL[e.sec] ?? '', rows: [] };
+        sec = { key: e.sec, label: (isEn ? CHARM_LABEL_EN[e.sec] : CHARM_LABEL[e.sec]) ?? '', rows: [] };
         secs.push(sec);
       }
       sec.rows.push(e);
@@ -400,16 +400,16 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     return (
       <section key={leaf.id} id={`sec-${leaf.id}`} className="mb-9 scroll-mt-20">
         <SectionHead
-          title={isLeaf ? leaf.label : labelPath(leaf.id)}
-          sub={leaf.en}
+          title={isEn ? (leaf.en || leaf.label) : (isLeaf ? leaf.label : labelPath(leaf.id))}
+          sub={isEn ? undefined : leaf.en}
           count={rows.length}
           tone="unique"
           onOpen={isLeaf ? undefined : () => go(leaf.id)}
-          openLabel={`進入「${leaf.label}」`}
+          openLabel={isEn ? `Enter "${leaf.en || leaf.label}"` : `進入「${leaf.label}」`}
         />
         {!dirMode && showSecHeads && secs.length > 1 && (
           <div className="flex flex-wrap items-center gap-1.5 mb-3 text-xs">
-            <span className="text-sanctuary-500">跳到：</span>
+            <span className="text-sanctuary-500">{isEn ? 'Jump to:' : '跳到：'}</span>
             {secs.map((x) => (
               <button
                 key={x.key}
@@ -440,11 +440,11 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     return (
       <section key={leaf.id} id={`sec-${leaf.id}`} className="mb-9 scroll-mt-20">
         <SectionHead
-          title={isLeaf ? leaf.label : labelPath(leaf.id)}
+          title={isEn ? (leaf.en || leaf.label) : (isLeaf ? leaf.label : labelPath(leaf.id))}
           count={rows.length}
           tone="set"
           onOpen={isLeaf ? undefined : () => go(leaf.id)}
-          openLabel={`進入「${leaf.label}」`}
+          openLabel={isEn ? `Enter "${leaf.en || leaf.label}"` : `進入「${leaf.label}」`}
         />
         {dirMode ? (
           <div className={CHIP_GRID}>{rows.map(setChip)}</div>
@@ -453,7 +453,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             {/* 套裝目錄：快速跳到該套裝 */}
             {rows.length > 1 && (
               <div className="flex flex-wrap items-center gap-1.5 mb-3 text-xs">
-                <span className="text-sanctuary-500">本段套裝：</span>
+                <span className="text-sanctuary-500">{isEn ? 'Sets in section:' : '本段套裝：'}</span>
                 {rows.map((r) => (
                   <button
                     key={r.set.id}
@@ -461,7 +461,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                     onClick={() => document.getElementById(`set-${r.set.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
                     className="px-2.5 py-1 rounded-full bg-sanctuary-900 border border-sanctuary-700 text-d2-set hover:border-d2-set"
                   >
-                    {r.set.name} <span className="font-mono text-sanctuary-500">Lv{r.minLv}</span>
+                    {isEn && r.set.nameEn ? r.set.nameEn : r.set.name} <span className="font-mono text-sanctuary-500">Lv{r.minLv}</span>
                   </button>
                 ))}
               </div>
@@ -498,7 +498,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
           className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-4 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
         />
         {searchQuery && (
-          <button onClick={() => setSearchQuery('')} aria-label="清除搜尋" className="absolute right-3 top-1/2 -translate-y-1/2 text-sanctuary-400 hover:text-white">
+          <button onClick={() => setSearchQuery('')} aria-label={isEn ? "Clear search" : "清除搜尋"} className="absolute right-3 top-1/2 -translate-y-1/2 text-sanctuary-400 hover:text-white">
             <X className="w-4 h-4" />
           </button>
         )}
@@ -548,9 +548,9 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                   onChange={(e) => setCrossSortBy(e.target.value as any)}
                   className="bg-sanctuary-900 border border-sanctuary-750 rounded px-2 py-0.5 text-sanctuary-200 focus:outline-none"
                 >
-                  <option value="level-desc">需求等級 (高至低)</option>
-                  <option value="level-asc">需求等級 (低至高)</option>
-                  <option value="name">名稱筆劃排序</option>
+                  <option value="level-desc">{isEn ? 'Req Level (High to Low)' : '需求等級 (高至低)'}</option>
+                  <option value="level-asc">{isEn ? 'Req Level (Low to High)' : '需求等級 (低至高)'}</option>
+                  <option value="name">{isEn ? 'Name (A to Z)' : '名稱筆劃排序'}</option>
                 </select>
               </div>
             </div>
@@ -559,13 +559,13 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
           {/* 裝備卡片清單 */}
           {filteredCrossItems.length === 0 ? (
             <div className="p-12 text-center text-sanctuary-400 bg-sanctuary-900/40 rounded-xl border border-sanctuary-800 space-y-3">
-              <div>查無同時符合目前特殊屬性、品質與部位的裝備。</div>
+              <div>{isEn ? 'No equipment found matching current filters.' : '查無同時符合目前特殊屬性、品質與部位的裝備。'}</div>
               <button
                 type="button"
                 onClick={handleClearCrossFilters}
                 className="px-4 py-2 rounded-lg bg-sanctuary-800 border border-sanctuary-700 text-sm text-sanctuary-100 hover:border-d2-unique cursor-pointer"
               >
-                重置屬性篩選
+                {isEn ? 'Reset Property Filters' : '重置屬性篩選'}
               </button>
             </div>
           ) : (
@@ -584,8 +584,8 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         </div>
       ) : (
         <TreeIndex
-          title="裝備索引"
-          rootLabel="全部裝備"
+          title={isEn ? "Item Index" : "裝備索引"}
+          rootLabel={isEn ? "All Equipment" : "全部裝備"}
           rootCount={root.count}
           nodes={tree}
           activeId={node.id}
@@ -617,12 +617,12 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             <div className="p-12 text-center text-sanctuary-400 bg-sanctuary-900/40 rounded-xl border border-sanctuary-800 space-y-3">
               <div>
                 {q && root.count > 0
-                  ? `「${node.label}」底下沒有符合「${q}」的裝備，但其他分類共有 ${root.count} 件符合，請看分類索引的數量。`
-                  : '查無符合目前條件的裝備，請更換分類或清除搜尋關鍵字。'}
+                  ? (isEn ? `No equipment matching "${q}" in "${node.en || node.label}", but ${root.count} items match in other categories.` : `「${node.label}」底下沒有符合「${q}」的裝備，但其他分類共有 ${root.count} 件符合，請看分類索引的數量。`)
+                  : (isEn ? 'No equipment found matching current criteria.' : '查無符合目前條件的裝備，請更換分類或清除搜尋關鍵字。')}
               </div>
               {q && root.count > 0 && node.id !== 'all' && (
                 <button type="button" onClick={() => go('all')} className="px-4 py-2 rounded-lg bg-sanctuary-800 border border-sanctuary-700 text-sm text-sanctuary-100 hover:border-d2-unique">
-                  回到「全部裝備」
+                  {isEn ? 'Back to "All Equipment"' : '回到「全部裝備」'}
                 </button>
               )}
             </div>

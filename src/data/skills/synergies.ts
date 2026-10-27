@@ -13,6 +13,8 @@ export interface SynergyRelation {
   percentPerPoint: number;
   bonusType: string;
   displayText: string;
+  bonusTypeEn?: string;
+  displayTextEn?: string;
 }
 
 export interface CalculatedSynergyItem {
@@ -23,6 +25,8 @@ export interface CalculatedSynergyItem {
   totalPercent: number;
   bonusType: string;
   displayText: string;
+  bonusTypeEn?: string;
+  displayTextEn?: string;
 }
 
 export interface SkillSynergyProfile {
@@ -33,12 +37,32 @@ export interface SkillSynergyProfile {
 
 const nameOf = new Map(GAME_SKILLS.map((s) => [s.id, s.name ?? s.nameEn]));
 
+const ELEMENT_EN: Record<string, string> = {
+  fire: "Fire Damage",
+  cold: "Cold Damage",
+  ltng: "Lightning Damage",
+  pois: "Poison Damage",
+  mag: "Magic Damage",
+  phys: "Physical Damage",
+};
+
 const fromGame = (): SynergyRelation[] => {
   const out: SynergyRelation[] = [];
   for (const t of GAME_SKILLS) {
     const bonusType = t.elem ? `${ELEMENT_ZH[t.elem.type] ?? t.elem.type}傷害` : "物理傷害";
+    const bonusTypeEn = t.elem ? (ELEMENT_EN[t.elem.type] ?? `${t.elem.type} Damage`) : "Physical Damage";
     for (const x of synergySources(t, {}).sources) {
-      out.push({ sourceId: x.skill.id, sourceName: x.skill.name ?? x.skill.nameEn, targetId: t.id, targetName: t.name ?? t.nameEn, percentPerPoint: x.perPoint, bonusType, displayText: `+${x.perPoint}% ${bonusType} / 點` });
+      out.push({
+        sourceId: x.skill.id,
+        sourceName: x.skill.name ?? x.skill.nameEn,
+        targetId: t.id,
+        targetName: t.name ?? t.nameEn,
+        percentPerPoint: x.perPoint,
+        bonusType,
+        displayText: `+${x.perPoint}% ${bonusType} / 點`,
+        bonusTypeEn,
+        displayTextEn: `+${x.perPoint}% ${bonusTypeEn} / pt`,
+      });
     }
   }
   return out;
@@ -46,9 +70,15 @@ const fromGame = (): SynergyRelation[] => {
 
 /** 舊百科有、遊戲表展開式沒有的協同：有的在遊戲技能的其他計算式（光環、被動）有引用，其餘遊戲表查無依據 */
 const fromLegacy = (): SynergyRelation[] => overlay.legacySynergies.map((r) => ({
-  sourceId: r.source, sourceName: nameOf.get(r.source) ?? r.source, targetId: r.target, targetName: nameOf.get(r.target) ?? r.target,
-  percentPerPoint: r.percent, bonusType: r.type,
+  sourceId: r.source,
+  sourceName: nameOf.get(r.source) ?? r.source,
+  targetId: r.target,
+  targetName: nameOf.get(r.target) ?? r.target,
+  percentPerPoint: r.percent,
+  bonusType: r.type,
   displayText: `${r.text}（舊版資料；${r.gameCalcReferencesSource ? "遊戲表另以光環或被動公式計算，模擬器尚未輸出" : "遊戲表查無此條，未證實"}）`,
+  bonusTypeEn: r.type,
+  displayTextEn: `+${r.percent}% ${r.type} / pt (Legacy reference)`,
 }));
 
 /** 全職業協同關聯表 */
@@ -73,6 +103,8 @@ export function calculateSkillSynergies(
       totalPercent: pts * r.percentPerPoint,
       bonusType: r.bonusType,
       displayText: r.displayText,
+      bonusTypeEn: r.bonusTypeEn,
+      displayTextEn: r.displayTextEn,
     };
   });
 
@@ -88,6 +120,8 @@ export function calculateSkillSynergies(
       totalPercent: myPoints * r.percentPerPoint,
       bonusType: r.bonusType,
       displayText: r.displayText,
+      bonusTypeEn: r.bonusTypeEn,
+      displayTextEn: r.displayTextEn,
     };
   });
 

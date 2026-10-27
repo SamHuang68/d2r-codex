@@ -11,10 +11,14 @@ export interface GemData {
   qualityName: string;
   requiredLevel: number;
   weaponEffect: string;
+  weaponEffectEn?: string;
   armorHelmEffect: string;
+  armorHelmEffectEn?: string;
   shieldEffect: string;
+  shieldEffectEn?: string;
   cubeRecipe: string;
   craftingUses: string[];
+  craftingUsesEn?: string[];
 }
 
 export interface UberKeyOrganData {
@@ -81,11 +85,19 @@ export const GEMS_DATA: GemData[] = [
     weaponEffect: "+150 攻擊準確率 (AR)",
     armorHelmEffect: "+10 力量 (Strength)",
     shieldEffect: "+30 防禦力",
+    weaponEffectEn: "+150 Attack Rating (AR)",
+    armorHelmEffectEn: "+10 Strength",
+    shieldEffectEn: "+30 Defense",
     cubeRecipe: "3顆 無瑕紫寶石 (Flawless Amethyst) 於赫拉迪姆方塊合成",
     craftingUses: [
       "【最熱門手工飾品】橙色施法護身符必備材料 (魔法護身符 + 完美紫寶石 + 8# 拉爾 + 珠寶)",
       "打孔配方：白裝武器隨機打孔 (普通武器 + 8# 拉爾 + 11# 安姆 + 完美紫寶石)",
       "洗大板：3顆任意完美寶石 + 任意特大咒符重置屬性"
+    ],
+    craftingUsesEn: [
+      "【Top Caster Craft】Essential for Caster Amulets (Magic Amulet + P-Amethyst + Ral #8 + Jewel)",
+      "Socketing Recipe: Normal weapon sockets (Normal Weapon + Ral #8 + Amn #11 + P-Amethyst)",
+      "Reroll Grand Charms: 3 Perfect Gems + any Grand Charm to reroll affixes"
     ]
   },
   // 完美黃寶石
@@ -100,11 +112,19 @@ export const GEMS_DATA: GemData[] = [
     weaponEffect: "增加 1-40 閃電傷害",
     armorHelmEffect: "+24% 更佳的機會取得魔法裝備 (MF / 打寶率)",
     shieldEffect: "+40% 閃電抗性 (Lightning Resist)",
+    weaponEffectEn: "Adds 1-40 Lightning Damage",
+    armorHelmEffectEn: "+24% Better Chance of Getting Magic Items (MF)",
+    shieldEffectEn: "+40% Lightning Resistance",
     cubeRecipe: "3顆 無瑕黃寶石 (Flawless Topaz) 於赫拉迪姆方塊合成",
     craftingUses: [
       "【平民打寶神器】拓荒期頭盔與衣服鑲嵌首選！4孔衣服鑲滿直接獲得 +96% MF",
       "打孔配方：防具衣服隨機打孔 (普通衣服 + 7# 塔爾 + 10# 書爾 + 完美黃寶石)",
       "盾牌鑲嵌：提供高達 40% 閃電抗性，拓荒保命必備"
+    ],
+    craftingUsesEn: [
+      "【Budget MF Standard】Helm & Body Armor budget MF sockets! 4-socket armor gives +96% MF",
+      "Socketing Recipe: Normal body armor sockets (Normal Armor + Tal #7 + Thul #10 + P-Topaz)",
+      "Shield Socket: Provides +40% Lightning Resistance for budget survivability"
     ]
   },
   // 完美紅寶石
@@ -119,11 +139,19 @@ export const GEMS_DATA: GemData[] = [
     weaponEffect: "增加 15-20 火焰傷害",
     armorHelmEffect: "+38 生命值 (Life)",
     shieldEffect: "+40% 火焰抗性 (Fire Resist)",
+    weaponEffectEn: "Adds 15-20 Fire Damage",
+    armorHelmEffectEn: "+38 Life",
+    shieldEffectEn: "+40% Fire Resistance",
     cubeRecipe: "3顆 無瑕紅寶石 (Flawless Ruby) 於赫拉迪姆方塊合成",
     craftingUses: [
       "【嗜血工藝核心】橙色吸血戒指/手套材料 (魔法戒指 + 完美紅寶石 + 12# 索爾 + 珠寶)",
       "打孔配方：盾牌隨機打孔 (普通盾牌 + 7# 塔爾 + 11# 安姆 + 完美紅寶石)",
       "生存配方：頭盔衣服提供實打實 +38 點純生命加成"
+    ],
+    craftingUsesEn: [
+      "【Blood Craft Core】Blood Rings & Gloves crafting (Magic Ring + P-Ruby + Sol #12 + Jewel)",
+      "Socketing Recipe: Normal shield sockets (Normal Shield + Tal #7 + Amn #11 + P-Ruby)",
+      "Survivability: Helm/Armor gives +38 raw Life pool boost"
     ]
   },
   // 完美藍寶石
@@ -138,11 +166,19 @@ export const GEMS_DATA: GemData[] = [
     weaponEffect: "增加 10-14 冰寒傷害 (凍結 3 秒)",
     armorHelmEffect: "+38 法力值 (Mana)",
     shieldEffect: "+40% 冰寒抗性 (Cold Resist)",
+    weaponEffectEn: "Adds 10-14 Cold Damage (Freezes 3 sec)",
+    armorHelmEffectEn: "+38 Mana",
+    shieldEffectEn: "+40% Cold Resistance",
     cubeRecipe: "3顆 無瑕藍寶石 (Flawless Sapphire) 於赫拉迪姆方塊合成",
     craftingUses: [
       "打孔配方：頭盔隨機打孔 (普通頭盔 + 8# 拉爾 + 10# 書爾 + 完美藍寶石)",
       "法力擴充：法師前期法力匱乏時鑲嵌於頭盔，提供 +38 巨額法力",
       "抗寒防凍：盾牌鑲嵌提供 +40% 冰寒抗性"
+    ],
+    craftingUsesEn: [
+      "Socketing Recipe: Normal helm sockets (Normal Helm + Ral #8 + Thul #10 + P-Sapphire)",
+      "Early Mana Pool: Socket into helms for +38 Mana during leveling",
+      "Cold Resists: Shield socket provides +40% Cold Resistance"
     ]
   },
   // 完美綠寶石
@@ -157,11 +193,19 @@ export const GEMS_DATA: GemData[] = [
     weaponEffect: "+100 毒素傷害 (持續 7 秒)",
     armorHelmEffect: "+10 敏捷 (Dexterity)",
     shieldEffect: "+40% 毒素抗性 (Poison Resist)",
+    weaponEffectEn: "+100 Poison Damage over 7 seconds",
+    armorHelmEffectEn: "+10 Dexterity",
+    shieldEffectEn: "+40% Poison Resistance",
     cubeRecipe: "3顆 無瑕綠寶石 (Flawless Emerald) 於赫拉迪姆方塊合成",
     craftingUses: [
       "敏捷配點：鑲嵌防具提供 +10 敏捷，用於湊齊格擋率或裝備敏捷需求",
       "升級配方：卓越暗金武器升級為精英武器 (17# 盧姆 + 21# 普爾 + 完美綠寶石)",
       "毒傷鋪墊：前期武器多孔鑲嵌多顆綠寶石，毒素傷害疊加秒殺小怪"
+    ],
+    craftingUsesEn: [
+      "Dexterity Stacking: Sockets give +10 Dex to hit max block or gear requirements",
+      "Upgrade Recipe: Normal Exceptional Unique weapon to Elite (Lum #17 + Pul #21 + P-Emerald)",
+      "Early Poison: Multi-socket early weapons stack poison damage to melt mobs"
     ]
   },
   // 完美鑽石
@@ -176,11 +220,19 @@ export const GEMS_DATA: GemData[] = [
     weaponEffect: "+68% 對不死生物的傷害",
     armorHelmEffect: "+100 攻擊準確率 (AR)",
     shieldEffect: "+19 全抗性 (All Resistances)",
+    weaponEffectEn: "+68% Damage to Undead",
+    armorHelmEffectEn: "+100 Attack Rating (AR)",
+    shieldEffectEn: "+19 All Resistances",
     cubeRecipe: "3顆 無瑕鑽石 (Flawless Diamond) 於赫拉迪姆方塊合成",
     craftingUses: [
       "【拓荒第一神盾】3孔白盾或聖騎士專用盾鑲 3 顆完美鑽石，瞬間提供 +57% 全抗性！",
       "升級配方：卓越暗金防具升級為精英防具 (18# 科 + 20# 藍姆 + 完美鑽石)",
       "對抗地獄抗性懲罰：地獄難度全抗直接 -100%，完鑽盾牌是平民法師拓荒保命首選"
+    ],
+    craftingUsesEn: [
+      "【Budget God-Shield】3-socket shield with 3 P-Diamonds grants an instant +57% All Resistances!",
+      "Upgrade Recipe: Exceptional Unique armor to Elite (Ko #18 + Lem #20 + P-Diamond)",
+      "Overcoming Hell Penalty: Counter -100% Hell all res with a triple-diamond shield"
     ]
   },
   // 完美骷髏石
@@ -195,11 +247,19 @@ export const GEMS_DATA: GemData[] = [
     weaponEffect: "偷取 4% 生命 (LL) 與 3% 法力 (LM)",
     armorHelmEffect: "回復生命 +5，法力恢復速度 +19%",
     shieldEffect: "反彈 20 點傷害給近戰攻擊者",
+    weaponEffectEn: "4% Life Stolen per hit (LL) & 3% Mana Stolen (LM)",
+    armorHelmEffectEn: "Replenish Life +5, Increase Mana Regeneration 19%",
+    shieldEffectEn: "Attacker Takes Damage of 20",
     cubeRecipe: "3顆 無瑕骷髏石 (Flawless Skull) 於赫拉迪姆方塊合成",
     craftingUses: [
       "【黃裝洗裝神器】6顆 完美骷髏石 + 1件 黃金稀有裝備 (Rare Item) = 重新隨機生成高階黃裝屬性！",
       "打孔配方：3顆 完美骷髏石 + 1顆 喬丹之石 + 1件 沒有孔的稀有（黃）裝備 = 為該裝備增添 1 孔",
       "雙吸兼顧：鑲嵌於近戰武器提供物理雙吸 (4% LL + 3% LM)"
+    ],
+    craftingUsesEn: [
+      "【Rare Item Rerolls】6 Perfect Skulls + 1 Rare Item = Reroll high-level rare item affixes!",
+      "Add Socket: 3 Perfect Skulls + 1 SOJ + 1 Rare item = Add 1 socket to the item",
+      "Dual Leech: Sockets in melee weapons provide physical dual leech (4% LL + 3% LM)"
     ]
   }
 ];

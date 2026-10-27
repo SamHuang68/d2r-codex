@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { QUESTS_DATA, WORLD_EVENTS_DATA, QuestData, WorldEventData } from '../../data/quests';
+import { QUESTS_EN, WORLD_EVENTS_EN } from '../../data/questsEn';
 import { actZh } from '../../utils/actLabel';
 import { useLanguage } from '../../context/LanguageContext';
 import { getQuestVisual, getWorldEventVisual } from '../../utils/questImages';
@@ -46,12 +47,13 @@ export const QuestGuide: React.FC = () => {
   }, [selectedAct, filterPermanentOnly, filterMandatoryOnly, searchQuery]);
 
   // 永久獎勵圖示與顏色
-  const getRewardBadge = (reward?: QuestData['permanentReward']) => {
+  const getRewardBadge = (reward?: QuestData['permanentReward'], questId?: string) => {
     if (!reward) return null;
+    const val = (isEn && questId && QUESTS_EN[questId]?.rewardValue) ? QUESTS_EN[questId].rewardValue : reward.value;
     return (
       <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-d2-gold/15 border border-d2-gold/40 text-d2-gold font-mono text-xs font-bold shadow-sm shadow-d2-gold/10">
         <Award className="w-3.5 h-3.5 text-d2-gold shrink-0" />
-        <span>{isEn ? "Permanent: " : "永久獎勵: "}{reward.value}</span>
+        <span>{isEn ? "Permanent: " : "永久獎勵: "}{val}</span>
       </div>
     );
   };
@@ -215,14 +217,16 @@ export const QuestGuide: React.FC = () => {
                           <h3 className="font-diablo font-bold text-lg text-sanctuary-100 group-hover:text-d2-gold transition-colors">
                             {isEn ? `Quest ${quest.questNumber}: ${quest.nameEn}` : `任務 ${quest.questNumber}: ${quest.name}`}
                           </h3>
-                          <span className="text-xs font-mono text-sanctuary-400">
-                            {isEn ? `(${quest.name})` : `(${quest.nameEn})`}
-                          </span>
+                          {!isEn && (
+                            <span className="text-xs font-mono text-sanctuary-400">
+                              ({quest.nameEn})
+                            </span>
+                          )}
                         </div>
                         <div className="flex items-center gap-2 text-xs font-mono text-sanctuary-400 mt-0.5 flex-wrap">
-                          <span>{isEn ? "Given By: " : "委託: "}{quest.givenBy}</span>
+                          <span>{isEn ? "Given By: " : "委託: "}{isEn ? (QUESTS_EN[quest.id]?.givenBy || quest.givenBy) : quest.givenBy}</span>
                           <span>·</span>
-                          <span className="text-sanctuary-300">{isEn ? "Location: " : "地點: "}{quest.location}</span>
+                          <span className="text-sanctuary-300">{isEn ? "Location: " : "地點: "}{isEn ? (QUESTS_EN[quest.id]?.location || quest.location) : quest.location}</span>
                           <span>·</span>
                           <span className={quest.isMandatory ? "text-amber-400 font-bold" : "text-sanctuary-500"}>
                             {quest.isMandatory ? (isEn ? "Mandatory" : "主線必解") : (isEn ? "Optional" : "支線可選")}
@@ -232,7 +236,7 @@ export const QuestGuide: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-3 shrink-0">
-                      {getRewardBadge(quest.permanentReward)}
+                      {getRewardBadge(quest.permanentReward, quest.id)}
                       <ChevronRight className={`w-5 h-5 text-sanctuary-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                     </div>
                   </div>
@@ -260,9 +264,11 @@ export const QuestGuide: React.FC = () => {
                             <h4 className="text-base sm:text-lg font-bold text-sanctuary-100">
                               {isEn ? visual.subjectEn : visual.subjectZh}
                             </h4>
-                            <span className="text-xs font-mono text-sanctuary-400">
-                              {isEn ? visual.subjectZh : visual.subjectEn}
-                            </span>
+                            {!isEn && (
+                              <span className="text-xs font-mono text-sanctuary-400">
+                                {visual.subjectEn}
+                              </span>
+                            )}
                             {visual.isBoss && (
                               <span className="text-[10px] px-2 py-0.5 rounded-full bg-d2-gold/20 text-d2-gold border border-d2-gold/40 font-semibold flex items-center gap-1">
                                 <Flame className="w-3 h-3 text-d2-fire" />
@@ -276,7 +282,7 @@ export const QuestGuide: React.FC = () => {
                               {isEn ? `Act ${quest.act}` : `第 ${quest.act} 章`}
                             </span>
                             <span className="px-2 py-0.5 rounded bg-sanctuary-800/90 text-sanctuary-300 border border-sanctuary-700/60">
-                              {quest.location}
+                              {isEn ? (QUESTS_EN[quest.id]?.location || quest.location) : quest.location}
                             </span>
                             <span className={`px-2 py-0.5 rounded border ${quest.isMandatory ? 'bg-amber-500/10 border-amber-500/40 text-amber-400 font-bold' : 'bg-sanctuary-950 border-sanctuary-850 text-sanctuary-400'}`}>
                               {quest.isMandatory ? (isEn ? 'Mandatory Story' : '主線必解') : (isEn ? 'Optional Quest' : '支線可選')}
@@ -286,7 +292,9 @@ export const QuestGuide: React.FC = () => {
                           {quest.permanentReward && (
                             <div className="text-xs text-d2-gold font-mono font-medium pt-0.5">
                               ★ {isEn ? "Permanent Reward: " : "永久通關獎勵："}
-                              <span className="font-bold underline">{quest.permanentReward.description}</span>
+                              <span className="font-bold underline">
+                                {isEn ? (QUESTS_EN[quest.id]?.rewardDesc || quest.permanentReward.description) : quest.permanentReward.description}
+                              </span>
                             </div>
                           )}
                         </div>
@@ -294,7 +302,7 @@ export const QuestGuide: React.FC = () => {
 
                       {/* 任務摘要 */}
                       <p className="text-sanctuary-200 leading-relaxed font-sans text-sm">
-                        {quest.summary}
+                        {isEn ? (QUESTS_EN[quest.id]?.summary || quest.summary) : quest.summary}
                       </p>
 
                       {/* 通關步驟 */}
@@ -304,7 +312,7 @@ export const QuestGuide: React.FC = () => {
                           {isEn ? "Walkthrough:" : "通關指引流程:"}
                         </div>
                         <ul className="space-y-1.5 font-sans text-sanctuary-300 pl-4 list-decimal">
-                          {quest.walkthrough.map((step, idx) => (
+                          {(isEn ? (QUESTS_EN[quest.id]?.walkthrough || quest.walkthrough) : quest.walkthrough).map((step, idx) => (
                             <li key={idx} className="leading-relaxed">
                               {step}
                             </li>
@@ -319,7 +327,7 @@ export const QuestGuide: React.FC = () => {
                           {isEn ? "Pro Tactical Guide & Tips" : "專家戰術圖說與速通要點"}
                         </div>
                         <p className="text-sanctuary-300 leading-relaxed text-xs">
-                          {quest.tacticalTips}
+                          {isEn ? (QUESTS_EN[quest.id]?.tacticalTips || quest.tacticalTips) : quest.tacticalTips}
                         </p>
                       </div>
                     </div>
@@ -355,12 +363,14 @@ export const QuestGuide: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <Skull className="w-4 h-4 text-d2-blood" />
                           <h3 className="text-xl font-diablo font-bold text-sanctuary-100">
-                            {evt.name}
+                            {isEn ? evt.nameEn : evt.name}
                           </h3>
                         </div>
-                        <div className="text-xs font-mono text-sanctuary-400 mt-0.5">
-                          {evt.nameEn}
-                        </div>
+                        {!isEn && (
+                          <div className="text-xs font-mono text-sanctuary-400 mt-0.5">
+                            {evt.nameEn}
+                          </div>
+                        )}
                         <div className="text-[11px] font-mono text-d2-gold mt-0.5">
                           {isEn ? evtVisual.subjectEn : evtVisual.subjectZh}
                         </div>
@@ -372,13 +382,13 @@ export const QuestGuide: React.FC = () => {
                     <div>
                       <span className="font-mono text-sanctuary-400 font-bold block mb-1">{isEn ? "Trigger Conditions:" : "觸發條件與開啟方式:"}</span>
                       <div className="bg-sanctuary-950/80 p-2.5 rounded-xl border border-sanctuary-800 text-sanctuary-200 font-sans leading-relaxed">
-                        {evt.triggerCondition}
+                        {isEn ? (WORLD_EVENTS_EN[evt.id]?.trigger || evt.triggerCondition) : evt.triggerCondition}
                       </div>
                     </div>
 
                     <div>
                       <span className="font-mono text-sanctuary-400 font-bold block mb-1">{isEn ? "Location:" : "發生地點:"}</span>
-                      <span className="text-d2-gold font-mono">{evt.location}</span>
+                      <span className="text-d2-gold font-mono">{isEn ? (WORLD_EVENTS_EN[evt.id]?.location || evt.location) : evt.location}</span>
                     </div>
 
                     {/* ── 專屬戰術圖解 (Visual Illustrated Schematics) ── */}
@@ -397,7 +407,9 @@ export const QuestGuide: React.FC = () => {
                           <div className="p-1 rounded bg-d2-fire/20 border border-d2-fire text-d2-fire font-bold animate-pulse">{isEn ? 'St. 6' : '階 6'}<br/>{isEn ? 'Walks!' : '降臨！'}</div>
                         </div>
                         <p className="text-[11px] text-sanctuary-300 font-sans leading-snug">
-                          ⚠️ <strong>回血封鎖鐵律</strong>：暗黑克隆體擁有極其恐怖的每秒千點回血。必須由角色<strong>本體</strong>使用附帶「防止怪物自療 (PMH)」的武器擊中 1 次（持續 80 分鐘）；傭兵攻擊無法觸發 PMH！
+                          {isEn 
+                            ? "⚠️ Mandatory PMH Rule: Diablo Clone regenerates thousands of HP per second. Your character MUST land 1 hit with Prevent Monster Heal gear (lasts 80 mins); mercenary hits do NOT apply PMH!"
+                            : "⚠️ 回血封鎖鐵律：暗黑克隆體擁有極其恐怖的每秒千點回血。必須由角色本體使用附帶「防止怪物自療 (PMH)」的武器擊中 1 次（持續 80 分鐘）；傭兵攻擊無法觸發 PMH！"}
                         </p>
                       </div>
                     )}
@@ -412,7 +424,9 @@ export const QuestGuide: React.FC = () => {
                           {isEn ? "9 Keys (3 of each) ➔ 3 Mini Red Portals ➔ 3 Organs ➔ Uber Tristram ➔ Hellfire Torch" : "9把鑰匙 (3恐+3憎+3毀) ➔ 開啟 3 小紅門 ➔ 擊殺莉莉絲等斬獲 3 大器官 ➔ 終極崔斯特姆 ➔ 斬獲【地獄火炬】"}
                         </div>
                         <p className="text-[11px] text-sanctuary-300 font-sans leading-snug">
-                          🛡️ <strong>走位拉怪圖解</strong>：從城鎮入口出發，務必緊貼<strong>左側斷壁殘垣下緣</strong>潛行，將「墨菲斯托」單獨引至地圖左下角秒殺；切勿徑直衝入中央廣場，否則巴爾與墨菲斯托雙王聯手會瞬間秒殺全隊！
+                          {isEn
+                            ? "🛡️ Tactical Pulling: From town entrance, hug the lower left ruins to lure Mephisto into the corner alone. Never rush middle, or Baal and Mephisto together will wipe you out instantly!"
+                            : "🛡️ 走位拉怪圖解：從城鎮入口出發，務必緊貼左側斷壁殘垣下緣潛行，將「墨菲斯托」單獨引至地圖左下角秒殺；切勿徑直衝入中央廣場，否則巴爾與墨菲斯托雙王聯手會瞬間秒殺全隊！"}
                         </p>
                       </div>
                     )}
@@ -427,7 +441,9 @@ export const QuestGuide: React.FC = () => {
                           {isEn ? "Wirt's Leg (Tristram NW) + Tome of Town Portal (20 Scrolls) into Cube ➔ Red Portal" : "【維特的腿】(亂石曠野崔斯特姆左上) + 【滿20張回城書】放入方塊 ➔ 鮮紅母牛傳送門"}
                         </div>
                         <p className="text-[11px] text-sanctuary-300 font-sans leading-snug">
-                          🐮 <strong>D2R 現代化版本規則</strong>：已徹底移除「擊殺牛王永久無法再開門」的古老詛咒！現在可以毫無顧忌全力擊殺牛王 (Cow King)，隨意反覆開門刷取白裝、無形神級底材與符文！
+                          {isEn
+                            ? "🐮 D2R Modern Rule: The ancient penalty for slaying the Cow King is removed! You can kill the Cow King every run without fear of losing portal access."
+                            : "🐮 D2R 現代化版本規則：已徹底移除「擊殺牛王永久無法再開門」的古老詛咒！現在可以毫無顧忌全力擊殺牛王 (Cow King)，隨意反覆開門刷取白裝、無形神級底材與符文！"}
                         </p>
                       </div>
                     )}

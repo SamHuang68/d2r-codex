@@ -98,7 +98,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
           <div className="relative w-16 h-16 rounded-2xl bg-sanctuary-950/90 border border-d2-magic/40 flex items-center justify-center p-1.5 shadow-[0_0_15px_rgba(105,105,255,0.2)] shrink-0">
             <img src={imgCube} alt="Horadric Cube" className="w-12 h-12 object-contain" />
             <div className="absolute -bottom-1 -right-1 px-1 rounded bg-d2-magic/20 text-[9px] font-mono text-d2-magic border border-d2-magic/40">
-              4格
+              {isEn ? '4 Slots' : '4格'}
             </div>
           </div>
           <div className="space-y-1">
@@ -161,9 +161,11 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
                             <h3 className="font-diablo text-base font-bold text-d2-magic group-hover:text-blue-300 transition-colors">
                               {isEn && recipe.titleEn ? recipe.titleEn : recipe.title}
                             </h3>
-                            <div className="text-[11px] text-sanctuary-400 font-mono italic">
-                              {isEn && recipe.titleEn ? recipe.title : recipe.titleEn}
-                            </div>
+                            {!isEn && recipe.titleEn && (
+                              <div className="text-[11px] text-sanctuary-400 font-mono italic">
+                                {recipe.titleEn}
+                              </div>
+                            )}
                           </div>
                           <span className="text-[10px] px-2 py-0.5 rounded bg-d2-magic/10 text-d2-magic border border-d2-magic/30 font-medium font-mono">
                             {recipe.category.toUpperCase()}
@@ -175,12 +177,12 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
                           <div className="text-xs text-sanctuary-400 font-medium flex items-center justify-between">
                             <span>{isEn ? 'Transmutation Inputs:' : '方塊投入材料 (Inputs)：'}</span>
                             <span className="text-[10px] text-sanctuary-500 font-mono">
-                              {recipe.inputs.length} 件材料
+                              {isEn ? `${(isEn && recipe.inputsEn ? recipe.inputsEn : recipe.inputs).length} Items` : `${recipe.inputs.length} 件材料`}
                             </span>
                           </div>
 
                           <div className="flex flex-wrap items-center gap-2 p-3 rounded-xl bg-sanctuary-900/60 border border-sanctuary-850 shadow-inner">
-                            {recipe.inputs.map((inp, idx) => {
+                            {(isEn && recipe.inputsEn ? recipe.inputsEn : recipe.inputs).map((inp, idx) => {
                               const runeMatch = inp.match(/(\d+)#/);
                               const runeNum = runeMatch ? parseInt(runeMatch[1], 10) : null;
 
@@ -207,7 +209,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
                                       <span className="truncate max-w-[160px]">{inp}</span>
                                     </span>
                                   )}
-                                  {idx < recipe.inputs.length - 1 && (
+                                  {idx < (isEn && recipe.inputsEn ? recipe.inputsEn : recipe.inputs).length - 1 && (
                                     <Plus className="w-3.5 h-3.5 text-sanctuary-500 shrink-0" />
                                   )}
                                 </React.Fragment>
@@ -221,16 +223,16 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
                             <span className="shrink-0">{isEn ? 'Transmuted Output: ' : '煉金轉化產出：'}</span>
                             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-sanctuary-900/90 border border-d2-unique/40 shadow-sm text-d2-unique font-bold flex-wrap">
                               <ItemIcon name={recipe.output} size="sm" showBorder={false} />
-                              <span>{recipe.output}</span>
+                              <span>{isEn && recipe.outputEn ? recipe.outputEn : recipe.output}</span>
                             </div>
                           </div>
                         </div>
                       </div>
 
                       {/* Recipe Notes */}
-                      {recipe.notes && (
+                      {(isEn && recipe.notesEn ? recipe.notesEn : recipe.notes) && (
                         <div className="mt-3 pt-3 border-t border-sanctuary-850/80 text-xs text-sanctuary-400 italic bg-sanctuary-900/40 p-2.5 rounded-lg leading-relaxed">
-                          💡 <span className="text-sanctuary-300">{recipe.notes}</span>
+                          💡 <span className="text-sanctuary-300">{isEn && recipe.notesEn ? recipe.notesEn : recipe.notes}</span>
                         </div>
                       )}
                     </div>

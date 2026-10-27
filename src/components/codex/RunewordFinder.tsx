@@ -32,6 +32,110 @@ const GROUPS: { id: string; label: string; labelEn: string; match: (b: string[])
 ];
 const SOCKETS = [2, 3, 4, 5, 6];
 
+const BASE_ZH_TO_EN: Record<string, string> = {
+  '武器': 'Weapons',
+  '近戰武器': 'Melee Weapons',
+  '遠程武器': 'Missile Weapons',
+  '弓或弩': 'Missile Weapons',
+  '弓': 'Bows',
+  '弩': 'Crossbows',
+  '刀劍': 'Swords',
+  '劍': 'Swords',
+  '斧': 'Axes',
+  '釘鎚': 'Maces',
+  '短棒': 'Clubs',
+  '重槌': 'Hammers',
+  '權杖': 'Scepters',
+  '長柄武器': 'Polearms',
+  '長矛': 'Spears',
+  '法杖': 'Staves',
+  '魔杖': 'Wands',
+  '匕首': 'Daggers',
+  '爪或拳刃': 'Claws',
+  '爪': 'Claws',
+  '護甲': 'Body Armor',
+  '頭盔': 'Helms',
+  '盾牌': 'Shields',
+  '聖騎士盾牌': 'Paladin Shields',
+  '巫毒頭顱': 'Shrunken Heads',
+  '魔典': 'Grimoires',
+};
+
+const TAG_ZH_TO_EN: Record<string, string> = {
+  '謎團': 'Enigma',
+  '無限': 'Infinity',
+  '悔恨': 'Grief',
+  '剛毅': 'Fortitude',
+  '精神': 'Spirit',
+  '靈光': 'Insight',
+  '信心': 'Faith',
+  '野獸': 'Beast',
+  '流亡': 'Exile',
+  '末日': 'Doom',
+  '夢境': 'Dream',
+  '榮耀之鍊': 'CoH',
+  '鳳凰': 'Phoenix',
+  '最後遺願': 'Last Wish',
+  '死神': 'Death',
+  '誓約': 'Oath',
+  '執法者': 'Lawbringer',
+  '強制': 'Duress',
+  '石塊': 'Stone',
+  '背信': 'Treachery',
+  '煙霧': 'Smoke',
+  '獅子心': 'Lionheart',
+  '神聖雷霆': 'Holy Thunder',
+  '黑色': 'Black',
+  '記憶': 'Memory',
+  '葉子': 'Leaf',
+  '白骨': 'White',
+  '微風': 'Zephyr',
+  '怨恨': 'Malice',
+  '鋼鐵': 'Steel',
+  '隱密': 'Stealth',
+  '學識': 'Lore',
+  '天底': 'Nadir',
+  '光輝': 'Radiance',
+  '韻律': 'Rhyme',
+  '燦爛': 'Splendor',
+  '古代人的誓約': "Ancient's Pledge",
+  '和平': 'Peace',
+  '神話': 'Myth',
+  '原則': 'Principle',
+  '開明': 'Enlightenment',
+  '骨頭': 'Bone',
+  '雨雲': 'Rain',
+  '催眠': 'Delirium',
+  '閃爍火焰': 'Flickering Flame',
+  '迷霧': 'Mist',
+  '執念': 'Obsession',
+  '典範': 'Pattern',
+  '瘟疫': 'Plague',
+  '不屈意志': 'Unbending Will',
+  '智慧': 'Wisdom',
+  '壓碎性打擊': 'Crushing Blow',
+  '致命攻勢': 'Deadly Strike',
+  '撕裂傷口': 'Open Wounds',
+  '偷取生命': 'Life Steal',
+  '偷取法力': 'Mana Steal',
+  '快速施法速度': 'Faster Cast Rate',
+  '快速打擊恢復': 'Faster Hit Recovery',
+  '快速格擋速度': 'Faster Block Rate',
+  '增加格擋機率': 'Increased Chance of Blocking',
+  '攻擊速度': 'Attack Speed',
+  '攻速': 'Attack Speed',
+  '靈氣': 'Aura',
+  '跑步速度': 'Faster Run/Walk',
+  '跑速': 'Faster Run/Walk',
+  '打擊恢復': 'Faster Hit Recovery',
+  '減傷': 'Damage Reduced',
+  '魔減': 'Magic Damage Reduced',
+  '全抗': 'All Resistances',
+  '無法被凍結': 'Cannot Be Frozen',
+  '衰老': 'Decrepify',
+  '傳送術': 'Teleport',
+};
+
 // 分類樹：底材類型 → 孔數（孔數越多越晚期；同孔數依需求等級排序）
 const TREE_DEFS: TaxDef[] = GROUPS.map((g) => ({
   id: g.id,
@@ -148,7 +252,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
     filteredRunewords.forEach((rw) => groupsOf(rw).forEach((g) => counts.set(`${g.id}/${rw.sockets}`, (counts.get(`${g.id}/${rw.sockets}`) ?? 0) + 1)));
     return recount(baseTree, counts);
   }, [baseTree, filteredRunewords]);
-  const root: TreeNode = useMemo(() => ({ id: 'all', label: '全部符文之語', count: filteredRunewords.length, children: tree }), [tree, filteredRunewords.length]);
+  const root: TreeNode = useMemo(() => ({ id: 'all', label: isEn ? 'All Runewords' : '全部符文之語', count: filteredRunewords.length, children: tree }), [tree, filteredRunewords.length, isEn]);
   const node = sel === 'all' ? root : findNode(tree, sel) ?? root;
   // 目前節點一筆都沒有、但別處有符合（搜尋或篩選的結果落在別的分類）時，自動放寬到全部
   React.useEffect(() => {
@@ -192,9 +296,9 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
         key={rw.id}
         tone="rune"
         icon={<ItemIcon {...repFor(rw.allowedBases)} rarity="runeword" size="sm" showBorder={false} imageUrl={rw.imageUrl || repFor(rw.allowedBases).imageUrl} />}
-        title={rw.name}
+        title={isEn ? rw.nameEn : rw.name}
         sub={`Lv${rw.requiredLevel} · ${rw.runes.join(' ')}`}
-        hint={`${rw.name}（${rw.nameEn}）｜${rw.sockets} 孔｜${rw.allowedBases.join('、')}`}
+        hint={isEn ? `${rw.nameEn} | ${rw.sockets} Sockets | ${isEn && rw.allowedBasesEn ? rw.allowedBasesEn.join(', ') : rw.allowedBases.join('、')}` : `${rw.name}（${rw.nameEn}）｜${rw.sockets} 孔｜${rw.allowedBases.join('、')}`}
         onClick={() => dir.jump(`rw-${rw.id}`, `${g?.id ?? 'melee'}/${rw.sockets}`, go)}
       />
     );
@@ -221,9 +325,11 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                         <h3 className="font-diablo text-lg font-bold text-d2-unique group-hover:text-amber-300 transition-colors">
                           {isEn && rw.nameEn ? rw.nameEn : rw.name}
                         </h3>
-                        <span className="text-xs text-sanctuary-400 font-mono italic">
-                          {isEn && rw.nameEn ? rw.name : rw.nameEn}
-                        </span>
+                        {!isEn && rw.nameEn && (
+                          <span className="text-xs text-sanctuary-400 font-mono italic">
+                            {rw.nameEn}
+                          </span>
+                        )}
                       </div>
                       <div className="text-xs text-sanctuary-300 mt-1 flex items-center gap-1.5 flex-wrap">
                       <span>{isEn ? 'Req Level:' : '需求等級:'} <strong className="text-sanctuary-100">{rw.requiredLevel}</strong> • {rw.sockets} {isEn ? 'Sockets' : '孔'}</span>
@@ -238,9 +344,9 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                               onNavigateToBase?.(base);
                             }}
                             className="text-sanctuary-300 hover:text-d2-socket hover:underline cursor-pointer transition-colors"
-                            title={`點擊查看【${base}】頂級符文底材指南`}
+                            title={isEn ? `Click to view [${base}] Runeword Base Guide` : `點擊查看【${base}】頂級符文底材指南`}
                           >
-                            {base}
+                            {isEn && rw.allowedBasesEn?.[bIdx] ? rw.allowedBasesEn[bIdx] : base}
                           </button>
                         </React.Fragment>
                       ))}
@@ -289,7 +395,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                             onNavigateToRune?.(rw.runeNumbers[i]);
                           }}
                           className="group/rune flex flex-col items-center gap-1 px-2.5 pt-1.5 pb-2 rounded-lg bg-sanctuary-900/90 hover:bg-d2-rune/20 border border-sanctuary-750 hover:border-d2-rune transition-all hover:scale-105 cursor-pointer min-w-[66px] shadow-sm"
-                          title={`點擊跳轉查看 ${rw.runeNumbers[i]}號 符文詳細屬性與方塊合成`}
+                          title={isEn ? `Click to view Rune #${rw.runeNumbers[i]} details & recipes` : `點擊跳轉查看 ${rw.runeNumbers[i]}號 符文詳細屬性與方塊合成`}
                         >
                           <span className="text-[9px] font-mono text-sanctuary-500 leading-none group-hover/rune:text-amber-300">
                             #{i + 1}
@@ -412,12 +518,12 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               onChange={(e) => setSelectedSockets(e.target.value === 'all' ? 'all' : Number(e.target.value))}
               className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"
             >
-              <option value="all">全部孔數</option>
-              <option value="2">2 孔 (Sockets)</option>
-              <option value="3">3 孔 (Sockets)</option>
-              <option value="4">4 孔 (Sockets)</option>
-              <option value="5">5 孔 (Sockets)</option>
-              <option value="6">6 孔 (Sockets)</option>
+              <option value="all">{isEn ? 'All Sockets' : '全部孔數'}</option>
+              <option value="2">2 {isEn ? 'Sockets' : '孔'}</option>
+              <option value="3">3 {isEn ? 'Sockets' : '孔'}</option>
+              <option value="4">4 {isEn ? 'Sockets' : '孔'}</option>
+              <option value="5">5 {isEn ? 'Sockets' : '孔'}</option>
+              <option value="6">6 {isEn ? 'Sockets' : '孔'}</option>
             </select>
           </div>
 
@@ -429,9 +535,9 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               onChange={(e) => setSelectedBase(e.target.value)}
               className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"
             >
-              <option value="all">全部底材</option>
+              <option value="all">{isEn ? 'All Bases' : '全部底材'}</option>
               {allBases.map((b) => (
-                <option key={b} value={b}>{b}</option>
+                <option key={b} value={b}>{isEn ? (BASE_ZH_TO_EN[b] ?? b) : b}</option>
               ))}
             </select>
           </div>
@@ -444,9 +550,9 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               onChange={(e) => setSelectedTag(e.target.value)}
               className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"
             >
-              <option value="all">全部標籤</option>
+              <option value="all">{isEn ? 'All Tags' : '全部標籤'}</option>
               {allTags.map((t) => (
-                <option key={t} value={t}>{t}</option>
+                <option key={t} value={t}>{isEn ? (TAG_ZH_TO_EN[t] ?? t) : t}</option>
               ))}
             </select>
           </div>
@@ -460,7 +566,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                 onChange={(e) => setOnlyLadder(e.target.checked)}
                 className="rounded bg-sanctuary-950 border-sanctuary-700 text-d2-unique focus:ring-0"
               />
-              <span>天梯限定 (Ladder)</span>
+              <span>{isEn ? 'Ladder Only' : '天梯限定 (Ladder)'}</span>
             </label>
           </div>
 
@@ -473,7 +579,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                 onChange={(e) => setOnlyDLC(e.target.checked)}
                 className="rounded bg-sanctuary-950 border-sanctuary-700 text-d2-fire focus:ring-0"
               />
-              <span>術士軍臨 (RotW)</span>
+              <span>{isEn ? 'Reign of the Warlock (RotW)' : '術士軍臨 (RotW)'}</span>
             </label>
           </div>
 
@@ -490,7 +596,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
         </div>
       </div>
 
-      <TreeIndex title="底材索引" rootLabel="全部符文之語" rootCount={root.count} nodes={tree} activeId={node.id} onSelect={go} tone="rune" initialOpen="none">
+      <TreeIndex title={t('底材索引', 'Base Index')} rootLabel={t('全部符文之語', 'All Runewords')} rootCount={root.count} nodes={tree} activeId={node.id} onSelect={go} tone="rune" initialOpen="none">
         <div className="space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <Crumbs crumbs={crumbs} onSelect={go} tone="rune" />
@@ -511,12 +617,12 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
             <div className="p-12 text-center text-sanctuary-400 bg-sanctuary-900/40 rounded-xl border border-sanctuary-800 space-y-3">
               <div>
                 {root.count > 0 && node.id !== 'all'
-                  ? `「${node.label}」底下沒有符合目前條件的符文之語，其他分類共 ${root.count} 組符合，請看分類索引的數量。`
-                  : '查無符合目前條件的符文之語，請嘗試放寬篩選條件。'}
+                  ? (isEn ? `No runewords matching in "${node.en || node.label}", ${root.count} match in other categories.` : `「${node.label}」底下沒有符合目前條件的符文之語，其他分類共 ${root.count} 組符合，請看分類索引的數量。`)
+                  : (isEn ? 'No runewords found matching current criteria.' : '查無符合目前條件的符文之語，請嘗試放寬篩選條件。')}
               </div>
               {root.count > 0 && node.id !== 'all' && (
                 <button type="button" onClick={() => go('all')} className="px-4 py-2 rounded-lg bg-sanctuary-800 border border-sanctuary-700 text-sm text-sanctuary-100 hover:border-d2-unique">
-                  回到「全部符文之語」
+                  {isEn ? 'Back to "All Runewords"' : '回到「全部符文之語」'}
                 </button>
               )}
             </div>
@@ -524,12 +630,12 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
             sections.map(({ n, rows }) => (
               <section key={n} id={`sec-${selGroupId || 'all'}-${n}`} className="mb-9 scroll-mt-20">
                 <SectionHead
-                  title={`${n} 孔`}
-                  sub={selGroup ? selGroup.label : undefined}
+                  title={isEn ? `${n} Sockets` : `${n} 孔`}
+                  sub={selGroup ? (isEn ? selGroup.labelEn : selGroup.label) : undefined}
                   count={rows.length}
                   tone="rune"
                   onOpen={selGroup && !isLeaf ? () => go(`${selGroup.id}/${n}`) : undefined}
-                  openLabel={`進入「${selGroup?.label ?? ''} ${n} 孔」`}
+                  openLabel={isEn ? `Enter "${selGroup?.labelEn ?? selGroup?.label ?? ''} ${n} Sockets"` : `進入「${selGroup?.label ?? ''} ${n} 孔」`}
                 />
                 {dirMode ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">{rows.map(rwChip)}</div>

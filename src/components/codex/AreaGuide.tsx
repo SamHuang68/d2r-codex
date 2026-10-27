@@ -35,9 +35,14 @@ interface ActGeographyHub {
 }
 
 const translateImmunity = (im: string): string => {
-  if (im.includes('冰寒')) return 'Cold';
+  if (im === '各類混合免疫') return 'Mixed Immunities';
+  if (im.includes('各波次不同')) return 'Varies by Wave (5 Minion Waves)';
+  if (im.includes('無原生免疫')) return 'No Native Immunities (Non-Elites)';
+  if (im.includes('艾德瑞奇')) return 'Cold Immune (Eldritch)';
+  if (im.includes('山克')) return 'Various Immunities (Shenk)';
+  if (im.includes('冰寒') || im.includes('寒冷')) return 'Cold';
   if (im.includes('火焰')) return 'Fire';
-  if (im.includes('閃電')) return 'Light';
+  if (im.includes('閃電') || im.includes('電擊')) return 'Lightning';
   if (im.includes('毒素')) return 'Poison';
   if (im.includes('物理')) return 'Physical';
   if (im.includes('魔法')) return 'Magic';
@@ -412,9 +417,11 @@ export const AreaGuide: React.FC = () => {
                       <div className="font-diablo text-sm font-bold text-sanctuary-100 group-hover:text-d2-gold transition-colors">
                         {isEn ? hub.hubNameEn : hub.hubNameZh}
                       </div>
-                      <div className="text-[10px] font-mono text-sanctuary-400 truncate">
-                        {isEn ? hub.hubNameZh : hub.hubNameEn}
-                      </div>
+                      {!isEn && (
+                        <div className="text-[10px] font-mono text-sanctuary-400 truncate">
+                          {hub.hubNameEn}
+                        </div>
+                      )}
 
                       <p className="text-[11px] text-sanctuary-400 mt-2 line-clamp-2 leading-relaxed">
                         {isEn ? hub.environmentEn : hub.environmentZh}
@@ -493,9 +500,11 @@ export const AreaGuide: React.FC = () => {
                       <h3 className="font-diablo text-base font-bold text-sanctuary-100 group-hover:text-d2-fire transition-colors">
                         {isEn ? area.nameEn : area.nameZh}
                       </h3>
-                      <div className="text-[11px] font-mono text-sanctuary-400 mb-2">
-                        {isEn ? area.nameZh : area.nameEn}
-                      </div>
+                      {!isEn && (
+                        <div className="text-[11px] font-mono text-sanctuary-400 mb-2">
+                          {area.nameEn}
+                        </div>
+                      )}
                       <div className="text-[10px] text-d2-unique font-mono mb-3">
                         {isEn ? area.locationEn : area.locationZh}
                       </div>
@@ -706,9 +715,11 @@ export const AreaGuide: React.FC = () => {
                       <h3 className="text-lg font-bold text-sanctuary-100 group-hover:text-d2-fire transition-colors">
                         {isEn && area.nameEn ? area.nameEn : area.name}
                       </h3>
-                      <div className="text-xs font-mono text-sanctuary-400 mb-3">
-                        {isEn && area.nameEn ? area.name : area.nameEn}
-                      </div>
+                      {!isEn && (
+                        <div className="text-xs font-mono text-sanctuary-400 mb-3">
+                          {area.nameEn}
+                        </div>
+                      )}
 
                       {/* Immunities */}
                       <div className="space-y-1 mb-3">
@@ -740,9 +751,9 @@ export const AreaGuide: React.FC = () => {
                     </div>
 
                     {/* Notes & Bosses */}
-                    {area.chestsAndBosses && (
+                    {(isEn ? area.chestsAndBossesEn : area.chestsAndBosses) && (
                       <div className="mt-3 pt-3 border-t border-sanctuary-800/60 text-xs text-sanctuary-400 leading-relaxed bg-sanctuary-950/40 p-2.5 rounded-xl">
-                        <span className="text-d2-unique font-medium font-mono">{isEn ? "Features: " : "特色："}</span> {area.chestsAndBosses}
+                        <span className="text-d2-unique font-medium font-mono">{isEn ? "Features: " : "特色："}</span> {isEn ? area.chestsAndBossesEn : area.chestsAndBosses}
                       </div>
                     )}
                   </div>

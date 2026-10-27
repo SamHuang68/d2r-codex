@@ -206,9 +206,11 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                     >
                       {isEn ? CLASS_ZH_TO_EN[cls] : cls}
                     </span>
-                    <span className="text-[10px] font-mono text-sanctuary-400 truncate w-full">
-                      {isEn ? cls : CLASS_ZH_TO_EN[cls]}
-                    </span>
+                    {!isEn && (
+                      <span className="text-[10px] font-mono text-sanctuary-400 truncate w-full">
+                        {CLASS_ZH_TO_EN[cls]}
+                      </span>
+                    )}
                     <span
                       className={`text-[9px] px-1.5 py-0.2 rounded-full mt-1 font-mono ${
                         isActive

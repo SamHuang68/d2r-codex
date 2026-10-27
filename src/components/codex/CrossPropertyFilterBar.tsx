@@ -133,7 +133,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
 
         {/* 部位選單 */}
         <div className="flex items-center gap-2">
-          <span className="text-xs text-sanctuary-400 font-medium shrink-0">部位:</span>
+          <span className="text-xs text-sanctuary-400 font-medium shrink-0">{isEn ? 'Slot:' : '部位:'}</span>
           <select
             value={selectedSlot}
             onChange={(e) => onSelectSlot(e.target.value as any)}

@@ -75,10 +75,10 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
       {/* 四大頂級神符傳奇榮譽展廳 (Big 4 High Runes Spotlight) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {[
-          { num: 31, nameZh: '喬', nameEn: 'Jah', roleZh: '神符之王・謎團核心', descZh: '全遊戲價值第一硬通貨，解鎖全職業傳送術與最後遺願。' },
-          { num: 30, nameZh: '貝', nameEn: 'Ber', roleZh: '元素破免・壓碎之尊', descZh: '組成「無限」與「謎團」的雙重基石，提供 20% 壓碎與 8% 物理減傷。' },
-          { num: 28, nameZh: '羅', nameEn: 'Lo', roleZh: '物理質變・致命極限', descZh: '「剛毅」與「悔恨」雙神裝核心，賦予 20% 致命打擊與抗性上限。' },
-          { num: 33, nameZh: '薩德', nameEn: 'Zod', roleZh: '萬劫不滅・永不毀損', descZh: '聖休亞瑞最稀有的終極神符，賦予無形極品武器裝備永生。' },
+          { num: 31, nameZh: '喬', nameEn: 'Jah', roleZh: '神符之王・謎團核心', roleEn: 'King of Runes • Enigma Core', descZh: '全遊戲價值第一硬通貨，解鎖全職業傳送術與最後遺願。', descEn: 'Top currency in D2R; unlocks Teleport for all classes and Last Wish.' },
+          { num: 30, nameZh: '貝', nameEn: 'Ber', roleZh: '元素破免・壓碎之尊', roleEn: 'Sundering Pillar • Crushing Blow', descZh: '組成「無限」與「謎團」的雙重基石，提供 20% 壓碎與 8% 物理減傷。', descEn: 'Twin cornerstone of Infinity and Enigma; grants 20% Crushing Blow & 8% DR.' },
+          { num: 28, nameZh: '羅', nameEn: 'Lo', roleZh: '物理質變・致命極限', roleEn: 'Physical Ascension • Deadly Strike', descZh: '「剛毅」與「悔恨」雙神裝核心，賦予 20% 致命打擊與抗性上限。', descEn: 'Core of Fortitude & Grief; grants 20% Deadly Strike and +5% Max Light Res.' },
+          { num: 33, nameZh: '薩德', nameEn: 'Zod', roleZh: '萬劫不滅・永不毀損', roleEn: 'Eternal Indestructible • Rarest Rune', descZh: '聖休亞瑞最稀有的終極神符，賦予無形極品武器裝備永生。', descEn: 'Rarest rune in Sanctuary; grants Indestructible to godly ethereal weapons.' },
         ].map((hr) => (
           <button
             key={hr.num}
@@ -94,9 +94,9 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                 <ItemIcon runeNumber={hr.num} size="sm" showBorder={false} />
                 <div>
                   <div className="font-diablo text-base font-bold text-amber-300 group-hover/hr:text-white">
-                    {hr.num}# {hr.nameZh} <span className="text-xs font-mono font-normal text-sanctuary-400">({hr.nameEn})</span>
+                    {hr.num}# {isEn ? hr.nameEn : hr.nameZh} {!isEn && <span className="text-xs font-mono font-normal text-sanctuary-400">({hr.nameEn})</span>}
                   </div>
-                  <div className="text-[10px] text-d2-gold font-mono">{hr.roleZh}</div>
+                  <div className="text-[10px] text-d2-gold font-mono">{isEn ? hr.roleEn : hr.roleZh}</div>
                 </div>
               </div>
               <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-950/70 text-amber-300 border border-amber-700/50">
@@ -104,7 +104,7 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
               </span>
             </div>
             <p className="text-[11px] text-sanctuary-400 mt-2 leading-relaxed line-clamp-2">
-              {hr.descZh}
+              {isEn ? hr.descEn : hr.descZh}
             </p>
           </button>
         ))}
@@ -116,7 +116,7 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
           <button
             key={r.number}
             type="button"
-            title={`${r.number}# ${r.name} (${r.nameEn})`}
+            title={isEn ? `${r.number}# ${r.nameEn}` : `${r.number}# ${r.name} (${r.nameEn})`}
             onClick={() => {
               setTierFilter(r.number <= 10 ? 'low' : r.number <= 21 ? 'mid' : 'high');
               setTimeout(() => document.getElementById(`rune-${r.number}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
@@ -183,9 +183,11 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                           </span>
                         )}
                       </h3>
-                      <div className="text-[11px] text-sanctuary-400 font-mono italic">
-                        {isEn && rune.nameEn ? rune.name : rune.nameEn}
-                      </div>
+                      {!isEn && rune.nameEn && (
+                        <div className="text-[11px] text-sanctuary-400 font-mono italic">
+                          {rune.nameEn}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="text-right">
@@ -206,19 +208,19 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-sanctuary-800 text-sanctuary-300 font-mono shrink-0">
                       ⚔️ {isEn ? 'Weapons' : '武器'}
                     </span>
-                    <span className="text-sanctuary-200">{rune.weaponEffect}</span>
+                    <span className="text-sanctuary-200">{isEn && rune.weaponEffectEn ? rune.weaponEffectEn : rune.weaponEffect}</span>
                   </div>
                   <div className="flex items-start gap-1.5">
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-sanctuary-800 text-sanctuary-300 font-mono shrink-0">
                       🛡️ {isEn ? 'Armor/Helm' : '防具/頭'}
                     </span>
-                    <span className="text-sanctuary-200">{rune.armorHelmEffect}</span>
+                    <span className="text-sanctuary-200">{isEn && rune.armorHelmEffectEn ? rune.armorHelmEffectEn : rune.armorHelmEffect}</span>
                   </div>
                   <div className="flex items-start gap-1.5">
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-sanctuary-800 text-sanctuary-300 font-mono shrink-0">
                       🔰 {isEn ? 'Shields' : '盾牌'}
                     </span>
-                    <span className="text-sanctuary-200">{rune.shieldEffect}</span>
+                    <span className="text-sanctuary-200">{isEn && rune.shieldEffectEn ? rune.shieldEffectEn : rune.shieldEffect}</span>
                   </div>
                 </div>
               </div>
@@ -232,7 +234,7 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                       <ArrowRight className="w-3 h-3 text-d2-rune shrink-0" /> {isEn ? 'Cube:' : '升級:'}
                     </span>
                     <span className="font-semibold text-sanctuary-200 truncate ml-2">
-                      {rune.cubeRecipe}
+                      {isEn && rune.cubeRecipeEn ? rune.cubeRecipeEn : rune.cubeRecipe}
                     </span>
                   </div>
                 )}

@@ -25,6 +25,60 @@ export const FRAMES_PER_SECOND = 25;
 export const durationSeconds = (s: Shrine): number | undefined => (s.type === 'Booster' && s.frames ? s.frames / FRAMES_PER_SECOND : undefined);
 
 const RESIST_ZH: Record<number, string> = { 8: '火焰', 9: '冰寒', 10: '閃電', 11: '毒素' };
+const RESIST_EN: Record<number, string> = { 8: 'Fire', 9: 'Cold', 10: 'Lightning', 11: 'Poison' };
+
+const SHRINE_MSG_EN: Record<number, string> = {
+  1: 'You feel refreshed.',
+  2: 'You feel vitality.',
+  3: 'You feel energized.',
+  4: 'You feel a strange transformation.',
+  5: 'You feel a strange transformation.',
+  6: 'Your skin hardens.',
+  7: 'Your battle prowess increases.',
+  8: 'You feel resistant to fire.',
+  9: 'You feel resistant to cold.',
+  10: 'You feel resistant to lightning.',
+  11: 'You feel resistant to poison.',
+  12: 'You feel knowledgeable.',
+  13: 'Your thoughts clarify.',
+  14: 'You feel tireless.',
+  15: 'You feel enlightened.',
+  16: 'You feel strange.',
+  17: 'A portal opens.',
+  18: 'A gem gleams.',
+  19: 'Fire engulfs the area.',
+  20: 'A monster grows stronger.',
+  21: 'Potions explode around you.',
+  22: 'Poisonous fumes fill the air.',
+};
+
+export const shrineMsgEn = (s: Shrine): string | undefined => SHRINE_MSG_EN[s.code] || (s.msg ? 'You feel empowered.' : undefined);
+
+export function shrineSummaryEn(s: Shrine): string {
+  const a0 = s.arg0; const a1 = s.arg1;
+  switch (s.code) {
+    case 1: return 'Instantly restores all Life and Mana';
+    case 2: return 'Instantly restores all Life';
+    case 3: return 'Instantly restores all Mana';
+    case 4: return 'Exchanges current Life into Mana';
+    case 5: return 'Exchanges current Mana into Life';
+    case 6: return `Defense +${a0}%`;
+    case 7: return `Physical Damage +${a0}%, Attack Rating +${a1}%`;
+    case 8: case 9: case 10: case 11: return `${RESIST_EN[s.code]} Resistance +${a0}%`;
+    case 12: return `+${a0} to All Skills`;
+    case 13: return `Mana Regeneration Rate +${a0}%`;
+    case 14: return 'Stamina does not drain (Infinite Stamina)';
+    case 15: return `Experience Gained +${a0}%`;
+    case 16: return 'Temporarily inverts character name display';
+    case 17: return 'Opens a neutral Portal to the current act town';
+    case 18: return 'Upgrades one inventory gem by 1 tier (or creates a random chipped gem)';
+    case 19: return 'Releases a Fire Nova dealing percentage Life damage to nearby units';
+    case 20: return 'Promotes the nearest standard monster into a Champion or Unique';
+    case 21: return 'Deals Fire damage to nearby foes and drops exploding potions';
+    case 22: return 'Releases poisonous gas damaging nearby foes and drops poison potions';
+    default: return s.effect;
+  }
+}
 
 /** 效果說明（繁中）。數字取自資料表參數；效果不明確的聖壇只翻譯資料表的效果文字，不推測數值 */
 export function shrineSummary(s: Shrine): string {

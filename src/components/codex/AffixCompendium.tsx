@@ -2,11 +2,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Search, Tag } from 'lucide-react';
 import { PageHeader } from '../common/PageHeader';
 import { useLanguage } from '../../context/LanguageContext';
+import affixLinesEnJson from '../../data/codex/affixLinesEn.json';
 import {
-  AFFIXES, AFFIX_KINDS, AFFIX_KIND_ZH, ITEM_TYPE_GROUPS, affixAppliesToType, affixAvailableAt, affixClass, affixLines, affixesFor, classZh, hasNegativeCharges, isUnknownType, itemTypeLabel,
+  AFFIXES, AFFIX_KINDS, AFFIX_KIND_ZH, ITEM_TYPE_GROUPS, affixAppliesToType, affixAvailableAt, affixClass, affixLines, affixesFor, classZh, classEn, hasNegativeCharges, isUnknownType, itemTypeLabel,
   type Affix, type AffixKind,
 } from '../../data/codex/magicAffixes';
 
+const affixLinesEnMap = affixLinesEnJson as Record<string, string>;
 const PAGE = 80;
 const AFFIX_KIND_EN: Record<AffixKind, string> = {
   prefix: 'Prefix',
@@ -26,41 +28,41 @@ const fmtPct = (v: number): string => (v >= 0.1 ? `${(v * 100).toFixed(1)}%` : `
 const AffixRow: React.FC<{ a: Affix; share?: number; onGroup: (g: number) => void }> = ({ a, share, onGroup }) => {
   const { isEn } = useLanguage();
   const cls = affixClass(a);
-  const lines = affixLines(a);
+  const lines = affixLines(a).map((l) => (isEn ? (affixLinesEnMap[l] ?? l) : l));
   return (
     <div className="rounded-xl border border-sanctuary-800/80 bg-sanctuary-900/40 p-3 sm:p-4 flex flex-col lg:flex-row gap-2 lg:gap-4">
       <div className="lg:w-56 shrink-0 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-bold text-sanctuary-100">{a.name}</span>
+          <span className="font-bold text-sanctuary-100">{isEn && a.nameEn ? a.nameEn : a.name}</span>
           <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${KIND_TONE[a.kind]}`}>{isEn ? AFFIX_KIND_EN[a.kind] : AFFIX_KIND_ZH[a.kind]}</span>
-          {a.rare && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sanctuary-800 text-sanctuary-300" title="稀有物品也可能抽到這個詞綴">{isEn ? "Rare eligible" : "稀有可出現"}</span>}
-          {hasNegativeCharges(a) && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-d2-fire/40 text-d2-fire bg-d2-fire/10" title="資料表給的充能技能等級與次數都是負數；這種寫法在遊戲內的實際效果尚未驗證">{isEn ? "Negative charges" : "充能數值為負"}</span>}
+          {a.rare && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sanctuary-800 text-sanctuary-300" title={isEn ? "Can spawn on rare items" : "稀有物品也可能抽到這個詞綴"}>{isEn ? "Rare eligible" : "稀有可出現"}</span>}
+          {hasNegativeCharges(a) && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-d2-fire/40 text-d2-fire bg-d2-fire/10" title={isEn ? "Charge skill level and charges are negative in data table" : "資料表給的充能技能等級與次數都是負數；這種寫法在遊戲內的實際效果尚未驗證"}>{isEn ? "Negative charges" : "充能數值為負"}</span>}
         </div>
-        <div className="text-[11px] font-mono text-sanctuary-500 truncate">{a.nameEn}</div>
+        {!isEn && a.nameEn && <div className="text-[11px] font-mono text-sanctuary-500 truncate">{a.nameEn}</div>}
       </div>
       <div className="flex-1 min-w-0 space-y-1.5">
         <ul className="text-sm text-sanctuary-100 space-y-0.5">
           {lines.map((t, i) => <li key={i}>{t}</li>)}
-          {lines.length === 0 && <li className="text-sanctuary-500">（沒有可顯示的屬性）</li>}
+          {lines.length === 0 && <li className="text-sanctuary-500">{isEn ? "(No displayable properties)" : "（沒有可顯示的屬性）"}</li>}
         </ul>
         <div className="flex flex-wrap items-center gap-1">
           <span className="text-[10px] text-sanctuary-500 font-mono mr-0.5">{isEn ? "Spawns on: " : "可出現於"}</span>
           {a.itypes.map((t) => (
             <span key={t} className={`text-[11px] px-1.5 py-0.5 rounded border ${isUnknownType(t) ? 'border-d2-fire/40 text-d2-fire bg-d2-fire/10' : 'border-sanctuary-700 text-sanctuary-300 bg-sanctuary-950/60'}`}
-              title={isUnknownType(t) ? `資料表的類型代碼「${t}」不存在（筆誤），遊戲讀表時不會符合任何物品` : t}>
-              {itemTypeLabel(t)}
+              title={isUnknownType(t) ? (isEn ? `Type code "${t}" does not exist in game table` : `資料表的類型代碼「${t}」不存在（筆誤），遊戲讀表時不會符合任何物品`) : t}>
+              {itemTypeLabel(t, isEn)}
             </span>
           ))}
           {a.etypes.length > 0 && <span className="text-[10px] text-sanctuary-500 font-mono ml-1">{isEn ? "Excludes: " : "排除"}</span>}
-          {a.etypes.map((t) => <span key={t} className="text-[11px] px-1.5 py-0.5 rounded border border-sanctuary-700 text-sanctuary-400 line-through decoration-sanctuary-600">{itemTypeLabel(t)}</span>)}
+          {a.etypes.map((t) => <span key={t} className="text-[11px] px-1.5 py-0.5 rounded border border-sanctuary-700 text-sanctuary-400 line-through decoration-sanctuary-600">{itemTypeLabel(t, isEn)}</span>)}
         </div>
       </div>
       <div className="lg:w-60 shrink-0 text-[11px] font-mono text-sanctuary-400 flex flex-wrap lg:flex-col lg:items-end gap-x-3 gap-y-0.5">
-        <span title="物品等級（alvl）要落在這個範圍才會抽到">{isEn ? `alvl ${a.level}–${a.maxLevel ?? "Any"}` : `物品等級 ${a.level}–${a.maxLevel ?? "不限"}`}</span>
-        <span title="這個詞綴讓物品增加的角色等級需求">{isEn ? `reqLvl +${a.levelReq}` : `需求等級 +${a.levelReq}`}</span>
-        {cls && <span className="text-sanctuary-200" title="資料表的職業欄位">職業：{classZh(cls)}{a.classLevelReq ? `（等級需求 ${a.classLevelReq}）` : ''}</span>}
-        <button type="button" onClick={() => onGroup(a.group)} className="underline decoration-dotted hover:text-sanctuary-100" title="同一組的詞綴在同一件物品上只會出現一個；點這裡只看這一組">{isEn ? `Group ${a.group}` : `組 ${a.group}`}</button>
-        <span title="抽選權重：同條件的候選詞綴裡，權重越大越容易抽到">{isEn ? `Weight ${a.frequency}` : `權重 ${a.frequency}`}{share !== undefined && <span className="text-d2-magic">　≈ {fmtPct(share)}</span>}</span>
+        <span title={isEn ? "Item level (alvl) required to roll" : "物品等級（alvl）要落在這個範圍才會抽到"}>{isEn ? `alvl ${a.level}–${a.maxLevel ?? "Any"}` : `物品等級 ${a.level}–${a.maxLevel ?? "不限"}`}</span>
+        <span title={isEn ? "Required character level added by this affix" : "這個詞綴讓物品增加的角色等級需求"}>{isEn ? `reqLvl +${a.levelReq}` : `需求等級 +${a.levelReq}`}</span>
+        {cls && <span className="text-sanctuary-200" title={isEn ? "Class constraint" : "資料表的職業欄位"}>{isEn ? `Class: ${classEn(cls)}` : `職業：${classZh(cls)}`}{a.classLevelReq ? (isEn ? ` (Req Lv ${a.classLevelReq})` : `（等級需求 ${a.classLevelReq}）`) : ''}</span>}
+        <button type="button" onClick={() => onGroup(a.group)} className="underline decoration-dotted hover:text-sanctuary-100" title={isEn ? "Only one affix from the same group can appear on an item" : "同一組的詞綴在同一件物品上只會出現一個；點這裡只看這一組"}>{isEn ? `Group ${a.group}` : `組 ${a.group}`}</button>
+        <span title={isEn ? "Spawn weight: higher is more common" : "抽選權重：同條件的候選詞綴裡，權重越大越容易抽到"}>{isEn ? `Weight ${a.frequency}` : `權重 ${a.frequency}`}{share !== undefined && <span className="text-d2-magic">　≈ {fmtPct(share)}</span>}</span>
       </div>
     </div>
   );
@@ -100,7 +102,7 @@ export const AffixCompendium: React.FC<{ initialQuery?: string }> = ({ initialQu
       if (hideNegative && hasNegativeCharges(a)) return false;
       if (type && !affixAppliesToType(a, type)) return false;
       if (ilvl !== undefined && !affixAvailableAt(a, ilvl)) return false;
-      if (t && !(a.name.toLowerCase().includes(t) || a.nameEn.toLowerCase().includes(t) || affixLines(a).some((l) => l.toLowerCase().includes(t)))) return false;
+      if (t && !(a.name.toLowerCase().includes(t) || a.nameEn.toLowerCase().includes(t) || affixLines(a).some((l) => l.toLowerCase().includes(t) || (affixLinesEnMap[l] && affixLinesEnMap[l].toLowerCase().includes(t))))) return false;
       return true;
     });
     const kindOrder = (a: Affix) => AFFIX_KINDS.indexOf(a.kind);
@@ -129,11 +131,11 @@ export const AffixCompendium: React.FC<{ initialQuery?: string }> = ({ initialQu
               </button>
             ))}
           </div>
-          <select value={type} onChange={(e) => { setType(e.target.value); reset(); }} aria-label="物品類型" className={inputCls}>
+          <select value={type} onChange={(e) => { setType(e.target.value); reset(); }} aria-label={isEn ? "Item Type" : "物品類型"} className={inputCls}>
             <option value="">{isEn ? "All Item Types" : "所有物品類型"}</option>
             {ITEM_TYPE_GROUPS.map((g) => (
-              <optgroup key={g.label} label={g.label}>
-                {g.options.map((o) => <option key={o.code} value={o.code}>{o.label}</option>)}
+              <optgroup key={g.label} label={isEn && g.labelEn ? g.labelEn : g.label}>
+                {g.options.map((o) => <option key={o.code} value={o.code}>{isEn && o.labelEn ? o.labelEn : o.label}</option>)}
               </optgroup>
             ))}
           </select>
@@ -165,12 +167,12 @@ export const AffixCompendium: React.FC<{ initialQuery?: string }> = ({ initialQu
               <button type="button" onClick={() => { setGroup(null); reset(); }} className="underline text-sanctuary-300 ml-1">{isEn ? "Clear" : "清除"}</button>
             </span>
           )}
-          {totals && <span className="text-sanctuary-500">已選物品類型與等級：每列的「≈ 百分比」＝同種類候選詞綴中的權重占比</span>}
+          {totals && <span className="text-sanctuary-500">{isEn ? "Selected item type & level: \"%\" = weight percentage among candidates of same kind" : "已選物品類型與等級：每列的「≈ 百分比」＝同種類候選詞綴中的權重占比"}</span>}
           <span className="ml-auto text-sanctuary-500">{isEn ? `${list.length} / ${AFFIXES.length} affixes` : `${list.length} / ${AFFIXES.length} 個詞綴`}</span>
         </div>
       </div>
 
-      <div className="space-y-2" aria-label="詞綴清單">
+      <div className="space-y-2" aria-label={isEn ? "Affix List" : "詞綴清單"}>
         {list.slice(0, limit).map((a) => (
           <AffixRow key={a.id} a={a} share={totals && totals[a.kind] > 0 ? a.frequency / totals[a.kind] : undefined} onGroup={(g) => { setGroup(g); reset(); }} />
         ))}
@@ -183,9 +185,19 @@ export const AffixCompendium: React.FC<{ initialQuery?: string }> = ({ initialQu
       </div>
 
       <div className="text-[11px] text-sanctuary-600 space-y-1">
-        <p>資料來自遊戲 magicprefix.txt、magicsuffix.txt、automagic.txt（3.3.93847）。已排除遊戲設定為不會產生、權重為 0 或沒有任何屬性的列。屬性範圍以 99 級角色的數值呈現；「依角色等級」的屬性用算式表示。</p>
-        <p>物品類型有繼承：選「大型咒符」會同時包含寫給「咒符」的詞綴。資料表裡有兩處類型代碼筆誤（staff、「ring 」帶空白），以紅框標示，遊戲讀表時不會符合任何物品，這裡照樣不符合。</p>
-        <p>未納入：部分底材的詞綴等級加成（magic_lvl）、遊戲內其他影響抽選的修正；權重占比是資料表權重的相對值，不等於實際掉落機率。職業與職業等級需求照資料表欄位顯示，尚未在遊戲內逐項驗證。</p>
+        {isEn ? (
+          <>
+            <p>Data sourced from game tables: magicprefix.txt, magicsuffix.txt, automagic.txt (3.3.93847). Filtered out non-spawning, zero-weight, or empty affixes. Ranges evaluated at level 99.</p>
+            <p>Item type inheritance supported: selecting &quot;Large Charm&quot; includes affixes applicable to &quot;Charms&quot;. Two typos in game data (staff, &quot;ring &quot;) are highlighted.</p>
+            <p>Omitted: base magic_lvl bonuses and external drop modifiers. Weight percentages are relative and do not reflect raw drop probability.</p>
+          </>
+        ) : (
+          <>
+            <p>資料來自遊戲 magicprefix.txt、magicsuffix.txt、automagic.txt（3.3.93847）。已排除遊戲設定為不會產生、權重為 0 或沒有任何屬性的列。屬性範圍以 99 級角色的數值呈現；「依角色等級」的屬性用算式表示。</p>
+            <p>物品類型有繼承：選「大型咒符」會同時包含寫給「咒符」的詞綴。資料表裡有兩處類型代碼筆誤（staff、「ring 」帶空白），以紅框標示，遊戲讀表時不會符合任何物品，這裡照樣不符合。</p>
+            <p>未納入：部分底材的詞綴等級加成（magic_lvl）、遊戲內其他影響抽選的修正；權重占比是資料表權重的相對值，不等於實際掉落機率。職業與職業等級需求照資料表欄位顯示，尚未在遊戲內逐項驗證。</p>
+          </>
+        )}
       </div>
     </div>
   );

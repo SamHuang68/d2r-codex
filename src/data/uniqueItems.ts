@@ -30,6 +30,7 @@ export const UNIQUE_ITEMS_DATA: UniqueItemData[] = rows.filter(included).map((r)
     nameEn: o?.nameEn ?? r.nameEnUS ?? r.nameEn,
     nameClassic: o?.nameClassic,
     baseItem: base?.name ?? r.baseName,
+    baseItemEn: base ? (base.nameEnUS ?? base.nameEn) : undefined,
     baseItemId: base ? slug(base.nameEnUS ?? base.nameEn) : undefined,
     slot: base ? gearSlotOf(base) : 'weapon',
     requiredLevel: Math.max(r.levelReq ?? 0, base?.levelReq ?? 0),

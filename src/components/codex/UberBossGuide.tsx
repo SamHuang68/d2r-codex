@@ -168,12 +168,12 @@ export const UberBossGuide: React.FC = () => {
                       1
                     </span>
                     <span className="text-xs font-mono text-sanctuary-400">
-                      {UBER_TRISTRAM_GUIDE.steps[0].boss}
+                      {isEn ? UBER_TRISTRAM_GUIDE.steps[0].bossEn : UBER_TRISTRAM_GUIDE.steps[0].boss}
                     </span>
                   </div>
 
                   <h4 className="text-lg font-bold text-sanctuary-100 group-hover:text-d2-gold transition-colors">
-                    {UBER_TRISTRAM_GUIDE.steps[0].title}
+                    {isEn ? UBER_TRISTRAM_GUIDE.steps[0].titleEn : UBER_TRISTRAM_GUIDE.steps[0].title}
                   </h4>
 
                   {/* Stage 1 Visual Gallery: 3 Key Keepers & Keys */}
@@ -217,7 +217,7 @@ export const UberBossGuide: React.FC = () => {
                     <div className="text-[10px] font-mono font-bold text-sanctuary-500 uppercase">
                       {isEn ? 'Requirements & Conditions:' : '所需材料與條件：'}
                     </div>
-                    {UBER_TRISTRAM_GUIDE.steps[0].requirements.map((req, rIdx) => (
+                    {(isEn ? UBER_TRISTRAM_GUIDE.steps[0].requirementsEn : UBER_TRISTRAM_GUIDE.steps[0].requirements)?.map((req, rIdx) => (
                       <div key={rIdx} className="text-xs text-sanctuary-200 flex items-start gap-1.5 leading-relaxed">
                         <CheckCircle2 className="w-3.5 h-3.5 text-d2-gold shrink-0 mt-0.5" />
                         <span>{req}</span>
@@ -230,14 +230,14 @@ export const UberBossGuide: React.FC = () => {
                     <img src={imgUberKey} alt="Key" className="w-5 h-5 object-contain shrink-0" />
                     <div>
                       <span className="text-d2-gold font-bold font-mono">{isEn ? "Stage Rewards: " : "階段收穫："}</span>
-                      {UBER_TRISTRAM_GUIDE.steps[0].rewards}
+                      {isEn ? UBER_TRISTRAM_GUIDE.steps[0].rewardsEn : UBER_TRISTRAM_GUIDE.steps[0].rewards}
                     </div>
                   </div>
 
                   {/* Strategy */}
                   <p className="text-xs text-sanctuary-400 leading-relaxed">
                     <span className="text-sanctuary-200 font-bold">{isEn ? "Tactical Tips: " : "戰術秘訣："}</span>
-                    {UBER_TRISTRAM_GUIDE.steps[0].strategy}
+                    {isEn ? UBER_TRISTRAM_GUIDE.steps[0].strategyEn : UBER_TRISTRAM_GUIDE.steps[0].strategy}
                   </p>
                 </div>
               </div>
@@ -250,12 +250,12 @@ export const UberBossGuide: React.FC = () => {
                       2
                     </span>
                     <span className="text-xs font-mono text-sanctuary-400">
-                      {UBER_TRISTRAM_GUIDE.steps[1].boss}
+                      {isEn ? UBER_TRISTRAM_GUIDE.steps[1].bossEn : UBER_TRISTRAM_GUIDE.steps[1].boss}
                     </span>
                   </div>
 
                   <h4 className="text-lg font-bold text-sanctuary-100 group-hover:text-d2-fire transition-colors">
-                    {UBER_TRISTRAM_GUIDE.steps[1].title}
+                    {isEn ? UBER_TRISTRAM_GUIDE.steps[1].titleEn : UBER_TRISTRAM_GUIDE.steps[1].title}
                   </h4>
 
                   {/* Stage 2 Visual Gallery: 3 Mini Bosses & 3 Organs */}
@@ -308,7 +308,7 @@ export const UberBossGuide: React.FC = () => {
                     <div className="text-[10px] font-mono font-bold text-sanctuary-500 uppercase">
                       {isEn ? 'Requirements & Conditions:' : '所需材料與條件：'}
                     </div>
-                    {UBER_TRISTRAM_GUIDE.steps[1].requirements.map((req, rIdx) => (
+                    {(isEn ? UBER_TRISTRAM_GUIDE.steps[1].requirementsEn : UBER_TRISTRAM_GUIDE.steps[1].requirements)?.map((req, rIdx) => (
                       <div key={rIdx} className="text-xs text-sanctuary-200 flex items-start gap-1.5 leading-relaxed">
                         <CheckCircle2 className="w-3.5 h-3.5 text-d2-fire shrink-0 mt-0.5" />
                         <span>{req}</span>
@@ -325,14 +325,14 @@ export const UberBossGuide: React.FC = () => {
                     </div>
                     <div>
                       <span className="text-d2-fire font-bold font-mono">{isEn ? "Stage Rewards: " : "階段收穫："}</span>
-                      {UBER_TRISTRAM_GUIDE.steps[1].rewards}
+                      {isEn ? UBER_TRISTRAM_GUIDE.steps[1].rewardsEn : UBER_TRISTRAM_GUIDE.steps[1].rewards}
                     </div>
                   </div>
 
                   {/* Strategy */}
                   <p className="text-xs text-sanctuary-400 leading-relaxed">
                     <span className="text-sanctuary-200 font-bold">{isEn ? "Tactical Tips: " : "戰術秘訣："}</span>
-                    {UBER_TRISTRAM_GUIDE.steps[1].strategy}
+                    {isEn ? UBER_TRISTRAM_GUIDE.steps[1].strategyEn : UBER_TRISTRAM_GUIDE.steps[1].strategy}
                   </p>
                 </div>
               </div>
@@ -345,12 +345,12 @@ export const UberBossGuide: React.FC = () => {
                       3
                     </span>
                     <span className="text-xs font-mono text-sanctuary-400">
-                      {UBER_TRISTRAM_GUIDE.steps[2].boss}
+                      {isEn ? UBER_TRISTRAM_GUIDE.steps[2].bossEn : UBER_TRISTRAM_GUIDE.steps[2].boss}
                     </span>
                   </div>
 
                   <h4 className="text-lg font-bold text-sanctuary-100 group-hover:text-d2-unique transition-colors">
-                    {UBER_TRISTRAM_GUIDE.steps[2].title}
+                    {isEn ? UBER_TRISTRAM_GUIDE.steps[2].titleEn : UBER_TRISTRAM_GUIDE.steps[2].title}
                   </h4>
 
                   {/* Stage 3 Visual Gallery: 3 Prime Evils & Torch */}
@@ -394,7 +394,7 @@ export const UberBossGuide: React.FC = () => {
                     <div className="text-[10px] font-mono font-bold text-sanctuary-500 uppercase">
                       {isEn ? 'Requirements & Conditions:' : '所需材料與條件：'}
                     </div>
-                    {UBER_TRISTRAM_GUIDE.steps[2].requirements.map((req, rIdx) => (
+                    {(isEn ? UBER_TRISTRAM_GUIDE.steps[2].requirementsEn : UBER_TRISTRAM_GUIDE.steps[2].requirements)?.map((req, rIdx) => (
                       <div key={rIdx} className="text-xs text-sanctuary-200 flex items-start gap-1.5 leading-relaxed">
                         <CheckCircle2 className="w-3.5 h-3.5 text-d2-unique shrink-0 mt-0.5" />
                         <span>{req}</span>
@@ -409,14 +409,14 @@ export const UberBossGuide: React.FC = () => {
                     </div>
                     <div>
                       <span className="text-d2-unique font-bold font-mono">{isEn ? "Stage Rewards: " : "階段收穫："}</span>
-                      {UBER_TRISTRAM_GUIDE.steps[2].rewards}
+                      {isEn ? UBER_TRISTRAM_GUIDE.steps[2].rewardsEn : UBER_TRISTRAM_GUIDE.steps[2].rewards}
                     </div>
                   </div>
 
                   {/* Strategy */}
                   <p className="text-xs text-sanctuary-400 leading-relaxed">
                     <span className="text-sanctuary-200 font-bold">{isEn ? "Tactical Tips: " : "戰術秘訣："}</span>
-                    {UBER_TRISTRAM_GUIDE.steps[2].strategy}
+                    {isEn ? UBER_TRISTRAM_GUIDE.steps[2].strategyEn : UBER_TRISTRAM_GUIDE.steps[2].strategy}
                   </p>
                 </div>
               </div>
@@ -452,10 +452,10 @@ export const UberBossGuide: React.FC = () => {
                 >
                   <div className="flex items-center gap-2 text-d2-fire font-bold text-sm">
                     <Zap className="w-4 h-4 shrink-0 text-d2-gold" />
-                    <span>{rule.name}</span>
+                    <span>{isEn ? (rule.nameEn || rule.name) : rule.name}</span>
                   </div>
                   <p className="text-xs text-sanctuary-400 leading-relaxed">
-                    {rule.desc}
+                    {isEn ? (rule.descEn || rule.desc) : rule.desc}
                   </p>
                 </div>
               ))}
@@ -482,7 +482,7 @@ export const UberBossGuide: React.FC = () => {
                   {isEn ? 'WORLD EVENT INVASION' : '世界事件 · 喬丹之石售出祭儀'}
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-diablo font-bold text-sanctuary-100">
-                  {UBER_TRISTRAM_GUIDE.dcloneGuide.title}
+                  {isEn ? (UBER_TRISTRAM_GUIDE.dcloneGuide.titleEn || UBER_TRISTRAM_GUIDE.dcloneGuide.title) : UBER_TRISTRAM_GUIDE.dcloneGuide.title}
                 </h3>
                 <p className="text-xs text-sanctuary-400 max-w-xl">
                   {isEn ? "Special world event to obtain the essential Unique Small Charm: Annihilus." : "獲取全職業必備暗金小型咒符【滅絕小型咒符 (Annihilus / 毀符)】的特殊世界事件。"}
@@ -511,7 +511,7 @@ export const UberBossGuide: React.FC = () => {
                 {isEn ? "SOJ Counter Trigger" : "觸發機制 (SOJ Counter)"}
               </div>
               <p className="text-xs text-sanctuary-300 leading-relaxed">
-                {UBER_TRISTRAM_GUIDE.dcloneGuide.mechanics}
+                {isEn ? (UBER_TRISTRAM_GUIDE.dcloneGuide.mechanicsEn || UBER_TRISTRAM_GUIDE.dcloneGuide.mechanics) : UBER_TRISTRAM_GUIDE.dcloneGuide.mechanics}
               </p>
             </div>
 
@@ -521,7 +521,7 @@ export const UberBossGuide: React.FC = () => {
                 {isEn ? "Spawn Location" : "降臨地點 (Spawn Location)"}
               </div>
               <p className="text-xs text-sanctuary-300 leading-relaxed">
-                {UBER_TRISTRAM_GUIDE.dcloneGuide.spawnRule}
+                {isEn ? (UBER_TRISTRAM_GUIDE.dcloneGuide.spawnRuleEn || UBER_TRISTRAM_GUIDE.dcloneGuide.spawnRule) : UBER_TRISTRAM_GUIDE.dcloneGuide.spawnRule}
               </p>
             </div>
 
@@ -531,7 +531,7 @@ export const UberBossGuide: React.FC = () => {
                 {isEn ? "Guaranteed Reward" : "擊殺必掉 (Guaranteed Reward)"}
               </div>
               <p className="text-xs text-sanctuary-300 leading-relaxed">
-                {UBER_TRISTRAM_GUIDE.dcloneGuide.dropReward}
+                {isEn ? (UBER_TRISTRAM_GUIDE.dcloneGuide.dropRewardEn || UBER_TRISTRAM_GUIDE.dcloneGuide.dropReward) : UBER_TRISTRAM_GUIDE.dcloneGuide.dropReward}
               </p>
             </div>
           </div>

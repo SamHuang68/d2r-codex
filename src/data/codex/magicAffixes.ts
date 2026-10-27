@@ -77,30 +77,56 @@ const GROUP_TYPE_ZH: Record<string, string> = {
   armo: '所有防具', weap: '所有武器', mele: '近戰武器', miss: '遠程武器（弓與弩）', thro: '投擲武器', blun: '鈍器', rod: '杖類（法杖、魔杖、權杖）',
   shld: '所有盾牌', sppl: '長柄與長矛', amaz: '亞馬遜專用', char: '咒符', misc: '雜項',
 };
+const GROUP_TYPE_EN: Record<string, string> = {
+  armo: 'Any Armor', weap: 'Any Weapon', mele: 'Melee Weapons', miss: 'Missile Weapons (Bow/Crossbow)', thro: 'Thrown Weapons', blun: 'Blunt Weapons', rod: 'Staves & Rods',
+  shld: 'Any Shield', sppl: 'Polearms & Spears', amaz: 'Amazon Only', char: 'Charms', misc: 'Misc',
+};
 const leafLabels = new Map<string, string>();
-const collectLeaves = (defs: TaxDef[]) => defs.forEach((d) => (d.children ? collectLeaves(d.children) : leafLabels.set(d.id, d.label)));
+const leafLabelsEn = new Map<string, string>();
+const collectLeaves = (defs: TaxDef[]) => defs.forEach((d) => {
+  if (d.children) {
+    collectLeaves(d.children);
+  } else {
+    leafLabels.set(d.id, d.label);
+    leafLabelsEn.set(d.id, d.en || d.label);
+  }
+});
 collectLeaves(EQUIP_DEFS);
 const baseTypeName = (code: string): string | undefined => gameData.bases.find((b) => b.type === code)?.name;
+const baseTypeNameEn = (code: string): string | undefined => gameData.bases.find((b) => b.type === code)?.nameEn;
 const typeNameOf = new Map((itemtypesJson as { code: string; name: string }[]).map((t) => [t.code, t.name]));
 
-export function itemTypeLabel(code: string): string {
+export function itemTypeLabel(code: string, isEn = false): string {
   const leaf = TYPE_LEAF[code];
+  if (isEn) {
+    const JEWELRY_EN: Record<string, string> = { ring: 'Ring', amul: 'Amulet', scha: 'Small Charm', mcha: 'Large Charm', lcha: 'Grand Charm', jewl: 'Jewel' };
+    return GROUP_TYPE_EN[code] ?? (leaf ? leafLabelsEn.get(leaf) : undefined) ?? JEWELRY_EN[code] ?? baseTypeNameEn(code) ?? (typeNameOf.has(code) ? typeNameOf.get(code)! : code.trim());
+  }
   return GROUP_TYPE_ZH[code] ?? (leaf ? leafLabels.get(leaf) : undefined) ?? baseTypeName(code) ?? (typeNameOf.has(code) ? typeNameOf.get(code)! : `${code.trim()}（資料表筆誤）`);
 }
 /** 資料表裡不存在的類型代碼（筆誤），永遠不會符合任何物品 */
 export const isUnknownType = (code: string): boolean => !equivOf.has(code);
 
-export interface ItemTypeOption { code: string; label: string }
-export interface ItemTypeGroup { label: string; options: ItemTypeOption[] }
+export interface ItemTypeOption { code: string; label: string; labelEn?: string }
+export interface ItemTypeGroup { label: string; labelEn?: string; options: ItemTypeOption[] }
 /** 篩選用的具體物品類型，依裝備分類的順序排列；飾品（戒指、護身符、三種咒符、珠寶）接在最後 */
 export const ITEM_TYPE_GROUPS: ItemTypeGroup[] = (() => {
   const codeOfLeaf = new Map<string, string>();
   for (const [code, leaf] of Object.entries(TYPE_LEAF)) if (!codeOfLeaf.has(leaf)) codeOfLeaf.set(leaf, code);
-  const leaves = (d: TaxDef): ItemTypeOption[] => (d.children ? d.children.flatMap(leaves) : codeOfLeaf.has(d.id) ? [{ code: codeOfLeaf.get(d.id)!, label: d.label }] : []);
-  const groups: ItemTypeGroup[] = EQUIP_DEFS.map((d) => ({ label: d.label, options: leaves(d) }));
-  groups.push({ label: '飾品', options: ['ring', 'amul', 'scha', 'mcha', 'lcha', 'jewl'].map((code) => ({ code, label: baseTypeName(code) ?? code })) });
+  const leaves = (d: TaxDef): ItemTypeOption[] => (d.children ? d.children.flatMap(leaves) : codeOfLeaf.has(d.id) ? [{ code: codeOfLeaf.get(d.id)!, label: d.label, labelEn: d.en || d.label }] : []);
+  const groups: ItemTypeGroup[] = EQUIP_DEFS.map((d) => ({ label: d.label, labelEn: d.en || d.label, options: leaves(d) }));
+  const JEWELRY_EN: Record<string, string> = { ring: 'Rings', amul: 'Amulets', scha: 'Small Charms', mcha: 'Large Charms', lcha: 'Grand Charms', jewl: 'Jewels' };
+  groups.push({
+    label: '飾品',
+    labelEn: 'Jewelry & Charms',
+    options: ['ring', 'amul', 'scha', 'mcha', 'lcha', 'jewl'].map((code) => ({ code, label: baseTypeName(code) ?? code, labelEn: JEWELRY_EN[code] ?? code }))
+  });
   return groups;
 })();
+
+export const classEn = (cls: string): string => ({
+  ama: 'Amazon', sor: 'Sorceress', nec: 'Necromancer', pal: 'Paladin', bar: 'Barbarian', dru: 'Druid', ass: 'Assassin',
+}[cls] ?? cls);
 
 // --- 屬性說明（套用既有的屬性描述器，數值以範圍呈現） ---
 const lineCache = new Map<string, string[]>();

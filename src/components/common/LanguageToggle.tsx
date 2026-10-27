@@ -25,7 +25,7 @@ export const LanguageToggle: React.FC<LanguageToggleProps> = ({
       {showLabel && (
         <span className="font-diablo tracking-wider text-[11px] select-none flex items-center">
           <span className={lang === 'zh' ? 'text-d2-unique font-bold' : 'text-sanctuary-400 group-hover:text-sanctuary-200'}>
-            中
+            {isEn ? 'ZH' : '中'}
           </span>
           <span className="text-sanctuary-600 mx-1">/</span>
           <span className={lang === 'en' ? 'text-d2-unique font-bold' : 'text-sanctuary-400 group-hover:text-sanctuary-200'}>

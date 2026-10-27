@@ -45,9 +45,9 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
 }) => {
   const { isEn } = useLanguage();
   const primaryTitle = isEn && titleEn ? titleEn : title;
-  const secondaryTitle = isEn && titleEn ? title : titleEn;
+  const secondaryTitle = isEn ? undefined : (titleEn && titleEn !== title ? titleEn : undefined);
   const primaryBase = isEn && baseItemEn ? baseItemEn : baseItem;
-  const secondaryBase = isEn && baseItemEn ? baseItem : baseItemEn;
+  const secondaryBase = isEn ? undefined : (baseItemEn && baseItemEn !== baseItem ? baseItemEn : undefined);
 
   // Title color according to rarity
   const getTitleColor = () => {

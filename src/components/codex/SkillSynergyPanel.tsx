@@ -71,7 +71,7 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
         <div>
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono px-2 py-0.5 rounded bg-sanctuary-800 text-d2-gold border border-sanctuary-700">
-              {skill.tree}
+              {isEn && skill.treeEn ? skill.treeEn : skill.tree}
             </span>
             <span className="text-xs font-mono text-sanctuary-400">
               {isEn ? `Required Level: Lv ${skill.requiredLevel}` : `需求等級: Lv ${skill.requiredLevel}`}
@@ -79,9 +79,11 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
           </div>
           <h2 className="text-2xl font-diablo font-bold text-sanctuary-100 mt-1 flex items-center gap-2">
             {isEn ? (skill.nameEn || skill.name) : skill.name}
-            <span className="text-xs font-mono font-normal text-sanctuary-400">
-              ({isEn ? skill.name : skill.nameEn})
-            </span>
+            {!isEn && skill.nameEn && (
+              <span className="text-xs font-mono font-normal text-sanctuary-400">
+                ({skill.nameEn})
+              </span>
+            )}
           </h2>
         </div>
 
@@ -126,7 +128,7 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
       {/* 技能描述 */}
       <div className="space-y-2">
         <p className="text-sm text-sanctuary-200 leading-relaxed">
-          {skill.description}
+          {isEn ? (skill.descriptionEn || skill.description) : skill.description}
         </p>
 
         {/* 前置條件警示 */}
@@ -215,11 +217,11 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
                         </span>
                         {targetObj && (
                           <span className="text-[10px] font-mono text-sanctuary-500">
-                            [{targetObj.tree}]
+                            [{isEn && targetObj.treeEn ? targetObj.treeEn : targetObj.tree}]
                           </span>
                         )}
                         <span className="text-xs font-mono text-cyan-300 bg-cyan-950/60 px-1.5 py-0.2 rounded border border-cyan-800">
-                          {item.displayText}
+                          {isEn ? (item.displayTextEn || item.displayText) : item.displayText}
                         </span>
                       </div>
 
@@ -241,7 +243,7 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
                             : `已投資 ${item.points} 點 × ${item.percentPerPoint}%`}
                         </span>
                         <span className="text-cyan-300 font-bold">
-                          +{item.totalPercent}% {item.bonusType}
+                          +{item.totalPercent}% {isEn ? (item.bonusTypeEn || item.bonusType) : item.bonusType}
                         </span>
                       </div>
                       <div className="w-full h-1.5 bg-sanctuary-950 rounded-full overflow-hidden border border-sanctuary-800">
@@ -294,7 +296,7 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
                       </span>
                     </div>
                     <div className="text-[10px] font-mono text-sanctuary-400 mt-0.5">
-                      {isEn ? `Per Point: ${item.displayText}` : `每點提供: ${item.displayText}`}
+                      {isEn ? `Per Point: ${item.displayTextEn || item.displayText}` : `每點提供: ${item.displayText}`}
                     </div>
                   </button>
                 );
@@ -317,7 +319,7 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
           <span>{isEn ? 'Tactical Guide & Mechanics' : '天梯實戰圖說與機制解析'}</span>
         </div>
         <p className="text-xs text-sanctuary-300 leading-relaxed">
-          {skill.details}
+          {isEn ? (skill.detailsEn || skill.details) : skill.details}
         </p>
       </div>
     </div>

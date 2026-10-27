@@ -19,11 +19,19 @@ const RangeCalculator: React.FC = () => {
     <section aria-label="升級計算" className="bg-sanctuary-900/60 p-4 rounded-2xl border border-sanctuary-800 space-y-3">
       <h3 className="font-bold text-sanctuary-100">{isEn ? "Level Range XP Calculator" : "從幾級升到幾級"}</h3>
       <div className="flex flex-wrap items-center gap-2 text-xs text-sanctuary-300">
-        從 <input type="text" inputMode="numeric" value={from} onChange={(e) => setFrom(e.target.value)} aria-label="起始等級" className={`${inputCls} w-20`} />
-        級升到 <input type="text" inputMode="numeric" value={to} onChange={(e) => setTo(e.target.value)} aria-label="目標等級" className={`${inputCls} w-20`} /> 級
+        {isEn ? 'From Level' : '從'} <input type="text" inputMode="numeric" value={from} onChange={(e) => setFrom(e.target.value)} aria-label={isEn ? "Start Level" : "起始等級"} className={`${inputCls} w-20`} />
+        {isEn ? 'to Level' : '級升到'} <input type="text" inputMode="numeric" value={to} onChange={(e) => setTo(e.target.value)} aria-label={isEn ? "Target Level" : "目標等級"} className={`${inputCls} w-20`} /> {isEn ? '' : '級'}
       </div>
       <div className="text-sm text-sanctuary-100">
-        {t > f ? <>需要 <b className="text-d2-gold font-mono">{fmtExp(need)}</b> 經驗（升到 {t} 級的累計 {fmtExp(expToReach(t))} − {f} 級的累計 {fmtExp(expToReach(f))}）</> : <span className="text-sanctuary-500">目標等級要比起始等級高</span>}
+        {t > f ? (
+          isEn ? (
+            <>Requires <b className="text-d2-gold font-mono">{fmtExp(need)}</b> XP (Cumulative to Lv {t}: {fmtExp(expToReach(t))} − Lv {f}: {fmtExp(expToReach(f))})</>
+          ) : (
+            <>需要 <b className="text-d2-gold font-mono">{fmtExp(need)}</b> 經驗（升到 {t} 級的累計 {fmtExp(expToReach(t))} − {f} 級的累計 {fmtExp(expToReach(f))}）</>
+          )
+        ) : (
+          <span className="text-sanctuary-500">{isEn ? 'Target level must be higher than start level' : '目標等級要比起始等級高'}</span>
+        )}
       </div>
     </section>
   );
@@ -38,15 +46,33 @@ const ProgressCalculator: React.FC = () => {
     <section aria-label="經驗進度" className="bg-sanctuary-900/60 p-4 rounded-2xl border border-sanctuary-800 space-y-3">
       <h3 className="font-bold text-sanctuary-100">{isEn ? "XP to Level & Progress Calculator" : "由目前經驗算等級與進度"}</h3>
       <label className="flex flex-wrap items-center gap-2 text-xs text-sanctuary-300">
-        目前累計經驗
-        <input type="text" inputMode="numeric" value={xpText} onChange={(e) => setXpText(e.target.value)} placeholder={isEn ? "e.g. 1,234,567,890" : "例如 1,234,567,890"} aria-label="目前累計經驗" className={`${inputCls} w-52`} />
+        {isEn ? 'Current Total XP' : '目前累計經驗'}
+        <input type="text" inputMode="numeric" value={xpText} onChange={(e) => setXpText(e.target.value)} placeholder={isEn ? "e.g. 1,234,567,890" : "例如 1,234,567,890"} aria-label={isEn ? "Current Total XP" : "目前累計經驗"} className={`${inputCls} w-52`} />
       </label>
       {p ? (
         <div className="text-sm text-sanctuary-100 space-y-1">
-          <div>目前 <b className="text-d2-gold font-mono">{p.level}</b> 級{p.level < MAX_LEVEL ? <>，到下一級完成 <b className="font-mono">{(p.fraction * 100).toFixed(2)}%</b>，還差 <b className="font-mono">{fmtExp(p.remaining)}</b></> : '（滿級）'}</div>
-          {p.level < MAX_LEVEL && <div className="text-xs text-sanctuary-400">距離 {MAX_LEVEL} 級還差 <span className="font-mono">{fmtExp(p.toMax)}</span> 經驗</div>}
+          <div>
+            {isEn ? (
+              <>Current Level: <b className="text-d2-gold font-mono">{p.level}</b>{p.level < MAX_LEVEL ? <>, progress to next level <b className="font-mono">{(p.fraction * 100).toFixed(2)}%</b>, remaining <b className="font-mono">{fmtExp(p.remaining)}</b> XP</> : ' (Max Level)'}</>
+            ) : (
+              <>目前 <b className="text-d2-gold font-mono">{p.level}</b> 級{p.level < MAX_LEVEL ? <>，到下一級完成 <b className="font-mono">{(p.fraction * 100).toFixed(2)}%</b>，還差 <b className="font-mono">{fmtExp(p.remaining)}</b></> : '（滿級）'}</>
+            )}
+          </div>
+          {p.level < MAX_LEVEL && (
+            <div className="text-xs text-sanctuary-400">
+              {isEn ? (
+                <>Remaining to Level {MAX_LEVEL}: <span className="font-mono">{fmtExp(p.toMax)}</span> XP</>
+              ) : (
+                <>距離 {MAX_LEVEL} 級還差 <span className="font-mono">{fmtExp(p.toMax)}</span> 經驗</>
+              )}
+            </div>
+          )}
         </div>
-      ) : <div className="text-xs text-sanctuary-500">輸入遊戲角色資訊裡的累計經驗（Experience）。</div>}
+      ) : (
+        <div className="text-xs text-sanctuary-500">
+          {isEn ? 'Enter the cumulative Experience from your in-game Character Sheet.' : '輸入遊戲角色資訊裡的累計經驗（Experience）。'}
+        </div>
+      )}
     </section>
   );
 };
@@ -102,8 +128,16 @@ export const ExperienceTable: React.FC = () => {
         </table>
       </div>
       <div className="text-[11px] text-sanctuary-600 space-y-1">
-        <p>資料來自遊戲 experience.txt（3.3.93847）。「累計經驗」是升到該等級需要的總經驗，「本級所需」是從上一級升到該級要再累積的經驗。</p>
-        <p>未納入：怪物與角色的等級差造成的經驗修正、組隊分配、死亡懲罰；資料表的 ExpRatio 欄用途未驗證，沒有收錄。</p>
+        <p>
+          {isEn
+            ? 'Data extracted from game experience.txt (3.3.93847). "Total XP" represents the cumulative XP required to reach that level; "XP Needed" is the XP required from the preceding level.'
+            : '資料來自遊戲 experience.txt（3.3.93847）。「累計經驗」是升到該等級需要的總經驗，「本級所需」是從上一級升到該級要再累積的經驗。'}
+        </p>
+        <p>
+          {isEn
+            ? 'Not included: level-difference XP penalty curves, party XP splits, death penalties; game ExpRatio column unverified and omitted.'
+            : '未納入：怪物與角色的等級差造成的經驗修正、組隊分配、死亡懲罰；資料表的 ExpRatio 欄用途未驗證，沒有收錄。'}
+        </p>
       </div>
     </div>
   );

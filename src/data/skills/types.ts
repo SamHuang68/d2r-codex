@@ -8,11 +8,14 @@ export interface SkillData {
   nameEn: string;
   characterClass: string;
   tree: string;
+  treeEn?: string;
   requiredLevel: number;
   prerequisites: string[];
   synergies?: string[];
   description: string;
+  descriptionEn?: string;
   details: string;
+  detailsEn?: string;
   iconName?: string;
   maxPoints?: number;
   /** 在技能樹中的格位（0 起算：列 0～5、欄 0～2），來自遊戲技能表 */
@@ -26,6 +29,7 @@ export interface SkillTree {
   name: string;
   nameEn: string;
   description: string;
+  descriptionEn?: string;
   skills: SkillData[];
 }
 

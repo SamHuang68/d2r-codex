@@ -609,9 +609,11 @@ export const BaseItemShowcase: React.FC<BaseItemShowcaseProps> = ({
                             <span className="font-bold text-sm text-sanctuary-100">
                               {isEn ? cand.nameEn : cand.name}
                             </span>
-                            <span className="text-xs font-mono text-sanctuary-500">
-                              ({isEn ? cand.name : cand.nameEn})
-                            </span>
+                            {!isEn && cand.nameEn && (
+                              <span className="text-xs font-mono text-sanctuary-500">
+                                ({cand.nameEn})
+                              </span>
+                            )}
                             <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sanctuary-800 text-sanctuary-400">
                               {isEn ? cand.typeEn : cand.type}
                             </span>

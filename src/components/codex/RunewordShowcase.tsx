@@ -481,7 +481,7 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
             onClick={() => setIsExpanded(!isExpanded)}
             className="p-2 rounded-xl bg-sanctuary-950 border border-sanctuary-750 text-sanctuary-400 hover:text-white transition-colors"
             title={isExpanded ? (isEn ? 'Collapse Showcase' : '收合展廳') : (isEn ? 'Expand Showcase' : '展開展廳')}
-            aria-label={isExpanded ? '收合展廳' : '展開展廳'}
+            aria-label={isExpanded ? (isEn ? 'Collapse Showcase' : '收合展廳') : (isEn ? 'Expand Showcase' : '展開展廳')}
           >
             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
@@ -517,9 +517,11 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
                           <h3 className={`font-diablo text-xl font-bold ${styles.titleColor} tracking-wide`}>
                             {isEn ? item.nameEn : item.name}
                           </h3>
-                          <span className="text-xs text-sanctuary-400 font-mono italic">
-                            ({isEn ? item.name : item.nameEn})
-                          </span>
+                          {!isEn && item.nameEn && (
+                            <span className="text-xs text-sanctuary-400 font-mono italic">
+                              ({item.nameEn})
+                            </span>
+                          )}
                           {item.alias && !isEn && (
                             <span className="text-[10px] px-1.5 py-0.2 rounded bg-sanctuary-800 text-sanctuary-300 font-medium">
                               俗稱 {item.alias}

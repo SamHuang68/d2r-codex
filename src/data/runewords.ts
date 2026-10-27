@@ -23,6 +23,12 @@ const ITYPE_ZH: Record<string, string> = {
   tors: '護甲', helm: '頭盔', shld: '盾牌', pala: '聖騎士盾牌', ashd: '聖騎士盾牌', head: '巫毒頭顱', grim: '魔典',
 };
 
+const ITYPE_EN: Record<string, string> = {
+  weap: 'Weapons', mele: 'Melee Weapons', miss: 'Missile Weapons', swor: 'Swords', axe: 'Axes', mace: 'Maces', club: 'Clubs', hamm: 'Hammers', scep: 'Scepters',
+  pole: 'Polearms', spea: 'Spears', staf: 'Staves', wand: 'Wands', knif: 'Daggers', h2h: 'Claws',
+  tors: 'Body Armor', helm: 'Helms', shld: 'Shields', pala: 'Paladin Shields', ashd: 'Paladin Shields', head: 'Shrunken Heads', grim: 'Grimoires',
+};
+
 type Cat = 'weapon' | 'armor' | 'shield';
 /** 物品類型代碼可鑲在哪一類底材（符文效果分武器／護甲／盾牌三種）：由遊戲底材的類型階層推得 */
 const catOfType = new Map<string, Set<Cat>>();
@@ -106,6 +112,7 @@ export const RUNEWORDS_DATA: RunewordData[] = (() => {
         runeNumbers: r.runes.map((c) => Number(c.replace(/\D/g, ''))),
         sockets: r.sockets,
         allowedBases: ['武器', '護甲'],
+        allowedBasesEn: ['Weapons', 'Body Armor'],
         requiredLevel: Math.max(0, ...r.runes.map((c) => runeLevel.get(c) ?? 0)),
         ladderOnly: true,
         isNewDLC: true,
@@ -142,6 +149,7 @@ export const RUNEWORDS_DATA: RunewordData[] = (() => {
         runeNumbers: r.runes.map((c) => Number(c.replace(/\D/g, ''))),
         sockets: r.sockets,
         allowedBases: [...new Set(r.itypes.map((t) => ITYPE_ZH[t] ?? t))],
+        allowedBasesEn: [...new Set(r.itypes.map((t) => ITYPE_EN[t] ?? t))],
         requiredLevel: Math.max(0, ...r.runes.map((c) => runeLevel.get(c) ?? 0)),
         ladderOnly: o?.ladderOnly ?? false,
         isNewDLC: o?.isNewDLC ?? true,
@@ -194,6 +202,7 @@ export const RUNEWORDS_DATA: RunewordData[] = (() => {
         runeNumbers: r.runes.map((c) => Number(c.replace(/\D/g, ''))),
         sockets: r.sockets,
         allowedBases: [...new Set(r.itypes.map((t) => ITYPE_ZH[t] ?? t))],
+        allowedBasesEn: [...new Set(r.itypes.map((t) => ITYPE_EN[t] ?? t))],
         requiredLevel: Math.max(0, ...r.runes.map((c) => runeLevel.get(c) ?? 0)),
         ladderOnly: o?.ladderOnly ?? false,
         isNewDLC: o?.isNewDLC,
@@ -230,6 +239,7 @@ export const RUNEWORDS_DATA: RunewordData[] = (() => {
       runeNumbers: r.runes.map((c) => Number(c.replace(/\D/g, ''))),
       sockets: r.sockets,
       allowedBases: [...new Set(r.itypes.map((t) => ITYPE_ZH[t] ?? t))],
+      allowedBasesEn: [...new Set(r.itypes.map((t) => ITYPE_EN[t] ?? t))],
       requiredLevel: Math.max(0, ...r.runes.map((c) => runeLevel.get(c) ?? 0)),
       ladderOnly: o?.ladderOnly ?? false,
       isNewDLC: o?.isNewDLC,

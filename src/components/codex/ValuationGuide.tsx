@@ -317,15 +317,17 @@ export const ValuationGuide: React.FC = () => {
                               {isMagic ? (isEn ? 'Magic Trophy' : '藍色魔法極品') : (isEn ? 'Rare Trophy' : '亮黃稀有極品')}
                             </span>
                             <span className="text-xs font-mono text-sanctuary-400">
-                              {item.itemType}
+                              {isEn ? (item.itemTypeEn || item.itemType) : item.itemType}
                             </span>
                           </div>
                           <h3 className={`text-xl sm:text-2xl font-bold ${rarityColor} group-hover:brightness-125 transition-all`}>
                             {isEn ? item.nameEn : item.name}
                           </h3>
-                        <div className="text-xs font-mono text-sanctuary-400 mt-0.5">
-                          {isEn ? item.name : item.nameEn}
-                        </div>
+                        {!isEn && (
+                          <div className="text-xs font-mono text-sanctuary-400 mt-0.5">
+                            {item.nameEn}
+                          </div>
+                        )}
                       </div>
                     </div>
                     </div>
@@ -338,7 +340,7 @@ export const ValuationGuide: React.FC = () => {
                           {isEn ? "Market Valuation" : "拍賣行估價 (Market Price)"}
                         </div>
                         <div className="text-xs sm:text-sm font-bold text-d2-gold mt-0.5">
-                          {item.estimatedValue}
+                          {isEn ? (item.estimatedValueEn || item.estimatedValue) : item.estimatedValue}
                         </div>
                       </div>
                     </div>
@@ -350,7 +352,7 @@ export const ValuationGuide: React.FC = () => {
                         {isEn ? 'Ideal Stats Combination' : '頂級詞綴組合 (Ideal Stats)'}
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                        {item.idealStats.map((stat, sIdx) => (
+                        {(isEn ? (item.idealStatsEn || item.idealStats) : item.idealStats).map((stat, sIdx) => (
                           <div
                             key={sIdx}
                             className="bg-sanctuary-950/60 px-3 py-1.5 rounded-xl border border-sanctuary-800 text-xs text-sanctuary-200 flex items-center gap-2"
@@ -364,7 +366,7 @@ export const ValuationGuide: React.FC = () => {
 
                     {/* Description */}
                     <p className="text-xs sm:text-sm text-sanctuary-300 leading-relaxed">
-                      {item.description}
+                      {isEn ? (item.descriptionEn || item.description) : item.description}
                     </p>
                   </div>
 
@@ -372,11 +374,11 @@ export const ValuationGuide: React.FC = () => {
                   <div className="mt-6 pt-4 border-t border-sanctuary-800/80 space-y-2">
                     <div className="text-xs text-sanctuary-400 flex items-start gap-1.5">
                       <BookOpen className="w-3.5 h-3.5 text-sanctuary-500 shrink-0 mt-0.5" />
-                      <span><strong>{isEn ? 'Farming Sources: ' : '獲取途徑：'}</strong>{item.farmingSources}</span>
+                      <span><strong>{isEn ? 'Farming Sources: ' : '獲取途徑：'}</strong>{isEn ? (item.farmingSourcesEn || item.farmingSources) : item.farmingSources}</span>
                     </div>
                     <div className="text-xs text-amber-300/90 flex items-start gap-1.5 bg-amber-950/20 p-2.5 rounded-xl border border-amber-800/40">
                       <AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
-                      <span><strong>{isEn ? 'Valuation Rule: ' : '鑑寶鐵律：'}</strong>{item.keyRule}</span>
+                      <span><strong>{isEn ? 'Valuation Rule: ' : '鑑寶鐵律：'}</strong>{isEn ? (item.keyRuleEn || item.keyRule) : item.keyRule}</span>
                     </div>
                   </div>
                 </div>

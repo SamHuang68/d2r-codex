@@ -94,7 +94,7 @@ const MonsterRow: React.FC<{ m: Monster; diff: Diff; open: boolean; onToggle: ()
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className={`font-bold truncate ${m.boss ? 'text-d2-unique group-hover:text-amber-300' : 'text-sanctuary-100 group-hover:text-white'} transition-colors`}>
-                {m.name}
+                {isEn ? (m.nameEn || m.name) : m.name}
               </span>
               {m.boss && (
                 <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-d2-unique/15 text-d2-unique border border-d2-unique/30 font-semibold shrink-0">
@@ -106,7 +106,7 @@ const MonsterRow: React.FC<{ m: Monster; diff: Diff; open: boolean; onToggle: ()
               </span>
             </div>
             <div className="text-[11px] font-mono text-sanctuary-500 truncate mt-0.5">
-              {m.nameEn !== m.name ? `${m.nameEn}　` : ''}{m.id}
+              {isEn ? m.id : (m.nameEn !== m.name ? `${m.nameEn}　${m.id}` : m.id)}
             </div>
           </div>
         </div>
@@ -142,9 +142,9 @@ const MonsterRow: React.FC<{ m: Monster; diff: Diff; open: boolean; onToggle: ()
             <div className="min-w-0 flex-1 space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <h3 className={`text-lg sm:text-xl font-bold tracking-wide ${m.boss ? 'text-d2-unique' : 'text-sanctuary-100'}`}>
-                  {m.name}
+                  {isEn ? (m.nameEn || m.name) : m.name}
                 </h3>
-                {m.nameEn && m.nameEn !== m.name && (
+                {!isEn && m.nameEn && m.nameEn !== m.name && (
                   <span className="text-sm font-serif italic text-sanctuary-400">
                     ({m.nameEn})
                   </span>
@@ -211,7 +211,7 @@ const MonsterRow: React.FC<{ m: Monster; diff: Diff; open: boolean; onToggle: ()
               <div className="flex flex-wrap gap-1.5">
                 {areasOfMonster(m.id).map(({ area, diffs }) => (
                   <span key={area.id} className="text-[11px] px-2 py-0.5 rounded-full border border-sanctuary-700 bg-sanctuary-950/60 text-sanctuary-300">
-                    {area.name ?? area.nameEn}<span className="text-sanctuary-500 font-mono">（{diffs.map((d) => isEn ? DIFF_EN[d] : DIFF_ZH[d]).join(' / ')}）</span>
+                    {isEn ? (area.nameEn || area.name) : (area.name ?? area.nameEn)}<span className="text-sanctuary-500 font-mono"> ({diffs.map((d) => isEn ? DIFF_EN[d] : DIFF_ZH[d]).join(' / ')})</span>
                   </span>
                 ))}
               </div>

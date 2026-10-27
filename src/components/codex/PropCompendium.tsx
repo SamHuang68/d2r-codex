@@ -211,11 +211,13 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                       <ItemIcon name={gem.name} nameEn={gem.nameEn} rarity="gem" size="lg" />
                       <div>
                         <h3 className="font-diablo text-base font-bold text-sanctuary-100">
-                          {gem.name}
+                          {isEn ? gem.nameEn : gem.name}
                         </h3>
-                        <div className="text-[11px] text-sanctuary-400 font-mono italic">
-                          {gem.nameEn}
-                        </div>
+                        {!isEn && (
+                          <div className="text-[11px] text-sanctuary-400 font-mono italic">
+                            {gem.nameEn}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <span className="text-[10px] px-2 py-0.5 rounded bg-d2-magic/15 text-d2-magic border border-d2-magic/30 font-medium">
@@ -227,15 +229,15 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                   <div className="space-y-2.5 py-4 text-xs font-sans">
                     <div className="flex items-start gap-2">
                       <span className="text-sanctuary-500 font-medium shrink-0 w-16">{isEn ? "Weapons:" : "武器效果："}</span>
-                      <span className="text-d2-blood font-semibold">{gem.weaponEffect}</span>
+                      <span className="text-d2-blood font-semibold">{isEn ? (gem.weaponEffectEn || gem.weaponEffect) : gem.weaponEffect}</span>
                     </div>
                     <div className="flex items-start gap-2">
                       <span className="text-sanctuary-500 font-medium shrink-0 w-16">{isEn ? "Armor / Helms:" : "衣服頭盔："}</span>
-                      <span className="text-d2-gold font-semibold">{gem.armorHelmEffect}</span>
+                      <span className="text-d2-gold font-semibold">{isEn ? (gem.armorHelmEffectEn || gem.armorHelmEffect) : gem.armorHelmEffect}</span>
                     </div>
                     <div className="flex items-start gap-2">
                       <span className="text-sanctuary-500 font-medium shrink-0 w-16">{isEn ? "Shields:" : "盾牌效果："}</span>
-                      <span className="text-d2-set font-semibold">{gem.shieldEffect}</span>
+                      <span className="text-d2-set font-semibold">{isEn ? (gem.shieldEffectEn || gem.shieldEffect) : gem.shieldEffect}</span>
                     </div>
                   </div>
                 </div>
@@ -250,7 +252,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                     {gem.craftingUses.map((use, uIdx) => (
                       <li key={uIdx} className="text-[11px] text-sanctuary-300 leading-snug flex items-start gap-1.5">
                         <span className="text-d2-magic font-bold">•</span>
-                        <span>{use}</span>
+                        <span>{isEn ? (gem.craftingUsesEn?.[uIdx] || use) : use}</span>
                       </li>
                     ))}
                   </ul>

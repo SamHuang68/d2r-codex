@@ -33,10 +33,14 @@ export interface RuneData {
   name: string;
   nameEn: string;
   weaponEffect: string;
+  weaponEffectEn?: string;
   armorHelmEffect: string;
+  armorHelmEffectEn?: string;
   shieldEffect: string;
+  shieldEffectEn?: string;
   requiredLevel: number;
   cubeRecipe?: string;
+  cubeRecipeEn?: string;
 }
 
 export interface RunewordData {
@@ -48,6 +52,7 @@ export interface RunewordData {
   runeNumbers: number[]; // e.g. [31, 6, 30]
   sockets: number;
   allowedBases: string[];
+  allowedBasesEn?: string[];
   requiredLevel: number;
   attributes: string[];
   ladderOnly?: boolean;
@@ -88,6 +93,7 @@ export interface SetPiece {
   nameEn: string;
   nameClassic?: string;
   baseItem: string;
+  baseItemEn?: string;
   baseItemId?: string;
   slot: GearSlot;
   requiredLevel: number;
@@ -120,8 +126,11 @@ export interface CubeRecipeData {
   title: string;
   titleEn: string;
   inputs: string[];
+  inputsEn?: string[];
   output: string;
+  outputEn?: string;
   notes?: string;
+  notesEn?: string;
 }
 
 export interface BreakpointData {
@@ -144,6 +153,7 @@ export interface AreaLevelData {
   isTerrorZone: boolean;
   immunities: string[]; // e.g. ["Fire", "Cold"]
   chestsAndBosses?: string;
+  chestsAndBossesEn?: string;
 }
 
 export interface CharacterClassData {

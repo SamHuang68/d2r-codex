@@ -104,7 +104,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
     filtered.forEach((e) => counts.set(e.leaf, (counts.get(e.leaf) ?? 0) + 1));
     return recount(baseTree, counts);
   }, [baseTree, filtered]);
-  const root: TreeNode = useMemo(() => ({ id: 'all', label: '全部底材', count: filtered.length, children: tree }), [tree, filtered.length]);
+  const root: TreeNode = useMemo(() => ({ id: 'all', label: isEn ? 'All Bases' : '全部底材', count: filtered.length, children: tree }), [tree, filtered.length, isEn]);
   const node = sel === 'all' ? root : findNode(tree, sel) ?? root;
   // 目前節點一筆都沒有、但別處有符合（搜尋或篩選的結果落在別的分類）時，自動放寬到全部
   React.useEffect(() => {
@@ -165,9 +165,11 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
                     <h3 className="text-lg font-diablo font-bold text-sanctuary-100 group-hover:text-d2-socket transition-colors leading-tight break-words">
                       {isEn && item.nameEn ? item.nameEn : item.name}
                     </h3>
-                    <div className="text-xs font-mono text-sanctuary-400 break-words">
-                      {isEn && item.nameEn ? item.name : item.nameEn}
-                    </div>
+                    {!isEn && item.nameEn && (
+                      <div className="text-xs font-mono text-sanctuary-400 break-words">
+                        {item.nameEn}
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-mono text-sanctuary-400">
                     <span className="px-1.5 py-0.5 rounded bg-sanctuary-800 text-sanctuary-300">
@@ -232,7 +234,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
                         type="button"
                         onClick={() => onNavigateToRuneword?.(rwCleanName)}
                         className="group/rw px-2 py-0.5 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-750 border border-sanctuary-750 hover:border-d2-gold text-[11px] font-mono text-d2-gold hover:text-white transition-all flex items-center gap-1 cursor-pointer shadow-sm hover:scale-105"
-                        title={`點擊查看【${rw}】完整組成符文與屬性`}
+                        title={isEn ? `Click to view [${rw}] Runeword recipe & stats` : `點擊查看【${rw}】完整組成符文與屬性`}
                       >
                         <span>{rw}</span>
                         <span className="text-[9px] text-d2-gold/60 group-hover/rw:text-d2-gold">↗</span>
@@ -282,9 +284,9 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
       key={e.item.id}
       tone="socket"
       icon={<ItemIcon name={e.item.name} nameEn={e.item.nameEn} baseItem={e.item.name} slot={isShield(e.item) ? 'shield' : e.item.category === 'armor' ? 'armor' : 'weapon'} rarity="normal" size="sm" imageUrl={e.item.imageUrl} showBorder={false} />}
-      title={e.item.name}
-      sub={`最多 ${e.item.maxSockets} 孔 · ${e.item.reqStr > 0 ? `力 ${e.item.reqStr}` : '無力需'}`}
-      hint={`${e.item.name}（${e.item.nameEn}）`}
+      title={isEn ? e.item.nameEn : e.item.name}
+      sub={isEn ? `Max ${e.item.maxSockets} Sockets · ${e.item.reqStr > 0 ? `Str ${e.item.reqStr}` : 'No Str Req'}` : `最多 ${e.item.maxSockets} 孔 · ${e.item.reqStr > 0 ? `力 ${e.item.reqStr}` : '無力需'}`}
+      hint={isEn ? e.item.nameEn : `${e.item.name}（${e.item.nameEn}）`}
       onClick={() => dir.jump(`base-${e.item.id}`, e.leaf, go)}
     />
   );
@@ -295,12 +297,12 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
     return (
       <section key={leaf.id} id={`sec-${leaf.id}`} className="mb-9 scroll-mt-20">
         <SectionHead
-          title={isLeaf ? leaf.label : labelPath(leaf.id)}
-          sub={leaf.en}
+          title={isEn ? (leaf.en || leaf.label) : (isLeaf ? leaf.label : labelPath(leaf.id))}
+          sub={isEn ? undefined : leaf.en}
           count={rows.length}
           tone="socket"
           onOpen={isLeaf ? undefined : () => go(leaf.id)}
-          openLabel={`進入「${leaf.label}」`}
+          openLabel={isEn ? `Enter "${leaf.en || leaf.label}"` : `進入「${leaf.label}」`}
         />
         {dirMode ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">{rows.map(baseChip)}</div>
@@ -424,13 +426,13 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
           {here.length === 0 ? (
             <div className="text-center py-16 bg-sanctuary-900/40 rounded-2xl border border-sanctuary-800 space-y-3">
               <HelpCircle className="w-10 h-10 text-sanctuary-600 mx-auto" />
-              <h3 className="text-lg font-diablo text-sanctuary-300">未找到符合條件的底材</h3>
+              <h3 className="text-lg font-diablo text-sanctuary-300">{isEn ? 'No matching bases found' : '未找到符合條件的底材'}</h3>
               <p className="text-xs text-sanctuary-500">
-                {root.count > 0 && node.id !== 'all' ? `「${node.label}」底下沒有符合的底材，其他分類共 ${root.count} 款符合，請看分類索引的數量。` : '請嘗試調整分類或清除搜尋關鍵字'}
+                {root.count > 0 && node.id !== 'all' ? (isEn ? `No bases matching in "${node.en || node.label}", ${root.count} items match in other categories.` : `「${node.label}」底下沒有符合的底材，其他分類共 ${root.count} 款符合，請看分類索引的數量。`) : (isEn ? 'Please adjust filters or clear search query.' : '請嘗試調整分類或清除搜尋關鍵字')}
               </p>
               {root.count > 0 && node.id !== 'all' && (
                 <button type="button" onClick={() => go('all')} className="px-4 py-2 rounded-lg bg-sanctuary-800 border border-sanctuary-700 text-sm text-sanctuary-100 hover:border-d2-socket">
-                  回到「全部底材」
+                  {isEn ? 'Back to "All Bases"' : '回到「全部底材」'}
                 </button>
               )}
             </div>

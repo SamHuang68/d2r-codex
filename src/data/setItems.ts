@@ -30,6 +30,7 @@ const pieceOf = (r: ItemRow, setSize: number): SetPiece => {
     nameEn: o?.nameEn ?? r.nameEnUS ?? r.nameEn,
     nameClassic: o?.nameClassic,
     baseItem: base?.name ?? '',
+    baseItemEn: base ? (base.nameEnUS ?? base.nameEn) : undefined,
     baseItemId: base ? slug(base.nameEnUS ?? base.nameEn) : undefined,
     slot: base ? gearSlotOf(base) : 'weapon',
     requiredLevel: Math.max(r.levelReq ?? 0, base?.levelReq ?? 0),

@@ -116,7 +116,7 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
     restoreFocus();
   }, [activeId]);
 
-  const crumbs = crumbsOf(rootLabel, nodes, activeId);
+  const crumbs = crumbsOf(rootLabel, nodes, activeId, isEn);
 
   // 根（全部）是 level 1 的 treeitem，其下第一層為 level 2；每一層都包在 role=group 裡，符合 ARIA tree 的結構
   const renderNodes = (list: TreeNode[], depth: number): React.ReactNode => (
@@ -150,7 +150,7 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
                 type="button"
                 onClick={() => select(n.id)}
                 aria-current={active ? 'true' : undefined}
-                title={n.en ? `${n.label}（${n.en}）` : n.label}
+                title={isEn ? (n.en || n.label) : (n.en ? `${n.label}（${n.en}）` : n.label)}
                 className={`flex-1 min-w-0 flex items-center justify-between gap-2 py-1.5 pr-2 text-left text-[13px] ${
                   active ? `${t.text} font-bold` : depth === 1 ? 'text-sanctuary-100 font-semibold' : 'text-sanctuary-300 hover:text-sanctuary-100'
                 }`}

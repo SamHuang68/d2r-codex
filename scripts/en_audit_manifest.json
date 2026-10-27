@@ -1,0 +1,149 @@
+[
+  {
+    "label": "Home / Portal",
+    "route": "#",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Classes / Characters",
+    "route": "#characters",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Skill Trees",
+    "route": "#skills",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Build Simulator",
+    "route": "#planner",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Breakpoints",
+    "route": "#breakpoints",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Experience Table",
+    "route": "#experience",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Item Compendium",
+    "route": "#items",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Runewords Hall of Fame",
+    "route": "#runewords",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Base Items",
+    "route": "#bases",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Horadric Cube Craft",
+    "route": "#cube",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Rune Vault",
+    "route": "#runes",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Affix Compendium",
+    "route": "#affixes",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Trophy Valuation",
+    "route": "#valuation",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Holy Grail Tracker",
+    "route": "#grail",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Monster Compendium",
+    "route": "#monsters",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Uber Bosses",
+    "route": "#uber",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Area Levels & TZ",
+    "route": "#areas",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Mercenary Matrix",
+    "route": "#mercenaries",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Quest Guide",
+    "route": "#quests",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Shrines",
+    "route": "#shrines",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  },
+  {
+    "label": "Props & Tokens",
+    "route": "#props",
+    "chineseCount": 0,
+    "status": "PASS",
+    "samples": []
+  }
+]

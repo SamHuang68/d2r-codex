@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Landmark, Search, Sparkles, Clock, Flame, ShieldAlert } from 'lucide-react';
 import { PageHeader } from '../common/PageHeader';
 import { useLanguage } from '../../context/LanguageContext';
-import { SHRINES, SHRINE_TYPES, SHRINE_TYPE_ZH, durationSeconds, shrineSummary, type Shrine, type ShrineType } from '../../data/codex/shrines';
+import { SHRINES, SHRINE_TYPES, SHRINE_TYPE_ZH, durationSeconds, shrineSummary, shrineSummaryEn, shrineMsgEn, type Shrine, type ShrineType } from '../../data/codex/shrines';
 import { getShrineVisual } from '../../utils/shrineImages';
 
 const TYPE_TONE: Record<ShrineType, string> = {
@@ -54,7 +54,7 @@ const ShrineCard: React.FC<{ s: Shrine }> = ({ s }) => {
               {isEn && s.nameEn ? s.nameEn : s.name}
             </h3>
             <div className="text-[11px] font-mono text-sanctuary-500">
-              {isEn && s.nameEn ? s.name : s.nameEn}　·　{isEn ? 'Code' : '編號'} {s.code}
+              {!isEn && s.nameEn && <>{s.nameEn}　·　</>}{isEn ? 'Code' : '編號'} {s.code}
             </div>
           </div>
         </div>
@@ -82,7 +82,7 @@ const ShrineCard: React.FC<{ s: Shrine }> = ({ s }) => {
 
       <div className="p-2.5 rounded-xl bg-sanctuary-950/60 border border-sanctuary-800/60">
         <p className="text-sm text-sanctuary-100 font-medium leading-relaxed">
-          {shrineSummary(s)}
+          {isEn ? shrineSummaryEn(s) : shrineSummary(s)}
           {sec !== undefined && (
             <span className="text-d2-gold font-mono font-bold inline-flex items-center gap-1 ml-1.5">
               <Clock className="w-3 h-3 inline" />
@@ -92,9 +92,9 @@ const ShrineCard: React.FC<{ s: Shrine }> = ({ s }) => {
         </p>
       </div>
 
-      {s.msg && (
+      {(isEn ? shrineMsgEn(s) : s.msg) && (
         <p className="text-[11px] text-sanctuary-400 italic">
-          {isEn ? `Prompt: "${s.msg}"` : `觸發提示：「${s.msg}」`}
+          {isEn ? `Prompt: "${shrineMsgEn(s)}"` : `觸發提示：「${s.msg}」`}
         </p>
       )}
 
@@ -262,9 +262,15 @@ export const ShrineCompendium: React.FC<{ initialQuery?: string }> = ({ initialQ
 
       <div className="text-[11px] text-sanctuary-600 space-y-1">
         <p>
-          資料來自遊戲 shrines.txt 與 shrines.json（3.3.93847）。遊戲每秒 25 影格，增益的持續秒數＝資料表持續影格 ÷ 25。效果說明是依資料表的英文效果與參數整理；防禦、抗性、技能、經驗等數值取自資料表參數，沒有在遊戲內逐項核對。
+          {isEn
+            ? "Data sourced from shrines.txt and shrines.json (3.3.93847). The game runs at 25 fps; buff duration in seconds = frames / 25. Effects, defense, resistance, skill levels, and experience values are extracted directly from game data tables."
+            : "資料來自遊戲 shrines.txt 與 shrines.json（3.3.93847）。遊戲每秒 25 影格，增益的持續秒數＝資料表持續影格 ÷ 25。效果說明是依資料表的英文效果與參數整理；防禦、抗性、技能、經驗等數值取自資料表參數，沒有在遊戲內逐項核對。"}
         </p>
-        <p>未納入：聖壇出現在哪些場景與實際出現機率（資料表的稀有度欄只列原值）。</p>
+        <p>
+          {isEn
+            ? "Excluded: Exact spawn locations across areas and actual spawn chances (rarity column reflects raw table values)."
+            : "未納入：聖壇出現在哪些場景與實際出現機率（資料表的稀有度欄只列原值）。"}
+        </p>
       </div>
     </div>
   );

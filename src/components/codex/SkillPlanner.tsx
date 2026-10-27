@@ -234,7 +234,9 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
             {t('八大職業全技能樹與協同矩陣模擬器', 'Skill Trees & Synergy Matrix Planner')}
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-3xl">
-            100% 復刻暗黑破壞神遊戲內經典 6x3 技能樹畫布與前置連線，全息整合雙向協同加成（Synergy）即時算力模型，支援 110 點加點模擬、天梯戰術圖說與配點匯出。
+            {isEn
+              ? "Faithfully reproduces the classic 6x3 Diablo II skill tree canvas and prerequisites, seamlessly integrating bidirectional synergy calculations, 110-point allocation simulation, tactical guidance, and build exports."
+              : "100% 復刻暗黑破壞神遊戲內經典 6x3 技能樹畫布與前置連線，全息整合雙向協同加成（Synergy）即時算力模型，支援 110 點加點模擬、天梯戰術圖說與配點匯出。"}
           </p>
         </div>
 
@@ -253,7 +255,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
           <div className="flex items-center gap-2">
             <button
               onClick={handleReset}
-              title="重置當前職業所有點數"
+              title={isEn ? "Reset all skill points for this class" : "重置當前職業所有點數"}
               className="px-3 py-2 bg-sanctuary-800/80 hover:bg-sanctuary-750 text-sanctuary-300 hover:text-sanctuary-100 rounded-xl text-xs font-medium border border-sanctuary-700/60 transition-all flex items-center gap-1.5"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -319,7 +321,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
                   isActive ? 'bg-sanctuary-950 text-d2-gold' : 'bg-sanctuary-800 text-sanctuary-300'
                 }`}>
-                  {points} 點
+                  {points} {isEn ? 'pts' : '點'}
                 </span>
               </button>
             );
@@ -339,7 +341,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
               }`}
             >
               <Network className="w-3.5 h-3.5" />
-              <span>遊戲技能樹</span>
+              <span>{isEn ? 'Skill Tree' : '遊戲技能樹'}</span>
             </button>
             <button
               onClick={() => setViewMode('grid')}
@@ -350,7 +352,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
               }`}
             >
               <LayoutGrid className="w-3.5 h-3.5" />
-              <span>詳解清單</span>
+              <span>{isEn ? 'Detailed List' : '詳解清單'}</span>
             </button>
           </div>
 
@@ -361,7 +363,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={`搜尋 ${selectedClass} 技能...`}
+              placeholder={isEn ? `Search ${CLASS_ZH_TO_EN[selectedClass] || selectedClass} skills...` : `搜尋 ${selectedClass} 技能...`}
               className="w-full bg-sanctuary-900 border border-sanctuary-800 rounded-xl pl-9 pr-4 py-2 text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-gold transition-colors"
             />
             {searchQuery && (
@@ -381,8 +383,8 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
         <div className="bg-sanctuary-900/40 border border-sanctuary-800/60 rounded-xl p-4 flex items-center gap-3 text-xs text-sanctuary-300">
           <BookOpen className="w-5 h-5 text-d2-gold shrink-0" />
           <div>
-            <span className="font-bold text-sanctuary-100 mr-2">{activeTree.name} ({activeTree.nameEn})：</span>
-            <span>{activeTree.description}</span>
+            <span className="font-bold text-sanctuary-100 mr-2">{isEn ? activeTree.nameEn : `${activeTree.name} (${activeTree.nameEn})`}：</span>
+            <span>{isEn ? (activeTree.descriptionEn || activeTree.nameEn) : activeTree.description}</span>
           </div>
         </div>
       )}
@@ -449,14 +451,16 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-diablo font-bold text-base text-sanctuary-100">
-                          {skill.name}
+                          {isEn ? (skill.nameEn || skill.name) : skill.name}
                         </span>
-                        <span className="text-[11px] font-mono text-sanctuary-400">
-                          {skill.nameEn}
-                        </span>
+                        {!isEn && skill.nameEn && (
+                          <span className="text-[11px] font-mono text-sanctuary-400">
+                            {skill.nameEn}
+                          </span>
+                        )}
                       </div>
                       <div className="text-[10px] text-sanctuary-500 font-mono mt-0.5">
-                        需求等級: Lv {skill.requiredLevel}
+                        {isEn ? `Required Level: Lv ${skill.requiredLevel}` : `需求等級: Lv ${skill.requiredLevel}`}
                       </div>
                     </div>
 
@@ -476,7 +480,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
                   <div className="space-y-1 pt-1">
                     {prereqSkills && prereqSkills.length > 0 && (
                       <div className="flex items-center gap-1.5 text-[11px]">
-                        <span className="text-sanctuary-400 font-mono">前置:</span>
+                        <span className="text-sanctuary-400 font-mono">{isEn ? "Prereqs:" : "前置:"}</span>
                         <div className="flex flex-wrap gap-1">
                           {prereqSkills.map(name => {
                             const preSkill = allCurrentClassSkills.find(s => s.name === name);
@@ -500,7 +504,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
 
                     {skill.synergies && skill.synergies.length > 0 && (
                       <div className="flex items-center gap-1.5 text-[11px]">
-                        <span className="text-sanctuary-400 font-mono">協同:</span>
+                        <span className="text-sanctuary-400 font-mono">{isEn ? "Synergies:" : "協同:"}</span>
                         <div className="flex flex-wrap gap-1">
                           {skill.synergies.map(syn => (
                             <span key={syn} className="px-1.5 py-0.2 rounded text-[10px] font-mono bg-cyan-950/60 text-cyan-300 border border-cyan-800/80">
@@ -516,24 +520,24 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
                 {/* 卡片主體說明 */}
                 <div className="p-4 space-y-3 text-xs flex-1">
                   <p className="text-sanctuary-300 leading-relaxed">
-                    {skill.description}
+                    {isEn ? (skill.descriptionEn || skill.description) : skill.description}
                   </p>
 
                   {/* 戰術圖說與 2.4/2.6 重生解析 */}
                   <div className="bg-sanctuary-950/70 p-2.5 rounded-xl border border-sanctuary-800/80 space-y-1">
                     <div className="flex items-center gap-1 text-[11px] font-mono text-d2-gold font-bold">
                       <Zap className="w-3 h-3 text-d2-gold" />
-                      戰術解析與實戰圖說
+                      {isEn ? "Tactical Guide & Mechanics" : "戰術解析與實戰圖說"}
                     </div>
                     <p className="text-[11px] text-sanctuary-300 leading-normal">
-                      {skill.details}
+                      {isEn ? (skill.detailsEn || skill.details) : skill.details}
                     </p>
                   </div>
 
                   {!isUnlocked && (
                     <div className="flex items-center gap-1.5 text-[11px] text-d2-blood font-mono bg-d2-blood/10 p-2 rounded-lg border border-d2-blood/20">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                      需先點亮上方所有前置技能各至少 1 點
+                      {isEn ? "Must allocate at least 1 point into all prerequisites" : "需先點亮上方所有前置技能各至少 1 點"}
                     </div>
                   )}
                 </div>
@@ -541,7 +545,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
                 {/* 卡片底端加減點控制器 */}
                 <div className="p-3 bg-sanctuary-950/90 border-t border-sanctuary-800/60 flex items-center justify-between gap-2">
                   <div className="text-[10px] text-sanctuary-400 font-mono">
-                    {points === 0 ? "未投資" : isMax ? "★ 滿級" : `已點 ${points} 級`}
+                    {isEn ? (points === 0 ? "Unallocated" : isMax ? "★ MAX" : `Lv ${points}`) : (points === 0 ? "未投資" : isMax ? "★ 滿級" : `已點 ${points} 級`)}
                   </div>
 
                   <div className="flex items-center gap-1.5">
@@ -549,7 +553,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
                       onClick={() => removePoint(skill, 1)}
                       disabled={points <= 0}
                       className="w-7 h-7 rounded-lg bg-sanctuary-850 hover:bg-sanctuary-750 disabled:opacity-40 disabled:cursor-not-allowed border border-sanctuary-750 text-sanctuary-300 hover:text-sanctuary-100 flex items-center justify-center transition-colors"
-                      title="扣除 1 點"
+                      title={isEn ? "Remove 1 pt" : "扣除 1 點"}
                     >
                       <Minus className="w-3.5 h-3.5" />
                     </button>
@@ -558,7 +562,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
                       onClick={() => addPoint(skill, 1)}
                       disabled={!isUnlocked || isMax || remainingPoints <= 0}
                       className="w-7 h-7 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-700 disabled:opacity-40 disabled:cursor-not-allowed border border-sanctuary-700 text-d2-gold hover:text-white flex items-center justify-center transition-colors font-bold"
-                      title="增加 1 點"
+                      title={isEn ? "Add 1 pt" : "增加 1 點"}
                     >
                       <Plus className="w-3.5 h-3.5" />
                     </button>
@@ -567,7 +571,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
                       onClick={() => addPoint(skill, 20)}
                       disabled={!isUnlocked || isMax || remainingPoints <= 0}
                       className="px-2 py-1 rounded-lg bg-d2-gold/20 hover:bg-d2-gold/30 disabled:opacity-40 disabled:cursor-not-allowed border border-d2-gold/30 text-d2-gold text-[10px] font-mono font-bold transition-colors"
-                      title="直接加滿至 20 點"
+                      title={isEn ? "Max out to 20 pts" : "直接加滿至 20 點"}
                     >
                       MAX
                     </button>

@@ -548,7 +548,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
             onClick={() => setIsExpanded(!isExpanded)}
             className="p-2 rounded-xl bg-sanctuary-950 border border-sanctuary-750 text-sanctuary-400 hover:text-white transition-colors"
             title={isExpanded ? (isEn ? 'Collapse' : '收合展廳') : (isEn ? 'Expand' : '展開展廳')}
-            aria-label={isExpanded ? '收合展廳' : '展開展廳'}
+            aria-label={isExpanded ? (isEn ? 'Collapse showcase' : '收合展廳') : (isEn ? 'Expand showcase' : '展開展廳')}
           >
             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
@@ -576,9 +576,11 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                             <h3 className={`font-diablo text-lg font-bold ${styles.titleColor}`}>
                               {isEn ? item.nameEn : item.name}
                             </h3>
-                            <span className="text-xs text-sanctuary-400 font-mono italic">
-                              ({isEn ? item.name : item.nameEn})
-                            </span>
+                            {!isEn && item.nameEn && (
+                              <span className="text-xs text-sanctuary-400 font-mono italic">
+                                ({item.nameEn})
+                              </span>
+                            )}
                           </div>
                           <div className="text-[11px] text-sanctuary-300 font-mono mt-0.5">
                             {isEn ? item.taglineEn : item.tagline}
@@ -687,9 +689,11 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                         <h3 className="font-diablo text-lg font-bold text-amber-300">
                           {isEn ? item.nameEn : item.name}
                         </h3>
-                        <div className="text-[11px] text-sanctuary-400 font-mono italic">
-                          {isEn ? item.name : item.nameEn}
-                        </div>
+                        {!isEn && item.nameEn && (
+                          <div className="text-[11px] text-sanctuary-400 font-mono italic">
+                            {item.nameEn}
+                          </div>
+                        )}
                       </div>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-950/80 text-amber-300 border border-amber-600/50 font-mono font-bold shrink-0">
                         {isEn ? item.tierChangeEn : item.tierChange}
@@ -786,9 +790,11 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                           <Dices className="w-4 h-4 text-emerald-400" />
                           <span>{isEn ? item.typeEn : item.type}</span>
                         </h3>
-                        <div className="text-[11px] text-sanctuary-400 font-mono italic">
-                          {isEn ? item.type : item.typeEn}
-                        </div>
+                        {!isEn && item.typeEn && (
+                          <div className="text-[11px] text-sanctuary-400 font-mono italic">
+                            {item.typeEn}
+                          </div>
+                        )}
                       </div>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-600/50 font-mono font-bold shrink-0">
                         {isEn ? `Max ${item.maxSockets} Sockets` : `最大 ${item.maxSockets} 孔`}
