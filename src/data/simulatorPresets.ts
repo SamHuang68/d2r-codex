@@ -89,11 +89,18 @@ export const BUILDS: BuildDef[] = [
     bis: { level: 92, items: { ...MELEE_BIS, ...SHAKO_ENIGMA, weaponI: n("Titan's Revenge"), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_BIS, notes: '標槍用泰坦的復仇，搭配謎團與軍帽。' },
   },
   {
-    id: 'ama-strafe', name: '掃射弓亞馬遜', classCode: 'ama', rest: 'dex', mfKeep: ['body'], weaponBound: true,
-    summary: '用弓連續掃射多個目標。依賴攻速與物理傷害，技能點集中在掃射與前置技能。',
+    id: 'ama-strafe', name: '砲轟／掃射弓亞馬遜', classCode: 'ama', rest: 'dex', mfKeep: ['body'], weaponBound: true,
+    summary: '用弓對周遭敵群發動高速砲轟（掃射）連續射擊。依賴攻速與物理傷害，技能點集中在掃射與前置技能。',
     skill: { main: 'Strafe', extra: { 'Critical Strike': 1 }, fill: ['Critical Strike', 'Penetrate', 'Pierce', 'Valkyrie'] },
     start: { level: 85, items: { ...MELEE_START, head: n("Andariel's Visage"), body: n('Chains of Honor', 'Dusk Shroud'), weaponI: n('Faith', 'Grand Matron Bow') }, charms: CHARMS_START, notes: '先以信心（Faith）符文之語弓起步。' },
     bis: { level: 92, items: { ...MELEE_BIS, head: n('Harlequin Crest'), body: n('Fortitude', 'Archon Plate'), weaponI: n('Windforce') }, charms: CHARMS_BIS, notes: '風之力（Windforce）搭配剛毅護甲。' },
+  },
+  {
+    id: 'ama-multishot', name: '多重箭物理弓亞馬遜', classCode: 'ama', rest: 'dex', mfKeep: ['body'], weaponBound: true,
+    summary: '以多重箭向前方扇形散射大範圍箭雨，搭配致命攻勢與穿透。攻速與物理傷害為核心。',
+    skill: { main: 'Multiple Shot', extra: { 'Guided Arrow': 20, 'Critical Strike': 10, Penetrate: 10, Pierce: 10 }, fill: ['Critical Strike', 'Penetrate', 'Pierce', 'Valkyrie'] },
+    start: { level: 85, items: { ...MELEE_START, head: n("Andariel's Visage"), body: n('Chains of Honor', 'Dusk Shroud'), weaponI: n('Faith', 'Grand Matron Bow') }, charms: CHARMS_START, notes: '先以信心（Faith）符文之語弓起步。' },
+    bis: { level: 92, items: { ...MELEE_BIS, head: n('Harlequin Crest'), body: n('Fortitude', 'Archon Plate'), weaponI: n('Windforce') }, charms: CHARMS_BIS, notes: '風之力（Windforce）九頭蛇弓搭配剛毅護甲。' },
   },
   // ── 魔法使 ──
   {
@@ -132,6 +139,13 @@ export const BUILDS: BuildDef[] = [
     start: { level: 80, items: { ...CASTER_START, head: n("Tal Rasha's Horadric Crest"), body: n('Skin of the Vipermagi'), weaponI: n("Deaths's Web"), shieldI: n('Homunculus') }, charms: CHARMS_START, notes: '召喚物的傷害不在此模擬，僅顯示角色本體的生命、防禦與抗性。' },
     bis: { level: 92, items: { ...CASTER_BIS, ...SHAKO_ENIGMA, weaponI: n("Deaths's Web"), shieldI: n('Homunculus') }, charms: CHARMS_BIS, notes: '召喚物的傷害不在此模擬，僅顯示角色本體的生命、防禦與抗性。' },
   },
+  {
+    id: 'nec-poison-nova', name: '劇毒新星死靈法師', classCode: 'nec', rest: 'vit',
+    summary: '施放劇毒新星瞬間擴散猛毒，搭配降低抗性詛咒與屍爆清場。',
+    skill: { main: 'Poison Nova', extra: { 'Lower Resist': 1, 'Corpse Explosion': 1, 'Bone Armor': 1 }, fill: ['Poison Explosion', 'Poison Dagger', 'Lower Resist'] },
+    start: { level: 80, items: { ...CASTER_START, head: n("Tal Rasha's Horadric Crest"), body: n('Skin of the Vipermagi'), weaponI: n("Deaths's Web"), shieldI: n('Homunculus') }, charms: CHARMS_START, notes: '死亡之網是毒系死靈的核心武器，提供高額毒系傷害與降抗。' },
+    bis: { level: 92, items: { ...CASTER_BIS, ...SHAKO_ENIGMA, weaponI: n("Deaths's Web"), shieldI: n('Homunculus') }, charms: CHARMS_BIS, notes: '死亡之網搭配謎團與軍帽，極速劇毒散佈。' },
+  },
   // ── 聖騎士 ──
   {
     id: 'pal-hammerdin', name: '祝福之鎚聖騎士', classCode: 'pal', rest: 'vit', blockTarget: 75,
@@ -146,6 +160,13 @@ export const BUILDS: BuildDef[] = [
     skill: { main: 'Zeal', extra: { Fanaticism: 20, Vigor: 1, 'Holy Shield': 20 }, fill: ['Vigor'] },
     start: { level: 85, items: { ...MELEE_START, head: n("Andariel's Visage"), body: n('Chains of Honor', 'Dusk Shroud'), weaponI: n('Grief'), shieldI: n('Herald of Zakarum') }, charms: CHARMS_START, notes: '悔恨搭配聖騎士盾。' },
     bis: { level: 92, items: { ...MELEE_BIS, ...SHAKO_ENIGMA, weaponI: n('Grief'), shieldI: n('Herald of Zakarum') }, charms: CHARMS_BIS, notes: '悔恨、謎團、軍帽。' },
+  },
+  {
+    id: 'pal-foh', name: '天神之拳聖騎士', classCode: 'pal', rest: 'vit', blockTarget: 75,
+    summary: '召喚天神之拳從天而降雷電打擊，向周遭分裂神聖之箭洗禮惡魔與不死怪物。',
+    skill: { main: 'Fist of the Heavens', extra: { 'Holy Shock': 20, Conviction: 10, 'Holy Shield': 20 }, fill: ['Holy Bolt', 'Conviction'] },
+    start: { level: 85, items: { ...CASTER_START, head: n("Andariel's Visage"), body: n('Chains of Honor', 'Dusk Shroud'), weaponI: n('Heart of the Oak', 'Scourge'), shieldI: n('Herald of Zakarum') }, charms: CHARMS_START, notes: '格擋目標 75%：橡樹之心與撒卡蘭姆使者。' },
+    bis: { level: 92, items: { ...CASTER_BIS, ...SHAKO_ENIGMA, weaponI: n('Heart of the Oak', 'Scourge'), shieldI: n('Herald of Zakarum') }, charms: CHARMS_BIS, notes: '軍帽、謎團、橡樹之心與撒卡蘭姆使者，格擋目標 75%。' },
   },
   // ── 野蠻人 ──
   {
@@ -162,6 +183,13 @@ export const BUILDS: BuildDef[] = [
     start: { level: 85, items: { ...MELEE_START, head: n("Andariel's Visage"), body: n('Fortitude', 'Archon Plate'), weaponI: n('Grief'), shieldI: n('Breath of the Dying') }, charms: CHARMS_START, notes: '主手與副手欄各放一把武器。' },
     bis: { level: 90, items: { ...MELEE_BIS, ...SHAKO_ENIGMA, weaponI: n('Grief'), shieldI: n('Breath of the Dying') }, charms: CHARMS_BIS, notes: '悔恨搭配死亡呼吸雙持。' },
   },
+  {
+    id: 'bar-berserk', name: '狂暴之擊野蠻人', classCode: 'bar', rest: 'vit',
+    summary: '以狂暴之擊打出 100% 純魔法傷害，無視敵人物理抗性，打寶與擊殺精英首領專用。',
+    skill: { main: 'Berserk', extra: { 'Battle Orders': 20, 'Iron Skin': 1, 'Natural Resistance': 1, 'Increased Speed': 1, Howl: 20 }, fill: ['Shout', 'Blade Mastery', 'Battle Command'] },
+    start: { level: 85, items: { ...MELEE_START, head: n("Arreat's Face"), body: n('Fortitude', 'Archon Plate'), weaponI: n('Grief'), shieldI: n('Stormshield') }, charms: CHARMS_START, notes: '悔恨單手劍搭配暴風之盾（物免盾），確保近戰安全。' },
+    bis: { level: 90, items: { ...MELEE_BIS, ...SHAKO_ENIGMA, weaponI: n('Grief'), shieldI: n('Stormshield') }, charms: CHARMS_BIS, notes: '謎團提供傳送術，搭配悔恨與暴風之盾。' },
+  },
   // ── 德魯伊 ──
   {
     id: 'dru-tornado', name: '龍捲風德魯伊', classCode: 'dru', rest: 'vit', mfKeep: ['head'],
@@ -177,6 +205,13 @@ export const BUILDS: BuildDef[] = [
     start: { level: 80, items: { ...CASTER_START, head: n("Jalal's Mane"), body: n('Skin of the Vipermagi'), weaponI: n('Heart of the Oak', 'Archon Staff') }, charms: CHARMS_START, notes: '先用加技能的施法裝備；橡樹之心是雙手法杖，副手不放盾。' },
     bis: { level: 92, items: { ...CASTER_BIS, head: n("Jalal's Mane"), body: n('Enigma', 'Dusk Shroud'), weaponI: n('Heart of the Oak', 'Archon Staff') }, charms: CHARMS_BIS, notes: '加技能優先的施法配置；橡樹之心是雙手法杖，副手不放盾。' },
   },
+  {
+    id: 'dru-fury', name: '狂怒變形狼德', classCode: 'dru', rest: 'vit', mfKeep: ['head'],
+    summary: '化身狼人以狂怒發動連續爪擊，擁有超高生命偷取與攻擊速度。',
+    skill: { main: 'Fury', extra: { Wearwolf: 20, 'Shape Shifting': 20, 'Heart of Wolverine': 20 }, fill: ['Feral Rage', 'Oak Sage'] },
+    start: { level: 85, items: { ...MELEE_START, head: n("Jalal's Mane"), body: n('Fortitude', 'Archon Plate'), weaponI: n('Grief'), shieldI: n('Stormshield') }, charms: CHARMS_START, notes: '加爾的鬃毛搭配悔恨與暴風之盾，兼顧輸出與生存。' },
+    bis: { level: 92, items: { ...MELEE_BIS, head: n("Jalal's Mane"), body: n('Fortitude', 'Archon Plate'), weaponI: n('Grief'), shieldI: n('Stormshield') }, charms: CHARMS_BIS, notes: '加爾的鬃毛搭配悔恨與暴風之盾，兼顧輸出與 50% 物理減免。' },
+  },
   // ── 刺客 ──
   {
     id: 'ass-lightning-trap', name: '閃電陷阱刺客', classCode: 'ass', rest: 'vit',
@@ -191,6 +226,35 @@ export const BUILDS: BuildDef[] = [
     skill: { main: 'Royal Strike', extra: { 'Claw Mastery': 20, Fade: 1 }, fill: ['Tiger Strike', 'Cobra Strike', 'Claws of Thunder', 'Blades of Ice', 'Fists of Fire', 'Dragon Claw'] },
     start: { level: 85, items: { ...MELEE_START, head: n("Andariel's Visage"), body: n('Chains of Honor', 'Dusk Shroud'), weaponI: n('Mosaic') }, charms: CHARMS_START, notes: '嵌飾為爪類符文之語。' },
     bis: { level: 92, items: { ...MELEE_BIS, ...SHAKO_ENIGMA, weaponI: n('Mosaic') }, charms: CHARMS_BIS, notes: '副手 I 欄未放置（雙持第二把爪需自行選擇）。' },
+  },
+  {
+    id: 'ass-blade-fury', name: '狂怒旋刃飛鏢刺客', classCode: 'ass', rest: 'vit',
+    summary: '以狂怒旋刃投擲高速飛鏢，全吃武器傷害、致命一擊與壓碎打擊，遠程物理輸出。',
+    skill: { main: 'Blade Fury', extra: { 'Claw Mastery': 20, Fade: 20, 'Shadow Master': 1 }, fill: ['Blade Shield', 'Blade Sentinel', 'Weapon Block'] },
+    start: { level: 85, items: { ...MELEE_START, head: n("Guillaume's Face"), body: n('Fortitude', 'Archon Plate'), weaponI: n('Grief'), shieldI: n('Stormshield') }, charms: CHARMS_START, notes: '吉永之臉配合悔恨與暴風之盾。' },
+    bis: { level: 92, items: { ...MELEE_BIS, head: n("Guillaume's Face"), body: n('Fortitude', 'Archon Plate'), weaponI: n('Grief'), shieldI: n('Stormshield') }, charms: CHARMS_BIS, notes: '悔恨搭配暴風之盾，吉永之臉帶來致命一擊與壓碎性打擊。' },
+  },
+  // ── 術士 ──
+  {
+    id: 'war-demon-enslavement', name: '惡魔使役術士', classCode: 'war', rest: 'vit',
+    summary: '束縛高階惡魔並使役褻瀆者大軍，透過惡魔專精與血誓強化僕從，本體在後方提供詛咒與指揮。',
+    skill: { main: 'Bind Demon', extra: { 'Demonic Mastery': 20, 'Blood Oath': 20, 'Summon Defiler': 20 }, fill: ['Blood Boil', 'Summon Tainted', 'Summon Goatman'] },
+    start: { level: 80, items: { ...CASTER_START, head: n("Tal Rasha's Horadric Crest"), body: n('Skin of the Vipermagi'), ...SPIRIT_SET }, charms: CHARMS_START, notes: '精神劍盾與蛇魔法師之皮的平價召喚施法起手配置。' },
+    bis: { level: 92, items: { ...CASTER_BIS, ...SHAKO_ENIGMA, weaponI: n('Heart of the Oak', 'Scourge'), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_BIS, notes: '軍帽、謎團、橡樹之心與精神盾，最大化全技能加成強化惡魔僕從。' },
+  },
+  {
+    id: 'war-chaos-apocalypse', name: '混沌天啟術士', classCode: 'war', rest: 'vit',
+    summary: '引爆天啟末日與烈焰湧浪，大範圍傾瀉混沌熾焰與深淵撕裂傷害，高快速施法毀滅戰場。',
+    skill: { main: 'Apocalypse', extra: { 'Flame Wave': 20, 'Ring of Fire': 20, 'Enhanced Entropy': 20 }, fill: ['Abyss', 'Miasma Chains', 'Sigil Death'] },
+    start: { level: 80, items: { ...CASTER_START, head: n("Tal Rasha's Horadric Crest"), body: n('Skin of the Vipermagi'), ...SPIRIT_SET }, charms: CHARMS_START, notes: '精神劍盾與蛇皮的高施法配置。' },
+    bis: { level: 92, items: { ...CASTER_BIS, ...SHAKO_ENIGMA, weaponI: n('Heart of the Oak', 'Scourge'), shieldI: n('Spirit', 'Monarch') }, charms: CHARMS_BIS, notes: '軍帽、謎團、橡樹之心與精神盾，高 FCR 快速傾瀉天啟末日。' },
+  },
+  {
+    id: 'war-eldritch-blade', name: '邪異虛空近戰術士', classCode: 'war', rest: 'vit',
+    summary: '以邪異轟擊與靈能護盾武裝自身，揮舞受虛空附魔的近戰利刃進行致命斬劈。',
+    skill: { main: 'Eldritch Blast', extra: { 'Psychic Ward': 20, 'Mirrored Blades': 20, 'Echoing Strike': 10 }, fill: ['Cleave', 'Blade Warp', 'Hex Bane'] },
+    start: { level: 85, items: { ...MELEE_START, head: n("Andariel's Visage"), body: n('Chains of Honor', 'Dusk Shroud'), weaponI: n('Grief'), shieldI: n('Stormshield') }, charms: CHARMS_START, notes: '悔恨單手劍搭配暴風之盾，靈能護盾提供高額生存防護。' },
+    bis: { level: 92, items: { ...MELEE_BIS, ...SHAKO_ENIGMA, weaponI: n('Grief'), shieldI: n('Stormshield') }, charms: CHARMS_BIS, notes: '悔恨、暴風之盾搭配謎團與軍帽，兼具機動性與頂級近戰減傷。' },
   },
 ];
 
@@ -215,6 +279,15 @@ const BIS_RESIST_FIX: Record<string, Items> = {
   'dru-fire': { gloves: n('Bloodfist'), ring1: n("Bul Katho's Wedding Band"), ring2: n('Opalvein'), boots: n('Waterwalk') },
   'ass-lightning-trap': { ring1: n("Bul Katho's Wedding Band"), ring2: n('Opalvein'), boots: n("Aldur's Advance") },
   'ass-mosaic': { gloves: n("Horazon's Hold"), belt: n("Gheed's Wager"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'ama-multishot': { neck: n("Saracen's Chance"), body: n('Chains of Honor', 'Dusk Shroud'), gloves: n('Bloodfist'), belt: n("Gheed's Wager"), ring2: n('Manald Heal'), boots: n('Waterwalk') },
+  'nec-poison-nova': { gloves: n('Bloodfist'), ring1: n("Bul Katho's Wedding Band"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'pal-foh': { ring1: n("Bul Katho's Wedding Band"), boots: n('Waterwalk') },
+  'bar-berserk': { gloves: n('Laying of Hands'), belt: n('Credendum'), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'dru-fury': { gloves: n('Laying of Hands'), belt: n('Credendum'), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'ass-blade-fury': { gloves: n('Laying of Hands'), belt: n('Credendum'), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'war-demon-enslavement': { gloves: n('Bloodfist'), ring1: n("Bul Katho's Wedding Band"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'war-chaos-apocalypse': { gloves: n('Bloodfist'), ring1: n("Bul Katho's Wedding Band"), ring2: n('Opalvein'), boots: n('Tearhaunch') },
+  'war-eldritch-blade': { gloves: n('Laying of Hands'), belt: n('Credendum'), ring2: n('Opalvein'), boots: n('Tearhaunch') },
 };
 BUILDS.forEach((b) => {
   const fix = BIS_RESIST_FIX[b.id]; if (!fix) return;
@@ -262,6 +335,7 @@ const TANK_MAX: Items = {
 const TANK_MAX_BOUND: Record<string, Items> = {
   'ama-lightning-fury': { head: n('Vampiregaze'), neck: n('Metalgrid'), body: n('Shaftstop'), ring1: n('Dwarf Star') },
   'ama-strafe': { neck: n("Mara's Kaleidoscope"), belt: n("Verdugo's Hearty Cord"), ring1: n('Dwarf Star'), ring2: n('Dwarf Star'), boots: n('Tearhaunch') },
+  'ama-multishot': { neck: n("Mara's Kaleidoscope"), belt: n("Verdugo's Hearty Cord"), ring1: n('Dwarf Star'), ring2: n('Dwarf Star'), boots: n('Tearhaunch') },
   'ass-mosaic': { head: n("Kira's Guardian"), neck: n("Saracen's Chance"), body: n('Shaftstop'), belt: n("Verdugo's Hearty Cord"), ring1: n('Dwarf Star'), ring2: n('Dwarf Star') },
 };
 const CHARMS_TANK: PresetItem[] = [n('Annihilus'), n('Hellfire Torch')];
