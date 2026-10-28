@@ -3,6 +3,7 @@ import { ChevronsLeft, ChevronsRight, Flame, Search } from 'lucide-react';
 import { NAV_GROUPS, ALL_NAV_MODULES, isPlainLeftClick, tabHref } from './navConfig';
 import { useLanguage } from '../../context/LanguageContext';
 import { LanguageToggle } from '../common/LanguageToggle';
+import { MusicControl } from '../common/MusicControl';
 
 interface NavbarProps {
   activeTab: string;
@@ -74,6 +75,9 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
         )}
 
         <div className="flex items-center gap-2 shrink-0 ml-auto">
+          {/* 背景音樂開關（預設關閉） */}
+          <MusicControl />
+
           {/* 中／英雙語切換按鈕 */}
           <LanguageToggle />
 

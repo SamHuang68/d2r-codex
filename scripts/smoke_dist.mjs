@@ -234,6 +234,23 @@ async function runOnce(base, browser) {
       await ctx2.close();
     }
 
+    // 背景音樂：預設關閉；打開面板、按開關後引擎才載入並開始播放（aria-checked），再按一次關掉；不能有頁面錯誤
+    try {
+      await page.evaluate(() => { location.hash = '#overview'; });
+      const musicBtn = page.getByRole('button', { name: /^(音樂|Music)$/ });
+      await musicBtn.waitFor({ state: 'visible', timeout: 10000 });
+      await musicBtn.click();
+      const sw = page.getByRole('switch', { name: /播放背景音樂|Play background music/ });
+      await sw.waitFor({ state: 'visible', timeout: 5000 });
+      if ((await sw.getAttribute('aria-checked')) !== 'false') failures.push('[桌面] 背景音樂預設應該是關閉');
+      await sw.click();
+      await page.waitForFunction(() => document.querySelector('[role="switch"]')?.getAttribute('aria-checked') === 'true', null, { timeout: 10000 });
+      await sw.click();
+      await page.waitForFunction(() => document.querySelector('[role="switch"]')?.getAttribute('aria-checked') === 'false', null, { timeout: 5000 });
+      await page.keyboard.press('Escape');
+    } catch (e) {
+      failures.push(`[桌面] 背景音樂開關無法開啟／關閉：${String(e.message).split('\n')[0]}`);
+    }
     // 搜尋面板也是第一次按 Q 才載入的 lazy chunk
     await page.evaluate(() => { location.hash = '#overview'; });
     try {
