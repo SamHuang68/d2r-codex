@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  Flame, Sparkles, BookOpen, Layers, Compass, Trophy, Sword, MapPin, Users,
-  Gem, Skull, ShieldAlert, FlaskConical, Wrench, Activity, Crown, Ghost, Tag, Landmark, TrendingUp,
-} from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 
 export interface NavModule {
   id: string;
@@ -33,7 +30,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Home Portal',
         desc: '大圖分類入口與職業展示',
         descEn: 'Portal categories & class showcases',
-        icon: <Flame className={`${ic} text-d2-fire`} />,
+        icon: <GameIcon name="gate" className={`${ic} text-d2-fire`} />,
       },
     ],
   },
@@ -47,7 +44,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Classes',
         desc: '8 大職業屬性與 Meta 流派',
         descEn: '8 classes attributes & meta builds',
-        icon: <Users className={`${ic} text-d2-fire`} />,
+        icon: <GameIcon name="helm" className={`${ic} text-d2-fire`} />,
       },
       {
         id: 'skills',
@@ -55,7 +52,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Skill Trees',
         desc: '全技能樹畫布與協同矩陣',
         descEn: 'Interactive skill trees & synergies',
-        icon: <Sparkles className={`${ic} text-d2-gold`} />,
+        icon: <GameIcon name="tree" className={`${ic} text-d2-gold`} />,
       },
       {
         id: 'planner',
@@ -63,7 +60,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Armory Planner',
         desc: '1:1 配裝模擬器與流派筆記',
         descEn: '1:1 gear simulator & build notes',
-        icon: <Wrench className={`${ic} text-d2-unique`} />,
+        icon: <GameIcon name="anvil" className={`${ic} text-d2-unique`} />,
       },
       {
         id: 'breakpoints',
@@ -71,7 +68,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Breakpoints',
         desc: 'FCR / FHR / FBR / IAS 斷點',
         descEn: 'FCR / FHR / FBR / IAS breakpoint tables',
-        icon: <Activity className={`${ic} text-d2-fire`} />,
+        icon: <GameIcon name="steps" className={`${ic} text-d2-fire`} />,
       },
       {
         id: 'experience',
@@ -79,7 +76,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Experience',
         desc: '1~99 級經驗與升級計算',
         descEn: 'Level 1-99 XP progression & calculator',
-        icon: <TrendingUp className={`${ic} text-d2-gold`} />,
+        icon: <GameIcon name="levelup" className={`${ic} text-d2-gold`} />,
       },
       {
         id: 'mercenaries',
@@ -87,7 +84,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Mercenaries',
         desc: '四大傭兵光環與終極神裝',
         descEn: 'Hireling auras & endgame gear matrix',
-        icon: <Crown className={`${ic} text-d2-gold`} />,
+        icon: <GameIcon name="swords" className={`${ic} text-d2-gold`} />,
       },
     ],
   },
@@ -101,7 +98,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Uniques & Sets',
         desc: '暗金與套裝全覽',
         descEn: 'Complete unique & set items compendium',
-        icon: <Sword className={`${ic} text-d2-unique`} />,
+        icon: <GameIcon name="sword" className={`${ic} text-d2-unique`} />,
       },
       {
         id: 'runewords',
@@ -109,7 +106,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Runewords',
         desc: '全天梯符文之語速查',
         descEn: 'Ladder & non-ladder runewords database',
-        icon: <Sparkles className={`${ic} text-d2-rune`} />,
+        icon: <GameIcon name="rune" className={`${ic} text-d2-rune`} />,
       },
       {
         id: 'bases',
@@ -117,7 +114,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Base Items',
         desc: '打孔、特等的底材與屬性需求',
         descEn: 'Socketing, superior bases & requirements',
-        icon: <ShieldAlert className={`${ic} text-d2-socket`} />,
+        icon: <GameIcon name="shield" className={`${ic} text-d2-socket`} />,
       },
       {
         id: 'runes',
@@ -125,7 +122,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Runes',
         desc: '1~33 號符文屬性與合成',
         descEn: 'Runes #1-#33 attributes & recipes',
-        icon: <Layers className={`${ic} text-d2-rune`} />,
+        icon: <GameIcon name="stone" className={`${ic} text-d2-rune`} />,
       },
       {
         id: 'props',
@@ -133,7 +130,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Props & Relics',
         desc: '寶石、鑰匙、精華與藥劑',
         descEn: 'Gems, Uber keys, essences & charms',
-        icon: <FlaskConical className={`${ic} text-d2-magic`} />,
+        icon: <GameIcon name="flask" className={`${ic} text-d2-magic`} />,
       },
     ],
   },
@@ -147,7 +144,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Horadric Cube',
         desc: '打孔、升級、手工裝配方',
         descEn: 'Cube recipes, upgrades & craft gear',
-        icon: <BookOpen className={`${ic} text-d2-magic`} />,
+        icon: <GameIcon name="cube" className={`${ic} text-d2-magic`} />,
       },
       {
         id: 'affixes',
@@ -155,7 +152,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Magic Affixes',
         desc: '魔法與稀有詞綴全表',
         descEn: 'Magic & rare prefix & suffix database',
-        icon: <Tag className={`${ic} text-d2-magic`} />,
+        icon: <GameIcon name="tag" className={`${ic} text-d2-magic`} />,
       },
       {
         id: 'valuation',
@@ -163,7 +160,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Price Check',
         desc: '極品詞綴與估價器',
         descEn: 'Valuation & price appraisal tool',
-        icon: <Gem className={`${ic} text-d2-magic`} />,
+        icon: <GameIcon name="gem" className={`${ic} text-d2-magic`} />,
       },
       {
         id: 'grail',
@@ -171,7 +168,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Holy Grail',
         desc: '全裝備收集打勾追蹤',
         descEn: 'Holy grail checklist & drop tracker',
-        icon: <Trophy className={`${ic} text-d2-gold`} />,
+        icon: <GameIcon name="grail" className={`${ic} text-d2-gold`} />,
       },
     ],
   },
@@ -185,7 +182,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Quests & Events',
         desc: '永久獎勵任務與世界事件',
         descEn: 'Permanent reward quests & D-Clone',
-        icon: <Compass className={`${ic} text-d2-gold`} />,
+        icon: <GameIcon name="scroll" className={`${ic} text-d2-gold`} />,
       },
       {
         id: 'areas',
@@ -193,7 +190,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Areas & Terror',
         desc: '85 級場景與邪惡威脅區域',
         descEn: 'Level 85 areas & Terror Zones',
-        icon: <MapPin className={`${ic} text-d2-fire`} />,
+        icon: <GameIcon name="map" className={`${ic} text-d2-fire`} />,
       },
       {
         id: 'monsters',
@@ -201,7 +198,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Monsters',
         desc: '三難度抗性、免疫與場景',
         descEn: 'Resistances, immunities & zones',
-        icon: <Ghost className={`${ic} text-d2-fire`} />,
+        icon: <GameIcon name="demon" className={`${ic} text-d2-fire`} />,
       },
       {
         id: 'shrines',
@@ -209,7 +206,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Shrines',
         desc: '聖壇效果、持續時間與等級',
         descEn: 'Shrine buffs, durations & effects',
-        icon: <Landmark className={`${ic} text-d2-gold`} />,
+        icon: <GameIcon name="altar" className={`${ic} text-d2-gold`} />,
       },
       {
         id: 'uber',
@@ -217,7 +214,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Uber Tristram',
         desc: '火炬、地獄崔斯特姆流程',
         descEn: 'Hellfire Torch & Pandemonium Event',
-        icon: <Skull className={`${ic} text-d2-fire`} />,
+        icon: <GameIcon name="skull" className={`${ic} text-d2-fire`} />,
       },
     ],
   },
