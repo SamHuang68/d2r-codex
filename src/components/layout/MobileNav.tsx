@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  Flame, 
-  Sparkles, 
-  Sword, 
-  Users, 
-  Menu,
-  X,
-} from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 
 import { NAV_GROUPS, isPlainLeftClick, tabHref } from './navConfig';
 import { useLanguage } from '../../context/LanguageContext';
@@ -28,11 +22,11 @@ export const MobileNav: React.FC<MobileNavProps> = ({
 
   // 底部快捷直達鍵 (最常用的 5 大模組)
   const quickTabs = [
-    { id: 'overview', label: '主頁', labelEn: 'Home', icon: <Flame className="w-5 h-5" /> },
-    { id: 'characters', label: '英雄', labelEn: 'Heroes', icon: <Users className="w-5 h-5 text-d2-fire" /> },
-    { id: 'skills', label: '技能樹', labelEn: 'Skills', icon: <Sparkles className="w-5 h-5 text-d2-gold" /> },
-    { id: 'runewords', label: '符文語', labelEn: 'Runewords', icon: <Sparkles className="w-5 h-5 text-d2-unique" /> },
-    { id: 'items', label: '裝備', labelEn: 'Items', icon: <Sword className="w-5 h-5 text-d2-unique" /> },
+    { id: 'overview', label: '主頁', labelEn: 'Home', icon: <GameIcon name="gate" className="w-5 h-5" /> },
+    { id: 'characters', label: '英雄', labelEn: 'Heroes', icon: <GameIcon name="helm" className="w-5 h-5 text-d2-fire" /> },
+    { id: 'skills', label: '技能樹', labelEn: 'Skills', icon: <GameIcon name="tree" className="w-5 h-5 text-d2-gold" /> },
+    { id: 'runewords', label: '符文語', labelEn: 'Runewords', icon: <GameIcon name="rune" className="w-5 h-5 text-d2-unique" /> },
+    { id: 'items', label: '裝備', labelEn: 'Items', icon: <GameIcon name="sword" className="w-5 h-5 text-d2-unique" /> },
   ];
 
   // 全站 21 大功能完整分類模組（與桌面側邊欄共用同一份設定）

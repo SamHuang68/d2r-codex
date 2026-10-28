@@ -1,5 +1,6 @@
 import React from 'react';
-import { Flame, ShieldCheck, Database, Zap, ArrowUp } from 'lucide-react';
+import { ShieldCheck, Database, Zap, ArrowUp } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 import meta from '../../data/game/meta.json';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -16,7 +17,7 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 rounded bg-sanctuary-850 border border-sanctuary-750 flex items-center justify-center">
-            <Flame className="w-4 h-4 text-d2-unique" />
+            <GameIcon name="gate" className="w-4 h-4 text-d2-unique" />
           </div>
           <div>
             <div className="font-diablo text-sm font-bold text-sanctuary-200 tracking-wider">

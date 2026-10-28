@@ -1,0 +1,36 @@
+name: Live site check
+
+# 每天對「正式網址」（自訂網域）跑一次冒煙測試。部署流程只檢查 GitHub Pages 的網址；
+# 自訂網域是 Cloudflare Pages 建置的，建置卡住或失敗不會有任何通知（曾經卡在複製程式碼階段約 18 分鐘），
+# 在這裡失敗時 GitHub 會寄信通知。也可以手動執行。
+on:
+  schedule:
+    - cron: '17 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-live:
+    name: 正式網址冒煙測試
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # 剛部署完的邊緣節點可能還沒換成新版，所以重試幾次、每次間隔 30 秒
+      - name: Smoke test d2r.samhuang68.org
+        run: node scripts/smoke_dist.mjs --url "https://d2r.samhuang68.org/" --retries 4 --delay 30
+        env:
+          SMOKE_CHANNEL: chrome

@@ -1,5 +1,6 @@
 import React from 'react';
-import { ChevronsLeft, ChevronsRight, Flame, Search } from 'lucide-react';
+import { ChevronsLeft, ChevronsRight, Search } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 import { NAV_GROUPS, ALL_NAV_MODULES, isPlainLeftClick, tabHref } from './navConfig';
 import { useLanguage } from '../../context/LanguageContext';
 import { LanguageToggle } from '../common/LanguageToggle';
@@ -43,10 +44,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
         >
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-d2-unique to-sanctuary-900 p-0.5 shadow-glow-gold flex items-center justify-center">
             <div className="w-full h-full bg-sanctuary-950 rounded-[7px] flex items-center justify-center">
-              <Flame className="w-4 h-4 text-d2-unique group-hover:scale-110 transition-transform duration-200" />
+              <GameIcon name="gate" className="w-4 h-4 text-d2-unique group-hover:scale-110 transition-transform duration-200" />
             </div>
           </div>
-          <div>
+          <div className="max-[439px]:hidden">
             <div className="font-diablo text-sm md:text-base font-bold tracking-wider text-sanctuary-100 group-hover:text-d2-unique transition-colors">
               SANCTUARY CODEX
             </div>

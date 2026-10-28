@@ -234,6 +234,12 @@ async function runOnce(base, browser) {
       await ctx2.close();
     }
 
+    // 網站圖標、分享圖與安裝資訊都要真的存在：缺檔時 SPA 會回後備首頁（text/html）而不是 404，所以也檢查內容類型
+    for (const f of ['icon.svg', 'icon-192.png', 'apple-touch-icon.png', 'manifest.webmanifest', 'og.png']) {
+      const r = await page.request.get(new URL(f, base).href);
+      const ct = r.headers()['content-type'] ?? '';
+      if (!r.ok() || ct.includes('text/html')) failures.push(`[桌面] 網站圖標或分享圖缺檔：${f}（HTTP ${r.status()}，${ct}）`);
+    }
     // 背景音樂：預設關閉；打開面板、按開關後引擎才載入並開始播放（aria-checked），再按一次關掉；不能有頁面錯誤
     try {
       await page.evaluate(() => { location.hash = '#overview'; });
@@ -326,6 +332,10 @@ async function runOnce(base, browser) {
       await sleep(500);
       const m = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, w: window.innerWidth }));
       if (m.sw > m.w + 1) failures.push(`[手機] ${hash || '首頁'} 有橫向捲動：scrollWidth ${m.sw} > ${m.w}`);
+      // 頂部列的按鈕不能被擠出畫面。手機模式下內容太寬時瀏覽器會把版面視窗撐寬（innerWidth 跟著變大），
+      // 上面用 innerWidth 的檢查就看不出來；要和使用者實際看到的視覺視窗（visualViewport，390）比
+      const clipped = await page.evaluate(() => [...document.querySelectorAll('header button, header a')].filter((el) => { const r = el.getBoundingClientRect(); const vw = window.visualViewport ? window.visualViewport.width : window.innerWidth; return r.width > 0 && (r.right > vw + 0.5 || r.left < -0.5); }).map((el) => (el.getAttribute('aria-label') || el.textContent || el.tagName).trim().slice(0, 20)));
+      if (clipped.length) failures.push(`[手機] ${hash || '首頁'} 頂部列有按鈕被擠出畫面：${clipped.join('、')}`);
       if (hash === '#planner') {
         try {
           await page.getByRole('tab', { name: '傭兵' }).click(); await sleep(500);
