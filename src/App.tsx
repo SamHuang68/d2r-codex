@@ -4,7 +4,7 @@ import { MobileNav } from './components/layout/MobileNav';
 import { ALL_NAV_MODULES } from './components/layout/navConfig';
 import { Footer } from './components/layout/Footer';
 import { BackToTop } from './components/common/BackToTop';
-import { CLASS_ZH } from './engine/catalog';
+import { CLASS_ZH } from './engine/slots';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 
 import { HeroSection } from './components/portal/HeroSection';
@@ -88,8 +88,15 @@ const AppContent: React.FC = () => {
       // 分頁內容是延遲載入的，高度不是一次到位：還原捲動位置分幾次嘗試
       [0, 150, 500].forEach((ms) => window.setTimeout(() => window.scrollTo(0, y), ms));
     };
+    const onHash = () => {
+      applyNav({ tab: tabFromHash(), query: '', cls: navRef.current.cls });
+    };
     window.addEventListener('popstate', onPop);
-    return () => window.removeEventListener('popstate', onPop);
+    window.addEventListener('hashchange', onHash);
+    return () => {
+      window.removeEventListener('popstate', onPop);
+      window.removeEventListener('hashchange', onHash);
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 分頁標題：瀏覽器的歷史紀錄清單、分頁列才看得出是哪一頁

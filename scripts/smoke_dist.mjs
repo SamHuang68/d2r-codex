@@ -187,6 +187,9 @@ async function runOnce(base, browser) {
     // 傭兵寶典的資料表數值：預設第二幕地獄，列出傭兵數值與技能；切到普通難度後類型變成三種光環傭兵
     await page.evaluate(() => { location.hash = '#mercenaries'; });
     try {
+      const actGuideBtn = page.getByRole('button', { name: /各[章幕]傭兵百科|Act Guide/ }).first();
+      await actGuideBtn.waitFor({ state: 'visible', timeout: 15000 });
+      await actGuideBtn.click();
       await page.waitForFunction(() => /生命/.test(document.querySelector('[aria-label="傭兵基礎數值"]')?.innerText ?? '') && /戳刺/.test(document.querySelector('[aria-label="傭兵技能"]')?.innerText ?? ''), null, { timeout: 15000 });
       const hell = await page.locator('[aria-label="傭兵類型"] button').count();
       await page.locator('[aria-label="難度"]').getByRole('button', { name: '普通' }).click();
@@ -199,7 +202,7 @@ async function runOnce(base, browser) {
     // 跨頁連結（傭兵頁的物品名）：點了才載入比對用的資料表，再跳到對應分頁
     await page.evaluate(() => { location.hash = '#mercenaries'; });
     try {
-      const link = page.locator('button[title^="點擊查看【"], button[title^="點擊跳轉查看【"]').first();
+      const link = page.locator('button[title*="在百科中查看【"], button[title*="View "], button[title^="點擊查看【"], button[title^="點擊跳轉查看【"]').first();
       await link.waitFor({ timeout: 10000 });
       await link.click();
       await page.waitForFunction(() => /^#(items|runewords|bases|runes|props)$/.test(location.hash), null, { timeout: 10000 });
@@ -321,7 +324,20 @@ async function runOnce(base, browser) {
 
 let local;
 const base = liveUrl ?? (local = await serveDist(distDir)).base;
-const browser = await chromium.launch(process.env.SMOKE_CHANNEL ? { channel: process.env.SMOKE_CHANNEL } : {});
+async function launchBrowser() {
+  if (process.env.SMOKE_CHANNEL) return chromium.launch({ channel: process.env.SMOKE_CHANNEL });
+  try {
+    return await chromium.launch({});
+  } catch (err) {
+    if (err.message && err.message.includes("Executable doesn't exist")) {
+      for (const ch of ['msedge', 'chrome']) {
+        try { return await chromium.launch({ channel: ch }); } catch {}
+      }
+    }
+    throw err;
+  }
+}
+const browser = await launchBrowser();
 let failures = [];
 try {
   for (let attempt = 1; attempt <= retries; attempt++) {
