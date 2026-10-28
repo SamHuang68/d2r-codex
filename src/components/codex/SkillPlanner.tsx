@@ -6,7 +6,6 @@ import { getClassImage } from '../../utils/classImages';
 import { CLASS_ZH_TO_EN } from '../../engine/slots';
 import { SkillSynergyPanel } from './SkillSynergyPanel';
 import { 
-  Sparkles, 
   RotateCcw, 
   Search, 
   Plus, 
@@ -19,6 +18,7 @@ import {
   LayoutGrid,
   Network
 } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 
 
 const MAX_TOTAL_POINTS = 110; // 98 (等級 2-99) + 12 (任務獎勵)
@@ -227,7 +227,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
       <div className="border-b border-sanctuary-800 pb-6 flex flex-col lg:flex-row lg:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-d2-gold text-xs font-mono tracking-widest uppercase">
-            <Sparkles className="w-4 h-4 text-d2-gold animate-pulse" />
+            <GameIcon name="tree" className="w-4 h-4 text-d2-gold animate-pulse" />
             Authentic In-Game Skill Tree & Synergy Matrix
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">

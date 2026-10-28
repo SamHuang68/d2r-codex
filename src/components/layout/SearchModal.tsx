@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, Flame, Shield, Sparkles, BookOpen, MapPin, Users, Gem, Skull, ShieldAlert, Compass, FlaskConical, Swords, Ghost, Tag, Landmark, TrendingUp } from 'lucide-react';
+import { Search, X, Shield } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 import { searchOmni, SearchResultItem } from '../../utils/search';
 import { searchCodex } from '../../utils/searchCodex';
 import { expandLegacyQuery } from '../../utils/termAliases';
@@ -63,41 +64,41 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   const getTypeIcon = (type: SearchResultItem['type']) => {
     switch (type) {
       case 'runeword':
-        return <Flame className="w-4 h-4 text-d2-unique" />;
+        return <GameIcon name="rune" className="w-4 h-4 text-d2-unique" />;
       case 'unique':
-        return <Sparkles className="w-4 h-4 text-d2-unique" />;
+        return <GameIcon name="sword" className="w-4 h-4 text-d2-unique" />;
       case 'set':
         return <Shield className="w-4 h-4 text-d2-set" />;
       case 'rune':
-        return <Flame className="w-4 h-4 text-d2-rune" />;
+        return <GameIcon name="stone" className="w-4 h-4 text-d2-rune" />;
       case 'cube':
-        return <BookOpen className="w-4 h-4 text-d2-magic" />;
+        return <GameIcon name="cube" className="w-4 h-4 text-d2-magic" />;
       case 'area':
-        return <MapPin className="w-4 h-4 text-d2-fire" />;
+        return <GameIcon name="map" className="w-4 h-4 text-d2-fire" />;
       case 'mercenary':
-        return <Users className="w-4 h-4 text-d2-gold" />;
+        return <GameIcon name="swords" className="w-4 h-4 text-d2-gold" />;
       case 'valuation':
-        return <Gem className="w-4 h-4 text-d2-magic" />;
+        return <GameIcon name="gem" className="w-4 h-4 text-d2-magic" />;
       case 'uber':
-        return <Skull className="w-4 h-4 text-d2-fire" />;
+        return <GameIcon name="skull" className="w-4 h-4 text-d2-fire" />;
       case 'skill':
-        return <Sparkles className="w-4 h-4 text-d2-gold" />;
+        return <GameIcon name="tree" className="w-4 h-4 text-d2-gold" />;
       case 'base':
-        return <ShieldAlert className="w-4 h-4 text-d2-socket" />;
+        return <GameIcon name="shield" className="w-4 h-4 text-d2-socket" />;
       case 'quest':
-        return <Compass className="w-4 h-4 text-d2-gold" />;
+        return <GameIcon name="scroll" className="w-4 h-4 text-d2-gold" />;
       case 'prop':
-        return <FlaskConical className="w-4 h-4 text-d2-magic" />;
+        return <GameIcon name="flask" className="w-4 h-4 text-d2-magic" />;
       case 'character':
-        return <Swords className="w-4 h-4 text-d2-fire" />;
+        return <GameIcon name="helm" className="w-4 h-4 text-d2-fire" />;
       case 'monster':
-        return <Ghost className="w-4 h-4 text-d2-fire" />;
+        return <GameIcon name="demon" className="w-4 h-4 text-d2-fire" />;
       case 'affix':
-        return <Tag className="w-4 h-4 text-d2-magic" />;
+        return <GameIcon name="tag" className="w-4 h-4 text-d2-magic" />;
       case 'shrine':
-        return <Landmark className="w-4 h-4 text-d2-gold" />;
+        return <GameIcon name="altar" className="w-4 h-4 text-d2-gold" />;
       case 'exp':
-        return <TrendingUp className="w-4 h-4 text-d2-gold" />;
+        return <GameIcon name="levelup" className="w-4 h-4 text-d2-gold" />;
     }
   };
 

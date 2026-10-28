@@ -22,6 +22,7 @@ import {
   Lock,
   Unlock
 } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 
 const TC87_IDENTIFIERS = [
   "tyraels_might",
@@ -361,7 +362,7 @@ export const HolyGrailTracker: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-sanctuary-800 pb-6">
         <div>
           <div className="flex items-center gap-2 text-d2-gold text-xs font-mono tracking-widest uppercase">
-            <Trophy className="w-4 h-4 text-d2-gold animate-pulse" />
+            <GameIcon name="grail" className="w-4 h-4 text-d2-gold animate-pulse" />
             Diablo II: Resurrected Holy Grail Checklist
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">

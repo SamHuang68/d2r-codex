@@ -7,7 +7,6 @@ import { useLanguage } from '../../context/LanguageContext';
 import { getMercenaryVisual } from '../../utils/mercenaryImages';
 import { ItemIcon } from '../common/ItemIcon';
 import { 
-  Users, 
   ShieldCheck, 
   Sparkles, 
   Sword, 
@@ -19,6 +18,7 @@ import {
   MapPin,
   Shield
 } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 
 export interface MercenaryGuideProps {
   onNavigateItem?: (itemName: string) => void;
@@ -88,7 +88,7 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
       <div className="border-b border-sanctuary-800 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-d2-fire text-xs font-mono tracking-widest uppercase">
-            <Users className="w-4 h-4 text-d2-fire animate-pulse" />
+            <GameIcon name="swords" className="w-4 h-4 text-d2-fire animate-pulse" />
             Mercenaries Compendium & Meta Builds
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">

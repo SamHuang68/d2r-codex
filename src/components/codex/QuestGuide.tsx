@@ -5,7 +5,6 @@ import { actZh } from '../../utils/actLabel';
 import { useLanguage } from '../../context/LanguageContext';
 import { getQuestVisual, getWorldEventVisual } from '../../utils/questImages';
 import { 
-  Compass, 
   MapPin, 
   Sparkles, 
   Award, 
@@ -18,6 +17,7 @@ import {
   BookOpen,
   Flame
 } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 
 export const QuestGuide: React.FC = () => {
   const { isEn } = useLanguage();
@@ -64,7 +64,7 @@ export const QuestGuide: React.FC = () => {
       <div className="border-b border-sanctuary-800 pb-6 flex flex-col lg:flex-row lg:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-d2-gold text-xs font-mono tracking-widest uppercase">
-            <Compass className="w-4 h-4 text-d2-gold animate-pulse" />
+            <GameIcon name="scroll" className="w-4 h-4 text-d2-gold animate-pulse" />
             Complete Questline & World Events Almanac
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">

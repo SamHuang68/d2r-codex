@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Ghost, MapPin, Search, ShieldOff, Flame } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 import { PageHeader } from '../common/PageHeader';
 import { useLanguage } from '../../context/LanguageContext';
 import { getMonsterImage, MAJOR_BOSS_SPOTLIGHT, type BossSpotlightItem } from '../../utils/monsterImages';
@@ -287,7 +288,7 @@ const MonstersTab: React.FC<{ initialQuery?: string }> = ({ initialQuery }) => {
       <div className="bg-sanctuary-900/60 p-4 rounded-2xl border border-sanctuary-800 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-bold text-d2-unique uppercase tracking-wider">
-            <Flame className="w-4 h-4 text-d2-fire animate-pulse" />
+            <GameIcon name="demon" className="w-4 h-4 text-d2-fire animate-pulse" />
             <span>{isEn ? 'Act Bosses & Prime Evils Spotlight' : '章節核心首領與終極魔王速查'}</span>
           </div>
           <span className="text-[11px] text-sanctuary-500 font-mono">
