@@ -13,6 +13,7 @@ import {
   Swords
 } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
+import { announceAct } from '../../utils/actMusicBus';
 
 /**
  * 五大章節原版地理環境設定
@@ -297,7 +298,8 @@ const SUPER_FARMING_AREAS: SuperFarmingArea[] = [
 
 export const AreaGuide: React.FC = () => {
   const { t, isEn } = useLanguage();
-  const [selectedAct, setSelectedAct] = useState<number | 'all'>('all');
+  const [selectedAct, setSelectedActRaw] = useState<number | 'all'>('all');
+  const setSelectedAct = (a: number | 'all') => { setSelectedActRaw(a); if (typeof a === 'number') announceAct(a); };
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [onlyAlvl85, setOnlyAlvl85] = useState<boolean>(false);
   const [activeSubTab, setActiveSubTab] = useState<'areas' | 'terror_zone'>('areas');
