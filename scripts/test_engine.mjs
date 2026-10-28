@@ -1924,3 +1924,10 @@ console.log('【傭兵與職業／流派搭配矩陣 (Mercenary Matrix & Preset 
     assert.equal(new Set(OLD.map(([o]) => o)).size, OLD.length);
   });
 }
+{
+  t('野蠻人頭盔說明的技能要和遊戲資料一致：亞瑞特的面容 +2 野蠻人技能與 +2 技能樹，海拉柏德的國度 +1~2 戰鬥命令／戰鬥指揮', () => {
+    const u = rd('uniques'); const m = (n) => u.find((x) => x.nameEn === n).mods;
+    assert.ok(m("Arreat's Face").some((x) => x.code === 'bar' && x.min === 2) && m("Arreat's Face").some((x) => x.code === 'skilltab' && x.min === 2));
+    for (const sk of ['Battle Orders', 'Battle Command']) assert.ok(m("Halaberd's Reign").some((x) => x.code === 'skill' && x.par === sk && x.min === 1 && x.max === 2));
+  });
+}
