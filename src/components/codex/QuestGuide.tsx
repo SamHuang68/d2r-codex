@@ -18,10 +18,12 @@ import {
   Flame
 } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
+import { announceAct } from '../../utils/actMusicBus';
 
 export const QuestGuide: React.FC = () => {
   const { isEn } = useLanguage();
-  const [selectedAct, setSelectedAct] = useState<number | 'events'>(1);
+  const [selectedAct, setSelectedActRaw] = useState<number | 'events'>(1);
+  const setSelectedAct = (a: number | 'events') => { setSelectedActRaw(a); if (typeof a === 'number') announceAct(a); };
   const [filterPermanentOnly, setFilterPermanentOnly] = useState<boolean>(false);
   const [filterMandatoryOnly, setFilterMandatoryOnly] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");

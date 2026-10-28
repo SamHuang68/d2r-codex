@@ -3,18 +3,19 @@ import { ExternalLink, Music, Volume2 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { AMBIENT_THEMES } from '../../utils/ambientThemes';
 import type { AmbientPlayer } from '../../utils/ambientPlayer';
+import { ACT_EVENT } from '../../utils/actMusicBus';
 
 const KEY = 'd2r_music';
 const STEAM_OST = 'https://store.steampowered.com/app/4523200';
 
-interface Saved { act: number; vol: number }
+interface Saved { act: number; vol: number; auto: boolean }
 
 const loadSaved = (): Saved => {
   try {
     const j = JSON.parse(window.localStorage.getItem(KEY) ?? 'null') as Partial<Saved> | null;
     const act = Number(j?.act); const vol = Number(j?.vol);
-    return { act: act >= 1 && act <= 5 ? act : 1, vol: vol >= 0 && vol <= 1 ? vol : 0.35 };
-  } catch { return { act: 1, vol: 0.35 }; }
+    return { act: act >= 1 && act <= 5 ? act : 1, vol: vol >= 0 && vol <= 1 ? vol : 0.35, auto: j?.auto === true };
+  } catch { return { act: 1, vol: 0.35, auto: false }; }
 };
 
 /** 氛圍音樂開關與選單：預設關閉、不自動播放；按下開關才載入合成引擎。記住上次選的章節與音量。 */
@@ -23,7 +24,9 @@ export const MusicControl: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const [on, setOn] = React.useState(false);
   const [error, setError] = React.useState(false);
-  const [{ act, vol }, setSaved] = React.useState<Saved>(loadSaved);
+  const [{ act, vol, auto }, setSaved] = React.useState<Saved>(loadSaved);
+  const live = React.useRef({ act, vol, auto, on });
+  live.current = { act, vol, auto, on };
   const playerRef = React.useRef<AmbientPlayer | null>(null);
   const boxRef = React.useRef<HTMLDivElement>(null);
 
@@ -41,6 +44,20 @@ export const MusicControl: React.FC = () => {
   };
 
   const stop = () => { playerRef.current?.stop(); playerRef.current = null; setOn(false); };
+
+  // 場景／任務頁選了某一章：開了「依章節自動切換」而且音樂正在播，就跟著換
+  React.useEffect(() => {
+    const onAct = (e: Event) => {
+      const a = Number((e as CustomEvent<number>).detail);
+      const cur = live.current;
+      if (!cur.auto || !cur.on || !(a >= 1 && a <= 5) || a === cur.act) return;
+      save({ act: a, vol: cur.vol, auto: cur.auto });
+      void play(a, cur.vol);
+    };
+    window.addEventListener(ACT_EVENT, onAct);
+    return () => window.removeEventListener(ACT_EVENT, onAct);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 離開頁面時停止；分頁被切到背景時暫停，回來再繼續
   React.useEffect(() => {
@@ -94,7 +111,7 @@ export const MusicControl: React.FC = () => {
                 type="button"
                 role="radio"
                 aria-checked={act === th.act}
-                onClick={() => { save({ act: th.act, vol }); if (on) void play(th.act, vol); }}
+                onClick={() => { save({ act: th.act, vol, auto }); if (on) void play(th.act, vol); }}
                 className={`w-full text-left px-2.5 py-1.5 rounded-lg border transition-colors ${act === th.act ? 'border-d2-unique/60 bg-d2-unique/10 text-d2-unique' : 'border-sanctuary-800 hover:border-sanctuary-600 text-sanctuary-300'}`}
               >
                 {t(th.zh, th.en)}
@@ -106,9 +123,13 @@ export const MusicControl: React.FC = () => {
             <input
               type="range" min={0} max={1} step={0.05} value={vol}
               aria-label={t('音量', 'Volume')}
-              onChange={(e) => { const v = Number(e.target.value); save({ act, vol: v }); playerRef.current?.setVolume(v); }}
+              onChange={(e) => { const v = Number(e.target.value); save({ act, vol: v, auto }); playerRef.current?.setVolume(v); }}
               className="w-full accent-amber-500"
             />
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" checked={auto} onChange={(e) => save({ act, vol, auto: e.target.checked })} className="accent-amber-500" />
+            <span>{t('瀏覽場景或任務時，自動切換到該章的音樂', 'Follow the act you browse in Areas and Quests')}</span>
           </label>
           {error && <p role="alert" className="text-red-400">{t('這個瀏覽器無法播放音樂。', 'This browser cannot play audio.')}</p>}
           <p className="text-[11px] leading-relaxed text-sanctuary-400">

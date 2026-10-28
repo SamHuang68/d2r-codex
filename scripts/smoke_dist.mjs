@@ -257,6 +257,23 @@ async function runOnce(base, browser) {
     } catch (e) {
       failures.push(`[桌面] 背景音樂開關無法開啟／關閉：${String(e.message).split('\n')[0]}`);
     }
+    // 音樂「依章節自動切換」：開著自動切換並播放時，到任務頁按第三章，音樂面板的章節要跟著變成第三章
+    try {
+      await page.evaluate(() => { location.hash = '#overview'; });
+      await page.getByRole('button', { name: /^(音樂|Music)$/ }).click();
+      await page.getByRole('checkbox', { name: /自動切換|Follow the act/ }).check();
+      await page.getByRole('switch', { name: /播放背景音樂|Play background music/ }).click();
+      await page.waitForFunction(() => document.querySelector('[role="switch"]')?.getAttribute('aria-checked') === 'true', null, { timeout: 10000 });
+      await page.keyboard.press('Escape');
+      await page.evaluate(() => { location.hash = '#quests'; });
+      await page.getByRole('button', { name: /^第三章/ }).first().click({ timeout: 10000 });
+      await page.getByRole('button', { name: /^(音樂|Music)$/ }).click();
+      await page.waitForFunction(() => [...document.querySelectorAll('[role="radio"]')].some((r) => r.textContent.includes('第三章') && r.getAttribute('aria-checked') === 'true'), null, { timeout: 5000 });
+      await page.getByRole('switch', { name: /播放背景音樂|Play background music/ }).click();
+      await page.keyboard.press('Escape');
+    } catch (e) {
+      failures.push(`[桌面] 音樂沒有依章節自動切換：${String(e.message).split('\n')[0]}`);
+    }
     // 搜尋面板也是第一次按 Q 才載入的 lazy chunk
     await page.evaluate(() => { location.hash = '#overview'; });
     try {
