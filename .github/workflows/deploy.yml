@@ -36,6 +36,13 @@ jobs:
       - name: Build static site
         run: npm run build
 
+      # 發布前先用瀏覽器載入「剛建好的 dist」跑冒煙（含首頁與各分頁 JS 預算）：壞的建置不要上線。
+      # 直接推到 main 不會經過 PR 的 CI；先前首頁 JS 超過預算的建置就是這樣發布出去、事後才在線上冒煙測試變紅。
+      - name: Smoke test the production build before publishing
+        run: node scripts/smoke_dist.mjs
+        env:
+          SMOKE_CHANNEL: chrome
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
