@@ -56,7 +56,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
     barbarian: {
       title: "野蠻人專用頭盔 (Barbarian Primal Helms)",
       desc: "亞瑞特的面容 (神頭，+2 野蠻人技能、+2 技能樹)；海拉柏德的國度原生帶有 +1~2 戰鬥命令 (BO)、+1~2 戰鬥指揮，兩頂都是野蠻人專用頭盔的極品。",
-      topBases: ["亞瑞特的面容 (Arreat's Face)", "惡魔頭角 (+3戰鬥命令 3孔治癒頭底材)", "殺手護盔"]
+      topBases: ["亞瑞特的面容 (Arreat's Face)", "惡魔角尖 (Demonhorn's Edge)", "殺手護盔"]
     },
     druid: {
       title: "德魯伊專用狼頭與鹿頭 (Druid Pelts)",
