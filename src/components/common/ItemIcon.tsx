@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GearSlot, ItemRarity } from '../../types';
 import { resolveItemImagePath } from '../../utils/itemImageResolver';
 import { MagicArt, artBoxOf } from './MagicArt';
+import { mirrorUrl } from '../../utils/imageMirror';
 
 export interface ItemIconProps {
   /** 收藏等按鈕內使用 span，讓所有 HTML 容器保持 phrasing content。 */
@@ -127,9 +128,16 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
     imageUrl,
   });
 
+  // 先用自家鏡像，鏡像載入失敗才退回原站網址；原站也失敗才顯示佔位
+  const mirrored = mirrorUrl(imageSrc);
+  const [mirrorFailedSrc, setMirrorFailedSrc] = useState('');
+  const displaySrc = mirrored && mirrorFailedSrc !== imageSrc ? mirrored : imageSrc;
+  const handleLoadError = () => {
+    if (mirrored && mirrorFailedSrc !== imageSrc) setMirrorFailedSrc(imageSrc);
+    else setFailedSrc(imageSrc);
+  };
   const imgError = failedSrc === imageSrc;
   const smooth = smoothSrc === imageSrc;
-  const setImgError = (_failed: boolean) => setFailedSrc(imageSrc);
   const setSmooth = (_on: boolean) => setSmoothSrc(imageSrc);
 
   // 只有 /img/items/magic/（暗金、套裝）的圖是 1:2（寬:高）畫布且底部帶有站名浮水印；
@@ -155,17 +163,17 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
 
       {!imgError && imageSrc ? (
         isMagicRemote && artBox ? (
-          <MagicArt src={imageSrc} alt={alt} box={artBox} fill={fill} onError={() => setImgError(true)} />
+          <MagicArt src={displaySrc} alt={alt} box={artBox} fill={fill} onError={handleLoadError} />
         ) : isMagicRemote ? (
           // 沒有預先算好的物品範圍（資料新增的圖）：完整顯示整張 1:2 畫布，底部以模糊遮罩淡化浮水印
           <Container className="block relative z-10 overflow-hidden max-w-full max-h-full" style={{ height: '100%', aspectRatio: '1 / 2' }}>
             <img
-              src={imageSrc}
+              src={displaySrc}
               alt={alt}
               className="w-full h-full object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
               loading="lazy"
               referrerPolicy="no-referrer"
-              onError={() => setImgError(true)}
+              onError={handleLoadError}
             />
             <Container
               aria-hidden
@@ -182,7 +190,7 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
           </Container>
         ) : (
           <img
-            src={imageSrc}
+            src={displaySrc}
             alt={alt}
             referrerPolicy={isRemote ? 'no-referrer' : undefined}
             onLoad={(e) => {
@@ -196,7 +204,7 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
               fill ? 'w-full h-full' : 'h-full w-auto max-w-full'
             }`}
             loading="lazy"
-            onError={() => setImgError(true)}
+            onError={handleLoadError}
           />
         )
       ) : (
