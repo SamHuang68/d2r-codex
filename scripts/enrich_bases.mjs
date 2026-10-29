@@ -126,7 +126,7 @@ const TACTICAL_METADATA = {
     recommendedRunewords: ["剛毅 (Fortitude)", "榮耀之鏈 (Chains of Honor / CoH)", "謎團 (Enigma)"],
     larzukSockets: 4,
     dropRecommendation: "地獄高階 85 場景、牛關、巴爾前五隊。",
-    tacticalNotes: "【精英輕甲防禦天花板】輕甲中防禦力最高的王者，且完全不降低跑步速度與耐力消耗。4 孔做剛毅 (Fortitude 300% 增傷 / 200% 防禦加成) 是自穿物理系與土豪傭兵的最愛。"
+    tacticalNotes: "【菁英輕甲防禦天花板】輕甲中防禦力最高的王者，且完全不降低跑步速度與耐力消耗。4 孔做剛毅 (Fortitude 300% 增傷 / 200% 防禦加成) 是自穿物理系與土豪傭兵的最愛。"
   },
   "dusk_shroud": {
     itemType: "輕型鎧甲",
@@ -203,8 +203,8 @@ const bases = JSON.parse(match[1]);
 // Enrich each base item
 const enriched = bases.map(b => {
   const extra = TACTICAL_METADATA[b.id] || {};
-  const qualityTierMap = { 'normal': '普通', 'exceptional': '進階', 'elite': '精華' };
-  const qTier = extra.qualityTier || qualityTierMap[b.grade] || '普通';
+  const qualityTierMap = { 'normal': '一般', 'exceptional': '進階', 'elite': '菁英' };
+  const qTier = extra.qualityTier || qualityTierMap[b.grade] || '一般';
 
   return {
     id: b.id,

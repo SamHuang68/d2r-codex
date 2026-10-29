@@ -154,17 +154,17 @@ export function leafOfItem(item: { slot: string; baseItemId?: string; baseItem?:
 export type TierKey = 'normal' | 'exceptional' | 'elite';
 export const TIER_ORDER: TierKey[] = ['normal', 'exceptional', 'elite'];
 
-/** 底材品階：普通 → 卓越 → 精英。實際遊玩最終都停在精英，普通與卓越只在前期拓荒用到，所以預設看精英 */
+/** 底材品階：一般 → 進階 → 菁英。實際遊玩最終都停在菁英，一般與進階只在前期拓荒用到，所以預設看菁英 */
 export const TIER_META: { key: TierKey; label: string; en: string; sub: string }[] = [
-  { key: 'normal', label: '普通', en: 'Normal', sub: '拓荒期' },
-  { key: 'exceptional', label: '卓越', en: 'Exceptional', sub: '過渡期' },
-  { key: 'elite', label: '精英', en: 'Elite', sub: '終局' },
+  { key: 'normal', label: '一般', en: 'Normal', sub: '拓荒期' },
+  { key: 'exceptional', label: '進階', en: 'Exceptional', sub: '過渡期' },
+  { key: 'elite', label: '菁英', en: 'Elite', sub: '終局' },
 ];
-export const TIER_LABEL: Record<TierKey, string> = { normal: '普通', exceptional: '卓越', elite: '精英' };
+export const TIER_LABEL: Record<TierKey, string> = { normal: '一般', exceptional: '進階', elite: '菁英' };
 export const TIER_LABEL_EN: Record<TierKey, string> = { normal: 'Normal', exceptional: 'Exceptional', elite: 'Elite' };
 export const DEFAULT_TIER: TierKey = 'elite';
 
-/** 普通／卓越／精英三層，每層底下都是同一套「部位 → 類型」分類 */
+/** 一般／進階／菁英三層，每層底下都是同一套「部位 → 類型」分類 */
 export function tierDefs(prefix: string): TaxDef[] {
   return TIER_META.map((t) => ({
     id: `${prefix}/${t.key}`,
@@ -261,7 +261,7 @@ export function recount(nodes: TreeNode[], counts: Map<string, number>): TreeNod
   });
 }
 
-/** 葉節點相對於目前節點的路徑文字（例如在「精英」底下看到「防具 › 頭部 › 頭盔」），避免每段都重複上層名稱 */
+/** 葉節點相對於目前節點的路徑文字（例如在「菁英」底下看到「防具 › 頭部 › 頭盔」），避免每段都重複上層名稱 */
 export function relPath(tree: TreeNode[], leafId: string, nodeId: string, isEn = false): string {
   const chain = pathTo(tree, leafId);
   const idx = nodeId === 'all' ? 0 : chain.findIndex((n) => n.id === nodeId) + 1;

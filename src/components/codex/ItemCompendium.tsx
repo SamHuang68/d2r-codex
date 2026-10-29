@@ -23,7 +23,7 @@ import {
 
 export interface ItemCompendiumProps {
   initialQuery?: string;
-  /** 一進頁面就停在的樹節點（例如首頁「成套裝備」磚傳 's'）；沒給就停在暗金·精英 */
+  /** 一進頁面就停在的樹節點（例如首頁「成套裝備」磚傳 's'）；沒給就停在暗金·菁英 */
   initialNode?: string;
   onNavigateToBase?: (baseName: string) => void;
   onNavigateToRune?: (runeNumber: number) => void;
@@ -204,7 +204,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     [tree, isEn],
   );
   const node = sel === 'all' ? root : findNode(tree, sel) ?? root;
-  // 目前節點一筆都沒有、但別處有符合（例如在預設的精英底下搜尋套裝名或戒指）時，自動放寬到全部，搜尋才不會死在預設節點
+  // 目前節點一筆都沒有、但別處有符合（例如在預設的菁英底下搜尋套裝名或戒指）時，自動放寬到全部，搜尋才不會死在預設節點
   React.useEffect(() => {
     if (node.id !== 'all' && node.count === 0 && root.count > 0) setSel('all');
   }, [node.id, node.count, root.count]);
