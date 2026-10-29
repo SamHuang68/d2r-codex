@@ -62,6 +62,11 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
         coreSkills: 'Shadow Rift + Hellfire Wave + Chaos Disintegration',
         gearSummary: 'Wizardspike + Enigma + Griffon\'s Eye',
       },
+      {
+        name: 'Eldritch Blade Melee (Eldritch Blade)',
+        coreSkills: 'Eldritch Blow + Psychic Ward + Mirror Blade + Echo Strike',
+        gearSummary: "Grief / Wizardspike + Stormshield + Enigma + Dracul's Grasp",
+      },
     ],
     gearInfo: {
       title: 'Warlock Exclusive Grimoires & Ritual Daggers',
@@ -100,6 +105,11 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
         name: 'Lightning Nova / Energy Shield',
         coreSkills: 'Nova + Static Field + Telekinesis + Energy Shield',
         gearSummary: 'Self-use Infinity Scythe + Griffon\'s Eye + Vipermagi + Stone of Jordan',
+      },
+      {
+        name: 'Meteor & Fireball Sorc (Meteor & Fireball)',
+        coreSkills: 'Meteor + Fire Ball + Fire Mastery + Warmth (maxed)',
+        gearSummary: "Eschuta's Temper / Heart of the Oak + Phoenix / Spirit + Vipermagi + Flame Rift Charm",
       },
     ],
     gearInfo: {
@@ -140,6 +150,11 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
         coreSkills: 'Smite + Fanaticism + Holy Shield',
         gearSummary: 'Grief Phase Blade + Exile Sacred Targe + Fortitude + Dracul\'s Grasp',
       },
+      {
+        name: 'Fist of the Heavens Paladin (FoHdin)',
+        coreSkills: 'Fist of the Heavens + Holy Bolt + Faith (maxed)',
+        gearSummary: 'Heart of the Oak + Herald of Zakarum / Spirit + Enigma + Arachnid Mesh',
+      },
     ],
     gearInfo: {
       title: 'Paladin Exclusive Auric Shields',
@@ -178,6 +193,11 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
         name: 'Physical Bowazon',
         coreSkills: 'Multishot + Strafe + Valkyrie + Critical Strike',
         gearSummary: 'Faith Grand Matron Bow + Fortitude + Windforce + War Traveler',
+      },
+      {
+        name: 'Strafe Bowazon (Strafe Bowazon)',
+        coreSkills: 'Strafe + Penetrate + Pierce + Critical Strike',
+        gearSummary: "Windforce / Faith + Fortitude + Atma's Scarab (damage amplify trigger) + Gore Rider",
       },
     ],
     gearInfo: {
@@ -218,6 +238,11 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
         coreSkills: 'Poison Nova + Poison Dagger + Lower Resist + Corpse Explosion',
         gearSummary: 'Death\'s Web + Bramble + 3-Piece Trang-Oul + Shako',
       },
+      {
+        name: 'Pure Bone Spear Necro (Bone Spear Necro)',
+        coreSkills: 'Bone Spear + Bone Spirit + Teeth + Bone Prison (maxed)',
+        gearSummary: "White Staff / Death's Web + Homunculus / Spirit + Enigma + Shako",
+      },
     ],
     gearInfo: {
       title: 'Necromancer Wands & Shrunken Heads',
@@ -256,6 +281,11 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
         name: 'Berserk Melee Barb',
         coreSkills: 'Berserk (100% Magic Damage) + Battle Orders + Howl',
         gearSummary: 'Grief Phase Blade + Stormshield + Fortitude + Gore Rider',
+      },
+      {
+        name: 'Dual Grief Whirlwind Barbarian (Whirlwind Barb)',
+        coreSkills: 'Whirlwind + Sword Mastery + Battle Command + Iron Skin (maxed)',
+        gearSummary: "Dual Grief + Fortitude / Enigma + Arreat's Face + Gore Rider",
       },
     ],
     gearInfo: {
@@ -296,6 +326,11 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
         coreSkills: 'Werewolf + Lycanthropy + Fury + Heart of Wolverine',
         gearSummary: 'Ribcracker / Grief + Fortitude + Jalal\'s Mane + Gore Rider',
       },
+      {
+        name: 'Fissure Fire Druid (Fire Druid)',
+        coreSkills: 'Fissure + Volcano + Armageddon + Oak Sage (maxed)',
+        gearSummary: 'Heart of the Oak / Raven Frost + Spirit + Enigma + Flame Rift Charm',
+      },
     ],
     gearInfo: {
       title: 'Druid Exclusive Pelts',
@@ -334,6 +369,11 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
         name: 'Trapsin (Lightning Trap)',
         coreSkills: 'Lightning Sentry + Death Sentry + Fire Blast + Burst of Speed',
         gearSummary: 'Dual +3 Trap Greater Talons + Enigma + Griffon\'s Eye + Arachnid Mesh',
+      },
+      {
+        name: 'Blade Fury Assassin (Blade Fury Sin)',
+        coreSkills: 'Blade Fury + Shadow Warrior + Shadow Master + Claw Mastery',
+        gearSummary: "Grief / Grim Reaper + Stormshield + Fortitude + Guillaume's Face",
       },
     ],
     gearInfo: {

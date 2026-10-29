@@ -70,6 +70,7 @@ export const BASE_NAME_EN: Record<string, string> = {
   '無形 神聖鎧甲': 'Eth Sacred Armor',
   '統御者鎧甲': 'Archon Plate',
   '無形 統御者鎧甲': 'Eth Archon Plate',
+  '主母之弓': 'Matriarchal Bow',
 };
 
 export const GEAR_NOTE_EN: Record<string, string> = {
@@ -207,6 +208,8 @@ export const GEAR_NOTE_EN: Record<string, string> = {
   '高額物理平傷 + 忽視目標防禦': 'Massive flat physical damage + Ignores Target Defense',
   '力量靈氣大幅提升全隊輸出': 'Might Aura greatly boosts total party output',
   '雙吸血與高防禦': 'Dual Leech & high defense',
+  '250%額外金幣 + 100%尋寶機率': '250% extra gold + 100% magic find',
+  '20級專注靈氣提升345%傷害': 'Lvl 20 Concentration boosts damage by ~345%',
 };
 
 export const BUILD_I18N: Record<string, BuildI18nEntry> = {

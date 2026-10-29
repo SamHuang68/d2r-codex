@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const baseDir = 'C:/Users/Sam/AI-Workspace/projects/d2r-codex';
+const baseDir = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const compDir = path.join(baseDir, 'src/components');
 
 function findFiles(dir, exts) {
