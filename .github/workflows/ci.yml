@@ -36,6 +36,9 @@ jobs:
       - name: Type check
         run: npm run lint
 
+      - name: Data English coverage
+        run: node scripts/check_data_i18n.mjs
+
       - name: Engine tests
         run: npm run test:engine
 

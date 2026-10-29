@@ -504,7 +504,18 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         )}
       </div>
 
-      {/* 跨裝備特殊屬性篩選列 */}
+      {/* 跨裝備特殊屬性篩選列：預設收合，讓樹狀索引在第一屏；有套用篩選時自動展開 */}
+      <details
+        className="mb-5 group"
+        open={selectedPropertyIds.length > 0 || selectedRarity !== 'all' || selectedSlot !== 'all' || undefined}
+      >
+        <summary className="cursor-pointer select-none rounded-xl border border-sanctuary-800 bg-sanctuary-900/60 px-4 py-2.5 text-sm text-sanctuary-200 hover:border-sanctuary-600">
+          {isEn ? 'Cross-item special property filter' : '跨裝備特殊屬性篩選（永不毀損、全技能、全抗、MF…）'}
+          {(selectedPropertyIds.length > 0 || selectedRarity !== 'all' || selectedSlot !== 'all') && (
+            <span className="ml-2 text-d2-unique">{isEn ? 'active' : '已套用'}</span>
+          )}
+        </summary>
+        <div className="mt-3">
       <CrossPropertyFilterBar
         selectedPropertyIds={selectedPropertyIds}
         onToggleProperty={handleToggleProperty}
@@ -517,6 +528,8 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         propertyCounts={propertyCounts}
         rarityCounts={rarityCounts}
       />
+        </div>
+      </details>
 
       {isCrossPropertyMode ? (
         <div className="space-y-4">
