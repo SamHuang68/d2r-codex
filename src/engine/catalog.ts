@@ -68,7 +68,7 @@ function fromRow(r: Row, kind: Rarity, setName?: string): CatalogEntry | undefin
 function runewordEntries(r: typeof runewords[number]): CatalogEntry[] {
   const rw = r as unknown as { id: string; name: string; nameEn: string; itypes: string[]; etypes: string[]; runes: string[]; mods: Modifier[] };
   const ok = (b: BaseItem) => rw.itypes.some((t) => b.ancestors.includes(t)) && !rw.etypes.some((t) => b.ancestors.includes(t)) && (b.sockets ?? 0) >= rw.runes.length && !!slotOfBase(b);
-  // 預設底材：非職業專屬、非圓環類，精英、需求最低者（容易穿戴）；之後可由 UI 更換。
+  // 預設底材：非職業專屬、非圓環類，菁英、需求最低者（容易穿戴）；之後可由 UI 更換。
   // 圓環類（頭環／寶冠／頭冠／權冠，ancestors 含 circ）只在沒有其他可用底材時才會被選：
   // 它們的需求力量為 0，過去會搶到所有頭盔符文之語的預設底材，圖與數值都不像一般頭盔
   const isCirclet = (b: BaseItem) => b.ancestors.includes('circ');

@@ -1503,18 +1503,18 @@ console.log('【傭兵寶典的資料表數值與手寫敘述】');
   });
 }
 
-console.log('【底材級別用字：遊戲字串的「普通／卓越／精英」】');
+console.log('【底材級別用字：全站統一為「一般／進階／菁英」】');
 {
   const { TIER_ZH, TIER_LABEL, TIER_META, TIER_QUALITY_ZH } = E;
-  const want = ['普通', '卓越', '精英'];
-  t('各處的級別用字一致且等於遊戲字串（ui.json：NormalQuality／ExceptionalQuality／EliteQuality）', () => {
+  const want = ['一般', '進階', '菁英'];
+  t('各處的級別用字一致，都是「一般／進階／菁英」（使用者指定；與遊戲字串 NormalQuality／ExceptionalQuality／EliteQuality 的「普通／卓越／精英」不同）', () => {
     for (const m of [TIER_ZH, TIER_LABEL, TIER_QUALITY_ZH]) assert.deepEqual([m.normal, m.exceptional, m.elite], want);
     assert.deepEqual(TIER_META.map((x) => x.label), want);
   });
-  t('原始碼裡不再出現舊的級別用字「進階」「菁英」（遊戲資料檔除外）', () => {
+  t('原始碼裡不再出現舊的級別用字「卓越」（遊戲資料檔、舊譯名別名檔除外；詞綴「卓越之」是遊戲詞綴名）', () => {
     const hits = [];
-    const walk = (d) => { for (const f of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, f.name); if (f.isDirectory()) { if (p.split(path.sep).join('/').endsWith('src/data/game')) continue; walk(p); } else if (/\.(ts|tsx|json)$/.test(f.name)) { const s = fs.readFileSync(p, 'utf8'); if (/進階|菁英/.test(s)) hits.push(p); } } };
-    walk('src'); assert.deepEqual(hits, [], '請改用遊戲字串的「普通／卓越／精英」');
+    const walk = (d) => { for (const f of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, f.name); if (f.isDirectory()) { if (p.split(path.sep).join('/').endsWith('src/data/game')) continue; walk(p); } else if (/\.(ts|tsx|json)$/.test(f.name)) { const s = fs.readFileSync(p, 'utf8'); if (/卓越/.test(s) && !/termAliases\.ts$/.test(p) && !/data[\\/]codex[\\/]overlay\.json$/.test(p)) hits.push(p); } } };
+    walk('src'); assert.deepEqual(hits, [], '級別用字請用「一般／進階／菁英」');
   });
 }
 
@@ -1606,7 +1606,7 @@ console.log('【方塊配方：手寫文字對照遊戲 cubemain.txt】');
       assert.equal(show(hand), show(gameTokens(game[0])), `${n} 號：${text}`);
     }
   });
-  t('道具頁（props.ts）的升級與打孔配方：卓越→精英的暗金武器用綠寶石、防具用鑽石，材料等於遊戲；骷髏加孔要 3 顆；紅門三處地圖用遊戲名稱', () => {
+  t('道具頁（props.ts）的升級與打孔配方：進階→菁英的暗金武器用綠寶石、防具用鑽石，材料等於遊戲；骷髏加孔要 3 顆；紅門三處地圖用遊戲名稱', () => {
     const gem = (id) => PROPS_GEMS_DATA.find((g) => g.id === id);
     const line = (g, re) => { const l = gem(g).craftingUses.find((x) => re.test(x)); assert.ok(l, `${g} 沒有 ${re}`); return l; };
     assert.equal(show(textTokens(line('gem_perfect_emerald', /暗金武器/))), show(gameTokens(byRow(133, /Exceptional Unique Weapon -> Elite Unique Weapon/))));

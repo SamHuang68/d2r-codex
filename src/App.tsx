@@ -61,7 +61,7 @@ const AppContent: React.FC = () => {
   useEffect(() => { if (isSearchOpen) setSearchLoaded(true); }, [isSearchOpen]);
   const [selectedInitialClass, setSelectedInitialClassState] = useState<string>('魔法使');
   const [targetQuery, setTargetQuery] = useState<string>('');
-  /** 裝備寶典要停在的樹節點（首頁「成套裝備」磚傳 's'、「暗金裝備」磚傳 'u'）；沒有就用預設的暗金·精英 */
+  /** 裝備寶典要停在的樹節點（首頁「成套裝備」磚傳 's'、「暗金裝備」磚傳 'u'）；沒有就用預設的暗金·菁英 */
   const [itemsNode, setItemsNode] = useState<string | undefined>();
   const [targetRuneNumber, setTargetRuneNumber] = useState<number | undefined>();
   const [plannerSubMode, setPlannerSubMode] = useState<'armory' | 'notes'>('armory');
