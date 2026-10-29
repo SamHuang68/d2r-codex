@@ -5,11 +5,11 @@ import { useLanguage } from '../../context/LanguageContext';
 import { getClassImage } from '../../utils/classImages';
 import { 
   Shield, 
-  Swords, 
   Sparkles, 
   Compass,
   Flame 
 } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 
 export interface CharacterGuideProps {
   onNavigateToSkills?: (className: string) => void;
@@ -55,8 +55,8 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
     },
     barbarian: {
       title: "野蠻人專用頭盔 (Barbarian Primal Helms)",
-      desc: "亞瑞特的面容 (神頭)；原生帶有 +3 戰鬥怒吼、+3 戰鬥命令 (BO喊血) 的野蠻人專用頭盔是極品副手與主手。",
-      topBases: ["亞瑞特的面容 (Arreat's Face)", "惡魔頭角 (+3戰鬥命令 3孔治癒頭底材)", "殺手護盔"]
+      desc: "亞瑞特的面容 (神頭，+2 野蠻人技能、+2 技能樹)；海拉柏德的國度原生帶有 +1~2 戰鬥命令 (BO)、+1~2 戰鬥指揮，兩頂都是野蠻人專用頭盔的極品。",
+      topBases: ["亞瑞特的面容 (Arreat's Face)", "惡魔角尖 (Demonhorn's Edge)", "殺手護盔"]
     },
     druid: {
       title: "德魯伊專用狼頭與鹿頭 (Druid Pelts)",
@@ -86,7 +86,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
       <div className="border-b border-sanctuary-800 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-d2-fire text-xs font-mono tracking-widest uppercase">
-            <Swords className="w-4 h-4 text-d2-fire animate-pulse" />
+            <GameIcon name="helm" className="w-4 h-4 text-d2-fire animate-pulse" />
             Character Classes & Mechanics Compendium
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">

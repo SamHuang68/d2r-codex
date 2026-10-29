@@ -3,7 +3,6 @@ import { useLanguage } from '../../context/LanguageContext';
 import { AREA_LEVELS_DATA, TERROR_ZONE_GUIDE } from '../../data/areaLevels';
 import { 
   MapPin, 
-  Flame, 
   Zap, 
   Award, 
   Search, 
@@ -13,6 +12,8 @@ import {
   ChevronRight,
   Swords
 } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
+import { announceAct } from '../../utils/actMusicBus';
 
 /**
  * 五大章節原版地理環境設定
@@ -297,7 +298,8 @@ const SUPER_FARMING_AREAS: SuperFarmingArea[] = [
 
 export const AreaGuide: React.FC = () => {
   const { t, isEn } = useLanguage();
-  const [selectedAct, setSelectedAct] = useState<number | 'all'>('all');
+  const [selectedAct, setSelectedActRaw] = useState<number | 'all'>('all');
+  const setSelectedAct = (a: number | 'all') => { setSelectedActRaw(a); if (typeof a === 'number') announceAct(a); };
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [onlyAlvl85, setOnlyAlvl85] = useState<boolean>(false);
   const [activeSubTab, setActiveSubTab] = useState<'areas' | 'terror_zone'>('areas');
@@ -334,7 +336,7 @@ export const AreaGuide: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-sanctuary-800 pb-6">
         <div>
           <div className="flex items-center gap-2 text-d2-fire text-xs font-mono tracking-widest uppercase">
-            <Flame className="w-4 h-4 text-d2-fire animate-pulse" />
+            <GameIcon name="map" className="w-4 h-4 text-d2-fire animate-pulse" />
             Endgame Farming & Terror Zones
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">

@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles, buildSkillSummary } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries'; export { TIER_LABEL, TIER_META } from './src/utils/equipTaxonomy'; export { TIER_QUALITY_ZH } from './src/data/codex/common'; export { searchCodex } from './src/utils/searchCodex'; export { searchOmni } from './src/utils/search'; export { LEGACY_TERM_ALIASES, expandLegacyQuery } from './src/utils/termAliases'; export { actZh } from './src/utils/actLabel'; export { CUBE_RECIPES_DATA } from './src/data/cubeRecipes'; export { GEMS_DATA as PROPS_GEMS_DATA, UBER_KEYS_ORGANS_DATA } from './src/data/props'; export * from './src/utils/propertyFilter'; export * from './src/data/mercenaryMatrix'; export * from './src/utils/mercPresetBridge';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles, buildSkillSummary } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries'; export { TIER_LABEL, TIER_META } from './src/utils/equipTaxonomy'; export { TIER_QUALITY_ZH } from './src/data/codex/common'; export { searchCodex } from './src/utils/searchCodex'; export { searchOmni } from './src/utils/search'; export { LEGACY_TERM_ALIASES, OLD_TRANSLATION_ALIASES, expandLegacyQuery } from './src/utils/termAliases'; export { actZh } from './src/utils/actLabel'; export { AMBIENT_THEMES, noteFreq, themeOfAct } from './src/utils/ambientThemes'; export { GAME_ICON_SHAPES } from './src/components/common/gameIconPaths'; export { CUBE_RECIPES_DATA } from './src/data/cubeRecipes'; export { GEMS_DATA as PROPS_GEMS_DATA, UBER_KEYS_ORGANS_DATA } from './src/data/props'; export * from './src/utils/propertyFilter'; export * from './src/data/mercenaryMatrix'; export * from './src/utils/mercPresetBridge';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -1927,6 +1927,51 @@ console.log('【傭兵與職業／流派搭配矩陣 (Mercenary Matrix & Preset 
       assert.ok(draft.merc.equipped.body, '傭兵應裝備護甲 (背信)');
     } finally {
       globalThis.window = oldWin;
+    }
+  });
+}
+{
+  const { OLD_TRANSLATION_ALIASES: OLD, expandLegacyQuery, searchOmni } = E;
+  t('舊版繁中譯名（底材、技能）的別名：每一條展開後都含目標寫法，且用目標寫法搜得到結果；原查詢的結果不變、排在前面', () => {
+    assert.ok(OLD.length > 250);
+    for (const [o, n] of OLD) { const q = expandLegacyQuery(o); assert.equal(q[0], o); assert.ok(q.length === 2 && q[1].includes(n), `${o} → ${q[1]}`); assert.ok(searchOmni(q[1]).length > 0, `${n} 搜不到`); }
+    assert.deepEqual(expandLegacyQuery('高級頭盔'), ['高級頭盔', '全罩盔']);
+    assert.deepEqual(expandLegacyQuery('謎團'), ['謎團']);
+    assert.equal(new Set(OLD.map(([o]) => o)).size, OLD.length);
+  });
+}
+{
+  t('野蠻人頭盔說明的技能要和遊戲資料一致：亞瑞特的面容 +2 野蠻人技能與 +2 技能樹，海拉柏德的國度 +1~2 戰鬥命令／戰鬥指揮', () => {
+    const u = rd('uniques'); const m = (n) => u.find((x) => x.nameEn === n).mods;
+    assert.ok(m("Arreat's Face").some((x) => x.code === 'bar' && x.min === 2) && m("Arreat's Face").some((x) => x.code === 'skilltab' && x.min === 2));
+    for (const sk of ['Battle Orders', 'Battle Command']) assert.ok(m("Halaberd's Reign").some((x) => x.code === 'skill' && x.par === sk && x.min === 1 && x.max === 2));
+  });
+}
+{
+  const { AMBIENT_THEMES: TH, noteFreq, themeOfAct } = E;
+  t('氛圍音樂：五章各有一組參數（音階與和弦在範圍內、和弦最多三音、間隔與音量合理）；A4＝440Hz', () => {
+    assert.deepEqual(TH.map((x) => x.act), [1, 2, 3, 4, 5]);
+    assert.equal(noteFreq(69), 440); assert.ok(Math.abs(noteFreq(81) - 880) < 1e-9);
+    for (const x of TH) {
+      assert.ok(x.scale[0] === 0 && x.scale.every((s, i) => i === 0 || s > x.scale[i - 1]) && x.scale.at(-1) < 12, `第${x.act}章音階`);
+      assert.ok(x.chords.length >= 2 && x.chords.every((c) => c.length >= 1 && c.length <= 3), `第${x.act}章和弦`);
+      assert.ok(x.pluck.every[0] > 0 && x.pluck.every[0] < x.pluck.every[1] && x.pluck.decay > 0 && x.pluck.gain > 0 && x.pluck.gain <= 0.2, `第${x.act}章點綴音`);
+      assert.ok(x.padGain > 0 && x.padGain <= 0.1 && x.noise.gain > 0 && x.noise.gain <= 0.1 && noteFreq(x.root) > 30 && noteFreq(x.root) < 400, `第${x.act}章音量與根音`);
+      assert.ok(x.zh.includes('第') && x.en.startsWith('Act'));
+    }
+    assert.equal(themeOfAct(3).act, 3); assert.equal(themeOfAct(99).act, 1);
+  });
+}
+{
+  const { GAME_ICON_SHAPES: SH } = E;
+  t('導覽列圖示：21 個模組各用一個不同的原創圖示，名稱都存在、路徑是合法的 SVG 指令且座標在 24×24 格內', () => {
+    const src = fs.readFileSync('src/components/layout/navConfig.tsx', 'utf8');
+    const names = [...src.matchAll(/<GameIcon name="([a-z]+)"/g)].map((m) => m[1]);
+    assert.equal(names.length, 21); assert.equal(new Set(names).size, 21, '有兩個模組用了同一個圖示');
+    for (const n of names) assert.ok(SH[n], `沒有圖示 ${n}`);
+    for (const [n, sh] of Object.entries(SH)) for (const d of [...sh.stroke, ...(sh.fill ?? [])]) {
+      assert.match(d, /^[MmLlHhVvCcSsQqTtAaZz0-9 ,.-]+$/, `${n} 路徑含不合法字元`);
+      for (const num of d.match(/-?[0-9]+(?:[.][0-9]+)?/g)) assert.ok(Math.abs(Number(num)) <= 24, `${n} 數值超出格子：${num}`);
     }
   });
 }

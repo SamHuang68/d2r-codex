@@ -234,6 +234,46 @@ async function runOnce(base, browser) {
       await ctx2.close();
     }
 
+    // 網站圖標、分享圖與安裝資訊都要真的存在：缺檔時 SPA 會回後備首頁（text/html）而不是 404，所以也檢查內容類型
+    for (const f of ['icon.svg', 'icon-192.png', 'apple-touch-icon.png', 'manifest.webmanifest', 'og.png']) {
+      const r = await page.request.get(new URL(f, base).href);
+      const ct = r.headers()['content-type'] ?? '';
+      if (!r.ok() || ct.includes('text/html')) failures.push(`[桌面] 網站圖標或分享圖缺檔：${f}（HTTP ${r.status()}，${ct}）`);
+    }
+    // 背景音樂：預設關閉；打開面板、按開關後引擎才載入並開始播放（aria-checked），再按一次關掉；不能有頁面錯誤
+    try {
+      await page.evaluate(() => { location.hash = '#overview'; });
+      const musicBtn = page.getByRole('button', { name: /^(音樂|Music)$/ });
+      await musicBtn.waitFor({ state: 'visible', timeout: 10000 });
+      await musicBtn.click();
+      const sw = page.getByRole('switch', { name: /播放背景音樂|Play background music/ });
+      await sw.waitFor({ state: 'visible', timeout: 5000 });
+      if ((await sw.getAttribute('aria-checked')) !== 'false') failures.push('[桌面] 背景音樂預設應該是關閉');
+      await sw.click();
+      await page.waitForFunction(() => document.querySelector('[role="switch"]')?.getAttribute('aria-checked') === 'true', null, { timeout: 10000 });
+      await sw.click();
+      await page.waitForFunction(() => document.querySelector('[role="switch"]')?.getAttribute('aria-checked') === 'false', null, { timeout: 5000 });
+      await page.keyboard.press('Escape');
+    } catch (e) {
+      failures.push(`[桌面] 背景音樂開關無法開啟／關閉：${String(e.message).split('\n')[0]}`);
+    }
+    // 音樂「依章節自動切換」：開著自動切換並播放時，到任務頁按第三章，音樂面板的章節要跟著變成第三章
+    try {
+      await page.evaluate(() => { location.hash = '#overview'; });
+      await page.getByRole('button', { name: /^(音樂|Music)$/ }).click();
+      await page.getByRole('checkbox', { name: /自動切換|Follow the act/ }).check();
+      await page.getByRole('switch', { name: /播放背景音樂|Play background music/ }).click();
+      await page.waitForFunction(() => document.querySelector('[role="switch"]')?.getAttribute('aria-checked') === 'true', null, { timeout: 10000 });
+      await page.keyboard.press('Escape');
+      await page.evaluate(() => { location.hash = '#quests'; });
+      await page.getByRole('button', { name: /^第三章/ }).first().click({ timeout: 10000 });
+      await page.getByRole('button', { name: /^(音樂|Music)$/ }).click();
+      await page.waitForFunction(() => [...document.querySelectorAll('[role="radio"]')].some((r) => r.textContent.includes('第三章') && r.getAttribute('aria-checked') === 'true'), null, { timeout: 5000 });
+      await page.getByRole('switch', { name: /播放背景音樂|Play background music/ }).click();
+      await page.keyboard.press('Escape');
+    } catch (e) {
+      failures.push(`[桌面] 音樂沒有依章節自動切換：${String(e.message).split('\n')[0]}`);
+    }
     // 搜尋面板也是第一次按 Q 才載入的 lazy chunk
     await page.evaluate(() => { location.hash = '#overview'; });
     try {
@@ -309,6 +349,10 @@ async function runOnce(base, browser) {
       await sleep(500);
       const m = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, w: window.innerWidth }));
       if (m.sw > m.w + 1) failures.push(`[手機] ${hash || '首頁'} 有橫向捲動：scrollWidth ${m.sw} > ${m.w}`);
+      // 頂部列的按鈕不能被擠出畫面。手機模式下內容太寬時瀏覽器會把版面視窗撐寬（innerWidth 跟著變大），
+      // 上面用 innerWidth 的檢查就看不出來；要和使用者實際看到的視覺視窗（visualViewport，390）比
+      const clipped = await page.evaluate(() => [...document.querySelectorAll('header button, header a')].filter((el) => { const r = el.getBoundingClientRect(); const vw = window.visualViewport ? window.visualViewport.width : window.innerWidth; return r.width > 0 && (r.right > vw + 0.5 || r.left < -0.5); }).map((el) => (el.getAttribute('aria-label') || el.textContent || el.tagName).trim().slice(0, 20)));
+      if (clipped.length) failures.push(`[手機] ${hash || '首頁'} 頂部列有按鈕被擠出畫面：${clipped.join('、')}`);
       if (hash === '#planner') {
         try {
           await page.getByRole('tab', { name: '傭兵' }).click(); await sleep(500);

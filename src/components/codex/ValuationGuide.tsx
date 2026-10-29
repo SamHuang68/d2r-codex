@@ -4,7 +4,6 @@ import { useLanguage } from '../../context/LanguageContext';
 import { SectionHead } from '../common/TreeIndex';
 import { ItemIcon } from '../common/ItemIcon';
 import { 
-  Gem, 
   Sparkles, 
   Coins, 
   CheckCircle2, 
@@ -16,6 +15,7 @@ import {
   ShieldCheck,
   HelpCircle
 } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 
 /** 天價神物的部位分類（依序分段顯示） */
 const VAL_CATS: { id: string; label: string; labelEn: string }[] = [
@@ -202,7 +202,7 @@ export const ValuationGuide: React.FC = () => {
       <div className="border-b border-sanctuary-800 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-d2-fire text-xs font-mono tracking-widest uppercase">
-            <Gem className="w-4 h-4 text-d2-fire animate-pulse" />
+            <GameIcon name="gem" className="w-4 h-4 text-d2-fire animate-pulse" />
             Trophy Item Price & Affix Valuation Guide
           </div>
           <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
