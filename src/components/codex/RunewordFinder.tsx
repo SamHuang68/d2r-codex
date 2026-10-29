@@ -5,7 +5,7 @@ import { ItemIcon } from '../common/ItemIcon';
 import { BASE_ITEMS_DATA } from '../../data/bases';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
-import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, crumbsOf, useDirectory } from '../common/TreeIndex';
+import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, MoreButton, crumbsOf, useDirectory, useDetailBudget } from '../common/TreeIndex';
 import { TaxDef, TreeNode, buildTree, recount, findNode } from '../../utils/equipTaxonomy';
 import { Search, Sparkles, Filter, X, ArrowRight } from 'lucide-react';
 import { RunewordShowcase } from './RunewordShowcase';
@@ -267,6 +267,10 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
     .filter((rw) => (!selGroup || selGroup.match(rw.allowedBases)) && (!selSockets || rw.sockets === Number(selSockets)))
     .sort(byLevel), [filteredRunewords, selGroup, selSockets]);
   const dirMode = dir.isDir(isLeaf, here.length);
+  // 詳細模式分批畫卡（每批 48 張），換節點或篩選就回到第一批
+  const budget = useDetailBudget(`${sel}|${searchQuery}|${selectedSockets}|${selectedBase}|${selectedTag}|${onlyLadder}|${onlyDLC}|${dirMode}`);
+  let left = dirMode ? Infinity : budget.n;
+  let shownN = 0;
   const go = (id: string) => setSel(id);
   const crumbs = crumbsOf(isEn ? 'All Runewords' : '全部符文之語', tree, sel, isEn);
 
@@ -630,12 +634,19 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               )}
             </div>
           ) : (
-            sections.map(({ n, rows }) => (
+            <>
+            {sections.map(({ n, rows: allRows }) => {
+              const take = Math.min(allRows.length, left);
+              if (take <= 0) return null;
+              left -= take; shownN += take;
+              const rows = allRows.slice(0, take);
+              return (
               <section key={n} id={`sec-${selGroupId || 'all'}-${n}`} className="mb-9 scroll-mt-20">
                 <SectionHead
                   title={isEn ? `${n} Sockets` : `${n} 孔`}
                   sub={selGroup ? (isEn ? selGroup.labelEn : selGroup.label) : undefined}
-                  count={rows.length}
+                  count={allRows.length}
+                  shown={rows.length < allRows.length ? rows.length : undefined}
                   tone="rune"
                   onOpen={selGroup && !isLeaf ? () => go(`${selGroup.id}/${n}`) : undefined}
                   openLabel={isEn ? `Enter "${selGroup?.labelEn ?? selGroup?.label ?? ''} ${n} Sockets"` : `進入「${selGroup?.label ?? ''} ${n} 孔」`}
@@ -646,7 +657,15 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">{rows.map(runewordCard)}</div>
                 )}
               </section>
-            ))
+              );
+            })}
+            {!dirMode && shownN < here.length && (
+              <MoreButton
+                onClick={budget.more}
+                label={isEn ? `Show more (${shownN} / ${here.length} shown)` : `顯示更多（已顯示 ${shownN} / ${here.length} 組）`}
+              />
+            )}
+            </>
           )}
         </div>
       </TreeIndex>

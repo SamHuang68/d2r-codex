@@ -5,7 +5,7 @@ import { ItemIcon } from '../common/ItemIcon';
 import { Sword, Search, X, ArrowUpDown, RotateCcw } from 'lucide-react';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
-import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, crumbsOf, useDirectory } from '../common/TreeIndex';
+import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, MoreButton, crumbsOf, useDirectory, useDetailBudget } from '../common/TreeIndex';
 import type { SetItemCollection, UniqueItemData, GearSlot } from '../../types';
 import { CLASS_ZH_TO_EN } from '../../engine/slots';
 import { TIER_LABEL, DEFAULT_TIER, TreeNode, buildTree, recount, findNode, leavesOf, inNode, relPath } from '../../utils/equipTaxonomy';
@@ -217,6 +217,10 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   const isLeaf = !node.children;
   const total = uHere.length + sHere.length;
   const dirMode = dir.isDir(isLeaf, total);
+  // 詳細模式分批畫卡：一組套裝的卡比單件暗金大很多，算 3 份額度
+  const budget = useDetailBudget(`${sel}|${q}|${dirMode}`);
+  let left = dirMode ? Infinity : budget.n;
+  let shownN = 0;
 
   // 分類磚的代表圖
   const repIcon = (n: TreeNode): CategoryTile['icon'] => {
@@ -385,8 +389,12 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
 
   /** 一個葉節點的暗金段落：目錄模式只列名稱小圖；詳細模式列完整卡片（咒符再依尺寸分段） */
   const uniqueSection = (leaf: TreeNode) => {
-    const rows = uHere.filter((e) => e.leaf === leaf.id);
-    if (rows.length === 0) return null;
+    const allRows = uHere.filter((e) => e.leaf === leaf.id);
+    if (allRows.length === 0) return null;
+    const take = Math.min(allRows.length, left);
+    if (take <= 0) return null;
+    left -= take; shownN += take;
+    const rows = allRows.slice(0, take);
     const secs: { key: string; label: string; rows: UEntry[] }[] = [];
     for (const e of rows) {
       let sec = secs.find((x) => x.key === e.sec);
@@ -402,7 +410,8 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         <SectionHead
           title={isEn ? (leaf.en || leaf.label) : (isLeaf ? leaf.label : labelPath(leaf.id))}
           sub={isEn ? undefined : leaf.en}
-          count={rows.length}
+          count={allRows.length}
+          shown={rows.length < allRows.length ? rows.length : undefined}
           tone="unique"
           onOpen={isLeaf ? undefined : () => go(leaf.id)}
           openLabel={isEn ? `Enter "${leaf.en || leaf.label}"` : `進入「${leaf.label}」`}
@@ -435,13 +444,18 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   };
 
   const setSection = (leaf: TreeNode) => {
-    const rows = sHere.filter((e) => e.leaf === leaf.id);
-    if (rows.length === 0) return null;
+    const allRows = sHere.filter((e) => e.leaf === leaf.id);
+    if (allRows.length === 0) return null;
+    const take = dirMode ? allRows.length : Math.min(allRows.length, Math.ceil(left / 3));
+    if (take <= 0) return null;
+    left -= take * 3; shownN += take;
+    const rows = allRows.slice(0, take);
     return (
       <section key={leaf.id} id={`sec-${leaf.id}`} className="mb-9 scroll-mt-20">
         <SectionHead
           title={isEn ? (leaf.en || leaf.label) : (isLeaf ? leaf.label : labelPath(leaf.id))}
-          count={rows.length}
+          count={allRows.length}
+          shown={rows.length < allRows.length ? rows.length : undefined}
           tone="set"
           onOpen={isLeaf ? undefined : () => go(leaf.id)}
           openLabel={isEn ? `Enter "${leaf.en || leaf.label}"` : `進入「${leaf.label}」`}
@@ -642,6 +656,12 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
           ) : (
             <div>
               {leaves.map((l) => (l.id.startsWith('s/') ? setSection(l) : uniqueSection(l)))}
+              {!dirMode && shownN < total && (
+                <MoreButton
+                  onClick={budget.more}
+                  label={isEn ? `Show more (${shownN} / ${total} shown)` : `顯示更多（已顯示 ${shownN} / ${total} 件）`}
+                />
+              )}
             </div>
           )}
         </div>

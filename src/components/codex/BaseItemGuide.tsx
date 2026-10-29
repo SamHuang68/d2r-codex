@@ -4,7 +4,7 @@ import { ItemIcon } from '../common/ItemIcon';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
 import { useLanguage } from '../../context/LanguageContext';
-import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, crumbsOf, useDirectory } from '../common/TreeIndex';
+import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, MoreButton, crumbsOf, useDirectory, useDetailBudget } from '../common/TreeIndex';
 import {
   TaxDef, TierKey, TIER_LABEL, TIER_LABEL_EN, DEFAULT_TIER, TreeNode,
   buildTree, recount, findNode, leavesOf, tierDefs, inNode, relPath, leafOfBase, resolveGameBase, tierOfBase,
@@ -115,6 +115,10 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
   const leaves = useMemo(() => leavesOf(node).filter((l) => l.count > 0), [node]);
   const isLeaf = !node.children;
   const dirMode = dir.isDir(isLeaf, here.length);
+  // 詳細模式分批畫卡（每批 48 張），換節點或篩選就回到第一批
+  const budget = useDetailBudget(`${sel}|${q}|${hand}|${filterEthOnly}|${filterSuperiorOnly}|${dirMode}`);
+  let left = dirMode ? Infinity : budget.n;
+  let shownN = 0;
   const go = (id: string) => setSel(id);
 
   const handleScrollToBase = (baseId: string) => {
@@ -292,14 +296,19 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
   );
 
   const section = (leaf: TreeNode) => {
-    const rows = here.filter((e) => e.leaf === leaf.id);
-    if (rows.length === 0) return null;
+    const allRows = here.filter((e) => e.leaf === leaf.id);
+    if (allRows.length === 0) return null;
+    const take = Math.min(allRows.length, left);
+    if (take <= 0) return null;
+    left -= take; shownN += take;
+    const rows = allRows.slice(0, take);
     return (
       <section key={leaf.id} id={`sec-${leaf.id}`} className="mb-9 scroll-mt-20">
         <SectionHead
           title={isEn ? (leaf.en || leaf.label) : (isLeaf ? leaf.label : labelPath(leaf.id))}
           sub={isEn ? undefined : leaf.en}
-          count={rows.length}
+          count={allRows.length}
+          shown={rows.length < allRows.length ? rows.length : undefined}
           tone="socket"
           onOpen={isLeaf ? undefined : () => go(leaf.id)}
           openLabel={isEn ? `Enter "${leaf.en || leaf.label}"` : `進入「${leaf.label}」`}
@@ -437,7 +446,15 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
               )}
             </div>
           ) : (
-            <div>{leaves.map(section)}</div>
+            <div>
+              {leaves.map(section)}
+              {!dirMode && shownN < here.length && (
+                <MoreButton
+                  onClick={budget.more}
+                  label={isEn ? `Show more (${shownN} / ${here.length} shown)` : `顯示更多（已顯示 ${shownN} / ${here.length} 款）`}
+                />
+              )}
+            </div>
           )}
         </div>
       </TreeIndex>

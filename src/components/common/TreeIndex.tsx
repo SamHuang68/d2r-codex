@@ -382,6 +382,27 @@ export function useDirectory(sel: string, resetKey = '') {
   };
 }
 
+/** 詳細模式一次最多畫幾張卡；再多的用「顯示更多」分批加 */
+export const DETAIL_BATCH = 48;
+
+/**
+ * 詳細模式的分批額度：節點、搜尋或篩選條件一換就回到第一批（在 render 當下重算，不經過 effect），
+ * 點「顯示更多」每次加一批。目錄模式（只有小圖與名稱）不受限。
+ */
+export function useDetailBudget(resetKey: string, step = DETAIL_BATCH) {
+  const [st, setSt] = useState({ key: resetKey, n: step });
+  const n = st.key === resetKey ? st.n : step;
+  return { n, more: () => setSt({ key: resetKey, n: n + step }) };
+}
+
+export const MoreButton: React.FC<{ label: string; onClick: () => void }> = ({ label, onClick }) => (
+  <div className="text-center mt-2 mb-8">
+    <button type="button" onClick={onClick} className="px-6 py-2.5 rounded-xl bg-sanctuary-900 border border-sanctuary-700 hover:border-d2-unique text-sm text-sanctuary-200">
+      {label}
+    </button>
+  </div>
+);
+
 export const ViewToggle: React.FC<{ dir: boolean; onChange: (v: 'dir' | 'detail') => void }> = ({ dir, onChange }) => {
   const { isEn } = useLanguage();
   const options = isEn
