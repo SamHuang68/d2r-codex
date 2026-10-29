@@ -15,7 +15,12 @@
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
-import { chromium } from 'playwright-core';
+import { chromium, firefox, webkit } from 'playwright-core';
+
+// SMOKE_BROWSER=firefox|webkit 可改用其他瀏覽器引擎（CI 的跨瀏覽器檢查用）；沒設就是 Chromium
+const ENGINES = { chromium, firefox, webkit };
+const browserName = process.env.SMOKE_BROWSER ?? 'chromium';
+if (!ENGINES[browserName]) { console.error(`SMOKE_BROWSER 只能是 chromium、firefox、webkit，收到 ${browserName}`); process.exit(2); }
 
 const args = process.argv.slice(2);
 const opt = (name, d) => { const i = args.indexOf(`--${name}`); return i >= 0 ? args[i + 1] : d; };
@@ -341,7 +346,8 @@ async function runOnce(base, browser) {
 
   // ── 手機：沒有橫向捲動 ──
   {
-    const ctx = await browser.newContext({ viewport: { width: 390, height: 800 }, isMobile: true, hasTouch: true });
+    // Firefox 不支援 isMobile 選項，只用 390 寬的視窗與觸控
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 800 }, hasTouch: true, ...(browserName === 'firefox' ? {} : { isMobile: true }) });
     const page = await ctx.newPage(); track(page, '手機');
     for (const hash of ['', '#planner']) {
       await page.goto(withBust(hash), { waitUntil: 'load', timeout: 45000 });
@@ -369,6 +375,7 @@ async function runOnce(base, browser) {
 let local;
 const base = liveUrl ?? (local = await serveDist(distDir)).base;
 async function launchBrowser() {
+  if (browserName !== 'chromium') return ENGINES[browserName].launch({});
   if (process.env.SMOKE_CHANNEL) return chromium.launch({ channel: process.env.SMOKE_CHANNEL });
   try {
     return await chromium.launch({});
