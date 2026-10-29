@@ -13,6 +13,7 @@
 //  - 手機視窗（390 寬）：首頁與配裝模擬沒有橫向捲動
 //  - 全程不得有頁面例外（pageerror）與頁面自己的 console 錯誤；第三方資源（字型、遠端圖片）載入失敗不算
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import http from 'node:http';
 import path from 'node:path';
 import { chromium, firefox, webkit } from 'playwright-core';
@@ -78,6 +79,13 @@ function serveDist(dir) {
   });
   return new Promise((resolve) => server.listen(0, '127.0.0.1', () => resolve({ server, base: `http://127.0.0.1:${server.address().port}/` })));
 }
+
+// 無障礙自動檢查（axe-core）：嚴重／重大（serious／critical）的違規不能出現。
+// 已知的歷史債務先列在這裡，數量不設上限但每次都會印出來，之後逐項清掉再從清單移除：
+//  - color-contrast：全站配色有大量低對比的暗色文字（需要整體調色，不是單點修）
+//  - label-content-name-mismatch：聖杯清單的收藏按鈕，無障礙名稱沒有包含畫面上的全部文字
+const AXE_KNOWN_DEBT = new Set(['color-contrast', 'label-content-name-mismatch']);
+const axeSource = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -283,6 +291,47 @@ async function runOnce(base, browser) {
     } catch (e) {
       failures.push(`[桌面] 音樂沒有依章節自動切換：${String(e.message).split('\n')[0]}`);
     }
+    }
+    // 無障礙：每個分頁跑 axe；嚴重／重大違規（已知債務除外）一律算失敗。只在 Chromium 跑（三種引擎結果相同，省時間）
+    if (browserName === 'chromium') {
+      const debt = {};
+      for (const hash of [...ROUTES.map((r) => r.hash), '#overview', '#planner']) {
+        try {
+          await page.evaluate((h) => { location.hash = h; }, hash);
+          await sleep(900);
+          await page.evaluate(axeSource);
+          const found = await page.evaluate(async () => {
+            const res = await window.axe.run(document, { resultTypes: ['violations'] });
+            return res.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => ({ id: v.id, n: v.nodes.length, sample: (v.nodes[0]?.html ?? '').slice(0, 120) }));
+          });
+          for (const v of found) {
+            if (AXE_KNOWN_DEBT.has(v.id)) debt[v.id] = Math.max(debt[v.id] ?? 0, v.n);
+            else failures.push(`[無障礙] ${hash} ${v.id}（${v.n} 處）例：${v.sample}`);
+          }
+        } catch (e) {
+          failures.push(`[無障礙] ${hash} axe 執行失敗：${String(e.message).split('\n')[0]}`);
+        }
+      }
+      const debtText = Object.entries(debt).map(([k, n]) => `${k} 最多 ${n} 處`).join('、');
+      if (debtText) console.log(`（無障礙已知債務，尚未清除：${debtText}）`);
+    }
+    // 樹狀索引的方向鍵操作（WAI-ARIA tree）：上下移動、右鍵展開／進入子節點、左鍵收合／回上一層
+    try {
+      await page.evaluate(() => { location.hash = '#items'; });
+      await page.waitForSelector('[data-node-id="all"]', { timeout: 15000 });
+      const cur = () => page.evaluate(() => document.activeElement?.dataset?.nodeId ?? document.activeElement?.tagName);
+      await page.locator('[data-node-id="all"]').focus();
+      await page.keyboard.press('ArrowDown');
+      if ((await cur()) !== 'u') failures.push('[桌面] 樹狀索引：根節點按下方向鍵沒有移到第一個節點');
+      await page.locator('[data-node-id="s"]').focus();
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowRight');
+      if ((await cur()) !== 's/class') failures.push('[桌面] 樹狀索引：右鍵沒有展開並移到第一個子節點');
+      await page.keyboard.press('ArrowLeft');
+      if ((await cur()) !== 's') failures.push('[桌面] 樹狀索引：左鍵沒有回到上一層');
+    } catch (e) {
+      failures.push(`[桌面] 樹狀索引方向鍵檢查失敗：${String(e.message).split('\n')[0]}`);
     }
     // 搜尋面板也是第一次按 Q 才載入的 lazy chunk
     await page.evaluate(() => { location.hash = '#overview'; });

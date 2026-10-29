@@ -514,6 +514,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
           <div>
             <label className="block text-sanctuary-400 mb-1 font-medium">{t('孔數 (Sockets)', 'Sockets')}</label>
             <select
+              aria-label={t('孔數 (Sockets)', 'Sockets')}
               value={selectedSockets}
               onChange={(e) => setSelectedSockets(e.target.value === 'all' ? 'all' : Number(e.target.value))}
               className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"
@@ -531,6 +532,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
           <div>
             <label className="block text-sanctuary-400 mb-1 font-medium">{t('底材類別 (Bases)', 'Bases')}</label>
             <select
+              aria-label={t('底材類別 (Bases)', 'Bases')}
               value={selectedBase}
               onChange={(e) => setSelectedBase(e.target.value)}
               className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"
@@ -546,6 +548,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
           <div>
             <label className="block text-sanctuary-400 mb-1 font-medium">{t('核心詞綴 (Tags)', 'Key Affixes')}</label>
             <select
+              aria-label={t('核心詞綴 (Tags)', 'Key Affixes')}
               value={selectedTag}
               onChange={(e) => setSelectedTag(e.target.value)}
               className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"

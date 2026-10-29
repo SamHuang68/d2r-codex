@@ -109,7 +109,7 @@ export const ExperienceTable: React.FC = () => {
             className="px-2.5 py-1 rounded-lg border border-sanctuary-800 bg-sanctuary-950/60 text-sanctuary-300 hover:text-sanctuary-100">{isEn ? `Lv ${l}` : `${l} 級`}</button>
         ))}
       </div>
-      <div className="overflow-x-auto rounded-2xl border border-sanctuary-800">
+      <div className="overflow-x-auto rounded-2xl border border-sanctuary-800" tabIndex={0} role="region" aria-label={isEn ? 'Experience table (scrollable)' : '經驗值表（可左右捲動）'}>
         <table className="w-full text-xs min-w-[560px]">
           <thead className="bg-sanctuary-900 text-sanctuary-400 font-mono">
             <tr><th className="text-right px-3 py-2 font-normal">{isEn ? 'Level' : '等級'}</th><th className="text-right px-3 py-2 font-normal">{isEn ? 'Total XP' : '累計經驗'}</th><th className="text-right px-3 py-2 font-normal">{isEn ? 'XP Needed' : '本級所需'}</th><th className="text-right px-3 py-2 font-normal" title="本級所需 ÷ 上一級所需">{isEn ? 'Ratio' : '倍率'}</th><th className="text-right px-3 py-2 font-normal">{isEn ? '% of Max' : '占 99 級累計'}</th></tr>
