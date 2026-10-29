@@ -20,7 +20,7 @@ export const AREA_LEVELS_DATA: AreaLevelData[] = [
     areaLevel: 83,
     isAlvl85: false,
     isTerrorZone: true,
-    immunities: ["毒素免疫 (Poison)", "閃電免疫 (Lightning)"]
+    immunities: ["閃電免疫 (Lightning)"]
   },
   {
     act: 1,
@@ -88,7 +88,7 @@ export const AREA_LEVELS_DATA: AreaLevelData[] = [
     areaLevel: 85,
     isAlvl85: true,
     isTerrorZone: true,
-    immunities: ["毒素免疫", "火焰免疫"],
+    immunities: ["毒素免疫"],
     chestsAndBosses: "庫拉斯特下水道深處，設有輝煌金箱子。",
     chestsAndBossesEn: "Deep within Kurast Sewers. Contains a glittering golden chest."
   },
@@ -119,7 +119,7 @@ export const AREA_LEVELS_DATA: AreaLevelData[] = [
     areaLevel: 83,
     isAlvl85: false,
     isTerrorZone: true,
-    immunities: ["火焰免疫", "閃電免疫"],
+    immunities: ["冰寒免疫", "毒素免疫"],
     chestsAndBosses: "墨菲斯托 (勞模) 固守處，周遭有瘸子議會成員與血河隔絕，經典隔岸卡位刷寶地。",
     chestsAndBossesEn: "Lair of Mephisto, separated by the River of Blood for classic moat-tricking."
   },
@@ -132,7 +132,7 @@ export const AREA_LEVELS_DATA: AreaLevelData[] = [
     areaLevel: 85,
     isAlvl85: true,
     isTerrorZone: true,
-    immunities: ["火焰免疫 (深淵騎士)", "冰寒免疫 (指環鬼)", "閃電免疫 (暴風施術者)"],
+    immunities: ["火焰免疫 (毒魔領主)", "冰寒免疫 (指環鬼)", "閃電免疫 (暴風施術者)"],
     chestsAndBosses: "五處封印解鎖召喚迪亞布羅 (Diablo)，全遊戲密度最高、掉寶期望值最高的核心戰場。",
     chestsAndBossesEn: "Unlock 5 seals to summon Diablo. Sanctuary's premier high-density endgame battlefield."
   },
@@ -197,7 +197,7 @@ export const AREA_LEVELS_DATA: AreaLevelData[] = [
     act: 5,
     name: "沃特之廳 (尼拉塞克的神殿)",
     nameEn: "Halls of Vaught",
-    areaLevel: 83,
+    areaLevel: 84,
     isAlvl85: false,
     isTerrorZone: true,
     immunities: ["冰寒免疫", "毒素免疫"],
@@ -222,7 +222,7 @@ export const AREA_LEVELS_DATA: AreaLevelData[] = [
     areaLevel: 79,
     isAlvl85: false,
     isTerrorZone: true,
-    immunities: ["冰寒免疫", "火焰免疫"],
+    immunities: ["火焰免疫"],
     chestsAndBosses: "女伯爵 (The Countess) 固守處，擁有特殊獨立符文掉落表，最高掉落 28# 羅 (Lo)，專屬掉落 24# 伊司特 (Ist) 與恐懼之鑰。",
     chestsAndBossesEn: "The Countess has a dedicated rune drop table up to Lo (#28), special drops up to Ist (#24), and Key of Terror."
   },
@@ -252,12 +252,12 @@ export const AREA_LEVELS_DATA: AreaLevelData[] = [
     act: 3,
     name: "剝皮地牢 第 3 層",
     nameEn: "Flayer Dungeon Level 3",
-    areaLevel: 85,
-    isAlvl85: true,
+    areaLevel: 83,
+    isAlvl85: false,
     isTerrorZone: true,
     immunities: ["毒素免疫", "閃電免疫"],
-    chestsAndBosses: "D2R 2.4 版本全新升格為 85 級場景！巫醫印都古所在地，狹小空間高密度小矮人。",
-    chestsAndBossesEn: "Elevated to Level 85 in D2R 2.4! Lair of Witch Doctor Endugu with dense Flayer packs."
+    chestsAndBosses: "巫醫印都古所在地，狹小空間高密度小矮人。",
+    chestsAndBossesEn: "Lair of Witch Doctor Endugu with dense Flayer packs."
   },
   {
     act: 5,

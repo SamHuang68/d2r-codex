@@ -172,8 +172,8 @@ const CRAFT_ITEMS: CraftSpotlight[] = [
     category: 'craft',
     badge: '10% FCR 腰帶',
     badgeEn: '10% FCR Belt',
-    tagline: '除蜘蛛之網外全遊戲唯一提供 FCR 的腰帶',
-    taglineEn: 'The only belt besides Arachnid Mesh that grants Faster Cast Rate',
+    tagline: '少數提供 FCR 的腰帶（蜘蛛之網、基德的賭注等）',
+    taglineEn: 'One of the few belts that grant Faster Cast Rate, such as Arachnid Mesh and Gheed\'s Wager',
     inputs: [
       { name: '魔法輕腰帶/鯊皮腰帶/吸血鬼牙腰帶', nameEn: 'Light/Sharkskin/Vampirefang Belt', isBase: true },
       { name: '6# 伊蘇 (Ith)', nameEn: '#6 Ith', runeNum: 6 },
@@ -252,8 +252,8 @@ const UPGRADE_ITEMS: UpgradeSpotlight[] = [
     gemZh: '完美鑽石',
     gemEn: 'Perfect Diamond',
     benefits: [
-      '防禦力從 279 暴增至 800 ~ 1034 點！',
-      '完整保留 +1 所有技能、35% 快速施法與 35 全抗',
+      '防禦力從 244 ~ 277 暴增至 800 ~ 1034 點！',
+      '完整保留 +1 所有技能、30% 快速施法與 20~35 全抗',
       '需求力量僅需 84 點，法師與全法系皆可輕鬆穿戴',
     ],
     benefitsEn: [
@@ -341,7 +341,7 @@ const UPGRADE_ITEMS: UpgradeSpotlight[] = [
     benefits: [
       '防禦力從 25 左右翻近三倍至 70 點以上',
       '僅需低階 7#+13# 符文，造價極其平民',
-      '需求力量僅 58 點，任何職業開荒隨手可升',
+      '需求力量僅 88 點，施法職業開荒也能穿戴',
     ],
     benefitsEn: [
       'Nearly triples defense from 25 to 70+.',

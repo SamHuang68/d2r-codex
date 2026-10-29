@@ -252,12 +252,12 @@ export const GEMS_DATA: GemData[] = [
     shieldEffectEn: "Attacker Takes Damage of 20",
     cubeRecipe: "3顆 無瑕骷髏石 (Flawless Skull) 於赫拉迪姆方塊合成",
     craftingUses: [
-      "【黃裝洗裝神器】6顆 完美骷髏石 + 1件 黃金稀有裝備 (Rare Item) = 重新隨機生成高階黃裝屬性！",
+      "【黃裝洗裝神器】6顆 完美骷髏石 + 1件 黃金稀有裝備 (Rare Item) = 重新隨機生成一件低階（物品等級 40）黃裝！（要高階需改用 1 顆完美骷髏石 + 稀有裝備 + 喬丹之石）",
       "打孔配方：3顆 完美骷髏石 + 1顆 喬丹之石 + 1件 沒有孔的稀有（黃）裝備 = 為該裝備增添 1 孔",
       "雙吸兼顧：鑲嵌於近戰武器提供物理雙吸 (4% LL + 3% LM)"
     ],
     craftingUsesEn: [
-      "【Rare Item Rerolls】6 Perfect Skulls + 1 Rare Item = Reroll high-level rare item affixes!",
+      "【Rare Item Rerolls】6 Perfect Skulls + 1 Rare Item = Reroll into a low-level (ilvl 40) rare item!",
       "Add Socket: 3 Perfect Skulls + 1 SOJ + 1 Rare item = Add 1 socket to the item",
       "Dual Leech: Sockets in melee weapons provide physical dual leech (4% LL + 3% LM)"
     ]
@@ -416,7 +416,7 @@ export const COMBAT_POTIONS_DATA: CombatPotionData[] = [
     category: "potion",
     effect: "瞬間 100% 補滿生命值 (Life) 與法力值 (Mana)",
     hiddenMechanic: "零延遲瞬發！無視任何吸血懲罰與減療狀態，危急時刻挽救生命的絕對神水。",
-    recipe: "3瓶 小紫水 ➔ 1瓶 大紫水；或 3瓶 生命藥水 + 3瓶 法力藥水 + 1顆 碎裂寶石 於方塊合成",
+    recipe: "3瓶 小紫水 ➔ 1瓶 大紫水；或 3瓶 生命藥水 + 3瓶 法力藥水 + 1顆 標準寶石（非碎裂寶石）於方塊合成",
     description: "全暗黑破壞神二代最珍貴的戰鬥藥劑，高難度專家級 (HC) 模式下活命的終極底牌。",
     proTips: "腰帶快捷鍵 1~4 必留至少一整排大紫水，應對電鬼齊射與娃娃死後自爆。"
   },
@@ -543,7 +543,7 @@ export const CHARMS_JEWELS_DATA: CharmJewelMeta[] = [
     rarity: "unique",
     keyAttributes: [
       "怪物的物理免疫 (PI) 抗性強制壓制為 95%",
-      "自身受到的物理傷害增加 +(10-30)%"
+      "自身受到的物理傷害增加 +(10-20)%"
     ],
     dropSource: "地獄難度邪惡威脅區域 (TZ)",
     tradeValueTier: "A",
@@ -572,7 +572,7 @@ export const CHARMS_JEWELS_DATA: CharmJewelMeta[] = [
     keyAttributes: [
       "+(3-5)% 元素技能傷害 (冰/火/電/毒)",
       "-(3-5)% 敵人對應元素抗性",
-      "死後 (Die) 或升級時 (Level-Up) 施展 100% 滿屏 50 級元素大招"
+      "死後 (Die) 或升級時 (Level-Up) 施展 100% 機率的元素技能 (死亡：連鎖閃電 47 級／暴風雪 37 級／隕石術 31 級／毒素新星 51 級；升級：新星 41 級／霜之新星 43 級／烈焰 29 級／劇毒 23 級)"
     ],
     dropSource: "地獄難度高階場景暗金怪與 Boss",
     tradeValueTier: "S+",
@@ -580,13 +580,13 @@ export const CHARMS_JEWELS_DATA: CharmJewelMeta[] = [
   },
   {
     id: "skill_grand_charms",
-    name: "7大職業頂級技能特大咒符 (技能板)",
+    name: "8大職業頂級技能特大咒符 (技能板)",
     nameEn: "Skill Grand Charms",
     slot: "grand_charm",
     rarity: "magic",
     keyAttributes: [
       "+1 特定單一技能樹 (例如：+1 閃電技能 / +1 聖騎士戰鬥技能 / +1 毒素與骸骨技能)",
-      "極品後綴：+45 生命 (45 Life，僅 85 級以上怪物/巴爾/迪亞布羅/尼拉塞克掉落之大板能洗出)"
+      "極品後綴：+45 生命 (45 Life，僅 91 級以上怪物/巴爾/迪亞布羅/尼拉塞克掉落之大板能洗出)"
     ],
     dropSource: "地獄難度怪物，使用 3 顆完美寶石重置洗板",
     tradeValueTier: "S+",

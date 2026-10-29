@@ -73,8 +73,8 @@ notes: "基礎攻擊力上升，需求力量與等級相應提高。",
     output: "精英版同款暗金武器",
         inputsEn: ["1x Lum (#17)","1x Pul (#21)","1x Perfect Emerald","1x Exceptional Unique Weapon"],
     outputEn: "Elite Version of Unique Weapon",
-notes: "例如：海鷗升級、泰坦的復仇升級為女傑標槍、阿里巴巴升級。",
-    notesEn: "Examples: Seagull, Titan's Revenge to Matriarchal Javelin, Blade of Ali Baba."
+notes: "例如：泰坦的復仇升級為女傑標槍、阿里巴巴升級。",
+    notesEn: "Examples: Titan's Revenge to Matriarchal Javelin, Blade of Ali Baba."
   },
   {
     id: "upgrade_unique_armor_norm_to_excep",
@@ -329,7 +329,7 @@ notes: "收集『墨菲斯托之腦 + 巴爾之眼 + 迪亞布羅之角』三樣
     output: "全新隨機屬性的同類型魔法物品 (維持原物品等級 ilvl 不變)",
         inputsEn: ["3x Any Perfect Gems (Including Skulls)","1x Magic Item (Grand Charm, Jewel, Circlet)"],
     outputEn: "Rerolled Magic Item (New random affixes, same ilvl preserved)",
-notes: "【神級致富公式】！使用巴爾 (ilvl 99)、迪亞布羅 (ilvl 94)、尼拉塞克 (ilvl 95) 或 Terror Zone 邪惡威脅區域 (ilvl 91+) 掉落的大板，可用 3 顆雜碎紫/紅/黃等完美寶石無限洗出『+1 職業單系技能 + 41-45 生命』的天價畢業板！",
+notes: "【神級致富公式】！使用巴爾 (ilvl 99)、迪亞布羅 (ilvl 94)、尼拉塞克 (ilvl 92) 或 Terror Zone 邪惡威脅區域 (ilvl 91+) 掉落的大板，可用 3 顆雜碎紫/紅/黃等完美寶石無限洗出『+1 職業單系技能 + 41-45 生命』的天價畢業板！",
     notesEn: "Endless source of wealth: reroll high-level Grand Charms for +1 Skill and +41-45 Life."
   },
   {
@@ -344,7 +344,7 @@ notes: "【神級致富公式】！使用巴爾 (ilvl 99)、迪亞布羅 (ilvl 9
     output: "全新屬性的稀有物品 (ilvl = 0.4 * clvl + 0.4 * 原 ilvl)",
         inputsEn: ["6x Perfect Skulls","1x Rare Item"],
     outputEn: "Rerolled Rare Item (ilvl = 0.4 * clvl + 0.4 * original ilvl)",
-notes: "洗權冠 (Diadem) 的最強神技！由於權冠具有極高的品質等級 (qlvl 85) 與魔法等級 (magic_lvl 18)，即使公式會降低 ilvl，洗權冠永遠能夠出現 +2 全技能、20% FCR 與 2 孔的頂級詞綴！",
+notes: "洗權冠 (Diadem) 的最強神技！由於權冠具有極高的品質等級 (qlvl 85) 與魔法等級 (magic_lvl 18)，即使公式會降低 ilvl，洗權冠永遠能夠出現 +2 職業技能、20% FCR 與 2 孔的頂級詞綴！",
     notesEn: "Godly on Diadems: qlvl 85 and magic_lvl 18 guarantees +2 Skills and 20% FCR can always roll!"
   },
   {

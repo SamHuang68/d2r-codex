@@ -110,7 +110,7 @@ export const VALUATION_ITEMS_DATA: ValuationItem[] = [
       "+41-45 生命 (Vita 最高檔位，需 ilvl 91+)"
     ],
     estimatedValue: "熱門電法/標馬 45 生命板身價 30-60 顆貝符文 (Ber)！",
-    description: "全遊戲最主流的終局背包填充物！41-45 生命詞綴的物品等級要求極高，唯有地獄巴爾 (ilvl 99)、大菠蘿 (ilvl 94)、尼拉塞克 (ilvl 95) 或 91 等級以上邪惡威脅區域的大板才能洗出。",
+    description: "全遊戲最主流的終局背包填充物！41-45 生命詞綴的物品等級要求極高，唯有地獄巴爾 (ilvl 99)、大菠蘿 (ilvl 94)、尼拉塞克 (ilvl 92) 或 91 等級以上邪惡威脅區域的大板才能洗出。",
     farmingSources: "擊殺巴爾、迪亞布羅、尼拉塞克或 91+ 級邪惡威脅區域掉落大板，使用 3 顆完美寶石無限重骰。",
     keyRule: "只有 ilvl 91+ 的大板才能出現 41-45 生命！一般 85 場景掉落最高只能到 40 生命。",
     itemTypeEn: "Grand Charm (3 slots)",
@@ -120,7 +120,7 @@ export const VALUATION_ITEMS_DATA: ValuationItem[] = [
     ],
     estimatedValueEn: "Lightning/Cold/Paladin Combat +45 Life worth 30-70 Ber Runes!",
     descriptionEn: "Top skill grand charm with maximum possible life roll. Essential for spellcasters seeking maximum skill levels and survivability.",
-    farmingSourcesEn: "Only dropped by Hell Diablo (ilvl 94), Nihlathak (ilvl 95), Baal (ilvl 99), or Level 89+ Terror Zones.",
+    farmingSourcesEn: "Only dropped by Hell Diablo (ilvl 94), Nihlathak (ilvl 92), Baal (ilvl 99), or Level 89+ Terror Zones.",
     keyRuleEn: "+41 to +45 Life Grand Charms CAN ONLY drop from Hell Diablo, Nihlathak, Baal, or high-level Terror Zones. Keep these for gem rerolls!",
   },
   {
@@ -237,7 +237,7 @@ export const VALUATION_ITEMS_DATA: ValuationItem[] = [
     idealStatsEn: [
       "+3 to Skill Tab (e.g. +3 Lightning / +3 Cold / +3 Poison & Bone)",
       "+20% Faster Cast Rate (FCR)",
-      "2 Natural Sockets (Jeweler's prefix roll)"
+      "2 Sockets (from Larzuk)"
     ],
     estimatedValueEn: "3/20/2os Lightning/Poison Tiara worth 20-45 Ber Runes!",
     descriptionEn: "Glass-cannon damage optimization helm. Socketing two 5/5 Rainbow Facets yields +3 Skills, 20% FCR, -10% Enemy Res, +10% Dmg.",
@@ -291,13 +291,13 @@ export const VALUATION_ITEMS_DATA: ValuationItem[] = [
       "全抗性 +15-20%"
     ],
     estimatedValue: "頂級大極品 2/20/30力/20全抗身價 80-200 顆貝符文！",
-    description: "打破傳送與施法幀數臨界點的神物！暗金馬拉的萬花筒只有 2 技能與 30 全抗，而手工 2/20 護身符提供了全遊戲唯二能湊齊 125 FCR 或 200 FCR 的關鍵拼圖。",
+    description: "打破傳送與施法幀數臨界點的神物！暗金馬拉的萬花筒只有 2 技能與 20-30 全抗，而手工 2/20 護身符提供了全遊戲唯二能湊齊 125 FCR 或 200 FCR 的關鍵拼圖。",
     farmingSources: "方塊手工藝：魔法護身符 (ilvl 90+) + 8號拉爾 (Ral) + 完美紫寶石 + 珠寶 (Jewel)。",
     keyRule: "角色等級需達 93 級賭博出的護身符才能穩定合成出 +2 職業技能！必須突破 15-20% FCR 才能超越馬拉。",
     itemTypeEn: "Crafted Caster Amulet",
     idealStatsEn: [
       "+2 to Class Skills (Paladin, Sorceress, Necromancer)",
-      "+15-20% Faster Cast Rate (Crafted only roll)",
+      "+5-10% Faster Cast Rate (Crafted base mod; 20% total needs a 10% 'of the Apprentice' affix)",
       "+20-30 Strength",
       "+40-60 Life",
       "+80-110 Mana",
@@ -326,7 +326,7 @@ export const VALUATION_ITEMS_DATA: ValuationItem[] = [
     description: "全暗黑世界最昂貴的近戰爪類武器之一！無形提升巨額基礎物理面板，自動修復保證永久不壞，愚者詞綴給予幾千點額外命中率，是刺客內戰與天梯對抗的終極殺手鐧。",
     farmingSources: "地獄牛關、恰西灌注魔力、邪惡威脅區域黃色爪。",
     keyRule: "必須是『無形 (Eth)』且同時帶有『自修 (Rep)』！若無自修則耐久打光即報廢。",
-    itemTypeEn: "Suwayyah / Runic Talons (Claws)",
+    itemTypeEn: "Greater Talons / Runic Talons (Claws)",
     idealStatsEn: [
       "Fool's Prefix (+0.5 Max Damage & +16.5 AR per character level)",
       "+250-300% Enhanced Damage (ED)",
@@ -352,7 +352,7 @@ export const VALUATION_ITEMS_DATA: ValuationItem[] = [
     ],
     estimatedValue: "滿變單顆身價 15-25 顆貝符文！",
     description: "物理弓馬風之力、食人妖骨盾、吉永之臉與各類頂級物理武器的最佳鑲嵌物。同時兼顧拉滿最高攻速檔位與百分比物理輸出爆發。",
-    farmingSources: "惡夢第三章後至地獄全圖掉落的魔法珠寶。",
+    farmingSources: "惡夢第五章後段至地獄全圖掉落的魔法珠寶。",
     keyRule: "ED (30-40%) 與 IAS (15%) 同時存在即為高價；未滿變 38/15 或 35/15 亦有極高價值。",
     itemTypeEn: "Jewel (1 slot)",
     idealStatsEn: [
@@ -361,7 +361,7 @@ export const VALUATION_ITEMS_DATA: ValuationItem[] = [
     ],
     estimatedValueEn: "Perfect 40/15 Ruby Jewel worth 15-30 Ber Runes!",
     descriptionEn: "The undisputed king of physical jewels. Used to socket Windforce, Tomb Reaver, Guillaume's Face, and Griffon's Eye for physical damage builds.",
-    farmingSourcesEn: "Drops from late Nightmare Act III through all Hell difficulty areas.",
+    farmingSourcesEn: "Drops from late Nightmare Act V through all Hell difficulty areas.",
     keyRuleEn: "Beware of identical 15% IAS / +Damage jewels with min/max bugs in non-weapon gear. 40% ED / 15% IAS is flawless.",
   }
 ];

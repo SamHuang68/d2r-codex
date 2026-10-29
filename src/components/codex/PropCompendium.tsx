@@ -502,7 +502,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
               <span>D2R 2.5 破免機制 (Sunder Charms) 與終局配置</span>
             </h3>
             <p className="text-xs text-sanctuary-300 leading-relaxed">
-              破免咒符將怪物的抗性<strong>強制壓制為 95%</strong>（不再免疫），但自身對應抗性會大幅降低。此時再搭配裝備上的減抗屬性（如獅鷲之眼、死亡之網、格里斯瓦德之杖、彩虹刻面珠寶、無限信念靈氣），可對原免疫怪物打出毀滅性全額傷害！
+              破免咒符將怪物的抗性<strong>強制壓制為 95%</strong>（不再免疫），但自身對應抗性會大幅降低。此時再搭配裝備上的減抗屬性（如獅鷲之眼、死亡之網、曼宋的教誨、彩虹刻面珠寶、無限信念靈氣），可對原免疫怪物打出毀滅性全額傷害！
             </p>
           </div>
 

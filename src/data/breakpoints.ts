@@ -44,7 +44,7 @@ export const BREAKPOINTS_DATA: BreakpointData[] = [
     characterClass: "魔法使",
     classNameEn: "Sorceress",
     type: "FHR",
-    notes: "法師常規推薦 42% (9 幀) 或精神盾提供的 55% 直接達標 8 幀 (60% FHR 檔位需補 5%) 或 86% (7 幀)。",
+    notes: "法師常規推薦 42% (9 幀) 或精神盾提供的 55% (仍為 9 幀，60% FHR 檔位需補 5% 才達 8 幀) 或 86% (7 幀)。",
     notesEn: "Common recommendations are 42% (9 frames), 55% from Spirit (needs +5% to hit the 60% 8-frame breakpoint), or 86% (7 frames).",
     breakpoints: [
       { frames: 15, requiredValue: 0 },
@@ -155,7 +155,7 @@ export const BREAKPOINTS_DATA: BreakpointData[] = [
     variant: "惡魔引導 / 混沌咒語",
     variantEn: "Demonic Channeling / Chaos Invocations",
     notes: "《術士軍臨》DLC 全新職業，終局混沌法術爆發建議維持在 68% 或 110% 檔位。",
-    notesEn: "RotW new class. Recommended to maintain 65% (10 frames) or 105% (9 frames) for smooth endgame casting.",
+    notesEn: "RotW new class. Recommended to maintain 68% (10 frames) or 110% (9 frames) for smooth endgame casting.",
     breakpoints: [
       { frames: 14, requiredValue: 0 },
       { frames: 13, requiredValue: 10 },

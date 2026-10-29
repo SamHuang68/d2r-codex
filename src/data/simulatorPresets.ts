@@ -210,7 +210,7 @@ export const BUILDS: BuildDef[] = [
     summary: '化身狼人以狂怒發動連續爪擊，擁有超高生命偷取與攻擊速度。',
     skill: { main: 'Fury', extra: { Wearwolf: 20, 'Shape Shifting': 20, 'Heart of Wolverine': 20 }, fill: ['Feral Rage', 'Oak Sage'] },
     start: { level: 85, items: { ...MELEE_START, head: n("Jalal's Mane"), body: n('Fortitude', 'Archon Plate'), weaponI: n('Grief'), shieldI: n('Stormshield') }, charms: CHARMS_START, notes: '加爾的鬃毛搭配悔恨與暴風之盾，兼顧輸出與生存。' },
-    bis: { level: 92, items: { ...MELEE_BIS, head: n("Jalal's Mane"), body: n('Fortitude', 'Archon Plate'), weaponI: n('Grief'), shieldI: n('Stormshield') }, charms: CHARMS_BIS, notes: '加爾的鬃毛搭配悔恨與暴風之盾，兼顧輸出與 50% 物理減免。' },
+    bis: { level: 92, items: { ...MELEE_BIS, head: n("Jalal's Mane"), body: n('Fortitude', 'Archon Plate'), weaponI: n('Grief'), shieldI: n('Stormshield') }, charms: CHARMS_BIS, notes: '加爾的鬃毛搭配悔恨與暴風之盾，兼顧輸出與 35% 物理減免。' },
   },
   // ── 刺客 ──
   {
