@@ -116,13 +116,13 @@ export const UBER_TRISTRAM_GUIDE = {
     {
       name: "偷取生命詛咒 (Life Tap 核心保命)",
       nameEn: "Life Tap Curse (Sustain Lifeline)",
-      desc: "普通吸血 (LL) 在超級魔神身上無效！必須仰賴【德古拉之握】手套或副手【聚氣偷取生命魔杖】，命中即觸發 50% 物理傷害轉化為生命，刀刀瞬間吸滿血。",
+      desc: "普通吸血 (LL) 在超級魔神身上無效！必須仰賴【德古拉之握】手套或副手【聚氣偷取生命魔杖】，命中時有機率觸發偷取生命詛咒（德古拉之握為 5%），讓攻擊者恢復生命。",
       descEn: "Standard Life Leech is ineffective on Uber bosses. Dracul's Grasp or a Life Tap charges wand heals 50% physical damage instantly on every hit."
     },
     {
       name: "超級墨菲斯托 20 級信念靈氣抵抗",
       nameEn: "Uber Mephisto Lv20 Conviction Counter",
-      desc: "老墨信念直接扣除全隊 125% 全抗！角色地獄抗性必須達到「300% 總抗性」或者開啟高等級【信念靈氣 (Conviction)】將老墨的信念覆蓋中和。",
+      desc: "老墨信念直接扣除全隊 125% 火焰／冰冷／閃電抗性！角色地獄抗性必須達到「300% 總抗性」或者開啟高等級【信念靈氣 (Conviction)】將老墨的信念覆蓋中和。",
       descEn: "Uber Mephisto's Lv20 Conviction aura subtracts -125% All Resistances. Stack 300% total resistances in Hell or override with your own higher Conviction."
     }
   ],

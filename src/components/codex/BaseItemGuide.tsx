@@ -325,7 +325,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
         icon={<ShieldAlert className="w-6 h-6" />}
         tone="text-d2-socket"
         title={t('頂級符文之語底材與打孔寶典', 'Best-in-Slot Runeword Bases & Sockets Guide')}
-        desc={t('收錄悔恨幻化之刃、法師鎧甲謎團、無形斬鐮無限、神聖小盾精神等全職業 S 級畢業底材，提供 WSM 攻速、最大孔數、拉蘇克固定打孔機制與打寶估價戰術解析。依「普通／卓越／精英 → 部位 → 類型」分層，終局都停在精英，所以預設就看精英。', 'Complete database of BiS bases for Runewords (Grief Phase Blade, Enigma Mage Plate, Infinity Thresher, Spirit Sacred Targe, etc.) with WSM attack speeds, max sockets, Larzuk socket quest mechanics, and valuation notes.')}
+        desc={t('收錄悔恨幻化之刃、法師鎧甲謎團、無形斬鐮無限、神聖小盾精神等全職業 S 級畢業底材，提供 WSM 攻速、最大孔數、拉蘇克固定打孔機制與打寶估價戰術解析。依「普通／卓越／精英 → 部位 → 類型」分層，終局多停在精英（法師鎧甲為卓越底材），所以預設就看精英。', 'Complete database of BiS bases for Runewords (Grief Phase Blade, Enigma Mage Plate, Infinity Thresher, Spirit Sacred Targe, etc.) with WSM attack speeds, max sockets, Larzuk socket quest mechanics, and valuation notes.')}
         right={
           <div className="flex items-center gap-3 bg-sanctuary-900/80 p-2.5 rounded-2xl border border-sanctuary-800 shrink-0 self-start">
             <div className="text-right px-3 border-r border-sanctuary-800">

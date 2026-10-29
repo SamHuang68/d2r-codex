@@ -35,13 +35,13 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
   const classSpecificGear: Record<string, { title: string; desc: string; topBases: string[] }> = {
     sorceress: {
       title: "魔法使專用單手法珠 (Sorceress Orbs)",
-      desc: "次元法珠、異能法珠、艾斯屈塔。原生可帶有 +3 單系技能與 +3 暴風雪/連鎖閃電等神級底材技能。",
+      desc: "次元法珠、異能法珠、艾斯屈塔。原生可帶有 +3 魔法使技能等神級底材屬性。",
       topBases: ["死亡深度 (Death's Fathom)", "艾斯屈塔的憤怒 (Eschuta's Temper)", "核瞳 (The Oculus)"]
     },
     paladin: {
       title: "聖騎士專用重盾 (Paladin Shields)",
-      desc: "原生附帶高達 +45 全抗性 (All Res) 或 +65% 增傷 +121 命中率！4孔神聖小盾是製作符文之語【精神】或【流亡】的最頂級底材。",
-      topBases: ["神聖小盾 (Sacred Targe 60%高格擋)", "撒卡蘭姆使者 (Herald of Zakarum)", "庫拉斯特盾"]
+      desc: "原生附帶高達 +50 全抗性 (All Res) 或 +40~75% 增傷與命中率！4孔神聖小盾是製作符文之語【精神】或【流亡】的最頂級底材。",
+      topBases: ["神聖小盾 (Sacred Targe 30%基礎格擋)", "撒卡蘭姆使者 (Herald of Zakarum)", "庫拉斯特盾"]
     },
     amazon: {
       title: "亞馬遜專用神聖弓與標槍 (Amazon Weapons)",
@@ -50,7 +50,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
     },
     necromancer: {
       title: "死靈法師魔杖與專用頭骨盾 (Wands & Shrunken Heads)",
-      desc: "魔胎 (Homunculus) 與骨焰；頂級白魔杖可帶有 +3 劇毒新星與衰老詛咒，是製作符文之語【骸骨】的最佳基底。",
+      desc: "魔胎 (Homunculus) 與骨焰；死亡之網魔杖可帶有 +2 所有技能與 +1~2 毒素與骨系技能，符文之語【骸骨】則需做在 3 孔身體護甲上。",
       topBases: ["埋骨魔杖 (死亡之網 -50%毒抗)", "魔胎 (Homunculus)", "骨盾 (+3衰老 +3骨矛)"]
     },
     barbarian: {
@@ -60,13 +60,13 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
     },
     druid: {
       title: "德魯伊專用狼頭與鹿頭 (Druid Pelts)",
-      desc: "加爾的鬃毛；原生附帶 +3 龍捲風 (Tornado)、+3 狂怒 (Fury) 或 +3 毀天滅地的高級自然頭冠。",
-      topBases: ["加爾的鬃毛 (Jalal's Mane)", "地獄犬之咬 (Cerebus' Bite)", "地土靈獸帽 (+3龍捲風 3孔變化底材)"]
+      desc: "加爾的鬃毛；原生附帶 +2 德魯伊技能與 +2 變形技能、+2~4 變形技能或 +3 元素技能的高級自然頭冠。",
+      topBases: ["加爾的鬃毛 (Jalal's Mane)", "地獄犬之咬 (Cerebus' Bite)", "地土靈獸帽 (3孔變化底材)"]
     },
     assassin: {
       title: "刺客專用拳劍與爪 (Assassin Katars)",
-      desc: "霸圖克的割喉爪；原生附帶 +3 陷阱、+3 雷光衛哨與武器格擋 (Weapon Block) 的雙持利爪。",
-      topBases: ["霸圖克的割喉爪 (Bartuc's Cut-Throat)", "符紋爪 (+3雷光衛哨 3孔混沌底材)", "近身刃"]
+      desc: "霸圖克的割喉爪；原生附帶 +2 刺客技能、+1 陷阱技能與武器格擋 (Weapon Block) 的雙持利爪。",
+      topBases: ["霸圖克的割喉爪 (Bartuc's Cut-Throat)", "符紋爪 (3孔混沌底材)", "近身刃"]
     },
     warlock: {
       title: "術士專用禁忌魔典與邪異匕首 (Warlock Grimoires)",

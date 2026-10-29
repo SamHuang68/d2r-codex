@@ -13,43 +13,43 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
       str: 15,
       dex: 20,
       vit: 25,
-      ene: 30,
+      ene: 20,
       life: 55,
-      mana: 45
+      mana: 20
     },
     statGains: {
-      lifePerVit: 2.0,
+      lifePerVit: 3.0,
       manaPerEne: 2.0,
-      staminaPerVit: 1.2
+      staminaPerVit: 1.0
     },
     skillTrees: [
       {
         name: "惡魔奴僕 (Demon Enslavement)",
         description: "支配地獄原生惡魔，將其轉化為擁有獨特攻擊技能與光環的僕從戰士。",
-        keySkills: ["召喚折磨惡魔", "深淵支配", "靈魂榨取", "狂暴儀式"]
+        keySkills: ["召喚羊頭人", "惡魔專精", "死亡印記", "束縛惡魔"]
       },
       {
         name: "邪異武裝 (Eldritch Infusion)",
         description: "引導遠古虛空與邪異能量灌注於雙手武具，將物理劈砍轉變為純粹破壞媒介。",
-        keySkills: ["邪異刃芒", "虛空共振", "深淵護盾", "破滅之觸"]
+        keySkills: ["邪異轟擊", "靈能護盾", "迴響打擊", "鏡像之刃"]
       },
       {
         name: "混沌暗影 (Chaos Magic)",
         description: "向戰場傾瀉無邊地獄熾焰與暗影裂痕，製造恐怖的範圍毀滅。",
-        keySkills: ["暗影裂隙", "地獄熾焰", "混沌崩解", "厄運降臨"]
+        keySkills: ["火焰之環", "烈焰湧浪", "瘴氣彈", "天啟末日"]
       }
     ],
     popularBuilds: [
       {
         name: "惡魔使役流 (Demon Commander)",
         tier: "S",
-        coreSkills: "召喚折磨惡魔 + 深淵支配 + 狂暴儀式",
+        coreSkills: "召喚羊頭人 + 惡魔專精 + 束縛惡魔",
         gearSummary: "權威魔典 + 貝恩套裝 + 喬丹之石"
       },
       {
         name: "混沌火影術士 (Chaos Pyromancer)",
         tier: "S",
-        coreSkills: "暗影裂隙 + 地獄熾焰 + 混沌崩解",
+        coreSkills: "火焰之環 + 烈焰湧浪 + 天啟末日",
         gearSummary: "巫師之刺 + 謎團 + 獅鷲之眼"
       },
       {
@@ -136,12 +136,12 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     statGains: {
       lifePerVit: 3.0,
       manaPerEne: 1.5,
-      staminaPerVit: 1.2
+      staminaPerVit: 1.0
     },
     skillTrees: [
       {
         name: "戰鬥技能 (Combat Skills)",
-        description: "聖錘旋轉、神聖電擊與盾牌猛擊的戰鬥本能。",
+        description: "聖錘旋轉、熱忱打擊與盾牌猛擊的戰鬥本能。",
         keySkills: ["祝福之鎚 (Blessed Hammer)", "神聖之盾", "盾牌重擊 (Smite)", "熱忱打擊 (Zeal)"]
       },
       {
@@ -252,7 +252,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     statGains: {
       lifePerVit: 3.0,
       manaPerEne: 1.5,
-      staminaPerVit: 1.2
+      staminaPerVit: 1.0
     },
     skillTrees: [
       {
@@ -310,7 +310,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     statGains: {
       lifePerVit: 4.0,
       manaPerEne: 1.0,
-      staminaPerVit: 1.4
+      staminaPerVit: 1.0
     },
     skillTrees: [
       {
@@ -367,8 +367,8 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     },
     statGains: {
       lifePerVit: 3.0,
-      manaPerEne: 1.5,
-      staminaPerVit: 1.2
+      manaPerEne: 1.75,
+      staminaPerVit: 1.25
     },
     skillTrees: [
       {
@@ -426,7 +426,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     statGains: {
       lifePerVit: 2.0,
       manaPerEne: 2.0,
-      staminaPerVit: 1.5
+      staminaPerVit: 1.0
     },
     skillTrees: [
       {

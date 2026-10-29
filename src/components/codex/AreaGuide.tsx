@@ -209,8 +209,8 @@ const SUPER_FARMING_AREAS: SuperFarmingArea[] = [
     ],
     keyDropsZh: '泰瑞爾之力、死亡之網、次元碎片、年歲之冠等 TC87 終極暗金',
     keyDropsEn: "Tyrael's Might, Death's Web, Death's Fathom, Crown of Ages",
-    tacticalTipZh: '全遊戲唯一完全沒有原生冰冷免疫怪物的 85 級地城！純冰暴風雪法師拓荒的第一朝聖首選。',
-    tacticalTipEn: 'The only Level 85 area with zero native Cold Immunes. Blizzard Sorceress holy grail haven.',
+    tacticalTipZh: '85 級地城中少數完全沒有原生冰冷免疫怪物的區域！純冰暴風雪法師拓荒的第一朝聖首選。',
+    tacticalTipEn: 'One of the few Level 85 areas with zero native Cold Immunes. Blizzard Sorceress holy grail haven.',
   },
   {
     id: 'travincal',
@@ -247,8 +247,8 @@ const SUPER_FARMING_AREAS: SuperFarmingArea[] = [
     locationEn: 'Act IV · River of Flame Terminal',
     alvl: 85,
     difficulty: 4,
-    immunitiesZh: ['火焰免疫 (深淵騎士)', '冰寒免疫 (遺忘騎士)', '閃電免疫 (暴風施術者)'],
-    immunitiesEn: ['Fire (Doom Knight)', 'Cold (Oblivion Knight)', 'Light (Storm Caster)'],
+    immunitiesZh: ['火焰免疫 (毒魔領主)', '冰寒免疫 (遺忘騎士)', '閃電免疫 (暴風施術者)'],
+    immunitiesEn: ['Fire (Venom Lord)', 'Cold (Oblivion Knight)', 'Light (Storm Caster)'],
     recommendedBuildsZh: [
       { name: '祝福之鎚聖騎', tag: 'Hammerdin', icon: '🔨' },
       { name: '無限電標馬', tag: 'Infinity Javazon', icon: '⚡' },

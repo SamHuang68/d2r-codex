@@ -53,16 +53,16 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
     '魔法使': {
       FCR: [37, 63, 105, 117, 200],
       FHR: [20, 30, 42, 60, 86, 142],
-      FBR: [9, 20, 42, 86],
+      FBR: [7, 15, 27, 48, 86],
     },
     '聖騎士': {
-      FCR: [35, 48, 75, 125],
+      FCR: [30, 48, 75, 125],
       FHR: [15, 27, 48, 86, 200],
       FBR: [13, 32, 86],
     },
     '死靈法師': {
       FCR: [30, 48, 75, 125],
-      FHR: [15, 26, 39, 56, 86, 152],
+      FHR: [16, 26, 39, 56, 86, 152],
       FBR: [6, 13, 20, 32, 52],
     },
     '術士': {
@@ -73,7 +73,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
     '亞馬遜': {
       FCR: [32, 48, 68, 99, 152],
       FHR: [20, 32, 52, 86],
-      FBR: [11, 20, 40],
+      FBR: [13, 32, 86],
     },
     '野蠻人': {
       FCR: [37, 63, 105, 200],
@@ -83,12 +83,12 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
     '刺客': {
       FCR: [27, 42, 65, 102, 174],
       FHR: [15, 27, 48, 86],
-      FBR: [13, 27, 48],
+      FBR: [13, 32, 86],
     },
     '德魯伊': {
       FCR: [30, 46, 68, 99, 163],
-      FHR: [20, 32, 54, 86],
-      FBR: [11, 20, 40],
+      FHR: [20, 42, 54, 86],
+      FBR: [10, 20, 40],
     },
   };
 

@@ -1866,6 +1866,22 @@ console.log('【傭兵與職業／流派搭配矩陣 (Mercenary Matrix & Preset 
     }
   });
 
+  t('每套配置的 hirelingId 指向遊戲資料中章節與光環吻合的地獄傭兵', () => {
+    const actNo = (s) => '一二三四五'.indexOf((s.match(/第(.)章/) ?? [])[1]) + 1;
+    const auraKeys = [['祈禱靈氣', '祈禱'], ['力量靈氣', '力量'], ['神聖冰凍', '神聖冰凍'], ['冰箭型', '寒冰箭'], ['狂亂野蠻人', '狂亂連擊']];
+    for (const entry of MERCENARY_MATRIX_DATA) {
+      for (const key of ['start', 'mf', 'bis']) {
+        const tier = entry.tiers[key];
+        const h = E.hirelingById(tier.hirelingId);
+        assert.ok(h, `${entry.id} ${key} 的 hirelingId ${tier.hirelingId} 不存在於遊戲資料`);
+        assert.equal(h.difficulty, 3, `${entry.id} ${key} 應為地獄難度傭兵`);
+        assert.equal(h.act, actNo(tier.mercTypeZh), `${entry.id} ${key} 的章節與「${tier.mercTypeZh}」不符`);
+        const hit = auraKeys.find(([label]) => tier.mercTypeZh.includes(label));
+        if (hit) assert.ok(h.desc.includes(hit[1]), `${entry.id} ${key}「${tier.mercTypeZh}」對應到「${h.desc}」`);
+      }
+    }
+  });
+
   t('全數 48 套傭兵配置均可精確解析裝備與合法底材 (resolveMercenaryEquipment)', () => {
     let resolvedCount = 0;
     for (const entry of MERCENARY_MATRIX_DATA) {
@@ -1905,7 +1921,7 @@ console.log('【傭兵與職業／流派搭配矩陣 (Mercenary Matrix & Preset 
       assert.equal(draft.classCode, 'sor');
       assert.ok(draft.merc, '暫存草稿應包含傭兵配置');
       assert.equal(draft.merc.on, true);
-      assert.equal(draft.merc.id, 33);
+      assert.equal(draft.merc.id, 12); // 第二章沙漠守衛 · 祈禱靈氣（Comb-Hell）
       assert.ok(draft.merc.equipped.weaponI, '傭兵應裝備武器 (靈光)');
       assert.ok(draft.merc.equipped.head, '傭兵應裝備頭盔 (治癒)');
       assert.ok(draft.merc.equipped.body, '傭兵應裝備護甲 (背信)');

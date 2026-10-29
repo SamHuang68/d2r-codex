@@ -60,7 +60,7 @@ export const MERCENARIES_DATA: MercenaryData[] = [
         weapon: "無形暗金【死神喪鐘】(The Reaper's Toll 鑲 13# 夏)",
         helm: "綠色套裝【吉永之臉】(Guillaume's Face 35% CB)",
         armor: "符文之語【背信】(Treachery 45% IAS + 15級影散)",
-        description: "專門配合旋風野蠻人、弓馬與狂熱聖騎士。死神喪鐘打擊時有 33% 機率施展等級 3 衰老 (Decrepify)，破除怪物物理免疫並降低敵人 50% 速度與輸出，吉永之臉補足 35% 粉碎打擊。",
+        description: "專門配合旋風野蠻人、弓馬與狂熱聖騎士。死神喪鐘打擊時有 33% 機率施展等級 1 衰老 (Decrepify)，破除怪物物理免疫並降低敵人 50% 速度與輸出，吉永之臉補足 35% 粉碎打擊。",
         strengths: ["100% 穩定破除物理免疫", "衰老減速極限保命", "擊殺 Boss 速度極快"]
       }
     ]
@@ -94,7 +94,7 @@ export const MERCENARIES_DATA: MercenaryData[] = [
         weapon: "綠裝【沙薩比的救贖鈷劍】(Sazabi's Redeemer 幻化)",
         helm: "綠裝【沙薩比的精神護罩】(Sazabi's Mental Sheath)",
         armor: "綠裝【沙薩比的解靈框體】(Sazabi's Ghost Liberator)",
-        description: "利用沙薩比套裝在 2.4 的大幅強化，湊滿全套提供 16% 吸血、16% 物理減傷、+27% 生命上限與超高惡魔增傷，造價僅需幾顆雜碎寶石，卻是紅門與高難度邪惡威脅區域生存率最高的配置！",
+        description: "利用沙薩比套裝在 2.4 的大幅強化，湊滿全套提供 15% 吸血、16% 物理減傷、+27% 生命上限與超高惡魔增傷，造價僅需幾顆雜碎寶石，卻是紅門與高難度邪惡威脅區域生存率最高的配置！",
         strengths: ["全套造價極為低廉", "生存硬度超越剛毅安頭", "完全不吃裝備孔數懲罰"]
       }
     ]

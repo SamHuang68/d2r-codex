@@ -93,7 +93,7 @@ export const ValuationGuide: React.FC = () => {
       { id: 'jewelers_4s', label: '天然 4 鑲孔 (Jeweler\'s 珠寶匠)', labelEn: 'Natural 4 Sockets (Jeweler\'s)', score: 45, isCrucial: true },
       { id: 'deflecting', label: '偏折 (30% FBR + 20% 格擋率)', labelEn: 'Deflecting (30% FBR + 20% Block)', score: 45, isCrucial: true },
       { id: 'eth_rep', label: '無形 + 自動修復耐久度', labelEn: 'Ethereal + Repairs Durability', score: 35 },
-      { id: 'life_60', label: '+50-60 生命 (巨鯨詞綴)', labelEn: '+50-60 Life (of the Whale)', score: 25 },
+      { id: 'life_60', label: '+41-60 生命 (巨像之詞綴)', labelEn: '+41-60 Life (of the Colossus)', score: 25 },
     ]
   };
 
@@ -164,7 +164,7 @@ export const ValuationGuide: React.FC = () => {
       label: isEn ? "🪙 Progression Keeper (Mid Tier)" : "🪙 拓荒過渡好物 (Mid Tier)",
       color: "text-d2-magic",
       borderColor: "border-d2-magic/50",
-      estValue: isEn ? "Valued at a few mid runes (Pul ~ Ist) or self-use." : "身價約為數顆 20-24 號符文 (Pul ~ Ist) 或自用。",
+      estValue: isEn ? "Valued at a few mid runes (Pul ~ Ist) or self-use." : "身價約為數顆 21-24 號符文 (Pul ~ Ist) 或自用。",
       advice: isEn
         ? "Has 1-2 useful attributes. Great for personal progression, but limited commercial appeal on endgame trade boards."
         : "有 1-2 條可用屬性，開荒期自用很舒服，但在畢業交易市場競爭力有限。"

@@ -283,16 +283,16 @@ const BOSS_PROFILES: BossProfile[] = [
     ],
     farmingValue: [
       '【全遊戲唯一的 Lv99 超級魔王】巴爾掉落的超大型護身符 (Grand Charm) 等級為 99，能洗出全暗黑唯一的 +45 生命技能大板！',
-      '掉落「毀滅精華 (Twisted Essence of Destruction)」是製作赦免徽章 (洗點水) 的必備核心。',
+      '掉落「潰爛的毀滅精華 (Festering Essence of Destruction)」是製作赦免徽章 (洗點水) 的必備核心。',
       '毀滅王座前五波怪物是 90~99 級衝頂等級的經驗之聖地。',
     ],
     farmingValueEn: [
-      '[Only Level 99 Boss] Baal drops ilvl 99 Grand Charms, the only charms in D2R capable of rolling +45 Life Skiller plates!',
-      'Drops Twisted Essence of Destruction, the crucial capstone for Token of Absolution respec tokens.',
+      '[Only Level 99 Boss] Baal drops ilvl 99 Grand Charms, which can roll up to +45 Life Skiller plates!',
+      'Drops Festering Essence of Destruction, the crucial capstone for Token of Absolution respec tokens.',
       'Throne of Destruction 5 minion waves provide the apex XP farming route for reaching Level 99.',
     ],
-    tacticalTip: '【三合一極限制殘連鎖】死靈法師的「衰老詛咒 (-50% 攻速移速)」+ 黏土石魔的「黏土緩速 (-50% 攻速)」+「冰冷傷害緩速」，會將巴爾的動作幀數降至接近靜止 (0 幀攻擊)！巴爾將徹底淪為木樁任人宰割。',
-    tacticalTipEn: '[Tri-Slow Lockdown] Decrepify (-50% speed) + Clay Golem slow (-50% speed) + Cold Chill reduces Baal\'s attack frames down to near zero! Baal becomes a completely frozen wooden target unable to cast.',
+    tacticalTip: '【三合一極限制殘連鎖】死靈法師的「衰老詛咒 (-50% 攻速移速)」+ 黏土石魔的「黏土緩速 (隨技能等級提升，20 級約 -63% 速度)」+「冰冷傷害緩速」，會將巴爾的動作幀數降至接近靜止 (0 幀攻擊)！巴爾將徹底淪為木樁任人宰割。',
+    tacticalTipEn: '[Tri-Slow Lockdown] Decrepify (-50% speed) + Clay Golem slow (scales with level, about -63% speed at level 20) + Cold Chill reduces Baal\'s attack frames down to near zero! Baal becomes a completely frozen wooden target unable to cast.',
   },
 ];
 

@@ -115,7 +115,7 @@ export const PRESET_META_BUILDS: Omit<CharacterBuildPlan, 'id'>[] = [
     targetLevel: 88,
     gear: {
       helm: '套裝【吉永之臉】(Guillaume\'s Face) 35% 粉碎打擊 CB',
-      armor: '符文之語【剛毅】(Fortitude 統御者鎧甲) 或【背信】(Treachery 偷靈氣)',
+      armor: '符文之語【剛毅】(Fortitude 統御者鎧甲) 或【背信】(Treachery 影散 + 劇毒)',
       weapon1: '符文之語【悔恨】(Grief 幻化之刃 400 純增傷 40% IAS)',
       shield1: '暗金【撒卡蘭姆使者】(金紋盾 HOZ 鑲 22# 烏姆 72 全抗)',
       weapon2: '戰爭召喚 (CTA) 或 偷取生命聚氣魔杖 (Life Tap Wand)',
@@ -199,8 +199,8 @@ export const PRESET_META_BUILDS: Omit<CharacterBuildPlan, 'id'>[] = [
       armor: '符文之語【剛毅】(Fortitude) 或【謎團】(Enigma)',
       weapon1: '符文之語【悔恨】(Grief 幻化之刃 400 純增傷 40% IAS)',
       shield1: '符文之語【執法者】(Lawbringer 幻化 衰老 + 庇護) 或 副持【悔恨】',
-      weapon2: '暗金【阿里巴巴之刃】(Blade of Ali Baba 雙孔鑲 20# 藍姆符文)',
-      shield2: '暗金【阿里巴巴之刃】(Blade of Ali Baba 雙孔鑲 20# 藍姆符文)',
+      weapon2: '暗金【阿里巴巴之刃】(Blade of Ali Baba 三孔鑲 20# 藍姆符文)',
+      shield2: '暗金【阿里巴巴之刃】(Blade of Ali Baba 三孔鑲 20# 藍姆符文)',
       gloves: '暗金【運氣守護】(Chance Guards 40% MF 200% 打錢)',
       boots: '暗金【地獄闊步】(Infernostride 70% 打錢 +10% 最大抗火)',
       belt: '暗金【黃金裹腰】(Goldwrap 80% 打錢 30% MF) 或 長串之耳',
@@ -215,6 +215,6 @@ export const PRESET_META_BUILDS: Omit<CharacterBuildPlan, 'id'>[] = [
       magicFind: 450,
       allSkills: 8
     },
-    notes: '崔凡克瘸子的終極剋星！旭日東升與雙矮人之星將多頭蛇火球完全轉化為補血溫泉。擊殺最高議會後，切副手雙持阿里巴巴（共4顆藍姆符文）狂按「尋找物品 (Find Item - Hork)」，一場噴出數百萬金幣與海量高級符文！'
+    notes: '崔凡克瘸子的終極剋星！旭日東升與雙矮人之星將多頭蛇火球完全轉化為補血溫泉。擊殺最高議會後，切副手雙持阿里巴巴（共6顆藍姆符文）狂按「尋找物品 (Find Item - Hork)」，一場噴出數百萬金幣與海量高級符文！'
   }
 ];
