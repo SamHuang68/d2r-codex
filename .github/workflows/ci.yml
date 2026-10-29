@@ -39,6 +39,9 @@ jobs:
       - name: Data English coverage
         run: node scripts/check_data_i18n.mjs
 
+      - name: Item image mirror
+        run: node scripts/sync_item_image_mirror.mjs
+
       - name: Engine tests
         run: npm run test:engine
 
