@@ -4,7 +4,7 @@ import { GameIcon } from '../common/GameIcons';
 import meta from '../../data/game/meta.json';
 import { useLanguage } from '../../context/LanguageContext';
 
-export const Footer: React.FC = () => {
+export const Footer: React.FC<{ onNavigate?: (tab: string) => void }> = ({ onNavigate }) => {
   const { isEn } = useLanguage();
   const scrollToTop = () => {
     window.scrollTo({
@@ -45,6 +45,15 @@ export const Footer: React.FC = () => {
           <span className="flex items-center gap-1.5 text-sanctuary-500" title={isEn ? "Simulator and codex values are generated from this game data version" : "模擬器與百科的數值由此版本的遊戲資料表產生"}>
             {isEn ? `Game Data Version ${meta.gameVersion} (Built ${meta.generatedAt})` : `遊戲資料版本 ${meta.gameVersion}（${meta.generatedAt} 產生）`}
           </span>
+          {onNavigate && (
+            <button
+              type="button"
+              onClick={() => onNavigate('about')}
+              className="underline underline-offset-2 hover:text-d2-unique transition-colors cursor-pointer"
+            >
+              {isEn ? 'Sources & Copyright' : '資料來源與版權聲明'}
+            </button>
+          )}
           <button
             type="button"
             onClick={scrollToTop}
