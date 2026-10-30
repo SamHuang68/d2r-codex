@@ -105,7 +105,8 @@ async function runOnce(base, browser) {
       if (m.type() !== 'error') return;
       const loc = m.location()?.url ?? '';
       // 第三方資源（字型、遠端圖片）載入失敗，或瀏覽器對資源失敗的通用訊息，不算頁面本身的錯誤
-      if (/Failed to load resource/i.test(m.text()) || (loc && !loc.startsWith(origin))) return;
+      // Firefox 在換頁中途中止字型下載時會印 "downloadable font: download failed"（沒有來源網址），同樣屬於第三方字型
+      if (/Failed to load resource|downloadable font/i.test(m.text()) || (loc && !loc.startsWith(origin))) return;
       failures.push(`[${tag}] console 錯誤：${m.text().slice(0, 200)}`);
     });
     // 同網域的 /assets/*.js 一定要是 JavaScript：網址不存在時主機會回傳首頁 HTML（SPA 後備），CDN 一旦把它依 /assets/* 的長期快取規則
@@ -175,6 +176,32 @@ async function runOnce(base, browser) {
       await pg.close();
     }
 
+    // 真路由：每個分頁都有自己的網址與靜態外殼（標題、canonical 各自獨立），直接開啟深層網址要能載入；舊的 #分頁 網址要自動轉成新路徑
+    {
+      const rp = await ctx.newPage(); track(rp, '桌面·路由');
+      try {
+        const root = new URL('.', base).pathname;
+        for (const id of ['items', 'planner', 'about']) {
+          const res = await rp.goto(new URL(`${id}/`, base).href, { waitUntil: 'load', timeout: 45000 });
+          if (!res || res.status() !== 200) { failures.push(`[路由] /${id}/ 回 HTTP ${res?.status()}（靜態外殼不存在？）`); continue; }
+          const meta = await rp.evaluate(() => ({ canonical: document.querySelector('link[rel=canonical]')?.href ?? '', title: document.title, desc: document.querySelector('meta[name=description]')?.content ?? '' }));
+          if (!meta.canonical.endsWith(`/${id}/`)) failures.push(`[路由] /${id}/ 的 canonical 不對：${meta.canonical}`);
+          await rp.waitForFunction(() => (document.body?.innerText ?? '').length > 500, null, { timeout: 15000 });
+          if (new URL(rp.url()).pathname !== `${root}${id}/`) failures.push(`[路由] /${id}/ 載入後網址被改掉：${rp.url()}`);
+        }
+        // 靜態 HTML（不執行 JS）就要有各分頁自己的標題與描述，爬蟲才分得出頁面
+        const raw = await (await fetch(new URL('items/', base))).text();
+        if (!/<title>裝備寶典 \|/.test(raw) || !/rel="canonical" href="[^"]*\/items\/"/.test(raw)) failures.push('[路由] /items/ 的靜態 HTML 沒有自己的標題或 canonical');
+        const sm = await fetch(new URL('sitemap.xml', base));
+        if (sm.status !== 200 || !(await sm.text()).includes('/items/</loc>')) failures.push('[路由] sitemap.xml 不存在或缺少分頁');
+        await rp.goto(new URL('?legacy=1#runewords', base).href, { waitUntil: 'load', timeout: 45000 });
+        await rp.waitForFunction((r) => location.pathname === `${r}runewords/`, root, { timeout: 15000 });
+      } catch (e) {
+        failures.push(`[路由] 深層網址或舊 #網址轉址失敗：${String(e.message).split('\n')[0]}`);
+      }
+      await rp.close();
+    }
+
     // 瀏覽器上一頁／下一頁：每次點進另一頁都是一筆歷史紀錄（同一頁連點不重複），上一頁回到前一個分頁而不是離開網站
     {
       const hp = await ctx.newPage(); track(hp, '桌面·歷史');
@@ -183,15 +210,15 @@ async function runOnce(base, browser) {
         await hp.waitForFunction(() => (document.body?.innerText ?? "").length > 800, null, { timeout: 15000 });
         const len0 = await hp.evaluate(() => history.length);
         const side = (label) => hp.locator('aside, nav').getByRole('link', { name: new RegExp(label) }).first();
-        await side('裝備寶典').click(); await hp.waitForFunction(() => location.hash === '#items', null, { timeout: 10000 });
-        await side('符文寶庫').click(); await hp.waitForFunction(() => location.hash === '#runes', null, { timeout: 10000 });
+        await side('裝備寶典').click(); await hp.waitForFunction(() => location.pathname.endsWith('/items/'), null, { timeout: 10000 });
+        await side('符文寶庫').click(); await hp.waitForFunction(() => location.pathname.endsWith('/runes/'), null, { timeout: 10000 });
         await side('符文寶庫').click(); await sleep(300);
         if ((await hp.evaluate(() => history.length)) - len0 !== 2) failures.push('[桌面] 同一個分頁連點，歷史紀錄多了重複的一筆');
-        await hp.goBack(); await hp.waitForFunction(() => location.hash === '#items', null, { timeout: 10000 });
+        await hp.goBack(); await hp.waitForFunction(() => location.pathname.endsWith('/items/'), null, { timeout: 10000 });
         await hp.waitForFunction(() => /暗金/.test((document.body?.innerText ?? "")) && !(document.body?.innerText ?? "").includes('載入中'), null, { timeout: 15000 });
         if (!(await hp.title()).includes('裝備寶典')) failures.push(`[桌面] 分頁標題沒有跟著分頁變：${await hp.title()}`);
-        await hp.goBack(); await hp.waitForFunction(() => (document.body?.innerText ?? "").includes('遊戲資料版本') && !location.hash.startsWith('#items'), null, { timeout: 10000 });
-        await hp.goForward(); await hp.waitForFunction(() => location.hash === '#items', null, { timeout: 10000 });
+        await hp.goBack(); await hp.waitForFunction(() => (document.body?.innerText ?? "").includes('遊戲資料版本') && !location.pathname.endsWith('/items/'), null, { timeout: 10000 });
+        await hp.goForward(); await hp.waitForFunction(() => location.pathname.endsWith('/items/'), null, { timeout: 10000 });
       } catch (e) {
         failures.push(`[桌面] 瀏覽器上一頁／下一頁沒有在分頁之間切換：${String(e.message).split('\n')[0]}`);
       }
@@ -219,7 +246,7 @@ async function runOnce(base, browser) {
       const link = page.locator('button[title*="在百科中查看【"], button[title*="View "], button[title^="點擊查看【"], button[title^="點擊跳轉查看【"]').first();
       await link.waitFor({ timeout: 10000 });
       await link.click();
-      await page.waitForFunction(() => /^#(items|runewords|bases|runes|props)$/.test(location.hash), null, { timeout: 10000 });
+      await page.waitForFunction(() => /\/(items|runewords|bases|runes|props)\/$/.test(location.pathname), null, { timeout: 10000 });
     } catch (e) {
       failures.push(`[桌面] 傭兵頁的物品連結點了沒有跳轉到對應分頁：${String(e.message).split('\n')[0]}`);
     }
@@ -369,7 +396,7 @@ async function runOnce(base, browser) {
       const hit = page.getByText('怪物圖鑑 ·').first();
       await hit.waitFor({ timeout: 10000 });
       await hit.click();
-      await page.waitForFunction(() => location.hash === '#monsters' && [...document.querySelectorAll('input[type=search]')].some((i) => i.value === '安達莉爾'), null, { timeout: 10000 });
+      await page.waitForFunction(() => location.pathname.endsWith('/monsters/') && [...document.querySelectorAll('input[type=search]')].some((i) => i.value === '安達莉爾'), null, { timeout: 10000 });
     } catch (e) {
       failures.push(`[桌面] 全域搜尋找不到怪物或點了沒有跳到怪物圖鑑：${String(e.message).split('\n')[0]}`);
     }

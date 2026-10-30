@@ -8,6 +8,7 @@ import { CLASS_ZH } from './engine/slots';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 
 import { HeroSection } from './components/portal/HeroSection';
+import { KNOWN_TABS, parsePath, pathForTab } from './utils/routes';
 import { CategoryGrid } from './components/portal/CategoryGrid';
 import { ClassShowcase } from './components/portal/ClassShowcase';
 import { DLCReign } from './components/portal/DLCReign';
@@ -38,11 +39,22 @@ const SearchModal = lazy(() => import('./components/layout/SearchModal').then((m
 // 配裝模擬器連同遊戲資料表很大，只在進入該頁時才載入，首頁不必等它
 const SimulatorV2 = lazy(() => import('./components/simulator/v2/SimulatorV2').then((m) => ({ default: m.SimulatorV2 })));
 
-const KNOWN_TABS = ['overview', 'characters', 'skills', 'runewords', 'items', 'props', 'bases', 'quests', 'mercenaries', 'valuation', 'uber', 'runes', 'cube', 'breakpoints', 'areas', 'monsters', 'affixes', 'shrines', 'experience', 'grail', 'planner', 'about'];
-/** 網址 #planner 可直接開啟對應分頁（例如配裝模擬器） */
-const tabFromHash = (): string => {
-  const h = typeof window !== 'undefined' ? window.location.hash.replace(/^#/, '') : '';
+/**
+ * 網址決定分頁：/planner/ 直接開啟配裝模擬器。舊的 #planner 形式仍然有效，載入時由 canonicalizeLegacyHash 轉成新路徑。
+ * 路徑優先，其次才看 hash（兩者都沒有就是首頁）。
+ */
+const tabFromLocation = (): string => {
+  if (typeof window === 'undefined') return 'overview';
+  const { tab } = parsePath(window.location.pathname);
+  if (tab) return tab;
+  const h = window.location.hash.replace(/^#/, '');
   return KNOWN_TABS.includes(h) ? h : 'overview';
+};
+/** 網址是舊式 #分頁 時，改寫成真正的路徑（保留查詢字串），不新增歷史紀錄 */
+const canonicalizeLegacyHash = () => {
+  const h = window.location.hash.replace(/^#/, '');
+  if (!KNOWN_TABS.includes(h)) return;
+  window.history.replaceState(window.history.state, '', pathForTab(h) + window.location.search);
 };
 
 /**
@@ -56,7 +68,7 @@ const sameNav = (a: NavState, b: NavState) => a.tab === b.tab && a.query === b.q
 
 const AppContent: React.FC = () => {
   const { t, isEn } = useLanguage();
-  const [activeTab, setActiveTab] = useState<string>(tabFromHash);
+  const [activeTab, setActiveTab] = useState<string>(tabFromLocation);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [searchLoaded, setSearchLoaded] = useState<boolean>(false);
   useEffect(() => { if (isSearchOpen) setSearchLoaded(true); }, [isSearchOpen]);
@@ -80,17 +92,22 @@ const AppContent: React.FC = () => {
   // 分頁與網址 hash 同步，方便直接連結與重新整理後停留原頁；上一頁／下一頁依歷史紀錄裡的狀態還原
   useEffect(() => {
     // 第一筆歷史紀錄補上狀態，之後回到它才知道當時的分頁與搜尋字串
+    canonicalizeLegacyHash();
     window.history.replaceState({ [NAV_KEY]: navRef.current }, '', window.location.href);
     const onPop = (e: PopStateEvent) => {
       const saved = (e.state as { [NAV_KEY]?: NavState; scrollY?: number } | null);
       // 沒有狀態＝使用者直接改了網址列的 hash：只看分頁
-      applyNav(saved?.[NAV_KEY] ?? { tab: tabFromHash(), query: '', cls: navRef.current.cls });
+      applyNav(saved?.[NAV_KEY] ?? { tab: tabFromLocation(), query: '', cls: navRef.current.cls });
       const y = saved?.scrollY ?? 0;
       // 分頁內容是延遲載入的，高度不是一次到位：還原捲動位置分幾次嘗試
       [0, 150, 500].forEach((ms) => window.setTimeout(() => window.scrollTo(0, y), ms));
     };
+    // 舊式 #分頁 網址（使用者手動改網址列、或舊連結在同一頁內被點到）：轉成路徑再換頁
     const onHash = () => {
-      applyNav({ tab: tabFromHash(), query: '', cls: navRef.current.cls });
+      const h = window.location.hash.replace(/^#/, '');
+      if (!KNOWN_TABS.includes(h)) return;
+      canonicalizeLegacyHash();
+      applyNav({ tab: h, query: '', cls: navRef.current.cls });
     };
     window.addEventListener('popstate', onPop);
     window.addEventListener('hashchange', onHash);
@@ -134,7 +151,7 @@ const AppContent: React.FC = () => {
     if (!sameNav(navRef.current, next)) {
       // 離開之前先把目前這一筆的捲動位置存進去，按上一頁時回到原本看的位置
       window.history.replaceState({ ...(window.history.state ?? {}), [NAV_KEY]: navRef.current, scrollY: window.scrollY }, '');
-      window.history.pushState({ [NAV_KEY]: next }, '', `#${effectiveTab}`);
+      window.history.pushState({ [NAV_KEY]: next }, '', pathForTab(effectiveTab));
     }
     applyNav(next);
     window.scrollTo({ top: 0, behavior: 'smooth' });

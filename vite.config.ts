@@ -1,5 +1,8 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import fs from 'node:fs';
+import path from 'node:path';
+import { ROUTES, SITE_ORIGIN } from './src/utils/routes';
 
 /**
  * 首頁載完、閒下來之後，在背景預先抓好「百科各頁共用的大資料 chunk」（遊戲資料、暗金、符文之語、技能、描述…），
@@ -24,9 +27,76 @@ const prefetchDataChunks = (): Plugin => ({
   },
 });
 
+const SITE_TITLE = '聖休亞瑞典藏中樞 | D2R Sanctuary Codex';
+const escapeAttr = (v: string) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+/**
+ * 真路由（/items/、/runewords/…）：
+ * - 開發與建置都把 index.html 裡的 __TABS__ 換成分頁名單（網站根目錄推算用）。
+ * - 建置後為每個分頁寫一份靜態 HTML 外殼（dist/<分頁>/index.html）：標題、描述、canonical、分享預覽各自獨立，
+ *   並寫死 <base href="../"> 讓相對路徑的資源從網站根目錄載入；<noscript> 裡放全站連結，讓不跑 JS 的爬蟲也能順著連結走。
+ *   靜態主機（GitHub Pages、Cloudflare Pages）直接回應 /items/ 就是這份檔，不必靠 404 後備。
+ * - 同時輸出 sitemap.xml，並把各分頁網址的快取規則補進 _headers。
+ */
+const staticRoutes = (): Plugin => {
+  let outDir = 'dist';
+  return {
+    name: 'static-routes',
+    configResolved(cfg) { outDir = path.resolve(cfg.root, cfg.build.outDir); },
+    transformIndexHtml: {
+      order: 'pre',
+      handler(html) {
+        return html.replace('__TABS__', JSON.stringify(ROUTES.map((r) => r.id)));
+      },
+    },
+    closeBundle() {
+      const indexPath = path.join(outDir, 'index.html');
+      if (!fs.existsSync(indexPath)) return;
+      const home = fs.readFileSync(indexPath, 'utf8');
+      const nl = home.includes('\r\n') ? '\r\n' : '\n';
+      const urlOf = (id: string) => (id === 'overview' ? `${SITE_ORIGIN}/` : `${SITE_ORIGIN}/${id}/`);
+      const noscript = (id: string, title: string, desc: string) => [
+        '<noscript>',
+        `  <main><h1>${escapeAttr(title)}</h1><p>${escapeAttr(desc)}</p><p>此網站需要啟用 JavaScript 才能瀏覽完整內容。</p>`,
+        '  <nav><ul>' + ROUTES.filter((r) => r.id !== id).map((r) => `<li><a href="${r.id === 'overview' ? './' : `${r.id}/`}">${escapeAttr(r.title)}</a></li>`).join('') + '</ul></nav></main>',
+        '</noscript>',
+      ].join(nl);
+      const render = (id: string, nested: boolean) => {
+        const r = ROUTES.find((x) => x.id === id)!;
+        const title = id === 'overview' ? SITE_TITLE : `${r.title} | ${SITE_TITLE}`;
+        const t = escapeAttr(title), d = escapeAttr(r.description), u = urlOf(id);
+        let out = home
+          .replace(/<title>[^<]*<\/title>/, `<title>${t}</title>`)
+          .replace(/(<meta name="description" content=")[^"]*(")/, `$1${d}$2`)
+          .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${t}$2`)
+          .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${d}$2`)
+          .replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${u}$2`)
+          .replace('</head>', `    <link rel="canonical" href="${u}" />${nl}  </head>`)
+          .replace('<div id="root"></div>', `<div id="root"></div>${nl}    ${noscript(id, r.title, r.description)}`);
+        if (nested) out = out.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />${nl}    <base href="../" />`);
+        return out;
+      };
+      fs.writeFileSync(indexPath, render('overview', false));
+      for (const r of ROUTES) {
+        if (r.id === 'overview') continue;
+        fs.mkdirSync(path.join(outDir, r.id), { recursive: true });
+        fs.writeFileSync(path.join(outDir, r.id, 'index.html'), render(r.id, true));
+      }
+      const headersPath = path.join(outDir, '_headers');
+      if (fs.existsSync(headersPath)) {
+        const extra = ROUTES.filter((r) => r.id !== 'overview').map((r) => `/${r.id}/${nl}  Cache-Control: no-cache${nl}`).join(nl);
+        fs.appendFileSync(headersPath, `${nl}# 各分頁的靜態外殼（vite.config.ts 的 staticRoutes 產生）：和首頁一樣每次重新確認${nl}${extra}`);
+      }
+      const today = new Date().toISOString().slice(0, 10);
+      const urls = ROUTES.map((r) => `  <url><loc>${urlOf(r.id)}</loc><lastmod>${today}</lastmod></url>`).join('\n');
+      fs.writeFileSync(path.join(outDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
+    },
+  };
+};
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), prefetchDataChunks()],
+  plugins: [react(), prefetchDataChunks(), staticRoutes()],
   base: './', // relative base for versatile static hosting
   server: {
     port: 3000,
