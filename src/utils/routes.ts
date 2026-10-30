@@ -37,13 +37,13 @@ export const KNOWN_TABS: string[] = ROUTES.map((r) => r.id);
 /** 把目前網址的路徑拆成網站根目錄與分頁；路徑不是已知分頁時 tab 為 undefined（例如首頁、或開發模式的 index.html）。 */
 export const parsePath = (pathname: string): { root: string; tab?: string } => {
   const parts = pathname.replace(/index\.html$/, '').split('/');
-  // 結尾是 '' 代表以斜線結尾
-  const trailing = parts[parts.length - 1] === '' ? parts.length - 2 : parts.length - 1;
-  const last = parts[trailing];
-  if (trailing >= 1 && KNOWN_TABS.includes(last) && last !== 'overview') {
-    return { root: parts.slice(0, trailing).join('/') + '/', tab: last };
+  parts.pop(); // 結尾的空字串（路徑以斜線結尾）或檔名
+  const last = parts[parts.length - 1];
+  if (parts.length > 1 && last !== 'overview' && KNOWN_TABS.includes(last)) {
+    parts.pop();
+    return { root: parts.join('/') + '/', tab: last };
   }
-  return { root: parts.slice(0, parts[parts.length - 1] === '' ? parts.length : parts.length - 1).join('/') + '/' };
+  return { root: parts.join('/') + '/' };
 };
 
 /** 網站根目錄（以斜線開頭結尾）。 */
