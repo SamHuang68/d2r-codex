@@ -105,7 +105,8 @@ async function runOnce(base, browser) {
       if (m.type() !== 'error') return;
       const loc = m.location()?.url ?? '';
       // 第三方資源（字型、遠端圖片）載入失敗，或瀏覽器對資源失敗的通用訊息，不算頁面本身的錯誤
-      if (/Failed to load resource/i.test(m.text()) || (loc && !loc.startsWith(origin))) return;
+      // Firefox 在換頁中途中止字型下載時會印 "downloadable font: download failed"（沒有來源網址），同樣屬於第三方字型
+      if (/Failed to load resource|downloadable font/i.test(m.text()) || (loc && !loc.startsWith(origin))) return;
       failures.push(`[${tag}] console 錯誤：${m.text().slice(0, 200)}`);
     });
     // 同網域的 /assets/*.js 一定要是 JavaScript：網址不存在時主機會回傳首頁 HTML（SPA 後備），CDN 一旦把它依 /assets/* 的長期快取規則
