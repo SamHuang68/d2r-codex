@@ -333,6 +333,22 @@ async function runOnce(base, browser) {
     } catch (e) {
       failures.push(`[桌面] 樹狀索引方向鍵檢查失敗：${String(e.message).split('\n')[0]}`);
     }
+    // 「詳細」模式分批：底材寶典的根節點（508 款）切到詳細，一次只能畫出一批（48 張）並出現「顯示更多」，按一下再加一批
+    try {
+      await page.evaluate(() => { location.hash = '#bases'; });
+      await page.waitForSelector('[data-node-id="all"]', { timeout: 15000 });
+      await page.locator('[data-node-id="all"]').click();
+      await page.getByRole('button', { name: /^詳細$|^Detailed$/ }).click();
+      await sleep(800);
+      const first = await page.locator('[id^="base-"]').count();
+      if (first < 1 || first > 60) failures.push(`[桌面] 底材寶典根節點詳細模式一次畫了 ${first} 張卡（應為第一批 48 張）`);
+      await page.getByRole('button', { name: /顯示更多|Show more/ }).first().click();
+      await sleep(500);
+      const second = await page.locator('[id^="base-"]').count();
+      if (second <= first) failures.push('[桌面] 底材寶典「顯示更多」按了沒有多出卡片');
+    } catch (e) {
+      failures.push(`[桌面] 詳細模式分批檢查失敗：${String(e.message).split('\n')[0]}`);
+    }
     // 搜尋面板也是第一次按 Q 才載入的 lazy chunk
     await page.evaluate(() => { location.hash = '#overview'; });
     try {
