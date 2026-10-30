@@ -33,11 +33,12 @@ const HolyGrailTracker = lazy(() => import('./components/vault/HolyGrailTracker'
 const BuildPlanner = lazy(() => import('./components/vault/BuildPlanner').then((m) => ({ default: m.BuildPlanner })));
 const CharacterGuide = lazy(() => import('./components/codex/CharacterGuide').then((m) => ({ default: m.CharacterGuide })));
 const PropCompendium = lazy(() => import('./components/codex/PropCompendium').then((m) => ({ default: m.PropCompendium })));
+const SourcesPage = lazy(() => import('./components/layout/SourcesPage').then((m) => ({ default: m.SourcesPage })));
 const SearchModal = lazy(() => import('./components/layout/SearchModal').then((m) => ({ default: m.SearchModal })));
 // 配裝模擬器連同遊戲資料表很大，只在進入該頁時才載入，首頁不必等它
 const SimulatorV2 = lazy(() => import('./components/simulator/v2/SimulatorV2').then((m) => ({ default: m.SimulatorV2 })));
 
-const KNOWN_TABS = ['overview', 'characters', 'skills', 'runewords', 'items', 'props', 'bases', 'quests', 'mercenaries', 'valuation', 'uber', 'runes', 'cube', 'breakpoints', 'areas', 'monsters', 'affixes', 'shrines', 'experience', 'grail', 'planner'];
+const KNOWN_TABS = ['overview', 'characters', 'skills', 'runewords', 'items', 'props', 'bases', 'quests', 'mercenaries', 'valuation', 'uber', 'runes', 'cube', 'breakpoints', 'areas', 'monsters', 'affixes', 'shrines', 'experience', 'grail', 'planner', 'about'];
 /** 網址 #planner 可直接開啟對應分頁（例如配裝模擬器） */
 const tabFromHash = (): string => {
   const h = typeof window !== 'undefined' ? window.location.hash.replace(/^#/, '') : '';
@@ -271,6 +272,7 @@ const AppContent: React.FC = () => {
         {activeTab === 'affixes' && <AffixCompendium initialQuery={targetQuery} />}
         {activeTab === 'shrines' && <ShrineCompendium initialQuery={targetQuery} />}
         {activeTab === 'experience' && <ExperienceTable />}
+        {activeTab === 'about' && <SourcesPage />}
         {activeTab === 'mercenaries' && (
           <MercenaryGuide
             onNavigateItem={handleItemOrRunewordNavigate}
@@ -355,7 +357,7 @@ const AppContent: React.FC = () => {
       <BackToTop onOpenSearch={() => setIsSearchOpen(true)} />
 
       {/* Global Footer */}
-      <Footer />
+      <Footer onNavigate={(tab) => handleNavigate(tab)} />
     </div>
   );
 };
