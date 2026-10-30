@@ -155,7 +155,8 @@ async function runOnce(base, browser) {
 
     for (const r of ROUTES) {
       await page.evaluate((h) => { location.hash = h; }, r.hash);
-      try { await page.waitForFunction((min) => (document.body?.innerText ?? "").length > min, r.min, { timeout: 10000 }); } catch { /* 下面會回報 */ }
+      // 等待上限放寬到 30 秒：慢速環境（CI 的 WebKit）載入第一批大型資料 chunk 實測可達 10 秒；真的卡死仍會在這裡失敗，且訊息會帶網址與頁面內容
+      try { await page.waitForFunction((min) => (document.body?.innerText ?? "").length > min, r.min, { timeout: 30000 }); } catch { /* 下面會回報 */ }
       const n = await textLen(page);
       if (n <= r.min) failures.push(`[桌面] ${r.label}（${r.hash}）內容不足：${n} 字，要求超過 ${r.min}（網址 ${page.url()}，頁面開頭：${JSON.stringify((await page.evaluate(() => document.body?.innerText ?? '')).slice(0, 200))}）`);
     }
