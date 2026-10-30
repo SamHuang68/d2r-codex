@@ -190,6 +190,12 @@ async function runOnce(base, browser) {
         // 靜態 HTML（不執行 JS）就要有各分頁自己的標題與描述，爬蟲才分得出頁面
         const raw = await (await fetch(new URL('items/', base))).text();
         if (!/<title>裝備寶典 \|/.test(raw) || !/rel="canonical" href="[^"]*\/items\/"/.test(raw)) failures.push('[路由] /items/ 的靜態 HTML 沒有自己的標題或 canonical');
+        // 靜態 HTML 的 <noscript> 有各頁的項目清單（建置時由遊戲資料表產生），不執行 JS 的爬蟲也看得到實際內容
+        for (const [id, needle] of [['items', '暗金裝備'], ['runewords', '先祖之契'], ['runes', '符文']]) {
+          const html = await (await fetch(new URL(`${id}/`, base))).text();
+          const ns = html.slice(html.indexOf('<main>', html.indexOf('<div id="root">')));
+          if ((html.match(/<li>/g) ?? []).length < 20 || !ns.includes(needle)) failures.push(`[路由] /${id}/ 的靜態 HTML 沒有項目清單（找不到「${needle}」）`);
+        }
         const rb = await fetch(new URL('robots.txt', base));
         if (rb.status !== 200 || !/^Sitemap:\s*\S+\/sitemap\.xml/im.test(await rb.text())) failures.push('[路由] robots.txt 不存在或沒有 Sitemap 行');
         const sm = await fetch(new URL('sitemap.xml', base));
