@@ -155,7 +155,8 @@ async function runOnce(base, browser) {
 
     for (const r of ROUTES) {
       await page.evaluate((h) => { location.hash = h; }, r.hash);
-      try { await page.waitForFunction((min) => (document.body?.innerText ?? "").length > min, r.min, { timeout: 10000 }); } catch { /* 下面會回報 */ }
+      // 等待上限放寬到 30 秒：慢速環境（CI 的 WebKit）載入第一批大型資料 chunk 實測可達 10 秒；真的卡死仍會在這裡失敗，且訊息會帶網址與頁面內容
+      try { await page.waitForFunction((min) => (document.body?.innerText ?? "").length > min, r.min, { timeout: 30000 }); } catch { /* 下面會回報 */ }
       const n = await textLen(page);
       if (n <= r.min) failures.push(`[桌面] ${r.label}（${r.hash}）內容不足：${n} 字，要求超過 ${r.min}（網址 ${page.url()}，頁面開頭：${JSON.stringify((await page.evaluate(() => document.body?.innerText ?? '')).slice(0, 200))}）`);
     }
@@ -190,6 +191,12 @@ async function runOnce(base, browser) {
         // 靜態 HTML（不執行 JS）就要有各分頁自己的標題與描述，爬蟲才分得出頁面
         const raw = await (await fetch(new URL('items/', base))).text();
         if (!/<title>裝備寶典 \|/.test(raw) || !/rel="canonical" href="[^"]*\/items\/"/.test(raw)) failures.push('[路由] /items/ 的靜態 HTML 沒有自己的標題或 canonical');
+        // 靜態 HTML 的 <noscript> 有各頁的項目清單（建置時由遊戲資料表產生），不執行 JS 的爬蟲也看得到實際內容
+        for (const [id, needle] of [['items', '暗金裝備'], ['runewords', '先祖之契'], ['runes', '符文']]) {
+          const html = await (await fetch(new URL(`${id}/`, base))).text();
+          const ns = html.slice(html.indexOf('<main>', html.indexOf('<div id="root">')));
+          if ((html.match(/<li>/g) ?? []).length < 20 || !ns.includes(needle)) failures.push(`[路由] /${id}/ 的靜態 HTML 沒有項目清單（找不到「${needle}」）`);
+        }
         const rb = await fetch(new URL('robots.txt', base));
         if (rb.status !== 200 || !/^Sitemap:\s*\S+\/sitemap\.xml/im.test(await rb.text())) failures.push('[路由] robots.txt 不存在或沒有 Sitemap 行');
         const sm = await fetch(new URL('sitemap.xml', base));

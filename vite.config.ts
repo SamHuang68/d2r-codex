@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import fs from 'node:fs';
 import path from 'node:path';
 import { ROUTES, SITE_ORIGIN } from './src/utils/routes';
+import { staticSummary } from './src/utils/staticSummaries';
 
 /**
  * 首頁載完、閒下來之後，在背景預先抓好「百科各頁共用的大資料 chunk」（遊戲資料、暗金、符文之語、技能、描述…），
@@ -57,7 +58,7 @@ const staticRoutes = (): Plugin => {
       const urlOf = (id: string) => (id === 'overview' ? `${SITE_ORIGIN}/` : `${SITE_ORIGIN}/${id}/`);
       const noscript = (id: string, title: string, desc: string) => [
         '<noscript>',
-        `  <main><h1>${escapeAttr(title)}</h1><p>${escapeAttr(desc)}</p><p>此網站需要啟用 JavaScript 才能瀏覽完整內容。</p>`,
+        `  <main><h1>${escapeAttr(title)}</h1><p>${escapeAttr(desc)}</p><p>此網站需要啟用 JavaScript 才能瀏覽完整互動內容；以下是本頁收錄的項目清單。</p>${staticSummary(id)}`,
         '  <nav><ul>' + ROUTES.filter((r) => r.id !== id).map((r) => `<li><a href="${r.id === 'overview' ? './' : `${r.id}/`}">${escapeAttr(r.title)}</a></li>`).join('') + '</ul></nav></main>',
         '</noscript>',
       ].join(nl);
