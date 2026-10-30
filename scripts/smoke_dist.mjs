@@ -15,7 +15,12 @@
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
-import { chromium } from 'playwright-core';
+import { chromium, firefox, webkit } from 'playwright-core';
+
+// SMOKE_BROWSER=firefox|webkit 可改用其他瀏覽器引擎（CI 的跨瀏覽器檢查用）；沒設就是 Chromium
+const ENGINES = { chromium, firefox, webkit };
+const browserName = process.env.SMOKE_BROWSER ?? 'chromium';
+if (!ENGINES[browserName]) { console.error(`SMOKE_BROWSER 只能是 chromium、firefox、webkit，收到 ${browserName}`); process.exit(2); }
 
 const args = process.argv.slice(2);
 const opt = (name, d) => { const i = args.indexOf(`--${name}`); return i >= 0 ? args[i + 1] : d; };
@@ -211,7 +216,9 @@ async function runOnce(base, browser) {
     }
 
     // 改版後舊頁面載入不到舊 chunk：第一次載入分頁的 chunk 失敗時，應自動整頁重整一次並恢復（模擬：中止第一次 QuestGuide chunk 請求）
-    {
+    // 用「同一個檔名失敗一次」模擬：WebKit／Firefox 會記住同網址的失敗，重整後仍失敗，和真實改版（新頁面用新檔名）不同，
+    // 所以這項只在 Chromium 驗證；真實改版情境已用兩份不同雜湊的建置在三種引擎上實測過
+    if (browserName === 'chromium') {
       const ctx2 = await browser.newContext({ viewport: { width: 1280, height: 800 } });
       const p2 = await ctx2.newPage();
       // 失敗當下那個「即將被重整掉」的頁面一定會丟出載入錯誤，不算；重整之後（第 2 次 load 起）出現的錯誤才算
@@ -240,6 +247,8 @@ async function runOnce(base, browser) {
       const ct = r.headers()['content-type'] ?? '';
       if (!r.ok() || ct.includes('text/html')) failures.push(`[桌面] 網站圖標或分享圖缺檔：${f}（HTTP ${r.status()}，${ct}）`);
     }
+    // Firefox 的無頭模式在沒有音效裝置的 CI 主機上，AudioContext.resume() 永遠不會完成，音樂開關無法驗證，只在 Chromium／WebKit 檢查
+    if (browserName !== 'firefox') {
     // 背景音樂：預設關閉；打開面板、按開關後引擎才載入並開始播放（aria-checked），再按一次關掉；不能有頁面錯誤
     try {
       await page.evaluate(() => { location.hash = '#overview'; });
@@ -273,6 +282,7 @@ async function runOnce(base, browser) {
       await page.keyboard.press('Escape');
     } catch (e) {
       failures.push(`[桌面] 音樂沒有依章節自動切換：${String(e.message).split('\n')[0]}`);
+    }
     }
     // 搜尋面板也是第一次按 Q 才載入的 lazy chunk
     await page.evaluate(() => { location.hash = '#overview'; });
@@ -341,7 +351,8 @@ async function runOnce(base, browser) {
 
   // ── 手機：沒有橫向捲動 ──
   {
-    const ctx = await browser.newContext({ viewport: { width: 390, height: 800 }, isMobile: true, hasTouch: true });
+    // Firefox 不支援 isMobile 選項，只用 390 寬的視窗與觸控
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 800 }, hasTouch: true, ...(browserName === 'firefox' ? {} : { isMobile: true }) });
     const page = await ctx.newPage(); track(page, '手機');
     for (const hash of ['', '#planner']) {
       await page.goto(withBust(hash), { waitUntil: 'load', timeout: 45000 });
@@ -369,6 +380,7 @@ async function runOnce(base, browser) {
 let local;
 const base = liveUrl ?? (local = await serveDist(distDir)).base;
 async function launchBrowser() {
+  if (browserName !== 'chromium') return ENGINES[browserName].launch({});
   if (process.env.SMOKE_CHANNEL) return chromium.launch({ channel: process.env.SMOKE_CHANNEL });
   try {
     return await chromium.launch({});

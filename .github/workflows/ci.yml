@@ -42,6 +42,9 @@ jobs:
       - name: Item image mirror
         run: node scripts/sync_item_image_mirror.mjs
 
+      - name: Item taxonomy tests
+        run: node scripts/test_item_taxonomy.mjs
+
       - name: Engine tests
         run: npm run test:engine
 
@@ -63,3 +66,37 @@ jobs:
       # 圖示解析與部位檢查（1776 項）
       - name: Item resolver tests
         run: npm test
+
+  # 同一份正式建置，用 Firefox 與 WebKit（Safari 的引擎）各跑一次冒煙測試。
+  # Chromium 以外的引擎在版面、SVG 濾鏡、日期與字型上行為不同，這裡擋下「只在 Safari／Firefox 壞掉」的問題。
+  cross-browser:
+    name: 跨瀏覽器冒煙測試（${{ matrix.browser }}）
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [firefox, webkit]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install browser
+        run: npx playwright-core install --with-deps ${{ matrix.browser }}
+
+      - name: Browser smoke test (${{ matrix.browser }})
+        run: node scripts/smoke_dist.mjs
+        env:
+          SMOKE_BROWSER: ${{ matrix.browser }}
