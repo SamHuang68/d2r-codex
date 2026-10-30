@@ -8,7 +8,7 @@ import { CLASS_ZH } from './engine/slots';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 
 import { HeroSection } from './components/portal/HeroSection';
-import { KNOWN_TABS, parsePath, pathForTab } from './utils/routes';
+import { KNOWN_TABS, ROUTES, parsePath, pathForTab } from './utils/routes';
 import { CategoryGrid } from './components/portal/CategoryGrid';
 import { ClassShowcase } from './components/portal/ClassShowcase';
 import { DLCReign } from './components/portal/DLCReign';
@@ -120,7 +120,8 @@ const AppContent: React.FC = () => {
   // 分頁標題：瀏覽器的歷史紀錄清單、分頁列才看得出是哪一頁
   useEffect(() => {
     const mod = ALL_NAV_MODULES.find((m) => m.id === activeTab);
-    const label = mod ? (isEn ? mod.labelEn : mod.label) : '';
+    // 不在導覽列的分頁（資料來源與版權聲明）用路由表的標題
+    const label = mod ? (isEn ? mod.labelEn : mod.label) : isEn ? '' : (ROUTES.find((r) => r.id === activeTab)?.title ?? '');
     const base = isEn ? 'Sanctuary Codex | D2R Database' : '聖休亞瑞典藏中樞 | D2R Sanctuary Codex';
     document.title = activeTab === 'overview' || !label ? base : `${label} | ${base}`;
   }, [activeTab, isEn]);

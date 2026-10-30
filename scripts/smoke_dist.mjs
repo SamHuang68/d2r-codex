@@ -157,7 +157,7 @@ async function runOnce(base, browser) {
       await page.evaluate((h) => { location.hash = h; }, r.hash);
       try { await page.waitForFunction((min) => (document.body?.innerText ?? "").length > min, r.min, { timeout: 10000 }); } catch { /* 下面會回報 */ }
       const n = await textLen(page);
-      if (n <= r.min) failures.push(`[桌面] ${r.label}（${r.hash}）內容不足：${n} 字，要求超過 ${r.min}`);
+      if (n <= r.min) failures.push(`[桌面] ${r.label}（${r.hash}）內容不足：${n} 字，要求超過 ${r.min}（網址 ${page.url()}，頁面開頭：${JSON.stringify((await page.evaluate(() => document.body?.innerText ?? '')).slice(0, 200))}）`);
     }
 
     // 個別分頁直接開啟時的 JS 量：每頁開新頁籤，才不會把前面分頁已載入的算進來
