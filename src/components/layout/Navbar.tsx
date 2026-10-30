@@ -39,7 +39,6 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
         <a
           href={tabHref('overview')}
           onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); setActiveTab('overview'); }}
-          aria-label={t('回到主頁', 'Back to Home')}
           className="flex items-center gap-2.5 cursor-pointer group shrink-0"
         >
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-d2-unique to-sanctuary-900 p-0.5 shadow-glow-gold flex items-center justify-center">
@@ -55,6 +54,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
               {t('暗黑II：獄火重生 全資料庫', 'D2: Resurrected Database')}
             </div>
           </div>
+          <span className="sr-only">{t('回到主頁', 'Back to Home')}</span>
         </a>
 
         {current && (
@@ -64,7 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
             className="hidden md:flex items-center gap-2 text-sm text-sanctuary-300 min-w-0 hover:text-d2-unique transition-colors cursor-pointer group"
             title={t('點擊回到頂端', 'Scroll to top')}
           >
-            <span className="text-sanctuary-600">/</span>
+            <span className="text-sanctuary-500">/</span>
             {current.icon}
             <span className="font-bold text-d2-unique group-hover:underline truncate">
               {t(current.label, current.labelEn)}

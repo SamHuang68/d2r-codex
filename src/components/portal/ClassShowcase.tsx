@@ -154,7 +154,7 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
                 <div className="grid grid-cols-3 gap-2 text-center text-xs">
                   <div className="p-2 rounded bg-sanctuary-950 border border-sanctuary-800">
                     <div className="text-sanctuary-400 text-[11px]">{isEn ? 'Per Vitality (Vit)' : '每點活力 (Vit)'}</div>
-                    <div className="text-d2-blood font-bold text-sm mt-0.5">+{currentClass.statGains.lifePerVit} {isEn ? 'Life' : '生命'}</div>
+                    <div className="text-red-400 font-bold text-sm mt-0.5">+{currentClass.statGains.lifePerVit} {isEn ? 'Life' : '生命'}</div>
                   </div>
                   <div className="p-2 rounded bg-sanctuary-950 border border-sanctuary-800">
                     <div className="text-sanctuary-400 text-[11px]">{isEn ? 'Per Energy (Ene)' : '每點精力 (Ene)'}</div>

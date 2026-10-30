@@ -434,7 +434,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
 
           {here.length === 0 ? (
             <div className="text-center py-16 bg-sanctuary-900/40 rounded-2xl border border-sanctuary-800 space-y-3">
-              <HelpCircle className="w-10 h-10 text-sanctuary-600 mx-auto" />
+              <HelpCircle className="w-10 h-10 text-sanctuary-500 mx-auto" />
               <h3 className="text-lg font-diablo text-sanctuary-300">{isEn ? 'No matching bases found' : '未找到符合條件的底材'}</h3>
               <p className="text-xs text-sanctuary-500">
                 {root.count > 0 && node.id !== 'all' ? (isEn ? `No bases matching in "${node.en || node.label}", ${root.count} items match in other categories.` : `「${node.label}」底下沒有符合的底材，其他分類共 ${root.count} 款符合，請看分類索引的數量。`) : (isEn ? 'Please adjust filters or clear search query.' : '請嘗試調整分類或清除搜尋關鍵字')}

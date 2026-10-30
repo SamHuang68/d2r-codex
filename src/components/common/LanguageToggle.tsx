@@ -28,7 +28,7 @@ export const LanguageToggle: React.FC<LanguageToggleProps> = ({
           <span className={lang === 'zh' ? 'text-d2-unique font-bold' : 'text-sanctuary-400 group-hover:text-sanctuary-200'}>
             {isEn ? 'ZH' : '中'}
           </span>
-          <span className="text-sanctuary-600 mx-1">/</span>
+          <span className="text-sanctuary-500 mx-1">/</span>
           <span className={lang === 'en' ? 'text-d2-unique font-bold' : 'text-sanctuary-400 group-hover:text-sanctuary-200'}>
             EN
           </span>

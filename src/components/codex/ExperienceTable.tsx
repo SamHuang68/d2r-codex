@@ -127,7 +127,7 @@ export const ExperienceTable: React.FC = () => {
           </tbody>
         </table>
       </div>
-      <div className="text-[11px] text-sanctuary-600 space-y-1">
+      <div className="text-[11px] text-sanctuary-500 space-y-1">
         <p>
           {isEn
             ? 'Data extracted from game experience.txt (3.3.93847). "Total XP" represents the cumulative XP required to reach that level; "XP Needed" is the XP required from the preceding level.'

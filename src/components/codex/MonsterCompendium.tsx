@@ -486,7 +486,7 @@ export const MonsterCompendium: React.FC<{ initialQuery?: string }> = ({ initial
         }
       />
       {tab === 'monsters' ? <MonstersTab initialQuery={initialQuery} /> : <AreasTab />}
-      <div className="text-[11px] text-sanctuary-600">{isEn ? 'Data from monstats.txt & levels.txt (3.3.93847). Resist ≥100 is immune; for sunder mechanics, see target resistance in the Simulator.' : '資料來自遊戲 monstats.txt 與 levels.txt（3.3.93847）。抗性 ≥100 為免疫；破免（例如裝備的「怪物免疫被穿透」）請看模擬器的目標抗性。'}</div>
+      <div className="text-[11px] text-sanctuary-500">{isEn ? 'Data from monstats.txt & levels.txt (3.3.93847). Resist ≥100 is immune; for sunder mechanics, see target resistance in the Simulator.' : '資料來自遊戲 monstats.txt 與 levels.txt（3.3.93847）。抗性 ≥100 為免疫；破免（例如裝備的「怪物免疫被穿透」）請看模擬器的目標抗性。'}</div>
     </div>
   );
 };

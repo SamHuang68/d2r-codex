@@ -477,7 +477,7 @@ export const UberBossGuide: React.FC = () => {
                 </div>
               </div>
               <div className="space-y-1">
-                <div className="flex items-center gap-2 text-d2-blood text-xs font-mono font-bold uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-red-400 text-xs font-mono font-bold uppercase tracking-wider">
                   <Flame className="w-4 h-4 text-d2-fire animate-pulse" />
                   {isEn ? 'WORLD EVENT INVASION' : '世界事件 · 喬丹之石售出祭儀'}
                 </div>

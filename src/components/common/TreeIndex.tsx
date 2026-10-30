@@ -289,7 +289,7 @@ export const Crumbs: React.FC<{ crumbs: { id: string; label: string }[]; onSelec
       const last = i === crumbs.length - 1;
       return (
         <React.Fragment key={c.id}>
-          {i > 0 && <ChevronRight className="w-3 h-3 text-sanctuary-600" aria-hidden />}
+          {i > 0 && <ChevronRight className="w-3 h-3 text-sanctuary-500" aria-hidden />}
           {last ? (
             <span className={`font-bold ${TONE[tone].text}`} aria-current="page">{c.label}</span>
           ) : (

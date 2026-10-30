@@ -108,7 +108,7 @@ export const MercenaryStats: React.FC<{ act: number }> = ({ act }) => {
             </tbody>
           </table>
         </div>
-        <p className="text-[11px] text-sanctuary-600">{isEn ? "Data from hireling.txt (3.3.93847), calculated without gear. Mercenary level cannot be lower than the minimum recruit level." : "傭兵數值來自遊戲資料表 hireling.txt（3.3.93847），傭兵等級落在檢查點之間時以最近的下方檢查點外推，與配裝模擬的傭兵分頁相同；不含裝備，沒有在遊戲內逐項核對。傭兵等級不能低於該類型雇得到的最低等級。"}</p>
+        <p className="text-[11px] text-sanctuary-500">{isEn ? "Data from hireling.txt (3.3.93847), calculated without gear. Mercenary level cannot be lower than the minimum recruit level." : "傭兵數值來自遊戲資料表 hireling.txt（3.3.93847），傭兵等級落在檢查點之間時以最近的下方檢查點外推，與配裝模擬的傭兵分頁相同；不含裝備，沒有在遊戲內逐項核對。傭兵等級不能低於該類型雇得到的最低等級。"}</p>
       </div>
     </section>
   );

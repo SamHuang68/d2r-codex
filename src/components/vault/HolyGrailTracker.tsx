@@ -496,7 +496,6 @@ export const HolyGrailTracker: React.FC = () => {
                 role="button"
                 tabIndex={0}
                 aria-pressed={isClaimed}
-                aria-label={isEn ? `${trophy.nameEn} ${isClaimed ? 'Claimed' : 'Unfound'}` : `${trophy.name} (${trophy.nameEn}) ${isClaimed ? '已收集' : '未收集'}`}
                 onClick={() => toggleObtained(trophy.id)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -507,7 +506,7 @@ export const HolyGrailTracker: React.FC = () => {
                 className={`relative cursor-pointer p-4 rounded-2xl border transition-all duration-300 group flex flex-col justify-between select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold focus-visible:ring-offset-2 focus-visible:ring-offset-sanctuary-950 ${
                   isClaimed
                     ? 'bg-gradient-to-b from-sanctuary-900/90 via-sanctuary-950 to-sanctuary-900/90 border-d2-unique/80 shadow-[0_0_20px_rgba(200,165,100,0.25)] hover:border-d2-gold'
-                    : 'bg-sanctuary-950/70 border-sanctuary-800/80 hover:border-sanctuary-700 opacity-65 hover:opacity-90'
+                    : 'bg-sanctuary-950/70 border-sanctuary-800/80 hover:border-sanctuary-700 [&_img]:opacity-60 [&_img]:grayscale hover:[&_img]:opacity-90 hover:[&_img]:grayscale-0'
                 }`}
               >
                 <div>
@@ -703,13 +702,12 @@ export const HolyGrailTracker: React.FC = () => {
                                   isObtained
                                     ? 'bg-sanctuary-900/80 border-d2-set/50 shadow-md ring-1 ring-d2-set/20'
                                     : item.isTC87
-                                    ? 'bg-sanctuary-950 border-amber-500/40 opacity-80 hover:opacity-100 hover:border-amber-400'
-                                    : 'bg-sanctuary-950 border-sanctuary-800/80 opacity-60 hover:opacity-100'
+                                    ? 'bg-sanctuary-950 border-amber-500/40 [&_img]:opacity-80 hover:[&_img]:opacity-100 hover:border-amber-400'
+                                    : 'bg-sanctuary-950 border-sanctuary-800/80 [&_img]:opacity-60 [&_img]:grayscale hover:[&_img]:opacity-100 hover:[&_img]:grayscale-0'
                                 }`}
                               >
                                 <button
                                   type="button"
-                                  aria-label={isEn ? `${item.nameEn} collected` : `${item.name}（${item.nameEn}）收藏`}
                                   aria-pressed={isObtained}
                                   onClick={() => toggleObtained(item.id)}
                                   className="flex items-center gap-3 cursor-pointer min-w-0 flex-1 text-left rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold focus-visible:ring-offset-2 focus-visible:ring-offset-sanctuary-950"
@@ -718,7 +716,7 @@ export const HolyGrailTracker: React.FC = () => {
                                     {isObtained ? (
                                       <CheckCircle2 className="w-5 h-5 text-d2-set" />
                                     ) : (
-                                      <Circle className={`w-5 h-5 ${item.isTC87 ? 'text-amber-400/60' : 'text-sanctuary-600'}`} />
+                                      <Circle className={`w-5 h-5 ${item.isTC87 ? 'text-amber-400/60' : 'text-sanctuary-500'}`} />
                                     )}
                                   </span>
 
@@ -761,7 +759,7 @@ export const HolyGrailTracker: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() => toggleEthereal(item.id)}
-                                  aria-label={isEn ? `${item.nameEn} Ethereal (ETH) collection` : `${item.name}（${item.nameEn}）無形 (ETH) 收藏`}
+                                  aria-label={isEn ? `ETH ${item.nameEn} Ethereal collection` : `ETH ${item.name}（${item.nameEn}）無形收藏`}
                                   aria-pressed={isEth}
                                   title={isEn ? "Mark as obtained in Ethereal (ETH)" : "標記是否打到無形 (ETH) 版本"}
                                   className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold border transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold focus-visible:ring-offset-2 focus-visible:ring-offset-sanctuary-950 ${

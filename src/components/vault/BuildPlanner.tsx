@@ -163,7 +163,7 @@ export const BuildPlanner: React.FC<BuildPlannerProps> = ({ onNavigateToSkills, 
 
           <button
             onClick={deleteCurrentPlan}
-            className="p-1.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-800 text-sanctuary-500 hover:text-d2-blood transition-colors"
+            className="p-1.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-800 text-sanctuary-500 hover:text-red-400 transition-colors"
             title={isEn ? "Delete current plan" : "刪除當前方案"}
           >
             <Trash2 className="w-4 h-4" />

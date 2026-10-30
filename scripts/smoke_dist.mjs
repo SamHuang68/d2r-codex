@@ -82,10 +82,8 @@ function serveDist(dir) {
 }
 
 // 無障礙自動檢查（axe-core）：嚴重／重大（serious／critical）的違規不能出現。
-// 已知的歷史債務先列在這裡，數量不設上限但每次都會印出來，之後逐項清掉再從清單移除：
-//  - color-contrast：全站配色有大量低對比的暗色文字（需要整體調色，不是單點修）
-//  - label-content-name-mismatch：聖杯清單的收藏按鈕，無障礙名稱沒有包含畫面上的全部文字
-const AXE_KNOWN_DEBT = new Set(['color-contrast', 'label-content-name-mismatch']);
+// 目前沒有已知債務；日後若暫時容許某條規則，把規則 id 列在這裡（數量不設上限但每次都會印出來），清掉之後再移除：
+const AXE_KNOWN_DEBT = new Set([]);
 const axeSource = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -159,7 +157,7 @@ async function runOnce(base, browser) {
       await page.evaluate((h) => { location.hash = h; }, r.hash);
       try { await page.waitForFunction((min) => (document.body?.innerText ?? "").length > min, r.min, { timeout: 10000 }); } catch { /* 下面會回報 */ }
       const n = await textLen(page);
-      if (n <= r.min) failures.push(`[桌面] ${r.label}（${r.hash}）內容不足：${n} 字，要求超過 ${r.min}`);
+      if (n <= r.min) failures.push(`[桌面] ${r.label}（${r.hash}）內容不足：${n} 字，要求超過 ${r.min}（網址 ${page.url()}，頁面開頭：${JSON.stringify((await page.evaluate(() => document.body?.innerText ?? '')).slice(0, 200))}）`);
     }
 
     // 個別分頁直接開啟時的 JS 量：每頁開新頁籤，才不會把前面分頁已載入的算進來
