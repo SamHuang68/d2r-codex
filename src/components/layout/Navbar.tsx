@@ -64,7 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
             className="hidden md:flex items-center gap-2 text-sm text-sanctuary-300 min-w-0 hover:text-d2-unique transition-colors cursor-pointer group"
             title={t('點擊回到頂端', 'Scroll to top')}
           >
-            <span className="text-sanctuary-600">/</span>
+            <span className="text-sanctuary-500">/</span>
             {current.icon}
             <span className="font-bold text-d2-unique group-hover:underline truncate">
               {t(current.label, current.labelEn)}

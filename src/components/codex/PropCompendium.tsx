@@ -229,7 +229,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                   <div className="space-y-2.5 py-4 text-xs font-sans">
                     <div className="flex items-start gap-2">
                       <span className="text-sanctuary-500 font-medium shrink-0 w-16">{isEn ? "Weapons:" : "武器效果："}</span>
-                      <span className="text-d2-blood font-semibold">{isEn ? (gem.weaponEffectEn || gem.weaponEffect) : gem.weaponEffect}</span>
+                      <span className="text-red-400 font-semibold">{isEn ? (gem.weaponEffectEn || gem.weaponEffect) : gem.weaponEffect}</span>
                     </div>
                     <div className="flex items-start gap-2">
                       <span className="text-sanctuary-500 font-medium shrink-0 w-16">{isEn ? "Armor / Helms:" : "衣服頭盔："}</span>

@@ -89,7 +89,7 @@ export const QuestGuide: React.FC = () => {
           </div>
           <div className="text-center px-2 border-r border-sanctuary-800">
             <div className="text-sanctuary-500 text-[10px]">{isEn ? "Max Life" : "最大生命"}</div>
-            <div className="text-d2-blood font-bold text-base">{isEn ? "+60 Life" : "+60 血"}</div>
+            <div className="text-red-400 font-bold text-base">{isEn ? "+60 Life" : "+60 血"}</div>
           </div>
           <div className="text-center px-2">
             <div className="text-sanctuary-500 text-[10px]">{isEn ? "All Res" : "永久全抗"}</div>
@@ -363,7 +363,7 @@ export const QuestGuide: React.FC = () => {
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <Skull className="w-4 h-4 text-d2-blood" />
+                          <Skull className="w-4 h-4 text-red-400" />
                           <h3 className="text-xl font-diablo font-bold text-sanctuary-100">
                             {isEn ? evt.nameEn : evt.name}
                           </h3>

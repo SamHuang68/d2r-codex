@@ -29,7 +29,7 @@ const ShrineCard: React.FC<{ s: Shrine }> = ({ s }) => {
     <div
       className={`rounded-2xl border bg-sanctuary-900/40 p-4 space-y-3 transition-all hover:border-sanctuary-700/80 group ${
         s.unused
-          ? 'border-sanctuary-800/60 opacity-80'
+          ? 'border-sanctuary-800/60'
           : isHighValue
           ? 'border-sanctuary-700/90 shadow-[0_0_15px_rgba(0,0,0,0.3)] hover:shadow-[0_0_20px_rgba(200,165,100,0.15)]'
           : 'border-sanctuary-800/80'
@@ -132,7 +132,7 @@ const ShrineCard: React.FC<{ s: Shrine }> = ({ s }) => {
         />
       </div>
 
-      <p className="text-[11px] font-mono text-sanctuary-600 leading-snug">{s.effect}</p>
+      <p className="text-[11px] font-mono text-sanctuary-500 leading-snug">{s.effect}</p>
     </div>
   );
 };
@@ -260,7 +260,7 @@ export const ShrineCompendium: React.FC<{ initialQuery?: string }> = ({ initialQ
         )}
       </div>
 
-      <div className="text-[11px] text-sanctuary-600 space-y-1">
+      <div className="text-[11px] text-sanctuary-500 space-y-1">
         <p>
           {isEn
             ? "Data sourced from shrines.txt and shrines.json (3.3.93847). The game runs at 25 fps; buff duration in seconds = frames / 25. Effects, defense, resistance, skill levels, and experience values are extracted directly from game data tables."

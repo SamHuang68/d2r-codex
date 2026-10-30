@@ -187,7 +187,7 @@ export const DLCReign: React.FC<DLCReignProps> = ({
                 >
                   <span className="text-sanctuary-200">{row.feature}</span>
                   <div className="flex items-center gap-4 shrink-0 font-mono text-xs">
-                    <span className={row.base ? 'text-d2-set font-bold' : 'text-sanctuary-600'}>
+                    <span className={row.base ? 'text-d2-set font-bold' : 'text-sanctuary-500'}>
                       {row.base ? t('✓ 包含', '✓ Included') : '—'}
                     </span>
                     <span className="text-d2-fire font-bold">{t('✓ 包含', '✓ Included')}</span>

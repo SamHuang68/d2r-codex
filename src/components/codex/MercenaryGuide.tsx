@@ -233,7 +233,7 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
                     <span className="text-d2-gold font-bold">
                       {isEn ? "Role: " : "戰術定位："}{isEn ? currentVisual.roleTagEn : currentMerc.type}
                     </span>
-                    <span className="text-sanctuary-600">·</span>
+                    <span className="text-sanctuary-500">·</span>
                     <span className="text-sanctuary-300">
                       {isEn ? "Equip: " : "可穿戴："}{currentMerc.equipmentTypes.join('、')}
                     </span>

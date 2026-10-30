@@ -152,7 +152,7 @@ export const BreakpointGauge: React.FC<BreakpointGaugeProps> = ({
                   className={`group flex flex-col items-center min-w-[48px] sm:min-w-[56px] text-center transition-all cursor-pointer ${
                     isCurrent
                       ? 'scale-105'
-                      : 'opacity-80 hover:opacity-100'
+                      : 'hover:brightness-125'
                   }`}
                   title={isEn ? `Set ${type} to ${bp.requiredValue}% (${bp.frames} frames)` : `點擊將 ${type} 數值設為 ${bp.requiredValue}% (${bp.frames} 幀)`}
                 >
@@ -227,7 +227,7 @@ export const BreakpointGauge: React.FC<BreakpointGaugeProps> = ({
                 <div className="text-xs font-mono font-bold">
                   {bp.frames} {isEn ? 'frames' : '幀'}
                 </div>
-                <div className="text-[11px] text-sanctuary-400 mt-1 font-mono">
+                <div className="text-[11px] text-sanctuary-300 mt-1 font-mono">
                   {isEn ? 'Req: ' : '需要: '}
                   <strong className={isCurrent ? 'text-d2-fire' : isPast ? 'text-emerald-400' : 'text-sanctuary-100'}>
                     {bp.requiredValue}%

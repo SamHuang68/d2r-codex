@@ -340,7 +340,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                       <span>(</span>
                       {rw.allowedBases.map((base, bIdx) => (
                         <React.Fragment key={bIdx}>
-                          {bIdx > 0 && <span className="text-sanctuary-600">/</span>}
+                          {bIdx > 0 && <span className="text-sanctuary-500">/</span>}
                           <button
                             type="button"
                             onClick={(e) => {

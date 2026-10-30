@@ -184,7 +184,7 @@ export const AffixCompendium: React.FC<{ initialQuery?: string }> = ({ initialQu
         )}
       </div>
 
-      <div className="text-[11px] text-sanctuary-600 space-y-1">
+      <div className="text-[11px] text-sanctuary-500 space-y-1">
         {isEn ? (
           <>
             <p>Data sourced from game tables: magicprefix.txt, magicsuffix.txt, automagic.txt (3.3.93847). Filtered out non-spawning, zero-weight, or empty affixes. Ranges evaluated at level 99.</p>

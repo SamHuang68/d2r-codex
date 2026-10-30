@@ -246,7 +246,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
             <div className="space-y-3 text-xs">
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800/80">
                 <span className="text-sanctuary-400">{isEn ? "Vitality ➔ Life" : "每點活力 ➔ 生命"}</span>
-                <span className="text-d2-blood font-bold font-mono text-sm">
+                <span className="text-red-400 font-bold font-mono text-sm">
                   +{currentClass.statGains.lifePerVit} {isEn ? "Life" : "生命"}
                 </span>
               </div>

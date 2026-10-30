@@ -507,7 +507,7 @@ export const HolyGrailTracker: React.FC = () => {
                 className={`relative cursor-pointer p-4 rounded-2xl border transition-all duration-300 group flex flex-col justify-between select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold focus-visible:ring-offset-2 focus-visible:ring-offset-sanctuary-950 ${
                   isClaimed
                     ? 'bg-gradient-to-b from-sanctuary-900/90 via-sanctuary-950 to-sanctuary-900/90 border-d2-unique/80 shadow-[0_0_20px_rgba(200,165,100,0.25)] hover:border-d2-gold'
-                    : 'bg-sanctuary-950/70 border-sanctuary-800/80 hover:border-sanctuary-700 opacity-65 hover:opacity-90'
+                    : 'bg-sanctuary-950/70 border-sanctuary-800/80 hover:border-sanctuary-700 [&_img]:opacity-60 [&_img]:grayscale hover:[&_img]:opacity-90 hover:[&_img]:grayscale-0'
                 }`}
               >
                 <div>
@@ -703,8 +703,8 @@ export const HolyGrailTracker: React.FC = () => {
                                   isObtained
                                     ? 'bg-sanctuary-900/80 border-d2-set/50 shadow-md ring-1 ring-d2-set/20'
                                     : item.isTC87
-                                    ? 'bg-sanctuary-950 border-amber-500/40 opacity-80 hover:opacity-100 hover:border-amber-400'
-                                    : 'bg-sanctuary-950 border-sanctuary-800/80 opacity-60 hover:opacity-100'
+                                    ? 'bg-sanctuary-950 border-amber-500/40 [&_img]:opacity-80 hover:[&_img]:opacity-100 hover:border-amber-400'
+                                    : 'bg-sanctuary-950 border-sanctuary-800/80 [&_img]:opacity-60 [&_img]:grayscale hover:[&_img]:opacity-100 hover:[&_img]:grayscale-0'
                                 }`}
                               >
                                 <button
@@ -718,7 +718,7 @@ export const HolyGrailTracker: React.FC = () => {
                                     {isObtained ? (
                                       <CheckCircle2 className="w-5 h-5 text-d2-set" />
                                     ) : (
-                                      <Circle className={`w-5 h-5 ${item.isTC87 ? 'text-amber-400/60' : 'text-sanctuary-600'}`} />
+                                      <Circle className={`w-5 h-5 ${item.isTC87 ? 'text-amber-400/60' : 'text-sanctuary-500'}`} />
                                     )}
                                   </span>
 

@@ -340,7 +340,7 @@ export const BossTacticsShowcase: React.FC<BossTacticsShowcaseProps> = ({
                 }`}
               >
                 <span>{isEn ? boss.nameEn : boss.name}</span>
-                <span className="text-[10px] opacity-75 font-mono">Act {boss.act}</span>
+                <span className="text-[10px] font-mono">Act {boss.act}</span>
               </button>
             );
           })}
@@ -415,7 +415,7 @@ export const BossTacticsShowcase: React.FC<BossTacticsShowcaseProps> = ({
               </div>
               <div className="p-1 rounded bg-sanctuary-950 border border-sanctuary-800">
                 <div className="text-[9px] text-d2-fire">{isEn ? 'Fire' : '火焰'}</div>
-                <div className={`font-bold ${currentBoss.resistsHell.fire < 0 ? 'text-rose-400 font-black animate-pulse' : 'text-sanctuary-200'}`}>
+                <div className={`font-bold ${currentBoss.resistsHell.fire < 0 ? 'text-rose-400 font-black' : 'text-sanctuary-200'}`}>
                   {currentBoss.resistsHell.fire}%
                 </div>
               </div>

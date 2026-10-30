@@ -134,7 +134,7 @@ export const SkillSynergyPanel: React.FC<SkillSynergyPanelProps> = ({
         {/* 前置條件警示 */}
         {!isUnlocked && (
           <div className="flex items-center gap-2 p-3 rounded-xl bg-d2-blood/10 border border-d2-blood/30 text-xs text-rose-300">
-            <AlertCircle className="w-4 h-4 shrink-0 text-d2-blood" />
+            <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
             <span>
               {isEn
                 ? 'Locked! You must allocate at least 1 point into all prerequisites above.'

@@ -245,7 +245,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
           <div className="text-right pr-3 border-r border-sanctuary-800">
             <div className="text-[11px] text-sanctuary-400 font-mono">{isEn ? 'Remaining Skill Points' : '剩餘可用技能點數'}</div>
             <div className="flex items-baseline justify-end gap-1.5">
-              <span className={`text-2xl font-bold font-mono ${remainingPoints < 10 ? 'text-d2-blood' : 'text-d2-gold'}`}>
+              <span className={`text-2xl font-bold font-mono ${remainingPoints < 10 ? 'text-red-400' : 'text-d2-gold'}`}>
                 {remainingPoints}
               </span>
               <span className="text-xs text-sanctuary-500 font-mono">/ {MAX_TOTAL_POINTS}</span>
@@ -535,7 +535,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
                   </div>
 
                   {!isUnlocked && (
-                    <div className="flex items-center gap-1.5 text-[11px] text-d2-blood font-mono bg-d2-blood/10 p-2 rounded-lg border border-d2-blood/20">
+                    <div className="flex items-center gap-1.5 text-[11px] text-red-400 font-mono bg-d2-blood/10 p-2 rounded-lg border border-d2-blood/20">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                       {isEn ? "Must allocate at least 1 point into all prerequisites" : "需先點亮上方所有前置技能各至少 1 點"}
                     </div>
