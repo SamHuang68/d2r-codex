@@ -116,6 +116,42 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
     restoreFocus();
   }, [activeId]);
 
+  /**
+   * 方向鍵操作（WAI-ARIA tree 慣例）：上下移動、Home／End 到頭尾、
+   * 右鍵：收合的節點展開，已展開則移到第一個子節點；左鍵：展開的節點收合，否則移到上一層。
+   * Enter／空白鍵維持原生按鈕的「選取」。
+   */
+  const onTreeKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
+    const target = e.target as HTMLElement;
+    if (!target.matches('[data-tree-main]')) return;
+    const mains = Array.from(e.currentTarget.querySelectorAll<HTMLElement>('[data-tree-main]'));
+    const i = mains.indexOf(target);
+    if (i < 0) return;
+    const li = target.closest('[role=treeitem]');
+    const id = target.dataset.nodeId ?? '';
+    const expanded = li?.getAttribute('aria-expanded');
+    const focusAt = (j: number) => { mains[Math.max(0, Math.min(mains.length - 1, j))]?.focus(); };
+    switch (e.key) {
+      case 'ArrowDown': focusAt(i + 1); break;
+      case 'ArrowUp': focusAt(i - 1); break;
+      case 'Home': focusAt(0); break;
+      case 'End': focusAt(mains.length - 1); break;
+      case 'ArrowRight':
+        if (id === 'all') break;
+        if (expanded === 'false') toggle(id);
+        else if (expanded === 'true') focusAt(i + 1);
+        break;
+      case 'ArrowLeft': {
+        if (id === 'all') break;
+        if (expanded === 'true') { toggle(id); break; }
+        li?.parentElement?.closest('[role=treeitem]')?.querySelector<HTMLElement>('[data-tree-main]')?.focus();
+        break;
+      }
+      default: return;
+    }
+    e.preventDefault();
+  };
+
   const crumbs = crumbsOf(rootLabel, nodes, activeId, isEn);
 
   // 根（全部）是 level 1 的 treeitem，其下第一層為 level 2；每一層都包在 role=group 裡，符合 ARIA tree 的結構
@@ -148,6 +184,8 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
               )}
               <button
                 type="button"
+                data-tree-main
+                data-node-id={n.id}
                 onClick={() => select(n.id)}
                 aria-current={active ? 'true' : undefined}
                 title={isEn ? (n.en || n.label) : (n.en ? `${n.label}（${n.en}）` : n.label)}
@@ -197,10 +235,12 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
           </button>
         </div>
       </div>
-      <ul role="tree" aria-label={title} className="p-1.5">
+      <ul role="tree" aria-label={title} className="p-1.5" onKeyDown={onTreeKeyDown}>
         <li role="treeitem" aria-level={1} aria-expanded aria-selected={activeId === 'all'}>
           <button
             type="button"
+            data-tree-main
+            data-node-id="all"
             onClick={() => select('all')}
             aria-current={activeId === 'all' ? 'true' : undefined}
             className={`w-full flex items-center justify-between gap-2 rounded-md border-l-2 px-2 py-1.5 mb-1 text-left text-[13px] ${

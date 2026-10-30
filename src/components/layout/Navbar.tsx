@@ -101,6 +101,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
         className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-amber-600 via-d2-unique to-amber-300 transition-all duration-150 pointer-events-none opacity-80"
         style={{ width: `${scrollPercent}%` }}
         role="progressbar"
+        aria-label={t('閱讀進度', 'Reading progress')}
         aria-valuenow={Math.round(scrollPercent)}
         aria-valuemin={0}
         aria-valuemax={100}

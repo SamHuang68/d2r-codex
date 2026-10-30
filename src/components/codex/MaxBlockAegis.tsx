@@ -83,6 +83,7 @@ export const MaxBlockAegis: React.FC<MaxBlockAegisProps> = ({
             <div className="flex items-center gap-3">
               <input
                 type="range"
+                aria-label="角色等級 (Character level)"
                 min="1"
                 max="99"
                 value={charLevel}
@@ -145,6 +146,7 @@ export const MaxBlockAegis: React.FC<MaxBlockAegisProps> = ({
             <div className="flex items-center gap-3">
               <input
                 type="number"
+                aria-label="目標格擋率 (Target block chance %)"
                 min="1"
                 max="95"
                 value={shieldBlockPercent}

@@ -273,6 +273,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
+                    aria-label={isEn ? `Total gear ${selectedType} %` : `當前裝備總 ${selectedType} %`}
                     min="0"
                     max="300"
                     value={currentValInput}

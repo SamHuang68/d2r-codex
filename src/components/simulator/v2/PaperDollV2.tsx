@@ -70,7 +70,7 @@ const SwapTabs: React.FC<{ swap: 'I' | 'II'; onSwap: (s: 'I' | 'II') => void; st
   <div className="absolute flex gap-1 z-10" style={style} role="group" aria-label="武器切換">
     {(['I', 'II'] as const).map((s) => (
       <button key={s} type="button" aria-pressed={swap === s} onClick={() => onSwap(s)}
-        className="d2-tab" style={{ flex: 'none', width: 40, padding: '3px 0', fontFamily: 'Cinzel, serif', fontSize: 13 }} aria-selected={swap === s}>{s}</button>
+        className="d2-tab" style={{ flex: 'none', width: 40, padding: '3px 0', fontFamily: 'Cinzel, serif', fontSize: 13 }}>{s}</button>
     ))}
   </div>
 );
@@ -171,6 +171,7 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
           style={{ left: gridL, top: gridT, width: cell * GRID_COLS, height: cell * GRID_ROWS, gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`, gridTemplateRows: `repeat(${GRID_ROWS}, 1fr)`,
             outline: gridRing === 'is-valid' ? '1px solid var(--gold)' : gridRing === 'is-over-ok' ? '2px solid #6fe06f' : gridRing === 'is-over-bad' ? '2px solid #ff5e50' : 'none' }}
           {...dropHandlers('charms')}
+          role="group"
           aria-label={isEn ? "Inventory (Charms)" : "背包（咒符）"}
         >
           {Array.from({ length: GRID_COLS * GRID_ROWS }, (_, i) => <i key={i} style={{ boxShadow: 'inset 0 0 0 1px #1f1a12' }} />)}
