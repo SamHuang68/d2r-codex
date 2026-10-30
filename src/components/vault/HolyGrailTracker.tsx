@@ -496,7 +496,6 @@ export const HolyGrailTracker: React.FC = () => {
                 role="button"
                 tabIndex={0}
                 aria-pressed={isClaimed}
-                aria-label={isEn ? `${trophy.nameEn} ${isClaimed ? 'Claimed' : 'Unfound'}` : `${trophy.name} (${trophy.nameEn}) ${isClaimed ? '已收集' : '未收集'}`}
                 onClick={() => toggleObtained(trophy.id)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -709,7 +708,6 @@ export const HolyGrailTracker: React.FC = () => {
                               >
                                 <button
                                   type="button"
-                                  aria-label={isEn ? `${item.nameEn} collected` : `${item.name}（${item.nameEn}）收藏`}
                                   aria-pressed={isObtained}
                                   onClick={() => toggleObtained(item.id)}
                                   className="flex items-center gap-3 cursor-pointer min-w-0 flex-1 text-left rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold focus-visible:ring-offset-2 focus-visible:ring-offset-sanctuary-950"
@@ -761,7 +759,7 @@ export const HolyGrailTracker: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() => toggleEthereal(item.id)}
-                                  aria-label={isEn ? `${item.nameEn} Ethereal (ETH) collection` : `${item.name}（${item.nameEn}）無形 (ETH) 收藏`}
+                                  aria-label={isEn ? `ETH ${item.nameEn} Ethereal collection` : `ETH ${item.name}（${item.nameEn}）無形收藏`}
                                   aria-pressed={isEth}
                                   title={isEn ? "Mark as obtained in Ethereal (ETH)" : "標記是否打到無形 (ETH) 版本"}
                                   className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold border transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold focus-visible:ring-offset-2 focus-visible:ring-offset-sanctuary-950 ${
