@@ -9,6 +9,7 @@ export const SITE_ORIGIN = 'https://d2r.samhuang68.org';
 
 export const ROUTES: RouteMeta[] = [
   { id: 'overview', title: '主頁展演', description: '暗黑破壞神 II：獄火重生 (D2R) 旗艦遊戲專頁與全功能速查手冊 - 包含完整符文之語、暗金與套裝裝備、方塊合成配方、FCR/FHR 斷點計算與聖杯打寶追蹤器', titleEn: 'Home', descriptionEn: 'Diablo II: Resurrected (D2R) database and quick-reference handbook: runewords, uniques and sets, Horadric Cube recipes, FCR/FHR breakpoints and a Holy Grail tracker.' },
+  { id: 'patches', title: '版本改動', description: 'D2R 3.3、3.4 版（天梯第 15、16 季）的物品改動：暗金、套裝與符文之語的數值調整，舊值對照新值。', titleEn: 'Patch Changes', descriptionEn: 'Item changes in D2R patches 3.3 and 3.4 (Ladder Seasons 15 and 16): old vs new values for uniques, sets and runewords.' },
   { id: 'characters', title: '角色寶典', description: 'D2R 八大職業屬性、技能方向與熱門流派（Meta Build）速查。', titleEn: 'Classes', descriptionEn: 'Attributes, skill focus and popular builds for all eight D2R classes.' },
   { id: 'skills', title: '技能寶典', description: 'D2R 全職業技能樹、技能等級數值與協同加成矩陣。', titleEn: 'Skill Trees', descriptionEn: 'Every D2R skill tree with per-level values and a synergy matrix.' },
   { id: 'planner', title: '配裝模擬', description: 'D2R 配裝模擬器：選職業、穿裝備、點技能，即時計算屬性、抗性與傭兵搭配。', titleEn: 'Armory Planner', descriptionEn: 'D2R build planner: pick a class, gear and skills, and see stats, resistances and mercenary setups update live.' },

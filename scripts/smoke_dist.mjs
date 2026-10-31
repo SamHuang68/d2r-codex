@@ -32,6 +32,7 @@ const delaySec = Number(opt('delay', 20));
 
 const ROUTES = [
   { hash: '#items', min: 1500, label: '裝備寶典' },
+  { hash: '#patches', min: 2000, label: '版本改動' },
   { hash: '#runewords', min: 1500, label: '符文之語' },
   { hash: '#skills', min: 600, label: '技能寶典' },
   { hash: '#bases', min: 1500, label: '底材寶典' },
@@ -276,6 +277,17 @@ async function runOnce(base, browser) {
           const resEn = await rp.goto(new URL('en/', base).href, { waitUntil: 'load', timeout: 45000 });
           if (!resEn || resEn.status() !== 200) failures.push(`[英文] /en/ 回 HTTP ${resEn?.status()}`);
           else await rp.waitForFunction(() => (document.body?.innerText ?? '').length > 500 && document.documentElement.lang === 'en', null, { timeout: 30000 });
+        }
+        // 版本改動頁：直接開啟有 3.4／3.3 的改動與單品連結；靜態 HTML 有改動清單
+        {
+          const res = await rp.goto(new URL('patches/', base).href, { waitUntil: 'load', timeout: 45000 });
+          if (!res || res.status() !== 200) failures.push(`[路由] /patches/ 回 HTTP ${res?.status()}`);
+          else {
+            await rp.waitForFunction(() => (document.body?.innerText ?? '').includes('Patch 3.4') && (document.body?.innerText ?? '').includes('鋼鐵面紗') && !(document.body?.innerText ?? '').includes('載入中'), null, { timeout: 30000 });
+            if (!(await rp.locator('a[href$="/items/veil_of_steel/"]').count())) failures.push('[路由] /patches/ 的物品名稱沒有連到單品頁');
+            const raw = await (await fetch(new URL('patches/', base))).text();
+            if (!raw.includes('href="items/veil_of_steel/"') || !raw.includes('+260–310% → +300–390%')) failures.push('[路由] /patches/ 的靜態 HTML 沒有改動清單或單品連結');
+          }
         }
         // 單品外殼的 <base> 指向網站根目錄：頁內連結要寫成相對根目錄（items/<id>/），寫成 ../ 會指到錯的地方
         for (const id of ['runewords/enigma', 'items/tarnhelm', 'items/civerbs_vestments']) {

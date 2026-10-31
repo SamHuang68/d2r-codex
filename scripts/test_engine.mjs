@@ -1964,10 +1964,10 @@ console.log('【傭兵與職業／流派搭配矩陣 (Mercenary Matrix & Preset 
 }
 {
   const { GAME_ICON_SHAPES: SH } = E;
-  t('導覽列圖示：21 個模組各用一個不同的原創圖示，名稱都存在、路徑是合法的 SVG 指令且座標在 24×24 格內', () => {
+  t('導覽列圖示：22 個模組各用一個不同的原創圖示，名稱都存在、路徑是合法的 SVG 指令且座標在 24×24 格內', () => {
     const src = fs.readFileSync('src/components/layout/navConfig.tsx', 'utf8');
     const names = [...src.matchAll(/<GameIcon name="([a-z]+)"/g)].map((m) => m[1]);
-    assert.equal(names.length, 21); assert.equal(new Set(names).size, 21, '有兩個模組用了同一個圖示');
+    assert.equal(names.length, 22); assert.equal(new Set(names).size, 22, '有兩個模組用了同一個圖示');
     for (const n of names) assert.ok(SH[n], `沒有圖示 ${n}`);
     for (const [n, sh] of Object.entries(SH)) for (const d of [...sh.stroke, ...(sh.fill ?? [])]) {
       assert.match(d, /^[MmLlHhVvCcSsQqTtAaZz0-9 ,.-]+$/, `${n} 路徑含不合法字元`);

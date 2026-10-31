@@ -34,6 +34,7 @@ const HolyGrailTracker = lazy(() => import('./components/vault/HolyGrailTracker'
 const BuildPlanner = lazy(() => import('./components/vault/BuildPlanner').then((m) => ({ default: m.BuildPlanner })));
 const CharacterGuide = lazy(() => import('./components/codex/CharacterGuide').then((m) => ({ default: m.CharacterGuide })));
 const PropCompendium = lazy(() => import('./components/codex/PropCompendium').then((m) => ({ default: m.PropCompendium })));
+const PatchNotes = lazy(() => import('./components/codex/PatchNotes').then((m) => ({ default: m.PatchNotes })));
 const SourcesPage = lazy(() => import('./components/layout/SourcesPage').then((m) => ({ default: m.SourcesPage })));
 const SearchModal = lazy(() => import('./components/layout/SearchModal').then((m) => ({ default: m.SearchModal })));
 // 配裝模擬器連同遊戲資料表很大，只在進入該頁時才載入，首頁不必等它
@@ -303,6 +304,7 @@ const AppContent: React.FC = () => {
         {activeTab === 'affixes' && <AffixCompendium initialQuery={targetQuery} />}
         {activeTab === 'shrines' && <ShrineCompendium initialQuery={targetQuery} />}
         {activeTab === 'experience' && <ExperienceTable />}
+        {activeTab === 'patches' && <PatchNotes onOpenItem={(tab, id) => handleNavigate(tab, undefined, undefined, undefined, id)} />}
         {activeTab === 'about' && <SourcesPage />}
         {activeTab === 'mercenaries' && (
           <MercenaryGuide
