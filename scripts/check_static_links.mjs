@@ -34,8 +34,23 @@ for (const file of pages) {
     const dir = path.join(dist, target);
     if (!fs.existsSync(path.join(dir, 'index.html')) && !(target === '' && fs.existsSync(path.join(dist, 'index.html')))) bad.push(`${rel || '/'}：連結 ${href} 沒有對應的頁面`);
   }
+  // 結構化資料（JSON-LD）要能解析且含 schema.org 型別；分享預覽圖（og:image、twitter:image）要指到存在的檔案
+  const ld = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];
+  if (!ld) bad.push(`${rel || '/'}：沒有結構化資料（JSON-LD）`);
+  else {
+    try {
+      const j = JSON.parse(ld);
+      if (!String(j['@context'] ?? '').includes('schema.org') || !(j['@type'] || j['@graph'])) bad.push(`${rel || '/'}：JSON-LD 缺少 @context 或型別`);
+    } catch (e) { bad.push(`${rel || '/'}：JSON-LD 不是合法 JSON（${e.message}）`); }
+  }
+  for (const prop of ['og:image', 'twitter:image']) {
+    const img = html.match(new RegExp(`<meta (?:property|name)="${prop}" content="([^"]+)"`))?.[1];
+    if (!img) { bad.push(`${rel || '/'}：沒有 ${prop}`); continue; }
+    const m = img.match(/^https:\/\/d2r\.samhuang68\.org\/(.+)$/);
+    if (!m || !fs.existsSync(path.join(dist, m[1]))) bad.push(`${rel || '/'}：${prop} 指到不存在的檔案（${img}）`);
+  }
   // 每個靜態頁都要在 sitemap.xml 裡
   if (rel && !sitemap.includes(`/${encodeURI(rel)}/</loc>`)) bad.push(`${rel}：不在 sitemap.xml 裡`);
 }
 if (bad.length) { console.error(`靜態頁連結檢查失敗（${bad.length} 處）：\n- ${bad.slice(0, 20).join('\n- ')}`); process.exit(1); }
-console.log(`靜態頁連結檢查通過：${pages.length} 個頁面、${links} 個連結都指到存在的頁面，且都在 sitemap.xml 裡`);
+console.log(`靜態頁連結檢查通過：${pages.length} 個頁面、${links} 個連結都指到存在的頁面，都在 sitemap.xml 裡，且都有可解析的結構化資料與存在的分享預覽圖`);
