@@ -188,6 +188,26 @@ async function runOnce(base, browser) {
           await rp.waitForFunction(() => (document.body?.innerText ?? '').length > 500, null, { timeout: 15000 });
           if (new URL(rp.url()).pathname !== `${root}${id}/`) failures.push(`[路由] /${id}/ 載入後網址被改掉：${rp.url()}`);
         }
+        // 單品網址：/runewords/enigma/ 直接開啟要停在該符文之語；列表裡的卡片標題是指向單品網址的連結；靜態 HTML 有完整屬性
+        {
+          const res = await rp.goto(new URL('runewords/enigma/', base).href, { waitUntil: 'load', timeout: 45000 });
+          if (!res || res.status() !== 200) failures.push(`[路由] /runewords/enigma/ 回 HTTP ${res?.status()}（單品靜態頁不存在？）`);
+          else {
+            await rp.waitForFunction(() => (document.body?.innerText ?? '').includes('傳送術') && !(document.body?.innerText ?? '').includes('載入中'), null, { timeout: 30000 });
+            const t = await rp.title();
+            if (!t.includes('謎團')) failures.push(`[路由] /runewords/enigma/ 的分頁標題沒有單品名稱：${t}`);
+            const raw = await (await fetch(new URL('runewords/enigma/', base))).text();
+            if (!raw.includes('+1 至傳送術') || !/rel="canonical" href="[^"]*\/runewords\/enigma\/"/.test(raw)) failures.push('[路由] /runewords/enigma/ 的靜態 HTML 沒有屬性清單或 canonical');
+            const sm0 = await (await fetch(new URL('sitemap.xml', base))).text();
+            if (!sm0.includes('/runewords/enigma/</loc>')) failures.push('[路由] sitemap.xml 缺少 /runewords/enigma/');
+            await rp.locator('input[placeholder*="搜尋"]').first().fill('先祖之契');
+            const link = rp.locator('a[href$="/runewords/ancients_pledge/"]').first();
+            await link.waitFor({ timeout: 30000 });
+            await link.click();
+            await rp.waitForFunction(() => location.pathname.endsWith('/runewords/ancients_pledge/'), null, { timeout: 15000 });
+            await rp.waitForFunction(() => document.title.includes('先祖之契'), null, { timeout: 15000 });
+          }
+        }
         // 靜態 HTML（不執行 JS）就要有各分頁自己的標題與描述，爬蟲才分得出頁面
         const raw = await (await fetch(new URL('items/', base))).text();
         if (!/<title>裝備寶典 \|/.test(raw) || !/rel="canonical" href="[^"]*\/items\/"/.test(raw)) failures.push('[路由] /items/ 的靜態 HTML 沒有自己的標題或 canonical');
