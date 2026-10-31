@@ -53,7 +53,7 @@ function patches(lang: Lang): string {
     return en ? sectionEn(title, rows) : section(title, rows);
   };
   const nl = resolvedNonLadder();
-  const refs = (list: { nameEn: string; ref?: { tab: 'items' | 'runewords'; id: string; name: string; nameEn: string } }[]) => list.map((x) => (x.ref ? link(pf, x.ref.tab, x.ref.id, en ? x.ref.nameEn : `${x.ref.name}（${x.ref.nameEn}）`) : esc(x.nameEn)));
+  const refs = (list: { nameEn: string; ref?: { tab: 'items' | 'runewords'; id: string; name: string; nameEn: string }; aliasNote?: { zh: string; en: string } }[]) => list.map((x) => (x.ref ? `${link(pf, x.ref.tab, x.ref.id, en ? x.ref.nameEn : `${x.ref.name}（${x.ref.nameEn}）`)}${x.aliasNote ? (en ? ` (${x.aliasNote.en})` : `（${x.aliasNote.zh}）`) : ''}` : esc(x.nameEn)));
   const nlTitle = en ? 'Now available in non-ladder' : '非天梯新增';
   const nlSec = en ? sectionEn(nlTitle, [...refs(nl.items), ...refs(nl.runewords)]) : section(nlTitle, [...refs(nl.items), ...refs(nl.runewords)]);
   const src = `<p>${en ? 'Compiled from' : '整理自'} <a href="${PATCH_SOURCE.url}">${esc(PATCH_SOURCE.name)} - ${esc(PATCH_SOURCE.titleEn)}</a></p>`;
