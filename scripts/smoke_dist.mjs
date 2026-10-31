@@ -109,6 +109,10 @@ async function runOnce(base, browser) {
     });
     // 同網域的 /assets/*.js 一定要是 JavaScript：網址不存在時主機會回傳首頁 HTML（SPA 後備），CDN 一旦把它依 /assets/* 的長期快取規則
     // 存下來，那個網址就會一直拿到 HTML（頁面的重新載入重試會用別的網址繞過去，所以只看頁面內容抓不到）
+    // 失敗時要知道頁面當下還有哪些請求沒完成（卡住的 chunk、被中止的請求），所以一直記著進行中的請求
+    const inflight = new Map(); page.__inflight = inflight; const t00 = Date.now();
+    page.on('request', (r) => inflight.set(r, { u: r.url().replace(origin, ''), t: Date.now() - t00 }));
+    for (const ev of ['requestfinished', 'requestfailed']) page.on(ev, (r) => inflight.delete(r));
     const seen = new Set();
     page.on('response', (res) => {
       const u = res.url();
@@ -119,6 +123,7 @@ async function runOnce(base, browser) {
     });
   };
   const withBust = (hash = '') => `${base}${base.includes('?') ? '&' : '?'}smoke=${Date.now()}${hash}`;
+  const inflightText = (page) => `進行中請求：${[...(page.__inflight?.values() ?? [])].map((v) => `${v.u}@${v.t}`).join(' | ') || '無'}；網址 ${page.url()}`;
   const textLen = (page) => page.evaluate(() => (document.body?.innerText ?? "").length);
 
   // 不存在的檔案要回 404（不是 SPA 後備的 200 首頁），而且 404 回應不能帶長期快取，否則 CDN 會把「找不到」快取很久。
@@ -158,7 +163,7 @@ async function runOnce(base, browser) {
       // 等待上限放寬到 30 秒：慢速環境（CI 的 WebKit）載入第一批大型資料 chunk 實測可達 10 秒；真的卡死仍會在這裡失敗，且訊息會帶網址與頁面內容
       try { await page.waitForFunction((min) => (document.body?.innerText ?? "").length > min, r.min, { timeout: 30000 }); } catch { /* 下面會回報 */ }
       const n = await textLen(page);
-      if (n <= r.min) failures.push(`[桌面] ${r.label}（${r.hash}）內容不足：${n} 字，要求超過 ${r.min}（網址 ${page.url()}，頁面開頭：${JSON.stringify((await page.evaluate(() => document.body?.innerText ?? '')).slice(0, 200))}）`);
+      if (n <= r.min) failures.push(`[桌面] ${r.label}（${r.hash}）內容不足：${n} 字，要求超過 ${r.min}（${inflightText(page)}，頁面開頭：${JSON.stringify((await page.evaluate(() => document.body?.innerText ?? '')).slice(0, 200))}）`);
     }
 
     // 個別分頁直接開啟時的 JS 量：每頁開新頁籤，才不會把前面分頁已載入的算進來
@@ -304,7 +309,7 @@ async function runOnce(base, browser) {
       await link.click();
       await page.waitForFunction(() => /\/(items|runewords|bases|runes|props)\/$/.test(location.pathname), null, { timeout: 10000 });
     } catch (e) {
-      failures.push(`[桌面] 傭兵頁的物品連結點了沒有跳轉到對應分頁：${String(e.message).split('\n')[0]}`);
+      failures.push(`[桌面] 傭兵頁的物品連結點了沒有跳轉到對應分頁：${String(e.message).split('\n')[0]}（${inflightText(page)}）`);
     }
 
     // 改版後舊頁面載入不到舊 chunk：第一次載入分頁的 chunk 失敗時，應自動整頁重整一次並恢復（模擬：中止第一次 QuestGuide chunk 請求）
