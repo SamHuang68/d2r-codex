@@ -43,7 +43,7 @@ export const SourcesPage: React.FC = () => {
           '暗金、套裝與底材的物品圖片取自社群資料站 d2r.world，並備份在本站，原站無法連線時仍可顯示。這些圖片的著作權屬於暴雪娛樂與原站，本站不主張任何權利。部分暗金與套裝圖片下方帶有原站的浮水印，本站以裁切方式避開，不是移除標示。',
           'Item images for uniques, sets and bases come from the community database d2r.world and are mirrored on this site so they still show if the original is unreachable. Copyright in these images belongs to Blizzard Entertainment and the original site; this site claims no rights to them. Some unique and set images carry the original site\'s watermark, which is cropped out of view rather than removed.'
         )}</p>
-        <p>{t('若你是權利人並希望移除或更正某張圖片，請透過本站的專案頁面提出，我們會儘快處理。', 'If you are a rights holder and want an image removed or corrected, please contact us through the project page and we will act promptly.')}</p>
+        <p>{t('本站為粉絲網站（fan page），一切權利歸暴雪娛樂所有。', 'This is a fan page. All rights belong to Blizzard Entertainment.')}</p>
       </Section>
 
       <Section icon={<Music className="w-5 h-5" />} title={t('原創內容', 'Original content')}>
