@@ -49,6 +49,16 @@ for (const file of pages) {
     const m = img.match(/^https:\/\/d2r\.samhuang68\.org\/(.+)$/);
     if (!m || !fs.existsSync(path.join(dist, m[1]))) bad.push(`${rel || '/'}：${prop} 指到不存在的檔案（${img}）`);
   }
+  // 語言版本：<html lang> 要和網址的語言一致；hreflang 的每個網址都要有對應頁面，且那一頁也要指回來（互相指向）
+  const wantLang = rel === 'en' || rel.startsWith('en/') ? 'en' : 'zh-TW';
+  if (!new RegExp(`<html lang="${wantLang}"`).test(html)) bad.push(`${rel || '/'}：<html lang> 應為 ${wantLang}`);
+  const here = `https://d2r.samhuang68.org/${rel ? `${rel}/` : ''}`;
+  for (const m of html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"/g)) {
+    const m2 = m[2].match(/^https:\/\/d2r\.samhuang68\.org\/(.*)$/);
+    const altFile = m2 ? path.join(dist, m2[1], 'index.html') : null;
+    if (!altFile || !fs.existsSync(altFile)) { bad.push(`${rel || '/'}：hreflang ${m[1]} 指到不存在的頁面（${m[2]}）`); continue; }
+    if (!fs.readFileSync(altFile, 'utf8').includes(`hreflang="${m[1] === 'x-default' ? 'x-default' : m[1]}" href="${m[2]}"`)) bad.push(`${m[2]}：沒有指回 ${here}（hreflang 要互相指向）`);
+  }
   // 每個靜態頁都要在 sitemap.xml 裡
   if (rel && !sitemap.includes(`/${encodeURI(rel)}/</loc>`)) bad.push(`${rel}：不在 sitemap.xml 裡`);
 }
