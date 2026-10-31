@@ -56,6 +56,10 @@ jobs:
       - name: Check chunk cycles
         run: node scripts/check_chunk_cycles.mjs
 
+      # 各分頁與單品的靜態 HTML 外殼：<noscript> 裡每個連結都要指到存在的頁面，且每個頁面都在 sitemap.xml 裡
+      - name: Check static page links
+        run: node scripts/check_static_links.mjs
+
       # 真的用瀏覽器載入正式建置：各頁有內容、配裝模擬可套用流派、手機版無橫向捲動、無頁面錯誤。
       # 開發伺服器、型別檢查與單元測試都抓不到的「正式建置才會出的錯」（例如整頁空白）在這一步擋下。
       - name: Browser smoke test (production build)

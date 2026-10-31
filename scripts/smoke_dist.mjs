@@ -216,6 +216,8 @@ async function runOnce(base, browser) {
           const html = await (await fetch(new URL(`${id}/`, base))).text();
           const ns = html.slice(html.indexOf('<main>', html.indexOf('<div id="root">')));
           if ((html.match(/<li>/g) ?? []).length < 20 || !ns.includes(needle)) failures.push(`[路由] /${id}/ 的靜態 HTML 沒有項目清單（找不到「${needle}」）`);
+          const want = { items: 'href="items/tarnhelm/"', runewords: 'href="runewords/enigma/"' }[id];
+          if (want && !ns.includes(want)) failures.push(`[路由] /${id}/ 的靜態清單沒有指向單品頁的連結（找不到 ${want}）`);
         }
         const rb = await fetch(new URL('robots.txt', base));
         if (rb.status !== 200 || !/^Sitemap:\s*\S+\/sitemap\.xml/im.test(await rb.text())) failures.push('[路由] robots.txt 不存在或沒有 Sitemap 行');

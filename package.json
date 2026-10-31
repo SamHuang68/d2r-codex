@@ -13,6 +13,7 @@
     "data:audit": "node scripts/data-pipeline/audit_game_data.mjs src/data/game",
     "test:engine": "node scripts/test_engine.mjs",
     "check:chunks": "node scripts/check_chunk_cycles.mjs",
+    "check:links": "node scripts/check_static_links.mjs",
     "smoke": "node scripts/smoke_dist.mjs",
     "data:portal": "node scripts/build_portal_summary.mjs"
   },
