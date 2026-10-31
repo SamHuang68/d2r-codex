@@ -33,6 +33,14 @@ export const NAV_GROUPS: NavGroup[] = [
         descEn: 'Portal categories & class showcases',
         icon: <GameIcon name="gate" className={`${ic} text-d2-fire`} />,
       },
+      {
+        id: 'patches',
+        label: '版本改動',
+        labelEn: 'Patch Changes',
+        desc: '3.3／3.4 版物品改動對照',
+        descEn: 'Patches 3.3 & 3.4 item changes',
+        icon: <GameIcon name="scroll" className={`${ic} text-d2-unique`} />,
+      },
     ],
   },
   {

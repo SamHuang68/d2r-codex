@@ -35,6 +35,10 @@ export const SourcesPage: React.FC = () => {
           `數值、名稱與配方主要由遊戲的資料表產生（遊戲資料版本 ${meta.gameVersion}，${meta.generatedAt} 產生），中文用字對照遊戲內的繁體中文字串。`,
           `Stats, names and recipes are mainly generated from the game's data tables (game data version ${meta.gameVersion}, built ${meta.generatedAt}); Chinese wording follows the in-game Traditional Chinese strings.`
         )}</p>
+        <p>{t(
+          '「版本改動」頁的物品改動（3.3、3.4 版）整理自 d2db.net 的文章〈Ladder Season 15 & 16 Item Changes〉，數值以原文為準；尚未套用到單品頁的基本資料（本站資料為遊戲檔案萃取）。',
+          'The item changes on the Patch Changes page (patches 3.3 and 3.4) are compiled from the d2db.net article "Ladder Season 15 & 16 Item Changes"; values follow the original article and are not yet applied to the item pages\' base data (this site\'s data is extracted from the game files).'
+        )}</p>
         <p>{t('打寶建議、流派與戰術說明是玩家社群的常見做法整理，只供參考；與遊戲實際行為不同時，以遊戲為準。', 'Farming tips, builds and tactics summarize common community practice and are for reference only; the game itself is authoritative.')}</p>
       </Section>
 

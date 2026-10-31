@@ -8,6 +8,8 @@ import { UNIQUE_ITEMS_DATA } from '../data/uniqueItems';
 import { SET_ITEMS_DATA } from '../data/setItems';
 import { RUNEWORDS_DATA } from '../data/runewords';
 import type { Lang } from './routes';
+import { resolvedPatchNotes, resolvedNonLadder } from './patchResolve';
+import { PATCH_SOURCE } from '../data/patchNotes';
 
 const esc = (v: unknown) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -40,12 +42,31 @@ function runes(lang: Lang): string {
   return section('符文', rows.map(({ b, n }) => `${n}. ${esc(b.name.replace(/^符文[：:]/, ''))}（${esc((b.nameEnUS ?? b.nameEn).replace(/ Rune$/, ''))}）${b.levelReq ? `，需求等級 ${b.levelReq}` : ''}`));
 }
 
+/** 版本改動頁：每個項目連到單品頁，改動逐條列出（舊值 → 新值）；非天梯新增清單與出處 */
+function patches(lang: Lang): string {
+  const en = lang === 'en';
+  const pf = en ? 'en/' : '';
+  const entries = resolvedPatchNotes();
+  const sec = (v: '3.4' | '3.3') => {
+    const rows = entries.filter((e) => e.entry.version === v).map((e) => `${link(pf, e.tab, e.id, en ? e.nameEn : `${e.name}（${e.nameEn}）`)}${e.entry.ladderOnly ? (en ? ' (ladder only)' : '（僅限天梯）') : ''}: ${e.entry.changes.map((c) => esc(en ? c.en : c.zh)).join(en ? '; ' : '；')}`);
+    const title = en ? `Patch ${v} item changes` : `Patch ${v} 物品改動`;
+    return en ? sectionEn(title, rows) : section(title, rows);
+  };
+  const nl = resolvedNonLadder();
+  const refs = (list: { nameEn: string; ref?: { tab: 'items' | 'runewords'; id: string; name: string; nameEn: string } }[]) => list.map((x) => (x.ref ? link(pf, x.ref.tab, x.ref.id, en ? x.ref.nameEn : `${x.ref.name}（${x.ref.nameEn}）`) : esc(x.nameEn)));
+  const nlTitle = en ? 'Now available in non-ladder' : '非天梯新增';
+  const nlSec = en ? sectionEn(nlTitle, [...refs(nl.items), ...refs(nl.runewords)]) : section(nlTitle, [...refs(nl.items), ...refs(nl.runewords)]);
+  const src = `<p>${en ? 'Compiled from' : '整理自'} <a href="${PATCH_SOURCE.url}">${esc(PATCH_SOURCE.name)} - ${esc(PATCH_SOURCE.titleEn)}</a></p>`;
+  return sec('3.4') + sec('3.3') + nlSec + src;
+}
+
 /** 分頁 id → 該頁的靜態內容摘要（HTML 片段）；沒有列出的分頁沒有摘要 */
 export const staticSummary = (id: string, lang: Lang = 'zh'): string => {
   switch (id) {
     case 'items': return uniques(lang) + sets(lang);
     case 'runewords': return runewords(lang);
     case 'runes': return runes(lang);
+    case 'patches': return patches(lang);
     default: return '';
   }
 };
