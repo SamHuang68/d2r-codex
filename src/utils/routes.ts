@@ -35,7 +35,7 @@ export const ROUTES: RouteMeta[] = [
 export const KNOWN_TABS: string[] = ROUTES.map((r) => r.id);
 
 /** 有單品網址（/<分頁>/<id>/）的分頁 */
-export const ITEM_TABS: string[] = ['runewords'];
+export const ITEM_TABS: string[] = ['runewords', 'items'];
 
 /**
  * 把目前網址的路徑拆成網站根目錄、分頁與單品 id（例如 /d2r-codex/runewords/enigma/ → 根目錄 /d2r-codex/、分頁 runewords、單品 enigma）。

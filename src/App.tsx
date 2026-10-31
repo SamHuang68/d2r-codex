@@ -265,6 +265,8 @@ const AppContent: React.FC = () => {
           <ItemCompendium 
             initialQuery={targetQuery}
             initialNode={itemsNode}
+            initialItemId={itemId}
+            onOpenItem={(id) => handleNavigate('items', undefined, undefined, undefined, id)}
             onNavigateToBase={(base) => handleNavigate('bases', base)}
           />
         )}

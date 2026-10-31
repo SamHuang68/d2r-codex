@@ -219,6 +219,21 @@ async function runOnce(base, browser) {
         }
         const rb = await fetch(new URL('robots.txt', base));
         if (rb.status !== 200 || !/^Sitemap:\s*\S+\/sitemap\.xml/im.test(await rb.text())) failures.push('[路由] robots.txt 不存在或沒有 Sitemap 行');
+        // 暗金、套裝部件、整組套裝的單品網址：直接開啟要有該單品的內容與標題，名稱是指向單品網址的連結
+        for (const [id, text, titlePart] of [['tarnhelm', '塔因頭盔', '塔因頭盔'], ['civerbs_vestments', '克維雷布的短棍', '克維雷布的法衣'], ['civerbs_cudgel', '克維雷布的短棍', '克維雷布的短棍']]) {
+          const res = await rp.goto(new URL(`items/${id}/`, base).href, { waitUntil: 'load', timeout: 45000 });
+          if (!res || res.status() !== 200) { failures.push(`[路由] /items/${id}/ 回 HTTP ${res?.status()}`); continue; }
+          await rp.waitForFunction((t) => (document.body?.innerText ?? '').includes(t) && !(document.body?.innerText ?? '').includes('載入中'), text, { timeout: 30000 });
+          if (!(await rp.title()).includes(titlePart)) failures.push(`[路由] /items/${id}/ 的分頁標題沒有單品名稱：${await rp.title()}`);
+          if (!(await rp.locator(`a[href$="/items/${id}/"]`).count())) failures.push(`[路由] /items/${id}/ 頁面上沒有指向自己的單品連結`);
+        }
+        // 單品外殼的 <base> 指向網站根目錄：頁內連結要寫成相對根目錄（items/<id>/），寫成 ../ 會指到錯的地方
+        for (const id of ['runewords/enigma', 'items/tarnhelm', 'items/civerbs_vestments']) {
+          const html = await (await fetch(new URL(`${id}/`, base))).text();
+          const bad = html.match(/<noscript>[\s\S]*<\/noscript>/)?.[0].match(/href="\.\.\/[^"]*"/g);
+          if (bad) failures.push(`[路由] /${id}/ 的 noscript 連結用了 ../（${bad[0]}），會以 <base> 為基準而指錯`);
+          if (!/<base href="\.\.\/\.\.\/"/.test(html)) failures.push(`[路由] /${id}/ 的外殼缺少 <base href="../../">`);
+        }
         const sm = await fetch(new URL('sitemap.xml', base));
         if (sm.status !== 200 || !(await sm.text()).includes('/items/</loc>')) failures.push('[路由] sitemap.xml 不存在或缺少分頁');
         await rp.goto(new URL('?legacy=1#runewords', base).href, { waitUntil: 'load', timeout: 45000 });
