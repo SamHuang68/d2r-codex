@@ -5,7 +5,7 @@
 import { UNIQUE_ITEMS_DATA } from '../data/uniqueItems';
 import { SET_ITEMS_DATA } from '../data/setItems';
 import { RUNEWORDS_DATA } from '../data/runewords';
-import { PATCH_NOTES, NON_LADDER_NOW, type PatchEntry } from '../data/patchNotes';
+import { PATCH_NOTES, NON_LADDER_NOW, RUNEWORD_ALIASES, type PatchEntry } from '../data/patchNotes';
 
 export interface ResolvedRef { name: string; nameEn: string; tab: 'items' | 'runewords'; id: string }
 export interface ResolvedEntry extends ResolvedRef { entry: PatchEntry }
@@ -30,8 +30,16 @@ export const resolvedPatchNotes = (): ResolvedEntry[] => PATCH_NOTES.map((entry)
  * 「非天梯新增」清單：名稱可能是暗金、套裝或符文之語，依序嘗試。
  * 找不到的（文章列了、但本站資料沒有的項目，例如 Mania、Hysteria）不丟錯，保留英文名並標示 ref 為 undefined，頁面註明「本站尚未收錄」。
  */
-export interface NonLadderRef { nameEn: string; ref?: ResolvedRef }
+export interface NonLadderRef { nameEn: string; ref?: ResolvedRef; aliasNote?: { zh: string; en: string } }
 export const resolvedNonLadder = (): { items: NonLadderRef[]; runewords: NonLadderRef[] } => ({
   items: NON_LADDER_NOW.items.map((n) => ({ nameEn: n, ref: lookup.get(`unique:${n}`) ?? lookup.get(`set:${n}`) })),
-  runewords: NON_LADDER_NOW.runewords.map((n) => ({ nameEn: n, ref: lookup.get(`runeword:${n}`) })),
+  runewords: NON_LADDER_NOW.runewords.map((n) => {
+    const alias = RUNEWORD_ALIASES[n];
+    if (alias) {
+      // 別名：對到合併後的那一筆，但顯示文章用的名稱（中文名用遊戲裡該版本的名稱）；對不上就丟錯，避免別名悄悄失效
+      const target = must(`runeword:${alias.resolveAs}`);
+      return { nameEn: n, ref: { ...target, name: alias.zh, nameEn: n }, aliasNote: { zh: alias.noteZh, en: alias.noteEn } };
+    }
+    return { nameEn: n, ref: lookup.get(`runeword:${n}`) };
+  }),
 });

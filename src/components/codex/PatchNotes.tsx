@@ -59,7 +59,7 @@ export const PatchNotes: React.FC<PatchNotesProps> = ({ onOpenItem }) => {
     <ul className="flex flex-wrap gap-2">
       {list.map((x) => (
         <li key={x.nameEn} className="rounded-lg border border-sanctuary-800 bg-sanctuary-900/60 px-2.5 py-1 text-sm text-sanctuary-200">
-          {x.ref ? itemLink(x.ref) : <span>{x.nameEn}<span className="ml-1.5 text-xs text-sanctuary-400">{t('（本站尚未收錄）', '(not in this site\'s data yet)')}</span></span>}
+          {x.ref ? <>{itemLink(x.ref)}{x.aliasNote && <span className="ml-1.5 text-xs text-sanctuary-400">{isEn ? `(${x.aliasNote.en})` : `（${x.aliasNote.zh}）`}</span>}</> : <span>{x.nameEn}<span className="ml-1.5 text-xs text-sanctuary-400">{t('（本站尚未收錄）', '(not in this site\'s data yet)')}</span></span>}
         </li>
       ))}
     </ul>
