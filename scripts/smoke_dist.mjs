@@ -89,9 +89,14 @@ const axeSource = fs.readFileSync(createRequire(import.meta.url).resolve('axe-co
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // 頁面載入的 JS 位元組（解壓後）。背景預先抓取（link rel=prefetch）的 chunk 不算：它們是閒下來之後才抓、沒有被這一頁用到
+// Firefox 把預先抓取的資源記成 initiatorType 'other'（Chromium 是 'link'），只看類型會把它們算進來；
+// 所以以「預先抓取開始的時間標記」（vite.config.ts 的預先抓取腳本打的 prefetch-start）為界：這個時間點之後才發出的請求不算。
+// 機器慢、預先抓取比量測更早開始時，這樣也不會誤算
 const jsBytes = (page) => page.evaluate(() => {
   const pf = new Set([...document.querySelectorAll('link[rel=prefetch]')].map((l) => l.href));
-  return performance.getEntriesByType('resource').filter((r) => /\.js(\?|$)/.test(r.name) && !(r.initiatorType === 'link' && pf.has(r.name))).reduce((a, r) => a + r.decodedBodySize, 0);
+  const mark = performance.getEntriesByName('prefetch-start')[0];
+  const cutoff = mark ? mark.startTime : Infinity;
+  return performance.getEntriesByType('resource').filter((r) => /\.js(\?|$)/.test(r.name) && r.startTime < cutoff && !(r.initiatorType === 'link' && pf.has(r.name))).reduce((a, r) => a + r.decodedBodySize, 0);
 });
 
 async function runOnce(base, browser) {
@@ -333,7 +338,8 @@ async function runOnce(base, browser) {
       const link = page.locator('button[title*="在百科中查看【"], button[title*="View "], button[title^="點擊查看【"], button[title^="點擊跳轉查看【"]').first();
       await link.waitFor({ timeout: 10000 });
       await link.click();
-      await page.waitForFunction(() => /\/(items|runewords|bases|runes|props)\/$/.test(location.pathname), null, { timeout: 10000 });
+      // 點了才動態載入比對用的資料表（好幾 MB），慢速環境（CI 的 Firefox）可能超過 10 秒；真的卡住仍會失敗，訊息會帶進行中的請求
+      await page.waitForFunction(() => /\/(items|runewords|bases|runes|props)\/$/.test(location.pathname), null, { timeout: 30000 });
     } catch (e) {
       failures.push(`[桌面] 傭兵頁的物品連結點了沒有跳轉到對應分頁：${String(e.message).split('\n')[0]}（${inflightText(page)}）`);
     }
