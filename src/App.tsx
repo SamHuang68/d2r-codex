@@ -40,15 +40,14 @@ const SearchModal = lazy(() => import('./components/layout/SearchModal').then((m
 const SimulatorV2 = lazy(() => import('./components/simulator/v2/SimulatorV2').then((m) => ({ default: m.SimulatorV2 })));
 
 /**
- * 網址決定分頁：/planner/ 直接開啟配裝模擬器。舊的 #planner 形式仍然有效，載入時由 canonicalizeLegacyHash 轉成新路徑。
- * 路徑優先，其次才看 hash（兩者都沒有就是首頁）。
+ * 網址決定分頁：/planner/ 直接開啟配裝模擬器。舊的 #planner 形式仍然有效：載入時由 canonicalizeLegacyHash 轉成新路徑。
+ * hash 優先（同一頁內改 hash 要跳到那一頁，網址路徑還是上一頁的），其次才看路徑（兩者都沒有就是首頁）。
  */
 const tabFromLocation = (): string => {
   if (typeof window === 'undefined') return 'overview';
-  const { tab } = parsePath(window.location.pathname);
-  if (tab) return tab;
   const h = window.location.hash.replace(/^#/, '');
-  return KNOWN_TABS.includes(h) ? h : 'overview';
+  if (KNOWN_TABS.includes(h)) return h;
+  return parsePath(window.location.pathname).tab ?? 'overview';
 };
 /** 網址是舊式 #分頁 時，改寫成真正的路徑（保留查詢字串），不新增歷史紀錄 */
 const canonicalizeLegacyHash = () => {
@@ -102,11 +101,12 @@ const AppContent: React.FC = () => {
       // 分頁內容是延遲載入的，高度不是一次到位：還原捲動位置分幾次嘗試
       [0, 150, 500].forEach((ms) => window.setTimeout(() => window.scrollTo(0, y), ms));
     };
-    // 舊式 #分頁 網址（使用者手動改網址列、或舊連結在同一頁內被點到）：轉成路徑再換頁
+    // 同一頁內改 #分頁（手動改網址列、舊連結被點到）：只換頁，不改寫網址。
+    // 不能在 hashchange 裡呼叫 history.replaceState：WebKit 上會讓 React 的 Suspense 停在「載入中」不再恢復（冒煙測試約一半機率重現）；
+    // 載入時的轉址（canonicalizeLegacyHash）在 effect 裡做，沒有這個問題
     const onHash = () => {
       const h = window.location.hash.replace(/^#/, '');
       if (!KNOWN_TABS.includes(h)) return;
-      canonicalizeLegacyHash();
       applyNav({ tab: h, query: '', cls: navRef.current.cls });
     };
     window.addEventListener('popstate', onPop);
