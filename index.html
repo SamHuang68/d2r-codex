@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <!-- 真路由（/items/ 這類網址）下，相對路徑的資源要以網站根目錄為準：建置時各分頁的靜態外殼已寫好 <base href="../">，
          這段處理其餘情況（開發伺服器、舊的後備頁）：從網址扣掉結尾的分頁名稱，得到網站根目錄（GitHub Pages 是 /d2r-codex/，自訂網域是 /） -->
-    <script>(function(){if(document.querySelector('base'))return;var tabs=__TABS__,itemTabs=__ITEM_TABS__,p=location.pathname.replace(/index\.html$/,'').split('/');if(p[p.length-1]==='')p.pop();var last=p[p.length-1],prev=p[p.length-2];if(p.length>2&&itemTabs.indexOf(prev)>=0)p.length-=2;else if(p.length>1&&last!=='overview'&&tabs.indexOf(last)>=0)p.pop();var b=document.createElement('base');b.href=p.join('/')+'/';document.head.insertBefore(b,document.head.firstChild)})()</script>
+    <script>(function(){if(document.querySelector('base'))return;var tabs=__TABS__,itemTabs=__ITEM_TABS__,p=location.pathname.replace(/index\.html$/,'').split('/');if(p[p.length-1]==='')p.pop();var last=p[p.length-1],prev=p[p.length-2];if(p.length>2&&itemTabs.indexOf(prev)>=0)p.length-=2;else if(p.length>1&&last!=='overview'&&tabs.indexOf(last)>=0)p.pop();if(p.length>1&&p[p.length-1]==='en')p.pop();var b=document.createElement('base');b.href=p.join('/')+'/';document.head.insertBefore(b,document.head.firstChild)})()</script>
     <link rel="icon" type="image/svg+xml" href="./icon.svg" />
     <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
     <link rel="apple-touch-icon" href="./apple-touch-icon.png" />

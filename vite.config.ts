@@ -30,6 +30,7 @@ const prefetchDataChunks = (): Plugin => ({
 });
 
 const SITE_TITLE = '聖休亞瑞典藏中樞 | D2R Sanctuary Codex';
+const SITE_TITLE_EN = 'Sanctuary Codex | D2R Database';
 const escapeAttr = (v: string) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
 /**
@@ -57,15 +58,25 @@ const staticRoutes = (): Plugin => {
       const home = fs.readFileSync(indexPath, 'utf8');
       const nl = home.includes('\r\n') ? '\r\n' : '\n';
       const urlOf = (pathPart: string) => `${SITE_ORIGIN}/${pathPart}`;
-      interface Page { path: string; depth: number; title: string; description: string; summary: string; selfId?: string; ogImage: string; ld: object[] }
+      type L = 'zh' | 'en';
+      interface Page { lang: L; key: string; path: string; depth: number; title: string; description: string; summary: string; selfId?: string; ogImage: string; ld: object[] }
+      const prefixOf = (l: L) => (l === 'en' ? 'en/' : '');
+      const siteTitle = (l: L) => (l === 'en' ? SITE_TITLE_EN : SITE_TITLE);
       const noscript = (pg: Page) => [
         '<noscript>',
-        `  <main><h1>${escapeAttr(pg.title)}</h1><p>${escapeAttr(pg.description)}</p><p>此網站需要啟用 JavaScript 才能瀏覽完整互動內容；以下是本頁收錄的內容。</p>${pg.summary}`,
-        '  <nav><ul>' + ROUTES.filter((r) => r.id !== pg.selfId).map((r) => `<li><a href="${r.id === 'overview' ? './' : `${r.id}/`}">${escapeAttr(r.title)}</a></li>`).join('') + '</ul></nav></main>',
+        `  <main><h1>${escapeAttr(pg.title)}</h1><p>${escapeAttr(pg.description)}</p><p>${pg.lang === 'en' ? 'This site needs JavaScript for the full interactive experience; below is what this page covers.' : '此網站需要啟用 JavaScript 才能瀏覽完整互動內容；以下是本頁收錄的內容。'}</p>${pg.summary}`,
+        '  <nav><ul>' + ROUTES.filter((r) => r.id !== pg.selfId).map((r) => `<li><a href="${r.id === 'overview' ? (pg.lang === 'en' ? 'en/' : './') : `${prefixOf(pg.lang)}${r.id}/`}">${escapeAttr(pg.lang === 'en' ? r.titleEn : r.title)}</a></li>`).join('') + '</ul></nav></main>',
         '</noscript>',
       ].join(nl);
+      // 同一頁的兩種語言版本：hreflang 互相指向，x-default 指向中文版
+      const altOf = (pg: Page) => {
+        const zhUrl = urlOf(pg.key ? `${pg.key}/` : '');
+        const enUrl = urlOf(`en/${pg.key ? `${pg.key}/` : ''}`);
+        return [{ hreflang: 'zh-Hant', href: zhUrl }, { hreflang: 'en', href: enUrl }, { hreflang: 'x-default', href: zhUrl }];
+      };
       const render = (pg: Page) => {
         const t = escapeAttr(pg.title), d = escapeAttr(pg.description), u = urlOf(pg.path);
+        const alts = altOf(pg).map((a) => `    <link rel="alternate" hreflang="${a.hreflang}" href="${a.href}" />`).join(nl);
         let out = home
           .replace(/<title>[^<]*<\/title>/, `<title>${t}</title>`)
           .replace(/(<meta name="description" content=")[^"]*(")/, `$1${d}$2`)
@@ -77,54 +88,75 @@ const staticRoutes = (): Plugin => {
           .replace(/(<meta property="og:image:height" content="[^"]*" \/>)/, `$1${nl}    <meta property="og:image:alt" content="${t}" />`)
           .replace(/(<meta name="twitter:card" content="[^"]*" \/>)/, `$1${nl}    <meta name="twitter:title" content="${t}" />${nl}    <meta name="twitter:description" content="${d}" />`)
           // 結構化資料（JSON-LD）：< 一律跳脫，避免內容裡的字串提早結束 <script>
-          .replace('</head>', `    <link rel="canonical" href="${u}" />${nl}    <script type="application/ld+json">${JSON.stringify(pg.ld.length === 1 ? pg.ld[0] : { '@context': 'https://schema.org', '@graph': pg.ld }).replace(/</g, '\\u003c').replace(/^\{/, pg.ld.length === 1 ? '{"@context":"https://schema.org",' : '{')}</script>${nl}  </head>`)
+          .replace('</head>', `    <link rel="canonical" href="${u}" />${nl}${alts}${nl}    <script type="application/ld+json">${JSON.stringify(pg.ld.length === 1 ? pg.ld[0] : { '@context': 'https://schema.org', '@graph': pg.ld }).replace(/</g, '\\u003c').replace(/^\{/, pg.ld.length === 1 ? '{"@context":"https://schema.org",' : '{')}</script>${nl}  </head>`)
           .replace('<div id="root"></div>', `<div id="root"></div>${nl}    ${noscript(pg)}`);
+        if (pg.lang === 'en') out = out.replace('<html lang="zh-TW"', '<html lang="en"').replace(/(<meta property="og:locale" content=")[^"]*(")/, '$1en_US$2');
         if (pg.depth > 0) out = out.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />${nl}    <base href="${'../'.repeat(pg.depth)}" />`);
         return out;
       };
-      const siteRef = { '@type': 'WebSite', '@id': `${SITE_ORIGIN}/#website`, name: '聖休亞瑞典藏中樞', alternateName: 'D2R Sanctuary Codex', url: `${SITE_ORIGIN}/`, inLanguage: 'zh-TW' };
+      const siteRef = (l: L) => ({ '@type': 'WebSite', '@id': `${SITE_ORIGIN}/${prefixOf(l)}#website`, name: l === 'en' ? 'Sanctuary Codex' : '聖休亞瑞典藏中樞', alternateName: l === 'en' ? '聖休亞瑞典藏中樞' : 'D2R Sanctuary Codex', url: urlOf(prefixOf(l)), inLanguage: l === 'en' ? 'en' : 'zh-TW' });
       const crumbs = (items: { name: string; path: string }[]) => ({
         '@type': 'BreadcrumbList',
         itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: urlOf(it.path) })),
       });
-      const ogFor = (tab: string) => (tab === 'overview' ? `${SITE_ORIGIN}/og.png` : `${SITE_ORIGIN}/og/${tab}.jpg`);
-      const pages: Page[] = ROUTES.map((r) => ({
-        path: r.id === 'overview' ? '' : `${r.id}/`,
-        depth: r.id === 'overview' ? 0 : 1,
-        title: r.id === 'overview' ? SITE_TITLE : `${r.title} | ${SITE_TITLE}`,
-        description: r.description,
-        summary: staticSummary(r.id),
-        selfId: r.id,
-        ogImage: ogFor(r.id),
-        ld: r.id === 'overview'
-          ? [siteRef]
-          : [
-              { '@type': 'WebPage', '@id': urlOf(`${r.id}/`), url: urlOf(`${r.id}/`), name: r.title, description: r.description, inLanguage: 'zh-TW', isPartOf: { '@id': siteRef['@id'] } },
-              crumbs([{ name: '首頁', path: '' }, { name: r.title, path: `${r.id}/` }]),
-            ],
-      }));
+      const ogFor = (l: L, tab: string) => (tab === 'overview' ? `${SITE_ORIGIN}/og.png` : `${SITE_ORIGIN}/og/${l === 'en' ? 'en/' : ''}${tab}.jpg`);
+      const pages: Page[] = [];
+      for (const l of ['zh', 'en'] as L[]) {
+        const pf = prefixOf(l);
+        const lg = l === 'en' ? 'en' : 'zh-TW';
+        for (const r of ROUTES) {
+          const name = l === 'en' ? r.titleEn : r.title;
+          const desc = l === 'en' ? r.descriptionEn : r.description;
+          const key = r.id === 'overview' ? '' : r.id;
+          const pagePath = `${pf}${key ? `${key}/` : ''}`;
+          pages.push({
+            lang: l,
+            key,
+            path: pagePath,
+            depth: (l === 'en' ? 1 : 0) + (key ? 1 : 0),
+            title: r.id === 'overview' ? siteTitle(l) : `${name} | ${siteTitle(l)}`,
+            description: desc,
+            summary: staticSummary(r.id, l),
+            selfId: r.id,
+            ogImage: ogFor(l, r.id),
+            ld: r.id === 'overview'
+              ? [siteRef(l)]
+              : [
+                  { '@type': 'WebPage', '@id': urlOf(pagePath), url: urlOf(pagePath), name, description: desc, inLanguage: lg, isPartOf: { '@id': siteRef(l)['@id'] } },
+                  crumbs([{ name: l === 'en' ? 'Home' : '首頁', path: pf }, { name, path: pagePath }]),
+                ],
+          });
+        }
+      }
       for (const ip of itemPages()) {
-        const tabTitle = ROUTES.find((r) => r.id === ip.tab)!.title;
+        const l = ip.lang as L;
+        const pf = prefixOf(l);
+        const tabRoute = ROUTES.find((r) => r.id === ip.tab)!;
+        const tabTitle = l === 'en' ? tabRoute.titleEn : tabRoute.title;
+        const key = `${ip.tab}/${encodeURIComponent(ip.id)}`;
+        const pagePath = `${pf}${key}/`;
         pages.push({
-          path: `${ip.tab}/${encodeURIComponent(ip.id)}/`,
-          depth: 2,
-          title: `${ip.title} | ${SITE_TITLE}`,
+          lang: l,
+          key,
+          path: pagePath,
+          depth: (l === 'en' ? 1 : 0) + 2,
+          title: `${ip.title} | ${siteTitle(l)}`,
           description: ip.description,
-          summary: ip.bodyHtml + `<p><a href="${ip.tab}/">${escapeAttr(tabTitle)}</a></p>`,
+          summary: ip.bodyHtml + `<p><a href="${pf}${ip.tab}/">${escapeAttr(tabTitle)}</a></p>`,
           selfId: undefined,
-          ogImage: ogFor(ip.tab),
+          ogImage: ogFor(l, ip.tab),
           ld: [
             {
               '@type': 'WebPage',
-              '@id': urlOf(`${ip.tab}/${encodeURIComponent(ip.id)}/`),
-              url: urlOf(`${ip.tab}/${encodeURIComponent(ip.id)}/`),
+              '@id': urlOf(pagePath),
+              url: urlOf(pagePath),
               name: ip.title,
               description: ip.description,
-              inLanguage: 'zh-TW',
-              isPartOf: { '@id': siteRef['@id'] },
-              about: { '@type': 'Thing', name: ip.name, alternateName: ip.nameEn },
+              inLanguage: l === 'en' ? 'en' : 'zh-TW',
+              isPartOf: { '@id': siteRef(l)['@id'] },
+              about: { '@type': 'Thing', name: ip.name, alternateName: l === 'en' ? undefined : ip.nameEn },
             },
-            crumbs([{ name: '首頁', path: '' }, { name: tabTitle, path: `${ip.tab}/` }, { name: ip.name, path: `${ip.tab}/${encodeURIComponent(ip.id)}/` }]),
+            crumbs([{ name: l === 'en' ? 'Home' : '首頁', path: pf }, { name: tabTitle, path: `${pf}${ip.tab}/` }, { name: ip.name, path: pagePath }]),
           ],
         });
       }
@@ -135,12 +167,13 @@ const staticRoutes = (): Plugin => {
       }
       const headersPath = path.join(outDir, '_headers');
       if (fs.existsSync(headersPath)) {
-        const extra = [...ROUTES.filter((r) => r.id !== 'overview').map((r) => `/${r.id}/`), ...ITEM_TABS.map((t) => `/${t}/*`)].map((p) => `${p}${nl}  Cache-Control: no-cache${nl}`).join(nl);
+        const extra = [...ROUTES.filter((r) => r.id !== 'overview').map((r) => `/${r.id}/`), ...ITEM_TABS.map((t) => `/${t}/*`), '/en/*'].map((p) => `${p}${nl}  Cache-Control: no-cache${nl}`).join(nl);
         fs.appendFileSync(headersPath, `${nl}# 各分頁的靜態外殼（vite.config.ts 的 staticRoutes 產生）：和首頁一樣每次重新確認${nl}${extra}`);
       }
       const today = new Date().toISOString().slice(0, 10);
-      const urls = pages.map((pg) => `  <url><loc>${urlOf(pg.path)}</loc><lastmod>${today}</lastmod></url>`).join('\n');
-      fs.writeFileSync(path.join(outDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
+      // sitemap：每個網址附上兩種語言的 alternate（xhtml:link），與頁面裡的 hreflang 一致
+      const urls = pages.map((pg) => `  <url><loc>${urlOf(pg.path)}</loc><lastmod>${today}</lastmod>${altOf(pg).map((a) => `<xhtml:link rel="alternate" hreflang="${a.hreflang}" href="${a.href}"/>`).join('')}</url>`).join('\n');
+      fs.writeFileSync(path.join(outDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls}\n</urlset>\n`);
     },
   };
 };

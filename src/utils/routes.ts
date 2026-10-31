@@ -37,29 +37,48 @@ export const KNOWN_TABS: string[] = ROUTES.map((r) => r.id);
 /** 有單品網址（/<分頁>/<id>/）的分頁 */
 export const ITEM_TABS: string[] = ['runewords', 'items'];
 
+export type Lang = 'zh' | 'en';
+
 /**
- * 把目前網址的路徑拆成網站根目錄、分頁與單品 id（例如 /d2r-codex/runewords/enigma/ → 根目錄 /d2r-codex/、分頁 runewords、單品 enigma）。
+ * 把目前網址的路徑拆成網站根目錄、語言、分頁與單品 id。
+ * 例：/d2r-codex/en/runewords/enigma/ → 根目錄 /d2r-codex/、語言 en、分頁 runewords、單品 enigma；/runewords/ → 語言 zh。
  * 路徑不是已知分頁時 tab 為 undefined（首頁、或開發模式的 index.html）。
  */
-export const parsePath = (pathname: string): { root: string; tab?: string; item?: string } => {
+export const parsePath = (pathname: string): { root: string; lang: Lang; tab?: string; item?: string } => {
   const parts = pathname.replace(/index\.html$/, '').split('/');
   parts.pop(); // 結尾的空字串（路徑以斜線結尾）或檔名
   const isTab = (x: string | undefined) => !!x && x !== 'overview' && KNOWN_TABS.includes(x);
+  let tab: string | undefined;
+  let item: string | undefined;
   const last = parts[parts.length - 1];
   const prev = parts[parts.length - 2];
   if (parts.length > 2 && ITEM_TABS.includes(prev) && isTab(prev)) {
-    const item = decodeURIComponent(last);
+    item = decodeURIComponent(last);
+    tab = prev;
     parts.length -= 2;
-    return { root: parts.join('/') + '/', tab: prev, item };
-  }
-  if (parts.length > 1 && isTab(last)) {
+  } else if (parts.length > 1 && isTab(last)) {
+    tab = last;
     parts.pop();
-    return { root: parts.join('/') + '/', tab: last };
   }
-  return { root: parts.join('/') + '/' };
+  // 英文版網址在根目錄之下多一層 /en/
+  let lang: Lang = 'zh';
+  if (parts.length > 1 && parts[parts.length - 1] === 'en') { lang = 'en'; parts.pop(); }
+  return { root: parts.join('/') + '/', lang, tab, item };
 };
 
 /** 網站根目錄（以斜線開頭結尾）。 */
 export const siteRoot = (): string => parsePath(window.location.pathname).root;
+/** 目前網址所屬的語言（網址決定語言：/en/… 是英文，其餘是繁體中文）。 */
+export const langFromLocation = (): Lang => parsePath(window.location.pathname).lang;
 
-export const pathForTab = (tab: string, item?: string): string => (tab === 'overview' ? siteRoot() : `${siteRoot()}${tab}/${item ? `${encodeURIComponent(item)}/` : ''}`);
+/** 組出分頁（與單品）的路徑。 */
+export const pathFor = (root: string, tab: string, item: string | undefined, lang: Lang): string =>
+  `${root}${lang === 'en' ? 'en/' : ''}${tab === 'overview' ? '' : `${tab}/${item ? `${encodeURIComponent(item)}/` : ''}`}`;
+/** 目前網站根目錄下的分頁路徑；語言預設沿用目前網址的語言。 */
+export const pathForTab = (tab: string, item?: string, lang: Lang = langFromLocation()): string => pathFor(siteRoot(), tab, item, lang);
+
+/** 目前網址換成另一種語言的網址（切換語言用）：同一個分頁、同一個單品。 */
+export const switchLangPath = (lang: Lang): string => {
+  const { root, tab, item } = parsePath(window.location.pathname);
+  return pathFor(root, tab ?? 'overview', item, lang);
+};

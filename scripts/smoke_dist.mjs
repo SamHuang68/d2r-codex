@@ -246,6 +246,32 @@ async function runOnce(base, browser) {
           if (!img || img.status !== 200 || !/image\//.test(img.headers.get('content-type') ?? '')) failures.push(`[路由] /runewords/enigma/ 的 og:image 取不到圖（${og}）`);
           if (!/name="twitter:title" content="[^"]*謎團/.test(html)) failures.push('[路由] /runewords/enigma/ 缺少 twitter:title');
         }
+        // 英文版網址（/en/…）：直接開啟是英文介面、<html lang>、標題與 hreflang 都對；語言切換鈕換成同一頁的另一種語言網址，上一頁回得去
+        {
+          const res = await rp.goto(new URL('en/runewords/enigma/', base).href, { waitUntil: 'load', timeout: 45000 });
+          if (!res || res.status() !== 200) failures.push(`[英文] /en/runewords/enigma/ 回 HTTP ${res?.status()}（英文靜態頁不存在？）`);
+          else {
+            await rp.waitForFunction(() => (document.body?.innerText ?? '').includes('Enigma') && !(document.body?.innerText ?? '').includes('載入中') && !(document.body?.innerText ?? '').includes('Loading'), null, { timeout: 30000 });
+            const info = await rp.evaluate(() => ({ lang: document.documentElement.lang, title: document.title, nav: (document.body?.innerText ?? '').includes('Runewords') }));
+            if (info.lang !== 'en') failures.push(`[英文] /en/runewords/enigma/ 的 <html lang> 是 ${info.lang}`);
+            if (!info.title.includes('Enigma')) failures.push(`[英文] /en/runewords/enigma/ 的分頁標題沒有英文單品名稱：${info.title}`);
+            if (!info.nav) failures.push('[英文] /en/runewords/enigma/ 沒有顯示英文介面');
+            const html = await (await fetch(new URL('en/runewords/enigma/', base))).text();
+            if (!/hreflang="zh-Hant" href="[^"]*\/runewords\/enigma\/"/.test(html) || !/hreflang="en" href="[^"]*\/en\/runewords\/enigma\/"/.test(html)) failures.push('[英文] /en/runewords/enigma/ 的 hreflang 不完整');
+            const root = new URL('.', base).pathname;
+            // 切換語言：英文 → 中文（同一個單品），再回英文；上一頁回到中文
+            await rp.locator('button[title*="Traditional Chinese"]').first().click();
+            await rp.waitForFunction((r) => location.pathname === `${r}runewords/enigma/`, root, { timeout: 15000 });
+            await rp.waitForFunction(() => document.documentElement.lang === 'zh-Hant', null, { timeout: 15000 });
+            await rp.locator('button[title*="Switch to English"]').first().click();
+            await rp.waitForFunction((r) => location.pathname === `${r}en/runewords/enigma/`, root, { timeout: 15000 });
+            await rp.goBack();
+            await rp.waitForFunction((r) => location.pathname === `${r}runewords/enigma/` && document.documentElement.lang === 'zh-Hant', root, { timeout: 15000 });
+          }
+          const resEn = await rp.goto(new URL('en/', base).href, { waitUntil: 'load', timeout: 45000 });
+          if (!resEn || resEn.status() !== 200) failures.push(`[英文] /en/ 回 HTTP ${resEn?.status()}`);
+          else await rp.waitForFunction(() => (document.body?.innerText ?? '').length > 500 && document.documentElement.lang === 'en', null, { timeout: 30000 });
+        }
         // 單品外殼的 <base> 指向網站根目錄：頁內連結要寫成相對根目錄（items/<id>/），寫成 ../ 會指到錯的地方
         for (const id of ['runewords/enigma', 'items/tarnhelm', 'items/civerbs_vestments']) {
           const html = await (await fetch(new URL(`${id}/`, base))).text();
