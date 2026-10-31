@@ -19,7 +19,7 @@ export interface NavGroup {
 
 const ic = 'w-4 h-4';
 
-/** 全站 21 個分頁的單一來源（桌面側邊欄、手機抽屜共用，分頁 id 與 App.tsx 一致） */
+/** 全站 22 個分頁的單一來源（桌面側邊欄、手機抽屜共用，分頁 id 與 App.tsx 一致） */
 export const NAV_GROUPS: NavGroup[] = [
   {
     category: '總覽',
@@ -39,7 +39,7 @@ export const NAV_GROUPS: NavGroup[] = [
         labelEn: 'Patch Changes',
         desc: '3.3／3.4 版物品改動對照',
         descEn: 'Patches 3.3 & 3.4 item changes',
-        icon: <GameIcon name="scroll" className={`${ic} text-d2-unique`} />,
+        icon: <GameIcon name="patch" className={`${ic} text-d2-unique`} />,
       },
     ],
   },
