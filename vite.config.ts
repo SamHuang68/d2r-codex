@@ -2,7 +2,8 @@ import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import fs from 'node:fs';
 import path from 'node:path';
-import { ROUTES, SITE_ORIGIN } from './src/utils/routes';
+import { ROUTES, ITEM_TABS, SITE_ORIGIN } from './src/utils/routes';
+import { itemPages } from './src/utils/staticItemPages';
 import { staticSummary } from './src/utils/staticSummaries';
 
 /**
@@ -47,7 +48,7 @@ const staticRoutes = (): Plugin => {
     transformIndexHtml: {
       order: 'pre',
       handler(html) {
-        return html.replace('__TABS__', JSON.stringify(ROUTES.map((r) => r.id)));
+        return html.replace('__TABS__', JSON.stringify(ROUTES.map((r) => r.id))).replace('__ITEM_TABS__', JSON.stringify(ITEM_TABS));
       },
     },
     closeBundle() {
@@ -55,17 +56,16 @@ const staticRoutes = (): Plugin => {
       if (!fs.existsSync(indexPath)) return;
       const home = fs.readFileSync(indexPath, 'utf8');
       const nl = home.includes('\r\n') ? '\r\n' : '\n';
-      const urlOf = (id: string) => (id === 'overview' ? `${SITE_ORIGIN}/` : `${SITE_ORIGIN}/${id}/`);
-      const noscript = (id: string, title: string, desc: string) => [
+      const urlOf = (pathPart: string) => `${SITE_ORIGIN}/${pathPart}`;
+      interface Page { path: string; depth: number; title: string; description: string; summary: string; selfId?: string }
+      const noscript = (pg: Page) => [
         '<noscript>',
-        `  <main><h1>${escapeAttr(title)}</h1><p>${escapeAttr(desc)}</p><p>此網站需要啟用 JavaScript 才能瀏覽完整互動內容；以下是本頁收錄的項目清單。</p>${staticSummary(id)}`,
-        '  <nav><ul>' + ROUTES.filter((r) => r.id !== id).map((r) => `<li><a href="${r.id === 'overview' ? './' : `${r.id}/`}">${escapeAttr(r.title)}</a></li>`).join('') + '</ul></nav></main>',
+        `  <main><h1>${escapeAttr(pg.title)}</h1><p>${escapeAttr(pg.description)}</p><p>此網站需要啟用 JavaScript 才能瀏覽完整互動內容；以下是本頁收錄的內容。</p>${pg.summary}`,
+        '  <nav><ul>' + ROUTES.filter((r) => r.id !== pg.selfId).map((r) => `<li><a href="${'../'.repeat(pg.depth)}${r.id === 'overview' ? '' : `${r.id}/`}">${escapeAttr(r.title)}</a></li>`).join('') + '</ul></nav></main>',
         '</noscript>',
       ].join(nl);
-      const render = (id: string, nested: boolean) => {
-        const r = ROUTES.find((x) => x.id === id)!;
-        const title = id === 'overview' ? SITE_TITLE : `${r.title} | ${SITE_TITLE}`;
-        const t = escapeAttr(title), d = escapeAttr(r.description), u = urlOf(id);
+      const render = (pg: Page) => {
+        const t = escapeAttr(pg.title), d = escapeAttr(pg.description), u = urlOf(pg.path);
         let out = home
           .replace(/<title>[^<]*<\/title>/, `<title>${t}</title>`)
           .replace(/(<meta name="description" content=")[^"]*(")/, `$1${d}$2`)
@@ -73,23 +73,41 @@ const staticRoutes = (): Plugin => {
           .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${d}$2`)
           .replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${u}$2`)
           .replace('</head>', `    <link rel="canonical" href="${u}" />${nl}  </head>`)
-          .replace('<div id="root"></div>', `<div id="root"></div>${nl}    ${noscript(id, r.title, r.description)}`);
-        if (nested) out = out.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />${nl}    <base href="../" />`);
+          .replace('<div id="root"></div>', `<div id="root"></div>${nl}    ${noscript(pg)}`);
+        if (pg.depth > 0) out = out.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />${nl}    <base href="${'../'.repeat(pg.depth)}" />`);
         return out;
       };
-      fs.writeFileSync(indexPath, render('overview', false));
-      for (const r of ROUTES) {
-        if (r.id === 'overview') continue;
-        fs.mkdirSync(path.join(outDir, r.id), { recursive: true });
-        fs.writeFileSync(path.join(outDir, r.id, 'index.html'), render(r.id, true));
+      const pages: Page[] = ROUTES.map((r) => ({
+        path: r.id === 'overview' ? '' : `${r.id}/`,
+        depth: r.id === 'overview' ? 0 : 1,
+        title: r.id === 'overview' ? SITE_TITLE : `${r.title} | ${SITE_TITLE}`,
+        description: r.description,
+        summary: staticSummary(r.id),
+        selfId: r.id,
+      }));
+      for (const ip of itemPages()) {
+        const tabTitle = ROUTES.find((r) => r.id === ip.tab)!.title;
+        pages.push({
+          path: `${ip.tab}/${encodeURIComponent(ip.id)}/`,
+          depth: 2,
+          title: `${ip.title} | ${SITE_TITLE}`,
+          description: ip.description,
+          summary: ip.bodyHtml + `<p><a href="../">${escapeAttr(tabTitle)}</a></p>`,
+          selfId: undefined,
+        });
+      }
+      for (const pg of pages) {
+        const file = pg.path ? path.join(outDir, ...pg.path.split('/').filter(Boolean), 'index.html') : indexPath;
+        fs.mkdirSync(path.dirname(file), { recursive: true });
+        fs.writeFileSync(file, render(pg));
       }
       const headersPath = path.join(outDir, '_headers');
       if (fs.existsSync(headersPath)) {
-        const extra = ROUTES.filter((r) => r.id !== 'overview').map((r) => `/${r.id}/${nl}  Cache-Control: no-cache${nl}`).join(nl);
+        const extra = [...ROUTES.filter((r) => r.id !== 'overview').map((r) => `/${r.id}/`), ...ITEM_TABS.map((t) => `/${t}/*`)].map((p) => `${p}${nl}  Cache-Control: no-cache${nl}`).join(nl);
         fs.appendFileSync(headersPath, `${nl}# 各分頁的靜態外殼（vite.config.ts 的 staticRoutes 產生）：和首頁一樣每次重新確認${nl}${extra}`);
       }
       const today = new Date().toISOString().slice(0, 10);
-      const urls = ROUTES.map((r) => `  <url><loc>${urlOf(r.id)}</loc><lastmod>${today}</lastmod></url>`).join('\n');
+      const urls = pages.map((pg) => `  <url><loc>${urlOf(pg.path)}</loc><lastmod>${today}</lastmod></url>`).join('\n');
       fs.writeFileSync(path.join(outDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
     },
   };

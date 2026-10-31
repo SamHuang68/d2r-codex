@@ -49,6 +49,12 @@ const tabFromLocation = (): string => {
   if (KNOWN_TABS.includes(h)) return h;
   return parsePath(window.location.pathname).tab ?? 'overview';
 };
+/** 網址 /runewords/enigma/ 的單品 id（hash 形式或沒有單品時為 undefined） */
+const itemFromLocation = (): string | undefined => {
+  if (typeof window === 'undefined') return undefined;
+  if (KNOWN_TABS.includes(window.location.hash.replace(/^#/, ''))) return undefined;
+  return parsePath(window.location.pathname).item;
+};
 /** 網址是舊式 #分頁 時，改寫成真正的路徑（保留查詢字串），不新增歷史紀錄 */
 const canonicalizeLegacyHash = () => {
   const h = window.location.hash.replace(/^#/, '');
@@ -60,9 +66,9 @@ const canonicalizeLegacyHash = () => {
  * 一次「導覽」的完整狀態。每次點進另一頁都會在瀏覽器歷史紀錄新增一筆（history.pushState）並帶著這份狀態，
  * 所以上一頁／下一頁（滑鼠側鍵、手機返回）會回到前後的分頁，連同當時帶進來的搜尋字串、樹節點、符文編號與職業。
  */
-interface NavState { tab: string; query: string; node?: string; runeNumber?: number; cls?: string }
+interface NavState { tab: string; query: string; node?: string; runeNumber?: number; cls?: string; item?: string }
 const NAV_KEY = 'd2nav';
-const sameNav = (a: NavState, b: NavState) => a.tab === b.tab && a.query === b.query && a.node === b.node && a.runeNumber === b.runeNumber && a.cls === b.cls;
+const sameNav = (a: NavState, b: NavState) => a.tab === b.tab && a.query === b.query && a.node === b.node && a.runeNumber === b.runeNumber && a.cls === b.cls && a.item === b.item;
 
 
 const AppContent: React.FC = () => {
@@ -75,16 +81,18 @@ const AppContent: React.FC = () => {
   const [targetQuery, setTargetQuery] = useState<string>('');
   /** 裝備寶典要停在的樹節點（首頁「成套裝備」磚傳 's'、「暗金裝備」磚傳 'u'）；沒有就用預設的暗金·菁英 */
   const [itemsNode, setItemsNode] = useState<string | undefined>();
+  /** 單品網址（/runewords/enigma/）指定的單品 id */
+  const [itemId, setItemId] = useState<string | undefined>(itemFromLocation);
   const [targetRuneNumber, setTargetRuneNumber] = useState<number | undefined>();
   const [plannerSubMode, setPlannerSubMode] = useState<'armory' | 'notes'>('armory');
   const [simInitialTab, setSimInitialTab] = useState<'stats' | 'gear' | 'skills' | 'merc' | undefined>();
 
   // 目前這一筆導覽的狀態（用 ref 記，pushState 時才拿得到「剛剛才設定」的職業）
-  const navRef = useRef<NavState>({ tab: activeTab, query: '', cls: '魔法使' });
+  const navRef = useRef<NavState>({ tab: activeTab, query: '', cls: '魔法使', item: itemFromLocation() });
   const setSelectedInitialClass = (cls: string) => { navRef.current = { ...navRef.current, cls }; setSelectedInitialClassState(cls); };
   const applyNav = (n: NavState) => {
     navRef.current = n;
-    setActiveTab(n.tab); setTargetQuery(n.query); setItemsNode(n.node); setTargetRuneNumber(n.runeNumber);
+    setActiveTab(n.tab); setTargetQuery(n.query); setItemsNode(n.node); setTargetRuneNumber(n.runeNumber); setItemId(n.item);
     if (n.cls) setSelectedInitialClassState(n.cls);
   };
 
@@ -96,7 +104,7 @@ const AppContent: React.FC = () => {
     const onPop = (e: PopStateEvent) => {
       const saved = (e.state as { [NAV_KEY]?: NavState; scrollY?: number } | null);
       // 沒有狀態＝使用者直接改了網址列的 hash：只看分頁
-      applyNav(saved?.[NAV_KEY] ?? { tab: tabFromLocation(), query: '', cls: navRef.current.cls });
+      applyNav(saved?.[NAV_KEY] ?? { tab: tabFromLocation(), query: '', cls: navRef.current.cls, item: itemFromLocation() });
       const y = saved?.scrollY ?? 0;
       // 分頁內容是延遲載入的，高度不是一次到位：還原捲動位置分幾次嘗試
       [0, 150, 500].forEach((ms) => window.setTimeout(() => window.scrollTo(0, y), ms));
@@ -123,8 +131,9 @@ const AppContent: React.FC = () => {
     // 不在導覽列的分頁（資料來源與版權聲明）用路由表的標題
     const label = mod ? (isEn ? mod.labelEn : mod.label) : isEn ? '' : (ROUTES.find((r) => r.id === activeTab)?.title ?? '');
     const base = isEn ? 'Sanctuary Codex | D2R Database' : '聖休亞瑞典藏中樞 | D2R Sanctuary Codex';
+    if (itemId) return; // 單品網址的標題由該頁自己設定（用單品名稱）
     document.title = activeTab === 'overview' || !label ? base : `${label} | ${base}`;
-  }, [activeTab, isEn]);
+  }, [activeTab, isEn, itemId]);
 
   // Global hotkey 'Q' or '/' to open search modal
   useEffect(() => {
@@ -145,14 +154,14 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleNavigate = (tab: string, query?: string, runeNumber?: number, node?: string) => {
+  const handleNavigate = (tab: string, query?: string, runeNumber?: number, node?: string, item?: string) => {
     const effectiveTab = tab === 'sets' ? 'items' : tab;
     // 沒帶搜尋字串的導覽（側欄、首頁磚）要清掉上一次跨頁帶來的搜尋字串，否則各清單頁會帶著舊關鍵字重新載入
-    const next: NavState = { tab: effectiveTab, query: query ?? '', node: node ?? (tab === 'sets' ? 's' : undefined), runeNumber, cls: navRef.current.cls };
+    const next: NavState = { tab: effectiveTab, query: query ?? '', node: node ?? (tab === 'sets' ? 's' : undefined), runeNumber, cls: navRef.current.cls, item };
     if (!sameNav(navRef.current, next)) {
       // 離開之前先把目前這一筆的捲動位置存進去，按上一頁時回到原本看的位置
       window.history.replaceState({ ...(window.history.state ?? {}), [NAV_KEY]: navRef.current, scrollY: window.scrollY }, '');
-      window.history.pushState({ [NAV_KEY]: next }, '', pathForTab(effectiveTab));
+      window.history.pushState({ [NAV_KEY]: next }, '', pathForTab(effectiveTab, item));
     }
     applyNav(next);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -246,6 +255,8 @@ const AppContent: React.FC = () => {
         {activeTab === 'runewords' && (
           <RunewordFinder 
             initialQuery={targetQuery}
+            initialItemId={itemId}
+            onOpenItem={(id) => handleNavigate('runewords', undefined, undefined, undefined, id)}
             onNavigateToRune={(n) => handleNavigate('runes', undefined, n)}
             onNavigateToBase={(base) => handleNavigate('bases', base)}
           />

@@ -10,9 +10,15 @@ import { TaxDef, TreeNode, buildTree, recount, findNode } from '../../utils/equi
 import { Search, Sparkles, Filter, X, ArrowRight } from 'lucide-react';
 import { RunewordShowcase } from './RunewordShowcase';
 import { useLanguage } from '../../context/LanguageContext';
+import { pathForTab } from '../../utils/routes';
+import { isPlainLeftClick } from '../layout/navConfig';
 
 export interface RunewordFinderProps {
   initialQuery?: string;
+  /** 單品網址（/runewords/enigma/）指定的符文之語 id：載入時以它的名稱搜尋 */
+  initialItemId?: string;
+  /** 點卡片標題時前往該符文之語的單品網址 */
+  onOpenItem?: (id: string) => void;
   onNavigateToRune?: (runeNumber: number) => void;
   onNavigateToBase?: (baseName: string) => void;
 }
@@ -148,6 +154,8 @@ const byLevel = (a: RW, b: RW) => a.requiredLevel - b.requiredLevel || a.name.lo
 
 export const RunewordFinder: React.FC<RunewordFinderProps> = ({
   initialQuery = '',
+  initialItemId,
+  onOpenItem,
   onNavigateToRune,
   onNavigateToBase,
 }) => {
@@ -168,6 +176,16 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
     const g = GROUPS.find((x) => x.match(bases));
     return baseImg(g ? g.rep : 'Phase Blade');
   };
+
+  // 單品網址：以該符文之語的名稱搜尋，並把分頁標題改成它的名稱
+  React.useEffect(() => {
+    if (!initialItemId) return;
+    const rw = RUNEWORDS_DATA.find((x) => x.id === initialItemId);
+    if (!rw) return;
+    setSearchQuery(isEn ? rw.nameEn : rw.name);
+    setSel('all');
+    document.title = isEn ? `${rw.nameEn} Runeword | Sanctuary Codex | D2R Database` : `${rw.name}（${rw.nameEn}）符文之語配方 | 聖休亞瑞典藏中樞 | D2R Sanctuary Codex`;
+  }, [initialItemId, isEn]);
 
   // Sync initialQuery when prop changes
   React.useEffect(() => {
@@ -327,7 +345,13 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="font-diablo text-lg font-bold text-d2-unique group-hover:text-amber-300 transition-colors">
-                          {isEn && rw.nameEn ? rw.nameEn : rw.name}
+                          <a
+                            href={pathForTab('runewords', rw.id)}
+                            onClick={(e) => { if (!onOpenItem || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenItem(rw.id); }}
+                            className="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold rounded"
+                          >
+                            {isEn && rw.nameEn ? rw.nameEn : rw.name}
+                          </a>
                         </h3>
                         {!isEn && rw.nameEn && (
                           <span className="text-xs text-sanctuary-400 font-mono italic">

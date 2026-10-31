@@ -34,12 +34,25 @@ export const ROUTES: RouteMeta[] = [
 
 export const KNOWN_TABS: string[] = ROUTES.map((r) => r.id);
 
-/** 把目前網址的路徑拆成網站根目錄與分頁；路徑不是已知分頁時 tab 為 undefined（例如首頁、或開發模式的 index.html）。 */
-export const parsePath = (pathname: string): { root: string; tab?: string } => {
+/** 有單品網址（/<分頁>/<id>/）的分頁 */
+export const ITEM_TABS: string[] = ['runewords'];
+
+/**
+ * 把目前網址的路徑拆成網站根目錄、分頁與單品 id（例如 /d2r-codex/runewords/enigma/ → 根目錄 /d2r-codex/、分頁 runewords、單品 enigma）。
+ * 路徑不是已知分頁時 tab 為 undefined（首頁、或開發模式的 index.html）。
+ */
+export const parsePath = (pathname: string): { root: string; tab?: string; item?: string } => {
   const parts = pathname.replace(/index\.html$/, '').split('/');
   parts.pop(); // 結尾的空字串（路徑以斜線結尾）或檔名
+  const isTab = (x: string | undefined) => !!x && x !== 'overview' && KNOWN_TABS.includes(x);
   const last = parts[parts.length - 1];
-  if (parts.length > 1 && last !== 'overview' && KNOWN_TABS.includes(last)) {
+  const prev = parts[parts.length - 2];
+  if (parts.length > 2 && ITEM_TABS.includes(prev) && isTab(prev)) {
+    const item = decodeURIComponent(last);
+    parts.length -= 2;
+    return { root: parts.join('/') + '/', tab: prev, item };
+  }
+  if (parts.length > 1 && isTab(last)) {
     parts.pop();
     return { root: parts.join('/') + '/', tab: last };
   }
@@ -49,4 +62,4 @@ export const parsePath = (pathname: string): { root: string; tab?: string } => {
 /** 網站根目錄（以斜線開頭結尾）。 */
 export const siteRoot = (): string => parsePath(window.location.pathname).root;
 
-export const pathForTab = (tab: string): string => (tab === 'overview' ? siteRoot() : `${siteRoot()}${tab}/`);
+export const pathForTab = (tab: string, item?: string): string => (tab === 'overview' ? siteRoot() : `${siteRoot()}${tab}/${item ? `${encodeURIComponent(item)}/` : ''}`);
