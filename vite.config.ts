@@ -61,7 +61,7 @@ const staticRoutes = (): Plugin => {
       const noscript = (pg: Page) => [
         '<noscript>',
         `  <main><h1>${escapeAttr(pg.title)}</h1><p>${escapeAttr(pg.description)}</p><p>此網站需要啟用 JavaScript 才能瀏覽完整互動內容；以下是本頁收錄的內容。</p>${pg.summary}`,
-        '  <nav><ul>' + ROUTES.filter((r) => r.id !== pg.selfId).map((r) => `<li><a href="${'../'.repeat(pg.depth)}${r.id === 'overview' ? '' : `${r.id}/`}">${escapeAttr(r.title)}</a></li>`).join('') + '</ul></nav></main>',
+        '  <nav><ul>' + ROUTES.filter((r) => r.id !== pg.selfId).map((r) => `<li><a href="${r.id === 'overview' ? './' : `${r.id}/`}">${escapeAttr(r.title)}</a></li>`).join('') + '</ul></nav></main>',
         '</noscript>',
       ].join(nl);
       const render = (pg: Page) => {
@@ -92,7 +92,7 @@ const staticRoutes = (): Plugin => {
           depth: 2,
           title: `${ip.title} | ${SITE_TITLE}`,
           description: ip.description,
-          summary: ip.bodyHtml + `<p><a href="../">${escapeAttr(tabTitle)}</a></p>`,
+          summary: ip.bodyHtml + `<p><a href="${ip.tab}/">${escapeAttr(tabTitle)}</a></p>`,
           selfId: undefined,
         });
       }

@@ -13,6 +13,10 @@ import { ITEM_TREE_DEFS, CHARM_LABEL, CHARM_LABEL_EN, U_ENTRIES, S_ENTRIES, UEnt
 import { CrossPropertyFilterBar } from './CrossPropertyFilterBar';
 import { CrossItemCard } from './CrossItemCard';
 import { useLanguage } from '../../context/LanguageContext';
+import { pathForTab } from '../../utils/routes';
+import { isPlainLeftClick } from '../layout/navConfig';
+import { UNIQUE_ITEMS_DATA } from '../../data/uniqueItems';
+import { SET_ITEMS_DATA } from '../../data/setItems';
 import {
   getAllUnifiedItems,
   filterUnifiedItems,
@@ -25,6 +29,10 @@ export interface ItemCompendiumProps {
   initialQuery?: string;
   /** 一進頁面就停在的樹節點（例如首頁「成套裝備」磚傳 's'）；沒給就停在暗金·菁英 */
   initialNode?: string;
+  /** 單品網址（/items/<id>/）指定的暗金、套裝部件或整組套裝 id */
+  initialItemId?: string;
+  /** 點卡片標題時前往該單品網址 */
+  onOpenItem?: (id: string) => void;
   onNavigateToBase?: (baseName: string) => void;
   onNavigateToRune?: (runeNumber: number) => void;
 }
@@ -84,6 +92,8 @@ const CLASS_NAME_EN: Record<string, string> = {
 export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   initialQuery = '',
   initialNode,
+  initialItemId,
+  onOpenItem,
   onNavigateToBase,
   onNavigateToRune,
 }) => {
@@ -162,6 +172,20 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
 
   // 是否進入跨裝備屬性檢索模式
   const isCrossPropertyMode = selectedPropertyIds.length > 0 || selectedRarity === 'runeword';
+
+  // 單品網址：以該單品（暗金、套裝部件或整組套裝）的名稱搜尋，並把分頁標題改成它的名稱
+  React.useEffect(() => {
+    if (!initialItemId) return;
+    const u = UNIQUE_ITEMS_DATA.find((x) => x.id === initialItemId);
+    const piece = u ? undefined : SET_ITEMS_DATA.flatMap((s) => s.pieces.map((p) => ({ p, s }))).find((x) => x.p.id === initialItemId);
+    const set = u || piece ? undefined : SET_ITEMS_DATA.find((s) => s.id === initialItemId);
+    const hit = u ?? piece?.p ?? set;
+    if (!hit) return;
+    setSearchQuery(isEn ? hit.nameEn : hit.name);
+    setSel('all');
+    const kind = u ? '暗金裝備' : piece ? `套裝裝備－${piece.s.name}` : '套裝';
+    document.title = isEn ? `${hit.nameEn} | Sanctuary Codex | D2R Database` : `${hit.name}（${hit.nameEn}）${kind} | 聖休亞瑞典藏中樞 | D2R Sanctuary Codex`;
+  }, [initialItemId, isEn]);
 
   // Sync initialQuery when prop changes
   React.useEffect(() => {
@@ -249,6 +273,17 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   const crumbs = crumbsOf(isEn ? 'All Equipment' : '全部裝備', tree, sel, isEn);
   const go = (id: string) => setSel(id);
 
+  /** 名稱連結到單品網址：一般點擊在站內換頁，Ctrl／⌘／中鍵開新分頁 */
+  const itemLink = (id: string, label: string) => (
+    <a
+      href={pathForTab('items', id)}
+      onClick={(e) => { if (!onOpenItem || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenItem(id); }}
+      className="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold rounded"
+    >
+      {label}
+    </a>
+  );
+
   const flashCls = (id: string) => (dir.flash === id ? 'ring-2 ring-d2-unique rounded-xl transition-shadow' : '');
 
   const uniqueCard = (e: UEntry) => {
@@ -260,6 +295,8 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
           layout="row"
           title={item.name}
           titleEn={item.nameEn}
+          titleHref={pathForTab('items', item.id)}
+          onTitleClick={onOpenItem ? () => onOpenItem(item.id) : undefined}
           baseItem={item.baseItem}
           baseItemEn={item.baseItemEn}
           rarity="unique"
@@ -318,7 +355,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
       {/* Set Header */}
       <div className="border-b border-sanctuary-800 pb-3 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <h4 className="font-diablo text-xl font-bold text-d2-set">{isEn && set.nameEn ? set.nameEn : set.name}</h4>
+          <h4 className="font-diablo text-xl font-bold text-d2-set">{itemLink(set.id, isEn && set.nameEn ? set.nameEn : set.name)}</h4>
           <div className="text-xs text-sanctuary-400 font-mono italic">
             {isEn ? '' : (set.nameEn ? `${set.nameEn} • ` : '')}{isEn ? `${set.pieces.length} Pieces` : `${set.pieces.length} 件套裝`}{set.class ? ` • ${isEn ? `${CLASS_NAME_EN[set.class] || set.class} Only` : `${set.class}專用`}` : ''}
           </div>
@@ -339,7 +376,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
               imageUrl={piece.imageUrl}
             />
             <div className="flex-1 min-w-0">
-              <div className="font-diablo font-bold text-d2-set text-sm">{isEn && piece.nameEn ? piece.nameEn : piece.name} {!isEn && piece.nameEn && <span className="font-sans text-xs text-sanctuary-400 font-normal">({piece.nameEn})</span>}</div>
+              <div className="font-diablo font-bold text-d2-set text-sm">{itemLink(piece.id, isEn && piece.nameEn ? piece.nameEn : piece.name)} {!isEn && piece.nameEn && <span className="font-sans text-xs text-sanctuary-400 font-normal">({piece.nameEn})</span>}</div>
               <div className="text-[11px] text-sanctuary-400 mb-2 font-medium">
                 {onNavigateToBase ? (
                   <button

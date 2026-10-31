@@ -22,6 +22,9 @@ interface ItemTooltipProps {
   /** stack：圖在上（預設）；row：圖在左、文字在右，適合清單卡 */
   layout?: 'stack' | 'row';
   badges?: string[];
+  /** 標題改成指向單品網址的連結（一般點擊交給 onTitleClick 在站內換頁） */
+  titleHref?: string;
+  onTitleClick?: () => void;
 }
 
 export const ItemTooltip: React.FC<ItemTooltipProps> = ({
@@ -42,6 +45,8 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
   imageUrl,
   layout = 'stack',
   badges,
+  titleHref,
+  onTitleClick,
 }) => {
   const { isEn } = useLanguage();
   const primaryTitle = isEn && titleEn ? titleEn : title;
@@ -87,7 +92,15 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
   const header = (
     <>
       <div className={`font-diablo text-lg md:text-xl font-bold tracking-wide leading-tight ${getTitleColor()}`}>
-        {primaryTitle}
+        {titleHref ? (
+          <a
+            href={titleHref}
+            onClick={(e) => { if (!onTitleClick || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); onTitleClick(); }}
+            className="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold rounded"
+          >
+            {primaryTitle}
+          </a>
+        ) : primaryTitle}
       </div>
       {secondaryTitle && (
         <div className="text-xs text-sanctuary-400 font-mono italic mb-1">
