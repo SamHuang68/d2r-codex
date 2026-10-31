@@ -23,7 +23,7 @@ const prefetchDataChunks = (): Plugin => ({
         .filter((c) => c.type === 'chunk' && !c.isEntry && PREFETCH_CHUNKS.includes(c.name))
         .map((c) => `./${c.fileName}`);
       if (!files.length) return undefined;
-      const code = `addEventListener('load',function(){var c=navigator.connection;if(c&&(c.saveData||(c.effectiveType&&c.effectiveType!=='4g')))return;setTimeout(function(){${JSON.stringify(files)}.forEach(function(u){var l=document.createElement('link');l.rel='prefetch';l.as='script';l.crossOrigin='';l.href=u;document.head.appendChild(l)})},2000)})`;
+      const code = `addEventListener('load',function(){var c=navigator.connection;if(c&&(c.saveData||(c.effectiveType&&c.effectiveType!=='4g')))return;setTimeout(function(){performance.mark('prefetch-start');${JSON.stringify(files)}.forEach(function(u){var l=document.createElement('link');l.rel='prefetch';l.as='script';l.crossOrigin='';l.href=u;document.head.appendChild(l)})},2000)})`;
       return [{ tag: 'script', children: code, injectTo: 'head' }];
     },
   },
