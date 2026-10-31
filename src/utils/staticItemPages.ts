@@ -7,7 +7,7 @@ import { UNIQUE_ITEMS_DATA } from '../data/uniqueItems';
 import { SET_ITEMS_DATA } from '../data/setItems';
 
 /** 連結一律相對於網站根目錄（單品外殼寫死了指向根目錄的 <base>），例如 items/<id>/ */
-export interface ItemPage { tab: string; id: string; title: string; description: string; bodyHtml: string }
+export interface ItemPage { tab: string; id: string; /** 中文名與英文名（結構化資料用） */ name: string; nameEn: string; title: string; description: string; bodyHtml: string }
 
 const esc = (v: unknown) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const clip = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1)}…` : s);
@@ -21,6 +21,8 @@ const runewordPages = (): ItemPage[] => RUNEWORDS_DATA.map((rw) => {
   return {
     tab: 'runewords',
     id: rw.id,
+    name: rw.name,
+    nameEn: rw.nameEn,
     title: `${name}符文之語配方`,
     description: clip(`${name}：${facts}。${attrs.slice(0, 4).join('、')}。`, 200),
     bodyHtml: `<section><h2>${esc(name)}</h2><p>${esc(facts)}</p><h3>屬性</h3><ul>${rw.attributes.map((a) => `<li>${esc(a)}</li>`).join('')}</ul></section>`,
@@ -38,6 +40,8 @@ const uniquePages = (): ItemPage[] => UNIQUE_ITEMS_DATA.map((u) => {
   return {
     tab: 'items',
     id: u.id,
+    name: u.name,
+    nameEn: u.nameEn,
     title: `${name}暗金裝備`,
     description: clip(`${name}：${facts}。${stats.slice(0, 4).join('、')}。`, 200),
     bodyHtml: `<section><h2>${esc(name)}</h2><p>${esc(facts)}</p><h3>屬性</h3>${ul(u.attributes)}${u.flavorText ? `<p>${esc(u.flavorText)}</p>` : ''}</section>`,
@@ -54,6 +58,8 @@ const setPages = (): ItemPage[] => SET_ITEMS_DATA.flatMap((set) => {
   const setPage: ItemPage = {
     tab: 'items',
     id: set.id,
+    name: set.name,
+    nameEn: set.nameEn,
     title: `${setName}套裝`,
     description: clip(`${setName}：共 ${set.pieces.length} 件。${set.pieces.map((p) => p.name).join('、')}。${bonuses.slice(0, 2).join('；')}`, 200),
     bodyHtml: `<section><h2>${esc(setName)}</h2><p>${set.pieces.length} 件套裝</p><h3>部件</h3>${pieceList}<h3>套裝加成</h3>${ul(bonuses)}</section>`,
@@ -64,6 +70,8 @@ const setPages = (): ItemPage[] => SET_ITEMS_DATA.flatMap((set) => {
     return {
       tab: 'items',
       id: p.id,
+      name: p.name,
+      nameEn: p.nameEn,
       title: `${name}套裝裝備－${set.name}`,
       description: clip(`${name}：${facts}。${p.attributes.filter(isStat).slice(0, 4).join('、')}。`, 200),
       bodyHtml: `<section><h2>${esc(name)}</h2><p>${esc(facts)}</p><h3>屬性</h3>${ul(p.attributes)}<p><a href="items/${encodeURIComponent(set.id)}/">${esc(setName)}</a></p></section>`,

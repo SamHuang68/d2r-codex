@@ -57,7 +57,7 @@ const staticRoutes = (): Plugin => {
       const home = fs.readFileSync(indexPath, 'utf8');
       const nl = home.includes('\r\n') ? '\r\n' : '\n';
       const urlOf = (pathPart: string) => `${SITE_ORIGIN}/${pathPart}`;
-      interface Page { path: string; depth: number; title: string; description: string; summary: string; selfId?: string }
+      interface Page { path: string; depth: number; title: string; description: string; summary: string; selfId?: string; ogImage: string; ld: object[] }
       const noscript = (pg: Page) => [
         '<noscript>',
         `  <main><h1>${escapeAttr(pg.title)}</h1><p>${escapeAttr(pg.description)}</p><p>此網站需要啟用 JavaScript 才能瀏覽完整互動內容；以下是本頁收錄的內容。</p>${pg.summary}`,
@@ -72,11 +72,22 @@ const staticRoutes = (): Plugin => {
           .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${t}$2`)
           .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${d}$2`)
           .replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${u}$2`)
-          .replace('</head>', `    <link rel="canonical" href="${u}" />${nl}  </head>`)
+          .replace(/(<meta property="og:image" content=")[^"]*(")/, `$1${pg.ogImage}$2`)
+          .replace(/(<meta name="twitter:image" content=")[^"]*(")/, `$1${pg.ogImage}$2`)
+          .replace(/(<meta property="og:image:height" content="[^"]*" \/>)/, `$1${nl}    <meta property="og:image:alt" content="${t}" />`)
+          .replace(/(<meta name="twitter:card" content="[^"]*" \/>)/, `$1${nl}    <meta name="twitter:title" content="${t}" />${nl}    <meta name="twitter:description" content="${d}" />`)
+          // 結構化資料（JSON-LD）：< 一律跳脫，避免內容裡的字串提早結束 <script>
+          .replace('</head>', `    <link rel="canonical" href="${u}" />${nl}    <script type="application/ld+json">${JSON.stringify(pg.ld.length === 1 ? pg.ld[0] : { '@context': 'https://schema.org', '@graph': pg.ld }).replace(/</g, '\\u003c').replace(/^\{/, pg.ld.length === 1 ? '{"@context":"https://schema.org",' : '{')}</script>${nl}  </head>`)
           .replace('<div id="root"></div>', `<div id="root"></div>${nl}    ${noscript(pg)}`);
         if (pg.depth > 0) out = out.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />${nl}    <base href="${'../'.repeat(pg.depth)}" />`);
         return out;
       };
+      const siteRef = { '@type': 'WebSite', '@id': `${SITE_ORIGIN}/#website`, name: '聖休亞瑞典藏中樞', alternateName: 'D2R Sanctuary Codex', url: `${SITE_ORIGIN}/`, inLanguage: 'zh-TW' };
+      const crumbs = (items: { name: string; path: string }[]) => ({
+        '@type': 'BreadcrumbList',
+        itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: urlOf(it.path) })),
+      });
+      const ogFor = (tab: string) => (tab === 'overview' ? `${SITE_ORIGIN}/og.png` : `${SITE_ORIGIN}/og/${tab}.jpg`);
       const pages: Page[] = ROUTES.map((r) => ({
         path: r.id === 'overview' ? '' : `${r.id}/`,
         depth: r.id === 'overview' ? 0 : 1,
@@ -84,6 +95,13 @@ const staticRoutes = (): Plugin => {
         description: r.description,
         summary: staticSummary(r.id),
         selfId: r.id,
+        ogImage: ogFor(r.id),
+        ld: r.id === 'overview'
+          ? [siteRef]
+          : [
+              { '@type': 'WebPage', '@id': urlOf(`${r.id}/`), url: urlOf(`${r.id}/`), name: r.title, description: r.description, inLanguage: 'zh-TW', isPartOf: { '@id': siteRef['@id'] } },
+              crumbs([{ name: '首頁', path: '' }, { name: r.title, path: `${r.id}/` }]),
+            ],
       }));
       for (const ip of itemPages()) {
         const tabTitle = ROUTES.find((r) => r.id === ip.tab)!.title;
@@ -94,6 +112,20 @@ const staticRoutes = (): Plugin => {
           description: ip.description,
           summary: ip.bodyHtml + `<p><a href="${ip.tab}/">${escapeAttr(tabTitle)}</a></p>`,
           selfId: undefined,
+          ogImage: ogFor(ip.tab),
+          ld: [
+            {
+              '@type': 'WebPage',
+              '@id': urlOf(`${ip.tab}/${encodeURIComponent(ip.id)}/`),
+              url: urlOf(`${ip.tab}/${encodeURIComponent(ip.id)}/`),
+              name: ip.title,
+              description: ip.description,
+              inLanguage: 'zh-TW',
+              isPartOf: { '@id': siteRef['@id'] },
+              about: { '@type': 'Thing', name: ip.name, alternateName: ip.nameEn },
+            },
+            crumbs([{ name: '首頁', path: '' }, { name: tabTitle, path: `${ip.tab}/` }, { name: ip.name, path: `${ip.tab}/${encodeURIComponent(ip.id)}/` }]),
+          ],
         });
       }
       for (const pg of pages) {

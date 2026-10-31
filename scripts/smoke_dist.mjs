@@ -229,6 +229,18 @@ async function runOnce(base, browser) {
           if (!(await rp.title()).includes(titlePart)) failures.push(`[路由] /items/${id}/ 的分頁標題沒有單品名稱：${await rp.title()}`);
           if (!(await rp.locator(`a[href$="/items/${id}/"]`).count())) failures.push(`[路由] /items/${id}/ 頁面上沒有指向自己的單品連結`);
         }
+        // 結構化資料與分享預覽：單品頁要有可解析的 JSON-LD（含麵包屑）；og:image 指到的圖要能取得（正式網域與本機路徑相同，用本次的 base 取）
+        {
+          const html = await (await fetch(new URL('runewords/enigma/', base))).text();
+          const ld = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];
+          let okLd = false;
+          try { const j = JSON.parse(ld ?? ''); okLd = JSON.stringify(j).includes('BreadcrumbList') && JSON.stringify(j).includes('Enigma'); } catch { /* 下面回報 */ }
+          if (!okLd) failures.push('[路由] /runewords/enigma/ 沒有可解析且含麵包屑的結構化資料（JSON-LD）');
+          const og = html.match(/property="og:image" content="https:\/\/[^/]+\/([^"]+)"/)?.[1];
+          const img = og ? await fetch(new URL(og, base)) : undefined;
+          if (!img || img.status !== 200 || !/image\//.test(img.headers.get('content-type') ?? '')) failures.push(`[路由] /runewords/enigma/ 的 og:image 取不到圖（${og}）`);
+          if (!/name="twitter:title" content="[^"]*謎團/.test(html)) failures.push('[路由] /runewords/enigma/ 缺少 twitter:title');
+        }
         // 單品外殼的 <base> 指向網站根目錄：頁內連結要寫成相對根目錄（items/<id>/），寫成 ../ 會指到錯的地方
         for (const id of ['runewords/enigma', 'items/tarnhelm', 'items/civerbs_vestments']) {
           const html = await (await fetch(new URL(`${id}/`, base))).text();
