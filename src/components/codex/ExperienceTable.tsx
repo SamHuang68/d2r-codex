@@ -135,8 +135,8 @@ export const ExperienceTable: React.FC = () => {
         </p>
         <p>
           {isEn
-            ? 'Not included: level-difference XP penalty curves, party XP splits, death penalties; game ExpRatio column unverified and omitted.'
-            : '未納入：怪物與角色的等級差造成的經驗修正、組隊分配、死亡懲罰；資料表的 ExpRatio 欄用途未驗證，沒有收錄。'}
+            ? 'Not included: party XP splits, death penalties; game ExpRatio column unverified and omitted. The level-difference XP ratio is on the Leveling Areas page.'
+            : '未納入：組隊分配、死亡懲罰；資料表的 ExpRatio 欄用途未驗證，沒有收錄。怪物與角色的等級差造成的經驗倍率請見「練等場景」頁。'}
         </p>
       </div>
     </div>

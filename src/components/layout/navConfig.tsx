@@ -88,6 +88,14 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: <GameIcon name="levelup" className={`${ic} text-d2-gold`} />,
       },
       {
+        id: 'leveling',
+        label: '練等場景',
+        labelEn: 'Leveling Areas',
+        desc: '依等級找不被扣經驗的場景',
+        descEn: 'Areas with full XP at your level',
+        icon: <GameIcon name="flag" className={`${ic} text-d2-gold`} />,
+      },
+      {
         id: 'mercenaries',
         label: '傭兵寶典',
         labelEn: 'Mercenaries',

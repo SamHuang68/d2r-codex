@@ -9,26 +9,9 @@ import {
   AREAS, DIFF_ZH, ELEMS, ELEM_ZH, KIND_ZH, MONSTERS, areaImmunity, areaLevel, areasOfMonster, immunitiesOf, isImmune, resistOf,
   type Area, type Diff, type ElemKey, type Monster,
 } from '../../data/codex/monsters';
+import { DIFF_EN, ELEM_EN, ELEM_TONE } from './monsterLabels';
 
-const ELEM_EN: Record<ElemKey, string> = {
-  physical: 'Phys',
-  magic: 'Mag',
-  fire: 'Fire',
-  lightning: 'Light',
-  cold: 'Cold',
-  poison: 'Pois',
-};
-
-const ELEM_TONE: Record<ElemKey, string> = {
-  physical: 'text-sanctuary-200 border-sanctuary-600 bg-sanctuary-700/40',
-  magic: 'text-d2-magic border-d2-magic/40 bg-d2-magic/10',
-  fire: 'text-d2-fire border-d2-fire/40 bg-d2-fire/10',
-  lightning: 'text-d2-lightning border-d2-lightning/40 bg-d2-lightning/10',
-  cold: 'text-d2-cold border-d2-cold/40 bg-d2-cold/10',
-  poison: 'text-d2-poison border-d2-poison/40 bg-d2-poison/10',
-};
 const KIND_EN: Record<string, string> = { demon: 'Demon', undead: 'Undead', insect: 'Insect', beast: 'Beast', human: 'Human', construct: 'Construct', other: 'Other' };
-const DIFF_EN: Record<Diff, string> = ['Normal', 'Nightmare', 'Hell'];
 const PAGE = 100;
 
 /** 一格抗性：免疫、弱點（負值）、一般數值。顏色只標出「值得注意」的，其餘淡色 */
