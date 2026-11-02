@@ -26,6 +26,7 @@ const MonsterCompendium = lazy(() => import('./components/codex/MonsterCompendiu
 const AffixCompendium = lazy(() => import('./components/codex/AffixCompendium').then((m) => ({ default: m.AffixCompendium })));
 const ShrineCompendium = lazy(() => import('./components/codex/ShrineCompendium').then((m) => ({ default: m.ShrineCompendium })));
 const ExperienceTable = lazy(() => import('./components/codex/ExperienceTable').then((m) => ({ default: m.ExperienceTable })));
+const LevelingScenes = lazy(() => import('./components/codex/LevelingScenes').then((m) => ({ default: m.LevelingScenes })));
 const AreaGuide = lazy(() => import('./components/codex/AreaGuide').then((m) => ({ default: m.AreaGuide })));
 const MercenaryGuide = lazy(() => import('./components/codex/MercenaryGuide').then((m) => ({ default: m.MercenaryGuide })));
 const ValuationGuide = lazy(() => import('./components/codex/ValuationGuide').then((m) => ({ default: m.ValuationGuide })));
@@ -304,6 +305,7 @@ const AppContent: React.FC = () => {
         {activeTab === 'affixes' && <AffixCompendium initialQuery={targetQuery} />}
         {activeTab === 'shrines' && <ShrineCompendium initialQuery={targetQuery} />}
         {activeTab === 'experience' && <ExperienceTable />}
+        {activeTab === 'leveling' && <LevelingScenes />}
         {activeTab === 'patches' && <PatchNotes onOpenItem={(tab, id) => handleNavigate(tab, undefined, undefined, undefined, id)} />}
         {activeTab === 'about' && <SourcesPage />}
         {activeTab === 'mercenaries' && (

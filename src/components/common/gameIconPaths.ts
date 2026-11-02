@@ -50,6 +50,8 @@ export const GAME_ICON_SHAPES = {
   altar: { stroke: ['M4 21h16', 'M6 21v-7h12v7', 'M12 2.5c2.2 3 3.2 4.4 3.2 6.2a3.2 3.2 0 0 1-6.4 0c0-1.8 1-3.200 3.200-6.200Z'] },
   /** 紅門六王：骷髏 */
   skull: { stroke: ['M12 3a8 8 0 0 0-8 8c0 3 1.5 4.7 3 5.7V21h10v-4.3c1.5-1 3-2.700 3-5.700a8 8 0 0 0-8-8Z', 'M10 21v-2.500', 'M14 21v-2.500'], fill: ['M7.500 10h3v3h-3Z', 'M13.500 10h3v3h-3Z'] },
+  /** 練等場景：插在路上的旗幟 */
+  flag: { stroke: ['M6 21V3', 'M6 4h11l-3 4.500 3 4.500H6', 'M3 21h9'] },
 } satisfies Record<string, IconShape>;
 
 export type GameIconName = keyof typeof GAME_ICON_SHAPES;

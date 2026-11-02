@@ -52,6 +52,7 @@ const ROUTES = [
   { hash: '#affixes', min: 4000, label: '詞綴寶典' },
   { hash: '#shrines', min: 2000, label: '聖壇圖鑑' },
   { hash: '#experience', min: 2500, label: '經驗值表' },
+  { hash: '#leveling', min: 1200, label: '練等場景' },
   { hash: '#about', min: 500, label: '資料來源與版權聲明' },
 ];
 
