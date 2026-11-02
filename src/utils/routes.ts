@@ -28,6 +28,7 @@ export const ROUTES: RouteMeta[] = [
   { id: 'grail', title: '聖杯打寶', description: 'D2R 聖杯收集追蹤器：全部暗金、套裝與符文打勾記錄進度。', titleEn: 'Holy Grail', descriptionEn: 'Holy Grail tracker: check off every unique, set item and rune to record your progress.' },
   { id: 'quests', title: '任務事件', description: 'D2R 永久獎勵任務與世界事件整理。', titleEn: 'Quests & Events', descriptionEn: 'Permanent-reward quests and world events in D2R.' },
   { id: 'areas', title: '場景恐區', description: 'D2R 85 級場景、邪惡威脅區域與恐怖區域資訊。', titleEn: 'Areas & Terror', descriptionEn: 'Level 85 areas, evil threat zones and terror zones in D2R.' },
+  { id: 'farming', title: '打寶場景', description: 'D2R 依流派或主要傷害元素，列出地獄難度高等級場景裡免疫怪物最少的地方，附箱子與首領備註。', titleEn: 'Farming Areas', descriptionEn: 'D2R Hell areas with the fewest monsters immune to your build or main damage element, with chest and boss notes.' },
   { id: 'monsters', title: '怪物圖鑑', description: 'D2R 怪物三種難度的抗性、免疫與出沒場景。', titleEn: 'Monsters', descriptionEn: 'D2R monster resistances, immunities and locations across all three difficulties.' },
   { id: 'shrines', title: '聖壇圖鑑', description: 'D2R 各種聖壇的效果、持續時間與出現等級。', titleEn: 'Shrines', descriptionEn: 'D2R shrine effects, durations and the levels they appear at.' },
   { id: 'uber', title: '紅門六王', description: 'D2R 火炬任務與地獄崔斯特姆（紅門）流程攻略。', titleEn: 'Uber Tristram', descriptionEn: 'Hellfire Torch quest and Uber Tristram (Pandemonium Event) walkthrough.' },

@@ -210,6 +210,14 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: <GameIcon name="map" className={`${ic} text-d2-fire`} />,
       },
       {
+        id: 'farming',
+        label: '打寶場景',
+        labelEn: 'Farming Areas',
+        desc: '依流派避開免疫的地獄場景',
+        descEn: 'Hell areas that fit your build',
+        icon: <GameIcon name="chest" className={`${ic} text-d2-unique`} />,
+      },
+      {
         id: 'monsters',
         label: '怪物圖鑑',
         labelEn: 'Monsters',
