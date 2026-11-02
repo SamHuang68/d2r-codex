@@ -118,6 +118,14 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: <GameIcon name="sword" className={`${ic} text-d2-unique`} />,
       },
       {
+        id: 'upgrades',
+        label: '暗金升級',
+        labelEn: 'Unique Upgrades',
+        desc: '值得升級的暗金與無形建議',
+        descEn: 'Uniques worth upgrading & ethereal tips',
+        icon: <GameIcon name="upgrade" className={`${ic} text-d2-unique`} />,
+      },
+      {
         id: 'runewords',
         label: '符文之語',
         labelEn: 'Runewords',

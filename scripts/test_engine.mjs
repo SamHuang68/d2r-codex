@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/attackSpeed'; export * from './src/engine/attackSpeedSkills'; export * from './src/engine/leveling'; export * from './src/data/codex/farming'; export { AREA_LEVELS_DATA } from './src/data/areaLevels'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles, buildSkillSummary } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries'; export { TIER_LABEL, TIER_META } from './src/utils/equipTaxonomy'; export { TIER_QUALITY_ZH } from './src/data/codex/common'; export { searchCodex } from './src/utils/searchCodex'; export { searchOmni } from './src/utils/search'; export { LEGACY_TERM_ALIASES, OLD_TRANSLATION_ALIASES, expandLegacyQuery } from './src/utils/termAliases'; export { actZh } from './src/utils/actLabel'; export { AMBIENT_THEMES, noteFreq, themeOfAct } from './src/utils/ambientThemes'; export { GAME_ICON_SHAPES } from './src/components/common/gameIconPaths'; export { CUBE_RECIPES_DATA } from './src/data/cubeRecipes'; export { GEMS_DATA as PROPS_GEMS_DATA, UBER_KEYS_ORGANS_DATA } from './src/data/props'; export * from './src/utils/propertyFilter'; export * from './src/data/mercenaryMatrix'; export * from './src/utils/mercPresetBridge';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/attackSpeed'; export * from './src/engine/attackSpeedSkills'; export * from './src/engine/leveling'; export * from './src/data/codex/farming'; export * from './src/data/codex/uniqueUpgrades'; export { AREA_LEVELS_DATA } from './src/data/areaLevels'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles, buildSkillSummary } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries'; export { TIER_LABEL, TIER_META } from './src/utils/equipTaxonomy'; export { TIER_QUALITY_ZH } from './src/data/codex/common'; export { searchCodex } from './src/utils/searchCodex'; export { searchOmni } from './src/utils/search'; export { LEGACY_TERM_ALIASES, OLD_TRANSLATION_ALIASES, expandLegacyQuery } from './src/utils/termAliases'; export { actZh } from './src/utils/actLabel'; export { AMBIENT_THEMES, noteFreq, themeOfAct } from './src/utils/ambientThemes'; export { GAME_ICON_SHAPES } from './src/components/common/gameIconPaths'; export { CUBE_RECIPES_DATA } from './src/data/cubeRecipes'; export { GEMS_DATA as PROPS_GEMS_DATA, UBER_KEYS_ORGANS_DATA } from './src/data/props'; export * from './src/utils/propertyFilter'; export * from './src/data/mercenaryMatrix'; export * from './src/utils/mercPresetBridge';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -662,6 +662,52 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
     assert.ok(farmingRows(83, null).length > all.length); assert.ok(farmingRows(75, null).length >= farmingRows(83, null).length);
     const ids = new Set(farmingRows(83, null).map((r) => r.area.id)); for (const r of all) assert.ok(ids.has(r.area.id));
     assert.ok(all.some((r) => r.note), '至少有一個場景帶備註');
+  });
+}
+
+// ── 暗金升級 ──
+{
+  const { UPGRADE_RECIPES, UPGRADE_ROWS, upgradeRowOf, upgradeLevel, etherealAdvice, buildsUsing, MERC_PICKS, LEVEL_HIGH, LEVEL_MID } = E;
+  console.log('【暗金升級】');
+  t('四條升級配方：普通→擴充（武器 Ral＋Sol＋完美翡翠、防具 Tal＋Shael＋完美鑽石）、擴充→傳奇（武器 Lum＋Pul＋完美翡翠、防具 Ko＋Lem＋完美鑽石）；需求等級 +5／+7', () => {
+    assert.equal(UPGRADE_RECIPES.length, 4);
+    const key = (r) => `${r.kind}/${r.step}`; const by = Object.fromEntries(UPGRADE_RECIPES.map((r) => [key(r), r]));
+    const names = (r) => r.inputs.map((i) => i.nameEn);
+    assert.deepEqual(names(by['weapon/exceptional']), ['Ral Rune', 'Sol Rune', 'Perfect Emerald']); assert.deepEqual(names(by['armor/exceptional']), ['Tal Rune', 'Shael Rune', 'Perfect Diamond']);
+    assert.deepEqual(names(by['weapon/elite']), ['Lum Rune', 'Pul Rune', 'Perfect Emerald']); assert.deepEqual(names(by['armor/elite']), ['Ko Rune', 'Lem Rune', 'Perfect Diamond']);
+    assert.equal(by['armor/exceptional'].levelReq, 5); assert.equal(by['armor/elite'].levelReq, 7);
+  });
+  t('蛇魔法師之皮：海蛇皮甲→蛇龍皮甲，完美升級防禦 1034、無形 1551（對照社群公開數字）；力量需求 43→84；需求等級 +7', () => {
+    const r = upgradeRowOf('Skin of the Vipermagi');
+    assert.equal(r.from.nameEn, 'Serpentskin Armor'); assert.equal(r.to.nameEn, 'Wyrmhide'); assert.equal(r.fromTier, 'exceptional');
+    assert.deepEqual(r.now, { min: 244, max: 277 }); assert.deepEqual(r.after, { min: 800, max: 1034 }); assert.deepEqual(r.afterEth, { min: 1201, max: 1551 });
+    assert.deepEqual(r.reqStr, [43, 84]); assert.equal(r.levelReqAfter, r.levelReq + 7); assert.equal(r.level, 'high');
+  });
+  t('普通底材的暗金要升兩階：需求等級 +12；腰帶格數 12→16 算在提升幅度裡', () => {
+    const m = upgradeRowOf('Magefist'); assert.equal(m.fromTier, 'normal'); assert.equal(m.to.tier, 'elite'); assert.equal(m.levelReqAfter, m.levelReq + 12);
+    assert.equal(m.oneStep.base.tier, 'exceptional'); assert.equal(m.oneStep.levelReqAfter, m.levelReq + 5); assert.ok(m.oneStep.reqStr < m.reqStr[1]); assert.equal(upgradeRowOf('Skin of the Vipermagi').oneStep, undefined, '擴充底材沒有只升一階');
+    const g = upgradeRowOf('Goldwrap'); assert.deepEqual(g.beltSlots, [12, 16]); assert.equal(g.level, 'high'); assert.match(g.reason.zh, /腰帶 \+4 格/);
+  });
+  t('提升幅度分級：防禦或傷害 +100 以上為大、+50 以上為中、其餘有限；腰帶 +4 格直接算大', () => {
+    const mk = (g, slots) => ({ kind: 'armor', now: { min: 0, max: 0 }, after: { min: g, max: g }, beltSlots: slots });
+    assert.equal(LEVEL_HIGH, 100); assert.equal(LEVEL_MID, 50);
+    assert.equal(upgradeLevel(mk(100)).level, 'high'); assert.equal(upgradeLevel(mk(99)).level, 'mid'); assert.equal(upgradeLevel(mk(50)).level, 'mid'); assert.equal(upgradeLevel(mk(49)).level, 'low');
+    assert.equal(upgradeLevel(mk(0, [12, 16])).level, 'high'); assert.equal(upgradeLevel(mk(0, [8, 12])).level, 'high'); assert.equal(upgradeLevel(mk(0, [12, 12])).level, 'low');
+  });
+  t('無形建議：傭兵一律建議；角色只有本身不可摧毀的才行，其餘因耐久減半且不能修理而不建議', () => {
+    assert.equal(etherealAdvice({ indestructible: false }, 'merc').ok, true); assert.equal(etherealAdvice({ indestructible: true }, 'player').ok, true); assert.equal(etherealAdvice({ indestructible: false }, 'player').ok, false);
+    assert.ok(etherealAdvice({ indestructible: true }, 'player').note); assert.equal(etherealAdvice({ indestructible: false }, 'player').note, undefined); assert.equal(etherealAdvice({ indestructible: false }, 'merc').note, undefined);
+  });
+  t('全部可升級暗金：升級後底材一定是傳奇、防禦不會變少（武器看平均傷害，最小或最大傷害單看可能變低，例如雷霆巨錘）、無形版比一般版高；本站流派範本用到的與傭兵推薦的都在裡面', () => {
+    assert.ok(UPGRADE_ROWS.length >= 200, `${UPGRADE_ROWS.length}`);
+    for (const r of UPGRADE_ROWS) {
+      assert.equal(r.to.tier, 'elite', r.nameEn); assert.notEqual(r.from.tier, 'elite', r.nameEn); assert.ok(r.name && r.nameEn);
+      assert.ok(r.kind === 'weapon' ? r.after.min + r.after.max >= r.now.min + r.now.max : r.after.max >= r.now.max && r.after.min >= r.now.min, `${r.nameEn} 升級後數值變少`); assert.ok(r.afterEth.max >= r.after.max && r.nowEth.max >= r.now.max, `${r.nameEn} 無形沒有比較高`);
+    }
+    for (const p of MERC_PICKS) { const r = upgradeRowOf(p.nameEn); assert.ok(r, `傭兵推薦 ${p.nameEn} 不在可升級清單`); assert.ok(r.type === 'tors' || r.type === 'helm', `${p.nameEn} 不是頭盔或護甲`); }
+    const used = buildsUsing(); assert.ok(used.size >= 10, `${used.size}`);
+    for (const [id, bs] of used) { assert.ok(UPGRADE_ROWS.some((r) => r.id === id), id); assert.ok(bs.length > 0); }
+    assert.ok([...used.keys()].includes(upgradeRowOf('Skin of the Vipermagi').id));
   });
 }
 
@@ -2092,10 +2138,10 @@ console.log('【傭兵與職業／流派搭配矩陣 (Mercenary Matrix & Preset 
 }
 {
   const { GAME_ICON_SHAPES: SH } = E;
-  t('導覽列圖示：24 個模組各用一個不同的原創圖示，名稱都存在、路徑是合法的 SVG 指令且座標在 24×24 格內', () => {
+  t('導覽列圖示：25 個模組各用一個不同的原創圖示，名稱都存在、路徑是合法的 SVG 指令且座標在 24×24 格內', () => {
     const src = fs.readFileSync('src/components/layout/navConfig.tsx', 'utf8');
     const names = [...src.matchAll(/<GameIcon name="([a-z]+)"/g)].map((m) => m[1]);
-    assert.equal(names.length, 24); assert.equal(new Set(names).size, 24, '有兩個模組用了同一個圖示');
+    assert.equal(names.length, 25); assert.equal(new Set(names).size, 25, '有兩個模組用了同一個圖示');
     for (const n of names) assert.ok(SH[n], `沒有圖示 ${n}`);
     for (const [n, sh] of Object.entries(SH)) for (const d of [...sh.stroke, ...(sh.fill ?? [])]) {
       assert.match(d, /^[MmLlHhVvCcSsQqTtAaZz0-9 ,.-]+$/, `${n} 路徑含不合法字元`);

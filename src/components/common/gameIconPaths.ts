@@ -54,6 +54,8 @@ export const GAME_ICON_SHAPES = {
   flag: { stroke: ['M6 21V3', 'M6 4h11l-3 4.500 3 4.500H6', 'M3 21h9'] },
   /** 打寶場景：寶箱 */
   chest: { stroke: ['M4 11V8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v3', 'M3 11h18v9H3Z', 'M12 11v9', 'M10 14.500h4'] },
+  /** 暗金升級：往上的箭頭站在底座上 */
+  upgrade: { stroke: ['M12 20V6', 'M6 12l6-6 6 6', 'M5 21h14'] },
 } satisfies Record<string, IconShape>;
 
 export type GameIconName = keyof typeof GAME_ICON_SHAPES;

@@ -54,6 +54,7 @@ const ROUTES = [
   { hash: '#experience', min: 2500, label: '經驗值表' },
   { hash: '#leveling', min: 1200, label: '練等場景' },
   { hash: '#farming', min: 1200, label: '打寶場景' },
+  { hash: '#upgrades', min: 1200, label: '暗金升級' },
   { hash: '#about', min: 500, label: '資料來源與版權聲明' },
 ];
 
