@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles, buildSkillSummary } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries'; export { TIER_LABEL, TIER_META } from './src/utils/equipTaxonomy'; export { TIER_QUALITY_ZH } from './src/data/codex/common'; export { searchCodex } from './src/utils/searchCodex'; export { searchOmni } from './src/utils/search'; export { LEGACY_TERM_ALIASES, OLD_TRANSLATION_ALIASES, expandLegacyQuery } from './src/utils/termAliases'; export { actZh } from './src/utils/actLabel'; export { AMBIENT_THEMES, noteFreq, themeOfAct } from './src/utils/ambientThemes'; export { GAME_ICON_SHAPES } from './src/components/common/gameIconPaths'; export { CUBE_RECIPES_DATA } from './src/data/cubeRecipes'; export { GEMS_DATA as PROPS_GEMS_DATA, UBER_KEYS_ORGANS_DATA } from './src/data/props'; export * from './src/utils/propertyFilter'; export * from './src/data/mercenaryMatrix'; export * from './src/utils/mercPresetBridge';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/attackSpeed'; export * from './src/engine/attackSpeedSkills'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles, buildSkillSummary } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries'; export { TIER_LABEL, TIER_META } from './src/utils/equipTaxonomy'; export { TIER_QUALITY_ZH } from './src/data/codex/common'; export { searchCodex } from './src/utils/searchCodex'; export { searchOmni } from './src/utils/search'; export { LEGACY_TERM_ALIASES, OLD_TRANSLATION_ALIASES, expandLegacyQuery } from './src/utils/termAliases'; export { actZh } from './src/utils/actLabel'; export { AMBIENT_THEMES, noteFreq, themeOfAct } from './src/utils/ambientThemes'; export { GAME_ICON_SHAPES } from './src/components/common/gameIconPaths'; export { CUBE_RECIPES_DATA } from './src/data/cubeRecipes'; export { GEMS_DATA as PROPS_GEMS_DATA, UBER_KEYS_ORGANS_DATA } from './src/data/props'; export * from './src/utils/propertyFilter'; export * from './src/data/mercenaryMatrix'; export * from './src/utils/mercPresetBridge';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -603,6 +603,67 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
     assert.equal(bpStatus(get('fhr', 'sor'), 142).frames, 6); assert.equal(bpStatus(get('fhr', 'dru', 'wolf'), 86).frames, 3); assert.equal(bpStatus(get('fbr', 'dru', 'human'), 52).frames, 6);
     const inferred = ['fhr/dru/other', 'fhr/nec/normal', 'fhr/pal/spear'];
     for (const id of inferred) { const [k, c, i] = id.split('/'); assert.equal(get(k, c, i).inferredLast, true, id); assert.equal(get(k, c, i).frames.at(-1), 4, id); }
+  });
+}
+
+// ── 攻擊速度（IAS）──
+{
+  const { ANIMATIONS, ATTACK_CLASSES, BREAKPOINTS, effectiveRate, speedBonus, framesFor, animBreakpoints, attackResult, weaponAnimClass, siasOf, SIAS_SKILLS, gameData } = E;
+  console.log('【攻擊速度（IAS）】');
+  t('邊際遞減 EIAS＝floor(120×IAS÷(120+IAS))：0→0、40→30、100→54、200→75；速度加成夾在 −85～75', () => {
+    for (const [v, e] of [[0, 0], [40, 30], [100, 54], [200, 75], [-10, 0], [40.9, 30]]) assert.equal(effectiveRate(v), e, `IAS ${v}`);
+    assert.equal(speedBonus(200, 60, 0), 75); assert.equal(speedBonus(0, 0, 20), -20); assert.equal(speedBonus(0, -200, 0), -85);
+  });
+  t('影格公式（手算）：16 影格的動畫 0 加成→15；WSM +20→20；加成 17→13；加成 75→9；動畫速度 208（11 影格）→13', () => {
+    const hand = (len, speed, b) => Math.ceil((len * 256) / Math.floor((speed * (100 + b)) / 100)) - 1;
+    for (const [len, speed, b, want] of [[16, 256, 0, 15], [16, 256, -20, 20], [16, 256, 17, 13], [16, 256, 75, 9], [11, 208, 0, 13]]) {
+      assert.equal(hand(len, speed, b), want, `手算 ${len}/${speed}/${b}`); assert.equal(framesFor([len, speed], b), want, `framesFor ${len}/${speed}/${b}`);
+    }
+  });
+  t('同一組公式與遊戲動畫資料重現社群 FCR 斷點表（魔法使一般法術、死靈法師一般型態、亞馬遜弓）：社群表只列到實務上限，是我們算出的前段', () => {
+    for (const [cls, id, rec] of [['sor', 'regular', ANIMATIONS.sor.SC.hth], ['nec', 'normal', ANIMATIONS.nec.SC.hth], ['ama', 'bow', ANIMATIONS.ama.SC.bow]]) {
+      const tb = BREAKPOINTS.fcr[cls].find((x) => x.id === id); const mine = animBreakpoints(rec, 0, 0);
+      assert.deepEqual(mine.slice(0, tb.thresholds.length).map((b) => b.ias), tb.thresholds, `${cls}/${id} 百分比`);
+      assert.deepEqual(mine.slice(0, tb.frames.length).map((b) => b.frames), tb.frames, `${cls}/${id} 影格`);
+    }
+  });
+  t('7 個職業都有 8 種武器類別的 A1 攻擊動畫；A1、A2 都有時影格數為正', () => {
+    assert.deepEqual(Object.keys(ANIMATIONS).sort(), [...ATTACK_CLASSES].sort());
+    for (const c of ATTACK_CLASSES) {
+      for (const wc of ['hth', '1hs', '1ht', '2hs', '2ht', 'stf', 'bow', 'xbw']) assert.ok(ANIMATIONS[c].A1[wc]?.[0] > 0, `${c} A1 ${wc}`);
+      for (const mode of ['A1', 'A2']) for (const rec of Object.values(ANIMATIONS[c][mode] ?? {})) assert.ok(rec[0] > 0 && rec[1] > 0);
+    }
+  });
+  t('武器動作類別：大劍雙手→2hs、單手持握→1hs；手斧→1hs；弓→bow；雙爪不支援；空手→hth；防具不支援', () => {
+    const by = (n) => gameData.bases.find((b) => b.nameEn === n);
+    assert.equal(weaponAnimClass(by('Giant Sword')), '2hs'); assert.equal(weaponAnimClass(by('Giant Sword'), true), '1hs');
+    assert.equal(weaponAnimClass(by('Hand Axe')), '1hs'); assert.equal(weaponAnimClass(by('Short Bow')), 'bow');
+    assert.equal(weaponAnimClass(gameData.bases.find((b) => b.type === 'h2h')), undefined);
+    assert.equal(weaponAnimClass(undefined), 'hth'); assert.equal(weaponAnimClass(gameData.bases.find((b) => b.kind === 'armor')), undefined);
+    for (const b of gameData.bases.filter((x) => x.kind === 'weapon')) { const wc = weaponAnimClass(b); if (wc) assert.ok(ANIMATIONS.ama.A1[wc], `${b.nameEn} 的類別 ${wc}`); }
+  });
+  t('攻擊結果：亞馬遜單手武器 0 IAS→15 影格（25÷15 次／秒）、20 IAS→13；斷點由小到大、影格遞減；下一檔差距正確；聖騎士雙手劍 A1／A2 影格不同分成兩列', () => {
+    const r0 = attackResult('ama', '1hs', 0, 0, 0); assert.equal(r0.rows.length, 1); assert.deepEqual(r0.rows[0].modes, ['A1', 'A2']);
+    assert.equal(r0.rows[0].frames, 15); assert.ok(Math.abs(r0.rows[0].perSecond - 25 / 15) < 1e-9);
+    const r20 = attackResult('ama', '1hs', 20, 0, 0); assert.equal(r20.eias, 17); assert.equal(r20.rows[0].frames, 13);
+    const bps = r20.rows[0].breakpoints; assert.equal(bps[0].ias, 0);
+    for (let i = 1; i < bps.length; i++) { assert.ok(bps[i].ias > bps[i - 1].ias); assert.ok(bps[i].frames < bps[i - 1].frames); }
+    assert.equal(r20.rows[0].next.frames, 12); assert.equal(r20.rows[0].next.missing, r20.rows[0].next.ias - 20);
+    const pal = attackResult('pal', '2hs', 0, 0, 0); assert.equal(pal.rows.length, 2); assert.deepEqual(pal.rows.map((x) => x.frames), [17, 18]);
+    assert.equal(attackResult('ama', 'ht1', 0, 0, 0), undefined);
+  });
+  t('加成到達上限 75：capped，沒有下一檔；WSM 負值（快速武器）讓同樣 IAS 的影格更少', () => {
+    const top = attackResult('sor', '1hs', 300, 0, 0); assert.equal(top.bonus, 75); assert.equal(top.capped, true); assert.equal(top.rows[0].next, undefined);
+    const slow = attackResult('ama', '1hs', 0, 0, 10).rows[0].frames, fast = attackResult('ama', '1hs', 0, 0, -10).rows[0].frames;
+    assert.ok(fast < slow, `${fast} < ${slow}`);
+  });
+  t('技能攻速：狂熱、狂亂連擊、速度爆發在 1～20 級都有值，隨等級不減，不超過 75', () => {
+    for (const { skillEn } of SIAS_SKILLS) {
+      let prev = 0;
+      for (let lv = 1; lv <= 20; lv++) { const v = siasOf(skillEn, lv); assert.ok(v !== undefined && v >= prev && v <= 75, `${skillEn} Lv${lv}=${v}`); prev = v; }
+      assert.ok(prev > 0, skillEn);
+    }
+    assert.equal(siasOf('No Such Skill', 1), undefined);
   });
 }
 

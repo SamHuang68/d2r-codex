@@ -9,7 +9,7 @@
 
 ## 步驟
 1. **確認安裝的遊戲版本**夠新。Patch 3.4（天梯第 16 季）若還沒推到你的安裝版，抽出來的資料表不會有新數值——先記下 `D2R_BUILD`（版本號），跑完後 `npm run check:patches` 的 3.4 數字沒動就是這個原因。
-2. 照 `scripts/data-pipeline/README.md` 的「步驟」做：用 `ex.exe` 唯讀抽取 `*global\excel\*` 與 `*local\lng\strings*`，再
+2. 照 `scripts/data-pipeline/README.md` 的「步驟」做：用 `ex.exe` 唯讀抽取 `*global\excel\*`、`*local\lng\strings*` 與 `*global\animdata.d2`，再
    `D2R_BUILD=<版本號> node scripts/data-pipeline/build_game_data.mjs <抽取根目錄> src/data/game`
 3. 稽核：`node scripts/data-pipeline/audit_game_data.mjs src/data/game`（有同版號的 d2data 可當第二來源）。
 4. 在**新分支**上看差異（`git diff --stat src/data/game`），然後依序跑：

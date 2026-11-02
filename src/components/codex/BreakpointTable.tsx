@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { BREAKPOINTS_DATA } from '../../data/breakpoints';
 import { AREA_LEVELS_DATA } from '../../data/areaLevels';
 import { CLASS_ZH_TO_EN } from '../../engine/slots';
 import { getClassImage } from '../../utils/classImages';
-import { Compass, Zap, MapPin, Sparkles } from 'lucide-react';
+import { Compass, Zap, MapPin, Sparkles, Swords } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
 import { useLanguage } from '../../context/LanguageContext';
 import { BreakpointGauge } from './BreakpointGauge';
 import { MaxBlockAegis } from './MaxBlockAegis';
+
+// 攻速計算器要讀整份武器底材表，只有打開那個分頁才載入
+const AttackSpeedCalculator = lazy(() => import('./AttackSpeedCalculator').then((m) => ({ default: m.AttackSpeedCalculator })));
 
 interface BreakpointTableProps {
   initialClass?: string;
@@ -40,7 +43,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
   const [selectedClass, setSelectedClass] = useState<string>(initialClass);
   const [selectedType, setSelectedType] = useState<'FCR' | 'FHR' | 'FBR'>('FCR');
   const [currentValInput, setCurrentValInput] = useState<number>(0);
-  const [activeSubTab, setActiveSubTab] = useState<'breakpoints' | 'areas'>('breakpoints');
+  const [activeSubTab, setActiveSubTab] = useState<'breakpoints' | 'attack' | 'areas'>('breakpoints');
 
   // 75% 滿格擋試算器狀態
   const [charLevel, setCharLevel] = useState<number>(85);
@@ -116,8 +119,8 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-2xl">
             {t(
-              '8 大職業施法 (FCR)、打擊恢復 (FHR) 與格擋 (FBR) 幀數斷點速查，並整合 75% 滿格擋敏捷儀表與 TC87 85 級場景等級對照表。',
-              'Breakpoints for FCR, FHR, and FBR across all 8 classes with interactive 75% Max Block Aegis and Level 85 area tables.'
+              '8 大職業施法 (FCR)、打擊恢復 (FHR) 與格擋 (FBR) 幀數斷點速查，另有普通攻擊的攻速 (IAS) 計算器，並整合 75% 滿格擋敏捷儀表與 TC87 85 級場景等級對照表。',
+              'Breakpoints for FCR, FHR, and FBR across all 8 classes, an attack speed (IAS) calculator for standard attacks, the interactive 75% Max Block Aegis, and Level 85 area tables.'
             )}
           </p>
         </div>
@@ -136,6 +139,17 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
             {isEn ? 'Breakpoints Engine' : '動作機制斷點'}
           </button>
           <button
+            onClick={() => setActiveSubTab('attack')}
+            className={`px-4 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+              activeSubTab === 'attack'
+                ? 'bg-d2-fire text-sanctuary-950 font-bold shadow-lg shadow-d2-fire/20'
+                : 'text-sanctuary-300 hover:text-sanctuary-100 hover:bg-sanctuary-800/50'
+            }`}
+          >
+            <Swords className="w-4 h-4" />
+            {isEn ? 'Attack Speed (IAS)' : '攻速計算器'}
+          </button>
+          <button
             onClick={() => setActiveSubTab('areas')}
             className={`px-4 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
               activeSubTab === 'areas'
@@ -149,7 +163,11 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
         </div>
       </div>
 
-      {activeSubTab === 'breakpoints' ? (
+      {activeSubTab === 'attack' ? (
+        <Suspense fallback={<div className="p-8 text-center text-sanctuary-400" role="status">{t('載入中…', 'Loading…')}</div>}>
+          <AttackSpeedCalculator />
+        </Suspense>
+      ) : activeSubTab === 'breakpoints' ? (
         <div className="space-y-8">
           {/* ── 75% 滿格擋防禦圓盤儀表 (Max Block Aegis) ── */}
           <MaxBlockAegis
