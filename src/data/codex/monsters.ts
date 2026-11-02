@@ -25,7 +25,8 @@ export interface Monster {
   res: Record<ElemKey, number[]>;
   drain: (number | null)[];
 }
-export interface Area { id: number; nameEn: string; name?: string; act: number; mlvl: (number | null)[]; mon: string[][] }
+/** nameEn 是 levels.txt 的內部名稱（例如 Hell1、Cellar of Pity）；nameEnUS 是遊戲內的英文顯示名（Abaddon、Frozen River），顯示用 areaNameEn */
+export interface Area { id: number; nameEn: string; nameEnUS?: string; name?: string; act: number; mlvl: (number | null)[]; mon: string[][] }
 
 export const MONSTERS = monstersJson as unknown as Monster[];
 export const AREAS = areasJson as unknown as Area[];
@@ -61,3 +62,4 @@ export function areaImmunity(a: Area, d: Diff): AreaImmunity {
   return { monsters, immuneCount, immune: ELEMS.filter((e) => immuneCount[e] > 0), safe: ELEMS.filter((e) => immuneCount[e] === 0) };
 }
 export const areaLevel = (a: Area, d: Diff): number | null => a.mlvl[d];
+export const areaNameEn = (a: Area): string => a.nameEnUS ?? a.nameEn;

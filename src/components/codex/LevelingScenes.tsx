@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { GameIcon } from '../common/GameIcons';
 import { PageHeader } from '../common/PageHeader';
 import { useLanguage } from '../../context/LanguageContext';
-import { AREAS, DIFF_ZH, ELEMS, ELEM_ZH, areaImmunity, type Diff, type ElemKey } from '../../data/codex/monsters';
+import { AREAS, DIFF_ZH, ELEMS, ELEM_ZH, areaImmunity, areaNameEn, type Diff, type ElemKey } from '../../data/codex/monsters';
 import { lateLevelFactor, levelingRows } from '../../engine/leveling';
 import { AreaImmunityChips } from './AreaImmunityChips';
 import { DIFF_EN, ELEM_EN } from './monsterLabels';
@@ -40,8 +40,8 @@ export const LevelingScenes: React.FC = () => {
   const renderRow = (r: (typeof rows)[number]) => (
     <tr key={r.area.id} className="border-t border-sanctuary-800/60 align-top">
       <td className="py-2 pr-3">
-        <div className="text-sanctuary-100 font-medium">{isEn ? r.area.nameEn : (r.area.name ?? r.area.nameEn)}</div>
-        <div className="text-[11px] font-mono text-sanctuary-500">{isEn ? `Act ${r.area.act}` : `第 ${r.area.act} 章　${r.area.nameEn}`}</div>
+        <div className="text-sanctuary-100 font-medium">{isEn ? areaNameEn(r.area) : (r.area.name ?? areaNameEn(r.area))}</div>
+        <div className="text-[11px] font-mono text-sanctuary-500">{isEn ? `Act ${r.area.act}` : `第 ${r.area.act} 章　${areaNameEn(r.area)}`}</div>
       </td>
       <td className="py-2 pr-3 font-mono text-sanctuary-300 whitespace-nowrap">Lv {r.mlvl}</td>
       <td className={`py-2 pr-3 font-mono whitespace-nowrap ${r.ratio >= 1 ? 'text-emerald-300 font-bold' : r.ratio >= 0.5 ? 'text-d2-gold' : 'text-d2-fire'}`}>{pct(r.ratio)}</td>

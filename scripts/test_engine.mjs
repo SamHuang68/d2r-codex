@@ -1384,6 +1384,14 @@ console.log('【怪物圖鑑與場景免疫（monstats／levels）】');
     assert.equal(info.immune.length + info.safe.length, 6); assert.equal(info.monsters.length, 4);
     for (const e of ELEMS) assert.equal(info.immuneCount[e], info.monsters.filter((m) => isImmune(resistOf(m, e, 2))).length);
   });
+  t('場景英文顯示名：每個場景都有遊戲內的英文名；內部名稱（Hell1、Cellar of Pity）顯示成遊戲內名稱，沒有內部名稱的殘留', () => {
+    const { areaNameEn } = E;
+    for (const a of AREAS) assert.ok(a.nameEnUS && a.nameEnUS.trim(), `${a.nameEn} 沒有英文顯示名`);
+    const by = (en) => AREAS.find((a) => a.nameEn === en);
+    for (const [en, shown] of [['Hell1', 'Abaddon'], ['Hell2', 'Pit of Acheron'], ['Hell3', 'Infernal Pit'], ['Cellar of Pity', 'Frozen River'], ['Rocky Summit', 'Arreat Summit'], ['Chaos Sanctum', 'The Chaos Sanctuary'], ['Pit Level 1', 'Pit Level 1']]) assert.equal(areaNameEn(by(en)), shown, en);
+    assert.equal(areaNameEn({ nameEn: 'X' }), 'X', '沒有顯示名時退回內部名稱');
+    for (const a of AREAS) assert.ok(!/^Hell\d$|^Pandemonium Run \d$/.test(areaNameEn(a)), `${a.id} 仍是內部名稱 ${areaNameEn(a)}`);
+  });
   t('出現場景與場景清單互為反向：怪物的出現場景一定包含列出它的場景與難度', () => {
     let n = 0;
     for (const a of AREAS) a.mon.forEach((ids, d) => ids.forEach((id) => { n++; const hit = areasOfMonster(id).find((x) => x.area.id === a.id); assert.ok(hit && hit.diffs.includes(d), `${id} @ ${a.nameEn} ${d}`); }));

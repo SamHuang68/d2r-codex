@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { GameIcon } from '../common/GameIcons';
 import { PageHeader } from '../common/PageHeader';
 import { useLanguage } from '../../context/LanguageContext';
-import { ELEMS, ELEM_ZH, type ElemKey } from '../../data/codex/monsters';
+import { ELEMS, ELEM_ZH, areaNameEn, type ElemKey } from '../../data/codex/monsters';
 import { BUILD_ELEMENT, farmingRows } from '../../data/codex/farming';
 import { BUILDS } from '../../data/simulatorPresets';
 import { CLASS_CODES, CLASS_CODE_EN, CLASS_CODE_ZH } from '../../engine/classes';
@@ -85,8 +85,8 @@ export const FarmingScenes: React.FC = () => {
               {rows.map((r) => (
                 <tr key={r.area.id} className="border-t border-sanctuary-800/60 align-top">
                   <td className="py-2 pr-3">
-                    <div className="text-sanctuary-100 font-medium">{isEn ? r.area.nameEn : (r.area.name ?? r.area.nameEn)}</div>
-                    <div className="text-[11px] font-mono text-sanctuary-500">{isEn ? `Act ${r.area.act}` : `第 ${r.area.act} 章　${r.area.nameEn}`}</div>
+                    <div className="text-sanctuary-100 font-medium">{isEn ? areaNameEn(r.area) : (r.area.name ?? areaNameEn(r.area))}</div>
+                    <div className="text-[11px] font-mono text-sanctuary-500">{isEn ? `Act ${r.area.act}` : `第 ${r.area.act} 章　${areaNameEn(r.area)}`}</div>
                   </td>
                   <td className="py-2 pr-3 font-mono text-sanctuary-300 whitespace-nowrap">Lv {r.mlvl}</td>
                   <td className="py-2 pr-3"><AreaImmunityChips area={r.area} diff={2} elem={elem ?? 'any'} /></td>
