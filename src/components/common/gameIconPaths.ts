@@ -52,6 +52,8 @@ export const GAME_ICON_SHAPES = {
   skull: { stroke: ['M12 3a8 8 0 0 0-8 8c0 3 1.5 4.7 3 5.7V21h10v-4.3c1.5-1 3-2.700 3-5.700a8 8 0 0 0-8-8Z', 'M10 21v-2.500', 'M14 21v-2.500'], fill: ['M7.500 10h3v3h-3Z', 'M13.500 10h3v3h-3Z'] },
   /** 練等場景：插在路上的旗幟 */
   flag: { stroke: ['M6 21V3', 'M6 4h11l-3 4.500 3 4.500H6', 'M3 21h9'] },
+  /** 打寶場景：寶箱 */
+  chest: { stroke: ['M4 11V8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v3', 'M3 11h18v9H3Z', 'M12 11v9', 'M10 14.500h4'] },
 } satisfies Record<string, IconShape>;
 
 export type GameIconName = keyof typeof GAME_ICON_SHAPES;

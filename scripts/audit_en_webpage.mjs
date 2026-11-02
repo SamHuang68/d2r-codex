@@ -58,6 +58,7 @@ const ALL_ROUTES = [
   { hash: '#breakpoints', label: 'Breakpoints' },
   { hash: '#experience', label: 'Experience Table' },
   { hash: '#leveling', label: 'Leveling Areas' },
+  { hash: '#farming', label: 'Farming Areas' },
   { hash: '#items', label: 'Item Compendium' },
   { hash: '#runewords', label: 'Runewords Hall of Fame' },
   { hash: '#bases', label: 'Base Items' },

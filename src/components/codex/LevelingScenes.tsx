@@ -2,9 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { GameIcon } from '../common/GameIcons';
 import { PageHeader } from '../common/PageHeader';
 import { useLanguage } from '../../context/LanguageContext';
-import { AREAS, DIFF_ZH, ELEMS, ELEM_ZH, areaImmunity, type Area, type Diff, type ElemKey } from '../../data/codex/monsters';
+import { AREAS, DIFF_ZH, ELEMS, ELEM_ZH, areaImmunity, type Diff, type ElemKey } from '../../data/codex/monsters';
 import { lateLevelFactor, levelingRows } from '../../engine/leveling';
-import { DIFF_EN, ELEM_EN, ELEM_TONE } from './monsterLabels';
+import { AreaImmunityChips } from './AreaImmunityChips';
+import { DIFF_EN, ELEM_EN } from './monsterLabels';
 
 const MAX_CLVL = 98;
 const KEY_LEVELS = [1, 12, 24, 30, 45, 60, 75, 85, 90, 95];
@@ -12,26 +13,6 @@ const inputCls = 'bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl px-
 const clampLevel = (v: string): number => (/^\d+$/.test(v.trim()) ? Math.min(MAX_CLVL, Math.max(1, Number(v.trim()))) : 1);
 const pct = (r: number): string => `${Math.round(r * 100)}%`;
 const btnCls = (on: boolean): string => `px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${on ? 'bg-d2-gold text-sanctuary-950 font-bold border-d2-gold' : 'text-sanctuary-300 border-sanctuary-800 hover:text-sanctuary-100 hover:bg-sanctuary-800/50'}`;
-
-/** 一個場景在該難度的免疫標籤：選了主要傷害元素就先標它安不安全，其餘有免疫的元素用小標籤 */
-const ImmunityChips: React.FC<{ area: Area; diff: Diff; elem: ElemKey | 'any' }> = ({ area, diff, elem }) => {
-  const { isEn } = useLanguage();
-  const info = useMemo(() => areaImmunity(area, diff), [area, diff]);
-  const total = info.monsters.length;
-  const label = (e: ElemKey) => (isEn ? ELEM_EN[e] : ELEM_ZH[e]);
-  return (
-    <div className="flex flex-wrap gap-1">
-      {elem !== 'any' && (info.immuneCount[elem]
-        ? <span className={`text-[11px] font-mono px-1.5 py-0.5 rounded border font-bold ${ELEM_TONE[elem]}`}>{isEn ? `${label(elem)} Imm ${info.immuneCount[elem]}/${total}` : `${label(elem)}免疫 ${info.immuneCount[elem]}/${total}`}</span>
-        : <span className="text-[11px] font-mono px-1.5 py-0.5 rounded border text-emerald-300 border-emerald-500/30 bg-emerald-500/10">{isEn ? `${label(elem)} clear` : `${label(elem)}全無免疫`}</span>)}
-      {ELEMS.filter((e) => e !== elem && info.immuneCount[e] > 0).map((e) => (
-        <span key={e} className="text-[10px] font-mono px-1.5 py-0.5 rounded border text-sanctuary-400 border-sanctuary-800" title={isEn ? `${info.immuneCount[e]} of ${total} monsters are immune` : `${total} 種怪物中有 ${info.immuneCount[e]} 種免疫`}>
-          {isEn ? `${label(e)} ${info.immuneCount[e]}/${total}` : `${label(e)} ${info.immuneCount[e]}/${total}`}
-        </span>
-      ))}
-    </div>
-  );
-};
 
 export const LevelingScenes: React.FC = () => {
   const { isEn, t } = useLanguage();
@@ -64,7 +45,7 @@ export const LevelingScenes: React.FC = () => {
       </td>
       <td className="py-2 pr-3 font-mono text-sanctuary-300 whitespace-nowrap">Lv {r.mlvl}</td>
       <td className={`py-2 pr-3 font-mono whitespace-nowrap ${r.ratio >= 1 ? 'text-emerald-300 font-bold' : r.ratio >= 0.5 ? 'text-d2-gold' : 'text-d2-fire'}`}>{pct(r.ratio)}</td>
-      <td className="py-2"><ImmunityChips area={r.area} diff={diff} elem={elem} /></td>
+      <td className="py-2"><AreaImmunityChips area={r.area} diff={diff} elem={elem} /></td>
     </tr>
   );
   const head = (

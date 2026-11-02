@@ -27,6 +27,7 @@ const AffixCompendium = lazy(() => import('./components/codex/AffixCompendium').
 const ShrineCompendium = lazy(() => import('./components/codex/ShrineCompendium').then((m) => ({ default: m.ShrineCompendium })));
 const ExperienceTable = lazy(() => import('./components/codex/ExperienceTable').then((m) => ({ default: m.ExperienceTable })));
 const LevelingScenes = lazy(() => import('./components/codex/LevelingScenes').then((m) => ({ default: m.LevelingScenes })));
+const FarmingScenes = lazy(() => import('./components/codex/FarmingScenes').then((m) => ({ default: m.FarmingScenes })));
 const AreaGuide = lazy(() => import('./components/codex/AreaGuide').then((m) => ({ default: m.AreaGuide })));
 const MercenaryGuide = lazy(() => import('./components/codex/MercenaryGuide').then((m) => ({ default: m.MercenaryGuide })));
 const ValuationGuide = lazy(() => import('./components/codex/ValuationGuide').then((m) => ({ default: m.ValuationGuide })));
@@ -301,6 +302,7 @@ const AppContent: React.FC = () => {
           <BreakpointTable initialClass={selectedInitialClass} />
         )}
         {activeTab === 'areas' && <AreaGuide />}
+        {activeTab === 'farming' && <FarmingScenes />}
         {activeTab === 'monsters' && <MonsterCompendium initialQuery={targetQuery} />}
         {activeTab === 'affixes' && <AffixCompendium initialQuery={targetQuery} />}
         {activeTab === 'shrines' && <ShrineCompendium initialQuery={targetQuery} />}

@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url';
 
 const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'd2eng-')), 'engine.mjs');
 await build({
-  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/attackSpeed'; export * from './src/engine/attackSpeedSkills'; export * from './src/engine/leveling'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles, buildSkillSummary } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries'; export { TIER_LABEL, TIER_META } from './src/utils/equipTaxonomy'; export { TIER_QUALITY_ZH } from './src/data/codex/common'; export { searchCodex } from './src/utils/searchCodex'; export { searchOmni } from './src/utils/search'; export { LEGACY_TERM_ALIASES, OLD_TRANSLATION_ALIASES, expandLegacyQuery } from './src/utils/termAliases'; export { actZh } from './src/utils/actLabel'; export { AMBIENT_THEMES, noteFreq, themeOfAct } from './src/utils/ambientThemes'; export { GAME_ICON_SHAPES } from './src/components/common/gameIconPaths'; export { CUBE_RECIPES_DATA } from './src/data/cubeRecipes'; export { GEMS_DATA as PROPS_GEMS_DATA, UBER_KEYS_ORGANS_DATA } from './src/data/props'; export * from './src/utils/propertyFilter'; export * from './src/data/mercenaryMatrix'; export * from './src/utils/mercPresetBridge';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: "export * from './src/engine/index'; export * from './src/engine/data'; export * from './src/engine/catalog'; export * from './src/engine/describe'; export * from './src/engine/build'; export * from './src/engine/alloc'; export * from './src/data/presetResolver'; export * from './src/data/simulatorPresets'; export * from './src/engine/skills'; export * from './src/engine/calc'; export * from './src/engine/buffs'; export * from './src/engine/skillPlan'; export { itemOwnStats } from './src/engine/character'; export * from './src/engine/magicFind'; export * from './src/engine/survival'; export * from './src/engine/breakpoints'; export * from './src/engine/attackSpeed'; export * from './src/engine/attackSpeedSkills'; export * from './src/engine/leveling'; export * from './src/data/codex/farming'; export { AREA_LEVELS_DATA } from './src/data/areaLevels'; export * from './src/engine/customItem'; export { itemSkillSeconds } from './src/engine/describe'; export * from './src/components/simulator/v2/equipRules'; export * from './src/components/simulator/v2/engineItems'; export * from './src/data/profileStore'; export * from './src/data/presetState'; export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems'; export { SET_ITEMS_DATA, ALL_SET_PIECES } from './src/data/setItems'; export { RUNEWORDS_DATA } from './src/data/runewords'; export { BASE_ITEMS_DATA } from './src/data/bases'; export { RUNES_DATA } from './src/data/runes'; export { SKILLS_DATA } from './src/data/skills'; export { SYNERGY_RELATIONS, calculateSkillSynergies } from './src/data/skills/synergies'; export { SKILL_GRID_LAYOUT } from './src/data/skills/layout'; export { overlay as CODEX_OVERLAY } from './src/data/codex/common'; export { normalizeItemQuery } from './src/utils/itemQueryNormalizer'; export { headerLines } from './src/data/codex/itemLines'; export { buildGearTiles, buildSkillSummary } from './src/data/codex/portalTiles'; export * from './src/engine/skillEffects'; export * from './src/engine/mercenary'; export * from './src/engine/summons'; export * from './src/data/codex/monsters'; export * from './src/data/codex/magicAffixes'; export * from './src/data/codex/customItemCheck'; export * from './src/data/codex/shrines'; export * from './src/data/codex/experience'; export { MERCENARIES_DATA } from './src/data/mercenaries'; export { TIER_LABEL, TIER_META } from './src/utils/equipTaxonomy'; export { TIER_QUALITY_ZH } from './src/data/codex/common'; export { searchCodex } from './src/utils/searchCodex'; export { searchOmni } from './src/utils/search'; export { LEGACY_TERM_ALIASES, OLD_TRANSLATION_ALIASES, expandLegacyQuery } from './src/utils/termAliases'; export { actZh } from './src/utils/actLabel'; export { AMBIENT_THEMES, noteFreq, themeOfAct } from './src/utils/ambientThemes'; export { GAME_ICON_SHAPES } from './src/components/common/gameIconPaths'; export { CUBE_RECIPES_DATA } from './src/data/cubeRecipes'; export { GEMS_DATA as PROPS_GEMS_DATA, UBER_KEYS_ORGANS_DATA } from './src/data/props'; export * from './src/utils/propertyFilter'; export * from './src/data/mercenaryMatrix'; export * from './src/utils/mercPresetBridge';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'error', loader: { '.json': 'json' },
 });
 const E = await import(pathToFileURL(out).href);
@@ -633,6 +633,35 @@ console.log(`\n通過 ${pass} 項${process.exitCode ? '，有失敗' : ''}`);
     const full = (c, d) => levelingRows(AREAS, c, d).filter((r) => r.ratio >= 1).length;
     assert.ok(full(5, 0) > 0, '普通 5 級應有全額場景'); assert.equal(full(95, 0), 0, '普通 95 級不該有全額場景'); assert.ok(full(85, 2) > 0, '地獄 85 級應有全額場景');
     assert.ok(full(60, 1) > 0 || full(60, 2) > 0, '60 級在惡夢或地獄應有全額場景');
+  });
+}
+
+// ── 打寶場景（階段 A：依流派避開免疫）──
+{
+  const { BUILD_ELEMENT, FARM_NOTE_AREA, farmingRows, BUILDS, AREAS, AREA_LEVELS_DATA, ELEMS } = E;
+  console.log('【打寶場景】');
+  t('每個流派都有主要元素（或明確標示混合）；沒有多的鍵；元素是合法的', () => {
+    assert.deepEqual(Object.keys(BUILD_ELEMENT).sort(), BUILDS.map((b) => b.id).sort());
+    for (const [id, e] of Object.entries(BUILD_ELEMENT)) assert.ok(e === null || ELEMS.includes(e), id);
+    assert.equal(BUILD_ELEMENT['sor-blizzard'], 'cold'); assert.equal(BUILD_ELEMENT['pal-hammerdin'], 'magic'); assert.equal(BUILD_ELEMENT['ama-strafe'], 'physical');
+  });
+  t('備註對照：每個編號都是存在的場景，且「場景恐區」頁的場景等級等於該場景地獄難度的怪物等級', () => {
+    for (const [nameEn, id] of Object.entries(FARM_NOTE_AREA)) {
+      const cur = AREA_LEVELS_DATA.find((x) => x.nameEn === nameEn); assert.ok(cur, `場景恐區頁沒有 ${nameEn}`);
+      const area = AREAS.find((a) => a.id === id); assert.ok(area, `編號 ${id} 不存在`);
+      assert.equal(area.mlvl[2], cur.areaLevel, `${nameEn} ↔ ${area.nameEn}`);
+    }
+  });
+  t('場景清單：地獄、怪物等級達標、有怪物；選了元素就依免疫比例由低到高；85 級場景是 83 級以上的子集', () => {
+    const all = farmingRows(85, null); assert.ok(all.length >= 25, `${all.length}`);
+    for (const r of all) { assert.ok(r.mlvl >= 85 && r.total > 0 && r.area.mon[2].length > 0); assert.equal(r.immune, 0); }
+    const cold = farmingRows(85, 'cold'); assert.equal(cold.length, all.length);
+    const share = (r) => r.immune / r.total;
+    for (let i = 1; i < cold.length; i++) assert.ok(share(cold[i - 1]) <= share(cold[i]), '沒有由低到高');
+    assert.ok(cold.some((r) => r.immune > 0) && cold.some((r) => r.immune === 0));
+    assert.ok(farmingRows(83, null).length > all.length); assert.ok(farmingRows(75, null).length >= farmingRows(83, null).length);
+    const ids = new Set(farmingRows(83, null).map((r) => r.area.id)); for (const r of all) assert.ok(ids.has(r.area.id));
+    assert.ok(all.some((r) => r.note), '至少有一個場景帶備註');
   });
 }
 
@@ -2055,10 +2084,10 @@ console.log('【傭兵與職業／流派搭配矩陣 (Mercenary Matrix & Preset 
 }
 {
   const { GAME_ICON_SHAPES: SH } = E;
-  t('導覽列圖示：23 個模組各用一個不同的原創圖示，名稱都存在、路徑是合法的 SVG 指令且座標在 24×24 格內', () => {
+  t('導覽列圖示：24 個模組各用一個不同的原創圖示，名稱都存在、路徑是合法的 SVG 指令且座標在 24×24 格內', () => {
     const src = fs.readFileSync('src/components/layout/navConfig.tsx', 'utf8');
     const names = [...src.matchAll(/<GameIcon name="([a-z]+)"/g)].map((m) => m[1]);
-    assert.equal(names.length, 23); assert.equal(new Set(names).size, 23, '有兩個模組用了同一個圖示');
+    assert.equal(names.length, 24); assert.equal(new Set(names).size, 24, '有兩個模組用了同一個圖示');
     for (const n of names) assert.ok(SH[n], `沒有圖示 ${n}`);
     for (const [n, sh] of Object.entries(SH)) for (const d of [...sh.stroke, ...(sh.fill ?? [])]) {
       assert.match(d, /^[MmLlHhVvCcSsQqTtAaZz0-9 ,.-]+$/, `${n} 路徑含不合法字元`);
