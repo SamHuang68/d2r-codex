@@ -49,6 +49,8 @@ export interface BaseItem {
   maxStack?: number;
   tier?: 'normal' | 'exceptional' | 'elite';
   width?: number; height?: number; oneOrTwoHanded?: boolean; invFile?: string;
+  /** 武器的動作類別（weapons.txt 的 wclass；雙手持握用 wclass2h），決定攻擊動畫 */
+  wclass?: string; wclass2h?: string;
 }
 
 export interface Gem { code: string; nameEn: string; name?: string; weapon: Modifier[]; armor: Modifier[]; shield: Modifier[] }

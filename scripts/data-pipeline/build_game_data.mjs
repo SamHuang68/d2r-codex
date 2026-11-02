@@ -426,6 +426,40 @@ for (const r of skillRows) {
   itemSkills[r.skill] = { id: slug(r.skill), frames: num(r.auralencalc), seconds: num(r.auralencalc) / 25 };
 }
 
+// --- 動畫影格（animdata.d2）：只取玩家職業的攻擊（A1／A2）與施法（SC）動作，供攻速與快速施法公式使用 ---
+// 檔案格式：256 個雜湊區塊，每區塊先有 uint32 筆數，每筆 160 位元組（COF 名稱 8、每方向影格數 u32、動畫速度 u32、144 個影格旗標）。
+const ANIM_CLASSES = { ama: 'AM', sor: 'SO', nec: 'NE', pal: 'PA', bar: 'BA', dru: 'DZ', ass: 'AI' };
+const ANIM_MODES = ['A1', 'A2', 'SC'];
+const ANIM_WCLASS = ['HTH', '1HS', '1HT', '2HS', '2HT', 'STF', 'BOW', 'XBW', 'HT1', 'HT2'];
+function buildAnimations() {
+  const file = path.join(root, 'data_data', 'global', 'animdata.d2');
+  if (!fs.existsSync(file)) return undefined;
+  const buf = fs.readFileSync(file);
+  const all = new Map();
+  let off = 0;
+  for (let b = 0; b < 256; b++) {
+    const n = buf.readUInt32LE(off); off += 4;
+    for (let i = 0; i < n; i++) {
+      all.set(buf.toString('latin1', off, off + 8).replace(/\0.*$/, ''), [buf.readUInt32LE(off + 8), buf.readUInt32LE(off + 12)]);
+      off += 160;
+    }
+  }
+  if (off !== buf.length) throw new Error(`animdata.d2 格式不符：讀到 ${off} / ${buf.length} 位元組`);
+  const out = {};
+  for (const [cls, pre] of Object.entries(ANIM_CLASSES)) {
+    out[cls] = {};
+    for (const mode of ANIM_MODES) {
+      for (const wc of ANIM_WCLASS) {
+        const rec = all.get(pre + mode + wc);
+        if (rec) (out[cls][mode] ||= {})[wc.toLowerCase()] = rec; // [影格數, 動畫速度]
+      }
+    }
+  }
+  return out;
+}
+const animations = buildAnimations();
+if (!animations) console.warn('找不到 animdata.d2，略過 animations.json（抽取時請加 "*global\\animdata.d2"）');
+
 fs.mkdirSync(outDir, { recursive: true });
 const meta = { generator: 'scripts/data-pipeline/build_game_data.mjs', gameVersion, source: 'D2R local CASC (excel + zhTW strings)', generatedAt: new Date().toISOString().slice(0, 10),
   counts: { bases: bases.length, uniques: uniques.length, gems: gems.length, sets: sets.length, setItems: setItems.length, runewords: runewords.length, skills: skills.length } };
@@ -433,7 +467,7 @@ const write = (n, d) => fs.writeFileSync(path.join(outDir, n), JSON.stringify(d)
 write('meta.json', meta); write('itemtypes.json', itemtypes); write('bases.json', bases); write('uniques.json', uniques);
 write('gems.json', gems); write('sets.json', sets); write('setItems.json', setItems); write('runewords.json', runewords);
 write('properties.json', properties); write('stats.json', stats); write('statStrings.zhTW.json', statStrings);
-write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns); write('hireling.json', hireling); write('summons.json', summonMonsters); write('monsters.json', monsters); write('areas.json', areas); write('affixes.json', affixes); write('shrines.json', shrines); write('experience.json', experience); write('cube.json', cube);
+write('charstats.json', charstats); write('skills.json', skills); write('skillNames.json', skillNames); write('skillTabs.json', skillTabs); write('skillTabsEn.json', skillTabsEn); write('inventory.json', inventory); write('uiCategories.json', uiCategories); write('itemSkills.json', itemSkills); write('skillCalc.json', skillCalcFns); write('hireling.json', hireling); write('summons.json', summonMonsters); write('monsters.json', monsters); write('areas.json', areas); write('affixes.json', affixes); write('shrines.json', shrines); write('experience.json', experience); write('cube.json', cube); if (animations) write('animations.json', animations);
 
 console.log(JSON.stringify(meta.counts));
 console.log('missing property defs:', missingProps.length, missingProps.slice(0, 20).join(','));

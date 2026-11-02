@@ -7,6 +7,7 @@
 2. 唯讀抽取：
    - `ex.exe "<D2R 安裝目錄>" "*global\excel\*" <輸出根目錄>`
    - `ex.exe "<D2R 安裝目錄>" "*local\lng\strings*" <輸出根目錄>`
+   - `ex.exe "<D2R 安裝目錄>" "*global\animdata.d2" <輸出根目錄>`（動畫影格數，攻速計算器用；沒抽就不會更新 animations.json，建置時會警告）
 3. 產生：`D2R_BUILD=<遊戲版本> node scripts/data-pipeline/build_game_data.mjs <輸出根目錄> src/data/game`
 4. 稽核：`node scripts/data-pipeline/audit_game_data.mjs src/data/game [d2data/json 路徑]`
    - d2data（blizzhackers/d2data，同版號）作為獨立來源逐欄比對。
@@ -19,7 +20,7 @@
    - 驗證：`npm run test:engine`（含「百科頁資料層」區塊）、`npm test`（圖示解析與部位檢查）。
 
 ## 輸出
-meta、itemtypes、skillNames／skillTabsEn（技能公開英文名；skillNames 另帶職業技能的 charClass）、skillCalc（技能計算式裡的 lnXY／dmXY 函式定義，來自遊戲 skillcalc.txt，引擎 `engine/calc.ts` 用它求值）、summons（召喚技能召喚的 31 種怪物的基礎值，來自 monstats.txt；技能的 summonId／petMax 在 skills.json）、monsters／areas（怪物圖鑑：monstats.txt 三個難度的等級與六種抗性，與 levels.txt 每個場景在各難度出現的怪物；中文名取自 monsters.json／levels.json 字串）、affixes（魔法詞綴：magicprefix／magicsuffix／automagic 的前綴、後綴、自動詞綴，含物品等級範圍、等級需求、同組、權重、可出現與排除的物品類型、職業欄位；權重 0 或沒填、不會產生、沒有屬性的列不收；供詞綴寶典 `data/codex/magicAffixes.ts` 使用）、cube（方塊配方：cubemain.txt 的 157 個啟用配方，含輸入、輸出、物品等級欄與輸出屬性；網站不載入，只供測試對照手寫的方塊配方文字）、shrines（聖壇：shrines.txt 的 22 種聖壇，含效果、參數、持續影格、重置時間、最低場景等級與繁中名稱／提示語；不含空白的 None）、experience（經驗值表：experience.txt 的 0~99 級累計經驗，八個職業相同，不同時管線會停下來；ExpRatio 欄用途未驗證不收）、hireling（傭兵：hireling.txt 擴充版資料，每個類型有幾個等級檢查點與每級成長，引擎 `engine/mercenary.ts` 外推；完全相同的重複列合併）、bases（武器／防具／misc，含 nameEnUS 公開英文名、重擊／踢擊傷害、腰帶格數、堆疊上限）、uniques、sets、setItems、runewords、properties（modifier→stat 對映）、stats（itemstatcost 子集）、statStrings.zhTW（描述模板）、charstats、skills（240 招：繁中名稱與說明、樹／列／欄格位、前置、等級上限、魔力與傷害欄位、協同計算式）、skillTabs（技能樹繁中名稱）、inventory（紙娃娃座標）、uiCategories（拾取篩選器類別樹）、itemSkills（沒有職業的物品技能：印記、蜘蛛網、譫妄、生命連結的狀態持續影格與秒數，描述屬性時用）。
+meta、itemtypes、skillNames／skillTabsEn（技能公開英文名；skillNames 另帶職業技能的 charClass）、skillCalc（技能計算式裡的 lnXY／dmXY 函式定義，來自遊戲 skillcalc.txt，引擎 `engine/calc.ts` 用它求值）、summons（召喚技能召喚的 31 種怪物的基礎值，來自 monstats.txt；技能的 summonId／petMax 在 skills.json）、monsters／areas（怪物圖鑑：monstats.txt 三個難度的等級與六種抗性，與 levels.txt 每個場景在各難度出現的怪物；中文名取自 monsters.json／levels.json 字串）、affixes（魔法詞綴：magicprefix／magicsuffix／automagic 的前綴、後綴、自動詞綴，含物品等級範圍、等級需求、同組、權重、可出現與排除的物品類型、職業欄位；權重 0 或沒填、不會產生、沒有屬性的列不收；供詞綴寶典 `data/codex/magicAffixes.ts` 使用）、cube（方塊配方：cubemain.txt 的 157 個啟用配方，含輸入、輸出、物品等級欄與輸出屬性；網站不載入，只供測試對照手寫的方塊配方文字）、shrines（聖壇：shrines.txt 的 22 種聖壇，含效果、參數、持續影格、重置時間、最低場景等級與繁中名稱／提示語；不含空白的 None）、experience（經驗值表：experience.txt 的 0~99 級累計經驗，八個職業相同，不同時管線會停下來；ExpRatio 欄用途未驗證不收）、hireling（傭兵：hireling.txt 擴充版資料，每個類型有幾個等級檢查點與每級成長，引擎 `engine/mercenary.ts` 外推；完全相同的重複列合併）、bases（武器／防具／misc，含 nameEnUS 公開英文名、重擊／踢擊傷害、腰帶格數、堆疊上限）、uniques、sets、setItems、runewords、properties（modifier→stat 對映）、stats（itemstatcost 子集）、statStrings.zhTW（描述模板）、charstats、skills（240 招：繁中名稱與說明、樹／列／欄格位、前置、等級上限、魔力與傷害欄位、協同計算式）、skillTabs（技能樹繁中名稱）、inventory（紙娃娃座標）、uiCategories（拾取篩選器類別樹）、itemSkills（沒有職業的物品技能：印記、蜘蛛網、譫妄、生命連結的狀態持續影格與秒數，描述屬性時用）、animations（animdata.d2 中 7 個職業的攻擊 A1／A2 與施法 SC 動作，每種武器類別的 [影格數, 動畫速度]；`engine/attackSpeed.ts` 的攻速計算用，術士未收錄）。
 
 ## 已知限制
 - `skilltab-war`、`roguesbow-affix1`、`magdam-rand`、`Gethit-skill` 在 properties.txt 無定義（4 件暗金），`Crafted *` 為 Rift 製作範本；皆標示於稽核輸出，不當作一般暗金。
