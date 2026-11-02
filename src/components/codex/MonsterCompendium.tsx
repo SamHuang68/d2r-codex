@@ -6,7 +6,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { getMonsterImage, MAJOR_BOSS_SPOTLIGHT, type BossSpotlightItem } from '../../utils/monsterImages';
 import { BossTacticsShowcase } from './BossTacticsShowcase';
 import {
-  AREAS, DIFF_ZH, ELEMS, ELEM_ZH, KIND_ZH, MONSTERS, areaImmunity, areaLevel, areasOfMonster, immunitiesOf, isImmune, resistOf,
+  AREAS, DIFF_ZH, ELEMS, ELEM_ZH, KIND_ZH, MONSTERS, areaImmunity, areaLevel, areaNameEn, areasOfMonster, immunitiesOf, isImmune, resistOf,
   type Area, type Diff, type ElemKey, type Monster,
 } from '../../data/codex/monsters';
 import { DIFF_EN, ELEM_EN, ELEM_TONE } from './monsterLabels';
@@ -195,7 +195,7 @@ const MonsterRow: React.FC<{ m: Monster; diff: Diff; open: boolean; onToggle: ()
               <div className="flex flex-wrap gap-1.5">
                 {areasOfMonster(m.id).map(({ area, diffs }) => (
                   <span key={area.id} className="text-[11px] px-2 py-0.5 rounded-full border border-sanctuary-700 bg-sanctuary-950/60 text-sanctuary-300">
-                    {isEn ? (area.nameEn || area.name) : (area.name ?? area.nameEn)}<span className="text-sanctuary-500 font-mono"> ({diffs.map((d) => isEn ? DIFF_EN[d] : DIFF_ZH[d]).join(' / ')})</span>
+                    {isEn ? (areaNameEn(area) || area.name) : (area.name ?? areaNameEn(area))}<span className="text-sanctuary-500 font-mono"> ({diffs.map((d) => isEn ? DIFF_EN[d] : DIFF_ZH[d]).join(' / ')})</span>
                   </span>
                 ))}
               </div>
@@ -366,8 +366,8 @@ const AreaCard: React.FC<{ area: Area; diff: Diff }> = ({ area, diff }) => {
     <div className="rounded-2xl border border-sanctuary-800/80 bg-sanctuary-900/40 p-4 space-y-2">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <h3 className="font-bold text-sanctuary-100">{area.name ?? area.nameEn}</h3>
-          <div className="text-[11px] font-mono text-sanctuary-500">{area.nameEn}　·　{isEn ? `Act ${area.act}` : `第 ${area.act} 章`}</div>
+          <h3 className="font-bold text-sanctuary-100">{isEn ? areaNameEn(area) : (area.name ?? areaNameEn(area))}</h3>
+          <div className="text-[11px] font-mono text-sanctuary-500">{isEn ? '' : `${areaNameEn(area)}　·　`}{isEn ? `Act ${area.act}` : `第 ${area.act} 章`}</div>
         </div>
         <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-sanctuary-950 text-sanctuary-300 border border-sanctuary-800 shrink-0" title="怪物等級（該難度）">Lv {areaLevel(area, diff) ?? '—'}</span>
       </div>
@@ -416,7 +416,7 @@ const AreasTab: React.FC = () => {
   const [q, setQ] = useState('');
   const list = useMemo(() => {
     const t = q.trim().toLowerCase();
-    return AREAS.filter((a) => (act === 'all' || a.act === act) && a.mon[diff].length > 0 && (!t || (a.name ?? '').toLowerCase().includes(t) || a.nameEn.toLowerCase().includes(t)));
+    return AREAS.filter((a) => (act === 'all' || a.act === act) && a.mon[diff].length > 0 && (!t || (a.name ?? '').toLowerCase().includes(t) || a.nameEn.toLowerCase().includes(t) || areaNameEn(a).toLowerCase().includes(t)));
   }, [diff, act, q]);
   return (
     <div className="space-y-4">

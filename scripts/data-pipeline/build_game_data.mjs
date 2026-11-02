@@ -355,7 +355,7 @@ const monsterIds = new Set(monsters.map((m) => m.id));
 // 場景：每個難度各有一份出現的怪物清單（mon＝普通、nmon＝惡夢、umon＝地獄）與怪物等級（擴充版 MonLvlEx）
 const areas = tsv('levels.txt').filter((r) => r.LevelName).map((r) => {
   const list = (pre) => { const out = []; for (let i = 1; i <= 25; i++) { const id = r[`${pre}${i}`]; if (id && monsterIds.has(id) && !out.includes(id)) out.push(id); } return out; };
-  return { id: num(r.Id), nameEn: r.LevelName, name: levelStrings.get(r.LevelName)?.zhTW, act: (num(r.Act) ?? 0) + 1, mlvl: triple(r, 'MonLvlEx'), mon: [list('mon'), list('nmon'), list('umon')] };
+  return { id: num(r.Id), nameEn: r.LevelName, nameEnUS: levelStrings.get(r.LevelName)?.enUS, name: levelStrings.get(r.LevelName)?.zhTW, act: (num(r.Act) ?? 0) + 1, mlvl: triple(r, 'MonLvlEx'), mon: [list('mon'), list('nmon'), list('umon')] };
 }).filter((a) => a.mon.some((l) => l.length));
 // --- 召喚物的怪物基礎數值（monstats.txt；普通／惡夢／地獄三組）---
 // 召喚技能（skills.json 的 summonId）召喚的怪物。生命沒有難度區分（遊戲再依等級換算），其餘三組依序是 普通、惡夢、地獄。
