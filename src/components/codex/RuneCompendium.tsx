@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { RUNES_DATA } from '../../data/runes';
 import { RUNEWORDS_DATA } from '../../data/runewords';
+import { RUNE_MILESTONE_BADGES } from '../../data/codex/runeFarming';
+import { RuneFarmingGuide } from './RuneFarmingGuide';
 import { ItemIcon } from '../common/ItemIcon';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
 import { SectionHead } from '../common/TreeIndex';
-import { Layers, ArrowRight, Sparkles, Flame } from 'lucide-react';
+import { Layers, ArrowRight, Sparkles, Flame, Compass, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
 export interface RuneCompendiumProps {
@@ -19,20 +21,25 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
 }) => {
   const { t, isEn } = useLanguage();
   const [tierFilter, setTierFilter] = useState<'all' | 'low' | 'mid' | 'high'>('all');
+  const [showFarmingGuide, setShowFarmingGuide] = useState<boolean>(true);
+
+  const handleSelectRune = (num: number) => {
+    if (num <= 10) setTierFilter('low');
+    else if (num <= 21) setTierFilter('mid');
+    else setTierFilter('high');
+
+    setTimeout(() => {
+      const el = document.getElementById(`rune-${num}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 120);
+  };
 
   // 若外部指定了目標符文，自動切換至相應階層並平滑滾動至目標卡片
   useEffect(() => {
     if (targetRuneNumber) {
-      if (targetRuneNumber <= 10) setTierFilter('low');
-      else if (targetRuneNumber <= 21) setTierFilter('mid');
-      else setTierFilter('high');
-
-      setTimeout(() => {
-        const el = document.getElementById(`rune-${targetRuneNumber}`);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }, 120);
+      handleSelectRune(targetRuneNumber);
     }
   }, [targetRuneNumber]);
 
@@ -60,8 +67,37 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
         icon={<Layers className="w-6 h-6" />}
         tone="text-d2-rune"
         title={t('33 枚符文全典藏與熱門符文語互聯', 'All 33 Runes Codex & Runewords Directory')}
-        desc={t('從 1# 艾爾 (El) 到 33# 薩德 (Zod)，完整收錄鑲嵌屬性、方塊升級公式，並支援點擊「相關符文之語」直達組成細節。', 'From 1# El to 33# Zod: complete socket effects, Horadric Cube upgrade formulas, and cross-referenced Runewords.')}
+        desc={t('從 1# 艾爾 (El) 到 33# 薩德 (Zod)，完整收錄鑲嵌屬性、方塊升級公式、固定掉落場景與上限，並支援點擊「相關符文之語」直達組成細節。', 'From 1# El to 33# Zod: complete socket effects, Horadric Cube upgrade formulas, farming spots & max drop caps, and cross-referenced Runewords.')}
       />
+
+      {/* 符文掉落聖地與固定場景指南 (可折疊/展開) */}
+      <section id="rune-farming-guide-section" aria-label={t('符文掉落場景指引', 'Rune Farming Spots Guide')}>
+        <div className="flex items-center justify-between pb-2 mb-2">
+          <button
+            type="button"
+            onClick={() => setShowFarmingGuide(!showFarmingGuide)}
+            className="flex items-center gap-2 text-xs font-mono font-bold text-d2-gold hover:text-amber-300 transition-colors cursor-pointer px-3 py-1.5 rounded-lg bg-sanctuary-900/80 border border-sanctuary-800 hover:border-amber-600/50 shadow-sm"
+          >
+            <Compass className="w-4 h-4 text-d2-fire" />
+            <span>{showFarmingGuide ? t('收合符文產地與掉落上限指南', 'Hide Rune Farming & Drop Caps Guide') : t('展開符文產地與掉落上限指南 (女伯爵/熔爐/LK箱/瘸子)', 'Show Rune Farming & Drop Caps Guide (Countess/Forge/LK/Council)')}</span>
+            {showFarmingGuide ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+
+          <a
+            href="#rune-tier-low"
+            className="text-[11px] font-mono text-sanctuary-400 hover:text-sanctuary-200 transition-colors flex items-center gap-1"
+          >
+            <span>{t('直達 33 枚符文列表', 'Jump to 33 Runes')}</span>
+            <span>↓</span>
+          </a>
+        </div>
+
+        {showFarmingGuide && (
+          <div className="animate-fade-in mb-8">
+            <RuneFarmingGuide onSelectRune={handleSelectRune} />
+          </div>
+        )}
+      </section>
 
       {/* 階層大圖分類磚（全部 / 低階 / 中階 / 高階神符） */}
       <CategoryTiles
@@ -83,10 +119,7 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
           <button
             key={hr.num}
             type="button"
-            onClick={() => {
-              setTierFilter('high');
-              setTimeout(() => document.getElementById(`rune-${hr.num}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
-            }}
+            onClick={() => handleSelectRune(hr.num)}
             className="group/hr p-3.5 rounded-xl bg-gradient-to-b from-sanctuary-900/90 to-sanctuary-950 border border-amber-600/30 hover:border-amber-400/70 text-left transition-all hover:scale-[1.02] shadow-md cursor-pointer"
           >
             <div className="flex items-center justify-between pb-2 border-b border-sanctuary-800">
@@ -117,11 +150,8 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
             key={r.number}
             type="button"
             title={isEn ? `${r.number}# ${r.nameEn}` : `${r.number}# ${r.name} (${r.nameEn})`}
-            onClick={() => {
-              setTierFilter(r.number <= 10 ? 'low' : r.number <= 21 ? 'mid' : 'high');
-              setTimeout(() => document.getElementById(`rune-${r.number}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
-            }}
-            className="flex flex-col items-center px-1.5 pt-1.5 pb-1 rounded-lg border border-sanctuary-800 hover:border-d2-rune bg-sanctuary-950 transition-colors"
+            onClick={() => handleSelectRune(r.number)}
+            className="flex flex-col items-center px-1.5 pt-1.5 pb-1 rounded-lg border border-sanctuary-800 hover:border-d2-rune bg-sanctuary-950 transition-colors cursor-pointer"
           >
             <ItemIcon runeNumber={r.number} name={r.name} nameEn={r.nameEn} rarity="rune" size="xs" showBorder={false} />
             <span className="text-[10px] font-mono text-d2-rune leading-none mt-1">{r.number}#</span>
@@ -145,6 +175,7 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
         {rows.map((rune) => {
           const isHighRune = rune.number >= 22;
           const isTarget = targetRuneNumber === rune.number;
+          const milestones = RUNE_MILESTONE_BADGES[rune.number];
 
           // 找出所有需要使用這顆符文的符文之語
           const relevantRunewords = RUNEWORDS_DATA.filter((rw) =>
@@ -201,6 +232,33 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                     )}
                   </div>
                 </div>
+
+                {/* 固定掉落場景里程碑標籤 (Milestone Badges) */}
+                {milestones && milestones.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-0.5">
+                    {milestones.map((m, mIdx) => {
+                      const isCap = m.badgeType === 'special_cap' || m.badgeType === 'quest_cap';
+                      const isGuaranteed = m.badgeType === 'guaranteed';
+
+                      return (
+                        <div
+                          key={mIdx}
+                          className={`text-[10px] font-mono px-2 py-0.5 rounded-md border flex items-center gap-1 shadow-sm ${
+                            isGuaranteed
+                              ? 'bg-emerald-950/80 text-emerald-300 border-emerald-600/40'
+                              : isCap
+                              ? 'bg-amber-950/80 text-amber-300 border-amber-600/40'
+                              : 'bg-sanctuary-900 text-d2-unique border-d2-unique/40'
+                          }`}
+                          title={isEn ? m.detailEn : m.detailZh}
+                        >
+                          <MapPin className="w-3 h-3 shrink-0 opacity-80" />
+                          <span>{isEn ? m.badgeEn : m.badgeZh}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
 
                 {/* Sockets Details */}
                 <div className="space-y-2 text-xs bg-sanctuary-900/40 p-2.5 rounded-xl border border-sanctuary-850">
