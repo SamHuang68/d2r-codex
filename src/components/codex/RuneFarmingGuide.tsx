@@ -156,48 +156,59 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({ onSelectRune
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {filteredSources.map((source) => {
             const isExpanded = expandedSourceId === source.id;
+            const dropCount = source.drops.length;
+            const gridColsClass =
+              dropCount === 1
+                ? 'grid-cols-1'
+                : dropCount === 2
+                ? 'grid-cols-1 sm:grid-cols-2'
+                : 'grid-cols-1 sm:grid-cols-3';
 
             return (
               <div
                 key={source.id}
                 className="rounded-xl bg-sanctuary-950 border border-sanctuary-800 hover:border-sanctuary-700 transition-all shadow-md flex flex-col justify-between overflow-hidden"
               >
-                {/* 卡片頭部 */}
-                <div className="p-4 sm:p-5 space-y-3.5 border-b border-sanctuary-850 bg-gradient-to-r from-sanctuary-900/40 to-transparent">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-950/70 text-amber-300 border border-amber-700/40">
-                          {source.act === 0 ? t('全章節', 'All Acts') : isEn ? `Act ${source.act}` : `第 ${source.act} 章`}
-                        </span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-sanctuary-850 text-sanctuary-300 border border-sanctuary-750">
-                          {isEn ? source.categoryLabelEn : source.categoryLabelZh}
-                        </span>
-                      </div>
-                      <h3 className="text-lg sm:text-xl font-diablo font-bold text-sanctuary-100 mt-1 flex items-center gap-2">
-                        <span>{isEn ? source.nameEn : source.nameZh}</span>
-                        {!isEn && (
-                          <span className="text-xs font-mono font-normal text-sanctuary-400">
-                            ({source.nameEn})
-                          </span>
-                        )}
-                      </h3>
-                      <div className="text-xs text-sanctuary-400 flex items-center gap-1 mt-0.5">
-                        <MapPin className="w-3.5 h-3.5 text-d2-fire shrink-0" />
-                        <span>{isEn ? source.locationEn : source.locationZh}</span>
-                      </div>
+                {/* 卡片頭部：分層佈局，徹底根除標題被右側標籤壓縮折行的排版失誤 */}
+                <div className="p-4 sm:p-5 space-y-2.5 border-b border-sanctuary-850 bg-gradient-to-r from-sanctuary-900/40 to-transparent">
+                  {/* 第一層：章節、分類標籤與推薦人數徽章 */}
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-950/70 text-amber-300 border border-amber-700/40">
+                        {source.act === 0 ? t('全章節', 'All Acts') : isEn ? `Act ${source.act}` : `第 ${source.act} 章`}
+                      </span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-sanctuary-850 text-sanctuary-300 border border-sanctuary-750">
+                        {isEn ? source.categoryLabelEn : source.categoryLabelZh}
+                      </span>
                     </div>
 
-                    {/* 推薦人數標章 */}
-                    <div className="text-right shrink-0">
-                      <div className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-sanctuary-900 border border-sanctuary-750 text-[11px] font-mono text-d2-gold">
-                        <Users className="w-3.5 h-3.5 text-amber-400" />
-                        <span>{isEn ? source.recommendedPlayerCountEn : source.recommendedPlayerCountZh}</span>
-                      </div>
+                    {/* 推薦人數標章（獨立於上方右側，享有充裕空間） */}
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-sanctuary-900 border border-sanctuary-750 text-[11px] font-mono text-d2-gold shrink-0">
+                      <Users className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      <span>{isEn ? source.recommendedPlayerCountEn : source.recommendedPlayerCountZh}</span>
                     </div>
                   </div>
 
-                  <p className="text-xs text-sanctuary-300 leading-relaxed">
+                  {/* 第二層：完整標題獨立佔用一行，字體大氣舒展，絕不被擠壓換行 */}
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-diablo font-bold text-sanctuary-100 tracking-wide">
+                      {isEn ? source.nameEn : source.nameZh}
+                    </h3>
+                    {!isEn && (
+                      <div className="text-xs font-mono text-sanctuary-400 mt-0.5">
+                        {source.nameEn}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 第三層：地點標記 */}
+                  <div className="text-xs text-sanctuary-400 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-d2-fire shrink-0" />
+                    <span>{isEn ? source.locationEn : source.locationZh}</span>
+                  </div>
+
+                  {/* 第四層：簡介文字 */}
+                  <p className="text-xs text-sanctuary-300 leading-relaxed pt-0.5">
                     {isEn ? source.summaryEn : source.summaryZh}
                   </p>
                 </div>
@@ -209,46 +220,47 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({ onSelectRune
                     <span>{t('各難度最高符文上限與產出範圍:', 'Max Rune Caps by Difficulty:')}</span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  <div className={`grid ${gridColsClass} gap-2.5`}>
                     {source.drops.map((drop) => {
                       const isHell = drop.difficulty === 'hell';
                       const isNM = drop.difficulty === 'nightmare';
+                      const isSingleCard = dropCount === 1;
 
                       return (
                         <div
                           key={drop.difficulty}
-                          className={`p-2.5 rounded-xl border flex flex-col justify-between space-y-2 ${
+                          className={`p-3 rounded-xl border flex flex-col justify-between space-y-2 ${
                             isHell
                               ? 'bg-red-950/20 border-red-900/40'
                               : isNM
                               ? 'bg-amber-950/20 border-amber-900/40'
                               : 'bg-sanctuary-900/40 border-sanctuary-800'
-                          }`}
+                          } ${isSingleCard ? 'sm:flex-row sm:items-center sm:space-y-0 sm:gap-4' : ''}`}
                         >
-                          <div className="flex items-center justify-between pb-1.5 border-b border-sanctuary-800/60">
-                            <span className="text-[11px] font-bold font-mono text-sanctuary-200">
-                              {isEn ? drop.labelEn : drop.labelZh}
-                            </span>
-                            <span
-                              className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-bold uppercase ${
-                                isHell
-                                  ? 'bg-red-900/60 text-red-300'
-                                  : isNM
-                                  ? 'bg-amber-900/60 text-amber-300'
-                                  : 'bg-sanctuary-800 text-sanctuary-300'
-                              }`}
-                            >
-                              {drop.difficulty}
-                            </span>
-                          </div>
+                          <div className={isSingleCard ? 'sm:w-1/3 space-y-1' : ''}>
+                            <div className="flex items-center justify-between pb-1.5 border-b border-sanctuary-800/60">
+                              <span className="text-[11px] font-bold font-mono text-sanctuary-200">
+                                {isEn ? drop.labelEn : drop.labelZh}
+                              </span>
+                              <span
+                                className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-bold uppercase ${
+                                  isHell
+                                    ? 'bg-red-900/60 text-red-300'
+                                    : isNM
+                                    ? 'bg-amber-900/60 text-amber-300'
+                                    : 'bg-sanctuary-800 text-sanctuary-300'
+                                }`}
+                              >
+                                {drop.difficulty}
+                              </span>
+                            </div>
 
-                          <div className="space-y-1">
-                            <div className="text-[11px] text-sanctuary-400 flex items-center justify-between">
-                              <span>{t('最高掉落:', 'Max Drop:')}</span>
+                            <div className="pt-1">
+                              <span className="text-[11px] text-sanctuary-400 mr-2">{t('最高掉落:', 'Max Drop:')}</span>
                               <button
                                 type="button"
                                 onClick={() => onSelectRune?.(drop.specialMaxRuneNumber ?? drop.maxRuneNumber)}
-                                className="font-diablo text-xs font-bold text-d2-rune hover:underline cursor-pointer flex items-center gap-1"
+                                className="font-diablo text-xs font-bold text-d2-rune hover:underline cursor-pointer inline-flex items-center gap-1"
                                 title={t('點擊定位此符文', 'Click to view rune details')}
                               >
                                 <ItemIcon runeNumber={drop.specialMaxRuneNumber ?? drop.maxRuneNumber} size="xs" showBorder={false} />
@@ -261,11 +273,11 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({ onSelectRune
                                 {isEn ? drop.runeRangeEn : drop.runeRangeZh}
                               </div>
                             )}
-
-                            <p className="text-[11px] text-sanctuary-300 leading-snug pt-1">
-                              {isEn ? drop.noteEn : drop.noteZh}
-                            </p>
                           </div>
+
+                          <p className={`text-[11px] text-sanctuary-300 leading-snug ${isSingleCard ? 'sm:w-2/3 sm:border-l sm:border-sanctuary-800/60 sm:pl-4' : 'pt-1'}`}>
+                            {isEn ? drop.noteEn : drop.noteZh}
+                          </p>
                         </div>
                       );
                     })}

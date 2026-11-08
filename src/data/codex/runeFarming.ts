@@ -193,49 +193,6 @@ export const RUNE_FARMING_SOURCES: RuneFarmingSource[] = [
     ]
   },
   {
-    id: 'qual_kehk',
-    nameZh: '亞瑞特山救援 (夸爾凱克)',
-    nameEn: 'Rescue on Mount Arreat (Qual-Kehk)',
-    act: 5,
-    category: 'quest',
-    categoryLabelZh: '固定任務 (Fixed Quest)',
-    categoryLabelEn: 'Fixed Quest',
-    locationZh: '第五章・冰凍高地 拯救野蠻人囚籠',
-    locationEn: 'Act 5 • Frigid Highlands, Barbarian Pens',
-    recommendedPlayerCountZh: '1 人即可',
-    recommendedPlayerCountEn: 'Soloable',
-    summaryZh: '第五章任務二。打破冰凍高地的木籠解救 15 名野蠻人士兵，回城與夸爾凱克對話必定獲得 3 枚固定符文。',
-    summaryEn: 'Act 5 Quest 2. Free 15 captured Barbarians from wooden pens in the Frigid Highlands to receive 3 guaranteed runes from Qual-Kehk.',
-    mechanicsZh: [
-      '【保證給予固定 3 符文】：每次解完任務，夸爾凱克必定固定獎勵 7# 塔爾 (Tal) + 8# 拉爾 (Ral) + 9# 歐特 (Ort)。',
-      '【開荒第一自保神裝】：這三顆符文依序鑲入 3 孔盾牌中，剛好組成「古代人的誓約 (Ancient\'s Pledge)」，提供冰抗 43%、火/電/毒抗各 48%！'
-    ],
-    mechanicsEn: [
-      '[Guaranteed 3 Runes]: Qual-Kehk awards 7# Tal + 8# Ral + 9# Ort with 100% certainty.',
-      '[Ancient\'s Pledge Combo]: Socketing Tal-Ral-Ort into a 3-socket shield instantly forms Ancient\'s Pledge, giving Cold Res +43% and Fire/Light/Poison Res +48%!'
-    ],
-    drops: [
-      {
-        difficulty: 'normal',
-        labelZh: '全難度通用',
-        labelEn: 'All Difficulties',
-        maxRuneNumber: 9,
-        maxRuneNameZh: '9# 歐特 (Ort)',
-        maxRuneNameEn: '9# Ort',
-        runeRangeZh: '固定贈送 7# Tal + 8# Ral + 9# Ort',
-        runeRangeEn: 'Guaranteed 7# Tal + 8# Ral + 9# Ort',
-        noteZh: '每個難度皆可解一次，無論普通或惡夢都是拓荒補抗性與做配方的穩定材料庫。',
-        noteEn: 'Can be completed once per difficulty. Reliable recipe/resistance baseline on any run.'
-      }
-    ],
-    proTipsZh: [
-      '第一章阿卡拉或恰西、第二章法拉處可直接買到 3 孔白色大盾牌 (Large Shield) 或輕盾 (Kite Shield) 來鑲嵌。'
-    ],
-    proTipsEn: [
-      'A 3-socket Large Shield or Kite Shield can be bought directly from vendors like Fara in Act 2.'
-    ]
-  },
-  {
     id: 'lower_kurast',
     nameZh: '下庫拉斯特超級寶箱 (LK 開箱)',
     nameEn: 'Lower Kurast Super Chests (LK Runs)',
@@ -261,13 +218,27 @@ export const RUNE_FARMING_SOURCES: RuneFarmingSource[] = [
     ],
     drops: [
       {
+        difficulty: 'normal',
+        labelZh: '普通難度',
+        labelEn: 'Normal',
+        maxRuneNumber: 10,
+        maxRuneNameZh: '10# 蘇爾 (Thul)',
+        maxRuneNameEn: '10# Thul',
+        runeRangeZh: '最高至 10# Thul',
+        runeRangeEn: 'Caps at 10# Thul',
+        noteZh: '箱子最高可出 10# Thul，兼產大量早期寶石與中低階符文。',
+        noteEn: 'Chests cap at 10# Thul; yields early gems and low runes.'
+      },
+      {
         difficulty: 'nightmare',
         labelZh: '惡夢難度',
         labelEn: 'Nightmare',
         maxRuneNumber: 22,
         maxRuneNameZh: '22# 烏姆 (Um)',
         maxRuneNameEn: '22# Um',
-        noteZh: '惡夢難度箱子最高可出 22# Um，兼產大量中階護身符與寶石。',
+        runeRangeZh: '最高至 22# Um',
+        runeRangeEn: 'Caps at 22# Um',
+        noteZh: '惡夢箱子最高可出 22# Um，兼產大量中階護身符與寶石。',
         noteEn: 'Nightmare super chests cap at 22# Um; also yields plentiful charms and gems.'
       },
       {
@@ -318,6 +289,30 @@ export const RUNE_FARMING_SOURCES: RuneFarmingSource[] = [
     ],
     drops: [
       {
+        difficulty: 'normal',
+        labelZh: '普通難度',
+        labelEn: 'Normal',
+        maxRuneNumber: 11,
+        maxRuneNameZh: '11# 安姆 (Amn)',
+        maxRuneNameEn: '11# Amn',
+        runeRangeZh: '最高至 11# Amn',
+        runeRangeEn: 'Caps at 11# Amn',
+        noteZh: '普通瘸子 (mlvl 28) 產出前期金幣、寶石與中階符文。',
+        noteEn: 'Normal Council (mlvl 28) drops early gold, gems, and mid runes.'
+      },
+      {
+        difficulty: 'nightmare',
+        labelZh: '惡夢難度',
+        labelEn: 'Nightmare',
+        maxRuneNumber: 22,
+        maxRuneNameZh: '22# 烏姆 (Um)',
+        maxRuneNameEn: '22# Um',
+        runeRangeZh: '最高至 22# Um',
+        runeRangeEn: 'Caps at 22# Um',
+        noteZh: '惡夢瘸子 (mlvl 58) 具備極佳的符文與暗金飾品產率，最高可出 22# Um。',
+        noteEn: 'Nightmare Council (mlvl 58) boasts great rune/ring rates up to 22# Um.'
+      },
+      {
         difficulty: 'hell',
         labelZh: '地獄難度',
         labelEn: 'Hell',
@@ -326,7 +321,7 @@ export const RUNE_FARMING_SOURCES: RuneFarmingSource[] = [
         maxRuneNameEn: '33# Zod',
         runeRangeZh: '最高可達 33# 薩德 (Zod)，盛產 20#~31# 高符',
         runeRangeEn: 'Up to 33# Zod; renowned for frequent 20#~31# drops',
-        noteZh: '天梯經濟支柱！高頻產出 24# Ist、26# Vex、28# Lo、30# Ber、31# Jah，兼產幾十萬金幣與極品亮金頭環/戒指。',
+        noteZh: '天梯經濟支柱！高頻產出 24# Ist、26# Vex、28# Lo、30# Ber、31# Jah，兼產天量金幣與極品亮金頭環/戒指。',
         noteEn: 'Core ladder economy engine: frequent Ist, Vex, Lo, Ber, Jah, plus millions in gold and rare rings/circlets.'
       }
     ],
@@ -364,6 +359,30 @@ export const RUNE_FARMING_SOURCES: RuneFarmingSource[] = [
       '[Kill on Walkways]: If a specter dies hovering over the void/space, all loot drops into the abyss and vanishes! Lure them onto solid flagstones.'
     ],
     drops: [
+      {
+        difficulty: 'normal',
+        labelZh: '普通難度',
+        labelEn: 'Normal',
+        maxRuneNumber: 8,
+        maxRuneNameZh: '8# 拉爾 (Ral)',
+        maxRuneNameEn: '8# Ral',
+        runeRangeZh: '最高至 8# Ral',
+        runeRangeEn: 'Caps at 8# Ral',
+        noteZh: '普通幽靈無武器防具掉落干擾，前期極易噴出法力藥水與低階符文。',
+        noteEn: 'Normal specters drop frequent mana potions and low runes.'
+      },
+      {
+        difficulty: 'nightmare',
+        labelZh: '惡夢難度',
+        labelEn: 'Nightmare',
+        maxRuneNumber: 18,
+        maxRuneNameZh: '18# 科 (Ko)',
+        maxRuneNameEn: '18# Ko',
+        runeRangeZh: '最高至 18# Ko',
+        runeRangeEn: 'Caps at 18# Ko',
+        noteZh: '惡夢幽靈 (mlvl 48) 產出精神與眼光符文機率高。',
+        noteEn: 'Nightmare specters (mlvl 48) farm Spirit and Insight runes quickly.'
+      },
       {
         difficulty: 'hell',
         labelZh: '地獄難度',
@@ -410,6 +429,30 @@ export const RUNE_FARMING_SOURCES: RuneFarmingSource[] = [
     ],
     drops: [
       {
+        difficulty: 'normal',
+        labelZh: '普通難度',
+        labelEn: 'Normal',
+        maxRuneNumber: 12,
+        maxRuneNameZh: '12# 索爾 (Sol)',
+        maxRuneNameEn: '12# Sol',
+        runeRangeZh: '最高至 12# Sol',
+        runeRangeEn: 'Caps at 12# Sol',
+        noteZh: '普通母牛 (mlvl 28) 是組裝天底、精神、眼光前綴底材與符文的聖地。',
+        noteEn: 'Normal cows (mlvl 28) farm early bases and runes for Nadir and Spirit.'
+      },
+      {
+        difficulty: 'nightmare',
+        labelZh: '惡夢難度',
+        labelEn: 'Nightmare',
+        maxRuneNumber: 24,
+        maxRuneNameZh: '24# 伊司特 (Ist)',
+        maxRuneNameEn: '24# Ist',
+        runeRangeZh: '最高至 24# Ist',
+        runeRangeEn: 'Caps at 24# Ist',
+        noteZh: '惡夢母牛 (mlvl 64) 掉落高達 24# Ist，是拓荒進地獄前的頂級練功與打寶聖地！',
+        noteEn: 'Nightmare cows (mlvl 64) drop up to 24# Ist; prime pre-Hell leveling spot.'
+      },
+      {
         difficulty: 'hell',
         labelZh: '地獄難度',
         labelEn: 'Hell',
@@ -429,6 +472,49 @@ export const RUNE_FARMING_SOURCES: RuneFarmingSource[] = [
     proTipsEn: [
       'D2R removed the legacy Cow King lock penalty: you can freely kill the Cow King every single run!',
       'Low Magic Find (MF) increases white and ethereal base drops without penalizing rune drop rates at all.'
+    ]
+  },
+  {
+    id: 'qual_kehk',
+    nameZh: '亞瑞特山救援 (夸爾凱克)',
+    nameEn: 'Rescue on Mount Arreat (Qual-Kehk)',
+    act: 5,
+    category: 'quest',
+    categoryLabelZh: '固定任務 (Fixed Quest)',
+    categoryLabelEn: 'Fixed Quest',
+    locationZh: '第五章・冰凍高地 拯救野蠻人囚籠',
+    locationEn: 'Act 5 • Frigid Highlands, Barbarian Pens',
+    recommendedPlayerCountZh: '1 人即可',
+    recommendedPlayerCountEn: 'Soloable',
+    summaryZh: '第五章任務二。打破冰凍高地的木籠解救 15 名野蠻人士兵，回城與夸爾凱克對話必定獲得 3 枚固定符文。',
+    summaryEn: 'Act 5 Quest 2. Free 15 captured Barbarians from wooden pens in the Frigid Highlands to receive 3 guaranteed runes from Qual-Kehk.',
+    mechanicsZh: [
+      '【保證給予固定 3 符文】：每次解完任務，夸爾凱克必定固定獎勵 7# 塔爾 (Tal) + 8# 拉爾 (Ral) + 9# 歐特 (Ort)。',
+      '【開荒第一自保神裝】：這三顆符文依序鑲入 3 孔盾牌中，剛好組成「古代人的誓約 (Ancient\'s Pledge)」，提供冰抗 43%、火/電/毒抗各 48%！'
+    ],
+    mechanicsEn: [
+      '[Guaranteed 3 Runes]: Qual-Kehk awards 7# Tal + 8# Ral + 9# Ort with 100% certainty.',
+      '[Ancient\'s Pledge Combo]: Socketing Tal-Ral-Ort into a 3-socket shield instantly forms Ancient\'s Pledge, giving Cold Res +43% and Fire/Light/Poison Res +48%!'
+    ],
+    drops: [
+      {
+        difficulty: 'normal',
+        labelZh: '全難度通用 (任務獎勵)',
+        labelEn: 'All Difficulties (Quest Reward)',
+        maxRuneNumber: 9,
+        maxRuneNameZh: '9# 歐特 (Ort)',
+        maxRuneNameEn: '9# Ort',
+        runeRangeZh: '固定贈送 7# Tal + 8# Ral + 9# Ort',
+        runeRangeEn: 'Guaranteed 7# Tal + 8# Ral + 9# Ort',
+        noteZh: '每個難度皆可解一次，無論普通或惡夢都是拓荒補抗性與做配方的穩定材料庫。',
+        noteEn: 'Can be completed once per difficulty. Reliable recipe/resistance baseline on any run.'
+      }
+    ],
+    proTipsZh: [
+      '第一章阿卡拉或恰西、第二章法拉處可直接買到 3 孔白色大盾牌 (Large Shield) 或輕盾 (Kite Shield) 來鑲嵌。'
+    ],
+    proTipsEn: [
+      'A 3-socket Large Shield or Kite Shield can be bought directly from vendors like Fara in Act 2.'
     ]
   },
   {
@@ -534,6 +620,17 @@ export const RUNE_MILESTONE_BADGES: Record<number, RuneMilestoneBadge[]> = {
       detailEn: 'Act 5 Q2 reward (Tal + Ral + Ort).'
     }
   ],
+  10: [
+    {
+      runeNumber: 10,
+      badgeType: 'special_cap',
+      badgeZh: 'LK箱(普通)上限',
+      badgeEn: 'LK Chests (Norm) Cap',
+      sourceId: 'lower_kurast',
+      detailZh: '普通難度下庫拉斯特超級寶箱最高可開出之符文。',
+      detailEn: 'Maximum drop cap for Normal Lower Kurast super chests.'
+    }
+  ],
   11: [
     {
       runeNumber: 11,
@@ -545,6 +642,17 @@ export const RUNE_MILESTONE_BADGES: Record<number, RuneMilestoneBadge[]> = {
       detailEn: 'Maximum drop cap for Normal Hellforge quest (1#~11# Amn).'
     }
   ],
+  12: [
+    {
+      runeNumber: 12,
+      badgeType: 'special_cap',
+      badgeZh: '乳牛關(普通)上限',
+      badgeEn: 'Cows (Norm) Cap',
+      sourceId: 'cow_level',
+      detailZh: '普通難度秘密乳牛關母牛最高可掉落之符文。',
+      detailEn: 'Maximum drop cap for Normal Secret Cow Level.'
+    }
+  ],
   16: [
     {
       runeNumber: 16,
@@ -554,6 +662,17 @@ export const RUNE_MILESTONE_BADGES: Record<number, RuneMilestoneBadge[]> = {
       sourceId: 'countess',
       detailZh: '惡夢女伯爵專屬符文掉落池最高符文（專屬池 1#~16# Io，怪身極微機率出 18# Ko）。',
       detailEn: 'Maximum drop cap for Nightmare Countess dedicated rune table (up to 16# Io).'
+    }
+  ],
+  18: [
+    {
+      runeNumber: 18,
+      badgeType: 'special_cap',
+      badgeZh: '女伯爵(惡夢)怪身上限',
+      badgeEn: 'Countess (NM) Monster Cap',
+      sourceId: 'countess',
+      detailZh: '惡夢女伯爵自身作為怪物掉落 (Monster Item TC) 之極限符文。',
+      detailEn: 'Absolute ceiling of Nightmare Countess via regular monster drop table.'
     }
   ],
   22: [
@@ -585,6 +704,15 @@ export const RUNE_MILESTONE_BADGES: Record<number, RuneMilestoneBadge[]> = {
       sourceId: 'countess',
       detailZh: '地獄女伯爵專屬高頻符文池之最高天花板！拓荒農 20#~24# 穩定產地。',
       detailEn: 'Ceiling of Hell Countess dedicated high-frequency rune table (farms 20#~24#).'
+    },
+    {
+      runeNumber: 24,
+      badgeType: 'special_cap',
+      badgeZh: '乳牛關(惡夢)上限',
+      badgeEn: 'Cows (NM) Cap',
+      sourceId: 'cow_level',
+      detailZh: '惡夢難度秘密乳牛關地獄母牛最高可掉落之符文！',
+      detailEn: 'Maximum drop cap for Nightmare Secret Cow Level.'
     }
   ],
   25: [
