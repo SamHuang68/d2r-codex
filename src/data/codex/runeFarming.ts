@@ -561,6 +561,197 @@ export const RUNE_FARMING_SOURCES: RuneFarmingSource[] = [
     proTipsEn: [
       'When Tombs, Chaos Sanctuary, Travincal, or Cows rotate as Terror Zones, pack density and HR frequency reach astronomical peaks.'
     ]
+  },
+  {
+    id: 'chaos_sanctuary',
+    nameZh: '混沌魔殿 (CS 開封印)',
+    nameEn: 'The Chaos Sanctuary (Seal Popping)',
+    act: 4,
+    category: 'high_density',
+    categoryLabelZh: '頂級85場景 (alvl 85)',
+    categoryLabelEn: 'Level 85 Area',
+    locationZh: '第四章・混沌魔殿 (五處封印與中央五芒星)',
+    locationEn: 'Act 4 • Chaos Sanctuary (5 Seals & Star)',
+    recommendedPlayerCountZh: '1~8 人，開封印全圖秒殺時人數越多收益越狂暴！',
+    recommendedPlayerCountEn: '1-8 players; higher player count scales seal popping dramatically!',
+    summaryZh: '地獄 85 級殿堂級場景。擁有 3 組固定暗金首領群，全區怪物與迪亞布羅皆能掉落 33# 薩德，並可活用「開封印秒殺判定機制 (Seal Glitch)」瞬間收割全圖符文！',
+    summaryEn: 'Premier Level 85 area. Features 3 fixed superunique packs, drops up to 33# Zod across all monsters, and enables the legendary "Seal Popping" trick to instantly loot the entire map!',
+    mechanicsZh: [
+      '【全區最高 33# 薩德】：混沌魔殿為 85 級場景，全區所有小怪、精英怪與迪亞布羅皆解鎖頂級 Runes 17 掉落池（最高出 33# Zod），盛產 30# Ber 與 31# Jah。',
+      '【暴風施法者 (Storm Casters)】：此處飛行的暴風施法者與秘法聖殿幽靈同屬 Wraith 族群，永遠不掉落武器與防具，符文與寶石掉落率提升約 3~4 倍！',
+      '【開封印秒殺機制 (Seal Popping)】：啟動 5 個封印並召喚迪亞布羅時，全場景剩餘未擊殺的怪物會被瞬間全滅。只要角色在開最後一個封印前的 6 秒內曾傳送飛過怪物身邊（引發怪物 Active 狀態），這些怪物死亡時會判定為角色擊殺，並完整噴出所有符文與物品！完全不受 MF 稀釋，堪稱全遊戲產出符文最快的密技。'
+    ],
+    mechanicsEn: [
+      '[alvl 85 Universal 33# Zod]: All regular monsters, champions, and Diablo drop from the top Runes 17 TC (up to 33# Zod), making Ber and Jah drops frequent.',
+      '[Storm Casters (Ghost TC)]: Flying Storm Casters share the specter drop table (no weapons/armor), increasing rune and gem drop rates by ~3-4x!',
+      '[Seal Popping Mechanic]: Breaking the 5th seal triggers a global kill wave that obliterates all remaining monsters. If the player teleported within vision of those packs within 6 seconds prior to seal activation, all monsters roll full drop tables credited to the player! Unaffected by MF, this is the fastest raw rune generator in the game.'
+    ],
+    drops: [
+      {
+        difficulty: 'normal',
+        labelZh: '普通難度',
+        labelEn: 'Normal',
+        maxRuneNumber: 21,
+        maxRuneNameZh: '21# 普爾 (Pul)',
+        maxRuneNameEn: '21# Pul',
+        runeRangeZh: '迪亞布羅至 21# Pul，小怪至 15# Hel',
+        runeRangeEn: 'Diablo caps at 21# Pul; regular monsters cap at 15# Hel',
+        noteZh: '迪亞布羅最高可出 21# Pul，小怪最高出 15# Hel。',
+        noteEn: 'Diablo can drop up to 21# Pul; normal monsters cap at 15# Hel.'
+      },
+      {
+        difficulty: 'nightmare',
+        labelZh: '惡夢難度',
+        labelEn: 'Nightmare',
+        maxRuneNumber: 27,
+        maxRuneNameZh: '27# 歐姆 (Ohm)',
+        maxRuneNameEn: '27# Ohm',
+        runeRangeZh: '迪亞布羅至 27# Ohm，小怪至 22# Um',
+        runeRangeEn: 'Diablo caps at 27# Ohm; regular monsters cap at 22# Um',
+        noteZh: '惡夢迪亞布羅最高可出 27# Ohm，是惡夢難度極罕見能出高符的大首領。',
+        noteEn: 'Nightmare Diablo can drop up to 27# Ohm, exceptionally rare for Nightmare.'
+      },
+      {
+        difficulty: 'hell',
+        labelZh: '地獄難度',
+        labelEn: 'Hell',
+        maxRuneNumber: 33,
+        maxRuneNameZh: '33# 薩德 (Zod)',
+        maxRuneNameEn: '33# Zod',
+        runeRangeZh: '全場景解鎖 1# ~ 33# 薩德 (Zod)',
+        runeRangeEn: 'All monsters drop up to 33# Zod',
+        noteZh: '全場景小怪與首領皆解鎖至 33# 薩德！出 Jah 與 Ber 的世界級打寶殿堂。',
+        noteEn: 'Universal drop cap up to 33# Zod across all monsters; world-class Jah & Ber farm.'
+      }
+    ],
+    proTipsZh: [
+      '熟練練習「開封印秒殺 (Seal Pop)」路徑：先清理混沌首相、迪塞斯勳爵與靈魂傳染者所在封印，留最後一個封印不點，快速傳送繞全場引活小怪，最後點擊封印收割全圖！',
+      '迪塞斯勳爵周圍隨從必帶詛咒與強大光環，物理與遠程傷害極高，開荒脆皮法師切勿近身停留。'
+    ],
+    proTipsEn: [
+      'Master the Seal Pop route: clear the 3 seal bosses first, leave the final seal untouched, tele-dash through remaining corridors to activate monsters, then hit the final seal!',
+      'Lord De Seis always spawns with Extra Fast, Strong, and Auras; maintain safe distance on fragile casters.'
+    ]
+  },
+  {
+    id: 'worldstone_keep',
+    nameZh: '世界之石要塞與毀滅王座',
+    nameEn: 'Worldstone Keep & Throne of Destruction',
+    act: 5,
+    category: 'high_density',
+    categoryLabelZh: '終局85場景 (alvl 85)',
+    categoryLabelEn: 'Endgame alvl 85',
+    locationZh: '第五章・世界之石要塞 1~3 層、毀滅王座與世界之石大殿',
+    locationEn: 'Act 5 • Worldstone Keep Levels 1-3, Throne of Destruction & Chamber',
+    recommendedPlayerCountZh: '3~8 人模式經驗與掉落極致，單人亦可穩定通刷',
+    recommendedPlayerCountEn: '3-8 players for peak XP & drops; highly viable solo',
+    summaryZh: '全遊戲等級最高、難度最硬核的終局 85 級場景。巴爾五波固定精英怪群與 99 級巴爾提供最豐厚的頂級高符與畢業裝備。',
+    summaryEn: 'The highest-level and most challenging endgame 85 area. Baal\'s 5 waves of fixed champion packs and level 99 Baal offer unparalleled high rune and item yields.',
+    mechanicsZh: [
+      '【終極 85 場景】：世界之石要塞 1、2、3 層與毀滅王座皆為 85 級場景，小怪最高可出 33# 薩德 (Zod)，精英怪掉落品質極高。',
+      '【巴爾五波精英僕從】：毀滅王座每波召喚的僕從必定掉落大量暗金、護身符與高階符文，是高等級衝等與打寶核心。',
+      '【99 級巴爾終極掉落】：關底巴爾 (mlvl 99) 為全遊戲常規怪物最高等級，符文掉落上限為 33# 薩德，且能產出全遊戲所有暗金裝備。'
+    ],
+    mechanicsEn: [
+      '[Premier 85 Areas]: Keep Levels 1-3 and the Throne are all level 85, allowing any monster to drop up to 33# Zod.',
+      '[Baal\'s 5 Minion Waves]: Each wave delivers guaranteed champion packs with massive drop quantities and top-tier rune potential.',
+      '[mlvl 99 Baal]: Baal sits at mlvl 99 with full access to max-tier item and rune pools (up to 33# Zod).'
+    ],
+    drops: [
+      {
+        difficulty: 'normal',
+        labelZh: '普通難度',
+        labelEn: 'Normal',
+        maxRuneNumber: 25,
+        maxRuneNameZh: '25# 古爾 (Gul)',
+        maxRuneNameEn: '25# Gul',
+        runeRangeZh: '巴爾至 25# Gul，小怪至 18# Ko',
+        runeRangeEn: 'Baal caps at 25# Gul; monsters cap at 18# Ko',
+        noteZh: '普通巴爾最高可掉出 25# Gul，小怪最高出 18# Ko。',
+        noteEn: 'Normal Baal caps at 25# Gul; regular minions cap at 18# Ko.'
+      },
+      {
+        difficulty: 'nightmare',
+        labelZh: '惡夢難度',
+        labelEn: 'Nightmare',
+        maxRuneNumber: 28,
+        maxRuneNameZh: '28# 羅 (Lo)',
+        maxRuneNameEn: '28# Lo',
+        runeRangeZh: '巴爾至 28# Lo，小怪至 24# Ist',
+        runeRangeEn: 'Baal caps at 28# Lo; monsters cap at 24# Ist',
+        noteZh: '惡夢巴爾驚人地能掉出 28# Lo，小怪最高至 24# Ist。',
+        noteEn: 'Nightmare Baal can drop up to 28# Lo; regular monsters cap at 24# Ist.'
+      },
+      {
+        difficulty: 'hell',
+        labelZh: '地獄難度',
+        labelEn: 'Hell',
+        maxRuneNumber: 33,
+        maxRuneNameZh: '33# 薩德 (Zod)',
+        maxRuneNameEn: '33# Zod',
+        runeRangeZh: '全場景解鎖 1# ~ 33# 薩德 (Zod)',
+        runeRangeEn: 'All monsters drop up to 33# Zod',
+        noteZh: '小怪與巴爾全面解鎖 33# 薩德，兼具衝 99 級經驗與全裝備掉落極限。',
+        noteEn: 'Universal 33# Zod drop ceiling; apex of level 99 leveling and grail hunting.'
+      }
+    ],
+    proTipsZh: [
+      '世界之石常有電鬼與冥河鬼娃，務必備妥雷神之力或撐滿電抗，傭兵切勿秒殺鬼娃引發自爆。',
+      '如果只刷五波僕從，殺完第五波古難怪後不必進紅門殺巴爾，可直接退房重開提高每小時期望效率。'
+    ],
+    proTipsEn: [
+      'Gloams and Stygian Dolls frequent the Keep; pack Lightning Absorb / 85% Light Res, and prevent merc from detonating dolls.',
+      'If focusing on wave clear speed, exit after the 5th wave instead of fighting Baal to maximize runes and XP per minute.'
+    ]
+  },
+  {
+    id: 'alvl_85_areas',
+    nameZh: '經典 85 級特區 (地穴 / 古代通道 / 古老石墓)',
+    nameEn: 'Iconic Level 85 Areas (The Pit / Ancient Tunnels / Stony Tomb)',
+    act: 0,
+    category: 'special_mechanic',
+    categoryLabelZh: '85級全境特區 (alvl 85)',
+    categoryLabelEn: 'Level 85 Areas',
+    locationZh: '第一至五章各著名地下洞穴與墓穴',
+    locationEn: 'Famous caves & dungeons across all Acts',
+    recommendedPlayerCountZh: '1~3 人拓荒通刷最佳',
+    recommendedPlayerCountEn: '1-3 players optimal for solo speed farming',
+    summaryZh: '地獄難度中怪物等級躍升至 85 級的特定地下場景。怪物脆弱且無固定全元素免疫，是開荒角色越級打高符與暗金的最佳跳板。',
+    summaryEn: 'Dungeons in Hell where monster levels jump to 85. Fragile monsters without universal immunities make them the best stepping stones for early ladder HR farming.',
+    mechanicsZh: [
+      '【地穴 (The Pit - 第一章泰摩高地)】：怪物血量極薄且抗性低，無天生全元素免疫，是弓馬、野蠻人、純死靈與電系職業早期打高符與 4 孔君主盾聖地。',
+      '【古代通道 (Ancient Tunnels - 第二章遺失的城市)】：全區完全無天生冰冷免疫怪，是拓荒期純暴風雪法師最舒服、最安全的打寶地。',
+      '【古老石墓 (Stony Tomb - 第二章碎石荒地旁)】：D2R 2.4 新增 85 場景，鄰近魯高因城門，怪物無天生火免疫且極為密集，是火法與毒死靈的專屬提款機。',
+      '【全場景小怪最高 33# 薩德】：所有 85 級場景小怪均解鎖最高 TC，普通怪最高可出 33# Zod，暗金怪 mlvl 88。'
+    ],
+    mechanicsEn: [
+      '[The Pit (Act 1 Tamoe Highland)]: Fragile monsters with low resistances and zero universal immunities; top pick for Bowazons, Necros, and Trapsins.',
+      '[Ancient Tunnels (Act 2 Lost City)]: Naturally lacks Cold Immune monsters; the undisputed early ladder home of Blizzard Sorceresses.',
+      '[Stony Tomb (Act 2 Rocky Waste)]: Added in Patch 2.4 right outside Lut Gholein; virtually immune-free for Fire builds, turning Fire Sorcs into HR magnets.',
+      '[Universal 33# Zod]: Regular monsters (mlvl 85) and champions (mlvl 88) can drop all runes up to 33# Zod.'
+    ],
+    drops: [
+      {
+        difficulty: 'hell',
+        labelZh: '地獄難度 (85 級場景)',
+        labelEn: 'Hell (alvl 85 Areas)',
+        maxRuneNumber: 33,
+        maxRuneNameZh: '33# 薩德 (Zod)',
+        maxRuneNameEn: '33# Zod',
+        runeRangeZh: '全區怪物全面解鎖 1# ~ 33# 薩德 (Zod)',
+        runeRangeEn: 'All monsters drop up to 33# Zod',
+        noteZh: '小怪 mlvl 85、精英怪 mlvl 88，全面解鎖 1#~33# Zod 與全遊戲所有底材。',
+        noteEn: 'Regular monsters mlvl 85, bosses mlvl 88; drops up to 33# Zod and all elite bases.'
+      }
+    ],
+    proTipsZh: [
+      '根據你的流派主力傷害屬性選擇對應 85 場景：冰法去「古代通道」、火法去「古老石墓」、電法去「地穴」或「蛛網洞穴」、物理去「地穴」。',
+      '85 場景重點在擊殺精英怪群 (Champions & Unique Packs)，沿途小怪快速清理即可，不需翻箱倒櫃地毯式搜索。'
+    ],
+    proTipsEn: [
+      'Match your elemental damage: Blizzard -> Ancient Tunnels; Fire -> Stony Tomb; Lightning -> The Pit or Arachnid Lair; Physical -> The Pit.',
+      'Focus on hunting Champion and Unique packs rather than searching every empty corner.'
+    ]
   }
 ];
 
@@ -726,6 +917,28 @@ export const RUNE_MILESTONE_BADGES: Record<number, RuneMilestoneBadge[]> = {
       detailEn: 'Highest drop from the Hellforge quest; two Guls cube into 26# Vex for HOTO.'
     }
   ],
+  26: [
+    {
+      runeNumber: 26,
+      badgeType: 'spotlight',
+      badgeZh: '橡樹之心門檻・高符基石',
+      badgeEn: 'HOTO Threshold • HR Core',
+      sourceId: 'hellforge',
+      detailZh: '頂級施法武器「橡樹之心 (HOTO)」核心！熔爐敲出 2 顆 Gul 方塊合成即得。',
+      detailEn: 'Core for Heart of the Oak; cubes directly from 2 Hellforge Guls.'
+    }
+  ],
+  27: [
+    {
+      runeNumber: 27,
+      badgeType: 'spotlight',
+      badgeZh: '戰爭召喚(CTA)之魂',
+      badgeEn: 'Call to Arms Core',
+      sourceId: 'chaos_sanctuary',
+      detailZh: '全職業副手必備「戰爭召喚 (CTA)」核心！提供戰鬥體質全隊血量暴增。',
+      detailEn: 'Essential component for Call to Arms (CTA), granting Battle Orders to all classes.'
+    }
+  ],
   28: [
     {
       runeNumber: 28,
@@ -735,6 +948,17 @@ export const RUNE_MILESTONE_BADGES: Record<number, RuneMilestoneBadge[]> = {
       sourceId: 'countess',
       detailZh: '地獄女伯爵自身作為普通怪物掉落 (Monster Item TC) 之極限最高符文。',
       detailEn: 'Absolute ceiling of Hell Countess via regular monster drop table.'
+    }
+  ],
+  29: [
+    {
+      runeNumber: 29,
+      badgeType: 'spotlight',
+      badgeZh: '合成 30# 貝之關鍵',
+      badgeEn: 'Foundation for 30# Ber',
+      sourceId: 'lower_kurast',
+      detailZh: '下庫拉斯特超級寶箱狂暴掉落；2 顆 Sur 方塊合成即為無價之寶 30# Ber！',
+      detailEn: 'Abundant in Hell LK super chests; 2 Surs cube directly into 30# Ber.'
     }
   ],
   30: [
@@ -759,6 +983,17 @@ export const RUNE_MILESTONE_BADGES: Record<number, RuneMilestoneBadge[]> = {
       detailEn: 'Hell Specters (no weapon/armor drops) can drop up to 31# Jah.'
     }
   ],
+  32: [
+    {
+      runeNumber: 32,
+      badgeType: 'spotlight',
+      badgeZh: '無法凍結・合成 33# 薩德',
+      badgeEn: 'Cannot Be Frozen • Zod Step',
+      sourceId: 'cow_level',
+      detailZh: '鑲嵌提供無法凍結，亦為「傲慢」核心；天梯市價親民，2 顆 Cham 可合成 33# 薩德。',
+      detailEn: 'Provides Cannot Be Frozen and core for Pride; 2 Chams cube into 33# Zod.'
+    }
+  ],
   33: [
     {
       runeNumber: 33,
@@ -771,3 +1006,133 @@ export const RUNE_MILESTONE_BADGES: Record<number, RuneMilestoneBadge[]> = {
     }
   ]
 };
+
+/**
+ * 農符文核心機制與硬核迷思破除資料介面
+ */
+export interface RuneDropMechanicInsight {
+  id: string;
+  titleZh: string;
+  titleEn: string;
+  tagZh: string;
+  tagEn: string;
+  summaryZh: string;
+  summaryEn: string;
+  iconType: 'players' | 'magic_find' | 'cube';
+  pointsZh: string[];
+  pointsEn: string[];
+  tableData?: {
+    headersZh: string[];
+    headersEn: string[];
+    rows: { col1Zh: string; col1En: string; col2: string; col3: string; col4Zh: string; col4En: string }[];
+  };
+}
+
+export const RUNE_MECHANICS_GUIDE: RuneDropMechanicInsight[] = [
+  {
+    id: 'player_count_no_drop',
+    titleZh: '房間人數與 No-Drop 機率換算（破解 8 人迷思）',
+    titleEn: 'Player Count & No-Drop Odds (The P8 Myth Debunked)',
+    tagZh: '掉落底層公式',
+    tagEn: 'Drop Formula',
+    summaryZh: '聖休亞瑞掉落機制的靈魂是「No-Drop（不掉落率）」。人數越高，不掉落率越低，噴出符文的次數越多；但注意 7 人與 8 人的掉落完全一致！',
+    summaryEn: 'The core of D2R item generation is "No-Drop". Higher player counts reduce empty drop chances, but /players 7 and 8 share the exact same drop rate!',
+    iconType: 'players',
+    pointsZh: [
+      '【No-Drop 階躍法則】：怪物死亡時的 No-Drop 機率只在「奇數人數」（1、3、5、7 人）時發生階躍性下降。',
+      '【破解 8 人迷思】：8 人模式 (/players 8) 的 No-Drop 機率與 7 人模式 (/players 7) 完全相同（均為 ~14.3%）！多開 8 人只會額外增加怪物 50% 血量並大幅拖慢殺怪速度。農符文最極限推薦設定為 /players 7。',
+      '【女伯爵反向定律】：女伯爵先判定普通裝備掉落（上限 5 件），剩餘空間才判定符文（最多 3 顆）。單人模式 (/players 1) 普通裝備 No-Drop 最高，反而騰出最多剩餘空間給專屬符文表；8 人模式裝備噴滿反而會擠掉符文！'
+    ],
+    pointsEn: [
+      '[Odd-Number Progression]: No-Drop chance only drops at odd player counts (players 1, 3, 5, 7).',
+      '[The P8 Myth]: /players 8 has the EXACT same drop rate as /players 7 (~14.3% No-Drop). P8 merely grants +50% monster HP, wasting time without extra rune drops. Always use /players 7 for peak efficiency.',
+      '[Countess Inverse Law]: The Countess rolls regular items first (up to 5); remaining capacity rolls runes (up to 3). In /players 1, item No-Drop is highest, preserving slots for her rune table. Full games choke out runes!'
+    ],
+    tableData: {
+      headersZh: ['房間人數設定', '普通小怪 No-Drop', '有效物品判定機率', '怪物血量與實戰建議'],
+      headersEn: ['Player Count', 'Regular No-Drop', 'Effective Drop Rate', 'Monster HP & Practical Advice'],
+      rows: [
+        {
+          col1Zh: '/players 1 (單人)',
+          col1En: '/players 1 (Solo)',
+          col2: '62.5%',
+          col3: '37.5%',
+          col4Zh: '血量 100%。女伯爵專屬符文掉落最高！拓荒期快速收割首選。',
+          col4En: '100% HP. Best for Countess dedicated rune pool! Prime for early speed runs.'
+        },
+        {
+          col1Zh: '/players 3 (三人)',
+          col1En: '/players 3 (3 Players)',
+          col2: '38.8%',
+          col3: '61.2%',
+          col4Zh: '血量 200%。單機拓荒性價比之王！大幅降低不掉落率且清怪阻力小。',
+          col4En: '200% HP. Best value for single player ladder start! Huge drop boost with low resistance.'
+        },
+        {
+          col1Zh: '/players 5 (五人)',
+          col1En: '/players 5 (5 Players)',
+          col2: '24.0%',
+          col3: '76.0%',
+          col4Zh: '血量 300%。角色成形（如電標馬、死靈法師、雙悔恨狂亂）後刷牛關絕佳配置。',
+          col4En: '300% HP. Superb for geared AOE builds (Javazon, Poison Necro, Dual Grief Frenzy).'
+        },
+        {
+          col1Zh: '/players 7 (七人)',
+          col1En: '/players 7 (7 Players)',
+          col2: '14.3%',
+          col3: '85.7%',
+          col4Zh: '血量 400%。【農符文天花板】LK 超級寶箱、崔凡克與秘密乳牛關極致高符產率！',
+          col4En: '400% HP. [Peak Rune Farming] Optimal for LK super chests, Travincal, and Cow runs!'
+        },
+        {
+          col1Zh: '/players 8 (八人)',
+          col1En: '/players 8 (8 Players)',
+          col2: '14.3%',
+          col3: '85.7%',
+          col4Zh: '血量 450%。【迷思警告】掉落率與 P7 完全一致，只多給經驗，刷符文不推薦。',
+          col4En: '450% HP. [Myth Warning] Identical drop rate to P7; only increases XP. Not recommended for runes.'
+        }
+      ]
+    }
+  },
+  {
+    id: 'magic_find_myth',
+    titleZh: '尋寶率 (MF) 對符文完全無效',
+    titleEn: 'Magic Find (MF) Has Zero Effect on Runes',
+    tagZh: '配裝關鍵思維',
+    tagEn: 'Gear Philosophy',
+    summaryZh: '這是暗黑破壞神二最常被誤解的機制：尋寶率 (MF) 只能讓物品變成魔法、亮金或暗金，完全無法提升任何符文的掉落機率！',
+    summaryEn: 'One of the most common misconceptions: Magic Find only affects item quality (magic, rare, unique) and has absolutely zero impact on rune drops!',
+    iconType: 'magic_find',
+    pointsZh: [
+      '【底層掉落兩階段判定】：怪物死亡時，系統先判定「掉落哪種基礎物品 (Base Item Type)」（如符文、君主盾、藥水）；第二步才根據 MF 判定該物品是否晉級為藍色、亮金或暗金。',
+      '【符文屬於白色/雜項品質】：符文在引擎中被歸類為不可具有品質等級的特殊雜項 (Misc)，它的掉落權重在第一階段就已敲定，完全不參與第二階段的 MF 運算！',
+      '【農高符的終極配裝法則】：若目標是農高階神符與白色打洞底材，請果斷脫下諧角之冠(軍帽)、財富、拿各等純 MF 裝備，全力堆疊傷害、攻擊速度(IAS)、施法速度(FCR)、跑速與生存抗性，用「更快的殺怪頻率」直接堆出高符期望值！'
+    ],
+    pointsEn: [
+      '[Two-Stage Generation]: The engine first decides the Base Item Type (rune, monarch, potion); only in stage 2 does MF determine whether it rolls magic, rare, or unique.',
+      '[Runes are Misc Items]: Runes are categorized as unmodifiable miscellaneous items. Their generation is finalized in stage 1, completely bypassing MF calculations!',
+      '[The Pure Speed Strategy]: When hunting high runes and grey socket bases, drop pure MF gear like Shako and Wealth. Stack pure DPS, FCR, IAS, Movement Speed, and survivability to maximize kills per hour!'
+    ]
+  },
+  {
+    id: 'cube_upgrade_economy',
+    titleZh: '高階神符方塊合成性價比盤點',
+    titleEn: 'Cube Upgrade Economy: What to Upgrade & What NOT to',
+    tagZh: '資產管理指南',
+    tagEn: 'Wealth Guide',
+    summaryZh: '符文方塊向上合成採用幾何級數消耗（2 顆合 1 顆）。某些合成能讓你瞬間湊出關鍵神裝，某些合成卻會讓你慘賠身家！',
+    summaryEn: 'Cube recipe upgrades double costs geometrically. Some upgrades immediately unlock game-changing runewords, while others destroy immense trade value!',
+    iconType: 'cube',
+    pointsZh: [
+      '【必合推薦 ★★★★★】：\n・2× 25# 古爾 (Gul) + 紅寶石 → 26# 伐克斯 (Vex)：敲石頭常出 25#，兩顆直出法系終極武器「橡樹之心 (HOTO)」。\n・2× 29# 瑟 (Sur) + 無瑕紫寶石 → 30# 貝 (Ber)：下庫拉斯特超級寶箱與天梯最核心的「合貝途徑」，組裝「謎團」與「無限」的最短捷徑！\n・2× 32# 查姆 (Cham) + 無瑕綠寶石 → 33# 薩德 (Zod)：天梯中 Cham 的流通需求極低（通常市價 < 0.5 Ber），合為 33# 薩德做「死亡呼吸」或鑲無形頂級暗金極具性價比。',
+      '【情況合 ★★★☆☆】：\n・2× 21# 普爾 (Pul) → 22# 烏姆 (Um)：做「強制」或衣帽鑲嵌補 15 全抗。\n・2× 23# 馬爾 (Mal) → 24# 伊司特 (Ist)：自用打寶鑲嵌或做精神/誓約缺料時可合。\n・2× 27# 歐姆 (Ohm) → 28# 羅 (Lo)：迫切需要做物理第一神甲「剛毅」或單手武器「悔恨」時可合。',
+      '【千萬別合 ❌ 禁忌】：\n・2× 30# 貝 (Ber) → 31# 喬 (Jah)：在天梯與單機經濟中，Ber（可做無限、謎團、野獸）的泛用性與交易價值普遍等於或超越 Jah，用兩顆 Ber 合一顆 Jah 相當於白白蒸發半套神裝！'
+    ],
+    pointsEn: [
+      '[Must Upgrade ★★★★★]:\n• 2x 25# Gul + Ruby -> 26# Vex: Hellforge frequently yields Gul; two instantly forge Heart of the Oak (HOTO).\n• 2x 29# Sur + Flawless Amethyst -> 30# Ber: The universal route to craft Enigma and Infinity from LK chests and ladder drops!\n• 2x 32# Cham + Flawless Emerald -> 33# Zod: Cham trades cheaply due to lower demand (<0.5 Ber); cubing into 33# Zod for Breath of the Dying is phenomenal value.',
+      '[Situational ★★★☆☆]:\n• 2x 21# Pul -> 22# Um: For Duress or +15/22 all resistances socketing.\n• 2x 23# Mal -> 24# Ist: When crafting Call to Arms or needing pure 25% MF socketing.\n• 2x 27# Ohm -> 28# Lo: When desperately needing Grief or Fortitude immediately.',
+      '[NEVER Upgrade ❌ Trap]:\n• 2x 30# Ber -> 31# Jah: In ladder and single-player economies, Ber trades at or above Jah due to Infinity, Enigma, and Beast recipes. Cubing 2 Bers into 1 Jah evaporates half a fortune!'
+    ]
+  }
+];

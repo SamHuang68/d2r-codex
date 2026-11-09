@@ -22,6 +22,7 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
   const { t, isEn } = useLanguage();
   const [tierFilter, setTierFilter] = useState<'all' | 'low' | 'mid' | 'high'>('all');
   const [showFarmingGuide, setShowFarmingGuide] = useState<boolean>(true);
+  const [farmingTargetRune, setFarmingTargetRune] = useState<number | null>(null);
 
   const handleSelectRune = (num: number) => {
     if (num <= 10) setTierFilter('low');
@@ -34,6 +35,17 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }, 120);
+  };
+
+  const handleFilterFarmingByRune = (num: number) => {
+    setShowFarmingGuide(true);
+    setFarmingTargetRune(num);
+    setTimeout(() => {
+      const el = document.getElementById('rune-farming-guide-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   };
 
   // 若外部指定了目標符文，自動切換至相應階層並平滑滾動至目標卡片
@@ -94,7 +106,7 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
 
         {showFarmingGuide && (
           <div className="animate-fade-in mb-8">
-            <RuneFarmingGuide onSelectRune={handleSelectRune} />
+            <RuneFarmingGuide onSelectRune={handleSelectRune} initialTargetRune={farmingTargetRune} />
           </div>
         )}
       </section>
@@ -241,20 +253,23 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                       const isGuaranteed = m.badgeType === 'guaranteed';
 
                       return (
-                        <div
+                        <button
                           key={mIdx}
-                          className={`text-[10px] font-mono px-2 py-0.5 rounded-md border flex items-center gap-1 shadow-sm ${
+                          type="button"
+                          onClick={() => handleFilterFarmingByRune(rune.number)}
+                          className={`text-[10px] font-mono px-2 py-0.5 rounded-md border flex items-center gap-1 shadow-sm transition-all hover:scale-105 cursor-pointer ${
                             isGuaranteed
-                              ? 'bg-emerald-950/80 text-emerald-300 border-emerald-600/40'
+                              ? 'bg-emerald-950/80 text-emerald-300 border-emerald-600/40 hover:border-emerald-400'
                               : isCap
-                              ? 'bg-amber-950/80 text-amber-300 border-amber-600/40'
-                              : 'bg-sanctuary-900 text-d2-unique border-d2-unique/40'
+                              ? 'bg-amber-950/80 text-amber-300 border-amber-600/40 hover:border-amber-400'
+                              : 'bg-sanctuary-900 text-d2-unique border-d2-unique/40 hover:border-d2-unique'
                           }`}
-                          title={isEn ? m.detailEn : m.detailZh}
+                          title={t('點擊查看推薦產地：', 'Click to view drop sources: ') + (isEn ? m.detailEn : m.detailZh)}
                         >
                           <MapPin className="w-3 h-3 shrink-0 opacity-80" />
                           <span>{isEn ? m.badgeEn : m.badgeZh}</span>
-                        </div>
+                          <span className="text-[9px] opacity-60">↗</span>
+                        </button>
                       );
                     })}
                   </div>

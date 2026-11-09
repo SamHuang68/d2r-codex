@@ -1,5 +1,9 @@
-import React, { useState } from 'react';
-import { RUNE_FARMING_SOURCES } from '../../data/codex/runeFarming';
+import React, { useState, useEffect } from 'react';
+import {
+  RUNE_FARMING_SOURCES,
+  RUNE_MECHANICS_GUIDE
+} from '../../data/codex/runeFarming';
+import { RUNES_DATA } from '../../data/runes';
 import { ItemIcon } from '../common/ItemIcon';
 import { useLanguage } from '../../context/LanguageContext';
 import {
@@ -13,25 +17,55 @@ import {
   Table,
   LayoutGrid,
   Info,
-  CheckCircle2
+  CheckCircle2,
+  Sparkles,
+  Filter,
+  Layers
 } from 'lucide-react';
 
 export interface RuneFarmingGuideProps {
   onSelectRune?: (runeNumber: number) => void;
+  initialTargetRune?: number | null;
 }
 
-export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({ onSelectRune }) => {
+export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
+  onSelectRune,
+  initialTargetRune = null
+}) => {
   const { t, isEn } = useLanguage();
   const [selectedDifficulty, setSelectedDifficulty] = useState<'all' | 'normal' | 'nightmare' | 'hell'>('all');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'boss' | 'quest' | 'superchest' | 'high_density' | 'special_mechanic'>('all');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [expandedSourceId, setExpandedSourceId] = useState<string | null>(null);
 
+  // 階段二：農符文核心機制與硬核迷思破除專區展開狀態與當前選中標籤
+  const [showMechanicsSection, setShowMechanicsSection] = useState<boolean>(false);
+  const [activeMechanicTab, setActiveMechanicTab] = useState<string>('player_count_no_drop');
+
+  // 階段三：目標符文反向篩選器 (1-33#)
+  const [selectedRuneFilter, setSelectedRuneFilter] = useState<number | null>(initialTargetRune);
+
+  useEffect(() => {
+    if (initialTargetRune !== undefined && initialTargetRune !== null) {
+      setSelectedRuneFilter(initialTargetRune);
+    }
+  }, [initialTargetRune]);
+
   const filteredSources = RUNE_FARMING_SOURCES.filter((s) => {
     if (selectedCategory !== 'all' && s.category !== selectedCategory) return false;
     if (selectedDifficulty !== 'all') {
-      const hasDiff = s.drops.some((d) => d.difficulty === selectedDifficulty || d.difficulty === 'normal' && s.id === 'qual_kehk');
+      const hasDiff = s.drops.some((d) => d.difficulty === selectedDifficulty || (d.difficulty === 'normal' && s.id === 'qual_kehk'));
       if (!hasDiff) return false;
+    }
+    if (selectedRuneFilter !== null) {
+      const coversRune = s.drops.some((d) => {
+        if (selectedDifficulty !== 'all' && d.difficulty !== selectedDifficulty && s.id !== 'qual_kehk') {
+          return false;
+        }
+        const max = d.specialMaxRuneNumber ?? d.maxRuneNumber;
+        return max >= selectedRuneFilter;
+      });
+      if (!coversRune) return false;
     }
     return true;
   });
@@ -52,10 +86,12 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({ onSelectRune
     { id: 'hell', labelZh: '地獄難度 (Hell)', labelEn: 'Hell' }
   ] as const;
 
+  const currentInsight = RUNE_MECHANICS_GUIDE.find((item) => item.id === activeMechanicTab) ?? RUNE_MECHANICS_GUIDE[0];
+
   return (
-    <div className="space-y-6 rounded-2xl bg-gradient-to-b from-sanctuary-900/90 via-sanctuary-950 to-sanctuary-950 border border-sanctuary-800 p-4 sm:p-6 shadow-xl">
+    <div className="space-y-6 rounded-2xl bg-gradient-to-b from-sanctuary-900/90 via-sanctuary-950 to-sanctuary-950 border border-sanctuary-800 p-4 sm:p-6 shadow-xl scroll-mt-20">
       {/* 標題與簡介 */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sanctuary-800 pb-5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sanctuary-850 pb-5">
         <div>
           <div className="flex items-center gap-2 text-d2-fire text-xs font-mono tracking-widest uppercase">
             <Compass className="w-4 h-4 text-d2-fire animate-pulse" />
@@ -69,8 +105,8 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({ onSelectRune
           </h2>
           <p className="text-xs sm:text-sm text-sanctuary-400 mt-1 max-w-3xl leading-relaxed">
             {t(
-              '詳解高塔女伯爵專屬掉落表與單人反向人數定律、第四章敲石頭 (地獄熔爐) 1/11 等機率產出、下庫拉斯特超級寶箱 30# 貝上限、崔凡克瘸子 3 倍掉落與秘法聖殿幽靈無防具掉落機制。',
-              'Detailed analysis of The Countess dedicated Rune TC and P1 rules, Hellforge 1/11 equal probability caps, Lower Kurast 30# Ber patterns, Travincal 3x drop multipliers, and Arcane Sanctuary specter loot pools.'
+              '詳解高塔女伯爵專屬掉落表、第四章敲石頭 (地獄熔爐) 1/11 等機率產出、下庫拉斯特 30# 貝上限、崔凡克瘸子 3 倍掉落、混沌魔殿開封印秒殺機制、世界之石五波怪與 85 級場景速查。',
+              'Detailed analysis of The Countess dedicated Rune TC, Hellforge 1/11 equal probability caps, Lower Kurast 30# Ber patterns, Travincal 3x multipliers, Chaos Sanctuary seal popping, Worldstone waves, and alvl 85 areas.'
             )}
           </p>
         </div>
@@ -106,48 +142,239 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({ onSelectRune
         </div>
       </div>
 
-      {/* 篩選控制器 */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-sanctuary-950/70 p-3 rounded-xl border border-sanctuary-850">
-        {/* 類型篩選 */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-[11px] text-sanctuary-400 font-mono mr-1">
-            {t('分類:', 'Category:')}
-          </span>
-          {categoryFilters.map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => setSelectedCategory(cat.id as any)}
-              className={`px-2.5 py-1 rounded-lg text-xs transition-colors cursor-pointer border ${
-                selectedCategory === cat.id
-                  ? 'bg-sanctuary-800 text-d2-gold border-d2-gold/50 font-bold'
-                  : 'bg-sanctuary-900/60 text-sanctuary-400 border-sanctuary-800 hover:text-sanctuary-200 hover:border-sanctuary-700'
-              }`}
-            >
-              {isEn ? cat.labelEn : cat.labelZh}
-            </button>
-          ))}
+      {/* 階段二：農符文三大核心機制與硬核迷思破除專區 (Drop Mechanics & Myths) */}
+      <div className="rounded-xl border border-sanctuary-800 bg-sanctuary-950/80 overflow-hidden shadow-md">
+        <button
+          type="button"
+          onClick={() => setShowMechanicsSection(!showMechanicsSection)}
+          className="w-full px-4 py-3 bg-gradient-to-r from-amber-950/30 via-sanctuary-900/60 to-sanctuary-950 hover:bg-sanctuary-900 transition-colors flex items-center justify-between cursor-pointer border-b border-sanctuary-850"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 rounded-lg bg-amber-950/80 border border-amber-600/50 text-amber-300">
+              <Sparkles className="w-4 h-4 text-amber-400" />
+            </div>
+            <div className="text-left">
+              <div className="font-diablo text-sm sm:text-base font-bold text-amber-200 flex items-center gap-2">
+                <span>{t('農符文三大核心機制與硬核迷思破除', '3 Core Rune Farming Mechanics & Myths Debunked')}</span>
+                <span className="text-[10px] font-mono px-2 py-0.2 rounded bg-amber-900/60 text-amber-300 border border-amber-700/40 font-normal">
+                  P7/P8 · MF · Cube
+                </span>
+              </div>
+              <p className="text-[11px] text-sanctuary-400 hidden sm:block">
+                {t(
+                  '詳解 No-Drop 人數公式與 8 人迷思、尋寶率 (MF) 對符文完全無效、以及高階神符方塊合成性價比盤點。',
+                  'Covers No-Drop scaling vs P8 myth, why MF does not affect runes, and high rune cube upgrade economy.'
+                )}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 text-xs font-mono text-amber-400 shrink-0">
+            <span>{showMechanicsSection ? t('收合專題', 'Collapse') : t('展開專題', 'Expand')}</span>
+            {showMechanicsSection ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </div>
+        </button>
+
+        {showMechanicsSection && (
+          <div className="p-4 sm:p-5 space-y-4 animate-fade-in bg-sanctuary-950/90 text-xs">
+            {/* 標籤導覽列 */}
+            <div className="flex flex-wrap gap-2 border-b border-sanctuary-850 pb-3">
+              {RUNE_MECHANICS_GUIDE.map((insight) => {
+                const isActive = activeMechanicTab === insight.id;
+                return (
+                  <button
+                    key={insight.id}
+                    type="button"
+                    onClick={() => setActiveMechanicTab(insight.id)}
+                    className={`px-3 py-1.5 rounded-lg font-mono text-xs font-semibold transition-all cursor-pointer border flex items-center gap-1.5 ${
+                      isActive
+                        ? 'bg-amber-600 text-sanctuary-950 border-amber-400 shadow'
+                        : 'bg-sanctuary-900 text-sanctuary-400 border-sanctuary-800 hover:text-sanctuary-200 hover:border-sanctuary-750'
+                    }`}
+                  >
+                    {insight.iconType === 'players' && <Users className="w-3.5 h-3.5" />}
+                    {insight.iconType === 'magic_find' && <Sparkles className="w-3.5 h-3.5" />}
+                    {insight.iconType === 'cube' && <Layers className="w-3.5 h-3.5" />}
+                    <span>{isEn ? insight.titleEn : insight.titleZh}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 標籤內容展示 */}
+            <div className="space-y-3.5">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <h4 className="font-diablo text-base font-bold text-amber-300 flex items-center gap-2">
+                  <span>{isEn ? currentInsight.titleEn : currentInsight.titleZh}</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950 border border-amber-800 text-amber-400 font-normal">
+                    {isEn ? currentInsight.tagEn : currentInsight.tagZh}
+                  </span>
+                </h4>
+              </div>
+
+              <p className="text-xs text-sanctuary-300 leading-relaxed bg-sanctuary-900/40 p-3 rounded-xl border border-sanctuary-850">
+                {isEn ? currentInsight.summaryEn : currentInsight.summaryZh}
+              </p>
+
+              {/* 重點列表 */}
+              <div className="space-y-2">
+                <ul className="space-y-2 text-sanctuary-300 pl-4 list-disc marker:text-amber-500 leading-relaxed">
+                  {(isEn ? currentInsight.pointsEn : currentInsight.pointsZh).map((pt, idx) => (
+                    <li key={idx} className="whitespace-pre-line">
+                      {pt}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* 若有表格資料則呈現對照表 */}
+              {currentInsight.tableData && (
+                <div className="pt-2">
+                  <div className="rounded-xl border border-sanctuary-800 overflow-x-auto bg-sanctuary-950">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-sanctuary-900/90 text-sanctuary-300 font-mono text-[11px] border-b border-sanctuary-800">
+                        <tr>
+                          {(isEn ? currentInsight.tableData.headersEn : currentInsight.tableData.headersZh).map((h, hIdx) => (
+                            <th key={hIdx} className="py-2.5 px-3">
+                              {h}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-sanctuary-850 font-mono">
+                        {currentInsight.tableData.rows.map((r, rIdx) => (
+                          <tr key={rIdx} className="hover:bg-sanctuary-900/40 transition-colors">
+                            <td className="py-2.5 px-3 text-amber-300 font-bold whitespace-nowrap">{isEn ? r.col1En : r.col1Zh}</td>
+                            <td className="py-2.5 px-3 text-red-400 whitespace-nowrap">{r.col2}</td>
+                            <td className="py-2.5 px-3 text-emerald-400 whitespace-nowrap">{r.col3}</td>
+                            <td className="py-2.5 px-3 text-sanctuary-300 font-sans text-[11px] leading-relaxed">
+                              {isEn ? r.col4En : r.col4Zh}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 篩選控制器（含階段三：目標符文反向篩選器） */}
+      <div className="space-y-3 bg-sanctuary-950/70 p-3.5 rounded-xl border border-sanctuary-850">
+        {/* 第一列：分類與難度篩選 */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          {/* 類型篩選 */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[11px] text-sanctuary-400 font-mono mr-1">
+              {t('分類:', 'Category:')}
+            </span>
+            {categoryFilters.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setSelectedCategory(cat.id as any)}
+                className={`px-2.5 py-1 rounded-lg text-xs transition-colors cursor-pointer border ${
+                  selectedCategory === cat.id
+                    ? 'bg-sanctuary-800 text-d2-gold border-d2-gold/50 font-bold'
+                    : 'bg-sanctuary-900/60 text-sanctuary-400 border-sanctuary-800 hover:text-sanctuary-200 hover:border-sanctuary-700'
+                }`}
+              >
+                {isEn ? cat.labelEn : cat.labelZh}
+              </button>
+            ))}
+          </div>
+
+          {/* 難度篩選 */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[11px] text-sanctuary-400 font-mono mr-1">
+              {t('難度:', 'Difficulty:')}
+            </span>
+            {difficultyFilters.map((diff) => (
+              <button
+                key={diff.id}
+                type="button"
+                onClick={() => setSelectedDifficulty(diff.id as any)}
+                className={`px-2.5 py-1 rounded-lg text-xs transition-colors cursor-pointer border ${
+                  selectedDifficulty === diff.id
+                    ? 'bg-sanctuary-800 text-amber-300 border-amber-500/50 font-bold'
+                    : 'bg-sanctuary-900/60 text-sanctuary-400 border-sanctuary-800 hover:text-sanctuary-200 hover:border-sanctuary-700'
+                }`}
+              >
+                {isEn ? diff.labelEn : diff.labelZh}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* 難度篩選 */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-[11px] text-sanctuary-400 font-mono mr-1">
-            {t('難度:', 'Difficulty:')}
-          </span>
-          {difficultyFilters.map((diff) => (
-            <button
-              key={diff.id}
-              type="button"
-              onClick={() => setSelectedDifficulty(diff.id as any)}
-              className={`px-2.5 py-1 rounded-lg text-xs transition-colors cursor-pointer border ${
-                selectedDifficulty === diff.id
-                  ? 'bg-sanctuary-800 text-amber-300 border-amber-500/50 font-bold'
-                  : 'bg-sanctuary-900/60 text-sanctuary-400 border-sanctuary-800 hover:text-sanctuary-200 hover:border-sanctuary-700'
-              }`}
-            >
-              {isEn ? diff.labelEn : diff.labelZh}
-            </button>
-          ))}
+        {/* 第二列：階段三 目標符文快速篩選（反向查詢） */}
+        <div className="pt-2.5 border-t border-sanctuary-850 flex flex-wrap items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-1.5 text-xs font-mono text-d2-gold">
+              <Filter className="w-3.5 h-3.5 text-amber-400" />
+              <span>{t('目標符文反向篩選:', 'Target Rune Filter:')}</span>
+            </div>
+
+            {/* 常用高階神符快捷按鈕 */}
+            <div className="flex items-center gap-1 flex-wrap">
+              {[24, 26, 28, 30, 31, 33].map((num) => {
+                const r = RUNES_DATA.find((x) => x.number === num);
+                const isSelected = selectedRuneFilter === num;
+                return (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => setSelectedRuneFilter(isSelected ? null : num)}
+                    className={`px-2 py-0.5 rounded text-[11px] font-mono font-bold transition-all cursor-pointer border flex items-center gap-1 ${
+                      isSelected
+                        ? 'bg-amber-600 text-sanctuary-950 border-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.5)]'
+                        : 'bg-sanctuary-900/80 text-amber-300 border-sanctuary-750 hover:border-amber-500/50 hover:bg-sanctuary-850'
+                    }`}
+                  >
+                    <ItemIcon runeNumber={num} size="xs" showBorder={false} />
+                    <span>{num}# {isEn ? r?.nameEn : r?.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 全部 33 枚符文下拉選單 */}
+            <div className="relative inline-block">
+              <select
+                aria-label={t('選擇特定符文', 'Select specific rune')}
+                value={selectedRuneFilter ?? ''}
+                onChange={(e) => setSelectedRuneFilter(e.target.value ? Number(e.target.value) : null)}
+                className="px-2.5 py-1 rounded-lg bg-sanctuary-900 border border-sanctuary-750 text-xs font-mono text-sanctuary-200 focus:outline-none focus:border-amber-500 cursor-pointer"
+              >
+                <option value="">{t('-- 選擇特定符文 (1-33#) --', '-- Select Specific Rune (1-33#) --')}</option>
+                {RUNES_DATA.map((r) => (
+                  <option key={r.number} value={r.number}>
+                    {r.number}# {isEn ? r.nameEn : r.name} {isEn ? '' : `(${r.nameEn})`} - {isEn ? `Req Lv ${r.requiredLevel}` : `需等級 ${r.requiredLevel}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {selectedRuneFilter !== null && (
+              <button
+                type="button"
+                onClick={() => setSelectedRuneFilter(null)}
+                className="text-[11px] font-mono text-red-400 hover:text-red-300 px-2 py-0.5 rounded bg-red-950/40 border border-red-900/50 cursor-pointer flex items-center gap-1"
+              >
+                ✕ {t('清除目標', 'Clear Filter')}
+              </button>
+            )}
+          </div>
+
+          {/* 篩選結果計數提示 */}
+          <div className="text-[11px] font-mono text-sanctuary-400">
+            {t('符合條件場景: ', 'Matching Sources: ')}
+            <strong className="text-amber-300 font-bold">{filteredSources.length}</strong>
+            {t(' / 共 ', ' / Total ')}
+            <span>{RUNE_FARMING_SOURCES.length}</span>
+          </div>
         </div>
       </div>
 
@@ -226,11 +453,18 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({ onSelectRune
                       const isNM = drop.difficulty === 'nightmare';
                       const isSingleCard = dropCount === 1;
 
+                      // 階段三：若此難度上限涵蓋使用者篩選的符文，標記高亮
+                      const isTargetMatched =
+                        selectedRuneFilter !== null &&
+                        (drop.specialMaxRuneNumber ?? drop.maxRuneNumber) >= selectedRuneFilter;
+
                       return (
                         <div
                           key={drop.difficulty}
-                          className={`p-3 rounded-xl border flex flex-col justify-between space-y-2 ${
-                            isHell
+                          className={`p-3 rounded-xl border flex flex-col justify-between space-y-2 transition-all ${
+                            isTargetMatched
+                              ? 'ring-1 ring-amber-500/80 border-amber-500/80 shadow-[0_0_12px_rgba(245,158,11,0.25)]'
+                              : isHell
                               ? 'bg-red-950/20 border-red-900/40'
                               : isNM
                               ? 'bg-amber-950/20 border-amber-900/40'
@@ -242,17 +476,24 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({ onSelectRune
                               <span className="text-[11px] font-bold font-mono text-sanctuary-200">
                                 {isEn ? drop.labelEn : drop.labelZh}
                               </span>
-                              <span
-                                className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-bold uppercase ${
-                                  isHell
-                                    ? 'bg-red-900/60 text-red-300'
-                                    : isNM
-                                    ? 'bg-amber-900/60 text-amber-300'
-                                    : 'bg-sanctuary-800 text-sanctuary-300'
-                                }`}
-                              >
-                                {drop.difficulty}
-                              </span>
+                              <div className="flex items-center gap-1">
+                                {isTargetMatched && (
+                                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                                    ✓ {t('可出此符文', 'Covers Target')}
+                                  </span>
+                                )}
+                                <span
+                                  className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-bold uppercase ${
+                                    isHell
+                                      ? 'bg-red-900/60 text-red-300'
+                                      : isNM
+                                      ? 'bg-amber-900/60 text-amber-300'
+                                      : 'bg-sanctuary-800 text-sanctuary-300'
+                                  }`}
+                                >
+                                  {drop.difficulty}
+                                </span>
+                              </div>
                             </div>
 
                             <div className="pt-1">
@@ -289,13 +530,11 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({ onSelectRune
                   <button
                     type="button"
                     onClick={() => setExpandedSourceId(isExpanded ? null : source.id)}
-                    className="w-full px-4 py-2.5 flex items-center justify-between text-xs text-sanctuary-400 hover:text-sanctuary-200 transition-colors cursor-pointer"
+                    className="w-full px-4 py-2.5 text-xs font-mono text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-900/50 transition-colors flex items-center justify-between cursor-pointer"
                   >
-                    <span className="flex items-center gap-1.5 font-mono">
+                    <span className="flex items-center gap-1.5 text-amber-300">
                       <Flame className="w-3.5 h-3.5 text-d2-fire" />
-                      {isExpanded
-                        ? t('收合特殊機制與專家技巧', 'Hide Mechanics & Pro Tips')
-                        : t('展開深入掉落機制與專家技巧', 'View In-Depth Mechanics & Pro Tips')}
+                      {t('展開深入掉落機制與專家技巧', 'View In-Depth Mechanics & Pro Tips')}
                     </span>
                     {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
@@ -364,8 +603,18 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({ onSelectRune
                 const nmDrop = s.drops.find((d) => d.difficulty === 'nightmare');
                 const hellDrop = s.drops.find((d) => d.difficulty === 'hell');
 
+                const isHellMatched =
+                  selectedRuneFilter !== null &&
+                  hellDrop &&
+                  (hellDrop.specialMaxRuneNumber ?? hellDrop.maxRuneNumber) >= selectedRuneFilter;
+
                 return (
-                  <tr key={s.id} className="hover:bg-sanctuary-900/40 transition-colors">
+                  <tr
+                    key={s.id}
+                    className={`transition-colors ${
+                      isHellMatched ? 'bg-amber-950/20 hover:bg-amber-950/30' : 'hover:bg-sanctuary-900/40'
+                    }`}
+                  >
                     <td className="py-3 px-4">
                       <div className="font-bold text-sanctuary-100 flex items-center gap-1.5">
                         <span>{isEn ? s.nameEn : s.nameZh}</span>
