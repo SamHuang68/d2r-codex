@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   RUNE_FARMING_SOURCES,
-  RUNE_MECHANICS_GUIDE
+  RUNE_MECHANICS_GUIDE,
+  BOSS_RUNE_DROP_CAPS
 } from '../../data/codex/runeFarming';
 import { RUNES_DATA } from '../../data/runes';
 import { ItemIcon } from '../common/ItemIcon';
@@ -20,7 +21,10 @@ import {
   CheckCircle2,
   Sparkles,
   Filter,
-  Layers
+  Layers,
+  Skull,
+  Gem,
+  Coins
 } from 'lucide-react';
 
 export interface RuneFarmingGuideProps {
@@ -35,7 +39,7 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
   const { t, isEn } = useLanguage();
   const [selectedDifficulty, setSelectedDifficulty] = useState<'all' | 'normal' | 'nightmare' | 'hell'>('all');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'boss' | 'quest' | 'superchest' | 'high_density' | 'special_mechanic'>('all');
-  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  const [viewMode, setViewMode] = useState<'cards' | 'table' | 'bosses'>('cards');
   const [expandedSourceId, setExpandedSourceId] = useState<string | null>(null);
 
   // 階段二：農符文核心機制與硬核迷思破除專區展開狀態與當前選中標籤
@@ -111,7 +115,7 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
           </p>
         </div>
 
-        {/* 視圖切換器（卡片 / 對照表） */}
+        {/* 視圖切換器（卡片 / 對照表 / 首領上限速查） */}
         <div className="flex items-center gap-2 self-start md:self-center shrink-0">
           <div className="p-1 rounded-xl bg-sanctuary-900 border border-sanctuary-800 flex items-center gap-1">
             <button
@@ -138,6 +142,18 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
               <Table className="w-3.5 h-3.5" />
               <span>{t('速查對照表', 'Quick Matrix')}</span>
             </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('bosses')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
+                viewMode === 'bosses'
+                  ? 'bg-amber-600 text-sanctuary-950 font-bold shadow'
+                  : 'text-sanctuary-400 hover:text-sanctuary-200'
+              }`}
+            >
+              <Skull className="w-3.5 h-3.5 text-red-400" />
+              <span>{t('快刷首領上限', 'Boss Caps')}</span>
+            </button>
           </div>
         </div>
       </div>
@@ -155,15 +171,15 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
             </div>
             <div className="text-left">
               <div className="font-diablo text-sm sm:text-base font-bold text-amber-200 flex items-center gap-2">
-                <span>{t('農符文三大核心機制與硬核迷思破除', '3 Core Rune Farming Mechanics & Myths Debunked')}</span>
+                <span>{t('農符文核心機制、高符經濟與寶石口訣', 'Core Rune Farming Mechanics, Currency Index & Gem Cycle')}</span>
                 <span className="text-[10px] font-mono px-2 py-0.2 rounded bg-amber-900/60 text-amber-300 border border-amber-700/40 font-normal">
-                  P7/P8 · MF · Cube
+                  P7/P8 · MF · Gems · Economy
                 </span>
               </div>
               <p className="text-[11px] text-sanctuary-400 hidden sm:block">
                 {t(
-                  '詳解 No-Drop 人數公式與 8 人迷思、尋寶率 (MF) 對符文完全無效、以及高階神符方塊合成性價比盤點。',
-                  'Covers No-Drop scaling vs P8 myth, why MF does not affect runes, and high rune cube upgrade economy.'
+                  '詳解 No-Drop 人數公式與 8 人迷思、尋寶率 (MF) 對符文完全無效、黃紫藍紅綠白寶石色彩循環口訣、高符流通硬通貨與方塊合成性價比。',
+                  'Covers No-Drop scaling vs P8 myth, why MF does not affect runes, Topaz-Amethyst-Sapphire-Ruby-Emerald-Diamond cycle, High Rune currency index, and cube economy.'
                 )}
               </p>
             </div>
@@ -194,7 +210,9 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
                   >
                     {insight.iconType === 'players' && <Users className="w-3.5 h-3.5" />}
                     {insight.iconType === 'magic_find' && <Sparkles className="w-3.5 h-3.5" />}
+                    {insight.iconType === 'gem' && <Gem className="w-3.5 h-3.5 text-amber-300" />}
                     {insight.iconType === 'cube' && <Layers className="w-3.5 h-3.5" />}
+                    {insight.iconType === 'coins' && <Coins className="w-3.5 h-3.5 text-amber-300" />}
                     <span>{isEn ? insight.titleEn : insight.titleZh}</span>
                   </button>
                 );
@@ -215,6 +233,33 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
               <p className="text-xs text-sanctuary-300 leading-relaxed bg-sanctuary-900/40 p-3 rounded-xl border border-sanctuary-850">
                 {isEn ? currentInsight.summaryEn : currentInsight.summaryZh}
               </p>
+
+              {/* 寶石色彩循環專屬視覺導引條 */}
+              {currentInsight.id === 'gem_color_cycle' && (
+                <div className="p-3 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800 space-y-2">
+                  <div className="text-[11px] font-mono font-bold text-amber-300 flex items-center gap-1.5">
+                    <Sparkles className="w-3 h-3 text-amber-400" />
+                    <span>{t('六色寶石循環記憶條 (黃紫藍紅綠白)：', '6-Gem Color Cycle Visual Chain:')}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-mono font-bold">
+                    {[
+                      { colorZh: '黃寶石', colorEn: 'Topaz', bg: 'bg-amber-400 text-stone-950 border-amber-300' },
+                      { colorZh: '紫寶石', colorEn: 'Amethyst', bg: 'bg-purple-600 text-white border-purple-400' },
+                      { colorZh: '藍寶石', colorEn: 'Sapphire', bg: 'bg-blue-600 text-white border-blue-400' },
+                      { colorZh: '紅寶石', colorEn: 'Ruby', bg: 'bg-red-600 text-white border-red-400' },
+                      { colorZh: '綠寶石', colorEn: 'Emerald', bg: 'bg-emerald-600 text-white border-emerald-400' },
+                      { colorZh: '鑽石(白)', colorEn: 'Diamond', bg: 'bg-slate-100 text-slate-900 border-white' }
+                    ].map((gem, gIdx, arr) => (
+                      <React.Fragment key={gem.colorEn}>
+                        <span className={`px-2.5 py-1 rounded-lg border shadow-sm ${gem.bg} shrink-0`}>
+                          {isEn ? gem.colorEn : gem.colorZh}
+                        </span>
+                        {gIdx < arr.length - 1 && <span className="text-sanctuary-500 shrink-0">➔</span>}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* 重點列表 */}
               <div className="space-y-2">
@@ -246,7 +291,7 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
                           <tr key={rIdx} className="hover:bg-sanctuary-900/40 transition-colors">
                             <td className="py-2.5 px-3 text-amber-300 font-bold whitespace-nowrap">{isEn ? r.col1En : r.col1Zh}</td>
                             <td className="py-2.5 px-3 text-red-400 whitespace-nowrap">{r.col2}</td>
-                            <td className="py-2.5 px-3 text-emerald-400 whitespace-nowrap">{r.col3}</td>
+                            <td className="py-2.5 px-3 text-emerald-400 whitespace-nowrap">{isEn ? (r.col3En ?? r.col3) : (r.col3Zh ?? r.col3)}</td>
                             <td className="py-2.5 px-3 text-sanctuary-300 font-sans text-[11px] leading-relaxed">
                               {isEn ? r.col4En : r.col4Zh}
                             </td>
@@ -683,6 +728,141 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
               })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* 視圖 C：熱門快刷首領與定點暗金怪符文上限速查 (Bosses & Superuniques) */}
+      {viewMode === 'bosses' && (
+        <div className="space-y-5 animate-fade-in">
+          {/* 首領專用頂部指南說明 */}
+          <div className="p-4 rounded-xl bg-gradient-to-r from-red-950/40 via-sanctuary-900/60 to-sanctuary-950 border border-red-900/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="text-xs font-mono font-bold text-red-400 flex items-center gap-1.5 uppercase">
+                <Skull className="w-4 h-4 text-red-400" />
+                <span>{t('首領與定點暗金怪符文機制速記', 'Bosses & Superuniques Rune Mechanics Notes')}</span>
+              </div>
+              <p className="text-xs text-sanctuary-300 leading-relaxed max-w-3xl">
+                {t(
+                  '首領與定點暗金怪的優勢在於固定刷新位置、擊殺速度快、並兼產特定精華或鑰匙。雖然其符文掉落權重略低於專屬掉落怪，但在地獄難度下「暴皮」與「尼拉塞克」皆能掉落 33# 薩德，「墨菲斯托」出到 31# 查姆，「都瑞爾」出到 30# 貝！',
+                  'Bosses feature fixed spawn locations and fast run times while dropping quest keys and essences. In Hell, Pindleskin and Nihlathak drop up to 33# Zod, Mephisto drops up to 31# Cham, and Duriel drops up to 30# Ber!'
+                )}
+              </p>
+            </div>
+            <div className="px-3 py-2 rounded-lg bg-sanctuary-950 border border-sanctuary-800 text-[11px] font-mono text-sanctuary-300 shrink-0 space-y-1">
+              <div className="text-d2-gold font-bold">{t('⚡ 快刷核心法則：', '⚡ Speed Farming Rules:')}</div>
+              <div>• {t('首領兼刷：MF 穿裝不扣減符文率', 'Boss MF runs never penalize rune rates')}</div>
+              <div>• {t('紅門定點：暴皮 10 秒、山克艾德瑞奇 15 秒', 'Pindle 10s runs • Shenk/Eldritch 15s')}</div>
+            </div>
+          </div>
+
+          {/* 首領卡片網格 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {BOSS_RUNE_DROP_CAPS.map((boss) => {
+              const isHellMatch = selectedRuneFilter !== null && boss.hellMaxRune >= selectedRuneFilter;
+
+              return (
+                <div
+                  key={boss.id}
+                  className={`p-4 rounded-xl bg-sanctuary-950 border transition-all flex flex-col justify-between space-y-3.5 shadow-md ${
+                    isHellMatch
+                      ? 'border-amber-500 ring-1 ring-amber-500/70 shadow-[0_0_12px_rgba(245,158,11,0.2)]'
+                      : 'border-sanctuary-800 hover:border-sanctuary-700'
+                  }`}
+                >
+                  <div className="space-y-2">
+                    {/* 頭部：名稱、章節與角色定位 */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-red-950/80 text-red-300 border border-red-700/50">
+                          {isEn ? `Act ${boss.act}` : `第 ${boss.act} 章`}
+                        </span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-sanctuary-900 border border-sanctuary-800 text-amber-300">
+                          {isEn ? boss.farmRoleEn : boss.farmRoleZh}
+                        </span>
+                      </div>
+                      {isHellMatch && (
+                        <span className="text-[9px] font-mono px-1.5 py-0.2 rounded font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                          ✓ {t('涵蓋目標', 'Matches Filter')}
+                        </span>
+                      )}
+                    </div>
+
+                    <div>
+                      <h3 className="font-diablo text-base font-bold text-sanctuary-100 flex items-center gap-1.5">
+                        <Skull className="w-4 h-4 text-red-400 shrink-0" />
+                        <span>{isEn ? boss.nameEn : boss.nameZh}</span>
+                      </h3>
+                      {!isEn && (
+                        <div className="text-[11px] font-mono text-sanctuary-400 mt-0.5">
+                          {boss.nameEn}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="text-xs text-sanctuary-400 flex items-center gap-1">
+                      <MapPin className="w-3.5 h-3.5 text-d2-fire shrink-0" />
+                      <span>{isEn ? boss.locationEn : boss.locationZh}</span>
+                    </div>
+                  </div>
+
+                  {/* 各難度符文上限三欄展示 */}
+                  <div className="grid grid-cols-3 gap-2 p-2.5 rounded-lg bg-sanctuary-900/50 border border-sanctuary-850 text-center font-mono text-xs">
+                    {/* 普通 */}
+                    <div className="space-y-1">
+                      <div className="text-[10px] text-sanctuary-400">{t('普通', 'Norm')}</div>
+                      <button
+                        type="button"
+                        onClick={() => onSelectRune?.(boss.normalMaxRune)}
+                        className="font-bold text-d2-rune hover:underline cursor-pointer inline-flex items-center gap-0.5 text-[11px]"
+                        title={t('點擊查看符文', 'Click to view rune')}
+                      >
+                        <ItemIcon runeNumber={boss.normalMaxRune} size="xs" showBorder={false} />
+                        <span>{boss.normalMaxRune}#</span>
+                      </button>
+                    </div>
+
+                    {/* 惡夢 */}
+                    <div className="space-y-1 border-x border-sanctuary-800">
+                      <div className="text-[10px] text-sanctuary-400">{t('惡夢', 'NM')}</div>
+                      <button
+                        type="button"
+                        onClick={() => onSelectRune?.(boss.nightmareMaxRune)}
+                        className="font-bold text-d2-rune hover:underline cursor-pointer inline-flex items-center gap-0.5 text-[11px]"
+                        title={t('點擊查看符文', 'Click to view rune')}
+                      >
+                        <ItemIcon runeNumber={boss.nightmareMaxRune} size="xs" showBorder={false} />
+                        <span>{boss.nightmareMaxRune}#</span>
+                      </button>
+                    </div>
+
+                    {/* 地獄 */}
+                    <div className="space-y-1">
+                      <div className="text-[10px] text-amber-400 font-bold">{t('地獄', 'Hell')}</div>
+                      <button
+                        type="button"
+                        onClick={() => onSelectRune?.(boss.hellMaxRune)}
+                        className={`font-bold hover:underline cursor-pointer inline-flex items-center gap-0.5 text-[11px] ${
+                          boss.hellMaxRune >= 30 ? 'text-amber-300' : 'text-d2-rune'
+                        }`}
+                        title={t('點擊查看符文', 'Click to view rune')}
+                      >
+                        <ItemIcon runeNumber={boss.hellMaxRune} size="xs" showBorder={false} />
+                        <span>{boss.hellMaxRune}#</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 實戰秘技 */}
+                  <div className="pt-1 border-t border-sanctuary-850/60 text-xs">
+                    <div className="flex items-start gap-1.5 text-sanctuary-300 leading-relaxed text-[11px]">
+                      <span className="text-amber-400 shrink-0 font-bold">💡</span>
+                      <span>{isEn ? boss.proTipEn : boss.proTipZh}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

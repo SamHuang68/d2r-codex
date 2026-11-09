@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RUNES_DATA } from '../../data/runes';
 import { RUNEWORDS_DATA } from '../../data/runewords';
-import { RUNE_MILESTONE_BADGES } from '../../data/codex/runeFarming';
+import { RUNE_MILESTONE_BADGES, RUNE_SPECIAL_UTILITIES } from '../../data/codex/runeFarming';
 import { RuneFarmingGuide } from './RuneFarmingGuide';
 import { ItemIcon } from '../common/ItemIcon';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
@@ -188,6 +188,7 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
           const isHighRune = rune.number >= 22;
           const isTarget = targetRuneNumber === rune.number;
           const milestones = RUNE_MILESTONE_BADGES[rune.number];
+          const utilities = RUNE_SPECIAL_UTILITIES[rune.number];
 
           // 找出所有需要使用這顆符文的符文之語
           const relevantRunewords = RUNEWORDS_DATA.filter((rw) =>
@@ -270,6 +271,41 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
                           <span>{isEn ? m.badgeEn : m.badgeZh}</span>
                           <span className="text-[9px] opacity-60">↗</span>
                         </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* 符文特異功能標籤 (Special Cube Utilities: 免金幣修裝、洗孔、手工核心、打孔、升階) */}
+                {utilities && utilities.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-0.5">
+                    {utilities.map((u, uIdx) => {
+                      const isRepair = u.category === 'repair';
+                      const isUnsocket = u.category === 'unsocket';
+                      const isCraft = u.category === 'craft';
+                      const isUpgrade = u.category === 'upgrade';
+
+                      const badgeStyle = isRepair
+                        ? 'bg-blue-950/80 text-cyan-300 border-cyan-600/40 hover:border-cyan-400'
+                        : isUnsocket
+                        ? 'bg-rose-950/80 text-rose-300 border-rose-600/40 hover:border-rose-400'
+                        : isCraft
+                        ? 'bg-purple-950/80 text-purple-300 border-purple-600/40 hover:border-purple-400'
+                        : isUpgrade
+                        ? 'bg-amber-950/80 text-amber-300 border-amber-600/40 hover:border-amber-400'
+                        : 'bg-emerald-950/80 text-emerald-300 border-emerald-600/40 hover:border-emerald-400';
+
+                      const iconChar = isRepair ? '🛠️' : isUnsocket ? '🧼' : isCraft ? '✨' : isUpgrade ? '💎' : '🔨';
+
+                      return (
+                        <div
+                          key={uIdx}
+                          className={`text-[10px] font-mono px-2 py-0.5 rounded-md border flex items-center gap-1 shadow-sm transition-all cursor-help ${badgeStyle}`}
+                          title={isEn ? u.descEn : u.descZh}
+                        >
+                          <span className="text-[10px] leading-none shrink-0">{iconChar}</span>
+                          <span className="font-semibold">{isEn ? u.badgeEn : u.badgeZh}</span>
+                        </div>
                       );
                     })}
                   </div>

@@ -1018,13 +1018,22 @@ export interface RuneDropMechanicInsight {
   tagEn: string;
   summaryZh: string;
   summaryEn: string;
-  iconType: 'players' | 'magic_find' | 'cube';
+  iconType: 'players' | 'magic_find' | 'cube' | 'gem' | 'coins';
   pointsZh: string[];
   pointsEn: string[];
   tableData?: {
     headersZh: string[];
     headersEn: string[];
-    rows: { col1Zh: string; col1En: string; col2: string; col3: string; col4Zh: string; col4En: string }[];
+    rows: {
+      col1Zh: string;
+      col1En: string;
+      col2: string;
+      col3?: string;
+      col3Zh?: string;
+      col3En?: string;
+      col4Zh: string;
+      col4En: string;
+    }[];
   };
 }
 
@@ -1116,6 +1125,77 @@ export const RUNE_MECHANICS_GUIDE: RuneDropMechanicInsight[] = [
     ]
   },
   {
+    id: 'gem_color_cycle',
+    titleZh: '符文合成「黃紫藍紅綠白」寶石色彩循環口訣',
+    titleEn: 'Rune Cubing "Topaz-Amethyst-Sapphire-Ruby-Emerald-Diamond" Gem Cycle',
+    tagZh: '方塊口訣記憶法',
+    tagEn: 'Cube Mnemonics',
+    summaryZh: '10#~32# 符文升級所需的寶石種類並非隨機分配，而是嚴格遵循固定的 6 色循環！只要記住口訣，任何符文合成配方一秒心算，免去繁瑣查表負擔。',
+    summaryEn: 'The gems required for 10#~32# rune upgrades strictly follow a recurring 6-color sequence: Topaz -> Amethyst -> Sapphire -> Ruby -> Emerald -> Diamond!',
+    iconType: 'gem',
+    pointsZh: [
+      '【六色彩色循環口訣】：【黃 ➔ 紫 ➔ 藍 ➔ 紅 ➔ 綠 ➔ 白】（Topaz ➔ Amethyst ➔ Sapphire ➔ Ruby ➔ Emerald ➔ Diamond）。',
+      '【四階段品質進階規則】：\n・10#～15#（3 合 1）：依序配【碎裂 (Chipped)】黃、紫、藍、紅、綠、白寶石。\n・16#～21#（3 合 1）：依序配【瑕疵 (Flawed)】黃、紫、藍、紅、綠、白寶石。\n・22#～27#（2 合 1）：依序配【普通 (Regular)】黃、紫、藍、紅、綠、白寶石。\n・28#～32#（2 合 1）：依序配【無瑕 (Flawless)】黃、紫、藍、紅、綠寶石（32# 合 33# 剛好到綠寶石結束）。',
+      '【速算實例】：想合 30# 貝？29# 瑟是無瑕組的第 2 顆，循環第二位是「紫」，因此配方必定是「2 Sur + 無瑕紫寶石 ➔ 1 Ber」！想合 26# 伐克斯？25# 古爾是普通組第 4 顆，第四位是「紅」，因此必定是「2 Gul + 紅寶石 ➔ 1 Vex」！'
+    ],
+    pointsEn: [
+      '[The 6-Color Sequence]: Topaz -> Amethyst -> Sapphire -> Ruby -> Emerald -> Diamond (Yellow -> Purple -> Blue -> Red -> Green -> White).',
+      '[4 Quality Tiers]:\n• 10#~15# (3 to 1): Chipped Topaz, Amethyst, Sapphire, Ruby, Emerald, Diamond.\n• 16#~21# (3 to 1): Flawed Topaz, Amethyst, Sapphire, Ruby, Emerald, Diamond.\n• 22#~27# (2 to 1): Regular Topaz, Amethyst, Sapphire, Ruby, Emerald, Diamond.\n• 28#~32# (2 to 1): Flawless Topaz, Amethyst, Sapphire, Ruby, Emerald (stops at Emerald for Zod).',
+      '[Mental Calculation Example]: Cubing into 30# Ber? 29# Sur is the 2nd in the Flawless tier; the 2nd color is Amethyst. Thus formula is 2 Sur + Flawless Amethyst -> Ber!'
+    ],
+    tableData: {
+      headersZh: ['階層範圍', '合成數量', '需求寶石品質', '對應 6 色寶石循環 (黃➔紫➔藍➔紅➔綠➔白)'],
+      headersEn: ['Rune Range', 'Ratio', 'Gem Quality', 'Gem Cycle (Topaz -> Amethyst -> Sapphire -> Ruby -> Emerald -> Diamond)'],
+      rows: [
+        {
+          col1Zh: '1# El ~ 9# Ort',
+          col1En: '1# El ~ 9# Ort',
+          col2: '3 : 1',
+          col3Zh: '無需寶石',
+          col3En: 'No Gems',
+          col4Zh: '直接將 3 顆相同符文放入方塊點擊合成即可。',
+          col4En: 'Transmute 3 matching runes directly without any gems.'
+        },
+        {
+          col1Zh: '10# Thul ~ 15# Hel',
+          col1En: '10# Thul ~ 15# Hel',
+          col2: '3 : 1',
+          col3Zh: '碎裂寶石 (Chipped)',
+          col3En: 'Chipped Gems',
+          col4Zh: '10#配碎黃、11#配碎紫、12#配碎藍、13#配碎紅、14#配碎綠、15#配碎白。',
+          col4En: '10# Chipped Topaz, 11# Amethyst, 12# Sapphire, 13# Ruby, 14# Emerald, 15# Diamond.'
+        },
+        {
+          col1Zh: '16# Io ~ 21# Pul',
+          col1En: '16# Io ~ 21# Pul',
+          col2: '3 : 1',
+          col3Zh: '瑕疵寶石 (Flawed)',
+          col3En: 'Flawed Gems',
+          col4Zh: '16#配瑕黃、17#配瑕紫、18#配瑕藍、19#配瑕紅、20#配瑕綠、21#配瑕白。',
+          col4En: '16# Flawed Topaz, 17# Amethyst, 18# Sapphire, 19# Ruby, 20# Emerald, 21# Diamond.'
+        },
+        {
+          col1Zh: '22# Um ~ 27# Ohm',
+          col1En: '22# Um ~ 27# Ohm',
+          col2: '2 : 1',
+          col3Zh: '普通寶石 (Regular)',
+          col3En: 'Regular Gems',
+          col4Zh: '22#配黃寶石、23#配紫寶石、24#配藍寶石、25#配紅寶石、26#配綠寶石、27#配白寶石。',
+          col4En: '22# Topaz, 23# Amethyst, 24# Sapphire, 25# Ruby, 26# Emerald, 27# Diamond.'
+        },
+        {
+          col1Zh: '28# Lo ~ 32# Cham',
+          col1En: '28# Lo ~ 32# Cham',
+          col2: '2 : 1',
+          col3Zh: '無瑕寶石 (Flawless)',
+          col3En: 'Flawless Gems',
+          col4Zh: '28#配無瑕黃、29#配無瑕紫、30#配無瑕藍、31#配無瑕紅、32#配無瑕綠。',
+          col4En: '28# Flawless Topaz, 29# Amethyst, 30# Sapphire, 31# Ruby, 32# Emerald.'
+        }
+      ]
+    }
+  },
+  {
     id: 'cube_upgrade_economy',
     titleZh: '高階神符方塊合成性價比盤點',
     titleEn: 'Cube Upgrade Economy: What to Upgrade & What NOT to',
@@ -1134,5 +1214,361 @@ export const RUNE_MECHANICS_GUIDE: RuneDropMechanicInsight[] = [
       '[Situational ★★★☆☆]:\n• 2x 21# Pul -> 22# Um: For Duress or +15/22 all resistances socketing.\n• 2x 23# Mal -> 24# Ist: When crafting Call to Arms or needing pure 25% MF socketing.\n• 2x 27# Ohm -> 28# Lo: When desperately needing Grief or Fortitude immediately.',
       '[NEVER Upgrade ❌ Trap]:\n• 2x 30# Ber -> 31# Jah: In ladder and single-player economies, Ber trades at or above Jah due to Infinity, Enigma, and Beast recipes. Cubing 2 Bers into 1 Jah evaporates half a fortune!'
     ]
+  },
+  {
+    id: 'high_rune_currency_index',
+    titleZh: '天梯高階神符流通硬通貨與相對經濟標竿',
+    titleEn: 'Ladder High Rune Currency Index & Relative Value Guide',
+    tagZh: '天梯經濟市場學',
+    tagEn: 'Economy & Trading',
+    summaryZh: '在 D2R 天梯經濟與社群交易中，「符文編號大小」絕對不等於「交易價值大小」！全天梯以 30# 貝 (Ber) 與 31# 喬 (Jah) 為黃金儲備本位幣。',
+    summaryEn: 'In D2R ladder trading, rune number does NOT equal market value! 30# Ber and 31# Jah act as the ultimate gold standard currencies of Sanctuary.',
+    iconType: 'coins',
+    pointsZh: [
+      '【雙王本位幣 (30# Ber & 31# Jah)】：整個 D2R 經濟體系的定價錨點。幾乎所有頂級裝備與手工飾品皆以 Ber / Jah 為單位計價。早期 Ber 稍貴（開荒做無限與謎團），中後期 Jah 與 Ber 等價。',
+      '【0.5 Ber 錨定幣 (29# Sur)】：因為 2 顆 Sur 必定可方塊合成 1 顆 Ber，因此 Sur 的交易價值在全賽季精準鎖定為 0.5 ~ 0.52 Ber，是最穩定、無折價的抗通膨高符。',
+      '【實戰性硬通貨 (28# Lo, 27# Ohm, 26# Vex, 24# Ist)】：Lo (悔恨/剛毅核心，約 0.5~0.6 Ber)、Ohm (戰爭召喚核心，約 0.25~0.3 Ber)、Vex (橡樹之心核心，約 0.12~0.15 Ber)、Ist (打寶與中階交易基準幣，約 0.04~0.05 Ber)。',
+      '【高號低價陷阱 (32# Cham & 33# Zod)】：很多新手常誤以為 32# 與 33# 號碼最大所以最貴。事實上因其能組裝的主流神裝較少，Cham 通常僅值 0.2~0.4 Ber，Zod 僅值 0.4~0.6 Ber，切勿拿 30# 貝去 1:1 等價交換 33# 薩德！'
+    ],
+    pointsEn: [
+      '[The Twin Kings (30# Ber & 31# Jah)]: The universal anchor of D2R trade economy. All godly items trade in units of Ber and Jah. Early ladder favors Ber (Infinity); mid-to-late ladder Jah and Ber trade at par.',
+      '[The Pure 0.5 Anchor (29# Sur)]: Because 2 Surs cube directly into 1 Ber, Sur strictly holds 0.5 ~ 0.52 Ber value throughout entire ladders with zero inflation risk.',
+      '[Core Functional Runes (28# Lo, 27# Ohm, 26# Vex, 24# Ist)]: Lo (Grief/Fortitude, ~0.5-0.6 Ber), Ohm (CTA, ~0.25-0.3 Ber), Vex (HOTO, ~0.12-0.15 Ber), Ist (MF & currency sub-unit, ~0.04-0.05 Ber).',
+      '[The High-Number Trap (32# Cham & 33# Zod)]: New players frequently assume highest number = highest value. Due to limited meta runeword recipes, Cham trades at only 0.2-0.4 Ber, and Zod at 0.4-0.6 Ber! Never trade a Ber 1:1 for a Zod.'
+    ]
   }
 ];
+
+/**
+ * 熱門快刷首領與固定暗金怪符文掉落上限資料介面
+ */
+export interface BossRuneDropCap {
+  id: string;
+  nameZh: string;
+  nameEn: string;
+  act: number;
+  locationZh: string;
+  locationEn: string;
+  mlvlHell: number;
+  normalMaxRune: number;
+  normalMaxRuneZh: string;
+  normalMaxRuneEn: string;
+  nightmareMaxRune: number;
+  nightmareMaxRuneZh: string;
+  nightmareMaxRuneEn: string;
+  hellMaxRune: number;
+  hellMaxRuneZh: string;
+  hellMaxRuneEn: string;
+  farmRoleZh: string;
+  farmRoleEn: string;
+  proTipZh: string;
+  proTipEn: string;
+}
+
+export const BOSS_RUNE_DROP_CAPS: BossRuneDropCap[] = [
+  {
+    id: 'pindleskin',
+    nameZh: '暴皮',
+    nameEn: 'Pindleskin',
+    act: 5,
+    locationZh: '第五章・尼拉塞克的神殿庭院 (紅門旁)',
+    locationEn: 'Act 5 • Nihlathak\'s Temple courtyard',
+    mlvlHell: 86,
+    normalMaxRune: 12,
+    normalMaxRuneZh: '12# 索爾 (Sol)',
+    normalMaxRuneEn: '12# Sol',
+    nightmareMaxRune: 24,
+    nightmareMaxRuneZh: '24# 伊司特 (Ist)',
+    nightmareMaxRuneEn: '24# Ist',
+    hellMaxRune: 33,
+    hellMaxRuneZh: '33# 薩德 (Zod)',
+    hellMaxRuneEn: '33# Zod',
+    farmRoleZh: '15 秒快刷之王・全符文全暗金',
+    farmRoleEn: '15-sec Speedrun King • Full Drop Pool',
+    proTipZh: '進紅門直走 2 秒即打，小怪帶亡者復活與衝鋒，擊殺後撿寶立即重開遊戲，效率冠絕全天梯。',
+    proTipEn: 'Step into the red portal and attack instantly. Slay and reset in 15 seconds flat.'
+  },
+  {
+    id: 'shenk_eldritch',
+    nameZh: '督軍山克 & 矯正者艾德瑞奇',
+    nameEn: 'Shenk the Overseer & Eldritch',
+    act: 5,
+    locationZh: '第五章・冰凍高地 傳送點上下兩側',
+    locationEn: 'Act 5 • Frigid Highlands WP (North & South)',
+    mlvlHell: 84,
+    normalMaxRune: 9,
+    normalMaxRuneZh: '9# 歐特 (Ort)',
+    normalMaxRuneEn: '9# Ort',
+    nightmareMaxRune: 22,
+    nightmareMaxRuneZh: '22# 烏姆 (Um)',
+    nightmareMaxRuneEn: '22# Um',
+    hellMaxRune: 33,
+    hellMaxRuneZh: '33# 薩德 (Zod)',
+    hellMaxRuneEn: '33# Zod',
+    farmRoleZh: '傳送點零門檻快刷雙星',
+    farmRoleEn: 'Zero-Distance WP Twin Bosses',
+    proTipZh: '飛到冰凍高地傳送點，往北 3 步殺艾德瑞奇、往南走下階梯殺山克，雙倍精英掉落只需 30 秒。',
+    proTipEn: 'Take Frigid Highlands waypoint: step north for Eldritch, south down steps for Shenk; 30s double clear.'
+  },
+  {
+    id: 'nihlathak',
+    nameZh: '尼拉塞克',
+    nameEn: 'Nihlathak',
+    act: 5,
+    locationZh: '第五章・沃特之廳 最深處',
+    locationEn: 'Act 5 • Halls of Vaught, Inner Sanctum',
+    mlvlHell: 95,
+    normalMaxRune: 18,
+    normalMaxRuneZh: '18# 科 (Ko)',
+    normalMaxRuneEn: '18# Ko',
+    nightmareMaxRune: 26,
+    nightmareMaxRuneZh: '26# 伐克斯 (Vex)',
+    nightmareMaxRuneEn: '26# Vex',
+    hellMaxRune: 33,
+    hellMaxRuneZh: '33# 薩德 (Zod)',
+    hellMaxRuneEn: '33# Zod',
+    farmRoleZh: '95級首領・破壞之鑰唯一產地',
+    farmRoleEn: 'Level 95 Boss • Key of Destruction',
+    proTipZh: '極其致命的屍體爆炸 (CE)，務必穿戴「安息 (Rest in Peace)」裝備（如大自然之戒或執法者）讓怪物靈魂昇華無法被引爆。',
+    proTipEn: 'Deadly Corpse Explosion! Equip Nature\'s Peace or Lawbringer (Rest in Peace) to prevent corpse popping.'
+  },
+  {
+    id: 'mephisto',
+    nameZh: '墨菲斯托',
+    nameEn: 'Mephisto',
+    act: 3,
+    locationZh: '第三章・憎恨的牢獄第三層',
+    locationEn: 'Act 3 • Durance of Hate Level 3',
+    mlvlHell: 87,
+    normalMaxRune: 15,
+    normalMaxRuneZh: '15# 海爾 (Hel)',
+    normalMaxRuneEn: '15# Hel',
+    nightmareMaxRune: 22,
+    nightmareMaxRuneZh: '22# 烏姆 (Um)',
+    nightmareMaxRuneEn: '22# Um',
+    hellMaxRune: 32,
+    hellMaxRuneZh: '32# 查姆 (Cham)',
+    hellMaxRuneEn: '32# Cham',
+    farmRoleZh: '天梯拓荒提款機・隔河卡位暴風雪',
+    farmRoleEn: 'Ladder Starter Bank • Moat Trick',
+    proTipZh: '活用紅色血池隔河卡位 (Moat Trick)，暴風雪法師站在血池另一側可無損安全擊殺。身後紅門大寶箱必順手翻開。',
+    proTipEn: 'Abuse the Moat Trick across the red pool to Blizzard him down safely. Pop the super chest behind the red portal!'
+  },
+  {
+    id: 'andariel',
+    nameZh: '安達莉爾',
+    nameEn: 'Andariel',
+    act: 1,
+    locationZh: '第一章・地下墓穴第四層',
+    locationEn: 'Act 1 • Catacombs Level 4',
+    mlvlHell: 75,
+    normalMaxRune: 6,
+    normalMaxRuneZh: '6# 伊斯 (Ith)',
+    normalMaxRuneEn: '6# Ith',
+    nightmareMaxRune: 18,
+    nightmareMaxRuneZh: '18# 科 (Ko)',
+    nightmareMaxRuneEn: '18# Ko',
+    hellMaxRune: 30,
+    hellMaxRuneZh: '30# 貝 (Ber)',
+    hellMaxRuneEn: '30# Ber',
+    farmRoleZh: '暗金飾品與 30# 貝來源・天生弱火',
+    farmRoleEn: 'Unique Rings & 30# Ber • Fire Weakness',
+    proTipZh: '天生火抗為 -50%，火法、火德與火陷阱刺客可在數秒內熔化。惡夢與地獄為全遊戲掉落喬丹之石 (SOJ) 期望值最高之首領。',
+    proTipEn: 'Natural -50% Fire Resistance melts to fire damage. Prime source for Stone of Jordan (SOJ) rings.'
+  },
+  {
+    id: 'duriel',
+    nameZh: '都瑞爾',
+    nameEn: 'Duriel',
+    act: 2,
+    locationZh: '第二章・塔拉夏的古墓 真正的術士之墓內室',
+    locationEn: 'Act 2 • Tal Rasha\'s Chamber',
+    mlvlHell: 88,
+    normalMaxRune: 11,
+    normalMaxRuneZh: '11# 安姆 (Amn)',
+    normalMaxRuneEn: '11# Amn',
+    nightmareMaxRune: 22,
+    nightmareMaxRuneZh: '22# 烏姆 (Um)',
+    nightmareMaxRuneEn: '22# Um',
+    hellMaxRune: 30,
+    hellMaxRuneZh: '30# 貝 (Ber)',
+    hellMaxRuneEn: '30# Ber',
+    farmRoleZh: '高階暗金護甲與飾品',
+    farmRoleEn: 'Armor & Jewelry Drop Multipliers',
+    proTipZh: '自帶神聖冰凍光環無法被「無法凍結」抵銷減速，戰前傭兵與自己喝 4~6 瓶解凍藥水直接撐高冰抗與上限。',
+    proTipEn: 'Holy Freeze slows through Cannot Be Frozen. Chug 4-6 Thawing Potions beforehand for bonus Cold Res and max cap.'
+  },
+  {
+    id: 'summoner',
+    nameZh: '召喚師',
+    nameEn: 'The Summoner',
+    act: 2,
+    locationZh: '第二章・秘法聖殿 四向路徑終點之一',
+    locationEn: 'Act 2 • Arcane Sanctuary, End of 1 of 4 paths',
+    mlvlHell: 80,
+    normalMaxRune: 8,
+    normalMaxRuneZh: '8# 拉爾 (Ral)',
+    normalMaxRuneEn: '8# Ral',
+    nightmareMaxRune: 18,
+    nightmareMaxRuneZh: '18# 科 (Ko)',
+    nightmareMaxRuneEn: '18# Ko',
+    hellMaxRune: 31,
+    hellMaxRuneZh: '31# 喬 (Jah)',
+    hellMaxRuneEn: '31# Jah',
+    farmRoleZh: '憎恨之鑰唯一掉落者・身旁固定大寶箱',
+    farmRoleEn: 'Key of Hate Source • 2-3 Super Chests',
+    proTipZh: '沿途清幽靈高頻出符文，召喚師血量極薄可秒殺，其站立台子周圍必有 2~3 個寶箱，開出高符機率極高。',
+    proTipEn: 'Summoner is very frail and drops Key of Hate. Always pop the 2-3 chests on his platform for frequent runes.'
+  }
+];
+
+/**
+ * 符文特異功能對照資料介面（免金幣修裝、方塊洗孔、打孔、手工合成核心）
+ */
+export interface RuneSpecialUtility {
+  runeNumber: number;
+  badgeZh: string;
+  badgeEn: string;
+  category: 'repair' | 'craft' | 'unsocket' | 'upgrade' | 'socket';
+  descZh: string;
+  descEn: string;
+}
+
+export const RUNE_SPECIAL_UTILITIES: Record<number, RuneSpecialUtility[]> = {
+  7: [
+    {
+      runeNumber: 7,
+      badgeZh: '胸甲打孔',
+      badgeEn: 'Armor Socketing',
+      category: 'socket',
+      descZh: '7# Tal + 10# Thul + 完美黃寶石 + 白色胸甲 = 隨機孔數（洗剛毅傭兵底材常用）。',
+      descEn: '7# Tal + 10# Thul + PTopaz + Plain Armor = Random sockets (Fortitude merc bases).'
+    },
+    {
+      runeNumber: 7,
+      badgeZh: '盾牌打孔',
+      badgeEn: 'Shield Socketing',
+      category: 'socket',
+      descZh: '7# Tal + 11# Amn + 完美紅寶石 + 白色盾牌 = 隨機孔數（洗 4 孔君主盾或聖騎盾）。',
+      descEn: '7# Tal + 11# Amn + PRuby + Plain Shield = Random sockets (4os Monarch/Paladin shield).'
+    }
+  ],
+  8: [
+    {
+      runeNumber: 8,
+      badgeZh: '100% 免金幣修防具',
+      badgeEn: 'Free Armor Repair',
+      category: 'repair',
+      descZh: '【省百萬維修費】1x Ral + 任意防具 = 100% 恢復耐久度（免回鐵匠花幾十萬修超強謎團/剛毅！）。',
+      descEn: '1x Ral + Any Armor = 100% Fully Repaired (bypasses massive 500k+ gold fees on Superior runewords!).'
+    },
+    {
+      runeNumber: 8,
+      badgeZh: '施法者手工項鍊核心',
+      badgeEn: 'Caster Amulet Core',
+      category: 'craft',
+      descZh: '1x Ral + 完美紫寶石 + 珠寶 + 魔法項鍊 = 施法者項鍊（衝 +2 技能 / +20% FCR 頂裝必備，全季剛需大量收購）。',
+      descEn: '1x Ral + PAmethyst + Jewel + Magic Amulet = Caster Amulet (+2 Skill / +20% FCR endgame pursuit).'
+    },
+    {
+      runeNumber: 8,
+      badgeZh: '武器打孔',
+      badgeEn: 'Weapon Socketing',
+      category: 'socket',
+      descZh: '8# Ral + 11# Amn + 完美紫寶石 + 白色武器 = 隨機孔數。',
+      descEn: '8# Ral + 11# Amn + PAmethyst + Plain Weapon = Random sockets.'
+    },
+    {
+      runeNumber: 8,
+      badgeZh: '暗金武器升級',
+      badgeEn: 'Unique Weapon Upgrade',
+      category: 'upgrade',
+      descZh: '8# Ral + 12# Sol + 完美綠寶石 + 一般暗金武器 = 升級為進階暗金武器。',
+      descEn: '8# Ral + 12# Sol + PEmerald + Normal Unique Weapon = Exceptional upgrade.'
+    }
+  ],
+  9: [
+    {
+      runeNumber: 9,
+      badgeZh: '100% 免金幣修武器',
+      badgeEn: 'Free Weapon Repair',
+      category: 'repair',
+      descZh: '1x Ort + 任意武器 = 100% 恢復耐久度（亦可加碎裂寶石同時充能聚氣技能）。',
+      descEn: '1x Ort + Any Weapon = 100% Fully Repaired (add chipped gem to recharge skill charges too).'
+    },
+    {
+      runeNumber: 9,
+      badgeZh: '打擊手套手工核心',
+      badgeEn: 'Hit Power Gloves Core',
+      category: 'craft',
+      descZh: '1x Ort + 完美藍寶石 + 珠寶 + 魔法手套 = 打擊手套（自帶「擊退 (Knockback)」與隨機攻速/吸血屬性，弓馬最愛）。',
+      descEn: '1x Ort + PSapphire + Jewel + Magic Gloves = Hit Power Gloves (guaranteed Knockback for Bowazons).'
+    }
+  ],
+  10: [
+    {
+      runeNumber: 10,
+      badgeZh: '安全手工靴核心',
+      badgeEn: 'Safety Boots Core',
+      category: 'craft',
+      descZh: '1x Thul + 完美綠寶石 + 珠寶 + 魔法靴 = 安全靴（帶火抗與減傷）。',
+      descEn: '1x Thul + PEmerald + Jewel + Magic Boots = Safety Boots (Fire Res & Damage Reduction).'
+    },
+    {
+      runeNumber: 10,
+      badgeZh: '頭盔打孔',
+      badgeEn: 'Helm Socketing',
+      category: 'socket',
+      descZh: '8# Ral + 10# Thul + 完美藍寶石 + 白色頭盔 = 隨機孔數（洗閃爍火焰或治癒底材）。',
+      descEn: '8# Ral + 10# Thul + PSapphire + Plain Helm = Random sockets (Flickering Flame/Cure helm).'
+    }
+  ],
+  11: [
+    {
+      runeNumber: 11,
+      badgeZh: '血腥壓碎手套核心',
+      badgeEn: 'Blood Gloves Core',
+      category: 'craft',
+      descZh: '1x Amn + 完美紅寶石 + 珠寶 + 魔法重手套/吸血鬼骸骨手套 = 必帶 5~10% 壓碎打擊 (CB) + 1~3% 吸血，近戰頂級手套！',
+      descEn: '1x Amn + PRuby + Jewel + Magic Heavy Gloves / Vampirebone Gloves = Blood Gloves (guaranteed 5-10% Crushing Blow & Life Steal).'
+    },
+    {
+      runeNumber: 11,
+      badgeZh: '血腥戒指核心',
+      badgeEn: 'Blood Ring Core',
+      category: 'craft',
+      descZh: '1x Amn + 完美紅寶石 + 珠寶 + 魔法戒指 = 血腥戒指（必帶 1~3% 吸血 + 10~20 生命 + 1~5 力量）。',
+      descEn: '1x Amn + PRuby + Jewel + Magic Ring = Blood Ring (guaranteed Life Steal, Life, and Strength).'
+    }
+  ],
+  12: [
+    {
+      runeNumber: 12,
+      badgeZh: '血腥頭盔核心',
+      badgeEn: 'Blood Helm Core',
+      category: 'craft',
+      descZh: '1x Sol + 完美紅寶石 + 珠寶 + 魔法頭盔 = 必帶 5~10% 致命打擊 (Deadly Strike) + 吸血。',
+      descEn: '1x Sol + PRuby + Jewel + Magic Helm = Blood Helm (guaranteed 5-10% Deadly Strike & Life Steal).'
+    }
+  ],
+  15: [
+    {
+      runeNumber: 15,
+      badgeZh: '方塊洗孔 (清空鑲孔)',
+      badgeEn: 'Unsocket (Clean Sockets)',
+      category: 'unsocket',
+      descZh: '【符文之語洗爛重做必備】1x Hel + 城鎮傳送卷軸 + 已鑲嵌裝備 = 徹底清空孔內符文與寶石，底材原樣完好保留！',
+      descEn: '1x Hel + Scroll of Town Portal + Socketed Item = Permanently destroys socketed items, leaving clean open base.'
+    }
+  ],
+  20: [
+    {
+      runeNumber: 20,
+      badgeZh: '防具升級 (進階→菁英)',
+      badgeEn: 'Armor Elite Upgrade',
+      category: 'upgrade',
+      descZh: '20# Lem + 18# Ko + 完美鑽石 + 進階暗金防具 = 升級為菁英暗金防具（如法師鎧甲升統御者鎧甲、蛇魔法師之皮升級為古龍皮）。',
+      descEn: '20# Lem + 18# Ko + PDiamond + Exceptional Armor = Elite Armor upgrade (Skin of the Vipermagi -> Wyrmhide, Mage Plate -> Archon Plate).'
+    }
+  ]
+};
