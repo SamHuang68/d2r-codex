@@ -16,6 +16,11 @@ export interface PatchEntry {
   nameEn: string;
   /** 文章標示僅限天梯 */
   ladderOnly?: boolean;
+  /** 僅適用於線上天梯與離線模式（3.4 術士軍臨） */
+  ladderAndOfflineOnly?: boolean;
+  /** 適用模式範圍備註 */
+  scopeZh?: string;
+  scopeEn?: string;
   /** 套裝部件所屬的套裝（nameEn） */
   parentSet?: string;
   /**
@@ -27,6 +32,15 @@ export interface PatchEntry {
   expectInSet?: boolean;
   changes: PatchChange[];
 }
+
+export const S16_SCOPE_NOTES = {
+  badgeZh: 'S16 改動預覽',
+  badgeEn: 'S16 Preview',
+  modeScopeZh: '僅適用於線上天梯與離線模式',
+  modeScopeEn: 'Online Ladder & Offline Only',
+  expansionScopeZh: '此變更僅適用於《術士軍臨》，經典版與《毀滅之王》不受影響。',
+  expansionScopeEn: 'Applies exclusively to "Reign of the Warlock"; Classic & Lord of Destruction unaffected.',
+};
 
 const add = (zh: string, en: string): PatchChange => ({ type: 'add', zh, en });
 const del = (zh: string, en: string): PatchChange => ({ type: 'remove', zh, en });
@@ -89,8 +103,8 @@ export const PATCH_NOTES: PatchEntry[] = [
   ] },
   { version: '3.4', kind: 'unique', nameEn: 'The Atlantean', expect: ['250-300'], changes: [
     chg('傷害強化 +200–250% → +250–300%', 'Enhanced Damage +200–250% → +250–300%'),
-    add('狂熱 +2–5（只限聖騎士）', '+2–5 to Fanaticism (Paladin only)'),
-    add('攻擊評級 +100–125', '+100–125 to Attack Rating'),
+    add('熱忱打擊 +2–5（僅限聖騎士）', '+2–5 to Zeal (Paladin only)'),
+    add('準確率 +100–125', '+100–125 to Attack Rating'),
     add('需求 -20%', 'Requirements -20%'),
     chg('需求等級 42 → 35', 'Required level 42 → 35'),
   ] },
@@ -99,11 +113,11 @@ export const PATCH_NOTES: PatchEntry[] = [
     chg('凍結時間減半 → 無法被凍結', 'Half Freeze Duration → Cannot Be Frozen'),
   ] },
   { version: '3.4', kind: 'unique', nameEn: 'Earthshaker', expect: ['烈焰爪擊'], changes: [
-    add('烈焰爪擊 +3–5（只限德魯伊）', '+3–5 to Fire Claws (Druid only)'),
+    add('烈焰爪擊 +3–5（僅限德魯伊）', '+3–5 to Fire Claws (Druid only)'),
   ] },
   { version: '3.4', kind: 'unique', nameEn: "Grim's Burning Dead", expect: ['火焰魔像'], changes: [
-    add('15% 機率以 Burning Dead Archer 重生', '15% chance to Revive as a Burning Dead Archer'),
-    add('火焰魔像 +3–5（只限死靈法師）', '+3–5 to Fire Golem (Necromancer only)'),
+    add('15% 復生為烈焰骷髏弓箭手', '15% chance to Revive as a Burning Dead Archer'),
+    add('火焰魔像 +3–5（僅限死靈法師）', '+3–5 to Fire Golem (Necromancer only)'),
     chg('死靈法師技能等級 +3 → +4', '+3 to Necromancer Skill Levels → +4'),
   ] },
   { version: '3.4', kind: 'unique', nameEn: 'Swordguard', expect: ['所有抗性 +20-30'], changes: [
@@ -188,3 +202,32 @@ export const RUNEWORD_ALIASES: Record<string, { resolveAs: string; zh: string; n
 };
 
 export const PATCH_SOURCE = { name: 'd2db.net', url: 'https://d2db.net/?page=article&id=112', titleEn: 'Ladder Season 15 & 16 Item Changes' };
+
+/** 遊戲內部資料與官方公告英文名別名對照表（例如 uniques.json 內部無撇號或有拼寫差異） */
+export const PATCH_ITEM_ALIASES: Record<string, string> = {
+  'Dimoaks Hew': "Dimoak's Hew",
+  'Griswolds Edge': "Griswold's Edge",
+  'Victors Silk': 'Silks of the Victor',
+  'The Atlantian': 'The Atlantean',
+  'Lavagout': 'Lava Gout',
+  'Rogues Bow': "Rogue's Bow",
+  'Blinkbats Form': "Blinkbat's Form",
+  'Angelical Raiment': 'Angelic Raiment',
+  'Angelical Sickle': 'Angelic Sickle',
+  'Angelical Mantle': 'Angelic Mantle',
+};
+
+/**
+ * 依物品 nameEn 快速索引 3.4（天梯第 16 季）改動項目
+ */
+export const PATCH_34_ENTRIES_BY_NAME: Record<string, PatchEntry> = {};
+for (const entry of PATCH_NOTES) {
+  if (entry.version === '3.4') {
+    PATCH_34_ENTRIES_BY_NAME[entry.nameEn] = entry;
+  }
+}
+for (const [alias, canonical] of Object.entries(PATCH_ITEM_ALIASES)) {
+  if (PATCH_34_ENTRIES_BY_NAME[canonical]) {
+    PATCH_34_ENTRIES_BY_NAME[alias] = PATCH_34_ENTRIES_BY_NAME[canonical];
+  }
+}

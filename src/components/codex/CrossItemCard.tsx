@@ -2,6 +2,8 @@ import React from 'react';
 import type { UnifiedGearItem, SpecialPropertyDef } from '../../utils/propertyFilter';
 import { ItemIcon } from '../common/ItemIcon';
 import { useLanguage } from '../../context/LanguageContext';
+import { PATCH_34_ENTRIES_BY_NAME } from '../../data/patchNotes';
+import { PatchChangeNote } from '../common/PatchChangeNote';
 
 export interface CrossItemCardProps {
   item: UnifiedGearItem;
@@ -20,6 +22,7 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
   onNavigateToRune,
 }) => {
   const { isEn } = useLanguage();
+  const patch34 = item.nameEn ? PATCH_34_ENTRIES_BY_NAME[item.nameEn] : undefined;
   // 檢查某條屬性是否匹配任何目前已選取的特殊屬性
   const isAttrHighlighted = (attrText: string): boolean => {
     if (activePropertyDefs.length === 0) return false;
@@ -65,6 +68,11 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
 
             {/* 標籤 Badge */}
             <div className="flex flex-col items-end gap-1 shrink-0">
+              {patch34 && (
+                <span className="text-[10px] px-2 py-0.5 rounded bg-purple-900/60 text-purple-200 border border-purple-500/40 font-semibold font-mono">
+                  {isEn ? 'S16 Preview' : 'S16 改動預覽'}
+                </span>
+              )}
               {item.isNewDLC && (
                 <span className="text-[10px] px-2 py-0.5 rounded bg-d2-fire/20 text-d2-fire border border-d2-fire/40 font-bold font-mono">
                   RotW DLC
@@ -133,6 +141,13 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
               );
             })}
           </div>
+
+          {/* S16 改動預覽附註 */}
+          {patch34 && (
+            <div className="mt-3">
+              <PatchChangeNote entry={patch34} />
+            </div>
+          )}
         </div>
       </div>
     );
@@ -176,11 +191,18 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
             </div>
 
             {/* 專用標籤 */}
-            {item.classOnly && (
-              <span className="text-[10px] px-2 py-0.5 rounded bg-sanctuary-900 text-d2-set border border-d2-set/30 font-medium">
-                {isEn ? `${CLASS_NAME_EN[item.classOnly] || item.classOnly} Only` : `${item.classOnly}專用`}
-              </span>
-            )}
+            <div className="flex flex-col items-end gap-1 shrink-0">
+              {patch34 && (
+                <span className="text-[10px] px-2 py-0.5 rounded bg-purple-900/60 text-purple-200 border border-purple-500/40 font-semibold font-mono">
+                  {isEn ? 'S16 Preview' : 'S16 改動預覽'}
+                </span>
+              )}
+              {item.classOnly && (
+                <span className="text-[10px] px-2 py-0.5 rounded bg-sanctuary-900 text-d2-set border border-d2-set/30 font-medium">
+                  {isEn ? `${CLASS_NAME_EN[item.classOnly] || item.classOnly} Only` : `${item.classOnly}專用`}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* 底材與需求等級 */}
@@ -233,6 +255,13 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
               );
             })}
           </div>
+
+          {/* S16 改動預覽附註 */}
+          {patch34 && (
+            <div className="mt-3">
+              <PatchChangeNote entry={patch34} />
+            </div>
+          )}
         </div>
       </div>
     );
@@ -275,6 +304,11 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
 
           {/* 標籤 Badge */}
           <div className="flex flex-col items-end gap-1 shrink-0">
+            {patch34 && (
+              <span className="text-[10px] px-2 py-0.5 rounded bg-purple-900/60 text-purple-200 border border-purple-500/40 font-semibold font-mono">
+                {isEn ? 'S16 Preview' : 'S16 改動預覽'}
+              </span>
+            )}
             {item.isNewDLC && (
               <span className="text-[10px] px-2 py-0.5 rounded bg-d2-fire/20 text-d2-fire border border-d2-fire/40 font-bold font-mono">
                 RotW DLC
@@ -342,6 +376,13 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
             );
           })}
         </div>
+
+        {/* S16 改動預覽附註 */}
+        {patch34 && (
+          <div className="mt-3">
+            <PatchChangeNote entry={patch34} />
+          </div>
+        )}
       </div>
     </div>
   );

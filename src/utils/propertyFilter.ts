@@ -6,6 +6,7 @@
 import { UNIQUE_ITEMS_DATA } from '../data/uniqueItems';
 import { SET_ITEMS_DATA } from '../data/setItems';
 import { RUNEWORDS_DATA } from '../data/runewords';
+import { PATCH_ITEM_ALIASES } from '../data/patchNotes';
 import type { GearSlot } from '../types';
 
 export type UnifiedItemRarity = 'unique' | 'set' | 'runeword';
@@ -603,9 +604,11 @@ export function filterUnifiedItems(
 
     // 4. 文字搜尋 (名稱、英文名、舊譯名、底材、屬性、套裝名、符文)
     if (cleanQuery) {
+      const aliasName = PATCH_ITEM_ALIASES[item.nameEn];
       const matchName =
         item.name.toLowerCase().includes(cleanQuery) ||
         item.nameEn.toLowerCase().includes(cleanQuery) ||
+        (aliasName ? aliasName.toLowerCase().includes(cleanQuery) : false) ||
         (item.nameClassic ? item.nameClassic.toLowerCase().includes(cleanQuery) : false);
 
       const matchBase =

@@ -23,8 +23,8 @@ const KIND_LABEL: Record<PatchKind, { zh: string; en: string }> = {
 const VERSIONS: { v: PatchVersion; zh: string; en: string; noteZh: string; noteEn: string }[] = [
   {
     v: '3.4', zh: 'Patch 3.4・天梯第 16 季', en: 'Patch 3.4 · Ladder Season 16',
-    noteZh: '以下是 3.4 版的物品改動（舊值 → 新值）。本站物品的基本資料目前是 3.3.93847 版（取自遊戲檔案），還沒有套用這些數值；等 3.4 的遊戲資料出來後會更新單品頁。',
-    noteEn: 'Item changes in patch 3.4 (old → new). The item data on this site is currently from game version 3.3.93847 and does not yet apply these values; item pages will be updated once the 3.4 game data is available.',
+    noteZh: '以下是 3.4 版（天梯第 16 季）的物品改動（舊值 → 新值）。下列物品的改動僅適用於線上天梯與離線模式；此變更僅適用於《術士軍臨》，經典版與《毀滅之王》不受影響。本站物品的基本資料目前是 3.3.93847 版（取自遊戲檔案），單品卡片已同步標註 S16 改動預覽附註；等 3.4 的官方遊戲資料發布後將正式合併基礎屬性。',
+    noteEn: 'Item changes in Patch 3.4 (Ladder Season 16, old → new). These changes apply exclusively to Online Ladder and Offline modes in "Reign of the Warlock"; Classic and Lord of Destruction are unaffected. Item cards now feature dedicated S16 preview notes; base stats will merge once patch 3.4 data drops.',
   },
   {
     v: '3.3', zh: 'Patch 3.3・天梯第 15 季', en: 'Patch 3.3 · Ladder Season 15',

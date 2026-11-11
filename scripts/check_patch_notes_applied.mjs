@@ -8,7 +8,7 @@ import { build } from 'esbuild';
 const bundle = await build({
   stdin: {
     contents: `
-      export { PATCH_NOTES } from './src/data/patchNotes';
+      export { PATCH_NOTES, PATCH_ITEM_ALIASES } from './src/data/patchNotes';
       export { UNIQUE_ITEMS_DATA } from './src/data/uniqueItems';
       export { SET_ITEMS_DATA } from './src/data/setItems';
       export { RUNEWORDS_DATA } from './src/data/runewords';`,
@@ -17,16 +17,25 @@ const bundle = await build({
   bundle: true, platform: 'node', format: 'esm', write: false, logLevel: 'error',
   define: { 'import.meta.env': '{}' }, loader: { '.json': 'json' },
 });
-const { PATCH_NOTES, UNIQUE_ITEMS_DATA, SET_ITEMS_DATA, RUNEWORDS_DATA } = await import(`data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString('base64')}`);
+const { PATCH_NOTES, PATCH_ITEM_ALIASES, UNIQUE_ITEMS_DATA, SET_ITEMS_DATA, RUNEWORDS_DATA } = await import(`data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString('base64')}`);
 
 const setText = (s) => [...(s.partialBonuses ?? []).map((b) => b.bonus), ...(s.fullBonuses ?? [])].join('\n');
 const textOf = (e) => {
-  if (e.kind === 'unique') { const u = UNIQUE_ITEMS_DATA.find((x) => x.nameEn === e.nameEn); return u && [u.attributes.join('\n'), `需要等級：${u.requiredLevel}`].join('\n'); }
-  if (e.kind === 'runeword') { const r = RUNEWORDS_DATA.find((x) => x.nameEn === e.nameEn); return r && [r.attributes.join('\n'), r.allowedBases.join('、')].join('\n'); }
-  if (e.kind === 'set') { const s = SET_ITEMS_DATA.find((x) => x.nameEn === e.nameEn); return s && setText(s); }
+  if (e.kind === 'unique') {
+    const u = UNIQUE_ITEMS_DATA.find((x) => x.nameEn === e.nameEn || PATCH_ITEM_ALIASES[x.nameEn] === e.nameEn);
+    return u && [u.attributes.join('\n'), `需要等級：${u.requiredLevel}`].join('\n');
+  }
+  if (e.kind === 'runeword') {
+    const r = RUNEWORDS_DATA.find((x) => x.nameEn === e.nameEn);
+    return r && [r.attributes.join('\n'), r.allowedBases.join('、')].join('\n');
+  }
+  if (e.kind === 'set') {
+    const s = SET_ITEMS_DATA.find((x) => x.nameEn === e.nameEn || PATCH_ITEM_ALIASES[x.nameEn] === e.nameEn);
+    return s && setText(s);
+  }
   // 套裝部件：預設只看部件自己的屬性（全套加成裡本來就有的字串不能算數）；兩件套、全套的加成寫在套裝上時（expectInSet）才連套裝一起看
-  const s = SET_ITEMS_DATA.find((x) => x.nameEn === e.parentSet);
-  const p = s?.pieces.find((x) => x.nameEn === e.nameEn);
+  const s = SET_ITEMS_DATA.find((x) => x.nameEn === e.parentSet || PATCH_ITEM_ALIASES[x.nameEn] === e.parentSet);
+  const p = s?.pieces.find((x) => x.nameEn === e.nameEn || PATCH_ITEM_ALIASES[x.nameEn] === e.nameEn);
   return p && (e.expectInSet ? `${p.attributes.join('\n')}\n${setText(s)}` : p.attributes.join('\n'));
 };
 

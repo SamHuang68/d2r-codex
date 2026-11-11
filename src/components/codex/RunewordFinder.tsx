@@ -12,6 +12,8 @@ import { RunewordShowcase } from './RunewordShowcase';
 import { useLanguage } from '../../context/LanguageContext';
 import { pathForTab } from '../../utils/routes';
 import { isPlainLeftClick } from '../layout/navConfig';
+import { PATCH_34_ENTRIES_BY_NAME } from '../../data/patchNotes';
+import { PatchChangeNote } from '../common/PatchChangeNote';
 
 export interface RunewordFinderProps {
   initialQuery?: string;
@@ -326,77 +328,84 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
     );
   };
 
-  const runewordCard = (rw: RW) => (
-            <div
-              key={rw.id}
-              id={`rw-${rw.id}`}
-              className={`bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-unique/50 rounded-xl p-5 shadow-lg transition-all duration-200 flex flex-col justify-between group scroll-mt-20 ${dir.flash === `rw-${rw.id}` ? 'ring-2 ring-d2-unique' : ''}`}
-            >
+  const runewordCard = (rw: RW) => {
+    const patch34 = PATCH_34_ENTRIES_BY_NAME[rw.nameEn];
+    return (
+      <div
+        key={rw.id}
+        id={`rw-${rw.id}`}
+        className={`bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-unique/50 rounded-xl p-5 shadow-lg transition-all duration-200 flex flex-col justify-between group scroll-mt-20 ${dir.flash === `rw-${rw.id}` ? 'ring-2 ring-d2-unique' : ''}`}
+      >
+        <div>
+          {/* Header: Title & Runes Badges */}
+          <div className="flex items-start justify-between gap-3 pb-3 border-b border-sanctuary-850">
+            <div className="flex items-start gap-3">
+              <ItemIcon
+                {...repFor(rw.allowedBases)}
+                rarity="runeword"
+                size="lg"
+                imageUrl={rw.imageUrl || repFor(rw.allowedBases).imageUrl}
+              />
               <div>
-                {/* Header: Title & Runes Badges */}
-                <div className="flex items-start justify-between gap-3 pb-3 border-b border-sanctuary-850">
-                  <div className="flex items-start gap-3">
-                    <ItemIcon
-                      {...repFor(rw.allowedBases)}
-                      rarity="runeword"
-                      size="lg"
-                      imageUrl={rw.imageUrl || repFor(rw.allowedBases).imageUrl}
-                    />
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-diablo text-lg font-bold text-d2-unique group-hover:text-amber-300 transition-colors">
-                          <a
-                            href={pathForTab('runewords', rw.id)}
-                            onClick={(e) => { if (!onOpenItem || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenItem(rw.id); }}
-                            className="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold rounded"
-                          >
-                            {isEn && rw.nameEn ? rw.nameEn : rw.name}
-                          </a>
-                        </h3>
-                        {!isEn && rw.nameEn && (
-                          <span className="text-xs text-sanctuary-400 font-mono italic">
-                            {rw.nameEn}
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-xs text-sanctuary-300 mt-1 flex items-center gap-1.5 flex-wrap">
-                      <span>{isEn ? 'Req Level:' : '需求等級:'} <strong className="text-sanctuary-100">{rw.requiredLevel}</strong> • {rw.sockets} {isEn ? 'Sockets' : '孔'}</span>
-                      <span>(</span>
-                      {rw.allowedBases.map((base, bIdx) => (
-                        <React.Fragment key={bIdx}>
-                          {bIdx > 0 && <span className="text-sanctuary-500">/</span>}
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onNavigateToBase?.(base);
-                            }}
-                            className="text-sanctuary-300 hover:text-d2-socket hover:underline cursor-pointer transition-colors"
-                            title={isEn ? `Click to view [${base}] Runeword Base Guide` : `點擊查看【${base}】頂級符文底材指南`}
-                          >
-                            {isEn && rw.allowedBasesEn?.[bIdx] ? rw.allowedBasesEn[bIdx] : base}
-                          </button>
-                        </React.Fragment>
-                      ))}
-                      <span>)</span>
-                    </div>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-diablo text-lg font-bold text-d2-unique group-hover:text-amber-300 transition-colors">
+                    <a
+                      href={pathForTab('runewords', rw.id)}
+                      onClick={(e) => { if (!onOpenItem || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenItem(rw.id); }}
+                      className="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold rounded"
+                    >
+                      {isEn && rw.nameEn ? rw.nameEn : rw.name}
+                    </a>
+                  </h3>
+                  {!isEn && rw.nameEn && (
+                    <span className="text-xs text-sanctuary-400 font-mono italic">
+                      {rw.nameEn}
+                    </span>
+                  )}
                 </div>
+                <div className="text-xs text-sanctuary-300 mt-1 flex items-center gap-1.5 flex-wrap">
+                  <span>{isEn ? 'Req Level:' : '需求等級:'} <strong className="text-sanctuary-100">{rw.requiredLevel}</strong> • {rw.sockets} {isEn ? 'Sockets' : '孔'}</span>
+                  <span>(</span>
+                  {rw.allowedBases.map((base, bIdx) => (
+                    <React.Fragment key={bIdx}>
+                      {bIdx > 0 && <span className="text-sanctuary-500">/</span>}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onNavigateToBase?.(base);
+                        }}
+                        className="text-sanctuary-300 hover:text-d2-socket hover:underline cursor-pointer transition-colors"
+                        title={isEn ? `Click to view [${base}] Runeword Base Guide` : `點擊查看【${base}】頂級符文底材指南`}
+                      >
+                        {isEn && rw.allowedBasesEn?.[bIdx] ? rw.allowedBasesEn[bIdx] : base}
+                      </button>
+                    </React.Fragment>
+                  ))}
+                  <span>)</span>
+                </div>
+              </div>
+            </div>
 
-                  {/* Badges */}
-                  <div className="flex flex-col items-end gap-1 shrink-0">
-                    {rw.isNewDLC && (
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-d2-fire/20 text-d2-fire border border-d2-fire/40 font-bold font-mono">
-                        RotW DLC
-                      </span>
-                    )}
-                    {rw.ladderOnly && (
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-medium">
-                        {isEn ? 'Ladder Only' : '天梯限定'}
-                      </span>
-                    )}
-                  </div>
-                </div>
+            {/* Badges */}
+            <div className="flex flex-col items-end gap-1 shrink-0">
+              {patch34 && (
+                <span className="text-[10px] px-2 py-0.5 rounded bg-purple-900/60 text-purple-200 border border-purple-500/40 font-semibold font-mono">
+                  {isEn ? 'S16 Preview' : 'S16 改動預覽'}
+                </span>
+              )}
+              {rw.isNewDLC && (
+                <span className="text-[10px] px-2 py-0.5 rounded bg-d2-fire/20 text-d2-fire border border-d2-fire/40 font-bold font-mono">
+                  RotW DLC
+                </span>
+              )}
+              {rw.ladderOnly && (
+                <span className="text-[10px] px-2 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-medium">
+                  {isEn ? 'Ladder Only' : '天梯限定'}
+                </span>
+              )}
+            </div>
+          </div>
 
                 {/* Rune Inscription Sockets Sequence */}
                 <div className="my-3 p-3 rounded-xl bg-sanctuary-950/90 border border-sanctuary-800 shadow-inner">
@@ -463,6 +472,13 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                     );
                   })}
                 </div>
+
+                {/* S16 改動預覽附註 */}
+                {patch34 && (
+                  <div className="mt-3.5">
+                    <PatchChangeNote entry={patch34} />
+                  </div>
+                )}
               </div>
 
               {/* Recommended Bases & Tags Footer */}
@@ -482,7 +498,8 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                 </div>
               </div>
             </div>
-  );
+    );
+  };
 
   return (
     <div className="py-8 max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">

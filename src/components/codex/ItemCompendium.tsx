@@ -17,6 +17,8 @@ import { pathForTab } from '../../utils/routes';
 import { isPlainLeftClick } from '../layout/navConfig';
 import { UNIQUE_ITEMS_DATA } from '../../data/uniqueItems';
 import { SET_ITEMS_DATA } from '../../data/setItems';
+import { PATCH_34_ENTRIES_BY_NAME, PATCH_ITEM_ALIASES } from '../../data/patchNotes';
+import { PatchChangeNote } from '../common/PatchChangeNote';
 import {
   getAllUnifiedItems,
   filterUnifiedItems,
@@ -54,7 +56,9 @@ const makeUniqueMatcher = (q: string) => {
   return (item: UniqueItemData) => {
     if (norm && norm.type === 'unique' && item.id === norm.id) return true;
     return terms.some((t) => {
+      const aliasName = PATCH_ITEM_ALIASES[item.nameEn];
       const matchName = item.name.toLowerCase().includes(t) || item.nameEn.toLowerCase().includes(t) ||
+        (aliasName ? aliasName.toLowerCase().includes(t) : false) ||
         (item.nameClassic && item.nameClassic.toLowerCase().includes(t));
       const matchBase = item.baseItem.toLowerCase().includes(t) || (item.baseItemEn ? item.baseItemEn.toLowerCase().includes(t) : false);
       const matchAttr = item.attributes.some((a) => a.toLowerCase().includes(t));
@@ -289,8 +293,9 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   const uniqueCard = (e: UEntry) => {
     const item = e.item;
     const aid = `item-${item.id}`;
+    const patch34 = PATCH_34_ENTRIES_BY_NAME[item.nameEn];
     return (
-      <div key={item.id} id={aid} className={`scroll-mt-20 ${flashCls(aid)}`}>
+      <div key={item.id} id={aid} className={`scroll-mt-20 flex flex-col justify-between ${flashCls(aid)}`}>
         <ItemTooltip
           layout="row"
           title={item.name}
@@ -313,9 +318,15 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             ...(item.classOnly ? [isEn ? `${CLASS_ZH_TO_EN[item.classOnly] || item.classOnly} Only` : `${item.classOnly}專用`] : []),
             ...(item.ladderOnly ? [isEn ? 'Ladder Only' : '天梯限定'] : []),
             ...(item.isNewDLC ? ['RotW DLC'] : []),
+            ...(patch34 ? [isEn ? 'S16 Preview' : 'S16 改動預覽'] : []),
           ]}
           className="h-full hover:border-d2-unique"
         />
+        {patch34 && (
+          <div className="mt-2.5">
+            <PatchChangeNote entry={patch34} />
+          </div>
+        )}
       </div>
     );
   };
@@ -350,76 +361,112 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     );
   };
 
-  const setCard = (set: SetItemCollection) => (
-    <div key={set.id} id={`set-${set.id}`} className={`bg-sanctuary-950 border border-d2-set/30 rounded-xl p-4 sm:p-5 shadow-xl scroll-mt-20 ${dir.flash === `set-${set.id}` ? 'ring-2 ring-d2-set' : ''}`}>
-      {/* Set Header */}
-      <div className="border-b border-sanctuary-800 pb-3 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <div>
-          <h4 className="font-diablo text-xl font-bold text-d2-set">{itemLink(set.id, isEn && set.nameEn ? set.nameEn : set.name)}</h4>
-          <div className="text-xs text-sanctuary-400 font-mono italic">
-            {isEn ? '' : (set.nameEn ? `${set.nameEn} • ` : '')}{isEn ? `${set.pieces.length} Pieces` : `${set.pieces.length} 件套裝`}{set.class ? ` • ${isEn ? `${CLASS_NAME_EN[set.class] || set.class} Only` : `${set.class}專用`}` : ''}
-          </div>
-        </div>
-      </div>
-
-      {/* Set Pieces Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-4">
-        {set.pieces.map((piece) => (
-          <div key={piece.id} className="p-3 rounded-lg bg-sanctuary-900/60 border border-sanctuary-800 text-xs flex gap-3 items-start">
-            <ItemIcon
-              name={piece.name}
-              nameEn={piece.nameEn}
-              baseItem={piece.baseItem}
-              slot={piece.slot}
-              rarity="set"
-              size="lg"
-              imageUrl={piece.imageUrl}
-            />
-            <div className="flex-1 min-w-0">
-              <div className="font-diablo font-bold text-d2-set text-sm">{itemLink(piece.id, isEn && piece.nameEn ? piece.nameEn : piece.name)} {!isEn && piece.nameEn && <span className="font-sans text-xs text-sanctuary-400 font-normal">({piece.nameEn})</span>}</div>
-              <div className="text-[11px] text-sanctuary-400 mb-2 font-medium">
-                {onNavigateToBase ? (
-                  <button
-                    type="button"
-                    onClick={() => onNavigateToBase(piece.baseItem)}
-                    className="hover:text-d2-socket hover:underline cursor-pointer transition-colors inline-flex items-center gap-0.5"
-                    title={isEn ? `Click to view base item guide` : `點擊查看【${piece.baseItem}】符文底材指南`}
-                  >
-                    <span>{isEn && piece.baseItemEn ? piece.baseItemEn : piece.baseItem}</span>
-                    <span className="text-[9px] text-d2-socket">↗</span>
-                  </button>
-                ) : (
-                  <span>{isEn && piece.baseItemEn ? piece.baseItemEn : piece.baseItem}</span>
-                )}{' '}
-                ({isEn ? 'Req Level:' : '需求等級:'} {piece.requiredLevel})
-              </div>
-              <div className="space-y-0.5 text-d2-magic">
-                {piece.attributes.map((attr, i) => (
-                  <div key={i}>• {attr}</div>
-                ))}
-              </div>
+  const setCard = (set: SetItemCollection) => {
+    const setPatch34 = PATCH_34_ENTRIES_BY_NAME[set.nameEn];
+    return (
+      <div key={set.id} id={`set-${set.id}`} className={`bg-sanctuary-950 border border-d2-set/30 rounded-xl p-4 sm:p-5 shadow-xl scroll-mt-20 ${dir.flash === `set-${set.id}` ? 'ring-2 ring-d2-set' : ''}`}>
+        {/* Set Header */}
+        <div className="border-b border-sanctuary-800 pb-3 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h4 className="font-diablo text-xl font-bold text-d2-set">{itemLink(set.id, isEn && set.nameEn ? set.nameEn : set.name)}</h4>
+              {setPatch34 && (
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-900/70 text-purple-200 border border-purple-500/40 font-semibold">
+                  {isEn ? 'S16 Preview' : 'S16 改動預覽'}
+                </span>
+              )}
+            </div>
+            <div className="text-xs text-sanctuary-400 font-mono italic">
+              {isEn ? '' : (set.nameEn ? `${set.nameEn} • ` : '')}{isEn ? `${set.pieces.length} Pieces` : `${set.pieces.length} 件套裝`}{set.class ? ` • ${isEn ? `${CLASS_NAME_EN[set.class] || set.class} Only` : `${set.class}專用`}` : ''}
             </div>
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* Set Bonuses Footer */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 rounded-lg bg-sanctuary-900 border border-sanctuary-800 text-xs">
-        <div>
-          <div className="text-d2-set font-bold mb-1">{isEn ? 'Partial Set Bonuses:' : '部分套裝加成效果:'}</div>
-          {set.partialBonuses.map((pb, idx) => (
-            <div key={idx} className="text-sanctuary-300">({pb.count} {isEn ? 'Pieces' : '件'}) {pb.bonus}</div>
-          ))}
+        {/* Set Pieces Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-4">
+          {set.pieces.map((piece) => {
+            const piecePatch34 = PATCH_34_ENTRIES_BY_NAME[piece.nameEn];
+            return (
+              <div key={piece.id} className="p-3 rounded-lg bg-sanctuary-900/60 border border-sanctuary-800 text-xs flex flex-col justify-between">
+                <div className="flex gap-3 items-start">
+                  <ItemIcon
+                    name={piece.name}
+                    nameEn={piece.nameEn}
+                    baseItem={piece.baseItem}
+                    slot={piece.slot}
+                    rarity="set"
+                    size="lg"
+                    imageUrl={piece.imageUrl}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-diablo font-bold text-d2-set text-sm flex items-center justify-between gap-1 flex-wrap">
+                      <span>{itemLink(piece.id, isEn && piece.nameEn ? piece.nameEn : piece.name)} {!isEn && piece.nameEn && <span className="font-sans text-xs text-sanctuary-400 font-normal">({piece.nameEn})</span>}</span>
+                      {piecePatch34 && (
+                        <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-purple-900/60 text-purple-300 border border-purple-500/40">
+                          {isEn ? 'S16' : 'S16 改動'}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[11px] text-sanctuary-400 mb-2 font-medium">
+                      {onNavigateToBase ? (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateToBase(piece.baseItem)}
+                          className="hover:text-d2-socket hover:underline cursor-pointer transition-colors inline-flex items-center gap-0.5"
+                          title={isEn ? `Click to view base item guide` : `點擊查看【${piece.baseItem}】符文底材指南`}
+                        >
+                          <span>{isEn && piece.baseItemEn ? piece.baseItemEn : piece.baseItem}</span>
+                          <span className="text-[9px] text-d2-socket">↗</span>
+                        </button>
+                      ) : (
+                        <span>{isEn && piece.baseItemEn ? piece.baseItemEn : piece.baseItem}</span>
+                      )}{' '}
+                      ({isEn ? 'Req Level:' : '需求等級:'} {piece.requiredLevel})
+                    </div>
+                    <div className="space-y-0.5 text-d2-magic">
+                      {piece.attributes.map((attr, i) => (
+                        <div key={i}>• {attr}</div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 部件專屬 S16 改動附註 */}
+                {piecePatch34 && (
+                  <div className="mt-2.5 pt-2 border-t border-purple-900/40">
+                    <PatchChangeNote entry={piecePatch34} compact />
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
-        <div>
-          <div className="text-d2-set font-bold mb-1">{isEn ? 'Complete Set Bonuses:' : '完整全套套裝加成:'}</div>
-          {set.fullBonuses.map((fb, idx) => (
-            <div key={idx} className="text-d2-set font-medium">• {fb}</div>
-          ))}
+
+        {/* Set Bonuses Footer */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 rounded-lg bg-sanctuary-900 border border-sanctuary-800 text-xs">
+          <div>
+            <div className="text-d2-set font-bold mb-1">{isEn ? 'Partial Set Bonuses:' : '部分套裝加成效果:'}</div>
+            {set.partialBonuses.map((pb, idx) => (
+              <div key={idx} className="text-sanctuary-300">({pb.count} {isEn ? 'Pieces' : '件'}) {pb.bonus}</div>
+            ))}
+          </div>
+          <div>
+            <div className="text-d2-set font-bold mb-1">{isEn ? 'Complete Set Bonuses:' : '完整全套套裝加成:'}</div>
+            {set.fullBonuses.map((fb, idx) => (
+              <div key={idx} className="text-d2-set font-medium">• {fb}</div>
+            ))}
+          </div>
         </div>
+
+        {/* 套裝整體 S16 改動附註 */}
+        {setPatch34 && (
+          <div className="mt-3.5">
+            <PatchChangeNote entry={setPatch34} />
+          </div>
+        )}
       </div>
-    </div>
-  );
+    );
+  };
 
   const LIST_GRID = 'grid grid-cols-1 xl:grid-cols-2 gap-4';
   const CHIP_GRID = 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2';
