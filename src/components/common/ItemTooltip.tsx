@@ -25,6 +25,8 @@ interface ItemTooltipProps {
   /** 標題改成指向單品網址的連結（一般點擊交給 onTitleClick 在站內換頁） */
   titleHref?: string;
   onTitleClick?: () => void;
+  /** 右側補充區塊（例如放置在原物品說明右側的 S16 版本更新預覽面板） */
+  rightAddon?: React.ReactNode;
 }
 
 export const ItemTooltip: React.FC<ItemTooltipProps> = ({
@@ -47,6 +49,7 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
   badges,
   titleHref,
   onTitleClick,
+  rightAddon,
 }) => {
   const { isEn } = useLanguage();
   const primaryTitle = isEn && titleEn ? titleEn : title;
@@ -154,41 +157,49 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
         )}
       </div>
 
-      <div className="space-y-1 text-xs text-d2-magic font-sans text-left mt-2 border-t border-sanctuary-800/80 pt-2">
-        {attributes.map((attr, idx) => (
-          <div key={idx} className="leading-snug">
-            {attr}
+      <div className={rightAddon ? "grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 border-t border-sanctuary-800/80 pt-2 items-start" : "space-y-1 text-xs text-d2-magic font-sans text-left mt-2 border-t border-sanctuary-800/80 pt-2"}>
+        <div className="space-y-1 text-xs text-d2-magic font-sans text-left min-w-0">
+          {attributes.map((attr, idx) => (
+            <div key={idx} className="leading-snug">
+              {attr}
+            </div>
+          ))}
+
+          {setBonuses && setBonuses.length > 0 && (
+            <div className="mt-3 pt-2 border-t border-d2-set/30 text-left text-xs space-y-1">
+              <div className="text-d2-set font-semibold">{isEn ? 'Partial Set Bonuses:' : '部分套裝獎勵:'}</div>
+              {setBonuses.map((sb, idx) => (
+                <div key={idx} className="text-d2-set-dark">
+                  ({sb.count} {isEn ? 'Items' : '件'}) {sb.bonus}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {fullSetBonuses && fullSetBonuses.length > 0 && (
+            <div className="mt-2 pt-1 border-t border-d2-set/30 text-left text-xs space-y-1">
+              <div className="text-d2-set font-bold">{isEn ? 'Full Set Bonuses:' : '完整套裝獎勵:'}</div>
+              {fullSetBonuses.map((fb, idx) => (
+                <div key={idx} className="text-d2-set font-medium">
+                  {fb}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {flavorText && (
+            <div className="mt-3 pt-2 border-t border-sanctuary-800 text-[11px] text-sanctuary-400 italic text-left">
+              "{flavorText}"
+            </div>
+          )}
+        </div>
+
+        {rightAddon && (
+          <div className="min-w-0 flex flex-col justify-start">
+            {rightAddon}
           </div>
-        ))}
+        )}
       </div>
-
-      {setBonuses && setBonuses.length > 0 && (
-        <div className="mt-3 pt-2 border-t border-d2-set/30 text-left text-xs space-y-1">
-          <div className="text-d2-set font-semibold">{isEn ? 'Partial Set Bonuses:' : '部分套裝獎勵:'}</div>
-          {setBonuses.map((sb, idx) => (
-            <div key={idx} className="text-d2-set-dark">
-              ({sb.count} {isEn ? 'Items' : '件'}) {sb.bonus}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {fullSetBonuses && fullSetBonuses.length > 0 && (
-        <div className="mt-2 pt-1 border-t border-d2-set/30 text-left text-xs space-y-1">
-          <div className="text-d2-set font-bold">{isEn ? 'Full Set Bonuses:' : '完整套裝獎勵:'}</div>
-          {fullSetBonuses.map((fb, idx) => (
-            <div key={idx} className="text-d2-set font-medium">
-              {fb}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {flavorText && (
-        <div className="mt-3 pt-2 border-t border-sanctuary-800 text-[11px] text-sanctuary-400 italic text-left">
-          "{flavorText}"
-        </div>
-      )}
     </>
   );
 

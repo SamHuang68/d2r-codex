@@ -334,7 +334,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
       <div
         key={rw.id}
         id={`rw-${rw.id}`}
-        className={`bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-unique/50 rounded-xl p-5 shadow-lg transition-all duration-200 flex flex-col justify-between group scroll-mt-20 ${dir.flash === `rw-${rw.id}` ? 'ring-2 ring-d2-unique' : ''}`}
+        className={`bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-unique/50 rounded-xl p-5 shadow-lg transition-all duration-200 flex flex-col justify-between group scroll-mt-20 ${dir.flash === `rw-${rw.id}` ? 'ring-2 ring-d2-unique' : ''} ${patch34 ? 'xl:col-span-2' : ''}`}
       >
         <div>
           {/* Header: Title & Runes Badges */}
@@ -454,31 +454,33 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                   </p>
                 )}
 
-                {/* Attributes List */}
-                <div className="space-y-1 text-xs text-d2-magic font-sans pt-1">
-                  {rw.attributes.map((attr, idx) => {
-                    const isSection = /^【.+】$/.test(attr);
-                    if (isSection) {
+                {/* Attributes List & S16 Note */}
+                <div className={patch34 ? "grid grid-cols-1 md:grid-cols-2 gap-4 pt-1 items-start" : "space-y-1 text-xs text-d2-magic font-sans pt-1"}>
+                  <div className="space-y-1 text-xs text-d2-magic font-sans min-w-0">
+                    {rw.attributes.map((attr, idx) => {
+                      const isSection = /^【.+】$/.test(attr);
+                      if (isSection) {
+                        return (
+                          <div key={idx} className="text-amber-400 font-bold font-diablo text-xs pt-2 pb-0.5 border-b border-sanctuary-850/60 first:pt-0">
+                            {attr}
+                          </div>
+                        );
+                      }
                       return (
-                        <div key={idx} className="text-amber-400 font-bold font-diablo text-xs pt-2 pb-0.5 border-b border-sanctuary-850/60 first:pt-0">
-                          {attr}
+                        <div key={idx} className="leading-relaxed pl-1">
+                          • {attr}
                         </div>
                       );
-                    }
-                    return (
-                      <div key={idx} className="leading-relaxed pl-1">
-                        • {attr}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* S16 改動預覽附註 */}
-                {patch34 && (
-                  <div className="mt-3.5">
-                    <PatchChangeNote entry={patch34} />
+                    })}
                   </div>
-                )}
+
+                  {/* S16 改動預覽附註（置於原物品說明右側） */}
+                  {patch34 && (
+                    <div className="min-w-0">
+                      <PatchChangeNote entry={patch34} />
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Recommended Bases & Tags Footer */}

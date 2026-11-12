@@ -295,7 +295,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     const aid = `item-${item.id}`;
     const patch34 = PATCH_34_ENTRIES_BY_NAME[item.nameEn];
     return (
-      <div key={item.id} id={aid} className={`scroll-mt-20 flex flex-col justify-between ${flashCls(aid)}`}>
+      <div key={item.id} id={aid} className={`scroll-mt-20 flex flex-col justify-between ${flashCls(aid)} ${patch34 ? 'xl:col-span-2' : ''}`}>
         <ItemTooltip
           layout="row"
           title={item.name}
@@ -320,13 +320,9 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             ...(item.isNewDLC ? ['RotW DLC'] : []),
             ...(patch34 ? [isEn ? 'S16 Preview' : 'S16 改動預覽'] : []),
           ]}
+          rightAddon={patch34 ? <PatchChangeNote entry={patch34} /> : undefined}
           className="h-full hover:border-d2-unique"
         />
-        {patch34 && (
-          <div className="mt-2.5">
-            <PatchChangeNote entry={patch34} />
-          </div>
-        )}
       </div>
     );
   };
@@ -423,47 +419,49 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                       )}{' '}
                       ({isEn ? 'Req Level:' : '需求等級:'} {piece.requiredLevel})
                     </div>
-                    <div className="space-y-0.5 text-d2-magic">
-                      {piece.attributes.map((attr, i) => (
-                        <div key={i}>• {attr}</div>
-                      ))}
+                    <div className={piecePatch34 ? "grid grid-cols-1 md:grid-cols-2 gap-3 items-start" : "space-y-0.5 text-d2-magic"}>
+                      <div className="space-y-0.5 text-d2-magic min-w-0">
+                        {piece.attributes.map((attr, i) => (
+                          <div key={i}>• {attr}</div>
+                        ))}
+                      </div>
+                      {piecePatch34 && (
+                        <div className="min-w-0">
+                          <PatchChangeNote entry={piecePatch34} compact />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
-
-                {/* 部件專屬 S16 改動附註 */}
-                {piecePatch34 && (
-                  <div className="mt-2.5 pt-2 border-t border-purple-900/40">
-                    <PatchChangeNote entry={piecePatch34} compact />
-                  </div>
-                )}
               </div>
             );
           })}
         </div>
 
         {/* Set Bonuses Footer */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 rounded-lg bg-sanctuary-900 border border-sanctuary-800 text-xs">
-          <div>
-            <div className="text-d2-set font-bold mb-1">{isEn ? 'Partial Set Bonuses:' : '部分套裝加成效果:'}</div>
-            {set.partialBonuses.map((pb, idx) => (
-              <div key={idx} className="text-sanctuary-300">({pb.count} {isEn ? 'Pieces' : '件'}) {pb.bonus}</div>
-            ))}
-          </div>
-          <div>
-            <div className="text-d2-set font-bold mb-1">{isEn ? 'Complete Set Bonuses:' : '完整全套套裝加成:'}</div>
-            {set.fullBonuses.map((fb, idx) => (
-              <div key={idx} className="text-d2-set font-medium">• {fb}</div>
-            ))}
+        <div className="p-3 rounded-lg bg-sanctuary-900 border border-sanctuary-800 text-xs">
+          <div className={setPatch34 ? "grid grid-cols-1 lg:grid-cols-2 gap-4 items-start" : "grid grid-cols-1 md:grid-cols-2 gap-4"}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-w-0">
+              <div>
+                <div className="text-d2-set font-bold mb-1">{isEn ? 'Partial Set Bonuses:' : '部分套裝加成效果:'}</div>
+                {set.partialBonuses.map((pb, idx) => (
+                  <div key={idx} className="text-sanctuary-300">({pb.count} {isEn ? 'Pieces' : '件'}) {pb.bonus}</div>
+                ))}
+              </div>
+              <div>
+                <div className="text-d2-set font-bold mb-1">{isEn ? 'Complete Set Bonuses:' : '完整全套套裝加成:'}</div>
+                {set.fullBonuses.map((fb, idx) => (
+                  <div key={idx} className="text-d2-set font-medium">• {fb}</div>
+                ))}
+              </div>
+            </div>
+            {setPatch34 && (
+              <div className="min-w-0">
+                <PatchChangeNote entry={setPatch34} />
+              </div>
+            )}
           </div>
         </div>
-
-        {/* 套裝整體 S16 改動附註 */}
-        {setPatch34 && (
-          <div className="mt-3.5">
-            <PatchChangeNote entry={setPatch34} />
-          </div>
-        )}
       </div>
     );
   };

@@ -32,7 +32,7 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
   // 1. 暗金裝備卡片 (Unique)
   if (item.rarity === 'unique') {
     return (
-      <div className="bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-unique/60 rounded-xl p-4 sm:p-5 shadow-lg transition-all flex flex-col justify-between group">
+      <div className={`bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-unique/60 rounded-xl p-4 sm:p-5 shadow-lg transition-all flex flex-col justify-between group ${patch34 ? 'xl:col-span-2' : ''}`}>
         <div>
           {/* 標題列 */}
           <div className="flex items-start justify-between gap-3 border-b border-sanctuary-850 pb-3 mb-3">
@@ -120,34 +120,35 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
             ) : null}
           </div>
 
-          {/* 屬性清單 */}
-          <div className="space-y-1 text-xs">
-            {item.attributes.map((attr, idx) => {
-              const highlighted = isAttrHighlighted(attr);
-              return (
-                <div
-                  key={idx}
-                  className={`flex items-start gap-1.5 transition-colors ${
-                    highlighted
-                      ? 'text-amber-200 font-semibold bg-d2-unique/10 px-1.5 py-0.5 rounded border border-d2-unique/30'
-                      : 'text-d2-magic'
-                  }`}
-                >
-                  <span className={highlighted ? 'text-d2-unique' : 'text-sanctuary-500'}>
-                    •
-                  </span>
-                  <span>{attr}</span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* S16 改動預覽附註 */}
-          {patch34 && (
-            <div className="mt-3">
-              <PatchChangeNote entry={patch34} />
+          {/* 屬性清單與 S16 改動附註（置於右側） */}
+          <div className={patch34 ? "grid grid-cols-1 md:grid-cols-2 gap-4 items-start" : "space-y-1 text-xs"}>
+            <div className="space-y-1 text-xs min-w-0">
+              {item.attributes.map((attr, idx) => {
+                const highlighted = isAttrHighlighted(attr);
+                return (
+                  <div
+                    key={idx}
+                    className={`flex items-start gap-1.5 transition-colors ${
+                      highlighted
+                        ? 'text-amber-200 font-semibold bg-d2-unique/10 px-1.5 py-0.5 rounded border border-d2-unique/30'
+                        : 'text-d2-magic'
+                    }`}
+                  >
+                    <span className={highlighted ? 'text-d2-unique' : 'text-sanctuary-500'}>
+                      •
+                    </span>
+                    <span>{attr}</span>
+                  </div>
+                );
+              })}
             </div>
-          )}
+
+            {patch34 && (
+              <div className="min-w-0">
+                <PatchChangeNote entry={patch34} />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -156,7 +157,7 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
   // 2. 套裝配件卡片 (Set)
   if (item.rarity === 'set') {
     return (
-      <div className="bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-set/60 rounded-xl p-4 sm:p-5 shadow-lg transition-all flex flex-col justify-between group">
+      <div className={`bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-set/60 rounded-xl p-4 sm:p-5 shadow-lg transition-all flex flex-col justify-between group ${patch34 ? 'xl:col-span-2' : ''}`}>
         <div>
           {/* 標題列 */}
           <div className="flex items-start justify-between gap-3 border-b border-sanctuary-850 pb-3 mb-3">
@@ -234,34 +235,35 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
             ) : null}
           </div>
 
-          {/* 屬性清單 */}
-          <div className="space-y-1 text-xs">
-            {item.attributes.map((attr, idx) => {
-              const highlighted = isAttrHighlighted(attr);
-              return (
-                <div
-                  key={idx}
-                  className={`flex items-start gap-1.5 transition-colors ${
-                    highlighted
-                      ? 'text-green-200 font-semibold bg-d2-set/10 px-1.5 py-0.5 rounded border border-d2-set/30'
-                      : 'text-d2-magic'
-                  }`}
-                >
-                  <span className={highlighted ? 'text-d2-set' : 'text-sanctuary-500'}>
-                    •
-                  </span>
-                  <span>{attr}</span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* S16 改動預覽附註 */}
-          {patch34 && (
-            <div className="mt-3">
-              <PatchChangeNote entry={patch34} />
+          {/* 屬性清單與 S16 改動附註（置於右側） */}
+          <div className={patch34 ? "grid grid-cols-1 md:grid-cols-2 gap-4 items-start" : "space-y-1 text-xs"}>
+            <div className="space-y-1 text-xs min-w-0">
+              {item.attributes.map((attr, idx) => {
+                const highlighted = isAttrHighlighted(attr);
+                return (
+                  <div
+                    key={idx}
+                    className={`flex items-start gap-1.5 transition-colors ${
+                      highlighted
+                        ? 'text-green-200 font-semibold bg-d2-set/10 px-1.5 py-0.5 rounded border border-d2-set/30'
+                        : 'text-d2-magic'
+                    }`}
+                  >
+                    <span className={highlighted ? 'text-d2-set' : 'text-sanctuary-500'}>
+                      •
+                    </span>
+                    <span>{attr}</span>
+                  </div>
+                );
+              })}
             </div>
-          )}
+
+            {patch34 && (
+              <div className="min-w-0">
+                <PatchChangeNote entry={patch34} />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -269,7 +271,7 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
 
   // 3. 符文之語卡片 (Runeword)
   return (
-    <div className="bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-rune/60 rounded-xl p-4 sm:p-5 shadow-lg transition-all flex flex-col justify-between group">
+    <div className={`bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-rune/60 rounded-xl p-4 sm:p-5 shadow-lg transition-all flex flex-col justify-between group ${patch34 ? 'xl:col-span-2' : ''}`}>
       <div>
         {/* 標題列 */}
         <div className="flex items-start justify-between gap-3 border-b border-sanctuary-850 pb-3 mb-3">
@@ -355,34 +357,35 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
           </div>
         )}
 
-        {/* 屬性清單 */}
-        <div className="space-y-1 text-xs">
-          {item.attributes.map((attr, idx) => {
-            const highlighted = isAttrHighlighted(attr);
-            return (
-              <div
-                key={idx}
-                className={`flex items-start gap-1.5 transition-colors ${
-                  highlighted
-                    ? 'text-amber-200 font-semibold bg-d2-unique/10 px-1.5 py-0.5 rounded border border-d2-unique/30'
-                    : 'text-d2-magic'
-                }`}
-              >
-                <span className={highlighted ? 'text-d2-unique' : 'text-sanctuary-500'}>
-                  •
-                </span>
-                <span>{attr}</span>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* S16 改動預覽附註 */}
-        {patch34 && (
-          <div className="mt-3">
-            <PatchChangeNote entry={patch34} />
+        {/* 屬性清單與 S16 改動附註（置於右側） */}
+        <div className={patch34 ? "grid grid-cols-1 md:grid-cols-2 gap-4 items-start" : "space-y-1 text-xs"}>
+          <div className="space-y-1 text-xs min-w-0">
+            {item.attributes.map((attr, idx) => {
+              const highlighted = isAttrHighlighted(attr);
+              return (
+                <div
+                  key={idx}
+                  className={`flex items-start gap-1.5 transition-colors ${
+                    highlighted
+                      ? 'text-amber-200 font-semibold bg-d2-unique/10 px-1.5 py-0.5 rounded border border-d2-unique/30'
+                      : 'text-d2-magic'
+                  }`}
+                >
+                  <span className={highlighted ? 'text-d2-unique' : 'text-sanctuary-500'}>
+                    •
+                  </span>
+                  <span>{attr}</span>
+                </div>
+              );
+            })}
           </div>
-        )}
+
+          {patch34 && (
+            <div className="min-w-0">
+              <PatchChangeNote entry={patch34} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
