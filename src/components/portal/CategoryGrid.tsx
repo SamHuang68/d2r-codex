@@ -70,7 +70,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({ onNavigateTab }) => 
                 onClick={() => onNavigateTab(m.id)}
                 className="group flex flex-col items-start gap-2 p-4 rounded-xl border border-sanctuary-800 bg-gradient-to-b from-sanctuary-900 to-sanctuary-950 hover:border-d2-gold/60 text-left transition-colors"
               >
-                <span className="p-2.5 rounded-lg bg-sanctuary-950 border border-sanctuary-800 [&_svg]:w-7 [&_svg]:h-7">{m.icon}</span>
+                <span className="p-2.5 rounded-lg bg-sanctuary-950 border border-sanctuary-800 [&_svg]:w-7 [&_svg]:h-7 [&_img]:w-7 [&_img]:h-7">{m.icon}</span>
                 <span className="font-diablo font-bold text-sm text-sanctuary-100 group-hover:text-d2-unique">
                   {t(m.label, m.labelEn)}
                 </span>

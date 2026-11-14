@@ -451,7 +451,7 @@ export const MonsterCompendium: React.FC<{ initialQuery?: string }> = ({ initial
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in">
       <PageHeader
-        icon={<Ghost className="w-7 h-7" />}
+        icon={<GameIcon name="demon" className="w-7 h-7" />}
         title={t('怪物圖鑑', 'Monster Bestiary')}
         tone="text-d2-fire"
         desc={t('遊戲資料表（monstats、levels）裡每種怪物在三個難度的等級與六種抗性，以及每個場景出現哪些怪物、有哪些元素免疫。規劃配裝與選場景時，用它查「這個場景能不能用我的元素」。', 'Game data tables detailing monster levels, 6 resistance types across 3 difficulties, and area monster spawns.')}

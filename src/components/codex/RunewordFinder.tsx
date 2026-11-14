@@ -5,6 +5,7 @@ import { ItemIcon } from '../common/ItemIcon';
 import { BASE_ITEMS_DATA } from '../../data/bases';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
+import { GameIcon } from '../common/GameIcons';
 import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, MoreButton, crumbsOf, useDirectory, useDetailBudget } from '../common/TreeIndex';
 import { TaxDef, TreeNode, buildTree, recount, findNode } from '../../utils/equipTaxonomy';
 import { Search, Sparkles, Filter, X, ArrowRight } from 'lucide-react';
@@ -506,7 +507,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
   return (
     <div className="py-8 max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
       <PageHeader
-        icon={<Sparkles className="w-6 h-6" />}
+        icon={<GameIcon name="rune" className="w-7 h-7" />}
         title={t('符文之語全能檢索手冊', 'Runewords Complete Codex')}
         desc={t('包含全經典、天梯限定及最新《術士軍臨》DLC 符文之語，支援按底材孔數與關鍵屬性即時交叉篩選。依「底材類型 → 孔數」分層，每層內依需求等級排序。', 'Complete database of Classic, Ladder-only, and Reign of the Warlock DLC runewords with multi-dimensional filtering by sockets, bases, and affixes.')}
         right={

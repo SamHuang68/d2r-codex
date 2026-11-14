@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Landmark, Search, Sparkles, Clock, Flame, ShieldAlert } from 'lucide-react';
+import { Search, Sparkles, Clock, Flame, ShieldAlert } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 import { PageHeader } from '../common/PageHeader';
 import { useLanguage } from '../../context/LanguageContext';
 import { SHRINES, SHRINE_TYPES, SHRINE_TYPE_ZH, durationSeconds, shrineSummary, shrineSummaryEn, shrineMsgEn, type Shrine, type ShrineType } from '../../data/codex/shrines';
@@ -167,7 +168,7 @@ export const ShrineCompendium: React.FC<{ initialQuery?: string }> = ({ initialQ
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in">
       <PageHeader
-        icon={<Landmark className="w-7 h-7" />}
+        icon={<GameIcon name="altar" className="w-7 h-7" />}
         title={t('聖壇圖鑑', 'Shrines Compendium')}
         tone="text-d2-gold"
         desc={t(

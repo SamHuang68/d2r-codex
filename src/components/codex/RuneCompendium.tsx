@@ -6,8 +6,9 @@ import { RuneFarmingGuide } from './RuneFarmingGuide';
 import { ItemIcon } from '../common/ItemIcon';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
+import { GameIcon } from '../common/GameIcons';
 import { SectionHead } from '../common/TreeIndex';
-import { Layers, ArrowRight, Sparkles, Flame, Compass, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
+import { ArrowRight, Sparkles, Flame, Compass, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
 export interface RuneCompendiumProps {
@@ -76,7 +77,7 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
   return (
     <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
       <PageHeader
-        icon={<Layers className="w-6 h-6" />}
+        icon={<GameIcon name="stone" className="w-7 h-7" />}
         tone="text-d2-rune"
         title={t('33 枚符文全典藏與熱門符文語互聯', 'All 33 Runes Codex & Runewords Directory')}
         desc={t('從 1# 艾爾 (El) 到 33# 薩德 (Zod)，完整收錄鑲嵌屬性、方塊升級公式、固定掉落場景與上限，並支援點擊「相關符文之語」直達組成細節。', 'From 1# El to 33# Zod: complete socket effects, Horadric Cube upgrade formulas, farming spots & max drop caps, and cross-referenced Runewords.')}

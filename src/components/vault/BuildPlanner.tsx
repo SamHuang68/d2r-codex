@@ -4,7 +4,8 @@ import { useLanguage } from '../../context/LanguageContext';
 import { loadBuildPlans, saveBuildPlans } from '../../utils/storage';
 import { BREAKPOINTS_DATA } from '../../data/breakpoints';
 import { PRESET_META_BUILDS } from '../../data/presets';
-import { Wrench, Plus, Trash2, CheckCircle2, Zap, Sparkles, BookOpen, X } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
+import { Plus, Trash2, CheckCircle2, Zap, Sparkles, BookOpen, X } from 'lucide-react';
 
 export interface BuildPlannerProps {
   onNavigateToSkills?: (className: string) => void;
@@ -123,7 +124,7 @@ export const BuildPlanner: React.FC<BuildPlannerProps> = ({ onNavigateToSkills, 
       <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="font-diablo text-2xl sm:text-3xl font-bold text-sanctuary-100 flex items-center gap-2">
-            <Wrench className="w-6 h-6 text-d2-unique" />
+            <GameIcon name="anvil" className="w-7 h-7 text-d2-unique" />
             <span>{isEn ? "Character Build Planner & Armory" : "角色配裝模擬工坊 (Build Planner)"}</span>
           </h2>
           <p className="text-xs sm:text-sm text-sanctuary-400 mt-1">

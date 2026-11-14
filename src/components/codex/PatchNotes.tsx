@@ -1,5 +1,6 @@
 import React from 'react';
-import { ScrollText, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 import { PageHeader } from '../common/PageHeader';
 import { useLanguage } from '../../context/LanguageContext';
 import { pathForTab } from '../../utils/routes';
@@ -68,7 +69,7 @@ export const PatchNotes: React.FC<PatchNotesProps> = ({ onOpenItem }) => {
   return (
     <div className="py-8 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       <PageHeader
-        icon={<ScrollText className="w-6 h-6" />}
+        icon={<GameIcon name="patch" className="w-7 h-7" />}
         title={t('版本改動', 'Patch Changes')}
         desc={t('暗黑破壞神 II：獄火重生 3.3、3.4 版（天梯第 15、16 季）的物品改動：暗金、套裝與符文之語的數值調整。', 'Item changes in Diablo II: Resurrected patches 3.3 and 3.4 (Ladder Seasons 15 and 16): balance changes to uniques, sets and runewords.')}
       />

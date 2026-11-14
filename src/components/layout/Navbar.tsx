@@ -43,7 +43,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
         >
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-d2-unique to-sanctuary-900 p-0.5 shadow-glow-gold flex items-center justify-center">
             <div className="w-full h-full bg-sanctuary-950 rounded-[7px] flex items-center justify-center">
-              <GameIcon name="gate" className="w-4 h-4 text-d2-unique group-hover:scale-110 transition-transform duration-200" />
+              <GameIcon name="gate" className="w-5 h-5 text-d2-unique group-hover:scale-110 transition-transform duration-200" />
             </div>
           </div>
           <div className="max-[439px]:hidden">

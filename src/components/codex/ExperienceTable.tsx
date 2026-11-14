@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { TrendingUp } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 import { PageHeader } from '../common/PageHeader';
 import { useLanguage } from '../../context/LanguageContext';
 import { EXP, MAX_LEVEL, expBetween, expForLevel, expToReach, fmtExp, progressOf } from '../../data/codex/experience';
@@ -87,7 +87,7 @@ export const ExperienceTable: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in">
       <PageHeader
-        icon={<TrendingUp className="w-7 h-7" />}
+        icon={<GameIcon name="levelup" className="w-7 h-7" />}
         title={t('經驗值表', 'Experience Table')}
         tone="text-d2-gold"
         desc={t('1 到 99 級每一級需要的累計經驗與單級經驗，以及升級計算。八個職業的經驗表完全相同。資料來自遊戲資料表。', 'Experience curve from Level 1 to 99, cumulative XP, XP per level, and level calculators for all 8 classes.')}

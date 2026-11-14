@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Search, Tag } from 'lucide-react';
+import { Search } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
 import { PageHeader } from '../common/PageHeader';
 import { useLanguage } from '../../context/LanguageContext';
 import affixLinesEnJson from '../../data/codex/affixLinesEn.json';
@@ -115,7 +116,7 @@ export const AffixCompendium: React.FC<{ initialQuery?: string }> = ({ initialQu
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in">
       <PageHeader
-        icon={<Tag className="w-7 h-7" />}
+        icon={<GameIcon name="tag" className="w-7 h-7" />}
         title={isEn ? "Magic Affix Compendium" : "詞綴寶典"}
         tone="text-d2-magic"
         desc={isEn ? "Complete catalog of prefixes, suffixes, and auto-affixes for magic and rare items: modifier ranges, eligible base types, required item levels (alvl), and spawn weights. Select an item type and item level to see what affixes can actually spawn on that item." : "魔法與稀有物品的前綴、後綴與自動詞綴全表：每個詞綴的屬性範圍、可以出現在哪些物品、要多高的物品等級、抽選權重。選一種物品類型和物品等級，就能看到那件物品實際可能長出哪些詞綴。"}

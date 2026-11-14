@@ -10,11 +10,11 @@ import { ItemIcon } from '../common/ItemIcon';
 import { UNIQUE_ITEMS_DATA } from '../../data/uniqueItems';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
+import { GameIcon } from '../common/GameIcons';
 import { useLanguage } from '../../context/LanguageContext';
 import { 
   Gem, 
   Sparkles, 
-  FlaskConical, 
   Layers, 
   ArrowRight, 
   ShieldAlert, 
@@ -84,7 +84,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
   return (
     <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 animate-fade-in">
       <PageHeader
-        icon={<FlaskConical className="w-6 h-6" />}
+        icon={<GameIcon name="flask" className="w-7 h-7" />}
         tone="text-d2-magic"
         title={isEn ? "Items, Gems & Combat Relics Compendium" : "道具、寶石與戰鬥聖物全典藏"}
         desc={isEn ? "Full database of 7 Perfect Gems socketing & crafting recipes, Pandemonium Event keys & organs, 4 Prime Evil Essences & Token of Absolution, and combat potions." : "收錄七大完美寶石鑲嵌與手工工藝、崔斯特姆紅門鑰匙與六王器官、四大魔神精華與洗點徽章，以及解毒/解凍抗性黑科技藥劑。"}

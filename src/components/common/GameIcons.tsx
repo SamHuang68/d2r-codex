@@ -1,13 +1,33 @@
 import React from 'react';
 import { GAME_ICON_SHAPES, type GameIconName } from './gameIconPaths';
+import { gameIconImageUrl } from './gameIconImages';
 
 export interface GameIconProps {
   name: GameIconName;
   className?: string;
+  /** true 時強制使用向量圖示（網站標誌等品牌用途）；預設優先顯示遊戲內圖樣 */
+  vector?: boolean;
 }
 
-/** 原創的遊戲風格圖示：顏色跟著文字色（currentColor），大小由 className 決定，和 lucide 圖示的用法相同。 */
-export const GameIcon: React.FC<GameIconProps> = ({ name, className }) => {
+/**
+ * 主題圖示：預設顯示對應的遊戲內圖樣（gameIconImages.ts），大小由 className 決定；
+ * 沒有對應圖樣或指定 vector 時，顯示跟著文字色（currentColor）的向量圖示。
+ */
+export const GameIcon: React.FC<GameIconProps> = ({ name, className, vector }) => {
+  const img = vector ? undefined : gameIconImageUrl(name);
+  if (img) {
+    return (
+      <img
+        src={img}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+        draggable={false}
+        className={`object-contain shrink-0 ${className ?? ''}`}
+      />
+    );
+  }
   const shape: { stroke: string[]; fill?: string[] } = GAME_ICON_SHAPES[name];
   return (
     <svg

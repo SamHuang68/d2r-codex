@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { CUBE_RECIPES_DATA } from '../../data/cubeRecipes';
 import { ItemIcon } from '../common/ItemIcon';
-import { BookOpen, Plus, ArrowRight, Sparkles, Flame } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
+import { Plus, ArrowRight, Sparkles, Flame } from 'lucide-react';
 import { CubeRecipeData } from '../../types';
 import { SectionHead } from '../common/TreeIndex';
 import { useLanguage } from '../../context/LanguageContext';
@@ -59,7 +60,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-magic flex items-center gap-2">
-            <BookOpen className="w-6 h-6 text-d2-magic" />
+            <GameIcon name="cube" className="w-7 h-7 text-d2-magic" />
             <span>{t('赫拉迪姆方塊煉金工坊 (Cube Recipes)', 'Horadric Cube Alchemy Lab')}</span>
           </h2>
           <p className="text-xs sm:text-sm text-sanctuary-400 mt-1">

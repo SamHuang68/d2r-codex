@@ -2138,11 +2138,18 @@ console.log('【傭兵與職業／流派搭配矩陣 (Mercenary Matrix & Preset 
 }
 {
   const { GAME_ICON_SHAPES: SH } = E;
-  t('導覽列圖示：25 個模組各用一個不同的原創圖示，名稱都存在、路徑是合法的 SVG 指令且座標在 24×24 格內', () => {
+  t('導覽列圖示：25 個模組各用一個不同的圖示，名稱都存在、路徑是合法的 SVG 指令且座標在 24×24 格內；每個都有對應且存在的遊戲內圖樣', () => {
     const src = fs.readFileSync('src/components/layout/navConfig.tsx', 'utf8');
     const names = [...src.matchAll(/<GameIcon name="([a-z]+)"/g)].map((m) => m[1]);
     assert.equal(names.length, 25); assert.equal(new Set(names).size, 25, '有兩個模組用了同一個圖示');
     for (const n of names) assert.ok(SH[n], `沒有圖示 ${n}`);
+    const imgSrc = fs.readFileSync('src/components/common/gameIconImages.ts', 'utf8');
+    const imgs = Object.fromEntries([...imgSrc.matchAll(/^\s+([a-z]+): '([^']+)'/gm)].map((m) => [m[1], m[2]]));
+    for (const n of names) {
+      assert.ok(imgs[n], `模組圖示 ${n} 沒有對應的遊戲內圖樣`);
+      assert.ok(fs.existsSync(`public/images/${imgs[n]}`), `圖示 ${n} 的圖檔不存在：${imgs[n]}`);
+    }
+    assert.equal(new Set(names.map((n) => imgs[n])).size, 25, '有兩個模組用了同一張遊戲圖樣');
     for (const [n, sh] of Object.entries(SH)) for (const d of [...sh.stroke, ...(sh.fill ?? [])]) {
       assert.match(d, /^[MmLlHhVvCcSsQqTtAaZz0-9 ,.-]+$/, `${n} 路徑含不合法字元`);
       for (const num of d.match(/-?[0-9]+(?:[.][0-9]+)?/g)) assert.ok(Math.abs(Number(num)) <= 24, `${n} 數值超出格子：${num}`);

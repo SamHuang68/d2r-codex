@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { cleanSearchQuery, normalizeItemQuery } from '../../utils/itemQueryNormalizer';
 import { ItemTooltip } from '../common/ItemTooltip';
 import { ItemIcon } from '../common/ItemIcon';
-import { Sword, Search, X, ArrowUpDown, RotateCcw } from 'lucide-react';
+import { GameIcon } from '../common/GameIcons';
+import { Search, X, ArrowUpDown, RotateCcw } from 'lucide-react';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import { PageHeader } from '../common/PageHeader';
 import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, MoreButton, crumbsOf, useDirectory, useDetailBudget } from '../common/TreeIndex';
@@ -572,7 +573,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   return (
     <div className="py-8 max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
       <PageHeader
-        icon={<Sword className="w-6 h-6" />}
+        icon={<GameIcon name="sword" className="w-7 h-7" />}
         title={t('裝備寶典 (暗金 · 套裝 · 符文之語)', 'Equipment Codex (Uniques · Sets · Runewords)')}
         desc={t('收錄暗黑破壞神二代各部位指標性暗金裝備、全套套裝與經典符文之語，支援跨裝備特殊屬性（永不毀損、+全技能、全抗、MF 等）一鍵篩選。未選取特殊屬性時保留階層式分類樹。', 'Comprehensive codex of iconic Unique gear, complete Sets, and Runewords. Supports one-click cross-equipment filtering by key special properties (Indestructible, +All Skills, All Res, MF, etc.).')}
         right={

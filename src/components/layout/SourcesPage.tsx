@@ -51,7 +51,7 @@ export const SourcesPage: React.FC = () => {
       </Section>
 
       <Section icon={<Music className="w-5 h-5" />} title={t('原創內容', 'Original content')}>
-        <p>{t('網站圖示、導覽列圖示與背景氛圍音樂為本站原創：圖示是自行繪製的向量圖，音樂由程式即時合成，不是遊戲原聲帶。', 'The site icon, navigation icons and ambient music are original to this site: the icons are hand-drawn vectors and the music is synthesized in real time, not the game soundtrack.')}</p>
+        <p>{t('網站圖示與背景氛圍音樂為本站原創：網站圖示是自行繪製的向量圖，音樂由程式即時合成，不是遊戲原聲帶。導覽列與各頁標題的主題圖示使用遊戲內的物品、聖壇與角色圖樣，版權屬於原權利人。', 'The site icon and ambient music are original to this site: the site icon is a hand-drawn vector and the music is synthesized in real time, not the game soundtrack. Topic icons in the navigation and page titles use in-game item, shrine and character artwork, which remains the property of its rights holder.')}</p>
       </Section>
 
       <p className="text-xs text-sanctuary-500">{isEn ? 'Last updated with the game data version shown above.' : '內容隨上方的遊戲資料版本更新。'}</p>
