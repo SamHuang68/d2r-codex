@@ -1,4 +1,6 @@
 import React from 'react';
+import { ArrowUpRight } from 'lucide-react';
+import { isPlainLeftClick, tabHref } from '../layout/navConfig';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
 import portalSummary from '../../data/codex/portalSummary.json';
 import { NAV_GROUPS } from '../layout/navConfig';
@@ -57,31 +59,36 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({ onNavigateTab }) => 
         />
       </div>
 
+      <div className="md:columns-2 gap-4">
       {toolGroups.map((g) => (
-        <div key={g.category}>
+        <div key={g.category} className="break-inside-avoid mb-4 rounded-2xl border border-sanctuary-800 bg-sanctuary-900/40 p-4 sm:p-5">
           <h3 className="font-diablo text-base font-bold text-sanctuary-200 mb-3 border-l-2 border-d2-gold pl-2">
             {t(g.category, g.categoryEn)}
           </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3">
+          <div className="grid gap-2">
             {g.items.map((m) => (
-              <button
+              <a
                 key={m.id}
-                type="button"
-                onClick={() => onNavigateTab(m.id)}
-                className="group flex flex-col items-start gap-2 p-4 rounded-xl border border-sanctuary-800 bg-gradient-to-b from-sanctuary-900 to-sanctuary-950 hover:border-d2-gold/60 text-left transition-colors"
+                href={tabHref(m.id)}
+                onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onNavigateTab(m.id); }}
+                className="group flex items-center gap-3 p-3 rounded-xl border border-transparent bg-sanctuary-950/60 hover:border-d2-gold/60 hover:bg-sanctuary-850 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-d2-gold focus-visible:outline-offset-2"
               >
                 <span className="p-2.5 rounded-lg bg-sanctuary-950 border border-sanctuary-800 [&_svg]:w-7 [&_svg]:h-7 [&_img]:w-7 [&_img]:h-7">{m.icon}</span>
-                <span className="font-diablo font-bold text-sm text-sanctuary-100 group-hover:text-d2-unique">
+                <span className="min-w-0 flex-1">
+                <span className="block font-diablo font-bold text-sm text-sanctuary-100 group-hover:text-d2-unique">
                   {t(m.label, m.labelEn)}
                 </span>
-                <span className="text-[11px] text-sanctuary-400 leading-snug">
+                <span className="block mt-1 text-xs text-sanctuary-300 leading-relaxed">
                   {t(m.desc, m.descEn)}
                 </span>
-              </button>
+                </span>
+                <ArrowUpRight aria-hidden="true" className="w-4 h-4 shrink-0 text-sanctuary-500 group-hover:text-d2-gold" />
+              </a>
             ))}
           </div>
         </div>
       ))}
+      </div>
     </section>
   );
 };

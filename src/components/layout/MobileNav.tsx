@@ -41,7 +41,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   return (
     <>
       {/* 底部浮動導航條 (Mobile Dock) */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-sanctuary-950/95 backdrop-blur-lg border-t border-sanctuary-800 px-2 py-1.5 flex items-center justify-around shadow-2xl safe-area-pb">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-sanctuary-950/95 backdrop-blur-lg border-t border-sanctuary-800 px-1 py-1.5 grid grid-cols-7 items-center shadow-2xl safe-area-pb">
         {quickTabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -50,7 +50,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
               href={tabHref(tab.id)}
               onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); handleSelectTab(tab.id); }}
               aria-current={isActive ? 'page' : undefined}
-              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all duration-150 shrink-0 ${
+              className={`flex flex-col items-center justify-center min-h-11 min-w-0 py-1 px-0.5 rounded-xl transition-all duration-150 shrink-0 ${
                 isActive
                   ? 'text-d2-unique font-bold scale-105'
                   : 'text-sanctuary-400 hover:text-sanctuary-200'
@@ -65,7 +65,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
         {/* 更多模組抽屜切換鍵 */}
         <button
           onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all duration-150 shrink-0 ${
+          className={`flex flex-col items-center justify-center min-h-11 min-w-0 py-1 px-0.5 rounded-xl transition-all duration-150 shrink-0 ${
             isDrawerOpen ? 'text-d2-gold font-bold scale-105' : 'text-sanctuary-400 hover:text-sanctuary-200'
           }`}
         >
@@ -76,7 +76,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
         {/* 全域快速搜尋按鈕 */}
         <button
           onClick={onOpenSearch}
-          className="flex flex-col items-center justify-center py-1 px-2 text-d2-unique rounded-xl shrink-0"
+          className="flex flex-col items-center justify-center min-h-11 min-w-0 py-1 px-0.5 text-d2-unique rounded-xl shrink-0"
         >
           <div className="w-6 h-6 rounded-full bg-d2-unique/20 flex items-center justify-center border border-d2-unique/40 shadow-glow-gold/20">
             <span className="text-[10px] font-bold font-mono">Q</span>

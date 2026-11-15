@@ -223,7 +223,7 @@ const AppContent: React.FC = () => {
         <Suspense fallback={<div className="p-8 text-center text-sanctuary-400" role="status">{t('載入中…', 'Loading…')}</div>}>
         {activeTab === 'overview' && (
           <div>
-            <HeroSection onNavigateTab={(tab) => handleNavigate(tab)} />
+            <HeroSection onNavigateTab={(tab) => handleNavigate(tab)} onOpenSearch={() => setIsSearchOpen(true)} />
             <CategoryGrid onNavigateTab={(tab, node) => handleNavigate(tab, undefined, undefined, node)} />
             <ClassShowcase 
               onCheckBreakpoints={handleCheckClassBreakpoints}

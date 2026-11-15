@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Play, Sparkles, ArrowRight, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Play, Sparkles, ArrowRight, X, Search } from 'lucide-react';
 import portalSummary from '../../data/codex/portalSummary.json';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -9,11 +9,27 @@ const { classCount: skillClassCount, treeCount: skillTreeCount } = portalSummary
 
 interface HeroSectionProps {
   onNavigateTab: (tab: string) => void;
+  onOpenSearch: () => void;
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
+export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab, onOpenSearch }) => {
   const { t } = useLanguage();
   const [showVideoModal, setShowVideoModal] = useState(false);
+
+  const videoRef = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    if (!showVideoModal) return;
+    const dialog = videoRef.current;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    dialog?.showModal();
+    document.body.style.overflow = 'hidden';
+    return () => {
+      dialog?.close();
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, [showVideoModal]);
 
   return (
     <section className="relative overflow-hidden pt-8 pb-10 md:pt-10 md:pb-12 border-b border-sanctuary-800">
@@ -48,6 +64,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
             'The timeless ARPG legend. Featuring build armory simulator, runeword matrix, breakpoint calculators, and Holy Grail drop tracker.'
           )}
         </p>
+
+        <button
+          type="button"
+          onClick={onOpenSearch}
+          className="mt-6 mx-auto w-full max-w-2xl flex items-center gap-3 rounded-2xl border border-d2-unique/50 bg-sanctuary-900 px-4 sm:px-5 py-4 text-left shadow-glow-gold hover:border-d2-gold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-d2-gold focus-visible:outline-offset-4"
+        >
+          <Search aria-hidden="true" className="w-5 h-5 text-d2-unique shrink-0" />
+          <span className="flex-1 text-sm sm:text-base text-sanctuary-200">{t('搜尋資料庫', 'Search Database')}</span>
+          <kbd className="rounded border border-sanctuary-700 px-2 py-1 text-xs text-d2-unique">Q /</kbd>
+          <ArrowRight aria-hidden="true" className="w-4 h-4 text-sanctuary-400" />
+        </button>
 
         {/* Action CTAs */}
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
@@ -140,15 +167,23 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
 
       {/* Video Modal (Blizzard Official Trailer) */}
       {showVideoModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+        <dialog
+          ref={videoRef}
+          aria-labelledby="portal-video-title"
+          onCancel={(e) => { e.preventDefault(); setShowVideoModal(false); }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowVideoModal(false); }}
+          className="m-auto w-[calc(100%-2rem)] max-w-4xl max-h-[90dvh] overflow-y-auto p-0 bg-transparent text-sanctuary-100 backdrop:bg-black/90 backdrop:backdrop-blur-md"
+        >
           <div className="relative w-full max-w-4xl bg-sanctuary-950 border border-sanctuary-700 rounded-2xl overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between p-4 border-b border-sanctuary-800 bg-sanctuary-900">
-              <span className="font-diablo font-bold text-d2-unique text-base">
+              <span id="portal-video-title" className="font-diablo font-bold text-d2-unique text-base">
                 {t('《暗黑破壞神 II：獄火重生》實機展示影片', 'Diablo II: Resurrected Official Trailer')}
               </span>
               <button
+                autoFocus
+                aria-label={t('關閉影片', 'Close video')}
                 onClick={() => setShowVideoModal(false)}
-                className="p-1.5 rounded-lg text-sanctuary-400 hover:text-white hover:bg-sanctuary-800"
+                className="shrink-0 p-3 rounded-lg text-sanctuary-400 hover:text-white hover:bg-sanctuary-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-d2-gold"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -163,7 +198,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab }) => {
               />
             </div>
           </div>
-        </div>
+        </dialog>
       )}
     </section>
   );
