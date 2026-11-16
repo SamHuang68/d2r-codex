@@ -22,6 +22,7 @@ const BLOCK_GROUPS: { tag: string; factor: number }[] = [
 const CLASS_NAME_BY_CODE: Record<string, string> = { ama: 'Amazon', sor: 'Sorceress', nec: 'Necromancer', pal: 'Paladin', bar: 'Barbarian', dru: 'Druid', ass: 'Assassin', war: 'Warlock' };
 
 export interface HeaderOptions {
+  lang?: 'zh' | 'en';
   /** 物品自身的需求等級（暗金／套裝件） */
   levelReq?: number;
   /** 遊戲表沒有可用資料的屬性（未定義的屬性、觸發技能等級 0）：略過這些 modifier（以索引指定），改附舊百科的文字行 */
@@ -42,6 +43,8 @@ export function scaledRequirements(base: BaseItem | undefined, mods: Modifier[])
 
 export function headerLines(base: BaseItem | undefined, mods: Modifier[], opts: HeaderOptions = {}): string[] {
   const lines: string[] = [];
+  const en = opts.lang === 'en';
+  const label = (zh: string, english: string) => en ? english : zh;
   const e0 = entriesAt(mods, 0); const e1 = entriesAt(mods, 1);
   // 無形物品：底材防禦與傷害 ×1.5（取整）
   const eth = mods.some((m) => m.code === 'ethereal');
@@ -54,9 +57,9 @@ export function headerLines(base: BaseItem | undefined, mods: Modifier[], opts: 
     const calc = (b: number, es: StatEntry[]) => Math.floor(ethScale(b) * (1 + sumOf(es, 'item_armor_percent') / 100)) + sumOf(es, 'armorclass');
     const [acMin, acMax] = opts.baseAc ?? [base.minAc, base.maxAc];
     const lo = calc(acMin, e0); const hi = calc(acMax, e1);
-    lines.push(`防禦：${range(lo, hi)}`);
+    lines.push(`${label('防禦：', 'Defense: ')}${range(lo, hi)}`);
     const r0 = sumOf(e0, 'item_armor_perlevel') / 8; const r1 = sumOf(e1, 'item_armor_perlevel') / 8;
-    if (r0 || r1) lines.push(`防禦：(${lo + Math.floor(r0)}-${lo + Math.floor(r0 * 99)})-(${hi + Math.floor(r1)}-${hi + Math.floor(r1 * 99)})`);
+    if (r0 || r1) lines.push(`${label('防禦：', 'Defense: ')}(${lo + Math.floor(r0)}-${lo + Math.floor(r0 * 99)})-(${hi + Math.floor(r1)}-${hi + Math.floor(r1 * 99)})`);
   }
   if (base?.kind === 'weapon') {
     const dmg = (label: string, mn: number, mx: number) => {
@@ -64,33 +67,33 @@ export function headerLines(base: BaseItem | undefined, mods: Modifier[], opts: 
       const side = (b: number, pct: string, flat: string, es: StatEntry[], lvl: number, perLvlFlat?: string, perLvlPct?: string) => Math.floor(ethScale(b) * (1 + (sumOf(es, pct) + (perLvlPct ? Math.floor((sumOf(es, perLvlPct) / 8) * lvl) : 0)) / 100)) + sumOf(es, flat) + (perLvlFlat ? Math.floor((sumOf(es, perLvlFlat) / 8) * lvl) : 0);
       const a = side(mn, 'item_mindamage_percent', 'mindamage', e0, 1); const b = side(mn, 'item_mindamage_percent', 'mindamage', e1, 99);
       const c = side(mx, 'item_maxdamage_percent', 'maxdamage', e0, 1, 'item_maxdamage_perlevel', 'item_maxdamage_percent_perlevel'); const d = side(mx, 'item_maxdamage_percent', 'maxdamage', e1, 99, 'item_maxdamage_perlevel', 'item_maxdamage_percent_perlevel');
-      lines.push(`${label}：${part(a, b)} - ${part(c, d)} 點`);
+      lines.push(`${label}${en ? ': ' : '：'}${part(a, b)} - ${part(c, d)}${en ? '' : ' 點'}`);
     };
-    if (base.minDam !== undefined && base.maxDam !== undefined) dmg('單手傷害', base.minDam, base.maxDam);
-    if (base.minDam2h !== undefined && base.maxDam2h !== undefined) dmg('雙手傷害', base.minDam2h, base.maxDam2h);
-    if (base.minMisDam !== undefined && base.maxMisDam !== undefined) dmg('投擲傷害', base.minMisDam, base.maxMisDam);
+    if (base.minDam !== undefined && base.maxDam !== undefined) dmg(label('單手傷害', 'One-Hand Damage'), base.minDam, base.maxDam);
+    if (base.minDam2h !== undefined && base.maxDam2h !== undefined) dmg(label('雙手傷害', 'Two-Hand Damage'), base.minDam2h, base.maxDam2h);
+    if (base.minMisDam !== undefined && base.maxMisDam !== undefined) dmg(label('投擲傷害', 'Throw Damage'), base.minMisDam, base.maxMisDam);
   }
   if (base?.ancestors.includes('shld')) {
     const total = (cf: number, es: StatEntry[]) => (base.block ?? 0) + sumOf(es, 'toblock') + cf;
     if (base.class) {
       const cf = blockFactor(CLASS_NAME_BY_CODE[base.class] ?? '');
-      lines.push(`格擋機率：${range(total(cf, e0), total(cf, e1))}%`);
+      lines.push(`${label('格擋機率：', 'Chance to Block: ')}${range(total(cf, e0), total(cf, e1))}%`);
     } else {
-      for (const g of BLOCK_GROUPS) lines.push(`格擋機率：${range(total(g.factor, e0), total(g.factor, e1))}% (${g.tag})`);
+      for (const g of BLOCK_GROUPS) lines.push(`${label('格擋機率：', 'Chance to Block: ')}${range(total(g.factor, e0), total(g.factor, e1))}% (${g.tag})`);
     }
-    if (base.smiteMax) lines.push(`重擊傷害：${base.smiteMin ?? 0} - ${base.smiteMax} 點`);
+    if (base.smiteMax) lines.push(`${label('重擊傷害：', 'Smite Damage: ')}${base.smiteMin ?? 0} - ${base.smiteMax}${en ? '' : ' 點'}`);
   }
-  if (base?.kickMax) lines.push(`踢擊傷害：${base.kickMin ?? 0} - ${base.kickMax} 點`);
-  if (lv > 0) lines.push(`需要等級：${lv}`);
-  if (req.str) lines.push(`需要力量：${req.str}`);
-  if (req.dex) lines.push(`需要敏捷：${req.dex}`);
-  if (base?.maxStack) lines.push(`最大堆疊：${base.maxStack + sumOf(e1, 'item_extra_stack')}`); // 投擲武器顯示堆疊數量，不顯示耐久度
-  else if (base && base.kind !== 'misc' && (base.durability ?? 0) > 0 && !indestructible) lines.push(`耐久度：${range((base.durability ?? 0) + sumOf(e0, 'maxdurability'), (base.durability ?? 0) + sumOf(e1, 'maxdurability'))}`);
-  if (base?.beltSlots) lines.push(`腰帶空間：+${base.beltSlots - 4} 格`);
+  if (base?.kickMax) lines.push(`${label('踢擊傷害：', 'Kick Damage: ')}${base.kickMin ?? 0} - ${base.kickMax}${en ? '' : ' 點'}`);
+  if (lv > 0) lines.push(`${label('需要等級：', 'Required Level: ')}${lv}`);
+  if (req.str) lines.push(`${label('需要力量：', 'Required Strength: ')}${req.str}`);
+  if (req.dex) lines.push(`${label('需要敏捷：', 'Required Dexterity: ')}${req.dex}`);
+  if (base?.maxStack) lines.push(`${label('最大堆疊：', 'Maximum Stack: ')}${base.maxStack + sumOf(e1, 'item_extra_stack')}`); // 投擲武器顯示堆疊數量，不顯示耐久度
+  else if (base && base.kind !== 'misc' && (base.durability ?? 0) > 0 && !indestructible) lines.push(`${label('耐久度：', 'Durability: ')}${range((base.durability ?? 0) + sumOf(e0, 'maxdurability'), (base.durability ?? 0) + sumOf(e1, 'maxdurability'))}`);
+  if (base?.beltSlots) lines.push(`${label('腰帶空間：', 'Belt Slots: ')}+${base.beltSlots - 4}${en ? '' : ' 格'}`);
   if (base?.kind === 'weapon') {
     // 近戰武器的攻擊範圍＝1＋底材的 rangeAdder；速度欄位省略代表 0
-    if (base.ancestors.includes('mele')) lines.push(`範圍: ${1 + (base.rangeAdder ?? 0)}`);
-    lines.push(`武器基本速度：[${base.speed ?? 0}]`);
+    if (base.ancestors.includes('mele')) lines.push(`${label('範圍: ', 'Range: ')}${1 + (base.rangeAdder ?? 0)}`);
+    lines.push(`${label('武器基本速度：', 'Weapon Base Speed: ')}[${base.speed ?? 0}]`);
   }
   return lines;
 }
@@ -108,5 +111,5 @@ export function modLines(mods: Modifier[], base?: BaseItem, opts: DescribeRangeO
 export function itemAttributes(base: BaseItem | undefined, mods: Modifier[], opts: HeaderOptions & { staticLines?: string[] } = {}): string[] {
   const used = opts.dropMods?.length ? mods.filter((_, i) => !opts.dropMods?.includes(i)) : mods;
   const head = headerLines(base, opts.staticLines ? [] : used, opts);
-  return [...head, ...(opts.staticLines ?? [...modLines(used, base), ...(opts.extraLines ?? [])])];
+  return [...head, ...(opts.staticLines ?? [...modLines(used, base, { lang: opts.lang }), ...(opts.extraLines ?? [])])];
 }

@@ -37,6 +37,7 @@ const pieceOf = (r: ItemRow, setSize: number): SetPiece => {
     requiredStr: scaledRequirements(base, r.mods).str || undefined,
     requiredDex: scaledRequirements(base, r.mods).dex || undefined,
     attributes: [...itemAttributes(base, r.mods, { levelReq: r.levelReq }), ...bonus],
+    attributesEn: [...itemAttributes(base, r.mods, { levelReq: r.levelReq, lang: 'en' }), ...r.setBonusByCount.flatMap(m => describeRanges([m], { lang: 'en' }).map(l => `${l.text} (${m.slot + 1 >= setSize ? 'Full Set' : m.slot + 1})`))],
     imageUrl: o?.imageUrl ?? (imageForEntry({ id: `set:${r.id}`, kind: 'set', baseCode: r.code }) || undefined),
     grade: base?.tier ?? 'normal',
     classOnly: base ? classOnlyOf(base) : null,
@@ -66,7 +67,9 @@ export const SET_ITEMS_DATA: SetItemCollection[] = setRows.map((s) => {
     class: cls ?? null,
     pieces,
     partialBonuses,
+    partialBonusesEn: s.partial.flatMap(m => describeRanges([m], { lang: 'en' }).map(l => ({ count: m.pieces, bonus: l.text }))),
     fullBonuses,
+    fullBonusesEn: describeRanges([...s.full, ...s.partial], { lang: 'en' }).map(l => l.text),
   };
 });
 

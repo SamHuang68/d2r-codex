@@ -34,7 +34,7 @@ const DiffButtons: React.FC<{ diff: Diff; onChange: (d: Diff) => void }> = ({ di
   const { isEn } = useLanguage();
   const diffLabels = isEn ? DIFF_EN : DIFF_ZH;
   return (
-    <div className="flex items-center gap-1" role="group" aria-label="難度">
+    <div className="flex items-center gap-1" role="group" aria-label={isEn ? 'Difficulty' : '難度'}>
       {([0, 1, 2] as Diff[]).map((d) => (
         <button key={d} type="button" onClick={() => onChange(d)} aria-pressed={diff === d}
           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${diff === d ? 'bg-d2-fire text-sanctuary-950 font-bold shadow' : 'bg-sanctuary-950/80 text-sanctuary-300 hover:text-sanctuary-100 border border-sanctuary-800'}`}>
@@ -323,15 +323,15 @@ const MonstersTab: React.FC<{ initialQuery?: string }> = ({ initialQuery }) => {
           <DiffButtons diff={diff} onChange={setDiff} />
           <div className="relative flex-1 md:max-w-sm">
             <Search className="w-4 h-4 text-sanctuary-500 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input type="search" value={q} onChange={(e) => { setQ(e.target.value); setLimit(PAGE); }} placeholder={isEn ? "Search monster by name, English name, or ID..." : "搜尋怪物名稱、英文名或代碼…"} aria-label="搜尋怪物"
+            <input type="search" value={q} onChange={(e) => { setQ(e.target.value); setLimit(PAGE); }} placeholder={isEn ? "Search monster by name, English name, or ID..." : "搜尋怪物名稱、英文名或代碼…"} aria-label={isEn ? 'Search monsters' : '搜尋怪物'}
               className="w-full pl-9 pr-3 py-2 bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-fire/50" />
           </div>
-          <select value={kind} onChange={(e) => { setKind(e.target.value); setLimit(PAGE); }} aria-label="分類" className="bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl px-3 py-2 text-xs text-sanctuary-200">
+          <select value={kind} onChange={(e) => { setKind(e.target.value); setLimit(PAGE); }} aria-label={isEn ? 'Category' : '分類'} className="bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl px-3 py-2 text-xs text-sanctuary-200">
             <option value="all">{isEn ? 'All Categories' : '全部分類'}</option>
             <option value="boss">{isEn ? 'Bosses & Superuniques' : '頭目'}</option>
             {(Object.keys(KIND_ZH) as (keyof typeof KIND_ZH)[]).map((k) => <option key={k} value={k}>{isEn ? (KIND_EN[k] || k) : KIND_ZH[k]}</option>)}
           </select>
-          <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} aria-label="排序" className="bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl px-3 py-2 text-xs text-sanctuary-200">
+          <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} aria-label={isEn ? 'Sort' : '排序'} className="bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl px-3 py-2 text-xs text-sanctuary-200">
             <option value="name">{isEn ? 'Sort by Name' : '依名稱'}</option><option value="level">{isEn ? 'Sort by Level (High to Low)' : '依等級（高到低）'}</option><option value="immunity">{isEn ? 'Sort by Immunities' : '依免疫項數'}</option>
           </select>
         </div>
@@ -348,7 +348,7 @@ const MonstersTab: React.FC<{ initialQuery?: string }> = ({ initialQuery }) => {
         </div>
       </div>
 
-      <div className="space-y-2" aria-label="怪物清單">
+      <div className="space-y-2" aria-label={isEn ? 'Monster list' : '怪物清單'}>
         {list.slice(0, limit).map((m) => <MonsterRow key={m.id} m={m} diff={diff} open={open === m.id} onToggle={() => setOpen(open === m.id ? null : m.id)} />)}
         {list.length === 0 && <div className="text-sm text-sanctuary-500 py-8 text-center">{isEn ? 'No monsters match the criteria' : '沒有符合條件的怪物'}</div>}
         {list.length > limit && <button type="button" onClick={() => setLimit(limit + PAGE)} className="w-full py-2.5 rounded-xl border border-sanctuary-800 text-xs text-sanctuary-300 hover:text-sanctuary-100">{isEn ? `Show more (${list.length - limit} remaining)` : `顯示更多（還有 ${list.length - limit} 隻）`}</button>}
@@ -369,7 +369,7 @@ const AreaCard: React.FC<{ area: Area; diff: Diff }> = ({ area, diff }) => {
           <h3 className="font-bold text-sanctuary-100">{isEn ? areaNameEn(area) : (area.name ?? areaNameEn(area))}</h3>
           <div className="text-[11px] font-mono text-sanctuary-500">{isEn ? '' : `${areaNameEn(area)}　·　`}{isEn ? `Act ${area.act}` : `第 ${area.act} 章`}</div>
         </div>
-        <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-sanctuary-950 text-sanctuary-300 border border-sanctuary-800 shrink-0" title="怪物等級（該難度）">Lv {areaLevel(area, diff) ?? '—'}</span>
+        <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-sanctuary-950 text-sanctuary-300 border border-sanctuary-800 shrink-0" title={isEn ? 'Monster level at this difficulty' : '怪物等級（該難度）'}>Lv {areaLevel(area, diff) ?? '—'}</span>
       </div>
       {total === 0 ? <div className="text-xs text-sanctuary-500">{isEn ? 'No monster spawns in this difficulty' : '此難度沒有怪物清單'}</div> : (
         <>
@@ -432,13 +432,13 @@ const AreasTab: React.FC = () => {
         </div>
         <div className="relative flex-1 md:max-w-xs">
           <Search className="w-4 h-4 text-sanctuary-500 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={isEn ? "Search area name..." : "搜尋場景名稱…"} aria-label="搜尋場景"
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={isEn ? "Search area name..." : "搜尋場景名稱…"} aria-label={isEn ? 'Search areas' : '搜尋場景'}
             className="w-full pl-9 pr-3 py-2 bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-fire/50" />
         </div>
         <span className="md:ml-auto text-xs text-sanctuary-500">{isEn ? `${list.length} Areas (${DIFF_EN[diff]})` : `${list.length} 個場景（${DIFF_ZH[diff]}）`}</span>
       </div>
       <div className="text-xs text-sanctuary-500">{isEn ? 'Green = No regular monsters are immune to this element; Colored = Number of immune monsters. Excludes champion/unique modifiers.' : '綠色＝這個場景（該難度）出現的一般怪物裡沒有任何一種免疫該元素；紅色等＝有幾種免疫。不含精英與獨特詞綴帶來的額外免疫（例如火焰附魔）。'}</div>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" aria-label="場景清單">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" aria-label={isEn ? 'Area list' : '場景清單'}>
         {list.map((a) => <AreaCard key={a.id} area={a} diff={diff} />)}
       </div>
     </div>

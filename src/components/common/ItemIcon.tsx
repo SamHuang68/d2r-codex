@@ -1,3 +1,4 @@
+import { useLanguage } from '../../context/LanguageContext';
 import React, { useState } from 'react';
 import { GearSlot, ItemRarity } from '../../types';
 import { resolveItemImagePath } from '../../utils/itemImageResolver';
@@ -149,7 +150,8 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
   const boxStyle: React.CSSProperties = fill
     ? {}
     : { height: px, minWidth: Math.round(px * 0.6), maxWidth: `min(100%, ${px}px)` };
-  const alt = name || nameEn || 'Item';
+  const { isEn } = useLanguage();
+  const alt = (isEn ? nameEn || name : name || nameEn) || 'Item';
 
   return (
     <Container

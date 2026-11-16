@@ -12,7 +12,7 @@ interface Props {
   onChangeBase: (baseCode: string) => void;
 }
 
-const runeName = (code: string) => gameData.gems.find((g) => g.code === code)?.name ?? code;
+const runeName = (code: string, en: boolean) => { const gem = gameData.gems.find(g => g.code === code); return (en ? gem?.nameEn : gem?.name) ?? code; };
 
 export const SocketEditor: React.FC<Props> = ({ eq, level, onChange, onChangeBase }) => {
   const { isEn } = useLanguage();
@@ -24,7 +24,7 @@ export const SocketEditor: React.FC<Props> = ({ eq, level, onChange, onChangeBas
 
   const effect = (id: string) => {
     const s = all.find((x) => x.id === id); if (!s) return '';
-    return describeModifiers(socketEffectMods(s, cat), 1, level).map((l) => l.text).join('，');
+    return describeModifiers(socketEffectMods(s, cat), 1, level, isEn ? 'en' : 'zh').map((l) => l.text).join('，');
   };
   const count = cap.fixed ? cap.count : Math.max(cap.count, Math.min(eq.socketCount ?? cap.count, cap.max));
   const socks = eq.sockets ?? [];
@@ -36,7 +36,7 @@ export const SocketEditor: React.FC<Props> = ({ eq, level, onChange, onChangeBas
 
   const opt = (kind: 'rune' | 'gem' | 'jewel', label: string) => (
     <optgroup label={label}>
-      {all.filter((s) => s.kind === kind).map((s) => <option key={s.id} value={s.id}>{s.name}　{effect(s.id)}</option>)}
+      {all.filter((s) => s.kind === kind).map((s) => <option key={s.id} value={s.id}>{isEn ? s.nameEn || s.name : s.name}　{effect(s.id)}</option>)}
     </optgroup>
   );
 
@@ -45,19 +45,19 @@ export const SocketEditor: React.FC<Props> = ({ eq, level, onChange, onChangeBas
       {entry.kind === 'runeword' && bases.length > 1 && (
         <label className="d2-field w-full">{isEn ? "Base Item" : "底材"}
           <select value={entry.baseCode} onChange={(e) => onChangeBase(e.target.value)} className="d2-select flex-1 min-w-0">
-            {bases.map((b) => <option key={b.code} value={b.code}>{isEn ? `${b.nameEn} (${b.name}) · ${b.tier ?? 'normal'}${b.class ? ' · Class Specific' : ''} · Req Str ${b.reqStr ?? 0}` : `${b.name}（${b.nameEn}） ${TIER_ZH[b.tier ?? 'normal']}${b.class ? ' · 職業專屬' : ''} · 需求力量 ${b.reqStr ?? 0}`}</option>)}
+            {bases.map((b) => <option key={b.code} value={b.code}>{isEn ? `${b.nameEn} · ${b.tier ?? 'normal'}${b.class ? ' · Class Specific' : ''} · Req Str ${b.reqStr ?? 0}` : `${b.name}（${b.nameEn}） ${TIER_ZH[b.tier ?? 'normal']}${b.class ? ' · 職業專屬' : ''} · 需求力量 ${b.reqStr ?? 0}`}</option>)}
           </select>
         </label>
       )}
       {entry.kind === 'runeword' && (
-        <div className="t-dim">{isEn ? "Runes: " : "符文："}{(entry.sockets ?? []).map(runeName).join(' + ')}<span style={{ color: 'var(--faint)' }}>{isEn ? " (Socketing bonuses from runes/gems already included)" : "（符文本身的鑲嵌效果已計入）"}</span></div>
+        <div className="t-dim">{isEn ? "Runes: " : "符文："}{(entry.sockets ?? []).map(code => runeName(code, isEn)).join(' + ')}<span style={{ color: 'var(--faint)' }}>{isEn ? " (Socketing bonuses from runes/gems already included)" : "（符文本身的鑲嵌效果已計入）"}</span></div>
       )}
       {!cap.fixed && cap.max > cap.count && (
         <label className="d2-field">{isEn ? "Sockets" : "孔數"}
           <select value={count} onChange={(e) => { const n = Number(e.target.value); onChange({ socketCount: n, sockets: socks.slice(0, n) }); }} className="d2-select">
             {Array.from({ length: cap.max - cap.count + 1 }, (_, i) => <option key={i} value={cap.count + i}>{cap.count + i}</option>)}
           </select>
-          <span style={{ color: 'var(--faint)' }}>{cap.count > 0 ? `自帶 ${cap.count} 孔，` : ''}最多 {cap.max} 孔</span>
+          <span style={{ color: 'var(--faint)' }}>{isEn ? `${cap.count > 0 ? `${cap.count} innate sockets; ` : ''}maximum ${cap.max} sockets` : `${cap.count > 0 ? `自帶 ${cap.count} 孔，` : ''}最多 ${cap.max} 孔`}</span>
         </label>
       )}
       {entry.kind !== 'runeword' && count > 0 && (

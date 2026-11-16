@@ -283,7 +283,7 @@ export const ValuationGuide: React.FC = () => {
               const rows = filteredItems.filter((i) => i.category === cat.id);
               if (rows.length === 0) return null;
               return (
-                <section key={cat.id} id={`val-${cat.id}`} aria-label={cat.label} className="scroll-mt-20">
+                <section key={cat.id} id={`val-${cat.id}`} aria-label={isEn ? cat.labelEn : cat.label} className="scroll-mt-20">
                   <SectionHead title={isEn ? cat.labelEn : cat.label} count={rows.length} tone="unique" />
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {rows.map((item) => {

@@ -227,7 +227,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                                 rw.nameEn.toLowerCase().includes(q) ||
                                 (rw.nameClassic && rw.nameClassic.toLowerCase().includes(q));
             const matchesRunes = rw.runes.some((r) => r.toLowerCase().includes(q));
-            const matchesAttrs = rw.attributes.some((a) => a.toLowerCase().includes(q));
+            const matchesAttrs = [...rw.attributes, ...(rw.attributesEn ?? [])].some((a) => a.toLowerCase().includes(q));
             const matchesBases = rw.allowedBases.some((b) => b.toLowerCase().includes(q));
             return matchesName || matchesRunes || matchesAttrs || matchesBases;
           });
@@ -451,14 +451,14 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                 {/* Description / Playstyle */}
                 {rw.description && (
                   <p className="text-xs text-sanctuary-300 italic bg-sanctuary-900/60 p-2.5 rounded-lg border border-sanctuary-850 mb-3">
-                    {rw.description}
+                    {isEn && rw.id === 'hustle' ? 'Added in patch 2.6. The weapon grants Fanaticism and casts Burst of Speed on striking, making it useful for prebuffing or early progression. The armor provides high movement speed, attack speed, and hit recovery.' : rw.description}
                   </p>
                 )}
 
                 {/* Attributes List & S16 Note */}
                 <div className={patch34 ? "grid grid-cols-1 md:grid-cols-2 gap-4 pt-1 items-start" : "space-y-1 text-xs text-d2-magic font-sans pt-1"}>
                   <div className="space-y-1 text-xs text-d2-magic font-sans min-w-0">
-                    {rw.attributes.map((attr, idx) => {
+                    {(isEn ? rw.attributesEn ?? rw.attributes : rw.attributes).map((attr, idx) => {
                       const isSection = /^【.+】$/.test(attr);
                       if (isSection) {
                         return (
@@ -489,13 +489,13 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                 {rw.recommendedBases ? (
                   <div className="truncate">
                     <strong className="text-sanctuary-300">{isEn ? 'Recommended Bases: ' : '推薦底材：'}</strong>
-                    <span className="text-d2-white font-medium">{rw.recommendedBases}</span>
+                    <span className="text-d2-white font-medium">{isEn && rw.id === 'hustle' ? 'Phase Blade / Archon Plate / Dusk Shroud' : rw.recommendedBases}</span>
                   </div>
                 ) : <div />}
                 <div className="flex items-center gap-1 flex-wrap shrink-0">
                   {rw.tags.map((t, i) => (
                     <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-sanctuary-900 text-sanctuary-400 border border-sanctuary-800">
-                      #{t}
+                      #{isEn ? ({ '攻速': 'IAS', '靈氣': 'Aura', '跑步速度': 'FRW', '打擊恢復': 'FHR' } as Record<string, string>)[t] ?? t : t}
                     </span>
                   ))}
                 </div>

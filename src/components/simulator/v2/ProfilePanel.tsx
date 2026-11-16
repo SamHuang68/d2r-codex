@@ -1,3 +1,4 @@
+import presetNotesEn from '../../../data/presetNotesEn.json';
 import React, { useEffect, useState } from 'react';
 import { BUILDS, PRESET_TIER_ZH, SIM_PRESETS, tierOf, type PresetTier } from '../../../data/simulatorPresets';
 import { previewPreset, stateFromPreset } from '../../../data/presetState';
@@ -16,6 +17,14 @@ interface Props {
   onUndo: () => void;
   say: (m: string) => void;
 }
+
+const englishPresetNotes = (note: string): string => {
+  const suffix = ' 已依地獄難度的抗性調整手套、腰帶、戒指、鞋子（技能加成、攻速、施法與受擊恢復影格不降）。';
+  if (note.endsWith(suffix)) return `${englishPresetNotes(note.slice(0, -suffix.length))} Gloves, belt, rings, and boots are adjusted for Hell resistances without reducing skills, IAS, FCR, or FHR breakpoints.`;
+  if (note.startsWith('保留流派核心裝備')) return `Keep core build equipment${note.includes('頭盔等核心欄位不換') ? ' (including core slots such as the helm)' : ''}, replacing eligible helm, armor, boots, right ring, and charms with magic-find items. This balances MF with kill speed; damage and FCR/IAS breakpoints are not simulated, so assess clear speed yourself.`;
+  if (note.startsWith('全身換成 MF 最高的件')) return `Maximize MF without prioritizing damage or survival${note.includes('技能綁定武器類型') ? '; this build retains its required endgame weapon types in both weapon slots' : ''}. Armor requires 97 strength, consuming attribute points and leaving lower life.`;
+  return (presetNotesEn as Record<string, string>)[note] ?? note;
+};
 
 const sameItems = (a: object, b: object) => JSON.stringify(a) === JSON.stringify(b);
 
@@ -131,9 +140,10 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
   const applyTemplate = (buildId: string, tier: PresetTier) => {
     const p = SIM_PRESETS.find((x) => x.build === buildId && x.tier === tier); if (!p) return;
     const { snap, notes } = stateFromPreset(p);
-    apply(snap, parts, `${p.name}`);
+    const label = isEn ? `${BUILD_NAME_EN[buildId] ?? buildId} — ${PRESET_TIER_EN[tier]}` : p.name;
+    apply(snap, parts, label);
     if (notes.length) {
-      say(isEn ? `Applied "${p.name}" with ${notes.length} notes: ${notes.join('; ')}` : `已套用「${p.name}」，但有 ${notes.length} 項需注意：${notes.join('；')}`);
+      say(isEn ? `Applied "${label}" with ${notes.length} notes: ${notes.join('; ')}` : `已套用「${p.name}」，但有 ${notes.length} 項需注意：${notes.join('；')}`);
     }
   };
 
@@ -253,7 +263,7 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
             <ul className="grid grid-cols-1 lg:grid-cols-2 gap-2">
               {builds.map((b) => {
                 const main = skillByName(b.skill.main);
-                const buildTitle = isEn && BUILD_NAME_EN[b.id] ? `${BUILD_NAME_EN[b.id]} (${b.name})` : b.name;
+                const buildTitle = isEn && BUILD_NAME_EN[b.id] ? BUILD_NAME_EN[b.id] : b.name;
                 const mainSkillName = main ? (isEn && (main as any).nameEn ? (main as any).nameEn : main.name) : b.skill.main;
                 const summaryText = isEn && BUILD_SUMMARY_EN[b.id] ? BUILD_SUMMARY_EN[b.id] : b.summary;
 
@@ -276,7 +286,7 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
                             className={`d2-btn ${t === 'bis' ? '' : 'is-quiet'}`}
                             disabled={none}
                             onClick={() => applyTemplate(b.id, t)}
-                            title={tierOf(b, t).notes}
+                            title={isEn ? englishPresetNotes(tierOf(b, t).notes) : tierOf(b, t).notes}
                           >
                             {btnText}
                           </button>
@@ -316,7 +326,7 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
                             className="d2-btn is-quiet"
                             disabled={none}
                             onClick={() => applyTemplate(b.id, t)}
-                            title={tierOf(b, t).notes}
+                            title={isEn ? englishPresetNotes(tierOf(b, t).notes) : tierOf(b, t).notes}
                           >
                             {tierLabel}{statText}
                           </button>
@@ -352,7 +362,7 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
                             className="d2-btn is-quiet"
                             disabled={none}
                             onClick={() => applyTemplate(b.id, t)}
-                            title={tierOf(b, t).notes}
+                            title={isEn ? englishPresetNotes(tierOf(b, t).notes) : tierOf(b, t).notes}
                           >
                             {tierLabel}{statText}
                           </button>

@@ -223,7 +223,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
                             <ArrowRight className="w-4 h-4 text-d2-unique shrink-0 animate-pulse" />
                             <span className="shrink-0">{isEn ? 'Transmuted Output: ' : '煉金轉化產出：'}</span>
                             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-sanctuary-900/90 border border-d2-unique/40 shadow-sm text-d2-unique font-bold flex-wrap">
-                              <ItemIcon name={recipe.output} size="sm" showBorder={false} />
+                              <ItemIcon name={recipe.output} nameEn={recipe.outputEn} size="sm" showBorder={false} />
                               <span>{isEn && recipe.outputEn ? recipe.outputEn : recipe.output}</span>
                             </div>
                           </div>

@@ -77,14 +77,14 @@ const BreakpointRow: React.FC<{ kind: BpKind; label: string; unit: string; class
   const table = tables.find((x) => x.id === pick) ?? tables[0];
   const st = bpStatus(table, value);
   return (
-    <div className="d2-row flex-wrap gap-y-1" title={table.inferredLast ? '最後一格的影格值來源頁面缺漏，依規律補上' : undefined}>
+    <div className="d2-row flex-wrap gap-y-1" title={table.inferredLast ? (isEn ? 'The source omits the final frame value; inferred from the progression' : '最後一格的影格值來源頁面缺漏，依規律補上') : undefined}>
       <span className="k">{label}</span>
       <span className="v">
         {value}%・{st.frames} {unit}
         {st.next ? <span className="t-dim">　{isEn ? `Next ${st.next.threshold}% (${st.next.missing}% missing, ${st.next.frames} frames)` : `下一格 ${st.next.threshold}%（還差 ${st.next.missing}%，${st.next.frames} 影格）`}</span> : <span className="t-gold">　{isEn ? "Max breakpoint reached" : "已達最高斷點"}</span>}
       </span>
       {tables.length > 1 && (
-        <select value={table.id} onChange={(e) => setPick(e.target.value)} className="d2-select w-full" aria-label={`${label}的動作種類`}>
+        <select value={table.id} onChange={(e) => setPick(e.target.value)} className="d2-select w-full" aria-label={isEn ? `${label} action type` : `${label}的動作種類`}>
           {tables.map((x) => <option key={x.id} value={x.id}>{isEn ? (x.labelEn || x.label) : x.label}</option>)}
         </select>
       )}
@@ -106,6 +106,7 @@ const Row: React.FC<{ label: string; value: string; tone?: string; title?: strin
  * 操作：點擊自動全選、Enter／離開欄位套用、Esc 取消、↑↓ ±1（Shift ±10）。
  */
 const AttrInput: React.FC<{ label: string; total: number; base: number; alloc: number; maxAlloc: number; bad: boolean; onCommit: (alloc: number) => void }> = ({ label, total, base, alloc, maxAlloc, bad, onCommit }) => {
+  const { isEn } = useLanguage();
   const [text, setText] = useState(String(total));
   const [focused, setFocused] = useState(false);
   const [note, setNote] = useState<string | null>(null);
@@ -117,8 +118,8 @@ const AttrInput: React.FC<{ label: string; total: number; base: number; alloc: n
     if (!/^-?\d+$/.test(t)) { setText(String(total)); return; } // 不是整數：還原，不改配點
     const n = Number(t);
     const want = Math.round(n) - base; const next = Math.max(0, Math.min(maxAlloc, want));
-    if (want < 0) setNote(`最低 ${base}（起始＋裝備），已調整`);
-    else if (want > maxAlloc) setNote(`點數不足，最高 ${base + maxAlloc}，已調整`);
+    if (want < 0) setNote(isEn ? `Adjusted to minimum ${base} (base + equipment)` : `最低 ${base}（起始＋裝備），已調整`);
+    else if (want > maxAlloc) setNote(isEn ? `Insufficient points; adjusted to maximum ${base + maxAlloc}` : `點數不足，最高 ${base + maxAlloc}，已調整`);
     onCommit(next); setText(String(base + next));
   };
   const step = (d: number) => { const next = Math.max(0, Math.min(maxAlloc, alloc + d)); onCommit(next); setText(String(base + next)); };
@@ -127,8 +128,8 @@ const AttrInput: React.FC<{ label: string; total: number; base: number; alloc: n
     <div className="d2-row is-attr flex-1" style={{ position: 'relative' }}>
       <span className="k">{label}</span>
       <input
-        className={`d2-attr-input ${bad ? 'is-bad' : ''}`} inputMode="numeric" value={text} aria-label={`${label}（直接輸入總值）`}
-        title={`${bad ? '未達裝備需求。' : ''}起始＋裝備 ${base}，配點 ${alloc}。直接輸入想要的總值`}
+        className={`d2-attr-input ${bad ? 'is-bad' : ''}`} inputMode="numeric" value={text} aria-label={isEn ? `${label} (enter total)` : `${label}（直接輸入總值）`}
+        title={isEn ? `${bad ? 'Equipment requirement not met. ' : ''}Base + equipment ${base}, allocated ${alloc}. Enter the desired total` : `${bad ? '未達裝備需求。' : ''}起始＋裝備 ${base}，配點 ${alloc}。直接輸入想要的總值`}
         onFocus={(e) => { setFocused(true); e.currentTarget.select(); }}
         onBlur={(e) => { setFocused(false); commit(e.currentTarget.value); }}
         onChange={(e) => setText(e.target.value)}
@@ -185,7 +186,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
                 <button
                   type="button" className="d2-plus" aria-label={`${displayLabel} +`}
                   disabled={remaining <= 0}
-                  title="點擊 ＋1；Shift ＋5"
+                  title={isEn ? 'Click +1; Shift +5' : '點擊 ＋1；Shift ＋5'}
                   onClick={(e) => (e.altKey ? onAdd(key, e.shiftKey ? -5 : -1) : onAdd(key, e.shiftKey ? 5 : 1))}
                   onContextMenu={(e) => { e.preventDefault(); onAdd(key, e.shiftKey ? -5 : -1); }}
                 >＋</button>
@@ -261,7 +262,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
           {buffs.map((b) => (
             <div key={b.id} className="d2-row" style={{ alignItems: 'flex-start' }}>
               <label className="flex items-start gap-3 cursor-pointer min-w-0 flex-1">
-                <input type="checkbox" className="d2-check mt-0.5" checked={b.on} disabled={b.alwaysOn} onChange={() => onToggleBuff(b.id)} aria-label={`啟用 ${b.name}`} />
+                <input type="checkbox" className="d2-check mt-0.5" checked={b.on} disabled={b.alwaysOn} onChange={() => onToggleBuff(b.id)} aria-label={isEn ? `Enable ${b.name}` : `啟用 ${b.name}`} />
                 <span className="min-w-0">
                   <span className="t-gold">{b.name}</span><span className="t-dim text-xs ml-2">Lv {b.level}　{b.source}{b.alwaysOn ? (isEn ? ' (Always On)' : '（恆啟用）') : ''}</span>
                   {b.lines.map((l, i) => <span key={i} className={`block text-xs ${l.supported ? 't-magic' : 't-dim'}`}>{l.text}</span>)}
@@ -271,13 +272,13 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
           ))}
         </div>
         {passives.length > 0 && (
-          <div className="mt-3" aria-label="被動技能效果">
+          <div className="mt-3" aria-label={isEn ? 'Passive skill effects' : '被動技能效果'}>
             <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "PASSIVE SKILLS" : "被 動 技 能"}</div>
             <div className="space-y-1">
               {passives.map((p, i) => (
-                <div key={`${p.skillId}-${p.stat}-${i}`} className="d2-row" title={p.applied ? '已計入上方的角色數值' : '遊戲內有這個效果，但本模擬器沒有對應的數值欄位，只列出不計入'}>
+                <div key={`${p.skillId}-${p.stat}-${i}`} className="d2-row" title={isEn ? (p.applied ? 'Included in the character stats above' : 'Available in game; displayed only because the planner has no matching stat field') : (p.applied ? '已計入上方的角色數值' : '遊戲內有這個效果，但本模擬器沒有對應的數值欄位，只列出不計入')}>
                   <span><span className="t-gold">{p.skill}</span><span className="t-dim text-xs ml-2">Lv {p.level}</span></span>
-                  <span className={p.applied ? 't-magic' : 't-dim'}>{p.text}{p.applied ? '' : '（僅列出）'}</span>
+                  <span className={p.applied ? 't-magic' : 't-dim'}>{p.text}{p.applied ? '' : (isEn ? ' (Display only)' : '（僅列出）')}</span>
                 </div>
               ))}
             </div>
@@ -286,7 +287,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
       </div>
 
       {BREAKPOINTS.fcr[classCode] && (
-        <div className="mt-5" aria-label="斷點">
+        <div className="mt-5" aria-label={isEn ? 'Breakpoints' : '斷點'}>
           <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "BREAKPOINTS" : "斷 點"}</div>
           <div className="grid grid-cols-1 gap-1.5">
             {BP_ROWS.map((r) => <BreakpointRow key={`${classCode}-${r.kind}`} kind={r.kind} label={isEn ? r.labelEn : r.label} unit={isEn ? r.unitEn : r.unit} classCode={classCode} value={s[r.stat] ?? 0} />)}
@@ -300,7 +301,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
       )}
 
       {result.sets.length > 0 && (
-        <div className="mt-5" aria-label="套裝">
+        <div className="mt-5" aria-label={isEn ? 'Sets' : '套裝'}>
           <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "SET BONUSES" : "套 裝"}</div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
             {result.sets.map((x) => (
@@ -317,7 +318,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
         </div>
       )}
 
-      <div className="mt-5" aria-label="生存力">
+      <div className="mt-5" aria-label={isEn ? 'Survivability' : '生存力'}>
         <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "SURVIVABILITY" : "生 存 力"}</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
           <Row label={isEn ? "Physical Damage Reduction (PDR %)" : "物理傷害減免"} value={`${sv.pdr}%${sv.pdrRaw > PDR_CAP ? (isEn ? ` (Gear ${sv.pdrRaw}%, capped at ${PDR_CAP}%)` : `（裝備 ${sv.pdrRaw}%，超出上限 ${PDR_CAP}% 的部分無效）`) : sv.pdr >= PDR_CAP ? (isEn ? ' (Capped)' : '（已達上限）') : ''}`} tone={sv.pdr >= PDR_CAP ? 't-unique' : ''} title={isEn ? "Damage reduced by N%, physical only, cap 50%" : "「受到的傷害降低 N%」，只對物理傷害，上限 50%"} />
@@ -335,7 +336,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
       </div>
 
       {mfRaw > 0 && (
-        <div className="mt-5" aria-label="尋寶效益">
+        <div className="mt-5" aria-label={isEn ? 'Magic find efficiency' : '尋寶效益'}>
           <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "MAGIC FIND SCALING" : "尋 寶 效 益"}</div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
             <Row label={isEn ? "Magic Find (Total Gear)" : "MF（裝備合計）"} value={`${mfRaw}%`} tone="t-unique" title={isEn ? "Magic Find from equipped gear" : "裝備提供的魔法物品尋獲率（含依等級成長的部分）"} />

@@ -10,7 +10,7 @@ import { useLanguage } from '../../../context/LanguageContext';
 import type { Equipped } from './types';
 
 const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
-const runeName = (code: string) => (gameData.gems.find((g) => g.code === code)?.name ?? code).replace(/^符文[：:]/, '');
+const runeName = (code: string, en: boolean) => { const gem = gameData.gems.find(g => g.code === code); return ((en ? gem?.nameEn : gem?.name) ?? code).replace(/^符文[：:]/, ''); };
 const tone = (k: Equipped['entry']['kind']) => (k === 'set' ? 't-set' : k === 'unique' || k === 'runeword' ? 't-unique' : 't-base');
 
 interface BodyProps {
@@ -29,12 +29,12 @@ export const ItemTooltipBody: React.FC<BodyProps> = ({ eq, level, rollMax, attrs
   const e = eq.entry;
   const base = baseByCode.get(e.baseCode);
   const own = useMemo(() => itemOwnStats(gameData, buildEngineItem(eq, 'tip', rollMax), level, attrs), [eq, level, rollMax, attrs]);
-  const mods = describeModifiers(e.mods, rollMax ? 1 : 0, level);
+  const mods = describeModifiers(e.mods, rollMax ? 1 : 0, level, isEn ? 'en' : 'zh');
   const setDef = e.setId ? gameData.sets?.find((d) => d.id === e.setId) : undefined;
   const setMembers = useMemo(() => (e.setId ? getCatalog().filter((x) => x.kind === 'set' && x.setId === e.setId) : []), [e.setId]);
   const have = new Set(equippedSetNames ?? []); const setCount = have.size;
   // 套裝加成文字（state 是全套時的光環特效，沒有文字說明，不列）
-  const setLines = (m: { code: string }[]) => describeModifiers(m.filter((x) => x.code !== 'state'), rollMax ? 1 : 0, level);
+  const setLines = (m: { code: string }[]) => describeModifiers(m.filter((x) => x.code !== 'state'), rollMax ? 1 : 0, level, isEn ? 'en' : 'zh');
   const cap = socketCapacity(e);
   const all = getSocketables();
   const socketed = (eq.sockets ?? []).map((id) => all.find((s) => s.id === id)).filter((s): s is NonNullable<typeof s> => !!s);
@@ -56,7 +56,7 @@ export const ItemTooltipBody: React.FC<BodyProps> = ({ eq, level, rollMax, attrs
       {req(isEn ? 'Required Level' : '需求等級', reqLv, level)}
       {eq.ethereal && <div className="mod">{isEn ? "Ethereal (Cannot be Repaired)" : "無形（無法修復）"}</div>}
       {mods.map((l, i) => <div key={i} className={`mod ${l.known ? '' : 'is-unknown'}`}>{l.text}</div>)}
-      {e.kind === 'runeword' && e.sockets && <div className="hint">{isEn ? "Runeword: " : "符文之語："}{e.sockets.map(runeName).join(' + ')}</div>}
+      {e.kind === 'runeword' && e.sockets && <div className="hint">{isEn ? "Runeword: " : "符文之語："}{e.sockets.map(code => runeName(code, isEn)).join(' + ')}</div>}
       {e.mods.some((m) => m.code.toLowerCase() === 'skill-rand') && <div className="hint">{eq.randomSkill ? (isEn ? `Random Skill: ${(skillByName(eq.randomSkill) as any)?.nameEn ?? skillByName(eq.randomSkill)?.name ?? eq.randomSkill}` : `隨機技能：${skillByName(eq.randomSkill)?.name ?? eq.randomSkill}`) : (isEn ? 'Random skill not chosen yet; bonus not included' : '尚未選擇隨機技能，該項加成未計入')}</div>}
       {setDef && (
         <div className="set-block">
@@ -70,7 +70,7 @@ export const ItemTooltipBody: React.FC<BodyProps> = ({ eq, level, rollMax, attrs
       {socketed.map((s, i) => (
         <div key={i} className="sock">
           <span className="t-dim">{isEn ? `Socketed (${s.nameEn || s.name}): ` : `鑲嵌 ${s.name}：`}</span>
-          {describeModifiers(socketEffectMods(s, cat), 1, level).map((l) => l.text).join('，') || (isEn ? 'No Effect' : '無效果')}
+          {describeModifiers(socketEffectMods(s, cat), 1, level, isEn ? 'en' : 'zh').map((l) => l.text).join('，') || (isEn ? 'No Effect' : '無效果')}
         </div>
       ))}
       {total > 0 && <div className="mod">{isEn ? "Sockets" : "鑲孔"} ({e.kind === 'runeword' ? total : `${socketed.length}/${total}`})</div>}

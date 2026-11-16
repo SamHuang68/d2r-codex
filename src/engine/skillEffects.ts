@@ -32,15 +32,38 @@ const SKILL_STAT_LABEL: Record<string, string> = {
 /** 遊戲屬性表沒有中文描述、數值單位也沒有可核對來源的光環屬性：照資料表原值列出並註明，不猜換算 */
 const RAW_STAT_LABEL: Record<string, string> = { hitpoints: '生命回復', thorns_percent: '反傷' };
 
+const SKILL_STAT_LABEL_EN: Record<string, string> = {
+  "passive_dodge": "Chance to Dodge Melee Attacks While Standing or Attacking",
+  "passive_avoid": "Chance to Avoid Missiles While Standing or Attacking",
+  "passive_evade": "Chance to Evade Attacks While Moving",
+  "passive_critical_strike": "Chance of Double Damage",
+  "passive_mastery_melee_crit": "Chance of Double Damage",
+  "passive_mastery_throw_crit": "Chance of Double Damage",
+  "passive_mastery_melee_th": "Attack Rating",
+  "passive_mastery_throw_th": "Attack Rating",
+  "passive_mastery_melee_dmg": "Damage",
+  "passive_mastery_throw_dmg": "Damage",
+  "skill_pierce": "Chance of Piercing Attack",
+  "passive_mastery_noconsume": "Chance Not to Consume Quantity",
+  "passive_weaponblock": "Dual Claw Block Chance",
+  "passive_summon_resist": "All Resistances for Summons",
+  "velocitypercent": "Faster Run/Walk",
+  "attackrate": "Attack Speed",
+  "skill_armor_percent": "Defense",
+  "curse_resistance": "Curse Duration Reduced",
+  "skill_handofathena": "Enemy Missiles Slowed to",
+  "other_animrate": "Other Animation Speed"
+};
+
 const PERCENT_NO_SIGN = new Set(['passive_dodge', 'passive_avoid', 'passive_evade', 'passive_critical_strike', 'passive_mastery_melee_crit', 'passive_mastery_throw_crit', 'skill_pierce', 'passive_mastery_noconsume', 'passive_weaponblock', 'curse_resistance', 'skill_handofathena']);
 
 /** 一條技能效果行的顯示文字；查不到說法時回傳 undefined，由呼叫端決定怎麼標示 */
-export function skillEffectText(stat: string, value: number, level = 90): string | undefined {
-  const d = describeEntry({ stat, value }, level);
+export function skillEffectText(stat: string, value: number, level = 90, lang: 'zh' | 'en' = 'zh'): string | undefined {
+  const d = describeEntry({ stat, value }, level, false, lang);
   if (d) return d;
-  const raw = RAW_STAT_LABEL[stat];
-  if (raw) return `${raw}：${value}（資料表原值，單位未驗證）`;
-  const label = SKILL_STAT_LABEL[stat];
+  const raw = lang === 'en' ? ({ hitpoints: 'Life Regeneration', thorns_percent: 'Thorns' } as Record<string, string>)[stat] : RAW_STAT_LABEL[stat];
+  if (raw) return lang === 'en' ? `${raw}: ${value} (raw table value; unit unverified)` : `${raw}：${value}（資料表原值，單位未驗證）`;
+  const label = (lang === 'en' ? SKILL_STAT_LABEL_EN : SKILL_STAT_LABEL)[stat];
   if (!label) return undefined;
   return PERCENT_NO_SIGN.has(stat) ? `${label}：${value}%` : `${label}：${value > 0 ? '+' : ''}${value}%`;
 }

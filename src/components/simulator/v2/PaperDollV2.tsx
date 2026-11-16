@@ -66,14 +66,17 @@ export function packCharms(charms: CatalogEntry[]): { entry: CatalogEntry; x: nu
 }
 export const canFitCharm = (charms: CatalogEntry[], extra: CatalogEntry) => packCharms([...charms, extra]).every((p) => p.ok);
 
-const SwapTabs: React.FC<{ swap: 'I' | 'II'; onSwap: (s: 'I' | 'II') => void; style: React.CSSProperties }> = ({ swap, onSwap, style }) => (
-  <div className="absolute flex gap-1 z-10" style={style} role="group" aria-label="武器切換">
+const SwapTabs: React.FC<{ swap: 'I' | 'II'; onSwap: (s: 'I' | 'II') => void; style: React.CSSProperties }> = ({ swap, onSwap, style }) => {
+  const { isEn } = useLanguage();
+  return (
+  <div className="absolute flex gap-1 z-10" style={style} role="group" aria-label={isEn ? 'Weapon switch' : '武器切換'}>
     {(['I', 'II'] as const).map((s) => (
       <button key={s} type="button" aria-pressed={swap === s} onClick={() => onSwap(s)}
         className="d2-tab" style={{ flex: 'none', width: 40, padding: '3px 0', fontFamily: 'Cinzel, serif', fontSize: 13 }}>{s}</button>
     ))}
   </div>
 );
+};
 
 /** 物品欄裡同一套裝的件名（不同名才算不同件） */
 export const setNamesOf = (equipped: EquippedMap, setId?: string): string[] => (setId ? [...new Set((Object.values(equipped) as (Equipped | undefined)[]).filter((x): x is Equipped => !!x && x.entry.setId === setId).map((x) => x.entry.name))] : []);
@@ -125,7 +128,7 @@ export const PaperDollV2: React.FC<Props> = ({ engineClass, equipped, charms, sw
 
   return (
     <div ref={wrapRef} className="w-full min-w-0 mx-auto overflow-hidden" style={{ maxWidth: DOLL_W, height: DOLL_H * scale }}>
-      <div className="relative select-none origin-top-left" style={{ width: DOLL_W, height: DOLL_H, transform: `scale(${scale})` }} aria-label="裝備欄">
+      <div className="relative select-none origin-top-left" style={{ width: DOLL_W, height: DOLL_H, transform: `scale(${scale})` }} aria-label={isEn ? 'Equipment slots' : '裝備欄'}>
         {/* 面板底：石材＋暈影，讓槽位像嵌在石板上 */}
         <div className="absolute inset-0 d2-well" style={{ background: 'var(--noise), radial-gradient(70% 55% at 50% 38%, #251e15 0%, #0e0b08 100%)' }} />
         <SwapTabs swap={swap} onSwap={onSwap} style={{ left: 30, top: 34 }} />

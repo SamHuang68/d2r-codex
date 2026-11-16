@@ -211,7 +211,7 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                     <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden mb-1.5 border border-sanctuary-750 shadow-inner">
                       <img
                         src={getClassImage(cls)}
-                        alt={cls}
+                        alt={isEn ? CLASS_ZH_TO_EN[cls] ?? cls : cls}
                         className="w-full h-full object-cover object-[75%_15%] transition-transform duration-300 group-hover:scale-110"
                       />
                       {isActive && (

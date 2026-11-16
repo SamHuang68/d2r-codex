@@ -77,10 +77,10 @@ export const MercenaryTab: React.FC<Props> = ({ merc, onChange, result, playerLe
   const minLv = h ? hirelingMinLevel(h) : 1;
 
   return (
-    <div className="space-y-4" aria-label="傭兵">
+    <div className="space-y-4" aria-label={isEn ? 'Mercenary' : '傭兵'}>
       <div className="d2-row" style={{ flexWrap: 'wrap', gap: 10 }}>
         <label className="flex items-center gap-2 cursor-pointer">
-          <input type="checkbox" className="d2-check" checked={merc.on} onChange={(e) => set({ on: e.target.checked })} aria-label="計入傭兵" />
+          <input type="checkbox" className="d2-check" checked={merc.on} onChange={(e) => set({ on: e.target.checked })} aria-label={isEn ? 'Include mercenary' : '計入傭兵'} />
           <span>{isEn ? "Count Mercenary Auras" : "計入傭兵的光環"}</span>
         </label>
         <span className="d2-sub">{isEn ? "When enabled, mercenary auras (innate or gear granted, e.g. Conviction from Infinity) appear in Attributes tab buffs and are always active." : "開啟後，傭兵的光環（原生與裝備給的，例如無限的信念）會出現在屬性頁的增益面板，恆啟用；傭兵死亡時請關掉。"}</span>
@@ -88,23 +88,23 @@ export const MercenaryTab: React.FC<Props> = ({ merc, onChange, result, playerLe
 
       <div className="d2-row" style={{ flexWrap: 'wrap', gap: 10 }}>
         <label className="d2-field">{isEn ? "Mercenary" : "傭兵"}
-          <select className="d2-select" value={h?.id ?? ''} onChange={(e) => { const nh = hirelingById(Number(e.target.value)); if (nh) set({ id: nh.id, level: clampMercLevel(nh, merc.level) }); }} aria-label="傭兵類型">
+          <select className="d2-select" value={h?.id ?? ''} onChange={(e) => { const nh = hirelingById(Number(e.target.value)); if (nh) set({ id: nh.id, level: clampMercLevel(nh, merc.level) }); }} aria-label={isEn ? 'Mercenary type' : '傭兵類型'}>
             {byDiff.map(({ d, list }) => (
               <optgroup key={d} label={isEn ? (d === 1 ? 'Normal' : d === 2 ? 'Nightmare' : 'Hell') : DIFFICULTY_ZH[d]}>
-                {list.map((x) => <option key={x.id} value={x.id}>{hirelingLabel(x)}</option>)}
+                {list.map((x) => <option key={x.id} value={x.id}>{hirelingLabel(x, isEn)}</option>)}
               </optgroup>
             ))}
           </select>
         </label>
         <label className="d2-field">{isEn ? "Merc Level" : "傭兵等級"}
           <input type="number" className="d2-input" style={{ width: 66 }} min={minLv} max={MERC_MAX_LEVEL} value={merc.level}
-            onChange={(e) => set({ level: h ? clampMercLevel(h, Number(e.target.value)) : merc.level })} aria-label="傭兵等級" />
+            onChange={(e) => set({ level: h ? clampMercLevel(h, Number(e.target.value)) : merc.level })} aria-label={isEn ? 'Mercenary level' : '傭兵等級'} />
         </label>
-        <button type="button" className="d2-btn is-quiet" onClick={() => h && set({ level: clampMercLevel(h, playerLevel) })} title="把傭兵等級設成和玩家一樣（傭兵等級會隨經驗追上玩家）">{isEn ? `Match Player (${playerLevel})` : `同玩家等級（${playerLevel}）`}</button>
+        <button type="button" className="d2-btn is-quiet" onClick={() => h && set({ level: clampMercLevel(h, playerLevel) })} title={isEn ? 'Set the mercenary level to match the player' : '把傭兵等級設成和玩家一樣（傭兵等級會隨經驗追上玩家）'}>{isEn ? `Match Player (${playerLevel})` : `同玩家等級（${playerLevel}）`}</button>
         {h && <span className="d2-sub">{isEn ? `Min lvl for this type: ${minLv}` : `此類型最低 ${minLv} 級`}</span>}
       </div>
 
-      <div className="space-y-1.5" aria-label="傭兵裝備">
+      <div className="space-y-1.5" aria-label={isEn ? 'Mercenary equipment' : '傭兵裝備'}>
         {MERC_SLOTS.map((slot) => {
           const eq = merc.equipped[slot];
           const warn = slot === 'weaponI' && eq && h ? weaponWarning(h.act, h.subType, eq.entry) : undefined;
@@ -114,21 +114,21 @@ export const MercenaryTab: React.FC<Props> = ({ merc, onChange, result, playerLe
       </div>
 
       {result && (
-        <div aria-label="傭兵數值">
+        <div aria-label={isEn ? 'Mercenary stats' : '傭兵數值'}>
           <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "MERCENARY STATS" : "傭 兵 數 值"}</div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-            <Row label={isEn ? "Life" : "生命"} value={result.life.toLocaleString()} title={`基礎 ${result.base.life}（${hirelingLabel(result.hireling)}，${result.level} 級）＋裝備`} />
-            <Row label={isEn ? "Defense" : "防禦"} value={result.defense.toLocaleString()} title={`基礎 ${result.base.defense} ＋ 裝備。不含敏捷帶來的防禦（沒有可核對的來源）`} />
-            <Row label={isEn ? "Attack Rating (AR)" : "命中（AR）"} value={result.ar.toLocaleString()} title={`基礎 ${result.base.ar}，加上裝備的命中與命中%。遊戲內的命中率公式沒有納入`} />
-            <Row label={isEn ? "Str / Dex" : "力量／敏捷"} value={`${result.str} / ${result.dex}`} title="基礎＋裝備" />
+            <Row label={isEn ? "Life" : "生命"} value={result.life.toLocaleString()} title={isEn ? `Base ${result.base.life} (${hirelingLabel(result.hireling, true)}, Level ${result.level}) + equipment` : `基礎 ${result.base.life}（${hirelingLabel(result.hireling, isEn)}，${result.level} 級）＋裝備`} />
+            <Row label={isEn ? "Defense" : "防禦"} value={result.defense.toLocaleString()} title={isEn ? `Base ${result.base.defense} + equipment. Excludes unverified dexterity-based defense.` : `基礎 ${result.base.defense} ＋ 裝備。不含敏捷帶來的防禦（沒有可核對的來源）`} />
+            <Row label={isEn ? "Attack Rating (AR)" : "命中（AR）"} value={result.ar.toLocaleString()} title={isEn ? `Base ${result.base.ar} plus equipment attack rating and AR%. In-game hit chance is not calculated.` : `基礎 ${result.base.ar}，加上裝備的命中與命中%。遊戲內的命中率公式沒有納入`} />
+            <Row label={isEn ? "Str / Dex" : "力量／敏捷"} value={`${result.str} / ${result.dex}`} title={isEn ? 'Base plus equipment' : '基礎＋裝備'} />
             <Row label={isEn ? "Resistances" : "抗性"} value={<><span className="t-fire">{result.resist.fire}</span> / <span className="t-cold">{result.resist.cold}</span> / <span className="t-lightning">{result.resist.lightning}</span> / <span className="t-poison">{result.resist.poison}</span></>}
-              title={`基礎＋裝備，上限 75（加上最大抗性）。未截斷：${result.rawResist.fire} / ${result.rawResist.cold} / ${result.rawResist.lightning} / ${result.rawResist.poison}`} />
-            <Row label={isEn ? "Base Damage" : "傭兵本身傷害"} value={`${result.base.damage.min}–${result.base.damage.max}`} title="資料表的傭兵基礎傷害。遊戲內它和武器傷害如何合併沒有可核對的來源，這裡分開列出，不相加" />
+              title={isEn ? `Base + equipment, capped at 75 plus maximum resistance bonuses. Uncapped: ${result.rawResist.fire} / ${result.rawResist.cold} / ${result.rawResist.lightning} / ${result.rawResist.poison}` : `基礎＋裝備，上限 75（加上最大抗性）。未截斷：${result.rawResist.fire} / ${result.rawResist.cold} / ${result.rawResist.lightning} / ${result.rawResist.poison}`} />
+            <Row label={isEn ? "Base Damage" : "傭兵本身傷害"} value={`${result.base.damage.min}–${result.base.damage.max}`} title={isEn ? 'Base mercenary damage from the table; shown separately because the combination with weapon damage has not been verified' : '資料表的傭兵基礎傷害。遊戲內它和武器傷害如何合併沒有可核對的來源，這裡分開列出，不相加'} />
             {result.weaponDamage && <Row label={isEn ? `Weapon Damage${result.weaponDamage.twoHanded ? ' (2H)' : ''}` : `武器傷害${result.weaponDamage.twoHanded ? '（雙手）' : ''}`} value={`${result.weaponDamage.min}–${result.weaponDamage.max}`} title={isEn ? "Calculated with base, ethereal bonus, ED%, and merc attributes" : "底材 × 無形 × (1＋強化傷害％＋力量敏捷加成％) ＋ 固定傷害，用傭兵的力量與敏捷"} />}
           </div>
           {result.bonuses.length > 0 && (
             <div className="mt-2 space-y-1">
-              {result.bonuses.map((b) => <div key={b.stat} className="d2-row"><span className="t-dim text-xs">{isEn ? 'From Gear' : '裝備提供'}</span><span className="t-magic">{describeEntry(b, result.level) ?? `${b.stat} ${b.value}`}</span></div>)}
+              {result.bonuses.map((b) => <div key={b.stat} className="d2-row"><span className="t-dim text-xs">{isEn ? 'From Gear' : '裝備提供'}</span><span className="t-magic">{describeEntry(b, result.level, false, isEn ? 'en' : 'zh') ?? `${b.stat} ${b.value}`}</span></div>)}
             </div>
           )}
           <div className="mt-3">
@@ -140,15 +140,15 @@ export const MercenaryTab: React.FC<Props> = ({ merc, onChange, result, playerLe
             {result.auras.length === 0 && <div className="d2-sub">{isEn ? "This mercenary has no auras." : "這個傭兵沒有光環。"}</div>}
             {result.auras.map((a) => (
               <div key={a.skill.id} className="d2-row" style={{ alignItems: 'flex-start' }}>
-                <span><span className="t-gold">{a.skill.name ?? a.skill.nameEn}</span><span className="t-dim text-xs ml-2">Lv {a.level}　{isEn ? (a.source === 'item' ? 'From Item' : 'Innate') : (a.source === 'item' ? '裝備給的' : '傭兵原生')}</span></span>
-                <span className="text-right">{auraEffects(a.skill, a.level).map((l, i) => <span key={i} className={`block text-xs ${l.supported ? 't-magic' : 't-dim'}`}>{l.supported && l.value !== undefined ? (skillEffectText(l.stat, l.value, result.level) ?? `${l.stat} ${l.value}`) : `${l.stat}（公式未支援）`}</span>)}</span>
+                <span><span className="t-gold">{isEn ? a.skill.nameEn : a.skill.name ?? a.skill.nameEn}</span><span className="t-dim text-xs ml-2">Lv {a.level}　{isEn ? (a.source === 'item' ? 'From Item' : 'Innate') : (a.source === 'item' ? '裝備給的' : '傭兵原生')}</span></span>
+                <span className="text-right">{auraEffects(a.skill, a.level).map((l, i) => <span key={i} className={`block text-xs ${l.supported ? 't-magic' : 't-dim'}`}>{l.supported && l.value !== undefined ? (skillEffectText(l.stat, l.value, result.level, isEn ? 'en' : 'zh') ?? `${l.stat} ${l.value}`) : (isEn ? `${l.stat} (unsupported formula)` : `${l.stat}（公式未支援）`)}</span>)}</span>
               </div>
             ))}
           </div>
           {result.unhandled.length > 0 && (
             <div className="mt-2 d2-sub t-bad">有 {result.unhandled.length} 項裝備屬性無法計算：{result.unhandled.slice(0, 4).map((u) => `${u.code}（${u.reason}）`).join('、')}</div>
           )}
-          <div className="d2-sub mt-2">傭兵數值來自遊戲資料表（hireling.txt），等級落在檢查點之間時以最近的下方檢查點外推；沒有在遊戲內逐項核對。</div>
+          <div className="d2-sub mt-2">{isEn ? 'Mercenary stats come from hireling.txt. Levels between checkpoints are extrapolated from the nearest lower checkpoint; not individually verified in game.' : '傭兵數值來自遊戲資料表（hireling.txt），等級落在檢查點之間時以最近的下方檢查點外推；沒有在遊戲內逐項核對。'}</div>
         </div>
       )}
     </div>

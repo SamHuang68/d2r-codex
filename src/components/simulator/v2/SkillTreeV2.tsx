@@ -1,3 +1,5 @@
+import skillDescEn from '../../../data/skills/skillDescEn.json';
+import skillTabsEn from '../../../data/game/skillTabsEn.json';
 import React, { useEffect, useMemo, useState } from 'react';
 import { summonInfo } from '../../../engine/summons';
 import { useLanguage } from '../../../context/LanguageContext';
@@ -140,24 +142,25 @@ export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skil
   const invested = selected ? pts(selected) : 0;
   const effective = selected ? effectiveLevel(selected, invested, bonuses) : 0;
   const dmgRes = selected ? skillDamage(selected, effective, levels, damageOpts(selected)) : undefined;
-  const dmg = damageText(dmgRes); const dmgTarget = targetDamageText(dmgRes);
+  const treeName = (t: { name: string; page: number }) => isEn ? (skillTabsEn as Record<string, string[]>)[classCode]?.[classCode === 'war' ? t.page - 1 : 3 - t.page] ?? TREE_NAME_EN[t.name] ?? t.name : t.name;
+  const dmg = damageText(dmgRes, isEn ? 'en' : 'zh'); const dmgTarget = targetDamageText(dmgRes, isEn ? 'en' : 'zh');
   const mana = selected && effective > 0 ? manaCost(selected, effective) : undefined;
-  const summon = useMemo(() => (selected && effective > 0 && selected.summonId ? summonInfo(selected, effective, levels, ownerStats ?? {}, 2) : undefined), [selected, effective, levels, ownerStats]);
+  const summon = useMemo(() => (selected && effective > 0 && selected.summonId ? summonInfo(selected, effective, levels, ownerStats ?? {}, 2, isEn ? 'en' : 'zh') : undefined), [selected, effective, levels, ownerStats, isEn]);
   const softBonus = effective > 0 ? effective - invested : 0;
 
   return (
     <div>
-      <div className="d2-tabs" style={{ padding: '0 0 12px' }} role="tablist" aria-label="技能樹">
+      <div className="d2-tabs" style={{ padding: '0 0 12px' }} role="tablist" aria-label={isEn ? 'Skill trees' : '技能樹'}>
         {trees.map((t, i) => (
           <button key={t.page} type="button" role="tab" aria-selected={treeIdx === i} className="d2-tab"
-            onClick={() => { setTreeIdx(i); if (t.skills[0]) setSelectedId(t.skills[0].id); }}>{isEn ? (TREE_NAME_EN[t.name] ?? t.name) : t.name}</button>
+            onClick={() => { setTreeIdx(i); if (t.skills[0]) setSelectedId(t.skills[0].id); }}>{treeName(t)}</button>
         ))}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[minmax(0,300px)_minmax(0,1fr)] gap-4 items-start">
         {/* 左：6×3 技能格 */}
         <div className="mx-auto w-full" style={{ maxWidth: 300 }}>
-          <div className="d2-skillboard" aria-label={`${tree.name} 技能樹`}>
+          <div className="d2-skillboard" aria-label={isEn ? `${treeName(tree)} skill tree` : `${tree.name} 技能樹`}>
             <svg viewBox="0 0 300 600" className="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true">
               <defs>
                 <marker id="d2-arrow-on" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><polygon points="0 1, 7 4, 0 7, 2 4" fill="#c9b277" /></marker>
@@ -176,15 +179,15 @@ export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skil
               return (
                 <div key={s.id} className="absolute" style={{ left: `${((s.col - 1) * 100) / 3 + 100 / 6}%`, top: `${((s.row - 1) * 100) / 6 + 100 / 12}%`, width: '24%', transform: 'translate(-50%, -50%)' }}>
                   <button type="button" className={cls}
-                    aria-label={`${s.name ?? s.nameEn} ${n} 點`} aria-pressed={selectedId === s.id}
+                    aria-label={isEn ? `${s.nameEn} ${n} points` : `${s.name ?? s.nameEn} ${n} 點`} aria-pressed={selectedId === s.id}
                     onClick={() => setSelectedId(s.id)} onDoubleClick={() => add(s)}
                     onContextMenu={(e) => { e.preventDefault(); remove(s); }}
                     onMouseEnter={() => setHoverId(s.id)} onMouseLeave={() => setHoverId(null)}>
                     <SkillGlyph skill={s} />
                     <span className="nm">{isEn ? (s.nameEn ?? s.name) : (s.name ?? s.nameEn)}</span>
                     <span className="cnt">{n}</span>
-                    {hasSyn && <span className="syn" title="有協同關係">⚡</span>}
-                    {activeSkillId === s.id && <span className="star" title="主力技能">★</span>}
+                    {hasSyn && <span className="syn" title={isEn ? 'Has synergies' : '有協同關係'}>⚡</span>}
+                    {activeSkillId === s.id && <span className="star" title={isEn ? 'Main skill' : '主力技能'}>★</span>}
                     {!unlocked && <Lock className="absolute w-4 h-4 t-dim" style={{ left: 4, bottom: 4 }} />}
                   </button>
                 </div>
@@ -200,10 +203,10 @@ export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skil
             <>
               <div className="d2-tip">
                 <div className="nm t-gold">{isEn ? (selected.nameEn ?? selected.name) : (selected.name ?? selected.nameEn)}</div>
-                <div className="base">{isEn ? selected.name : selected.nameEn}　·　{tree.name}</div>
-                <div className="base">{isEn ? "Required Level: " : "需要等級："}{selected.reqLevel}{level < selected.reqLevel && <span className="t-bad">（目前等級不足）</span>}</div>
+                <div className="base">{selected.nameEn}　·　{treeName(tree)}</div>
+                <div className="base">{isEn ? "Required Level: " : "需要等級："}{selected.reqLevel}{level < selected.reqLevel && <span className="t-bad">{isEn ? '(Level too low)' : '（目前等級不足）'}</span>}</div>
                 {selected.prereq.length > 0 && <div className="base">{isEn ? "Prerequisites: " : "前置："}{selected.prereq.map((n) => isEn ? (skillByName(n)?.nameEn ?? n) : (skillByName(n)?.name ?? n)).join(isEn ? ', ' : '、')}</div>}
-                {selected.desc && <div className="mod" style={{ color: 'var(--text)' }}>{selected.desc.replace(/\n/g, ' ')}</div>}
+                {selected.desc && <div className="mod" style={{ color: 'var(--text)' }}>{(isEn ? (skillDescEn as Record<string, string>)[selected.id] ?? selected.desc : selected.desc).replace(/\n/g, ' ')}</div>}
                 {selected.passive && <div className="hint">{isEn ? "Passive Skill" : "被動技能"}</div>}
                 {selected.aura && <div className="hint">{isEn ? "Aura" : "光環"}</div>}
               </div>
@@ -221,23 +224,23 @@ export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skil
                 </div>
               )}
               {summon && (
-                <div className="d2-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 3 }} aria-label="召喚物">
+                <div className="d2-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 3 }} aria-label={isEn ? 'Summon' : '召喚物'}>
                   <div className="flex justify-between gap-2"><span className="k">{isEn ? "Summons" : "召喚物"}</span><span className="v t-gold" style={{ fontSize: 14 }}>{isEn ? `Max ${summon.count ?? '—'}` : `最多 ${summon.count ?? '—'} 隻`}</span></div>
-                  {summon.lines.length > 0 && <div className="d2-sub">技能給每隻的加成（遊戲技能表，含協同與專精）</div>}
+                  {summon.lines.length > 0 && <div className="d2-sub">{isEn ? 'Per-summon skill bonuses (game tables, including synergies and masteries)' : '技能給每隻的加成（遊戲技能表，含協同與專精）'}</div>}
                   {summon.lines.map((l, i) => <div key={`l${i}`} className="text-xs t-magic">{l}</div>)}
-                  {summon.inherited.length > 0 && <div className="d2-sub">繼承你身上的</div>}
+                  {summon.inherited.length > 0 && <div className="d2-sub">{isEn ? 'Inherited from your character' : '繼承你身上的'}</div>}
                   {summon.inherited.map((l, i) => <div key={`i${i}`} className="text-xs t-magic">{l}</div>)}
-                  {summon.base.length > 0 && <div className="d2-sub">怪物本身的基礎值（資料表，地獄）</div>}
+                  {summon.base.length > 0 && <div className="d2-sub">{isEn ? 'Base monster values (game tables, Hell)' : '怪物本身的基礎值（資料表，地獄）'}</div>}
                   {summon.base.map((l, i) => <div key={`b${i}`} className="text-xs t-dim">{l}</div>)}
-                  {summon.unsupported.length > 0 && <div className="text-xs t-dim">公式算不出、未列入：{summon.unsupported.join('、')}</div>}
-                  <div className="d2-sub">各項來源分開列出，沒有合併成最終傷害：技能加成與怪物基礎值在遊戲內如何合併、召喚物的等級換算，沒有可核對的來源。</div>
+                  {summon.unsupported.length > 0 && <div className="text-xs t-dim">{isEn ? 'Unsupported formulas, excluded: ' : '公式算不出、未列入：'}{summon.unsupported.join('、')}</div>}
+                  <div className="d2-sub">{isEn ? 'Sources are shown separately, not combined into final damage. The combination rules and summon level scaling have not been verified.' : '各項來源分開列出，沒有合併成最終傷害：技能加成與怪物基礎值在遊戲內如何合併、召喚物的等級換算，沒有可核對的來源。'}</div>
                 </div>
               )}
               <div className="flex flex-wrap gap-2">
-                <button type="button" className="d2-btn is-quiet" onClick={() => remove(selected)} disabled={invested <= 0} aria-label="減 1 點">－</button>
-                <button type="button" className="d2-btn flex-1" onClick={() => add(selected)} disabled={invested >= selected.maxLvl || !met(selected) || remainingPts <= 0} aria-label="加 1 點" style={{ whiteSpace: 'nowrap' }}>{isEn ? "+ Add" : "＋ 加點"}</button>
+                <button type="button" className="d2-btn is-quiet" onClick={() => remove(selected)} disabled={invested <= 0} aria-label={isEn ? 'Remove 1 point' : '減 1 點'}>－</button>
+                <button type="button" className="d2-btn flex-1" onClick={() => add(selected)} disabled={invested >= selected.maxLvl || !met(selected) || remainingPts <= 0} aria-label={isEn ? 'Add 1 point' : '加 1 點'} style={{ whiteSpace: 'nowrap' }}>{isEn ? "+ Add" : "＋ 加點"}</button>
                 <button type="button" className="d2-btn" onClick={() => add(selected, selected.maxLvl)} disabled={invested >= selected.maxLvl || !met(selected) || remainingPts <= 0} style={{ whiteSpace: 'nowrap' }}>MAX</button>
-                <button type="button" className={`d2-btn ${activeSkillId === selected.id ? '' : 'is-quiet'}`} onClick={() => onSetActiveSkillId(selected.id)} title="標記為主力技能（屬性頁會顯示其傷害）" style={{ whiteSpace: 'nowrap' }}>{activeSkillId === selected.id ? (isEn ? '★ Main' : '★ 主力') : (isEn ? 'Set as Main' : '設為主力')}</button>
+                <button type="button" className={`d2-btn ${activeSkillId === selected.id ? '' : 'is-quiet'}`} onClick={() => onSetActiveSkillId(selected.id)} title={isEn ? 'Set as main skill to show its damage on the Attributes tab' : '標記為主力技能（屬性頁會顯示其傷害）'} style={{ whiteSpace: 'nowrap' }}>{activeSkillId === selected.id ? (isEn ? '★ Main' : '★ 主力') : (isEn ? 'Set as Main' : '設為主力')}</button>
               </div>
 
               {/* 協同 */}
@@ -269,9 +272,9 @@ export const SkillTreeV2: React.FC<SkillTreeV2Props> = ({ classCode, level, skil
                     ))}
                   </ul>
                 )}
-                {targets.length > 0 && <div className="d2-sub">本技能同時為 {targets.map((x) => x.name ?? x.nameEn).join('、')} 增傷。</div>}
+                {targets.length > 0 && <div className="d2-sub">{isEn ? `Also boosts ${targets.map(x => x.nameEn).join(', ')}.` : `本技能同時為 ${targets.map(x => x.name ?? x.nameEn).join('、')} 增傷。`}</div>}
               </div>
-              <div className="d2-sub" style={{ color: remainingPts < 0 ? 'var(--bad)' : undefined }}>已投入 {totalInvested}／可用 {budget} 點（等級−1＋任務）{remainingPts < 0 ? `，超出 ${-remainingPts} 點（一鍵點滿協同不受預算限制）` : `，剩餘 ${remainingPts} 點`}。{isEn ? (ENGINE_CLASS_BY_CODE[classCode] ?? classCode) : (CLASS_CODE_ZH[classCode] ?? classCode)}。</div>
+              <div className="d2-sub" style={{ color: remainingPts < 0 ? 'var(--bad)' : undefined }}>{isEn ? `Allocated ${totalInvested} / ${budget} points (level - 1 + quests), ${remainingPts < 0 ? `${-remainingPts} over budget (Max All Synergies ignores the budget)` : `${remainingPts} remaining`}. ` : <>已投入 {totalInvested}／可用 {budget} 點（等級−1＋任務）{remainingPts < 0 ? `，超出 ${-remainingPts} 點（一鍵點滿協同不受預算限制）` : `，剩餘 ${remainingPts} 點`}。</>}{isEn ? (ENGINE_CLASS_BY_CODE[classCode] ?? classCode) : (CLASS_CODE_ZH[classCode] ?? classCode)}。</div>
             </>
           ) : (
             <div className="d2-sub text-center py-10">{isEn ? "Select a skill on the left" : "請在左側點選技能"}</div>

@@ -616,7 +616,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                                 </button>
                               ) : (
                                 <span className="flex items-center gap-1 px-2 py-1 rounded-lg bg-sanctuary-900 border border-sanctuary-750 text-[11px] text-sanctuary-200 font-mono">
-                                  <ItemIcon name={inp.name} size="xs" showBorder={false} />
+                                  <ItemIcon name={inp.name} nameEn={inp.nameEn} size="xs" showBorder={false} />
                                   <span className="truncate max-w-[120px]">{isEn && inp.nameEn ? inp.nameEn : inp.name}</span>
                                 </span>
                               )}
@@ -735,7 +735,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                           </button>
                         ))}
                         <span className="flex items-center gap-1 px-2 py-1 rounded bg-sanctuary-900 border border-sanctuary-750 text-[11px] text-sanctuary-200">
-                          <ItemIcon name={item.gemZh} size="xs" showBorder={false} />
+                          <ItemIcon name={item.gemZh} nameEn={item.gemEn} size="xs" showBorder={false} />
                           <span>{isEn ? item.gemEn : item.gemZh}</span>
                         </span>
                       </div>
@@ -823,7 +823,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                           </button>
                         ))}
                         <span className="flex items-center gap-1 px-2 py-1 rounded bg-sanctuary-900 border border-sanctuary-750 text-[11px] text-sanctuary-200">
-                          <ItemIcon name={item.gem} size="xs" showBorder={false} />
+                          <ItemIcon name={item.gem} nameEn={item.gemEn} size="xs" showBorder={false} />
                           <span>{isEn ? item.gemEn : item.gem}</span>
                         </span>
                       </div>

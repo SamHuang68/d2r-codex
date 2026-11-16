@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { build } from 'esbuild';
+const out='C:/Users/Sam/AI-Workspace/docs/d2r-codex/英文顯示修復';
+const root=process.cwd().replaceAll('\\','/');
+const bundled=path.join(out,'資料驗證暫存.mjs');
+await build({stdin:{contents:`export {UNIQUE_ITEMS_DATA} from '${root}/src/data/uniqueItems';export {SET_ITEMS_DATA} from '${root}/src/data/setItems';export {RUNEWORDS_DATA} from '${root}/src/data/runewords';export {getCatalog} from '${root}/src/engine/catalog';export {describeModifiers,describeRanges} from '${root}/src/engine/describe';`,resolveDir:root,loader:'ts'},bundle:true,platform:'node',format:'esm',outfile:bundled,logLevel:'silent'});
+const m=await import(pathToFileURL(bundled).href);
+const baseline={uniques:m.UNIQUE_ITEMS_DATA,sets:m.SET_ITEMS_DATA,runewords:m.RUNEWORDS_DATA,descriptions:m.getCatalog().map(e=>({id:e.id,ranges:m.describeRanges(e.mods),rolls:[1,45,99].map(level=>[0,1].map(roll=>m.describeModifiers(e.mods,roll,level)))}))};
+fs.writeFileSync(path.join(out,'繁中資料基準.json'),JSON.stringify(baseline));
+console.log(JSON.stringify({暗金:baseline.uniques.length,套裝:baseline.sets.length,符文:baseline.runewords.length,物品描述:baseline.descriptions.length}));

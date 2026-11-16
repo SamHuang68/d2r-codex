@@ -36,10 +36,11 @@ const POS_KEY = 'd2sim.gearPicker.pos';
 /** 種類層：沿用裝備寶典的分類（itemtypes → 部位 → 類型），不另維護第二份清單 */
 const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
 const TAX_LABEL = new Map<string, string>();
+const TAX_LABEL_EN = new Map<string, string>();
 const TAX_ORDER = new Map<string, number>();
 (() => {
   let i = 0;
-  const walk = (d: TaxDef) => { TAX_LABEL.set(d.id, d.label); TAX_ORDER.set(d.id, i++); d.children?.forEach(walk); };
+  const walk = (d: TaxDef) => { TAX_LABEL.set(d.id, d.label); TAX_LABEL_EN.set(d.id, d.en ?? d.label); TAX_ORDER.set(d.id, i++); d.children?.forEach(walk); };
   [...EQUIP_DEFS, JEWELRY_DEF].forEach(walk);
 })();
 const leafOf = (e: CatalogEntry): string => {
@@ -50,7 +51,7 @@ const leafOf = (e: CatalogEntry): string => {
 };
 /** 路徑片段：種類（1～3 層）→ 強度 → 一般／職業專屬 */
 const segsOf = (e: CatalogEntry): string[] => [...leafOf(e).split('/'), e.tier ? TIER_ZH[e.tier] : NO_TIER, e.classCode ? '職業專屬' : '一般'];
-const labelOfPath = (path: string[]): string => TAX_LABEL.get(path.join('/')) ?? path[path.length - 1];
+const labelOfPath = (path: string[], en = false): string => (en ? TAX_LABEL_EN : TAX_LABEL).get(path.join('/')) ?? (en ? ({ '一般': 'Normal', '進階': 'Exceptional', '菁英': 'Elite', '不分強度': 'All Tiers', '職業專屬': 'Class Specific' } as Record<string, string>)[path[path.length - 1]] : undefined) ?? path[path.length - 1];
 const orderOf = (path: string[], seg: string): number => {
   const id = [...path, seg].join('/');
   if (TAX_ORDER.has(id)) return TAX_ORDER.get(id)!;
@@ -180,12 +181,12 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
     const m = new Map<string, number>();
     here.forEach((t) => { const seg = t.segs[path.length]; if (seg !== undefined) m.set(seg, (m.get(seg) ?? 0) + 1); });
     return [...m.entries()].sort((a, b) => orderOf(path, a[0]) - orderOf(path, b[0]))
-      .map(([seg, n]) => ({ label: labelOfPath([...path, seg]), n, next: [...path, seg] }));
+      .map(([seg, n]) => ({ label: labelOfPath([...path, seg], isEn), n, next: [...path, seg] }));
   })();
   // 只有一個分支時不必多點一次：仍顯示，但「直接列出」放在最上面
   const showList = searching || flat || (here.length > 0 && levelOptions.length === 0);
   const list = showList ? sortList(searching ? filtered : entriesUnder(path)) : [];
-  const crumbLabels = path.map((_, i) => labelOfPath(path.slice(0, i + 1)));
+  const crumbLabels = path.map((_, i) => labelOfPath(path.slice(0, i + 1), isEn));
   const goUp = () => { if (flat) { setFlat(false); return; } setPath((p) => p.slice(0, -1)); };
   const rarityText = RARITIES.filter((r) => rarity[r]).map((r) => isEn ? RARITY_EN[r] : RARITY_ZH[r]).join(isEn ? ', ' : '・') || (isEn ? 'None' : '未選');
   const tierText = TIERS.filter((t) => tiers[t]).map((t) => isEn ? TIER_EN[t] : TIER_ZH[t]).join(isEn ? ', ' : '・') || (isEn ? 'None' : '未選');
@@ -199,7 +200,7 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
       <div
         ref={winRef}
         role="dialog"
-        aria-label="裝備庫"
+        aria-label={isEn ? 'Gear Library' : '裝備庫'}
         aria-modal="false"
         className={`d2-float ${minimized ? 'is-min' : ''} ${dragSource ? 'is-dragging' : ''}`}
         style={floatStyle}
@@ -208,14 +209,14 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
         <div className="d2-float-title" onPointerDown={onTitleDown} onPointerMove={onTitleMove} onPointerUp={onTitleUp} onPointerCancel={onTitleUp}>
           <span className="d2-float-name">{isEn ? "Gear Library" : "裝 備 庫"}</span>
           <span className="d2-sub" style={{ marginRight: 'auto' }}>{wide ? (isEn ? 'Drag title to move' : '可拖曳標題移動') : (isEn ? 'Bottom drawer' : '底部抽屜')}</span>
-          <button type="button" className="d2-icon-btn" onClick={() => setMinimized((v) => !v)} aria-label={minimized ? '展開裝備庫' : '收合裝備庫'} title={minimized ? '展開' : '收合'}>{minimized ? '▢' : '—'}</button>
-          <button type="button" className="d2-icon-btn" onClick={onClose} aria-label="關閉裝備庫" title="關閉（Esc）">✕</button>
+          <button type="button" className="d2-icon-btn" onClick={() => setMinimized((v) => !v)} aria-label={isEn ? (minimized ? 'Expand Gear Library' : 'Collapse Gear Library') : (minimized ? '展開裝備庫' : '收合裝備庫')} title={isEn ? (minimized ? 'Expand' : 'Collapse') : (minimized ? '展開' : '收合')}>{minimized ? '▢' : '—'}</button>
+          <button type="button" className="d2-icon-btn" onClick={onClose} aria-label={isEn ? 'Close Gear Library' : '關閉裝備庫'} title={isEn ? 'Close (Esc)' : '關閉（Esc）'}>✕</button>
         </div>
 
         {!minimized && (
           <>
             <div className="d2-float-tools">
-              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={isEn ? "Search name (EN / ZH), base..." : "搜尋名稱（中／英）、底材…"} className="d2-input w-full" aria-label="搜尋裝備" />
+              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={isEn ? "Search name (EN / ZH), base..." : "搜尋名稱（中／英）、底材…"} className="d2-input w-full" aria-label={isEn ? 'Search Gear' : '搜尋裝備'} />
               <button type="button" className="d2-filter-toggle" aria-expanded={filtersOpen} onClick={() => setFiltersOpen((v) => !v)}>
                 <span>{isEn ? "Filters" : "篩選"}</span>
                 <span className="d2-filter-sum">{rarityText}｜{tierText}{onlyMyClass ? (isEn ? ' | Class Only' : '｜隱藏他職專屬') : ''}</span>
@@ -230,8 +231,8 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
               )}
             </div>
 
-            <nav className="d2-crumbs" aria-label="目前層級">
-              <button type="button" className="d2-icon-btn" disabled={searching || (path.length === 0 && !flat)} onClick={goUp} aria-label="回上一層" title="回上一層">←</button>
+            <nav className="d2-crumbs" aria-label={isEn ? 'Current category' : '目前層級'}>
+              <button type="button" className="d2-icon-btn" disabled={searching || (path.length === 0 && !flat)} onClick={goUp} aria-label={isEn ? 'Parent category' : '回上一層'} title={isEn ? 'Parent category' : '回上一層'}>←</button>
               {searching ? (
                 <span className="t-gold">{isEn ? "Search Results" : "搜尋結果"}</span>
               ) : (
@@ -254,12 +255,12 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
                 <div className="space-y-1.5">
                   {path.length > 0 && countUnder(path) > 0 && (
                     <button type="button" className="d2-node is-all" onClick={() => setFlat(true)}>
-                      <span>{isEn ? "List all in this category" : "直接列出此層全部"}</span><span className="n">{countUnder(path)} 項</span><span className="chev">☰</span>
+                      <span>{isEn ? "List all in this category" : "直接列出此層全部"}</span><span className="n">{countUnder(path)} {isEn ? 'items' : '項'}</span><span className="chev">☰</span>
                     </button>
                   )}
                   {levelOptions.map((o) => (
                     <button key={o.label} type="button" className="d2-node" disabled={o.n === 0} onClick={() => setPath(o.next)} style={o.n === 0 ? { opacity: .4, cursor: 'not-allowed' } : undefined}>
-                      <span>{o.label}</span><span className="n">{o.n} 項</span><span className="chev">›</span>
+                      <span>{o.label}</span><span className="n">{o.n} {isEn ? 'items' : '項'}</span><span className="chev">›</span>
                     </button>
                   ))}
                   {countUnder(path) === 0 && <div className="d2-empty">目前篩選條件下沒有項目，請展開「篩選」放寬範圍。</div>}
@@ -281,24 +282,24 @@ export const GearPicker: React.FC<Props> = ({ open, onClose, level, engineClassC
                         </div>
                         <div className="min-w-0 flex-1 cursor-pointer" onClick={() => setDetail(detail === e.id ? null : e.id)}>
                           <div className={`truncate font-semibold ${tone(e.kind)}`}>{isEn ? (e.nameEn || e.name) : e.name}</div>
-                          <div className="truncate text-xs t-dim">{isEn ? e.name : e.nameEn}</div>
-                          <div className="truncate text-xs t-dim">{isEn ? (SLOT_EN[e.slot] ?? e.slot) : SLOT_ZH[e.slot]} · {isEn ? (e.baseNameEn || e.baseName) : e.baseName}{e.classCode ? (isEn ? ` · ${ENGINE_CLASS_BY_CODE[e.classCode] ?? e.classCode} Only` : ` · ${CLASS_ZH[e.classCode]}專用`) : ''}{e.levelReq ? ` · Lv${e.levelReq}` : ''}{e.setName ? ` · ${e.setName}` : ''}</div>
+                          <div className="truncate text-xs t-dim">{isEn ? e.baseNameEn : e.nameEn}</div>
+                          <div className="truncate text-xs t-dim">{isEn ? (SLOT_EN[e.slot] ?? e.slot) : SLOT_ZH[e.slot]} · {isEn ? (e.baseNameEn || e.baseName) : e.baseName}{e.classCode ? (isEn ? ` · ${ENGINE_CLASS_BY_CODE[e.classCode] ?? e.classCode} Only` : ` · ${CLASS_ZH[e.classCode]}專用`) : ''}{e.levelReq ? ` · Lv${e.levelReq}` : ''}{e.setName ? ` · ${isEn ? gameData.sets?.find(s => s.id === e.setId)?.nameEn ?? e.setName : e.setName}` : ''}</div>
                         </div>
                         <button type="button" onClick={() => onEquip(e)} className="d2-btn shrink-0" style={{ padding: '3px 12px' }}>{isEn ? "Equip" : "穿戴"}</button>
                       </div>
                       {detail === e.id && (
                         <div className="d2-tip my-1">
-                          <div className={`nm ${tone(e.kind)}`}>{e.name}</div>
-                          <div className="base">{e.baseName}</div>
-                          {describeModifiers(e.mods, 1, level).map((l, i) => <div key={i} className={`mod ${l.known ? '' : 'is-unknown'}`}>{l.text}</div>)}
-                          {e.sockets && <div className="hint">符文：{e.sockets.join(' + ')}（鑲嵌效果已計入）</div>}
-                          {e.mods.length === 0 && <div className="hint">基礎底材，無額外屬性</div>}
+                          <div className={`nm ${tone(e.kind)}`}>{isEn ? e.nameEn : e.name}</div>
+                          <div className="base">{isEn ? e.baseNameEn : e.baseName}</div>
+                          {describeModifiers(e.mods, 1, level, isEn ? 'en' : 'zh').map((l, i) => <div key={i} className={`mod ${l.known ? '' : 'is-unknown'}`}>{l.text}</div>)}
+                          {e.sockets && <div className="hint">{isEn ? `Runes: ${e.sockets.join(' + ')} (socket effects included)` : `符文：${e.sockets.join(' + ')}（鑲嵌效果已計入）`}</div>}
+                          {e.mods.length === 0 && <div className="hint">{isEn ? 'Base item with no additional modifiers' : '基礎底材，無額外屬性'}</div>}
                         </div>
                       )}
                     </li>
                   ))}
                   {list.length === 0 && <li className="d2-empty">{isEn ? "No items found." : "沒有符合的項目。"}</li>}
-                  {list.length > MAX_LIST && <li className="text-xs t-dim px-2 py-1">僅顯示前 {MAX_LIST} 項，請用搜尋縮小範圍</li>}
+                  {list.length > MAX_LIST && <li className="text-xs t-dim px-2 py-1">{isEn ? `Showing the first ${MAX_LIST} items. Narrow the search for more results.` : `僅顯示前 ${MAX_LIST} 項，請用搜尋縮小範圍`}</li>}
                 </ul>
               )}
             </div>

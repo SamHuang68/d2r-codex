@@ -283,8 +283,10 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
 /** 內容區的麵包屑：每一層都可點回上一層 */
 export const Crumbs: React.FC<{ crumbs: { id: string; label: string }[]; onSelect: (id: string) => void; tone?: IndexTone }> = ({
   crumbs, onSelect, tone = 'unique',
-}) => (
-  <nav aria-label="目前位置" className="flex flex-wrap items-center gap-1 text-xs text-sanctuary-400">
+}) => {
+  const { isEn } = useLanguage();
+  return (
+  <nav aria-label={isEn ? 'Breadcrumb' : '目前位置'} className="flex flex-wrap items-center gap-1 text-xs text-sanctuary-400">
     {crumbs.map((c, i) => {
       const last = i === crumbs.length - 1;
       return (
@@ -300,6 +302,7 @@ export const Crumbs: React.FC<{ crumbs: { id: string; label: string }[]; onSelec
     })}
   </nav>
 );
+};
 
 /** 分段標題：標題 + 數量 + 可選的「查看全部」 */
 export const SectionHead: React.FC<{
@@ -409,7 +412,7 @@ export const ViewToggle: React.FC<{ dir: boolean; onChange: (v: 'dir' | 'detail'
     ? ([['dir', 'Directory'], ['detail', 'Detailed']] as const)
     : ([['dir', '目錄'], ['detail', '詳細']] as const);
   return (
-  <div className="inline-flex rounded-lg border border-sanctuary-700 bg-sanctuary-900 p-0.5 text-xs" role="group" aria-label="顯示方式">
+  <div className="inline-flex rounded-lg border border-sanctuary-700 bg-sanctuary-900 p-0.5 text-xs" role="group" aria-label={isEn ? 'View mode' : '顯示方式'}>
     {options.map(([k, label]) => {
       const on = (dir ? 'dir' : 'detail') === k;
       return (

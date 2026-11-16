@@ -55,6 +55,7 @@ export interface RunewordData {
   allowedBasesEn?: string[];
   requiredLevel: number;
   attributes: string[];
+  attributesEn?: string[];
   ladderOnly?: boolean;
   isNewDLC?: boolean; // RotW / 2.6
   tags: string[]; // e.g. ["FCR", "Teleport", "CB", "Magic Find", "All Skills"]
@@ -78,6 +79,7 @@ export interface UniqueItemData {
   ladderOnly?: boolean;
   isNewDLC?: boolean;
   attributes: string[];
+  attributesEn?: string[];
   flavorText?: string;
   tags?: string[];
   imageUrl?: string;
@@ -100,6 +102,7 @@ export interface SetPiece {
   requiredStr?: number;
   requiredDex?: number;
   attributes: string[];
+  attributesEn?: string[];
   setBonuses?: string[];
   imageUrl?: string;
   grade?: 'normal' | 'exceptional' | 'elite';
@@ -115,8 +118,10 @@ export interface SetItemCollection {
   isClassSet?: boolean;
   class?: string | null;
   pieces: SetPiece[];
+  partialBonusesEn?: { count: number; bonus: string }[];
   partialBonuses: { count: number; bonus: string }[];
   fullBonuses: string[];
+  fullBonusesEn?: string[];
   imageUrl?: string;
 }
 

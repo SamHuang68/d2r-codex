@@ -41,7 +41,7 @@ const ELEM: [string, string][] = [['fire', '火焰'], ['cold', '冰寒'], ['ligh
 const isInherit = (l: StatLine) => !!l.calc && /stat\('[^']+'\.accr/.test(l.calc);
 
 /** 召喚技能（等級 lvl，硬點＋加成後）給召喚物的內容。owner 是玩家的屬性（繼承用）；difficulty 0／1／2＝普通／惡夢／地獄（怪物基礎值用） */
-export function summonInfo(s: GameSkill, lvl: number, levels: SkillLevels, owner: Record<string, number>, difficulty: 0 | 1 | 2 = 2): SummonInfo | undefined {
+export function summonInfo(s: GameSkill, lvl: number, levels: SkillLevels, owner: Record<string, number>, difficulty: 0 | 1 | 2 = 2, lang: 'zh' | 'en' = 'zh'): SummonInfo | undefined {
   if (!s.summonId || lvl <= 0) return undefined;
   const monster = summonMonsterOf(s);
   const rows: { line: StatLine; value?: number; supported: boolean }[] = [];
@@ -52,7 +52,7 @@ export function summonInfo(s: GameSkill, lvl: number, levels: SkillLevels, owner
   const sum: Record<string, number> = {}; const inherited: string[] = []; const unsupported: string[] = [];
   for (const r of rows) {
     if (!r.supported || r.value === undefined) { if (r.line.calc) unsupported.push(r.line.stat); continue; }
-    if (isInherit(r.line)) { if (r.value) { const t = skillEffectText(r.line.stat, r.value, lvl); if (t) inherited.push(t); } continue; }
+    if (isInherit(r.line)) { if (r.value) { const t = skillEffectText(r.line.stat, r.value, lvl, lang); if (t) inherited.push(t); } continue; }
     // 生命以 1/256 為單位儲存（屬性定義的 ValShift 8）
     const v = r.line.stat === 'maxhp' || r.line.stat === 'hitpoints' ? r.value / 256 : r.value;
     sum[r.line.stat] = (sum[r.line.stat] ?? 0) + v;
@@ -60,34 +60,35 @@ export function summonInfo(s: GameSkill, lvl: number, levels: SkillLevels, owner
 
   const lines: string[] = [];
   const done = new Set<string>();
-  const hp = (sum.maxhp ?? 0) + (sum.hitpoints ?? 0); if (hp) lines.push(`生命 +${Math.floor(hp)}`);
+  const hp = (sum.maxhp ?? 0) + (sum.hitpoints ?? 0); if (hp) lines.push(`${lang === 'en' ? 'Life' : '生命'} +${Math.floor(hp)}`);
   done.add('maxhp'); done.add('hitpoints');
   for (const [k, zh] of ELEM) {
     const mn = sum[`${k}mindam`]; const mx = sum[`${k}maxdam`]; done.add(`${k}mindam`); done.add(`${k}maxdam`);
-    if (mn !== undefined || mx !== undefined) lines.push(`${zh}傷害 ${Math.floor(mn ?? 0)}–${Math.floor(mx ?? 0)}`);
+    if (mn !== undefined || mx !== undefined) lines.push(`${lang === 'en' ? `${({ fire: 'Fire', cold: 'Cold', light: 'Lightning', poison: 'Poison', magic: 'Magic' } as Record<string, string>)[k]} Damage` : `${zh}傷害`} ${Math.floor(mn ?? 0)}–${Math.floor(mx ?? 0)}`);
   }
   for (const [stat, value] of Object.entries(sum)) {
     if (done.has(stat) || !value) continue;
-    if (stat === 'velocitypercent') { lines.push(`移動速度 ${value > 0 ? '+' : ''}${value}%`); continue; }
+    if (stat === 'velocitypercent') { lines.push(`${lang === 'en' ? 'Movement Speed' : '移動速度'} ${value > 0 ? '+' : ''}${value}%`); continue; }
     if (stat === 'coldlength') continue;
-    const t = skillEffectText(stat, value, lvl); if (t) lines.push(t); else unsupported.push(stat);
+    const t = skillEffectText(stat, value, lvl, lang); if (t) lines.push(t); else unsupported.push(stat);
   }
 
-  return { skill: s, level: lvl, count: petCount(s, lvl, levels), monster, lines, inherited, unsupported, base: monsterBase(monster, difficulty) };
+  return { skill: s, level: lvl, count: petCount(s, lvl, levels), monster, lines, inherited, unsupported, base: monsterBase(monster, difficulty, lang) };
 }
 
 /** 怪物基礎值的顯示文字 */
-export function monsterBase(m: SummonMonster | undefined, difficulty: 0 | 1 | 2 = 2): string[] {
+export function monsterBase(m: SummonMonster | undefined, difficulty: 0 | 1 | 2 = 2, lang: 'zh' | 'en' = 'zh'): string[] {
   if (!m) return [];
   const out: string[] = [];
-  if (m.maxHP) out.push(m.minHP && m.minHP !== m.maxHP ? `生命 ${m.minHP}–${m.maxHP}` : `生命 ${m.maxHP}`);
-  const ac = m.ac[difficulty]; if (ac) out.push(`防禦 ${ac}`);
+  if (m.maxHP) out.push(m.minHP && m.minHP !== m.maxHP ? `${lang === 'en' ? 'Life' : '生命'} ${m.minHP}–${m.maxHP}` : `${lang === 'en' ? 'Life' : '生命'} ${m.maxHP}`);
+  const ac = m.ac[difficulty]; if (ac) out.push(`${lang === 'en' ? 'Defense' : '防禦'} ${ac}`);
   m.dmg.forEach((d, i) => {
     const mn = d.min[difficulty] ?? 0; const mx = d.max[difficulty] ?? 0; if (!mx) return;
     // 兩種攻擊的數值完全相同就只列一次
     if (i > 0 && m.dmg[0].min[difficulty] === mn && m.dmg[0].max[difficulty] === mx) return;
+    if (lang === 'en') { out.push(`Attack${m.dmg.length > 1 ? ` ${i + 1}` : ''}: Damage ${mn}–${mx}${d.tohit[difficulty] ? `, Attack Rating ${d.tohit[difficulty]}` : ''}`); return; }
     out.push(`${m.dmg.length > 1 ? `攻擊 ${i + 1}：` : '攻擊：'}傷害 ${mn}–${mx}${d.tohit[difficulty] ? `、命中 ${d.tohit[difficulty]}` : ''}`);
   });
-  if (!m.dmg.length && m.tohit[difficulty]) out.push(`命中 ${m.tohit[difficulty]}`);
+  if (!m.dmg.length && m.tohit[difficulty]) out.push(`${lang === 'en' ? 'Attack Rating' : '命中'} ${m.tohit[difficulty]}`);
   return out;
 }

@@ -1,3 +1,4 @@
+import { MERCENARIES_EN } from '../../data/mercenariesEn';
 import React, { useState } from 'react';
 import { MERCENARIES_DATA } from '../../data/mercenaries';
 import { MercenaryStats } from './MercenaryStats';
@@ -30,7 +31,8 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
   const [viewMode, setViewMode] = useState<'matrix' | 'act_guide'>('matrix');
   const [selectedActId, setSelectedActId] = useState<string>('act2_desert');
 
-  const currentMerc = MERCENARIES_DATA.find((m) => m.id === selectedActId) || MERCENARIES_DATA[0];
+  const sourceMerc = MERCENARIES_DATA.find((m) => m.id === selectedActId) || MERCENARIES_DATA[0];
+  const currentMerc = isEn ? { ...sourceMerc, ...MERCENARIES_EN[sourceMerc.id] } : sourceMerc;
   const currentVisual = getMercenaryVisual(currentMerc.id);
 
   const renderParsedItemLinks = (rawText: string, colorClass: string, slot?: string) => {
@@ -48,7 +50,7 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
                     type="button"
                     onClick={() => onNavigateItem?.(itemName)}
                     className={`${colorClass} hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5 transition-colors`}
-                    title={`點擊查看【${itemName}】詳細屬性`}
+                    title={isEn ? `View ${itemName} details` : `點擊查看【${itemName}】詳細屬性`}
                   >
                     <span>【{itemName}】</span>
                     <span className="text-[9px] opacity-70">↗</span>
@@ -177,7 +179,7 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
                     <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-sanctuary-700/80 bg-sanctuary-950 shadow-inner">
                       <img
                         src={visual.image}
-                        alt={merc.name}
+                        alt={isEn ? merc.nameEn : merc.name}
                         className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-110"
                         loading="lazy"
                       />
@@ -205,7 +207,7 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
                 <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shrink-0 border-2 border-d2-fire/50 bg-sanctuary-950 shadow-[0_0_20px_rgba(255,100,50,0.2)]">
                   <img
                     src={currentVisual.image}
-                    alt={currentMerc.name}
+                    alt={isEn ? currentMerc.nameEn : currentMerc.name}
                     className="w-full h-full object-cover object-top"
                   />
                   <div className="absolute top-1 right-1 px-1.5 py-0.2 rounded bg-d2-fire text-sanctuary-950 text-[9px] font-bold font-mono tracking-wider">

@@ -124,7 +124,7 @@ export const AffixCompendium: React.FC<{ initialQuery?: string }> = ({ initialQu
 
       <div className="bg-sanctuary-900/60 p-4 rounded-2xl border border-sanctuary-800 space-y-3">
         <div className="flex flex-col md:flex-row md:items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-1" role="group" aria-label="詞綴種類">
+          <div className="flex items-center gap-1" role="group" aria-label={isEn ? 'Affix kind' : '詞綴種類'}>
             {(['all', ...AFFIX_KINDS] as const).map((k) => (
               <button key={k} type="button" onClick={() => { setKind(k); reset(); }} aria-pressed={kind === k}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${kind === k ? 'bg-d2-magic text-sanctuary-950 font-bold shadow' : 'bg-sanctuary-950/80 text-sanctuary-300 hover:text-sanctuary-100 border border-sanctuary-800'}`}>
@@ -140,16 +140,16 @@ export const AffixCompendium: React.FC<{ initialQuery?: string }> = ({ initialQu
               </optgroup>
             ))}
           </select>
-          <label className="flex items-center gap-1.5 text-xs text-sanctuary-300" title="物品等級（ilvl）；遊戲用它判斷詞綴等級（alvl）。留空＝不限">
+          <label className="flex items-center gap-1.5 text-xs text-sanctuary-300" title={isEn ? 'Item level (ilvl), used to determine affix level (alvl). Leave blank for any level.' : '物品等級（ilvl）；遊戲用它判斷詞綴等級（alvl）。留空＝不限'}>
             {isEn ? "Item Level" : "物品等級"}
-            <input type="text" inputMode="numeric" value={ilvlText} onChange={(e) => { setIlvlText(e.target.value); reset(); }} placeholder="1–99" aria-label="物品等級"
+            <input type="text" inputMode="numeric" value={ilvlText} onChange={(e) => { setIlvlText(e.target.value); reset(); }} placeholder="1–99" aria-label={isEn ? 'Item level' : '物品等級'}
               className={`${inputCls} w-20 font-mono`} />
           </label>
           <div className="relative flex-1 md:max-w-xs">
             <Search className="w-4 h-4 text-sanctuary-500 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input type="search" value={q} onChange={(e) => { setQ(e.target.value); reset(); }} placeholder={isEn ? "Search affix name or stat..." : "搜尋詞綴名稱或屬性…"} aria-label="搜尋詞綴" className={`${inputCls} w-full pl-9`} />
+            <input type="search" value={q} onChange={(e) => { setQ(e.target.value); reset(); }} placeholder={isEn ? "Search affix name or stat..." : "搜尋詞綴名稱或屬性…"} aria-label={isEn ? 'Search affixes' : '搜尋詞綴'} className={`${inputCls} w-full pl-9`} />
           </div>
-          <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} aria-label="排序" className={inputCls}>
+          <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} aria-label={isEn ? 'Sort' : '排序'} className={inputCls}>
             <option value="group">{isEn ? "By Group" : "依組別"}</option><option value="level">{isEn ? "By Item Level" : "依物品等級"}</option><option value="name">{isEn ? "By Name" : "依名稱"}</option>
           </select>
         </div>
@@ -158,7 +158,7 @@ export const AffixCompendium: React.FC<{ initialQuery?: string }> = ({ initialQu
             <input type="checkbox" checked={rareOnly} onChange={(e) => { setRareOnly(e.target.checked); reset(); }} className="accent-d2-magic" />
             {isEn ? "Rare eligible only" : "只看稀有物品也會出現的"}
           </label>
-          <label className="flex items-center gap-1.5 text-sanctuary-300 cursor-pointer" title="職業專用後綴裡有 112 個，充能技能的等級與次數在資料表中是負數，實際效果尚未驗證">
+          <label className="flex items-center gap-1.5 text-sanctuary-300 cursor-pointer" title={isEn ? '112 class-specific suffixes have negative skill levels and charge counts in the data. Their effects have not been verified.' : '職業專用後綴裡有 112 個，充能技能的等級與次數在資料表中是負數，實際效果尚未驗證'}>
             <input type="checkbox" checked={hideNegative} onChange={(e) => { setHideNegative(e.target.checked); reset(); }} className="accent-d2-magic" />
             {isEn ? "Hide negative charges" : "隱藏充能數值為負的詞綴"}
           </label>

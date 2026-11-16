@@ -89,7 +89,7 @@ function solve(keys: { key: string; value: number; cands: Affix[] }[], o: SolveO
   return over ? 'budget' : best;
 }
 
-export function checkCustomItem(def: Pick<CustomItemDef, 'baseCode' | 'affixes'>): ItemCheck {
+export function checkCustomItem(def: Pick<CustomItemDef, 'baseCode' | 'affixes'>, isEn = false): ItemCheck {
   const type = CUSTOM_BASE_TYPE[def.baseCode] ?? 'ring';
   const pool = AFFIXES.filter((a) => (a.kind === 'prefix' || a.kind === 'suffix') && affixAppliesToType(a, type));
   const lines: LineCheck[] = def.affixes.map((a: CustomAffix) => {
@@ -117,11 +117,16 @@ export function checkCustomItem(def: Pick<CustomItemDef, 'baseCode' | 'affixes'>
   const maxQ = CAPS[qualities[qualities.length - 1]];
   const noGroup = solve(keys, { prefix: 99, suffix: 99, rareOnly: false, window: false });
   if (noGroup === 'budget') { res.undecided = true; return res; }
-  if (!noGroup) { res.conflict = '其中有詞綴屬於同一組，同一件物品上只會出現一個，不能同時有。'; return res; }
+  if (!noGroup) { res.conflict = isEn ? 'Some affixes belong to the same group; only one can appear on an item.' : '其中有詞綴屬於同一組，同一件物品上只會出現一個，不能同時有。'; return res; }
   const noCap = solve(keys, { prefix: 99, suffix: 99, rareOnly: false, window: true });
   if (noCap === 'budget') { res.undecided = true; return res; }
-  if (!noCap) { res.conflict = '這些詞綴要求的物品等級範圍沒有交集，同一件物品湊不出來。'; return res; }
+  if (!noCap) { res.conflict = isEn ? 'The required item-level ranges do not overlap.' : '這些詞綴要求的物品等級範圍沒有交集，同一件物品湊不出來。'; return res; }
   const eg = noCap.rows.map((r) => `${r.name}（${AFFIX_KIND_ZH[r.kind]}）`).join('、');
+  if (isEn) {
+    const example = noCap.rows.map(r => `${r.nameEn} (${r.kind})`).join(', ');
+    res.conflict = type === 'ring' || type === 'amul' ? `Too many affixes: magic allows 1 prefix + 1 suffix; rare allows ${maxQ.prefix} + ${maxQ.suffix}, using rare-eligible affixes only. Example required combination: ${example}.` : `Charms can only be magic, with 1 prefix + 1 suffix. Example required combination: ${example}.`;
+    return res;
+  }
   res.conflict = type === 'ring' || type === 'amul'
     ? `需要的詞綴個數超過上限：魔法品質最多 ${CAPS.magic.prefix} 個前綴＋${CAPS.magic.suffix} 個後綴，稀有品質最多 ${maxQ.prefix}＋${maxQ.suffix}（稀有只能用「稀有也會出現」的詞綴）。例如這組要靠 ${eg}。`
     : `護身符只會是魔法品質，最多 ${CAPS.magic.prefix} 個前綴＋${CAPS.magic.suffix} 個後綴，放不進同一個護身符。例如這組要靠 ${eg}。`;

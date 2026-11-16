@@ -22,8 +22,9 @@ function loadLibrary(): CustomItemDef[] {
 }
 const storeLibrary = (list: CustomItemDef[]): boolean => { try { window.localStorage.setItem(LIB_KEY, JSON.stringify(list)); return true; } catch { return false; } };
 
-const linesOf = (def: CustomItemDef, level: number) => describeModifiers(def.affixes.map((a) => ({ code: a.code, min: a.value, max: a.value })), 1, level).map((l) => l.text);
+const linesOf = (def: CustomItemDef, level: number, lang: 'zh' | 'en' = 'zh') => describeModifiers(def.affixes.map((a) => ({ code: a.code, min: a.value, max: a.value })), 1, level, lang).map((l) => l.text);
 
+const BASE_EN: Record<string, string> = { rin: 'Ring', amu: 'Amulet', cm1: 'Small Charm', cm2: 'Large Charm', cm3: 'Grand Charm' };
 const KIND_ZH = { prefix: '前綴', suffix: '後綴', auto: '自動' } as const;
 const QUALITY_ZH = { magic: '魔法', rare: '稀有' } as const;
 const fmtRange = ([lo, hi]: [number, number]) => (lo === hi ? `${lo}` : `${lo}–${hi}`);
@@ -31,7 +32,20 @@ const fmtRange = ([lo, hi]: [number, number]) => (lo === hi ? `${lo}` : `${lo}�
 /** 「遊戲內檢查」：對照遊戲魔法詞綴表，說明這組詞綴能不能長在這種飾品上（只是參考，不擋穿戴與儲存） */
 const GameCheck: React.FC<{ check: ItemCheck; level: number }> = ({ check, level }) => {
   const { isEn } = useLanguage();
-  const label = (code: string, value: number) => describeModifiers([{ code, min: value, max: value }], 1, level)[0]?.text ?? code;
+  const label = (code: string, value: number) => describeModifiers([{ code, min: value, max: value }], 1, level, isEn ? 'en' : 'zh')[0]?.text ?? code;
+  if (isEn) return (
+    <div className="d2-tip" aria-label="In-Game Check" style={{ textAlign: 'left' }}>
+      <div className="nm t-gold">In-Game Check (Reference)</div>
+      {check.fit && <div className="mod t-set">Possible with {check.fit.quality} quality; item level ≥ {check.fit.minIlvl}{check.fit.maxIlvl ? ` and ≤ ${check.fit.maxIlvl}` : ''}. Affixes: {check.fit.rows.map(r => `${r.nameEn} (${r.kind})`).join(', ')}</div>}
+      {check.conflict && <div className="mod t-bad">Cannot coexist: {check.conflict}</div>}
+      {check.undecided && <div className="mod t-rare">Too many combinations; no verdict.</div>}
+      {check.lines.map((l, i) => <div key={i} className={`mod ${l.verdict === 'ok' ? '' : 't-bad'}`}>
+        {l.verdict === 'ok' ? 'Valid' : l.verdict === 'value' ? 'Out of range' : 'Unavailable'}: {label(l.code, l.value)}{' '}
+        <span className="t-dim">{l.verdict === 'ok' ? `Available from ${[...new Set(l.rows.map(r => r.nameEn))].slice(0, 3).join(', ')}${new Set(l.rows.map(r => r.nameEn)).size > 3 ? ', and others' : ''}; item level ≥ ${Math.min(...l.rows.map(r => r.level))}` : l.verdict === 'value' ? `Possible rolls on this item: ${l.ranges.map(fmtRange).join(', ')}` : 'The game affix table has no matching property for this item type.'}</span>
+      </div>)}
+      <div className="hint">Excludes base affix-level bonuses and properties from unique, set, crafted, or other sources. Not individually verified in game.</div>
+    </div>
+  );
   return (
     <div className="d2-tip" aria-label="遊戲內檢查" style={{ textAlign: 'left' }}>
       <div className="nm t-gold">{isEn ? "In-Game Check (Reference)" : "遊戲內檢查（參考）"}</div>
@@ -70,14 +84,14 @@ export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
   // 詞綴選單的文字：用遊戲的屬性描述範本，把數字換成 N（例如「+N 生命」）
   const labels = useMemo(() => {
     const m = new Map<string, string>();
-    CUSTOM_AFFIXES.forEach((a) => { const t = describeModifiers([{ code: a.code, min: 1, max: 1 }], 1, level)[0]?.text ?? a.code; m.set(a.code, t.replace(/\d+(\.\d+)?/g, 'N')); });
+    CUSTOM_AFFIXES.forEach((a) => { const t = describeModifiers([{ code: a.code, min: 1, max: 1 }], 1, level, isEn ? 'en' : 'zh')[0]?.text ?? a.code; m.set(a.code, t.replace(/\d+(\.\d+)?/g, 'N')); });
     return m;
-  }, [level]);
+  }, [level, isEn]);
 
   const def: CustomItemDef = { baseCode, name, affixes };
   const check = validateCustomDef(def);
   const clean = typeof check === 'string' ? undefined : check;
-  const lines = clean ? linesOf(clean, level) : [];
+  const lines = clean ? linesOf(clean, level, isEn ? 'en' : 'zh') : [];
 
   // 詞綴表較大，背景載入（不拖慢配裝頁首次顯示）；載入失敗就不顯示檢查
   const [checker, setChecker] = useState<typeof import('../../../data/codex/customItemCheck') | null>(null);
@@ -87,40 +101,40 @@ export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
     return () => { alive = false; };
   }, []);
   const cleanKey = clean ? JSON.stringify([clean.baseCode, clean.affixes]) : '';
-  const gameCheck = useMemo(() => (checker && clean && clean.affixes.length ? checker.checkCustomItem(clean) : undefined), [checker, cleanKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  const gameCheck = useMemo(() => (checker && clean && clean.affixes.length ? checker.checkCustomItem(clean, isEn) : undefined), [checker, cleanKey, isEn]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setAffix = (i: number, patch: Partial<CustomAffix>) => setAffixes((l) => l.map((a, k) => (k === i ? { ...a, ...patch } : a)));
-  const equip = (d: CustomItemDef) => { const e = customEntry(d); if (e) onEquip(e); else say('無法建立這件自訂飾品'); };
+  const equip = (d: CustomItemDef) => { const e = customEntry(d); if (e) onEquip(e); else say(isEn ? 'Cannot create this custom item' : '無法建立這件自訂飾品'); };
   const save = () => {
     if (!clean) return;
-    const label = clean.name || CUSTOM_BASES.find((b) => b.code === clean.baseCode)?.label || '自訂';
+    const label = clean.name || (isEn ? BASE_EN[clean.baseCode] : CUSTOM_BASES.find((b) => b.code === clean.baseCode)?.label) || (isEn ? 'Custom' : '自訂');
     const next = [{ ...clean, name: label }, ...library.filter((x) => x.name !== label)].slice(0, MAX_LIB);
-    if (storeLibrary(next)) { setLibrary(next); say(`已存入「${label}」`); } else say('無法儲存：瀏覽器封鎖了本機儲存（無痕模式或容量已滿）');
+    if (storeLibrary(next)) { setLibrary(next); say(isEn ? `Saved: ${label}` : `已存入「${label}」`); } else say(isEn ? 'Cannot save: local storage is blocked or full' : '無法儲存：瀏覽器封鎖了本機儲存（無痕模式或容量已滿）');
   };
-  const remove = (d: CustomItemDef) => { const next = library.filter((x) => x !== d); if (storeLibrary(next)) setLibrary(next); else say('無法儲存：瀏覽器封鎖了本機儲存'); };
+  const remove = (d: CustomItemDef) => { const next = library.filter((x) => x !== d); if (storeLibrary(next)) setLibrary(next); else say(isEn ? 'Cannot save: local storage is blocked' : '無法儲存：瀏覽器封鎖了本機儲存'); };
   const load = (d: CustomItemDef) => { setBaseCode(d.baseCode); setName(d.name); setAffixes(d.affixes.length ? d.affixes : [{ code: 'hp', value: 1 }]); };
 
   return (
-    <section aria-label="自訂飾品" className="d2-panel" style={{ marginTop: 12 }}>
+    <section aria-label={isEn ? 'Custom items' : '自訂飾品'} className="d2-panel" style={{ marginTop: 12 }}>
       <div className="d2-title">{isEn ? "CUSTOM ITEM BUILDER" : "自 訂 飾 品"}</div>
       <div className="d2-panel-body space-y-3">
         <div className="d2-sub">{isEn ? "Craft custom magic or rare jewelry/charms by picking affixes from the game database. The In-Game Check validates rolls against the affix tables for reference." : "魔法或稀有的戒指、護身符、咒符，詞綴是隨機的，遊戲資料裡沒有現成物品可選，所以由你自己組。詞綴從清單選、數值自己填；數值上限只是防呆。下方的「遊戲內檢查」會對照遊戲的詞綴表，提示這組詞綴能不能長出來，只是參考，不會擋下穿戴或儲存。"}</div>
         <div className="flex flex-wrap items-center gap-2">
           <label className="d2-field">{isEn ? "Type" : "種類"}
-            <select value={baseCode} onChange={(e) => setBaseCode(e.target.value)} className="d2-select" aria-label="自訂飾品種類">
-              {CUSTOM_BASES.map((b) => <option key={b.code} value={b.code}>{b.label}</option>)}
+            <select value={baseCode} onChange={(e) => setBaseCode(e.target.value)} className="d2-select" aria-label={isEn ? 'Custom item type' : '自訂飾品種類'}>
+              {CUSTOM_BASES.map((b) => <option key={b.code} value={b.code}>{isEn ? BASE_EN[b.code] : b.label}</option>)}
             </select>
           </label>
-          <input value={name} onChange={(e) => setName(e.target.value)} maxLength={MAX_CUSTOM_NAME} placeholder={isEn ? "Name (optional), e.g. Lucky Small Charm" : "名稱（選填），例如：幸運小符"} aria-label="自訂飾品名稱" className="d2-input flex-1" style={{ minWidth: 160 }} />
+          <input value={name} onChange={(e) => setName(e.target.value)} maxLength={MAX_CUSTOM_NAME} placeholder={isEn ? "Name (optional), e.g. Lucky Small Charm" : "名稱（選填），例如：幸運小符"} aria-label={isEn ? 'Custom item name' : '自訂飾品名稱'} className="d2-input flex-1" style={{ minWidth: 160 }} />
         </div>
         <ul className="space-y-1.5">
           {affixes.map((a, i) => (
             <li key={i} className="flex flex-wrap items-center gap-2">
-              <select value={a.code} onChange={(e) => setAffix(i, { code: e.target.value })} className="d2-select flex-1" style={{ minWidth: 160 }} aria-label={`第 ${i + 1} 條詞綴`}>
+              <select value={a.code} onChange={(e) => setAffix(i, { code: e.target.value })} className="d2-select flex-1" style={{ minWidth: 160 }} aria-label={isEn ? `Modifier ${i + 1}` : `第 ${i + 1} 條詞綴`}>
                 {CUSTOM_AFFIXES.map((x) => <option key={x.code} value={x.code}>{labels.get(x.code)}</option>)}
               </select>
-              <input type="number" min={1} max={CUSTOM_AFFIXES.find((x) => x.code === a.code)?.max} value={a.value} onChange={(e) => setAffix(i, { value: Number(e.target.value) || 1 })} className="d2-input" style={{ width: 80 }} aria-label={`第 ${i + 1} 條詞綴的數值`} />
-              <button type="button" className="d2-btn is-danger" onClick={() => setAffixes((l) => l.filter((_, k) => k !== i))} aria-label={`移除第 ${i + 1} 條詞綴`}>{isEn ? "Remove" : "移除"}</button>
+              <input type="number" min={1} max={CUSTOM_AFFIXES.find((x) => x.code === a.code)?.max} value={a.value} onChange={(e) => setAffix(i, { value: Number(e.target.value) || 1 })} className="d2-input" style={{ width: 80 }} aria-label={isEn ? `Modifier ${i + 1} value` : `第 ${i + 1} 條詞綴的數值`} />
+              <button type="button" className="d2-btn is-danger" onClick={() => setAffixes((l) => l.filter((_, k) => k !== i))} aria-label={isEn ? `Remove modifier ${i + 1}` : `移除第 ${i + 1} 條詞綴`}>{isEn ? "Remove" : "移除"}</button>
             </li>
           ))}
         </ul>
@@ -129,10 +143,10 @@ export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
           <span className="d2-sub">{isEn ? `Up to ${MAX_CUSTOM_AFFIXES} mods` : `最多 ${MAX_CUSTOM_AFFIXES} 條`}</span>
         </div>
         {clean && (
-          <div className="d2-tip" aria-label="自訂飾品預覽">
-            <div className="nm t-magic">{clean.name || `自訂${CUSTOM_BASES.find((b) => b.code === clean.baseCode)?.label}`}</div>
+          <div className="d2-tip" aria-label={isEn ? 'Custom item preview' : '自訂飾品預覽'}>
+            <div className="nm t-magic">{clean.name || (isEn ? `Custom ${BASE_EN[clean.baseCode]}` : `自訂${CUSTOM_BASES.find((b) => b.code === clean.baseCode)?.label}`)}</div>
             {lines.map((t, i) => <div key={i} className="mod">{t}</div>)}
-            {lines.length === 0 && <div className="hint">還沒有詞綴</div>}
+            {lines.length === 0 && <div className="hint">{isEn ? 'No modifiers yet' : '還沒有詞綴'}</div>}
           </div>
         )}
         {gameCheck && <GameCheck check={gameCheck} level={level} />}
@@ -150,7 +164,7 @@ export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
                 <li key={`${d.name}-${i}`} className="d2-build flex flex-wrap items-center gap-x-3 gap-y-1">
                   <div className="min-w-0 flex-1">
                     <b className="t-magic break-all">{d.name}</b>
-                    <div className="d2-sub">{CUSTOM_BASES.find((b) => b.code === d.baseCode)?.label}・{linesOf(d, level).join('，') || '沒有詞綴'}</div>
+                    <div className="d2-sub">{isEn ? BASE_EN[d.baseCode] : CUSTOM_BASES.find((b) => b.code === d.baseCode)?.label}・{linesOf(d, level, isEn ? 'en' : 'zh').join('，') || (isEn ? 'No modifiers' : '沒有詞綴')}</div>
                   </div>
                   <button type="button" className="d2-btn" onClick={() => equip(d)}>{isEn ? "Equip" : "穿戴"}</button>
                   <button type="button" className="d2-btn is-quiet" onClick={() => load(d)}>{isEn ? "Edit" : "載入編輯"}</button>
@@ -159,7 +173,7 @@ export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
               ))}
             </ul>
           )}
-          <div className="d2-sub mt-1">只存在這個瀏覽器；戴上後的自訂飾品會隨配裝一起存進 Profile 與自動暫存。</div>
+          <div className="d2-sub mt-1">{isEn ? 'Stored in this browser only. Equipped custom items are included in saved profiles and autosaves.' : '只存在這個瀏覽器；戴上後的自訂飾品會隨配裝一起存進 Profile 與自動暫存。'}</div>
         </div>
       </div>
     </section>

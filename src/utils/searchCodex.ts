@@ -1,3 +1,4 @@
+import { describeRanges } from '../engine/describe';
 import type { SearchResultItem } from './search';
 
 /**
@@ -11,7 +12,7 @@ const rank = (name: string, nameEn: string, q: string): number => {
   return a === q || b === q ? 0 : a.startsWith(q) || b.startsWith(q) ? 1 : 2;
 };
 
-export async function searchCodex(query: string): Promise<SearchResultItem[]> {
+export async function searchCodex(query: string, isEn = false): Promise<SearchResultItem[]> {
   const q = query.trim().toLowerCase();
   if (!q) return [];
   const [mon, aff, shr, exp] = await Promise.all([
@@ -24,11 +25,11 @@ export async function searchCodex(query: string): Promise<SearchResultItem[]> {
     .sort((a, b) => rank(a.name, a.nameEn, q) - rank(b.name, b.nameEn, q) || a.name.localeCompare(b.name, 'zh-Hant'))
     .slice(0, MAX_PER_KIND);
   for (const m of monsters) {
-    const imm = mon.immunitiesOf(m, 2).map((e) => mon.ELEM_ZH[e]);
+    const imm = mon.immunitiesOf(m, 2).map((e) => (isEn ? e : mon.ELEM_ZH[e]));
     out.push({
       id: `monster:${m.id}`, type: 'monster', title: m.name, titleEn: m.nameEn,
-      category: `怪物圖鑑 · ${mon.KIND_ZH[m.kind ?? 'other']}`, badge: m.boss ? '首領' : '怪物',
-      preview: `地獄 Lv ${m.levels[2] ?? '—'}・${imm.length ? `免疫 ${imm.join('、')}` : '無免疫'}`, targetTab: 'monsters',
+      category: isEn ? `Monsters · ${m.kind ?? 'other'}` : `怪物圖鑑 · ${mon.KIND_ZH[m.kind ?? 'other']}`, badge: isEn ? (m.boss ? 'Boss' : 'Monster') : m.boss ? '首領' : '怪物',
+      preview: isEn ? `Hell Lv ${m.levels[2] ?? '—'} · ${imm.length ? `Immune: ${imm.join(', ')}` : 'No immunities'}` : `地獄 Lv ${m.levels[2] ?? '—'}・${imm.length ? `免疫 ${imm.join('、')}` : '無免疫'}`, targetTab: 'monsters',
     });
   }
 
@@ -46,8 +47,8 @@ export async function searchCodex(query: string): Promise<SearchResultItem[]> {
     const a = rows[0];
     out.push({
       id: `affix:${a.kind}|${a.nameEn}`, type: 'affix', title: a.name, titleEn: a.nameEn,
-      category: `詞綴寶典 · ${aff.AFFIX_KIND_ZH[a.kind]}`, badge: '詞綴',
-      preview: `${aff.affixLines(a).join('，')}${rows.length > 1 ? `（${rows.length} 階）` : ''}`, targetTab: 'affixes',
+      category: isEn ? `Affixes · ${a.kind}` : `詞綴寶典 · ${aff.AFFIX_KIND_ZH[a.kind]}`, badge: isEn ? 'Affix' : '詞綴',
+      preview: isEn ? `${describeRanges(a.mods, { lang: 'en' }).map(l => l.text).join(', ')}${rows.length > 1 ? ` (${rows.length} tiers)` : ''}` : `${aff.affixLines(a).join('，')}${rows.length > 1 ? `（${rows.length} 階）` : ''}`, targetTab: 'affixes',
     });
   }
 
@@ -57,22 +58,22 @@ export async function searchCodex(query: string): Promise<SearchResultItem[]> {
     const sec = shr.durationSeconds(s);
     out.push({
       id: `shrine:${s.code}`, type: 'shrine', title: s.name, titleEn: s.nameEn,
-      category: `聖壇圖鑑 · ${shr.SHRINE_TYPE_ZH[s.type]}`, badge: '聖壇',
-      preview: `${shr.shrineSummary(s)}${sec !== undefined ? `（${sec} 秒）` : ''}`, targetTab: 'shrines',
+      category: isEn ? `Shrines · ${s.type}` : `聖壇圖鑑 · ${shr.SHRINE_TYPE_ZH[s.type]}`, badge: isEn ? 'Shrine' : '聖壇',
+      preview: isEn ? `${shr.shrineSummaryEn(s)}${sec !== undefined ? ` (${sec} seconds)` : ''}` : `${shr.shrineSummary(s)}${sec !== undefined ? `（${sec} 秒）` : ''}`, targetTab: 'shrines',
     });
   }
 
   // 經驗值：問到「經驗」「升級」或 exp 時給經驗值表；有帶 1~99 的數字就直接給那一級的數值
   if (/經驗|升級|exp/.test(q)) {
     out.push({
-      id: 'exp:table', type: 'exp', title: '經驗值表', titleEn: 'Experience Table', category: '經驗值表 · 1~99 級', badge: '經驗值',
-      preview: `升到 99 級累計 ${exp.fmtExp(exp.expToReach(exp.MAX_LEVEL))}；98→99 級需要 ${exp.fmtExp(exp.expForLevel(exp.MAX_LEVEL))}`, targetTab: 'experience',
+      id: 'exp:table', type: 'exp', title: '經驗值表', titleEn: 'Experience Table', category: isEn ? 'Experience · Levels 1–99' : '經驗值表 · 1~99 級', badge: isEn ? 'Experience' : '經驗值',
+      preview: isEn ? `Total to Level 99: ${exp.fmtExp(exp.expToReach(exp.MAX_LEVEL))}; 98→99: ${exp.fmtExp(exp.expForLevel(exp.MAX_LEVEL))}` : `升到 99 級累計 ${exp.fmtExp(exp.expToReach(exp.MAX_LEVEL))}；98→99 級需要 ${exp.fmtExp(exp.expForLevel(exp.MAX_LEVEL))}`, targetTab: 'experience',
     });
     const n = Number((/(?:^|\D)(\d{1,2})(?!\d)/.exec(q) ?? [])[1]);
     if (n >= 1 && n <= exp.MAX_LEVEL) {
       out.push({
-        id: `exp:${n}`, type: 'exp', title: `${n} 級經驗`, titleEn: `Level ${n}`, category: '經驗值表 · 單級數值', badge: '經驗值',
-        preview: `升到 ${n} 級累計 ${exp.fmtExp(exp.expToReach(n))}；從 ${n - 1} 級升上來需要 ${exp.fmtExp(exp.expForLevel(n))}`, targetTab: 'experience',
+        id: `exp:${n}`, type: 'exp', title: `${n} 級經驗`, titleEn: `Level ${n}`, category: isEn ? 'Experience · Single level' : '經驗值表 · 單級數值', badge: isEn ? 'Experience' : '經驗值',
+        preview: isEn ? `Total to Level ${n}: ${exp.fmtExp(exp.expToReach(n))}; ${n - 1}→${n}: ${exp.fmtExp(exp.expForLevel(n))}` : `升到 ${n} 級累計 ${exp.fmtExp(exp.expToReach(n))}；從 ${n - 1} 級升上來需要 ${exp.fmtExp(exp.expForLevel(n))}`, targetTab: 'experience',
       });
     }
   }

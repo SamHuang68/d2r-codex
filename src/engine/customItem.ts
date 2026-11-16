@@ -61,5 +61,5 @@ export function customEntry(def: CustomItemDef): CatalogEntry | undefined {
   const tpl = getCatalog().find((e) => e.id === `base:${def.baseCode}`); if (!tpl) return undefined;
   const mods: Modifier[] = def.affixes.map((a) => ({ code: a.code, min: a.value, max: a.value }));
   const label = CUSTOM_BASES.find((b) => b.code === def.baseCode)?.label ?? tpl.name;
-  return { ...tpl, id: `custom:${def.baseCode}:${(seq++).toString(36)}`, name: def.name || `自訂${label}`, nameEn: 'Custom', mods, custom: def };
+  return { ...tpl, id: `custom:${def.baseCode}:${(seq++).toString(36)}`, name: def.name || `自訂${label}`, nameEn: def.name || `Custom ${tpl.baseNameEn}`, mods, custom: def };
 }

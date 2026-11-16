@@ -140,16 +140,23 @@ export function skillLevelsFrom(hard: Record<string, number>, b: SkillBonuses): 
 }
 
 /** 傷害結果 → 顯示文字（繁中） */
-export function damageText(d: ReturnType<typeof skillDamage>): string | undefined {
+export function damageText(d: ReturnType<typeof skillDamage>, lang: 'zh' | 'en' = 'zh'): string | undefined {
   if (!d) return undefined;
+  if (lang === 'en') {
+    if (d.kind === 'weapon') return `Weapon Damage ${d.weaponPct}%`;
+    const bonus = [d.synergyPct ? `Synergy +${d.synergyPct}%` : '', d.masteryPct ? `Mastery +${d.masteryPct}%` : ''].filter(Boolean).join(', ');
+    const elem = ({ fire: 'Fire', cold: 'Cold', ltng: 'Lightning', pois: 'Poison', mag: 'Magic' } as Record<string, string>)[d.element ?? ''] ?? d.element;
+    return `${d.kind === 'elemental' ? elem : 'Physical'} Damage ${d.min.toLocaleString()}–${d.max.toLocaleString()}${d.kind !== 'elemental' && d.weaponPct ? ` + Weapon Damage ${d.weaponPct}%` : ''}${bonus ? ` (includes ${bonus})` : ''}`;
+  }
   if (d.kind === 'weapon') return `武器傷害 ${d.weaponPct}%`;
   const bonus = [d.synergyPct ? `協同 +${d.synergyPct}%` : '', d.masteryPct ? `專精 +${d.masteryPct}%` : ''].filter(Boolean).join('、');
   const tail = bonus ? `（含${bonus}）` : '';
   if (d.kind === 'elemental') return `${ELEMENT_ZH[d.element ?? ''] ?? d.element}傷害 ${d.min.toLocaleString()}–${d.max.toLocaleString()}${tail}`;
   return `物理傷害 ${d.min.toLocaleString()}–${d.max.toLocaleString()}${d.weaponPct ? `＋武器傷害 ${d.weaponPct}%` : ''}${tail}`;
 }
-export function targetDamageText(d: ReturnType<typeof skillDamage>): string | undefined {
+export function targetDamageText(d: ReturnType<typeof skillDamage>, lang: 'zh' | 'en' = 'zh'): string | undefined {
   if (!d || d.kind !== 'elemental' || !d.target) return undefined;
+  if (lang === 'en') return `Against ${d.target.res}% Resistance: ${d.target.min.toLocaleString()}–${d.target.max.toLocaleString()}`;
   return `對抗性 ${d.target.res}% 的目標：${d.target.min.toLocaleString()}–${d.target.max.toLocaleString()}`;
 }
 

@@ -23,7 +23,7 @@ import { engineItemsOf } from './engineItems';
 import './d2skin.css';
 import { useLanguage } from '../../../context/LanguageContext';
 import { getClassImage } from '../../../utils/classImages';
-import { DEFAULT_MERC, MERC_SLOT_ZH, DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type MercSlot, type MercState, type Quests, type TabKey } from './types';
+import { DEFAULT_MERC, MERC_SLOT_EN, DOLL_SLOT_EN, MERC_SLOT_ZH, DOLL_SLOT_KIND, DOLL_SLOT_ZH, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type MercSlot, type MercState, type Quests, type TabKey } from './types';
 
 const CLASSES: { zh: string; en: string; code: string }[] = [
   { zh: '亞馬遜', en: 'Amazon', code: 'ama' }, { zh: '魔法使', en: 'Sorceress', code: 'sor' }, { zh: '死靈法師', en: 'Necromancer', code: 'nec' },
@@ -78,7 +78,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const [mercPickerOpen, setMercPickerOpen] = useState(false);
   const [mercJump, setMercJump] = useState<{ group: Group; seq: number } | null>(null);
   const [pickerJump, setPickerJump] = useState<{ group: Group; seq: number } | null>(null);
-  const [toast, setToast] = useState<string | null>(restored ? '已還原離開前的配裝' : null);
+  const [toast, setToast] = useState<string | null>(restored ? (isEn ? 'Restored your previous build' : '已還原離開前的配裝') : null);
   const [skillPoints, setSkillPoints] = useState<Record<string, number>>(restored?.skillPoints ?? {});
   const [activeSkillId, setActiveSkillId] = useState<string>(restored?.activeSkillId ?? '');
   const [buffsOn, setBuffsOn] = useState<Record<string, boolean>>(restored?.buffsOn ?? {});
@@ -166,13 +166,13 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
       if (entry.slot === 'weapon' && entry.twoHanded) {
         const sh = target === 'weaponI' ? 'shieldI' : 'shieldII';
         const wb = baseByCode.get(entry.baseCode);
-        if (next[sh] && !(wb?.oneOrTwoHanded && cls.en === 'Barbarian')) { delete next[sh]; say('雙手武器：已卸下同組副手'); }
+        if (next[sh] && !(wb?.oneOrTwoHanded && cls.en === 'Barbarian')) { delete next[sh]; say(isEn ? 'Two-handed weapon: unequipped the off-hand item' : '雙手武器：已卸下同組副手'); }
       }
       return next;
     });
     setSelected(target);
   };
-  const equip = (entry: CatalogEntry) => { const t = targetFor(entry); if (!t) { say('找不到對應槽位'); return; } place(t, entry); };
+  const equip = (entry: CatalogEntry) => { const t = targetFor(entry); if (!t) { say(isEn ? 'No compatible equipment slot' : '找不到對應槽位'); return; } place(t, entry); };
   const unequip = (slot: DollSlot) => { setEquipped((m) => { const n = { ...m }; delete n[slot]; return n; }); setSelected(null); };
 
   const selectClass = (c: typeof CLASSES[number]) => {
@@ -204,12 +204,19 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const onAllVit = () => setAlloc((a) => ({ ...a, vit: a.vit + remaining }));
 
   const share = () => {
-    const lines = [`${cls.zh} Lv${level}（${DIFF_ZH[difficulty]}）`, `力${result.attributes.str} 敏${result.attributes.dex} 體${result.attributes.vit} 能${result.attributes.ene}`,
+    const lines = isEn ? [
+      `${cls.en} Lv${level} (${difficulty === 'hell' ? 'Hell' : difficulty === 'nightmare' ? 'Nightmare' : 'Normal'})`,
+      `Strength ${result.attributes.str} Dexterity ${result.attributes.dex} Vitality ${result.attributes.vit} Energy ${result.attributes.ene}`,
+      `Life ${result.life} Mana ${result.mana} Defense ${result.defense} Block ${result.blockChance}%`,
+      `Resistances: Fire ${result.resist.fire}, Cold ${result.resist.cold}, Lightning ${result.resist.lightning}, Poison ${result.resist.poison}`,
+      ...(Object.keys(equipped) as DollSlot[]).map(k => `${DOLL_SLOT_EN[k]}: ${equipped[k]!.entry.nameEn}`), ...charms.map(c => `Charm: ${c.nameEn}`),
+      ...(merc.on && mercHire && mercResult ? [`Mercenary: ${hirelingLabel(mercHire, true)} Lv${mercResult.level} (Life ${mercResult.life}, Defense ${mercResult.defense})`, ...(Object.keys(merc.equipped) as MercSlot[]).map(k => `Mercenary ${MERC_SLOT_EN[k]}: ${merc.equipped[k]!.entry.nameEn}`)] : [])
+    ] : [`${cls.zh} Lv${level}（${DIFF_ZH[difficulty]}）`, `力${result.attributes.str} 敏${result.attributes.dex} 體${result.attributes.vit} 能${result.attributes.ene}`,
       `生命 ${result.life} 法力 ${result.mana} 防禦 ${result.defense} 格擋 ${result.blockChance}%`,
       `抗性 火${result.resist.fire} 冰${result.resist.cold} 電${result.resist.lightning} 毒${result.resist.poison}`,
       ...(Object.keys(equipped) as DollSlot[]).map((k) => `${DOLL_SLOT_ZH[k]}：${equipped[k]!.entry.name}`), ...charms.map((c) => `咒符：${c.name}`),
       ...(merc.on && mercHire && mercResult ? [`傭兵：${hirelingLabel(mercHire)} Lv${mercResult.level}（生命 ${mercResult.life} 防禦 ${mercResult.defense}）`, ...(Object.keys(merc.equipped) as MercSlot[]).map((k) => `傭兵${MERC_SLOT_ZH[k]}：${merc.equipped[k]!.entry.name}`)] : [])];
-    navigator.clipboard?.writeText(lines.join('\n')).then(() => say('已複製配裝摘要'), () => say('無法複製（瀏覽器未授權）'));
+    navigator.clipboard?.writeText(lines.join('\n')).then(() => say(isEn ? 'Build summary copied' : '已複製配裝摘要'), () => say(isEn ? 'Cannot copy: clipboard permission unavailable' : '無法複製（瀏覽器未授權）'));
   };
   const patchEquipped = (slot: DollSlot, patch: Partial<Equipped>) => setEquipped((m) => (m[slot] ? { ...m, [slot]: { ...m[slot]!, ...patch } } : m));
   const changeBase = (slot: DollSlot, baseCode: string) => setEquipped((m) => (m[slot] ? { ...m, [slot]: { ...m[slot]!, entry: withBase(m[slot]!.entry, baseCode) } } : m));
@@ -230,17 +237,17 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     else if (classChanged) { setSkillPoints({}); setActiveSkillId(''); setBuffsOn({}); }
     if (parts.character) { setLevel(snap.level); setDifficulty(snap.difficulty); setQuests(snap.quests); setAlloc(snap.alloc); setTargetRes(snap.targetRes); }
     else if (classChanged) setAlloc(ZERO);
-    say(`已套用：${label}`);
+    say(isEn ? `Applied: ${label}` : `已套用：${label}`);
   };
-  const undoApply = () => { const prev = undoRef.current; if (!prev) return; undoRef.current = null; setCanUndo(false); applySnapshot(prev, ALL_PARTS, '上一次套用之前的狀態', false); };
+  const undoApply = () => { const prev = undoRef.current; if (!prev) return; undoRef.current = null; setCanUndo(false); applySnapshot(prev, ALL_PARTS, isEn ? 'State before the previous apply' : '上一次套用之前的狀態', false); };
   const clearAll = () => { setEquipped({}); setCharms([]); setAlloc(ZERO); setSelected(null); setMerc((m) => ({ ...m, equipped: {} })); };
   // 傭兵的裝備：只收頭盔、護甲、武器，放進對應的格子
   const equipMerc = (entry: CatalogEntry) => {
     const slot: MercSlot | null = entry.slot === 'head' ? 'head' : entry.slot === 'body' ? 'body' : entry.slot === 'weapon' ? 'weaponI' : null;
-    if (!slot) { say('傭兵只能穿戴頭盔、護甲與武器'); return; }
-    if (entry.classCode) { say('職業專屬裝備傭兵不能穿戴'); return; }
+    if (!slot) { say(isEn ? 'Mercenaries can only equip helms, armor, and weapons' : '傭兵只能穿戴頭盔、護甲與武器'); return; }
+    if (entry.classCode) { say(isEn ? 'Mercenaries cannot equip class-specific items' : '職業專屬裝備傭兵不能穿戴'); return; }
     setMerc((m) => ({ ...m, equipped: { ...m.equipped, [slot]: { entry } } }));
-    say(`傭兵已裝備：${entry.name}`);
+    say(isEn ? `Mercenary equipped: ${entry.nameEn}` : `傭兵已裝備：${entry.name}`);
   };
 
   const selEq = selected ? equipped[selected] : undefined;
@@ -262,26 +269,26 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     if (!sk) return null;
     const hard = skillPoints[sk.id] ?? 0; const lvl = effectiveLevel(sk, hard, skillBonuses);
     const d = skillDamage(sk, lvl, skillLevelsFrom(skillPoints, skillBonuses), damageOpts(sk));
-    return { name: sk.name ?? sk.nameEn, level: lvl, text: damageText(d) ?? (hard > 0 ? '此技能沒有傷害欄位' : '尚未投入技能點'), targetText: targetDamageText(d) };
+    return { name: isEn ? sk.nameEn : sk.name ?? sk.nameEn, level: lvl, text: damageText(d, isEn ? 'en' : 'zh') ?? (isEn ? (hard > 0 ? 'This skill has no damage field' : 'No skill points allocated') : (hard > 0 ? '此技能沒有傷害欄位' : '尚未投入技能點')), targetText: targetDamageText(d, isEn ? 'en' : 'zh') };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSkillId, skillPoints, skillBonuses, mods, result, applied, targetRes]);
+  }, [activeSkillId, skillPoints, skillBonuses, mods, result, applied, targetRes, isEn]);
 
   const skillBudget = skillPointBudget(level, quests.skillPts);
   const skillUsed = Object.values(skillPoints).reduce((a2, b2) => a2 + b2, 0);
 
   const buffPanel = candidates.map((c) => ({
-    id: c.rowId, name: c.skill.name ?? c.skill.nameEn, level: c.level, alwaysOn: c.alwaysOn, on: c.alwaysOn || !!buffsOn[c.rowId],
-    source: c.source === 'item-aura' ? '裝備光環' : c.source === 'item-skill' ? '裝備提供' : c.source === 'mercenary' ? '傭兵' : '本職業',
+    id: c.rowId, name: isEn ? c.skill.nameEn : c.skill.name ?? c.skill.nameEn, level: c.level, alwaysOn: c.alwaysOn, on: c.alwaysOn || !!buffsOn[c.rowId],
+    source: isEn ? ({ 'item-aura': 'Equipment Aura', 'item-skill': 'Granted by Equipment', mercenary: 'Mercenary', class: 'Class Skill' }[c.source] ?? 'Class Skill') : c.source === 'item-aura' ? '裝備光環' : c.source === 'item-skill' ? '裝備提供' : c.source === 'mercenary' ? '傭兵' : '本職業',
     lines: auraEffects(c.skill, c.level, levels),
-  })).map((b2) => ({ ...b2, lines: b2.lines.map((l) => ({ supported: l.supported, text: l.supported && l.value !== undefined ? (skillEffectText(l.stat, l.value, level) ?? `${l.stat} ${l.value}`) : `${l.stat}（公式未支援，未計入）` })) }));
+  })).map((b2) => ({ ...b2, lines: b2.lines.map((l) => ({ supported: l.supported, text: l.supported && l.value !== undefined ? (skillEffectText(l.stat, l.value, level, isEn ? 'en' : 'zh') ?? `${l.stat} ${l.value}`) : (isEn ? `${l.stat} (unsupported formula; not included)` : `${l.stat}（公式未支援，未計入）`) })) }));
 
   return (
-    <section className="d2sim space-y-4" aria-label="配裝模擬器">
+    <section className="d2sim space-y-4" aria-label={isEn ? 'Armory Planner' : '配裝模擬器'}>
       {/* 頂部列 */}
       <div className="d2-panel">
         <div className="d2-panel-body space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="職業">
+            <div className="flex flex-wrap gap-1.5" role="tablist" aria-label={isEn ? 'Class' : '職業'}>
               {CLASSES.map((c) => (
                 <button key={c.code} type="button" role="tab" aria-selected={c.code === cls.code} onClick={() => selectClass(c)} className="d2-class flex items-center gap-1.5"><img src={getClassImage(c.code)} alt="" className="w-4 h-4 rounded-full object-cover object-[75%_15%] border border-sanctuary-700/60 inline-block" /><span>{isEn ? c.en : c.zh}</span></button>
               ))}
@@ -302,10 +309,10 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
               </select>
             </label>
             <span className="d2-sub" style={{ letterSpacing: '.2em' }}>{isEn ? "Quests" : "任務"}</span>
-            <NumSelect label={isEn ? "Life Pot" : "生命藥水"} value={quests.lifePotions} max={3} onChange={(n) => setQuests((q) => ({ ...q, lifePotions: n }))} title="第三章「金鳥」，每難度 +20 最大生命" />
-            <NumSelect label={isEn ? "Anya" : "安亞卷軸"} value={quests.anya} max={3} onChange={(n) => setQuests((q) => ({ ...q, anya: n }))} title="第五章，每難度 +10 全抗" />
-            <NumSelect label={isEn ? "Lam Esen" : "拉姆艾森之書"} value={quests.lamEsen} max={3} onChange={(n) => setQuests((q) => ({ ...q, lamEsen: n }))} title="第三章，每難度 +5 屬性點" />
-            <NumSelect label={isEn ? "Skill Quests" : "技能點任務"} value={quests.skillPts} max={3} onChange={(n) => setQuests((q) => ({ ...q, skillPts: n }))} title="魔物巢穴 1、拉瑪達 1、伊卒爾 2，每難度共 +4 技能點（社群共識，未於遊戲內核對）" />
+            <NumSelect label={isEn ? "Life Pot" : "生命藥水"} value={quests.lifePotions} max={3} onChange={(n) => setQuests((q) => ({ ...q, lifePotions: n }))} title={isEn ? 'Act III Golden Bird: +20 maximum life per difficulty' : '第三章「金鳥」，每難度 +20 最大生命'} />
+            <NumSelect label={isEn ? "Anya" : "安亞卷軸"} value={quests.anya} max={3} onChange={(n) => setQuests((q) => ({ ...q, anya: n }))} title={isEn ? 'Act V: +10 all resistances per difficulty' : '第五章，每難度 +10 全抗'} />
+            <NumSelect label={isEn ? "Lam Esen" : "拉姆艾森之書"} value={quests.lamEsen} max={3} onChange={(n) => setQuests((q) => ({ ...q, lamEsen: n }))} title={isEn ? 'Act III: +5 attribute points per difficulty' : '第三章，每難度 +5 屬性點'} />
+            <NumSelect label={isEn ? "Skill Quests" : "技能點任務"} value={quests.skillPts} max={3} onChange={(n) => setQuests((q) => ({ ...q, skillPts: n }))} title={isEn ? 'Den of Evil 1, Radament 1, Izual 2: +4 skill points per difficulty (community reference; not verified in game)' : '魔物巢穴 1、拉瑪達 1、伊卒爾 2，每難度共 +4 技能點（社群共識，未於遊戲內核對）'} />
             <label className="d2-field" title={isEn ? "Affix rolls min/max values" : "裝備詞綴範圍值取上限或下限"}>{isEn ? "Rolls" : "屬性取值"}
               <select value={rollMax ? 'max' : 'min'} onChange={(e) => setRollMax(e.target.value === 'max')} className="d2-select">
                 <option value="max">{isEn ? "Max" : "上限"}</option><option value="min">{isEn ? "Min" : "下限"}</option>
@@ -336,7 +343,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
                   {(selEq.entry.group === 'armor' || selEq.entry.group === 'weapon') && (
                     <label className="d2-field"><input type="checkbox" className="d2-check" checked={!!selEq.ethereal} onChange={(e) => setEquipped((m) => ({ ...m, [selected]: { ...m[selected]!, ethereal: e.target.checked } }))} />{isEn ? "Eth" : "無形"}</label>
                   )}
-                  {onNavigateItem && selEq.entry.kind !== 'base' && <button type="button" onClick={() => onNavigateItem(selEq.entry.name)} className="d2-btn is-quiet" title="到百科頁查看這件物品（配裝會自動暫存，回來時還原）">{isEn ? "View Codex" : "在百科中查看"}</button>}
+                  {onNavigateItem && selEq.entry.kind !== 'base' && <button type="button" onClick={() => onNavigateItem(selEq.entry.name)} className="d2-btn is-quiet" title={isEn ? 'View this item in the Codex; your build is autosaved and restored when you return' : '到百科頁查看這件物品（配裝會自動暫存，回來時還原）'}>{isEn ? "View Codex" : "在百科中查看"}</button>}
                   <button type="button" onClick={() => unequip(selected)} className="d2-btn is-danger">{isEn ? "Unequip" : "卸下"}</button>
                 </div>
                 {(() => {
@@ -344,10 +351,10 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
                   if (!rs) return null;
                   const pool = GAME_SKILLS.filter((x) => x.gameId >= (rs.min ?? 0) && x.gameId <= (rs.max ?? 0)).sort((a, b) => a.gameId - b.gameId);
                   return (
-                    <label className="d2-field mt-2 w-full">隨機技能
-                      <select value={selEq.randomSkill ?? ''} onChange={(e) => patchEquipped(selected, { randomSkill: e.target.value || undefined })} className="d2-select flex-1 min-w-0" aria-label="隨機技能">
-                        <option value="">（尚未選擇，+{String(rs.par ?? 0)} 未計入）</option>
-                        {pool.map((x) => <option key={x.id} value={x.nameEn}>{x.name ?? x.nameEn}</option>)}
+                    <label className="d2-field mt-2 w-full">{isEn ? 'Random Skill' : '隨機技能'}
+                      <select value={selEq.randomSkill ?? ''} onChange={(e) => patchEquipped(selected, { randomSkill: e.target.value || undefined })} className="d2-select flex-1 min-w-0" aria-label={isEn ? 'Random Skill' : '隨機技能'}>
+                        <option value="">{isEn ? `(Not selected; +${String(rs.par ?? 0)} not included)` : `（尚未選擇，+${String(rs.par ?? 0)} 未計入）`}</option>
+                        {pool.map((x) => <option key={x.id} value={x.nameEn}>{isEn ? x.nameEn : x.name ?? x.nameEn}</option>)}
                       </select>
                     </label>
                   );
@@ -370,7 +377,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
               <AttributesTab className={isEn ? cls.en : cls.zh} classCode={cls.code} level={level} result={result} alloc={alloc} remaining={remaining} needStr={needStr} needDex={needDex}
                 onAdd={onAdd} onSet={onSet} onAutoReq={onAutoReq} onAllVit={onAllVit} onReset={() => setAlloc(ZERO)} mainSkill={mainSkill}
                 targetRes={targetRes} onTargetRes={setTargetRes} buffs={buffPanel} onToggleBuff={(id) => setBuffsOn((m) => ({ ...m, [id]: !m[id] }))}
-                enemyReduction={applied.enemyResReduction} passives={passives.lines} />
+                enemyReduction={applied.enemyResReduction} passives={isEn ? passives.lines.map(p => ({ ...p, skill: skillById(p.skillId)?.nameEn ?? p.skill, text: skillEffectText(p.stat, p.value, p.level, 'en') ?? p.text })) : passives.lines} />
             )}
             {tab === 'gear' && (
               <GearTreeTab open={pickerOpen} onClose={() => setPickerOpen(false)}

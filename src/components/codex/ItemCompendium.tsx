@@ -62,7 +62,7 @@ const makeUniqueMatcher = (q: string) => {
         (aliasName ? aliasName.toLowerCase().includes(t) : false) ||
         (item.nameClassic && item.nameClassic.toLowerCase().includes(t));
       const matchBase = item.baseItem.toLowerCase().includes(t) || (item.baseItemEn ? item.baseItemEn.toLowerCase().includes(t) : false);
-      const matchAttr = item.attributes.some((a) => a.toLowerCase().includes(t));
+      const matchAttr = [...item.attributes, ...(item.attributesEn ?? [])].some((a) => a.toLowerCase().includes(t));
       return matchName || matchBase || matchAttr;
     });
   };
@@ -77,7 +77,7 @@ const makeSetMatcher = (q: string) => {
       const matchSetName = set.name.toLowerCase().includes(t) || set.nameEn.toLowerCase().includes(t);
       const matchPieces = set.pieces.some((p) =>
         p.name.toLowerCase().includes(t) || p.nameEn.toLowerCase().includes(t) ||
-        (p.nameClassic && p.nameClassic.toLowerCase().includes(t)) || p.attributes.some((a) => a.toLowerCase().includes(t)));
+        (p.nameClassic && p.nameClassic.toLowerCase().includes(t)) || [...p.attributes, ...(p.attributesEn ?? [])].some((a) => a.toLowerCase().includes(t)));
       return matchSetName || matchPieces;
     });
   };
@@ -309,7 +309,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
           requiredLevel={item.requiredLevel}
           requiredStr={item.requiredStr}
           requiredDex={item.requiredDex}
-          attributes={item.attributes}
+          attributes={isEn ? item.attributesEn ?? item.attributes : item.attributes}
           flavorText={item.flavorText}
           onNavigateToBase={onNavigateToBase}
           imageUrl={item.imageUrl}
@@ -422,7 +422,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                     </div>
                     <div className={piecePatch34 ? "grid grid-cols-1 md:grid-cols-2 gap-3 items-start" : "space-y-0.5 text-d2-magic"}>
                       <div className="space-y-0.5 text-d2-magic min-w-0">
-                        {piece.attributes.map((attr, i) => (
+                        {(isEn ? piece.attributesEn ?? piece.attributes : piece.attributes).map((attr, i) => (
                           <div key={i}>• {attr}</div>
                         ))}
                       </div>
@@ -445,13 +445,13 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-w-0">
               <div>
                 <div className="text-d2-set font-bold mb-1">{isEn ? 'Partial Set Bonuses:' : '部分套裝加成效果:'}</div>
-                {set.partialBonuses.map((pb, idx) => (
+                {(isEn ? set.partialBonusesEn ?? set.partialBonuses : set.partialBonuses).map((pb, idx) => (
                   <div key={idx} className="text-sanctuary-300">({pb.count} {isEn ? 'Pieces' : '件'}) {pb.bonus}</div>
                 ))}
               </div>
               <div>
                 <div className="text-d2-set font-bold mb-1">{isEn ? 'Complete Set Bonuses:' : '完整全套套裝加成:'}</div>
-                {set.fullBonuses.map((fb, idx) => (
+                {(isEn ? set.fullBonusesEn ?? set.fullBonuses : set.fullBonuses).map((fb, idx) => (
                   <div key={idx} className="text-d2-set font-medium">• {fb}</div>
                 ))}
               </div>

@@ -1,3 +1,4 @@
+import { propInEnglish } from '../../data/propsEn';
 ﻿import React, { useState } from 'react';
 import { 
   GEMS_DATA, 
@@ -270,32 +271,32 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
           <div className="bg-sanctuary-900/60 p-6 rounded-2xl border border-sanctuary-800 space-y-4">
             <h3 className="font-diablo text-base font-bold text-d2-fire flex items-center gap-2">
               <Flame className="w-4 h-4 text-d2-fire" />
-              <span>超級崔斯特姆紅門開門步驟全流程圖解</span>
+              <span>{isEn ? "Uber Tristram Portal Walkthrough" : "超級崔斯特姆紅門開門步驟全流程圖解"}</span>
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs font-mono">
               <div className="p-3 rounded-xl bg-sanctuary-950 border border-sanctuary-800">
-                <div className="text-d2-fire font-bold mb-1">【步驟一：收集 9 把鑰匙】</div>
+                <div className="text-d2-fire font-bold mb-1">{isEn ? "Step 1: Collect 9 Keys" : "【步驟一：收集 9 把鑰匙】"}</div>
                 <p className="text-sanctuary-300 font-sans text-[11px]">
-                  擊殺女伯爵、召喚師、尼拉塞克，各取得 3 把鑰匙 (合計 3組 恐懼+憎恨+毀滅)。
+                  {isEn ? "Defeat the Countess, Summoner, and Nihlathak for 3 keys each: three sets of Terror, Hate, and Destruction." : "擊殺女伯爵、召喚師、尼拉塞克，各取得 3 把鑰匙 (合計 3組 恐懼+憎恨+毀滅)。"}
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-sanctuary-950 border border-sanctuary-800">
-                <div className="text-d2-fire font-bold mb-1">【步驟二：開啟 3 個小紅門】</div>
+                <div className="text-d2-fire font-bold mb-1">{isEn ? "Step 2: Open 3 Minor Portals" : "【步驟二：開啟 3 個小紅門】"}</div>
                 <p className="text-sanctuary-300 font-sans text-[11px]">
-                  在 A5 哈洛加斯分 3 次放入方塊合成，分別開啟魔母巢穴、遺忘沙漠、苦痛熔爐。
+                  {isEn ? "Transmute three sets in Act V Harrogath to open Matron’s Den, Forgotten Sands, and Furnace of Pain." : "在 A5 哈洛加斯分 3 次放入方塊合成，分別開啟魔母巢穴、遺忘沙漠、苦痛熔爐。"}
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-sanctuary-950 border border-sanctuary-800">
-                <div className="text-d2-fire font-bold mb-1">【步驟三：擊殺王取得 3 大器官】</div>
+                <div className="text-d2-fire font-bold mb-1">{isEn ? "Step 3: Collect the 3 Organs" : "【步驟三：擊殺王取得 3 大器官】"}</div>
                 <p className="text-sanctuary-300 font-sans text-[11px]">
-                  擊殺莉莉絲、超級都瑞爾、超級伊卒爾，100% 掉落墨菲斯托之腦、巴爾之眼、迪亞布羅之角。
+                  {isEn ? "Defeat Lilith, Uber Duriel, and Uber Izual for guaranteed drops of Mephisto’s Brain, Baal’s Eye, and Diablo’s Horn." : "擊殺莉莉絲、超級都瑞爾、超級伊卒爾，100% 掉落墨菲斯托之腦、巴爾之眼、迪亞布羅之角。"}
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-sanctuary-950 border border-d2-gold/50 shadow-glow-gold/10">
-                <div className="text-d2-gold font-bold mb-1">【步驟四：決戰超級崔斯特姆】</div>
+                <div className="text-d2-gold font-bold mb-1">{isEn ? "Step 4: Battle in Uber Tristram" : "【步驟四：決戰超級崔斯特姆】"}</div>
                 <p className="text-sanctuary-300 font-sans text-[11px]">
-                  三大器官放入方塊合成，開啟終極紅門，擊破三大魔神斬獲「地獄火炬」！
+                  {isEn ? "Transmute the three organs to open the final portal. Defeat the three Prime Evils to obtain a Hellfire Torch." : "三大器官放入方塊合成，開啟終極紅門，擊破三大魔神斬獲「地獄火炬」！"}
                 </p>
               </div>
             </div>
@@ -303,7 +304,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
 
           {/* Keys & Organs Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {UBER_KEYS_ORGANS_DATA.map((item) => (
+            {(isEn ? UBER_KEYS_ORGANS_DATA.map(propInEnglish) : UBER_KEYS_ORGANS_DATA).map((item) => (
               <div
                 key={item.id}
                 className="p-5 rounded-2xl bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-fire/60 shadow-xl transition-all duration-200 flex flex-col justify-between space-y-4"
@@ -314,7 +315,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                       <ItemIcon name={item.name} nameEn={item.nameEn} rarity="prop" size="lg" />
                       <div>
                         <h3 className="font-diablo text-base font-bold text-sanctuary-100">
-                          {item.name}
+                          {isEn ? item.nameEn : item.name}
                         </h3>
                         <div className="text-[11px] text-sanctuary-400 font-mono italic">
                           {item.nameEn}
@@ -363,31 +364,31 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
               <div className="space-y-1.5">
                 <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-d2-gold/15 border border-d2-gold/30 text-xs text-d2-gold font-bold">
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>無限自由洗點神器</span>
+                  <span>{isEn ? "Repeatable Character Respec" : "無限自由洗點神器"}</span>
                 </div>
                 <h3 className="font-diablo text-2xl font-bold text-sanctuary-100">
-                  赦免徽章 (Token of Absolution)
+                  {isEn ? "Token of Absolution" : "赦免徽章 (Token of Absolution)"}
                 </h3>
                 <p className="text-xs text-sanctuary-300 max-w-xl leading-relaxed">
-                  在地獄難度擊殺第一至第五章大 Boss 收集四色精華，於赫拉迪姆方塊中融合即可獲得「赦免徽章」。右鍵使用即可完全重置當前角色所有屬性點與技能樹，隨心轉型！
+                  {isEn ? "Collect the four essences from act bosses on Hell difficulty and transmute them in the Horadric Cube. Right-click the Token of Absolution to reset all allocated attributes and skills." : "在地獄難度擊殺第一至第五章大 Boss 收集四色精華，於赫拉迪姆方塊中融合即可獲得「赦免徽章」。右鍵使用即可完全重置當前角色所有屬性點與技能樹，隨心轉型！"}
                 </p>
               </div>
             </div>
 
             <div className="p-4 rounded-2xl bg-sanctuary-950 border border-d2-gold/40 shadow-glow-gold/10 text-center shrink-0 w-full md:w-64">
-              <div className="text-xs text-sanctuary-400 font-mono mb-1">方塊合成公式</div>
+              <div className="text-xs text-sanctuary-400 font-mono mb-1">{isEn ? "Cube Recipe" : "方塊合成公式"}</div>
               <div className="font-bold text-sm text-d2-gold font-diablo">
-                4 色精華各 1 顆
+                {isEn ? "1 Essence of Each Color" : "4 色精華各 1 顆"}
               </div>
               <div className="text-[11px] text-sanctuary-400 mt-1">
-                藍 + 黃 + 紅 + 綠 ➔ 赦免徽章
+                {isEn ? "Blue + Yellow + Red + Green → Token of Absolution" : "藍 + 黃 + 紅 + 綠 ➔ 赦免徽章"}
               </div>
             </div>
           </div>
 
           {/* Essences Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {ESSENCES_DATA.map((ess) => (
+            {(isEn ? ESSENCES_DATA.map(propInEnglish) : ESSENCES_DATA).map((ess) => (
               <div
                 key={ess.id}
                 className="p-5 rounded-2xl bg-sanctuary-950 border border-sanctuary-850 hover:border-sanctuary-700 shadow-xl flex flex-col justify-between space-y-4"
@@ -402,11 +403,11 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                           style={{ backgroundColor: ess.colorHex }}
                         />
                         <span className="text-[10px] font-mono text-sanctuary-400 font-bold">
-                          Act {ess.act} 精華
+                          Act {ess.act} {isEn ? 'Essence' : '精華'}
                         </span>
                       </div>
                       <h4 className="font-diablo text-base font-bold text-sanctuary-100">
-                        {ess.name}
+                        {isEn ? ess.nameEn : ess.name}
                       </h4>
                       <div className="text-[11px] text-sanctuary-400 font-mono italic">
                         {ess.nameEn}
@@ -442,7 +443,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
       {activeCategory === 'potions' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {COMBAT_POTIONS_DATA.map((pot) => (
+            {(isEn ? COMBAT_POTIONS_DATA.map(propInEnglish) : COMBAT_POTIONS_DATA).map((pot) => (
               <div
                 key={pot.id}
                 className="p-5 rounded-2xl bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-unique/50 shadow-xl transition-all duration-150 flex flex-col justify-between space-y-4"
@@ -453,7 +454,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                       <ItemIcon name={pot.name} nameEn={pot.nameEn} rarity="prop" size="lg" />
                       <div>
                         <h3 className="font-diablo text-base font-bold text-d2-unique">
-                          {pot.name}
+                          {isEn ? pot.nameEn : pot.name}
                         </h3>
                         <div className="text-[11px] text-sanctuary-400 font-mono italic">
                           {pot.nameEn}
@@ -499,15 +500,15 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
           <div className="bg-sanctuary-900/60 p-5 rounded-2xl border border-sanctuary-800 space-y-2">
             <h3 className="font-diablo text-base font-bold text-d2-set flex items-center gap-2">
               <ShieldAlert className="w-4 h-4 text-d2-set" />
-              <span>D2R 2.5 破免機制 (Sunder Charms) 與終局配置</span>
+              <span>{isEn ? "D2R 2.5 Sunder Charms and Endgame Builds" : "D2R 2.5 破免機制 (Sunder Charms) 與終局配置"}</span>
             </h3>
             <p className="text-xs text-sanctuary-300 leading-relaxed">
-              破免咒符將怪物的抗性<strong>強制壓制為 95%</strong>（不再免疫），但自身對應抗性會大幅降低。此時再搭配裝備上的減抗屬性（如獅鷲之眼、死亡之網、曼宋的教誨、彩虹刻面珠寶、無限信念靈氣），可對原免疫怪物打出毀滅性全額傷害！
+              {isEn ? <>Sunder Charms set an immune monster’s resistance to <strong>95%</strong>, removing its immunity while substantially lowering your corresponding resistance. Pair them with resistance-reducing equipment such as Griffon’s Eye, Death’s Web, Mang Song’s Lesson, Rainbow Facets, or Infinity’s Conviction aura to increase damage against formerly immune monsters.</> : <>破免咒符將怪物的抗性<strong>強制壓制為 95%</strong>（不再免疫），但自身對應抗性會大幅降低。此時再搭配裝備上的減抗屬性（如獅鷲之眼、死亡之網、曼宋的教誨、彩虹刻面珠寶、無限信念靈氣），可對原免疫怪物打出毀滅性全額傷害！</>}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {CHARMS_JEWELS_DATA.map((charm) => (
+            {(isEn ? CHARMS_JEWELS_DATA.map(propInEnglish) : CHARMS_JEWELS_DATA).map((charm) => (
               <div
                 key={charm.id}
                 className="p-5 rounded-2xl bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-set/60 shadow-xl flex flex-col justify-between space-y-4"
@@ -525,7 +526,7 @@ export const PropCompendium: React.FC<PropCompendiumProps> = ({
                       />
                       <div>
                         <h4 className="font-diablo text-sm font-bold text-d2-unique">
-                          {charm.name}
+                          {isEn ? charm.nameEn : charm.name}
                         </h4>
                         <div className="text-[11px] text-sanctuary-400 font-mono italic">
                           {charm.nameEn}

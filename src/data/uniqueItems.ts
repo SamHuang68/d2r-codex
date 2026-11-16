@@ -2,6 +2,7 @@
  * 百科頁的暗金資料：由遊戲資料表（game/uniques.json）即時產生，不再另存一份物品資料。
  * 舊 id（聖杯存檔、社群別名使用）、公開英文名、舊譯名來自覆蓋層 codex/overlay.json；遊戲表新增的項目用穩定的 slug 當 id。
  */
+import extraLinesEn from './codex/itemExtraLinesEn.json';
 import type { UniqueItemData } from '../types';
 import uniquesJson from './game/uniques.json';
 import { imageForEntry } from '../utils/catalogImage';
@@ -38,6 +39,7 @@ export const UNIQUE_ITEMS_DATA: UniqueItemData[] = rows.filter(included).map((r)
     requiredDex: scaledRequirements(base, r.mods).dex || undefined,
     ladderOnly: false,
     attributes: itemAttributes(base, r.mods, { levelReq: r.levelReq, staticLines: o?.staticLines, extraLines: o?.extraLines, dropMods: o?.dropMods, baseAc: uniqueBaseAc(r.id) }),
+    attributesEn: itemAttributes(base, r.mods, { lang: 'en', levelReq: r.levelReq, staticLines: o?.staticLines?.map(l => (extraLinesEn as Record<string, string>)[l] ?? l), extraLines: o?.extraLines?.map(l => (extraLinesEn as Record<string, string>)[l] ?? l), dropMods: o?.dropMods, baseAc: uniqueBaseAc(r.id) }),
     imageUrl: o?.imageUrl ?? (imageForEntry({ id: `unique:${r.id}`, kind: 'unique', baseCode: r.code }) || undefined),
     grade: base?.tier ?? 'normal',
     classOnly: base ? classOnlyOf(base) : null,

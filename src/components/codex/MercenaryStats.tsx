@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Database } from 'lucide-react';
-import { DIFFICULTY_ZH, HIRELINGS, MERC_MAX_LEVEL, clampMercLevel, hirelingMinLevel, mercBaseAt } from '../../engine/mercenary';
+import { hirelingLabel, DIFFICULTY_ZH, HIRELINGS, MERC_MAX_LEVEL, clampMercLevel, hirelingMinLevel, mercBaseAt } from '../../engine/mercenary';
 import { skillEffectText } from '../../engine/skillEffects';
 import { auraEffects, skillByName } from '../../engine/skills';
 import { actZh } from '../../utils/actLabel';
@@ -28,14 +28,14 @@ export const MercenaryStats: React.FC<{ act: number }> = ({ act }) => {
 
   if (!h || !base) return null;
   return (
-    <section aria-label="傭兵資料表數值" className="space-y-4">
+    <section aria-label={isEn ? 'Mercenary data table' : '傭兵資料表數值'} className="space-y-4">
       <div className="flex items-center gap-2">
         <Database className="w-5 h-5 text-d2-fire" />
         <h3 className="text-xl font-diablo font-bold text-sanctuary-100">{t('資料表數值（hireling.txt）', 'Raw Data Stats (hireling.txt)')}</h3>
       </div>
       <div className="bg-sanctuary-900/40 border border-sanctuary-800/80 rounded-2xl p-4 sm:p-5 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-1" role="group" aria-label="難度">
+          <div className="flex items-center gap-1" role="group" aria-label={isEn ? 'Difficulty' : '難度'}>
             {DIFFS.map((d) => (
               <button key={d} type="button" aria-pressed={diff === d} disabled={!types.some((x) => x.difficulty === d)}
                 onClick={() => { setDiff(d); setKindId(null); }}
@@ -44,24 +44,24 @@ export const MercenaryStats: React.FC<{ act: number }> = ({ act }) => {
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-1 flex-wrap" role="group" aria-label="傭兵類型">
+          <div className="flex items-center gap-1 flex-wrap" role="group" aria-label={isEn ? 'Mercenary type' : '傭兵類型'}>
             {inDiff.map((x) => (
               <button key={x.id} type="button" aria-pressed={x.id === h.id} onClick={() => setKindId(x.id)}
                 className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${x.id === h.id ? 'bg-sanctuary-700 text-sanctuary-50 font-bold border border-d2-fire/60' : 'bg-sanctuary-950/80 text-sanctuary-300 hover:text-sanctuary-100 border border-sanctuary-800'}`}>
-                {x.desc}
+                {isEn ? x.subType : x.desc}
               </button>
             ))}
           </div>
           <label className="flex items-center gap-1.5 text-xs text-sanctuary-300 md:ml-auto">
             {isEn ? 'Merc Level' : '傭兵等級'}
-            <input type="text" inputMode="numeric" value={levelText} onChange={(e) => setLevelText(e.target.value)} aria-label="傭兵等級" className={`${inputCls} w-20`} />
+            <input type="text" inputMode="numeric" value={levelText} onChange={(e) => setLevelText(e.target.value)} aria-label={isEn ? 'Mercenary level' : '傭兵等級'} className={`${inputCls} w-20`} />
             <span className="text-sanctuary-500">（{minLv}–{MERC_MAX_LEVEL}）</span>
           </label>
         </div>
 
-        <div className="text-xs text-sanctuary-400">{isEn ? `Act ${h.act} ${(h as any).typeEn || h.typeZh} · ${h.desc} · ${h.difficulty === 1 ? "Normal" : h.difficulty === 2 ? "Nightmare" : "Hell"} (Lvl: ${level})` : `${actZh(h.act)} ${h.typeZh}・${h.desc}・${DIFFICULTY_ZH[h.difficulty]}　目前 ${level} 級`}</div>
+        <div className="text-xs text-sanctuary-400">{isEn ? `${hirelingLabel(h, true)} (Level ${level})` : `${actZh(h.act)} ${h.typeZh}・${h.desc}・${DIFFICULTY_ZH[h.difficulty]}　目前 ${level} 級`}</div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-sm" aria-label="傭兵基礎數值">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-sm" aria-label={isEn ? 'Base mercenary stats' : '傭兵基礎數值'}>
           {[
             [isEn ? 'Life' : '生命', base.life.toLocaleString()],
             [isEn ? 'Defense' : '防禦', base.defense.toLocaleString()],
@@ -77,7 +77,7 @@ export const MercenaryStats: React.FC<{ act: number }> = ({ act }) => {
           </div>
         </div>
 
-        <div className="space-y-1.5" aria-label="傭兵技能">
+        <div className="space-y-1.5" aria-label={isEn ? 'Mercenary skills' : '傭兵技能'}>
           <div className="text-xs font-mono font-bold text-sanctuary-400">{isEn ? `Skills & Auras (Lvl ${level})` : `技能與光環（${level} 級）`}</div>
           {base.skills.map((s) => {
             const sk = s.mode === 1 ? skillByName(s.nameEn) : undefined;
@@ -87,7 +87,7 @@ export const MercenaryStats: React.FC<{ act: number }> = ({ act }) => {
                 <span><span className="text-d2-gold font-bold">{isEn && s.nameEn ? s.nameEn : s.name}</span><span className="text-sanctuary-500 ml-2 font-mono">Lv {s.level}{s.mode === 1 ? (isEn ? " Aura" : "　光環") : s.mode === 14 ? (isEn ? " Attack" : "　普通攻擊") : ""}</span></span>
                 <span className="text-right text-sanctuary-400">
                   {s.mode === 1
-                    ? lines.map((l, i) => <span key={i} className={`block ${l.supported ? 'text-d2-magic' : 'text-sanctuary-500'}`}>{l.supported && l.value !== undefined ? (skillEffectText(l.stat, l.value, level) ?? `${l.stat} ${l.value}`) : `${l.stat}（公式未支援）`}</span>)
+                    ? lines.map((l, i) => <span key={i} className={`block ${l.supported ? 'text-d2-magic' : 'text-sanctuary-500'}`}>{l.supported && l.value !== undefined ? (skillEffectText(l.stat, l.value, level, isEn ? 'en' : 'zh') ?? `${l.stat} ${l.value}`) : (isEn ? `${l.stat} (unsupported formula)` : `${l.stat}（公式未支援）`)}</span>)
                     : s.mode === 14 ? null : (isEn ? `Chance: ${s.chance}%` : `施放機率 ${s.chance}%`)}
                 </span>
               </div>
@@ -95,14 +95,14 @@ export const MercenaryStats: React.FC<{ act: number }> = ({ act }) => {
           })}
         </div>
 
-        <div className="overflow-x-auto" aria-label="各難度雇得到的類型">
+        <div className="overflow-x-auto" aria-label={isEn ? 'Mercenary types by difficulty' : '各難度雇得到的類型'}>
           <table className="text-xs w-full min-w-[420px]">
             <thead><tr className="text-sanctuary-500 font-mono"><th className="text-left font-normal pb-1 pr-3">{isEn ? 'Difficulty' : '難度'}</th><th className="text-left font-normal pb-1">{isEn ? 'Available Hirelings (Min Lvl)' : '雇得到的類型（最低傭兵等級）'}</th></tr></thead>
             <tbody>
               {DIFFS.map((d) => (
                 <tr key={d} className="border-t border-sanctuary-800/60 align-top">
                   <td className="py-1.5 pr-3 text-sanctuary-300 whitespace-nowrap">{isEn ? (d === 1 ? 'Normal' : d === 2 ? 'Nightmare' : 'Hell') : DIFFICULTY_ZH[d]}</td>
-                  <td className="py-1.5 text-sanctuary-200">{types.filter((x) => x.difficulty === d).map((x) => `${x.desc}（${hirelingMinLevel(x)}）`).join('、') || '—'}</td>
+                  <td className="py-1.5 text-sanctuary-200">{types.filter((x) => x.difficulty === d).map((x) => `${isEn ? x.subType : x.desc}（${hirelingMinLevel(x)}）`).join('、') || '—'}</td>
                 </tr>
               ))}
             </tbody>

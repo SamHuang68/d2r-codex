@@ -38,15 +38,15 @@ export const SearchModal: React.FC<SearchModalProps> = ({
     // 查詢字串裡若有舊寫法（站內用字已統一成遊戲字串），也用遊戲寫法搜一次；原查詢的結果在前，附加的結果依 id 去重
     const queries = expandLegacyQuery(query);
     const dedupe = (list: SearchResultItem[]) => { const seen = new Set<string>(); return list.filter((r) => (seen.has(r.id) ? false : (seen.add(r.id), true))); };
-    const hits = dedupe(queries.flatMap((q) => searchOmni(q)));
+    const hits = dedupe(queries.flatMap((q) => searchOmni(q, isEn)));
     setResults(hits);
     // 怪物、詞綴、聖壇、經驗值表的資料較大，輸入之後才載入；結果附加在原本的結果後面。輸入又變了就丟掉舊的結果
     let alive = true;
-    Promise.all(queries.map((q) => searchCodex(q)))
+    Promise.all(queries.map((q) => searchCodex(q, isEn)))
       .then((lists) => { const more = dedupe(lists.flat()); if (alive && more.length) setResults(dedupe([...hits, ...more])); })
       .catch(() => undefined);
     return () => { alive = false; };
-  }, [query]);
+  }, [query, isEn]);
 
   // Handle ESC key
   useEffect(() => {
@@ -192,7 +192,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           ) : (
             results.map((item) => {
               const mainTitle = isEn && item.titleEn ? item.titleEn : item.title;
-              const subTitle = isEn && item.titleEn ? item.title : item.titleEn;
+              const subTitle = isEn ? undefined : item.titleEn;
               return (
                 <div
                   key={item.id}

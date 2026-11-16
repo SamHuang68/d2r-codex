@@ -1,3 +1,10 @@
+import skillTabsZh from '../data/game/skillTabs.json';
+import skillTabsEn from '../data/game/skillTabsEn.json';
+import { propInEnglish } from '../data/propsEn';
+import { MERCENARIES_EN } from '../data/mercenariesEn';
+import { QUESTS_EN, WORLD_EVENTS_EN } from '../data/questsEn';
+import skillDescEn from '../data/skills/skillDescEn.json';
+import { CLASS_ZH_TO_EN } from '../engine/slots';
 import { RUNES_DATA } from '../data/runes';
 import { actZh } from './actLabel';
 import { RUNEWORDS_DATA } from '../data/runewords';
@@ -22,6 +29,16 @@ import {
 } from '../data/props';
 import { normalizeItemQuery, cleanSearchQuery } from './itemQueryNormalizer';
 
+const treeNamesEn = new Map(Object.entries(skillTabsZh).flatMap(([code, names]) => names.map((name, i) => [name, (skillTabsEn as Record<string, string[]>)[code][i]] as const)));
+const englishTree = (name: string) => treeNamesEn.get(name) ?? name;
+const englishItemName = (name: string) => {
+  const item = [...RUNEWORDS_DATA, ...UNIQUE_ITEMS_DATA, ...BASE_ITEMS_DATA].find(x => x.name === name || x.nameEn === name || name.startsWith(`${x.name} (`));
+  return item ? item.nameEn + (name.includes('需無形') ? ' (Ethereal required)' : '') : name;
+};
+const baseTypesEn: Record<string, string> = {"武器鑲材": "Weapon Base", "鎧甲防具": "Armor", "亞馬遜專用弓": "Amazon Bow", "單手劍": "One-Handed Sword", "單手斧": "One-Handed Axe", "聖騎士專用盾": "Paladin Shield", "輕型盾牌": "Light Shield", "輕型鎧甲": "Light Armor", "重型鎧甲": "Heavy Armor", "長柄武器": "Polearm", "長矛 (2.4可做符文語)": "Spear (runewords supported since 2.4)", "雙手劍 (野蠻人可單手)": "Two-Handed Sword (Barbarians can use one-handed)"};
+const immunityEn: Record<string, string> = {"冰寒免疫": "Cold Immune", "冰寒免疫 (指環鬼)": "Cold Immune (Oblivion Knights)", "各波次不同 (五波僕從)": "Varies by wave (five minion waves)", "各類免疫 (山克)": "Various immunities (Shenk)", "各類混合免疫": "Mixed immunities", "寒冷免疫 (艾德瑞奇)": "Cold Immune (Eldritch)", "毒素免疫": "Poison Immune", "火焰免疫": "Fire Immune", "火焰免疫 (偶爾)": "Fire Immune (occasional)", "火焰免疫 (毒魔領主)": "Fire Immune (Venom Lords)", "火焰免疫 (瘸子長老)": "Fire Immune (Council Members)", "無原生免疫 (非金怪)": "No native immunities (non-unique monsters)", "物理免疫 (偶爾)": "Physical Immune (occasional)", "物理免疫 (幽靈)": "Physical Immune (Ghosts)", "閃電免疫": "Lightning Immune", "閃電免疫 (Lightning)": "Lightning Immune", "閃電免疫 (偶爾)": "Lightning Immune (occasional)", "閃電免疫 (暴風施術者)": "Lightning Immune (Storm Casters)"};
+const englishElement = (name: string) => immunityEn[name] ?? name;
+
 export interface SearchResultItem {
   id: string;
   type: 'runeword' | 'unique' | 'set' | 'rune' | 'cube' | 'area' | 'mercenary' | 'valuation' | 'uber' | 'skill' | 'base' | 'quest' | 'prop' | 'character' | 'monster' | 'affix' | 'shrine' | 'exp';
@@ -33,7 +50,7 @@ export interface SearchResultItem {
   targetTab: string;
 }
 
-export const searchOmni = (query: string): SearchResultItem[] => {
+export const searchOmni = (query: string, isEn = false): SearchResultItem[] => {
   const q = query.trim().toLowerCase();
   if (!q) return [];
 
@@ -55,9 +72,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
           type: 'runeword',
           title: rw.name,
           titleEn: rw.nameEn,
-          category: `符文之語 (${rw.sockets}孔: ${rw.runes.join(' + ')})`,
-          badge: '最佳匹配',
-          preview: rw.attributes.slice(0, 3).join(' | '),
+          category: isEn ? `Runeword (${rw.sockets} sockets: ${rw.runes.join(' + ')})` : `符文之語 (${rw.sockets}孔: ${rw.runes.join(' + ')})`,
+          badge: (isEn ? 'Best Match' : '最佳匹配'),
+          preview: (isEn ? rw.attributesEn ?? rw.attributes : rw.attributes).slice(0, 3).join(' | '),
           targetTab: 'runewords'
         });
       }
@@ -70,9 +87,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
           type: 'unique',
           title: uq.name,
           titleEn: uq.nameEn,
-          category: `暗金裝備 (${uq.baseItem})`,
-          badge: '最佳匹配',
-          preview: uq.attributes.slice(0, 3).join(' | '),
+          category: isEn ? `Unique (${uq.baseItemEn ?? uq.baseItem})` : `暗金裝備 (${uq.baseItem})`,
+          badge: (isEn ? 'Best Match' : '最佳匹配'),
+          preview: (isEn ? uq.attributesEn ?? uq.attributes : uq.attributes).slice(0, 3).join(' | '),
           targetTab: 'items'
         });
       }
@@ -86,9 +103,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
           type: 'set',
           title: piece.name,
           titleEn: piece.nameEn,
-          category: `套裝部件 (${parentSet ? parentSet.name : '套裝'})`,
-          badge: '最佳匹配',
-          preview: piece.attributes.slice(0, 3).join(' | '),
+          category: isEn ? `Set Piece (${parentSet?.nameEn ?? 'Set'})` : `套裝部件 (${parentSet ? parentSet.name : '套裝'})`,
+          badge: (isEn ? 'Best Match' : '最佳匹配'),
+          preview: (isEn ? piece.attributesEn ?? piece.attributes : piece.attributes).slice(0, 3).join(' | '),
           targetTab: 'items'
         });
       } else {
@@ -100,11 +117,11 @@ export const searchOmni = (query: string): SearchResultItem[] => {
             type: 'set',
             title: set.name,
             titleEn: set.nameEn,
-            category: `套裝組合 (${set.pieces.length} 件套)`,
-            badge: '最佳匹配',
+            category: isEn ? `Set (${set.pieces.length} pieces)` : `套裝組合 (${set.pieces.length} 件套)`,
+            badge: (isEn ? 'Best Match' : '最佳匹配'),
             preview: (set.fullBonuses && set.fullBonuses.length > 0)
-              ? set.fullBonuses.slice(0, 3).join(' | ')
-              : set.pieces.map(p => p.name).join('、'),
+              ? (isEn ? set.fullBonusesEn ?? set.fullBonuses : set.fullBonuses).slice(0, 3).join(' | ')
+              : set.pieces.map(p => isEn ? p.nameEn : p.name).join('、'),
             targetTab: 'items'
           });
         }
@@ -118,11 +135,11 @@ export const searchOmni = (query: string): SearchResultItem[] => {
           type: 'base',
           title: base.name,
           titleEn: base.nameEn,
-          category: `符文底材 (${base.category} · 最多${base.maxSockets}孔)`,
-          badge: '最佳匹配',
+          category: isEn ? `Base Item (${base.category} · up to ${base.maxSockets} sockets)` : `符文底材 (${base.category} · 最多${base.maxSockets}孔)`,
+          badge: (isEn ? 'Best Match' : '最佳匹配'),
           preview: (base.recommendedRunewords && base.recommendedRunewords.length > 0)
-            ? `推薦符文語: ${base.recommendedRunewords.slice(0, 3).join(', ')}`
-            : `要求力量: ${base.reqStr || 0} · 敏捷: ${base.reqDex || 0} · 最大孔數: ${base.maxSockets}`,
+            ? (isEn ? `Recommended Runewords: ${base.recommendedRunewords.slice(0, 3).map(englishItemName).join(', ')}` : `推薦符文語: ${base.recommendedRunewords.slice(0, 3).join(', ')}`)
+            : (isEn ? `Required Strength: ${base.reqStr || 0} · Dexterity: ${base.reqDex || 0} · Max Sockets: ${base.maxSockets}` : `要求力量: ${base.reqStr || 0} · 敏捷: ${base.reqDex || 0} · 最大孔數: ${base.maxSockets}`),
           targetTab: 'bases'
         });
       }
@@ -152,9 +169,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'runeword',
         title: rw.name,
         titleEn: rw.nameEn,
-        category: `符文之語 (${rw.sockets}孔: ${rw.runes.join(' + ')})`,
-        badge: rw.isNewDLC ? 'RotW DLC' : (rw.ladderOnly ? '天梯專用' : '符文之語'),
-        preview: rw.attributes.slice(0, 3).join(' | '),
+        category: isEn ? `Runeword (${rw.sockets} sockets: ${rw.runes.join(' + ')})` : `符文之語 (${rw.sockets}孔: ${rw.runes.join(' + ')})`,
+        badge: rw.isNewDLC ? 'RotW DLC' : (rw.ladderOnly ? (isEn ? 'Ladder Only' : '天梯專用') : (isEn ? 'Runeword' : '符文之語')),
+        preview: (isEn ? rw.attributesEn ?? rw.attributes : rw.attributes).slice(0, 3).join(' | '),
         targetTab: 'runewords'
       });
     }
@@ -180,9 +197,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'unique',
         title: item.name,
         titleEn: item.nameEn,
-        category: `暗金裝備 (${item.baseItem})`,
-        badge: item.isNewDLC ? 'RotW DLC' : '獨特暗金',
-        preview: item.attributes.slice(0, 3).join(' | '),
+        category: isEn ? `Unique (${item.baseItemEn ?? item.baseItem})` : `暗金裝備 (${item.baseItem})`,
+        badge: item.isNewDLC ? 'RotW DLC' : (isEn ? 'Unique' : '獨特暗金'),
+        preview: (isEn ? item.attributesEn ?? item.attributes : item.attributes).slice(0, 3).join(' | '),
         targetTab: 'items'
       });
     }
@@ -199,9 +216,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'set',
         title: set.name,
         titleEn: set.nameEn,
-        category: `套裝裝備 (${set.pieces.length} 件套)`,
-        badge: '成套套裝',
-        preview: set.pieces.map(p => p.name).join('、'),
+        category: isEn ? `Set (${set.pieces.length} pieces)` : `套裝裝備 (${set.pieces.length} 件套)`,
+        badge: (isEn ? 'Full Set' : '成套套裝'),
+        preview: set.pieces.map(p => isEn ? p.nameEn : p.name).join('、'),
         targetTab: 'sets'
       });
     } else {
@@ -214,9 +231,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
             type: 'set',
             title: piece.name,
             titleEn: piece.nameEn,
-            category: `套裝散件 (${set.name})`,
-            badge: '綠色套裝',
-            preview: piece.attributes.slice(0, 3).join(' | '),
+            category: isEn ? `Set Piece (${set.nameEn})` : `套裝散件 (${set.name})`,
+            badge: (isEn ? 'Set Item' : '綠色套裝'),
+            preview: (isEn ? piece.attributesEn ?? piece.attributes : piece.attributes).slice(0, 3).join(' | '),
             targetTab: 'sets'
           });
         }
@@ -241,9 +258,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'rune',
         title: `${rune.number}號 ${rune.name}`,
         titleEn: rune.nameEn,
-        category: `符文 (Lv ${rune.requiredLevel})`,
-        badge: rune.number >= 26 ? '大號符文' : (rune.number >= 16 ? '中階符文' : '初階符文'),
-        preview: `武器: ${rune.weaponEffect} | 盾甲: ${rune.shieldEffect}`,
+        category: isEn ? `Rune (Lv ${rune.requiredLevel})` : `符文 (Lv ${rune.requiredLevel})`,
+        badge: rune.number >= 26 ? (isEn ? 'High Rune' : '大號符文') : (rune.number >= 16 ? (isEn ? 'Mid Rune' : '中階符文') : (isEn ? 'Low Rune' : '初階符文')),
+        preview: isEn ? `Weapon: ${rune.weaponEffectEn} | Shield: ${rune.shieldEffectEn}` : `武器: ${rune.weaponEffect} | 盾甲: ${rune.shieldEffect}`,
         targetTab: 'runes'
       });
     }
@@ -266,9 +283,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'cube',
         title: recipe.title,
         titleEn: recipe.titleEn,
-        category: `方塊公式 (${recipe.category})`,
-        badge: '方塊合成',
-        preview: `${recipe.inputs.join(' + ')} -> ${recipe.output}`,
+        category: isEn ? `Cube Recipe (${recipe.category})` : `方塊公式 (${recipe.category})`,
+        badge: (isEn ? 'Cube Transmutation' : '方塊合成'),
+        preview: isEn ? `${(recipe.inputsEn ?? recipe.inputs).join(' + ')} -> ${recipe.outputEn ?? recipe.output}` : `${recipe.inputs.join(' + ')} -> ${recipe.output}`,
         targetTab: 'cube'
       });
     }
@@ -290,9 +307,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'area',
         title: area.name,
         titleEn: area.nameEn,
-        category: `${actZh(area.act)} · 區域等級 Lv ${area.areaLevel}`,
-        badge: area.isAlvl85 ? 'Lv85 頂級場景' : (area.isTerrorZone ? '邪惡威脅區域' : '常規場景'),
-        preview: `免疫: ${area.immunities.join(', ')} | ${area.chestsAndBosses || ''}`,
+        category: isEn ? `Act ${area.act} · Area Level ${area.areaLevel}` : `${actZh(area.act)} · 區域等級 Lv ${area.areaLevel}`,
+        badge: area.isAlvl85 ? (isEn ? 'Level 85 Area' : 'Lv85 頂級場景') : (area.isTerrorZone ? (isEn ? 'Terror Zone' : '邪惡威脅區域') : (isEn ? 'Regular Area' : '常規場景')),
+        preview: isEn ? `Immunities: ${area.immunities.map(englishElement).join(', ')} | ${area.chestsAndBossesEn ?? area.chestsAndBosses ?? ''}` : `免疫: ${area.immunities.join(', ')} | ${area.chestsAndBosses || ''}`,
         targetTab: 'areas'
       });
     }
@@ -315,9 +332,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'mercenary',
         title: merc.name,
         titleEn: merc.nameEn,
-        category: `傭兵指南 (第 ${merc.act} 章: ${merc.type})`,
-        badge: '傭兵配置',
-        preview: merc.builds.map(b => b.name).join(' | '),
+        category: isEn ? `Mercenary Guide (Act ${merc.act}: ${MERCENARIES_EN[merc.id]?.type ?? merc.type})` : `傭兵指南 (第 ${merc.act} 章: ${merc.type})`,
+        badge: (isEn ? 'Mercenary Build' : '傭兵配置'),
+        preview: (isEn ? MERCENARIES_EN[merc.id]?.builds ?? merc.builds : merc.builds).map(b => b.name).join(' | '),
         targetTab: 'mercenaries'
       });
     }
@@ -340,9 +357,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'valuation',
         title: item.name,
         titleEn: item.nameEn,
-        category: `鑑寶估價 (${item.itemType})`,
-        badge: item.rarity === 'magic' ? '極品藍裝' : '極品黃裝',
-        preview: `滿變: ${item.idealStats.slice(0, 2).join(' | ')} | 身價: ${item.estimatedValue}`,
+        category: isEn ? `Valuation (${item.itemTypeEn ?? item.itemType})` : `鑑寶估價 (${item.itemType})`,
+        badge: item.rarity === 'magic' ? (isEn ? 'Magic Trophy' : '極品藍裝') : (isEn ? 'Rare Trophy' : '極品黃裝'),
+        preview: isEn ? `Perfect rolls: ${(item.idealStatsEn ?? item.idealStats).slice(0, 2).join(' | ')} | Value: ${item.estimatedValueEn ?? item.estimatedValue}` : `滿變: ${item.idealStats.slice(0, 2).join(' | ')} | 身價: ${item.estimatedValue}`,
         targetTab: 'valuation'
       });
     }
@@ -356,10 +373,10 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         id: `uber_step_${st.step}`,
         type: 'uber',
         title: st.title,
-        titleEn: st.boss,
-        category: `紅門六王攻略 (第 ${st.step} 階段)`,
-        badge: '地獄火炬',
-        preview: `${st.rewards} | 戰術: ${st.strategy}`,
+        titleEn: st.titleEn ?? st.bossEn ?? st.boss,
+        category: isEn ? `Uber Tristram (Step ${st.step})` : `紅門六王攻略 (第 ${st.step} 階段)`,
+        badge: (isEn ? 'Hellfire Torch' : '地獄火炬'),
+        preview: isEn ? `${st.rewardsEn} | Strategy: ${st.strategyEn}` : `${st.rewards} | 戰術: ${st.strategy}`,
         targetTab: 'uber'
       });
     }
@@ -386,9 +403,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
             type: 'skill',
             title: sk.name,
             titleEn: sk.nameEn,
-            category: `${sk.characterClass} · ${sk.tree} (Lv ${sk.requiredLevel})`,
-            badge: '職業技能',
-            preview: sk.description,
+            category: isEn ? `${CLASS_ZH_TO_EN[sk.characterClass] ?? sk.characterClass} · ${englishTree(sk.tree)} (Lv ${sk.requiredLevel})` : `${sk.characterClass} · ${sk.tree} (Lv ${sk.requiredLevel})`,
+            badge: (isEn ? 'Class Skill' : '職業技能'),
+            preview: isEn ? (skillDescEn as Record<string, string>)[sk.id] ?? sk.description : sk.description,
             targetTab: 'skills'
           });
         }
@@ -416,11 +433,11 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'base',
         title: base.name,
         titleEn: base.nameEn,
-        category: `符文底材 (${base.category} · ${base.itemType || '裝備'} · 最多${base.maxSockets}孔)`,
-        badge: base.qualityTier || base.grade || '底材',
+        category: isEn ? `Base Item (${base.category} · ${baseTypesEn[base.itemType ?? ''] ?? base.itemType ?? 'Equipment'} · up to ${base.maxSockets} sockets)` : `符文底材 (${base.category} · ${base.itemType || '裝備'} · 最多${base.maxSockets}孔)`,
+        badge: isEn ? base.grade ?? 'Base' : base.qualityTier || base.grade || '底材',
         preview: (base.recommendedRunewords && base.recommendedRunewords.length > 0)
-          ? `推薦符文語: ${base.recommendedRunewords.slice(0, 3).join(', ')}`
-          : `要求力量: ${base.reqStr || 0} · 敏捷: ${base.reqDex || 0} · 最大孔數: ${base.maxSockets}`,
+          ? (isEn ? `Recommended Runewords: ${base.recommendedRunewords.slice(0, 3).map(englishItemName).join(', ')}` : `推薦符文語: ${base.recommendedRunewords.slice(0, 3).join(', ')}`)
+          : (isEn ? `Required Strength: ${base.reqStr || 0} · Dexterity: ${base.reqDex || 0} · Max Sockets: ${base.maxSockets}` : `要求力量: ${base.reqStr || 0} · 敏捷: ${base.reqDex || 0} · 最大孔數: ${base.maxSockets}`),
         targetTab: 'bases'
       });
     }
@@ -444,9 +461,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'quest',
         title: quest.name,
         titleEn: quest.nameEn,
-        category: `${actZh(quest.act)} 任務 ${quest.questNumber} (${quest.location})`,
-        badge: quest.permanentReward ? '永久獎勵' : (quest.isMandatory ? '主線必解' : '支線任務'),
-        preview: quest.permanentReward ? quest.permanentReward.description : quest.summary,
+        category: isEn ? `Act ${quest.act} Quest ${quest.questNumber} (${QUESTS_EN[quest.id]?.location ?? quest.location})` : `${actZh(quest.act)} 任務 ${quest.questNumber} (${quest.location})`,
+        badge: quest.permanentReward ? (isEn ? 'Permanent Reward' : '永久獎勵') : (quest.isMandatory ? (isEn ? 'Required Quest' : '主線必解') : (isEn ? 'Optional Quest' : '支線任務')),
+        preview: isEn ? (quest.permanentReward ? QUESTS_EN[quest.id]?.rewardDesc : QUESTS_EN[quest.id]?.summary) ?? QUESTS_EN[quest.id]?.summary ?? quest.summary : quest.permanentReward ? quest.permanentReward.description : quest.summary,
         targetTab: 'quests'
       });
     }
@@ -460,9 +477,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'quest',
         title: evt.name,
         titleEn: evt.nameEn,
-        category: `終局世界事件 (${evt.location})`,
-        badge: '世界事件',
-        preview: evt.guide,
+        category: isEn ? `World Event (${WORLD_EVENTS_EN[evt.id]?.location ?? evt.location})` : `終局世界事件 (${evt.location})`,
+        badge: (isEn ? 'World Event' : '世界事件'),
+        preview: isEn ? WORLD_EVENTS_EN[evt.id]?.guide ?? evt.guide : evt.guide,
         targetTab: 'quests'
       });
     }
@@ -490,9 +507,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'character',
         title: `${cls.name} (${cls.nameEn})`,
         titleEn: classTr?.title || cls.title,
-        category: `英雄職業 (${cls.isDLC ? 'RotW DLC' : '經典原版'})`,
-        badge: cls.isDLC ? 'RotW DLC' : '8大英雄',
-        preview: cls.description,
+        category: isEn ? `Class (${cls.isDLC ? 'RotW DLC' : 'Classic'})` : `英雄職業 (${cls.isDLC ? 'RotW DLC' : '經典原版'})`,
+        badge: cls.isDLC ? 'RotW DLC' : (isEn ? '8 Classes' : '8大英雄'),
+        preview: isEn ? classTr?.description ?? cls.description : cls.description,
         targetTab: 'characters'
       });
     }
@@ -507,9 +524,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'prop',
         title: gem.name,
         titleEn: gem.nameEn,
-        category: `完美寶石 (Lv ${gem.requiredLevel})`,
-        badge: '寶石工藝',
-        preview: `盾: ${gem.shieldEffect} | 甲: ${gem.armorHelmEffect}`,
+        category: isEn ? `Perfect Gem (Lv ${gem.requiredLevel})` : `完美寶石 (Lv ${gem.requiredLevel})`,
+        badge: (isEn ? 'Gem Crafting' : '寶石工藝'),
+        preview: isEn ? `Shield: ${gem.shieldEffectEn} | Armor: ${gem.armorHelmEffectEn}` : `盾: ${gem.shieldEffect} | 甲: ${gem.armorHelmEffect}`,
         targetTab: 'props'
       });
     }
@@ -523,9 +540,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'prop',
         title: key.name,
         titleEn: key.nameEn,
-        category: `六王聖物 (${key.dropSource})`,
-        badge: key.type === 'key' ? '紅門鑰匙' : '魔王器官',
-        preview: key.tacticalTips,
+        category: isEn ? `Uber Relic (${propInEnglish(key).dropSource})` : `六王聖物 (${key.dropSource})`,
+        badge: key.type === 'key' ? (isEn ? 'Portal Key' : '紅門鑰匙') : (isEn ? 'Organ / Trophy' : '魔王器官'),
+        preview: isEn ? propInEnglish(key).tacticalTips : key.tacticalTips,
         targetTab: 'props'
       });
     }
@@ -539,9 +556,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'prop',
         title: ess.name,
         titleEn: ess.nameEn,
-        category: `四大精華 (${ess.bossSource})`,
-        badge: '洗點精華',
-        preview: ess.description,
+        category: isEn ? `Essence (${propInEnglish(ess).bossSource})` : `四大精華 (${ess.bossSource})`,
+        badge: (isEn ? 'Respec Essence' : '洗點精華'),
+        preview: isEn ? propInEnglish(ess).description : ess.description,
         targetTab: 'props'
       });
     }
@@ -555,9 +572,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'prop',
         title: pot.name,
         titleEn: pot.nameEn,
-        category: `戰鬥藥劑 (${pot.category})`,
-        badge: '生存黑科技',
-        preview: pot.effect,
+        category: isEn ? `Combat Utility (${pot.category})` : `戰鬥藥劑 (${pot.category})`,
+        badge: (isEn ? 'Survival Utility' : '生存黑科技'),
+        preview: isEn ? propInEnglish(pot).effect : pot.effect,
         targetTab: 'props'
       });
     }
@@ -571,9 +588,9 @@ export const searchOmni = (query: string): SearchResultItem[] => {
         type: 'prop',
         title: charm.name,
         titleEn: charm.nameEn,
-        category: `神級護身符 (${charm.slot})`,
+        category: isEn ? `Charm / Jewel (${charm.slot})` : `神級護身符 (${charm.slot})`,
         badge: `Tier ${charm.tradeValueTier}`,
-        preview: charm.keyAttributes.join(' | '),
+        preview: (isEn ? propInEnglish(charm).keyAttributes : charm.keyAttributes).join(' | '),
         targetTab: 'props'
       });
     }

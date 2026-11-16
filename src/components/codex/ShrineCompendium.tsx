@@ -73,7 +73,7 @@ const ShrineCard: React.FC<{ s: Shrine }> = ({ s }) => {
           {s.unused && (
             <span
               className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-d2-fire/40 text-d2-fire bg-d2-fire/10"
-              title="資料表的效果文字標示「Not Used」"
+              title={isEn ? 'The game table marks this effect as Not Used' : '資料表的效果文字標示「Not Used」'}
             >
               {isEn ? 'Unused in Data' : '資料表標示未使用'}
             </span>
@@ -103,13 +103,13 @@ const ShrineCard: React.FC<{ s: Shrine }> = ({ s }) => {
         <Fact
           k={isEn ? 'Min Area Level' : '最低場景等級'}
           v={s.levelMin}
-          title="資料表 LevelMin 欄，視為這種聖壇出現的最低場景等級"
+          title={isEn ? 'LevelMin: interpreted as the minimum area level for this shrine' : '資料表 LevelMin 欄，視為這種聖壇出現的最低場景等級'}
         />
         {s.reset !== undefined && (
           <Fact
             k={isEn ? 'Reset Time' : '重置時間'}
             v={isEn ? `${s.reset} mins` : `${s.reset} 分鐘`}
-            title="資料表 reset time in minutes 欄"
+            title={isEn ? 'Reset time in minutes from the game table' : '資料表 reset time in minutes 欄'}
           />
         )}
         {s.type !== 'Booster' && s.frames !== undefined && (
@@ -217,7 +217,7 @@ export const ShrineCompendium: React.FC<{ initialQuery?: string }> = ({ initialQ
       </div>
 
       <div className="bg-sanctuary-900/60 p-4 rounded-2xl border border-sanctuary-800 flex flex-col md:flex-row md:items-center gap-3">
-        <div className="flex items-center gap-1 flex-wrap" role="group" aria-label="聖壇類型">
+        <div className="flex items-center gap-1 flex-wrap" role="group" aria-label={isEn ? 'Shrine type' : '聖壇類型'}>
           {(['all', ...SHRINE_TYPES] as const).map((k) => (
             <button
               key={k}
@@ -241,7 +241,7 @@ export const ShrineCompendium: React.FC<{ initialQuery?: string }> = ({ initialQ
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={t('搜尋聖壇名稱或效果…', 'Search shrine name or effect...')}
-            aria-label="搜尋聖壇"
+            aria-label={isEn ? 'Search shrines' : '搜尋聖壇'}
             className="w-full pl-9 pr-3 py-2 bg-sanctuary-950/80 border border-sanctuary-800 rounded-xl text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-gold/50"
           />
         </div>
@@ -250,7 +250,7 @@ export const ShrineCompendium: React.FC<{ initialQuery?: string }> = ({ initialQ
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" aria-label="聖壇清單">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" aria-label={isEn ? 'Shrine list' : '聖壇清單'}>
         {list.map((s) => (
           <ShrineCard key={s.code} s={s} />
         ))}
