@@ -347,9 +347,9 @@ export const HolyGrailTracker: React.FC = () => {
         const success = importUserData(content);
         if (success) {
           setGrailState(loadHolyGrailState());
-          alert('打寶進度備份成功還原！');
+          alert(isEn ? 'Grail progress restored successfully!' : '打寶進度備份成功還原！');
         } else {
-          alert('還原失敗：檔案格式不正確。');
+          alert(isEn ? 'Restore failed: invalid file format.' : '還原失敗：檔案格式不正確。');
         }
       }
     };

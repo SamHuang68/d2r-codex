@@ -38,18 +38,18 @@ export const MAX_CUSTOM_AFFIXES = 8;
 export const MAX_CUSTOM_NAME = 30;
 
 /** 檢查外部（匯入、儲存的）自訂物品定義。結構不對回傳原因；通過就回傳整理過的內容 */
-export function validateCustomDef(v: unknown): CustomItemDef | string {
-  if (!v || typeof v !== 'object' || Array.isArray(v)) return '自訂物品不是物件';
+export function validateCustomDef(v: unknown, isEn = false): CustomItemDef | string {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return (isEn ? 'Custom item must be an object' : '自訂物品不是物件');
   const o = v as Record<string, unknown>;
-  if (typeof o.baseCode !== 'string' || !CUSTOM_BASES.some((b) => b.code === o.baseCode)) return '自訂物品的底材不認得';
-  if (typeof o.name !== 'string') return '自訂物品缺少名稱';
-  if (!Array.isArray(o.affixes) || o.affixes.length > MAX_CUSTOM_AFFIXES) return `自訂物品的詞綴不合法（最多 ${MAX_CUSTOM_AFFIXES} 條）`;
+  if (typeof o.baseCode !== 'string' || !CUSTOM_BASES.some((b) => b.code === o.baseCode)) return (isEn ? 'Unknown custom item base' : '自訂物品的底材不認得');
+  if (typeof o.name !== 'string') return (isEn ? 'Custom item name must be text' : '自訂物品缺少名稱');
+  if (!Array.isArray(o.affixes) || o.affixes.length > MAX_CUSTOM_AFFIXES) return (isEn ? `Custom affixes must be a list of at most ${MAX_CUSTOM_AFFIXES} entries` : `自訂物品的詞綴不合法（最多 ${MAX_CUSTOM_AFFIXES} 條）`);
   const affixes: CustomAffix[] = [];
   for (const a of o.affixes) {
-    if (!a || typeof a !== 'object') return '自訂詞綴不是物件';
+    if (!a || typeof a !== 'object') return (isEn ? 'Custom affix must be an object' : '自訂詞綴不是物件');
     const { code, value } = a as Record<string, unknown>;
-    if (typeof code !== 'string' || !AFFIX_CAP.has(code)) return `不認得的詞綴「${String(code)}」`;
-    if (typeof value !== 'number' || !Number.isFinite(value)) return `詞綴「${code}」的數值不是數字`;
+    if (typeof code !== 'string' || !AFFIX_CAP.has(code)) return (isEn ? `Unknown affix "${String(code)}"` : `不認得的詞綴「${String(code)}」`);
+    if (typeof value !== 'number' || !Number.isFinite(value)) return (isEn ? `Value for affix "${code}" must be a finite number` : `詞綴「${code}」的數值不是數字`);
     affixes.push({ code, value: Math.max(1, Math.min(AFFIX_CAP.get(code)!, Math.round(value))) });
   }
   return { baseCode: o.baseCode, name: o.name.trim().slice(0, MAX_CUSTOM_NAME), affixes };

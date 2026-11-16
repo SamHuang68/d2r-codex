@@ -17,7 +17,7 @@ const MAX_LIB = 60;
 function loadLibrary(): CustomItemDef[] {
   try {
     const arr = JSON.parse(window.localStorage.getItem(LIB_KEY) || '[]'); if (!Array.isArray(arr)) return [];
-    return arr.map(validateCustomDef).filter((x): x is CustomItemDef => typeof x !== 'string');
+    return arr.map((value) => validateCustomDef(value)).filter((x): x is CustomItemDef => typeof x !== 'string');
   } catch { return []; }
 }
 const storeLibrary = (list: CustomItemDef[]): boolean => { try { window.localStorage.setItem(LIB_KEY, JSON.stringify(list)); return true; } catch { return false; } };
@@ -89,7 +89,7 @@ export const CustomItemBuilder: React.FC<Props> = ({ level, onEquip, say }) => {
   }, [level, isEn]);
 
   const def: CustomItemDef = { baseCode, name, affixes };
-  const check = validateCustomDef(def);
+  const check = validateCustomDef(def, isEn);
   const clean = typeof check === 'string' ? undefined : check;
   const lines = clean ? linesOf(clean, level, isEn ? 'en' : 'zh') : [];
 

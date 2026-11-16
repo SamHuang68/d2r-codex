@@ -139,7 +139,7 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
 
   const applyTemplate = (buildId: string, tier: PresetTier) => {
     const p = SIM_PRESETS.find((x) => x.build === buildId && x.tier === tier); if (!p) return;
-    const { snap, notes } = stateFromPreset(p);
+    const { snap, notes } = stateFromPreset(p, isEn);
     const label = isEn ? `${BUILD_NAME_EN[buildId] ?? buildId} — ${PRESET_TIER_EN[tier]}` : p.name;
     apply(snap, parts, label);
     if (notes.length) {
@@ -174,7 +174,7 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
   };
 
   const applyProfile = (p: SavedProfile) => {
-    const { snap, errors } = fromSavedData(p.data);
+    const { snap, errors } = fromSavedData(p.data, isEn);
     apply(snap, parts, p.name);
     if (errors.length) {
       say(isEn ? `Applied "${p.name}", but ${errors.length} items could not be restored: ${errors.join('; ')}` : `已套用「${p.name}」，但有 ${errors.length} 項無法還原：${errors.join('；')}`);
@@ -189,7 +189,7 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
   };
 
   const doImport = () => {
-    const r = parseProfile(importText.trim());
+    const r = parseProfile(importText.trim(), isEn);
     if (typeof r === 'string') {
       say(isEn ? `Import failed: ${r}` : `匯入失敗：${r}`);
       return;

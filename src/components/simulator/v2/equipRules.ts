@@ -1,6 +1,6 @@
 import { CLASS_ZH, ENGINE_CLASS_BY_CODE, SLOT_ZH, type CatalogEntry } from '../../../engine/catalog';
 import { gameData } from '../../../engine/data';
-import { DOLL_SLOT_KIND, DOLL_SLOT_ZH, type DollSlot, type EquippedMap } from './types';
+import { DOLL_SLOT_KIND, DOLL_SLOT_ZH, DOLL_SLOT_EN, type DollSlot, type EquippedMap } from './types';
 
 const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
 
@@ -12,19 +12,19 @@ const baseByCode = new Map(gameData.bases.map((b) => [b.code, b]));
  * - 雙手武器不能搭配盾牌（野蠻人的「單雙手皆可」武器除外）。
  * 咒符放背包的規則（只能放咒符、空間夠不夠）不在這裡，由背包排列決定。
  */
-export function slotPlacementError(target: DollSlot, entry: CatalogEntry, equipped: EquippedMap, engineClass: string): string | null {
+export function slotPlacementError(target: DollSlot, entry: CatalogEntry, equipped: EquippedMap, engineClass: string, isEn = false): string | null {
   const dualWield = entry.slot === 'weapon' && (target === 'shieldI' || target === 'shieldII') && (engineClass === 'Barbarian' || engineClass === 'Assassin');
   if (dualWield) {
     const main = equipped[target === 'shieldI' ? 'weaponI' : 'weaponII']?.entry;
-    if (entry.twoHanded) return '雙手武器不能放在副手欄';
-    if (main?.twoHanded) return '主手為雙手武器，副手欄不能放武器';
-    if (engineClass === 'Assassin' && !/^(h2h|h2h2)$/.test(baseByCode.get(entry.baseCode)?.type ?? '')) return '刺客雙持只能使用爪類武器';
-  } else if (DOLL_SLOT_KIND[target] !== entry.slot) return `「${entry.name}」是${SLOT_ZH[entry.slot]}，不能放在${DOLL_SLOT_ZH[target]}`;
-  if (entry.classCode && ENGINE_CLASS_BY_CODE[entry.classCode] !== engineClass) return `「${entry.name}」只有${CLASS_ZH[entry.classCode] ?? entry.classCode}能使用`;
+    if (entry.twoHanded) return isEn ? 'Two-handed weapons cannot be placed in the off-hand slot' : '雙手武器不能放在副手欄';
+    if (main?.twoHanded) return isEn ? 'Cannot equip an off-hand weapon while using a two-handed main-hand weapon' : '主手為雙手武器，副手欄不能放武器';
+    if (engineClass === 'Assassin' && !/^(h2h|h2h2)$/.test(baseByCode.get(entry.baseCode)?.type ?? '')) return isEn ? 'Assassins can only dual-wield claw weapons' : '刺客雙持只能使用爪類武器';
+  } else if (DOLL_SLOT_KIND[target] !== entry.slot) return isEn ? `"${entry.nameEn}" is a ${entry.slot} item and cannot be placed in ${DOLL_SLOT_EN[target]}` : `「${entry.name}」是${SLOT_ZH[entry.slot]}，不能放在${DOLL_SLOT_ZH[target]}`;
+  if (entry.classCode && ENGINE_CLASS_BY_CODE[entry.classCode] !== engineClass) return isEn ? `"${entry.nameEn}" can only be used by ${ENGINE_CLASS_BY_CODE[entry.classCode] ?? entry.classCode}` : `「${entry.name}」只有${CLASS_ZH[entry.classCode] ?? entry.classCode}能使用`;
   if (entry.slot === 'shield') {
     const w = equipped[target === 'shieldI' ? 'weaponI' : 'weaponII']?.entry;
     const wb = w && baseByCode.get(w.baseCode);
-    if (w?.twoHanded && !(wb?.oneOrTwoHanded && engineClass === 'Barbarian')) return '雙手武器無法搭配盾牌';
+    if (w?.twoHanded && !(wb?.oneOrTwoHanded && engineClass === 'Barbarian')) return isEn ? 'A shield cannot be used with this two-handed weapon' : '雙手武器無法搭配盾牌';
   }
   return null;
 }

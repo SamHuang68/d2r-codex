@@ -154,8 +154,8 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     }
   };
   const canDrop = (target: DollSlot | 'charms', entry: CatalogEntry): string | null => {
-    if (target === 'charms') return entry.slot !== 'charm' ? '只有咒符能放進背包' : canFitCharm(charms, entry) ? null : '背包空間不足';
-    return slotPlacementError(target, entry, equipped, cls.en);
+    if (target === 'charms') return entry.slot !== 'charm' ? (isEn ? 'Only charms can be placed in the inventory' : '只有咒符能放進背包') : canFitCharm(charms, entry) ? null : (isEn ? 'Not enough inventory space' : '背包空間不足');
+    return slotPlacementError(target, entry, equipped, cls.en, isEn);
   };
   const place = (target: DollSlot | 'charms', entry: CatalogEntry) => {
     const err = canDrop(target, entry);
@@ -180,10 +180,10 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     const dropped: string[] = [];
     setEquipped((m) => {
       const n: EquippedMap = {};
-      (Object.keys(m) as DollSlot[]).forEach((k) => { const e = m[k]!; if (e.entry.classCode && e.entry.classCode !== c.code) dropped.push(e.entry.name); else n[k] = e; });
+      (Object.keys(m) as DollSlot[]).forEach((k) => { const e = m[k]!; if (e.entry.classCode && e.entry.classCode !== c.code) dropped.push(isEn ? e.entry.nameEn : e.entry.name); else n[k] = e; });
       return n;
     });
-    if (dropped.length) say(`已卸下其他職業專屬裝備：${dropped.join('、')}`);
+    if (dropped.length) say(isEn ? `Unequipped items restricted to another class: ${dropped.join(', ')}` : `已卸下其他職業專屬裝備：${dropped.join('、')}`);
   };
 
   const onAdd = (k: keyof Alloc, n: number) => setAlloc((a) => {
@@ -224,7 +224,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   // ── 流派範本／自訂 Profile：擷取與套用完整狀態 ──
   const capture = (): SimSnapshot => ({ classCode: cls.code, level, difficulty, quests, alloc, equipped, charms, swap, skillPoints, activeSkillId, buffsOn, targetRes, rollMax, merc });
   const applySnapshot = (snap: SimSnapshot, parts: ApplyParts, label: string, recordUndo = true) => {
-    const c = CLASSES.find((x) => x.code === snap.classCode); if (!c) { say(`找不到職業「${snap.classCode}」`); return; }
+    const c = CLASSES.find((x) => x.code === snap.classCode); if (!c) { say(isEn ? `Class "${snap.classCode}" was not found` : `找不到職業「${snap.classCode}」`); return; }
     if (recordUndo) { undoRef.current = capture(); setCanUndo(true); }
     const classChanged = c.code !== cls.code;
     setCls(c); setSelected(null); onClassChange?.(c.zh);

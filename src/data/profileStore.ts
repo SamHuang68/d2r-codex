@@ -50,30 +50,30 @@ export function toSavedData(s: SimSnapshot): SavedData {
   return out;
 }
 
-function restoreItem(it: SavedItem, errors: string[]): Equipped | undefined {
+function restoreItem(it: SavedItem, errors: string[], isEn = false): Equipped | undefined {
   if (it.custom) {
     const e = customEntry(it.custom);
-    if (!e) { errors.push(`無法還原自訂物品「${it.custom.name}」`); return undefined; }
+    if (!e) { errors.push((isEn ? `Cannot restore custom item "${it.custom.name}"` : `無法還原自訂物品「${it.custom.name}」`)); return undefined; }
     return { entry: e, ethereal: it.ethereal, sockets: undefined, socketCount: undefined };
   }
   let entry = findEntry(it.id);
-  if (!entry) { errors.push(`找不到物品「${it.id}」（遊戲資料版本可能不同）`); return undefined; }
+  if (!entry) { errors.push((isEn ? `Item "${it.id}" was not found (the game data version may differ)` : `找不到物品「${it.id}」（遊戲資料版本可能不同）`)); return undefined; }
   if (it.baseCode && it.baseCode !== entry.baseCode) entry = withBase(entry, it.baseCode);
   const known = getSocketables();
-  const sockets = it.sockets?.filter((id) => { const ok = known.some((s) => s.id === id); if (!ok) errors.push(`找不到鑲嵌物「${id}」`); return ok; });
+  const sockets = it.sockets?.filter((id) => { const ok = known.some((s) => s.id === id); if (!ok) errors.push((isEn ? `Socketable "${id}" was not found` : `找不到鑲嵌物「${id}」`)); return ok; });
   return { entry, ethereal: it.ethereal, sockets: sockets?.length ? sockets : undefined, socketCount: it.socketCount, randomSkill: it.randomSkill && skillByName(it.randomSkill) ? it.randomSkill : undefined };
 }
 
 /** 存檔 → 畫面狀態；任何找不到的項目都會列入 errors，不會悄悄丟掉 */
-export function fromSavedData(d: SavedData): { snap: SimSnapshot; errors: string[] } {
+export function fromSavedData(d: SavedData, isEn = false): { snap: SimSnapshot; errors: string[] } {
   const errors: string[] = []; const equipped: EquippedMap = {};
-  (Object.keys(d.equipped ?? {}) as DollSlot[]).forEach((k) => { const r = restoreItem(d.equipped[k]!, errors); if (r) equipped[k] = r; });
+  (Object.keys(d.equipped ?? {}) as DollSlot[]).forEach((k) => { const r = restoreItem(d.equipped[k]!, errors, isEn); if (r) equipped[k] = r; });
   const charms: CatalogEntry[] = [];
-  (d.charms ?? []).forEach((c) => { const r = restoreItem(c, errors); if (r) charms.push(r.entry); });
+  (d.charms ?? []).forEach((c) => { const r = restoreItem(c, errors, isEn); if (r) charms.push(r.entry); });
   let merc: MercState | undefined;
   if (d.merc) {
     const me: EquippedMap = {};
-    (Object.keys(d.merc.equipped ?? {}) as DollSlot[]).forEach((k) => { const r = restoreItem(d.merc!.equipped[k]!, errors); if (r) me[k] = r; });
+    (Object.keys(d.merc.equipped ?? {}) as DollSlot[]).forEach((k) => { const r = restoreItem(d.merc!.equipped[k]!, errors, isEn); if (r) me[k] = r; });
     merc = { on: d.merc.on, id: d.merc.id, level: d.merc.level, equipped: me };
   }
   const { merc: _savedMerc, ...rest } = d; void _savedMerc;
@@ -88,63 +88,63 @@ const DOLL_SLOTS: DollSlot[] = ['head', 'neck', 'body', 'gloves', 'belt', 'ring1
 const MAX_CHARMS = 40;
 
 /** 單件物品的結構檢查：結構不對（不是物品、鑲嵌欄位不是文字陣列）就回傳原因，不猜、不補 */
-function cleanItem(v: unknown, where: string): SavedItem | string {
-  if (!isObj(v) || typeof v.id !== 'string' || !v.id) return `${where}不是物品`;
-  if (v.baseCode !== undefined && typeof v.baseCode !== 'string') return `${where}的底材代碼不是文字`;
-  if (v.sockets !== undefined && !(Array.isArray(v.sockets) && v.sockets.length <= 6 && v.sockets.every((x) => typeof x === 'string'))) return `${where}的鑲嵌欄位不合法`;
+function cleanItem(v: unknown, where: string, isEn = false): SavedItem | string {
+  if (!isObj(v) || typeof v.id !== 'string' || !v.id) return (isEn ? `${where} is not a valid item` : `${where}不是物品`);
+  if (v.baseCode !== undefined && typeof v.baseCode !== 'string') return (isEn ? `${where}: base code must be text` : `${where}的底材代碼不是文字`);
+  if (v.sockets !== undefined && !(Array.isArray(v.sockets) && v.sockets.length <= 6 && v.sockets.every((x) => typeof x === 'string'))) return (isEn ? `${where}: sockets must be a list of at most 6 text IDs` : `${where}的鑲嵌欄位不合法`);
   let custom: CustomItemDef | undefined;
-  if (v.custom !== undefined) { const c = validateCustomDef(v.custom); if (typeof c === 'string') return `${where}：${c}`; custom = c; }
-  if (v.randomSkill !== undefined && typeof v.randomSkill !== 'string') return `${where}的隨機技能不是文字`;
+  if (v.custom !== undefined) { const c = validateCustomDef(v.custom, isEn); if (typeof c === 'string') return `${where}：${c}`; custom = c; }
+  if (v.randomSkill !== undefined && typeof v.randomSkill !== 'string') return (isEn ? `${where}: random skill must be text` : `${where}的隨機技能不是文字`);
   return { custom, randomSkill: v.randomSkill as string | undefined, id: v.id, baseCode: v.baseCode as string | undefined, ethereal: v.ethereal === true || undefined, sockets: v.sockets as string[] | undefined, socketCount: v.socketCount === undefined ? undefined : int(v.socketCount, 0, 6, 0) };
 }
 
 /** 檢查存檔／匯入內容的結構，不信任外部文字。結構不合就回傳原因（不會丟例外，也不會讓壞資料流進畫面） */
-function validate(raw: unknown): SavedProfile | string {
-  if (!isObj(raw) || raw.v !== 1 || typeof raw.name !== 'string' || !isObj(raw.data)) return '格式不符：不是本模擬器匯出的 Profile';
+function validate(raw: unknown, isEn = false): SavedProfile | string {
+  if (!isObj(raw) || raw.v !== 1 || typeof raw.name !== 'string' || !isObj(raw.data)) return (isEn ? 'Invalid format: this is not a profile exported by this simulator' : '格式不符：不是本模擬器匯出的 Profile');
   const d = raw.data;
-  if (typeof d.classCode !== 'string' || !(d.classCode in CLASS_ZH)) return `格式不符：不認得的職業「${String(d.classCode)}」`;
-  if (!isObj(d.equipped)) return '格式不符：缺少裝備欄位';
+  if (typeof d.classCode !== 'string' || !(d.classCode in CLASS_ZH)) return (isEn ? `Invalid format: unknown class "${String(d.classCode)}"` : `格式不符：不認得的職業「${String(d.classCode)}」`);
+  if (!isObj(d.equipped)) return (isEn ? 'Invalid format: equipment must be an object' : '格式不符：缺少裝備欄位');
 
   const equipped: SavedData['equipped'] = {};
   for (const [slot, v] of Object.entries(d.equipped)) {
-    if (!DOLL_SLOTS.includes(slot as DollSlot)) return `格式不符：不認得的裝備欄位「${slot}」`;
-    const it = cleanItem(v, `裝備欄位「${slot}」`); if (typeof it === 'string') return `格式不符：${it}`;
+    if (!DOLL_SLOTS.includes(slot as DollSlot)) return (isEn ? `Invalid format: unknown equipment slot "${slot}"` : `格式不符：不認得的裝備欄位「${slot}」`);
+    const it = cleanItem(v, isEn ? `Equipment slot "${slot}"` : `裝備欄位「${slot}」`, isEn); if (typeof it === 'string') return (isEn ? `Invalid format: ${it}` : `格式不符：${it}`);
     equipped[slot as DollSlot] = it;
   }
   const charms: SavedItem[] = [];
   if (d.charms !== undefined) {
-    if (!Array.isArray(d.charms) || d.charms.length > MAX_CHARMS) return '格式不符：咒符清單不合法';
-    for (const [i, v] of d.charms.entries()) { const it = cleanItem(v, `第 ${i + 1} 個咒符`); if (typeof it === 'string') return `格式不符：${it}`; charms.push(it); }
+    if (!Array.isArray(d.charms) || d.charms.length > MAX_CHARMS) return (isEn ? 'Invalid format: charms must be a list of at most 40 items' : '格式不符：咒符清單不合法');
+    for (const [i, v] of d.charms.entries()) { const it = cleanItem(v, isEn ? `Charm ${i + 1}` : `第 ${i + 1} 個咒符`, isEn); if (typeof it === 'string') return (isEn ? `Invalid format: ${it}` : `格式不符：${it}`); charms.push(it); }
   }
   const skillPoints: Record<string, number> = {};
   if (d.skillPoints !== undefined) {
-    if (!isObj(d.skillPoints)) return '格式不符：技能點不是物件';
+    if (!isObj(d.skillPoints)) return (isEn ? 'Invalid format: skill points must be an object' : '格式不符：技能點不是物件');
     for (const [id, v] of Object.entries(d.skillPoints)) {
-      if (typeof v !== 'number' || !Number.isFinite(v)) return `格式不符：技能「${id}」的點數不是數字`;
+      if (typeof v !== 'number' || !Number.isFinite(v)) return (isEn ? `Invalid format: points for skill "${id}" must be a finite number` : `格式不符：技能「${id}」的點數不是數字`);
       const pts = int(v, 0, skillById(id)?.maxLvl ?? 20, 0); if (pts > 0) skillPoints[id] = pts;
     }
   }
   const buffsOn: Record<string, boolean> = {};
   if (d.buffsOn !== undefined) {
-    if (!isObj(d.buffsOn)) return '格式不符：增益勾選不是物件';
-    for (const [id, v] of Object.entries(d.buffsOn)) { if (typeof v !== 'boolean') return `格式不符：增益「${id}」不是勾選值`; if (v) buffsOn[id] = true; }
+    if (!isObj(d.buffsOn)) return (isEn ? 'Invalid format: buffs must be an object' : '格式不符：增益勾選不是物件');
+    for (const [id, v] of Object.entries(d.buffsOn)) { if (typeof v !== 'boolean') return (isEn ? `Invalid format: buff "${id}" must be true or false` : `格式不符：增益「${id}」不是勾選值`); if (v) buffsOn[id] = true; }
   }
   let merc: SavedMerc | undefined;
   if (d.merc !== undefined) {
-    if (!isObj(d.merc)) return '格式不符：傭兵欄位不是物件';
+    if (!isObj(d.merc)) return (isEn ? 'Invalid format: mercenary must be an object' : '格式不符：傭兵欄位不是物件');
     const me: SavedMerc['equipped'] = {};
     if (d.merc.equipped !== undefined) {
-      if (!isObj(d.merc.equipped)) return '格式不符：傭兵裝備不是物件';
+      if (!isObj(d.merc.equipped)) return (isEn ? 'Invalid format: mercenary equipment must be an object' : '格式不符：傭兵裝備不是物件');
       for (const [slot, v] of Object.entries(d.merc.equipped)) {
-        if (!(MERC_SLOTS as readonly string[]).includes(slot)) return `格式不符：傭兵不能穿戴「${slot}」`;
-        const it = cleanItem(v, `傭兵的「${slot}」`); if (typeof it === 'string') return `格式不符：${it}`;
+        if (!(MERC_SLOTS as readonly string[]).includes(slot)) return (isEn ? `Invalid format: mercenary cannot use slot "${slot}"` : `格式不符：傭兵不能穿戴「${slot}」`);
+        const it = cleanItem(v, isEn ? `Mercenary slot "${slot}"` : `傭兵的「${slot}」`, isEn); if (typeof it === 'string') return (isEn ? `Invalid format: ${it}` : `格式不符：${it}`);
         me[slot as DollSlot] = it;
       }
     }
     merc = { on: d.merc.on === true, id: int(d.merc.id, 0, 99, DEFAULT_MERC.id), level: int(d.merc.level, 1, 99, DEFAULT_MERC.level), equipped: me };
   }
   const q = isObj(d.quests) ? d.quests : {}; const a = isObj(d.alloc) ? d.alloc : {};
-  const name = raw.name.trim().slice(0, 40) || '匯入的 Profile';
+  const name = raw.name.trim().slice(0, 40) || (isEn ? 'Imported Profile' : '匯入的 Profile');
   const clean: SavedData = {
     classCode: d.classCode, level: int(d.level, 1, 99, 90),
     difficulty: d.difficulty === 'normal' || d.difficulty === 'nightmare' ? d.difficulty : 'hell',
@@ -162,7 +162,7 @@ export function loadProfiles(): { list: SavedProfile[]; rejected: number } {
   try {
     const arr = JSON.parse(window.localStorage.getItem(KEY) || '[]');
     if (!Array.isArray(arr)) return { list: [], rejected: 1 };
-    const results = arr.map(validate);
+    const results = arr.map((value) => validate(value));
     const list = results.filter((x): x is SavedProfile => typeof x !== 'string').sort((x, y) => y.savedAt - x.savedAt);
     return { list, rejected: results.length - list.length };
   } catch { return { list: [], rejected: 1 }; }
@@ -194,8 +194,8 @@ export function loadDraft(): SavedData | null {
 
 export const exportProfile = (p: SavedProfile): string => JSON.stringify({ ...p, id: '' });
 
-export function parseProfile(text: string): SavedProfile | string {
+export function parseProfile(text: string, isEn = false): SavedProfile | string {
   let raw: unknown;
-  try { raw = JSON.parse(text); } catch { return '不是有效的 JSON'; }
-  return validate(raw);
+  try { raw = JSON.parse(text); } catch { return (isEn ? 'Invalid JSON' : '不是有效的 JSON'); }
+  return validate(raw, isEn);
 }
