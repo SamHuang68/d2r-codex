@@ -7,6 +7,7 @@ import { CubeRecipeData } from '../../types';
 import { SectionHead } from '../common/TreeIndex';
 import { useLanguage } from '../../context/LanguageContext';
 import { CubeCraftShowcase } from './CubeCraftShowcase';
+import { CraftedItemsCatalog } from './CraftedItemsCatalog';
 
 export interface CubeLabProps {
   onNavigateToRune?: (runeNumber: number) => void;
@@ -65,8 +66,8 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
           </h2>
           <p className="text-xs sm:text-sm text-sanctuary-400 mt-1">
             {t(
-              '白裝打孔隨機公式、暗金防具/武器底材升級、施法/血腥手工飾品與赦免徽章洗點全收錄。',
-              'Comprehensive recipes for socketing white bases, upgrading Unique armor/weapons, Blood & Caster crafts, and Token of Absolution respecs.'
+              '白裝打孔隨機公式、暗金／亮黃底材升級、完整 36 條四大系列手工合成物品（血腥／施法／重擊／防護）與赦免徽章洗點全收錄。',
+              'Comprehensive recipes for socketing white bases, upgrading Unique/Rare gear, all 36 Crafted Items (Blood, Caster, Hit Power, Safety), and Token of Absolution respecs.'
             )}
           </p>
         </div>
@@ -137,6 +138,11 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
         onNavigateToRune={onNavigateToRune}
         onScrollToRecipe={handleScrollToRecipe}
       />
+
+      {/* 完整 36 條手工合成物品大全（血腥／施法／重擊／防護 × 9 部位 + 即時 ilvl 計算器） */}
+      {(activeCategory === 'all' || activeCategory === 'craft') && (
+        <CraftedItemsCatalog onNavigateToRune={onNavigateToRune} />
+      )}
 
       {/* Recipes Cards：依配方類別分段，每段有標題與數量 */}
       <div className="space-y-9">
