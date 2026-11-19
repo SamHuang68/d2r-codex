@@ -1,4 +1,4 @@
-import { CLASS_ZH, findEntry, getSocketables, withBase, type CatalogEntry } from '../engine/catalog';
+import { CLASS_ZH, findEntry, findSocketable, withBase, type CatalogEntry } from '../engine/catalog';
 import { skillById, skillByName } from '../engine/skills';
 import { customEntry, validateCustomDef, type CustomItemDef } from '../engine/customItem';
 import { DEFAULT_MERC, MERC_SLOTS, type Alloc, type Difficulty, type DollSlot, type Equipped, type EquippedMap, type MercState, type Quests } from '../components/simulator/v2/types';
@@ -59,8 +59,7 @@ function restoreItem(it: SavedItem, errors: string[], isEn = false): Equipped | 
   let entry = findEntry(it.id);
   if (!entry) { errors.push((isEn ? `Item "${it.id}" was not found (the game data version may differ)` : `找不到物品「${it.id}」（遊戲資料版本可能不同）`)); return undefined; }
   if (it.baseCode && it.baseCode !== entry.baseCode) entry = withBase(entry, it.baseCode);
-  const known = getSocketables();
-  const sockets = it.sockets?.filter((id) => { const ok = known.some((s) => s.id === id); if (!ok) errors.push((isEn ? `Socketable "${id}" was not found` : `找不到鑲嵌物「${id}」`)); return ok; });
+  const sockets = it.sockets?.filter((id) => { const ok = Boolean(findSocketable(id)); if (!ok) errors.push((isEn ? `Socketable "${id}" was not found` : `找不到鑲嵌物「${id}」`)); return ok; });
   return { entry, ethereal: it.ethereal, sockets: sockets?.length ? sockets : undefined, socketCount: it.socketCount, randomSkill: it.randomSkill && skillByName(it.randomSkill) ? it.randomSkill : undefined };
 }
 

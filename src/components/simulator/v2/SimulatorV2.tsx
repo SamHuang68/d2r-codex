@@ -3,6 +3,7 @@ import { computeCharacter } from '../../../engine/character';
 import { gameData } from '../../../engine/data';
 import { withBase, type CatalogEntry, type Group } from '../../../engine/catalog';
 import { ALL_PARTS, fromSavedData, loadDraft, saveDraft, type ApplyParts, type SimSnapshot } from '../../../data/profileStore';
+import { parseSharePayload, SHARE_QUERY_KEY } from '../../../data/profileShare';
 import type { EquippedItem } from '../../../engine/types';
 import { SkillTreeV2 } from './SkillTreeV2';
 import { GAME_SKILLS } from '../../../engine/skills';
@@ -55,13 +56,28 @@ const NumSelect: React.FC<{ label: string; value: number; max: number; onChange:
 
 export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法使', initialTab, onNavigateItem, onClassChange }) => {
   const { isEn } = useLanguage();
-  // 離開再回來：若暫存的職業與要開啟的職業相同，還原上次的配裝（從其他頁面指定了別的職業時，不蓋掉使用者的選擇）
-  const restored = useMemo(() => {
+  // 啟動還原：網址帶 ?build=... 時優先載入分享配裝；否則若暫存職業與目前一致則還原上次配裝
+  const boot = useMemo<{ snap: SimSnapshot | null; toast: string | null; fromShare: boolean }>(() => {
+    if (typeof window !== 'undefined') {
+      const raw = new URLSearchParams(window.location.search).get(SHARE_QUERY_KEY);
+      if (raw) {
+        const parsed = parseSharePayload(raw, isEn);
+        if (typeof parsed === 'string') {
+          return { snap: null, toast: isEn ? `Share link failed: ${parsed}` : `分享連結載入失敗：${parsed}`, fromShare: true };
+        }
+        const r = fromSavedData(parsed.data, isEn);
+        const msg = r.errors.length
+          ? (isEn ? `Loaded shared build "${parsed.name}" (${r.errors.length} items skipped)` : `已載入分享配裝「${parsed.name}」（略過 ${r.errors.length} 項）`)
+          : (isEn ? `Loaded shared build "${parsed.name}"` : `已載入分享配裝「${parsed.name}」`);
+        return { snap: r.snap, toast: msg, fromShare: true };
+      }
+    }
     const want = CLASSES.find((c) => c.zh === initialClass) ?? CLASSES[1];
-    const d = loadDraft(); if (!d || d.classCode !== want.code) return null;
-    const r = fromSavedData(d); return r.errors.length ? null : r.snap;
+    const d = loadDraft(); if (!d || d.classCode !== want.code) return { snap: null, toast: null, fromShare: false };
+    const r = fromSavedData(d); return r.errors.length ? { snap: null, toast: null, fromShare: false } : { snap: r.snap, toast: isEn ? 'Restored your previous build' : '已還原離開前的配裝', fromShare: false };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const [cls, setCls] = useState(CLASSES.find((c) => c.zh === initialClass) ?? CLASSES[1]);
+  const restored = boot.snap;
+  const [cls, setCls] = useState(CLASSES.find((c) => c.code === restored?.classCode) ?? CLASSES.find((c) => c.zh === initialClass) ?? CLASSES[1]);
   const [level, setLevel] = useState(restored?.level ?? 90);
   const [difficulty, setDifficulty] = useState<Difficulty>(restored?.difficulty ?? 'hell');
   const [quests, setQuests] = useState<Quests>(restored?.quests ?? { lifePotions: 3, anya: 3, lamEsen: 3, skillPts: 3 }) // 預設地獄、三難度任務皆完成；可調整;
@@ -78,7 +94,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
   const [mercPickerOpen, setMercPickerOpen] = useState(false);
   const [mercJump, setMercJump] = useState<{ group: Group; seq: number } | null>(null);
   const [pickerJump, setPickerJump] = useState<{ group: Group; seq: number } | null>(null);
-  const [toast, setToast] = useState<string | null>(restored ? (isEn ? 'Restored your previous build' : '已還原離開前的配裝') : null);
+  const [toast, setToast] = useState<string | null>(boot.toast);
   const [skillPoints, setSkillPoints] = useState<Record<string, number>>(restored?.skillPoints ?? {});
   const [activeSkillId, setActiveSkillId] = useState<string>(restored?.activeSkillId ?? '');
   const [buffsOn, setBuffsOn] = useState<Record<string, boolean>>(restored?.buffsOn ?? {});
@@ -92,7 +108,17 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
     const timer = window.setTimeout(() => saveDraft({ classCode: cls.code, level, difficulty, quests, alloc, equipped, charms, swap, skillPoints, activeSkillId, buffsOn, targetRes, rollMax, merc }), 400);
     return () => window.clearTimeout(timer);
   }, [cls, level, difficulty, quests, alloc, equipped, charms, swap, skillPoints, activeSkillId, buffsOn, targetRes, rollMax, merc]);
-  useEffect(() => { if (restored) { const t = window.setTimeout(() => setToast(null), 3500); return () => window.clearTimeout(t); } return undefined; }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (boot.fromShare && typeof window !== 'undefined') {
+      const u = new URL(window.location.href);
+      if (u.searchParams.has(SHARE_QUERY_KEY)) {
+        u.searchParams.delete(SHARE_QUERY_KEY);
+        window.history.replaceState(window.history.state, '', u.toString());
+      }
+    }
+    if (boot.toast) { const t = window.setTimeout(() => setToast(null), 4000); return () => window.clearTimeout(t); }
+    return undefined;
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const say = (m: string) => { setToast(m); window.setTimeout(() => setToast((t) => (t === m ? null : t)), 3500); };
 

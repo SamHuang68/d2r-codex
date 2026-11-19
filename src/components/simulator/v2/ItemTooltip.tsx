@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { categoryOfEntry, getCatalog, getSocketables, socketCapacity, socketEffectMods, TIER_ZH } from '../../../engine/catalog';
+import { categoryOfEntry, findSocketable, getCatalog, socketCapacity, socketEffectMods, TIER_ZH } from '../../../engine/catalog';
 import { itemOwnStats } from '../../../engine/character';
 import { buildEngineItem } from '../../../engine/build';
 import { gameData } from '../../../engine/data';
@@ -36,8 +36,7 @@ export const ItemTooltipBody: React.FC<BodyProps> = ({ eq, level, rollMax, attrs
   // 套裝加成文字（state 是全套時的光環特效，沒有文字說明，不列）
   const setLines = (m: { code: string }[]) => describeModifiers(m.filter((x) => x.code !== 'state'), rollMax ? 1 : 0, level, isEn ? 'en' : 'zh');
   const cap = socketCapacity(e);
-  const all = getSocketables();
-  const socketed = (eq.sockets ?? []).map((id) => all.find((s) => s.id === id)).filter((s): s is NonNullable<typeof s> => !!s);
+  const socketed = (eq.sockets ?? []).map((id) => findSocketable(id)).filter((s): s is NonNullable<typeof s> => !!s);
   const cat = categoryOfEntry(e);
   const total = e.kind === 'runeword' ? (e.sockets?.length ?? 0) : cap.fixed ? cap.count : Math.max(cap.count, Math.min(eq.socketCount ?? cap.count, cap.max));
   const reqStr = base?.reqStr ?? 0; const reqDex = base?.reqDex ?? 0; const reqLv = Math.max(base?.levelReq ?? 0, e.levelReq ?? 0);

@@ -2,7 +2,9 @@ import presetNotesEn from '../../../data/presetNotesEn.json';
 import React, { useEffect, useState } from 'react';
 import { BUILDS, PRESET_TIER_ZH, SIM_PRESETS, tierOf, type PresetTier } from '../../../data/simulatorPresets';
 import { previewPreset, stateFromPreset } from '../../../data/presetState';
-import { ALL_PARTS, exportProfile, fromSavedData, loadProfiles, newProfile, parseProfile, storeProfiles, type ApplyParts, type SavedProfile, type SimSnapshot } from '../../../data/profileStore';
+import { ALL_PARTS, exportProfile, fromSavedData, loadProfiles, newProfile, storeProfiles, type ApplyParts, type SavedProfile, type SimSnapshot } from '../../../data/profileStore';
+import { buildShareUrl, parseProfileOrShareUrl } from '../../../data/profileShare';
+import { ProfileCompare } from './ProfileCompare';
 import { CLASS_CODE_ZH, skillByName } from '../../../engine/skills';
 import { effectiveMf } from '../../../engine/magicFind';
 import { useLanguage } from '../../../context/LanguageContext';
@@ -188,8 +190,21 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
     );
   };
 
+  const shareProfile = (p: SavedProfile) => {
+    const url = buildShareUrl(p);
+    navigator.clipboard?.writeText(url).then(
+      () => say(isEn ? `Copied share link for "${p.name}" (${url.length} chars)` : `已複製「${p.name}」的分享連結（共 ${url.length} 字元）`),
+      () => say(isEn ? 'Clipboard access denied' : '無法複製（瀏覽器未授權）')
+    );
+  };
+
+  const shareCurrent = () => {
+    const nm = name.trim() || (isEn ? `${classNameDisplay} Build` : `${classNameDisplay}配裝`);
+    shareProfile(newProfile(nm, capture()));
+  };
+
   const doImport = () => {
-    const r = parseProfile(importText.trim(), isEn);
+    const r = parseProfileOrShareUrl(importText.trim(), isEn);
     if (typeof r === 'string') {
       say(isEn ? `Import failed: ${r}` : `匯入失敗：${r}`);
       return;
@@ -404,6 +419,14 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
             <button
               type="button"
               className="d2-btn is-quiet"
+              onClick={shareCurrent}
+              title={isEn ? 'Copy a compressed shareable URL for the current build' : '將目前配裝壓縮成短網址並複製，可直接貼到 Discord / LINE 分享'}
+            >
+              {isEn ? 'Share Link' : '分享連結'}
+            </button>
+            <button
+              type="button"
+              className="d2-btn is-quiet"
               aria-expanded={importOpen}
               onClick={() => setImportOpen((v) => !v)}
             >
@@ -421,7 +444,7 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
                 value={importText}
                 onChange={(e) => setImportText(e.target.value)}
                 rows={4}
-                placeholder={isEn ? 'Paste exported profile JSON/text here' : '貼上匯出的 Profile 文字'}
+                placeholder={isEn ? 'Paste exported profile JSON or a ?build=... share link here' : '貼上匯出的 Profile 文字或 ?build=... 分享連結'}
                 aria-label={isEn ? 'Import Profile Text' : '匯入 Profile'}
                 className="d2-input w-full"
                 style={{ fontFamily: 'monospace', fontSize: 12 }}
@@ -463,6 +486,9 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
                     <button type="button" className="d2-btn" disabled={none} onClick={() => applyProfile(p)}>
                       {isEn ? 'Apply' : '套用'}
                     </button>
+                    <button type="button" className="d2-btn is-quiet" onClick={() => shareProfile(p)}>
+                      {isEn ? 'Share' : '分享'}
+                    </button>
                     <button type="button" className="d2-btn is-quiet" onClick={() => copy(p)}>
                       {isEn ? 'Export' : '匯出'}
                     </button>
@@ -480,6 +506,8 @@ export const ProfilePanel: React.FC<Props> = ({ classCode, capture, apply, canUn
             </ul>
           )}
         </section>
+
+        <ProfileCompare classCode={classCode} capture={capture} profiles={profiles} />
       </div>
     </div>
   );

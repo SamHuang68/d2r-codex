@@ -349,8 +349,8 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
           </div>
           <div className="d2-sub mt-1">
             {isEn
-              ? `Each additional 1% MF yields approximately +${marginalUnique(mfRaw).toFixed(2)}% effective unique MF: diminishing returns increase at higher MF.`
-              : `再加 1% MF 約讓暗金有效 MF +${marginalUnique(mfRaw).toFixed(2)}%：MF 越高，每點越不划算。公式為社群整理，沒有在遊戲內逐項實測；傭兵尚未模擬，不含傭兵提供的 MF。`}
+              ? `Each additional 1% MF yields approximately +${marginalUnique(mfRaw).toFixed(2)}% effective unique MF: diminishing returns increase at higher MF. Shows character gear MF only (mercenary MF applies only on mercenary kills).`
+              : `再加 1% MF 約讓暗金有效 MF +${marginalUnique(mfRaw).toFixed(2)}%：MF 越高，每點越不划算。公式為社群整理，未在遊戲內逐項實測；此處僅計入角色裝備 MF（遊戲內傭兵擊殺時才會加上傭兵 MF）。`}
           </div>
         </div>
       )}
@@ -363,7 +363,11 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
           {moreRows.length === 0 && <div className="t-dim text-sm">{isEn ? 'No additional bonuses active' : '目前沒有這類加成'}</div>}
           {moreRows.map((m) => <Row key={m.stat} label={isEn ? m.labelEn : m.label} value={`${m.v}${m.suffix ?? ''}`} />)}
           {skillRows.length > 0 && <div className="sm:col-span-2 d2-row text-sm"><span className="k">{isEn ? 'Skill Bonuses' : '技能加成'}</span><span className="t-magic text-right">{skillRows.join('、')}</span></div>}
-          <div className="sm:col-span-2 d2-sub">FCR／FHR 斷點影格、光環／戰吼／BO／變身、元素專精尚未實作，數值不含這些來源。</div>
+          <div className="sm:col-span-2 d2-sub">
+            {isEn
+              ? 'FCR/FHR/FBR breakpoints and toggleable auras/warcry/BO (including mercenary auras) are computed above; shapeshifting and certain non-numeric procs are not yet modeled.'
+              : 'FCR／FHR／FBR 斷點影格與可勾選光環／戰吼／BO（含傭兵光環）已計入上方；變身與部分非數值觸發效果尚未納入計算。'}
+          </div>
         </div>
       )}
     </div>

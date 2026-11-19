@@ -169,6 +169,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
   const [selectedTag, setSelectedTag] = useState<string>('all');
   const [onlyLadder, setOnlyLadder] = useState<boolean>(false);
   const [onlyDLC, setOnlyDLC] = useState<boolean>(false);
+  const [onlyS16, setOnlyS16] = useState<boolean>(false);
   const [sel, setSel] = useState<string>('all');
 
   const baseImg = (nameEn: string) => {
@@ -245,12 +246,14 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
       if (onlyLadder && !rw.ladderOnly) return false;
       // RotW DLC
       if (onlyDLC && !rw.isNewDLC) return false;
+      // S16 Patch 3.4 Changes
+      if (onlyS16 && !PATCH_34_ENTRIES_BY_NAME[rw.nameEn]) return false;
 
       return true;
     });
-  }, [searchQuery, selectedSockets, selectedBase, selectedTag, onlyLadder, onlyDLC]);
+  }, [searchQuery, selectedSockets, selectedBase, selectedTag, onlyLadder, onlyDLC, onlyS16]);
 
-  const dir = useDirectory(sel, `${searchQuery}|${selectedSockets}|${selectedBase}|${selectedTag}|${onlyLadder}|${onlyDLC}`);
+  const dir = useDirectory(sel, `${searchQuery}|${selectedSockets}|${selectedBase}|${selectedTag}|${onlyLadder}|${onlyDLC}|${onlyS16}`);
 
   const resetFilters = () => {
     setSearchQuery('');
@@ -259,6 +262,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
     setSelectedTag('all');
     setOnlyLadder(false);
     setOnlyDLC(false);
+    setOnlyS16(false);
     setSel('all');
   };
 
@@ -557,7 +561,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
         </div>
 
         {/* Bottom Filter Selectors */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 text-xs">
           {/* Socket Filter */}
           <div>
             <label className="block text-sanctuary-400 mb-1 font-medium">{t('孔數 (Sockets)', 'Sockets')}</label>
@@ -631,6 +635,23 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                 className="rounded bg-sanctuary-950 border-sanctuary-700 text-d2-fire focus:ring-0"
               />
               <span>{isEn ? 'Reign of the Warlock (RotW)' : '術士軍臨 (RotW)'}</span>
+            </label>
+          </div>
+
+          {/* S16 Patch 3.4 toggle */}
+          <div className="flex items-end pb-1.5">
+            <label className="flex items-center gap-2 cursor-pointer select-none text-purple-300">
+              <input
+                type="checkbox"
+                checked={onlyS16}
+                onChange={(e) => {
+                  const next = e.target.checked;
+                  setOnlyS16(next);
+                  if (next) setSel('all');
+                }}
+                className="rounded bg-sanctuary-950 border-sanctuary-700 text-purple-400 focus:ring-0"
+              />
+              <span>{isEn ? 'S16 Changes' : '只看 S16 改動'}</span>
             </label>
           </div>
 

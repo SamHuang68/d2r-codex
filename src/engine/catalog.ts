@@ -2,6 +2,7 @@ import uniques from '../data/game/uniques.json';
 import setItems from '../data/game/setItems.json';
 import runewords from '../data/game/runewords.json';
 import { gameData } from './data';
+import { parseCustomJewel } from './customJewel';
 import { uniqueBaseAc } from './referenceOverrides';
 import { slotOfBase, type SlotKind, type Rarity, type Tier, type Group } from './slots';
 // 部位、職業名稱等輕量對照表在 slots.ts（百科頁只要這些，不該為此載入暗金與符文之語的整份資料）；這裡原樣轉出，既有的匯入不用改
@@ -155,7 +156,7 @@ export function getSocketables(): Socketable[] {
   }
   sockCache = out; return out;
 }
-export function findSocketable(id: string): Socketable | undefined { return getSocketables().find((s) => s.id === id); }
+export function findSocketable(id: string): Socketable | undefined { return getSocketables().find((s) => s.id === id) ?? parseCustomJewel(id); }
 /** 鑲嵌物對此部位的效果（寶石／符文依部位不同；珠寶不分） */
 export function socketEffectMods(s: Socketable, cat: SocketCategory): Modifier[] {
   if (s.jewelMods) return s.jewelMods;
