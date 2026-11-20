@@ -251,6 +251,10 @@ const AppContent: React.FC = () => {
               setSelectedInitialClass(cls);
               handleNavigate('breakpoints');
             }}
+            onNavigateToPlanner={(cls) => {
+              setSelectedInitialClass(cls);
+              handleNavigate('planner');
+            }}
             onNavigateToRunewords={handleItemOrRunewordNavigate}
             onNavigateToItems={handleItemOrRunewordNavigate}
           />

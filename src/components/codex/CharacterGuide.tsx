@@ -14,6 +14,7 @@ import { GameIcon } from '../common/GameIcons';
 export interface CharacterGuideProps {
   onNavigateToSkills?: (className: string) => void;
   onNavigateToBreakpoints?: (className: string) => void;
+  onNavigateToPlanner?: (className: string) => void;
   onNavigateToRunewords?: (rwName: string) => void;
   onNavigateToItems?: (itemName: string) => void;
 }
@@ -21,6 +22,7 @@ export interface CharacterGuideProps {
 export const CharacterGuide: React.FC<CharacterGuideProps> = ({
   onNavigateToSkills,
   onNavigateToBreakpoints,
+  onNavigateToPlanner,
   onNavigateToRunewords,
   onNavigateToItems,
 }) => {
@@ -66,12 +68,12 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
     assassin: {
       title: "刺客專用拳劍與爪 (Assassin Katars)",
       desc: "霸圖克的割喉爪；原生附帶 +2 刺客技能、+1 陷阱技能與武器格擋 (Weapon Block) 的雙持利爪。",
-      topBases: ["霸圖克的割喉爪 (Bartuc's Cut-Throat)", "符紋爪 (3孔混沌底材)", "近身刃"]
+      topBases: ["霸圖克的割喉爪 (Bartuc's Cut-Throat)", "符紋爪 (3孔混沌底材)", "穿擊拳刃 (Suwayyah)"]
     },
     warlock: {
       title: "術士專用禁忌魔典與邪異匕首 (Warlock Grimoires)",
       desc: "艾迪亞布羅斯學術；副手魔典可提供深淵僕從強化與混沌抗性穿透，是終局惡魔大軍核心。",
-      topBases: ["權威魔典 (Grimoire of Authority)", "巫師會儀式匕首", "深淵支配之印"]
+      topBases: ["艾迪亞布羅斯學術 (Ars Al'Diabolos)", "權威 (Authority)", "巫師會 (Coven)"]
     }
   };
 
@@ -98,11 +100,22 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {onNavigateToPlanner && (
+            <button
+              type="button"
+              onClick={() => onNavigateToPlanner(currentClass.name)}
+              className="px-3.5 py-2 rounded-xl bg-d2-unique text-sanctuary-950 font-bold text-xs hover:bg-amber-300 flex items-center gap-1.5 transition-all shadow-md shadow-d2-unique/20 cursor-pointer"
+            >
+              <Shield className="w-3.5 h-3.5 text-sanctuary-950" />
+              <span>{t('配裝模擬器', 'Armory Planner')}</span>
+            </button>
+          )}
           {onNavigateToSkills && (
             <button
+              type="button"
               onClick={() => onNavigateToSkills(currentClass.name)}
-              className="px-3.5 py-2 rounded-xl bg-d2-gold text-sanctuary-950 font-bold text-xs hover:bg-amber-400 flex items-center gap-1.5 transition-all shadow-md shadow-d2-gold/20"
+              className="px-3.5 py-2 rounded-xl bg-d2-gold text-sanctuary-950 font-bold text-xs hover:bg-amber-400 flex items-center gap-1.5 transition-all shadow-md shadow-d2-gold/20 cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-sanctuary-950" />
               <span>{t('技能樹模擬器', 'Skill Tree Simulator')}</span>
@@ -110,8 +123,9 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
           )}
           {onNavigateToBreakpoints && (
             <button
+              type="button"
               onClick={() => onNavigateToBreakpoints(currentClass.name)}
-              className="px-3.5 py-2 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-d2-unique text-xs font-semibold flex items-center gap-1.5 transition-all"
+              className="px-3.5 py-2 rounded-xl bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-d2-unique text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <Compass className="w-3.5 h-3.5" />
               <span>{t('檔位斷點表', 'Breakpoints Table')}</span>
@@ -295,8 +309,8 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
                     <span className="text-sanctuary-200 font-semibold">{base}</span>
                     <button
                       type="button"
-                      onClick={() => onNavigateToItems?.(base.split(' ')[0])}
-                      className="text-d2-unique hover:text-amber-300 text-[11px] font-mono flex items-center gap-0.5 cursor-pointer"
+                      onClick={() => onNavigateToItems?.(base)}
+                      className="text-d2-unique hover:text-amber-300 text-[11px] font-mono flex items-center gap-0.5 cursor-pointer shrink-0"
                     >
                       <span>{isEn ? "View" : "查裝備"}</span>
                       <span>↗</span>
@@ -337,7 +351,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
                       </span>
                     </div>
 
-                    <div className="text-xs font-sans space-y-1">
+                    <div className="text-xs font-sans space-y-1.5">
                       <div>
                         <span className="text-sanctuary-500 font-medium">{isEn ? "Core Skills: " : "核心技能組合："}</span>
                         <span className="text-sanctuary-200">{coreSkills}</span>
@@ -345,7 +359,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
                       <div>
                         <span className="text-sanctuary-500 font-medium">{isEn ? "Signature Gear: " : "代表性配裝："}</span>
                         <span className="text-d2-unique font-medium">
-                          {gearSummary.split('+').map((gearItem, gIdx, arr) => {
+                          {gearSummary.split(/\s+\+\s+/).map((gearItem, gIdx, arr) => {
                             const cleanItem = gearItem.trim();
                             const subItems = cleanItem.includes('/') ? cleanItem.split('/') : [cleanItem];
                             return (
@@ -378,6 +392,28 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
                           })}
                         </span>
                       </div>
+                      {(onNavigateToSkills || onNavigateToPlanner) && (
+                        <div className="pt-1.5 flex flex-wrap items-center gap-2 text-[11px] font-mono">
+                          {onNavigateToSkills && (
+                            <button
+                              type="button"
+                              onClick={() => onNavigateToSkills(currentClass.name)}
+                              className="px-2 py-0.5 rounded bg-sanctuary-950 border border-sanctuary-800 text-d2-gold hover:border-d2-gold/60 transition-colors cursor-pointer"
+                            >
+                              {isEn ? 'Skill Tree ↗' : '技能樹 ↗'}
+                            </button>
+                          )}
+                          {onNavigateToPlanner && (
+                            <button
+                              type="button"
+                              onClick={() => onNavigateToPlanner(currentClass.name)}
+                              className="px-2 py-0.5 rounded bg-sanctuary-950 border border-sanctuary-800 text-d2-unique hover:border-d2-unique/60 transition-colors cursor-pointer"
+                            >
+                              {isEn ? 'Armory Planner ↗' : '配裝模擬 ↗'}
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 );

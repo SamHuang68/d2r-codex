@@ -55,7 +55,7 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
       {
         name: 'Demon Commander',
         coreSkills: 'Summon Torture Fiend + Abyssal Command + Frenzy Rite',
-        gearSummary: 'Grimoire of Authority + Bane\'s Raiment + Stone of Jordan',
+        gearSummary: "Ars Al'Diabolos + Bane's Garments + Stone of Jordan",
       },
       {
         name: 'Chaos Pyromancer',
@@ -71,7 +71,7 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
     gearInfo: {
       title: 'Warlock Exclusive Grimoires & Ritual Daggers',
       desc: 'Off-hand Grimoires provide demonic minion empowerment and chaos resistance penetration, serving as the core of endgame armies.',
-      topBases: ['Grimoire of Authority', 'Coven Ritual Dagger', 'Sigil of Abyssal Command'],
+      topBases: ["Ars Al'Diabolos", 'Authority (Runeword)', 'Coven (Runeword)'],
     },
   },
   sorceress: {
@@ -152,7 +152,7 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
       },
       {
         name: 'Fist of the Heavens Paladin (FoHdin)',
-        coreSkills: 'Fist of the Heavens + Holy Bolt + Faith (maxed)',
+        coreSkills: 'Fist of the Heavens + Holy Bolt + Conviction (maxed)',
         gearSummary: 'Heart of the Oak + Herald of Zakarum / Spirit + Enigma + Arachnid Mesh',
       },
     ],
@@ -329,7 +329,7 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
       {
         name: 'Fissure Fire Druid (Fire Druid)',
         coreSkills: 'Fissure + Volcano + Armageddon + Oak Sage (maxed)',
-        gearSummary: 'Heart of the Oak / Raven Frost + Spirit + Enigma + Flame Rift Charm',
+        gearSummary: 'Heart of the Oak / Ravenlore + Spirit + Enigma + Flame Rift',
       },
     ],
     gearInfo: {
@@ -373,7 +373,7 @@ export const CLASS_TRANSLATIONS: Record<string, ClassTranslationData> = {
       {
         name: 'Blade Fury Assassin (Blade Fury Sin)',
         coreSkills: 'Blade Fury + Shadow Warrior + Shadow Master + Claw Mastery',
-        gearSummary: "Grief / Grim Reaper + Stormshield + Fortitude + Guillaume's Face",
+        gearSummary: "Grief / Death + Stormshield + Fortitude + Guillaume's Face",
       },
     ],
     gearInfo: {

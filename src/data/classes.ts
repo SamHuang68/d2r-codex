@@ -44,7 +44,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
         name: "惡魔使役流 (Demon Commander)",
         tier: "S",
         coreSkills: "召喚羊頭人 + 惡魔專精 + 束縛惡魔",
-        gearSummary: "權威魔典 + 貝恩套裝 + 喬丹之石"
+        gearSummary: "艾迪亞布羅斯學術 + 貝恩的衣裝 + 喬丹之石"
       },
       {
         name: "混沌火影術士 (Chaos Pyromancer)",
@@ -114,7 +114,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
         name: "隕石火球法 (Meteor & Fireball)",
         tier: "A",
         coreSkills: "隕石術 + 火球術 + 火焰專精 + 暖流滿",
-        gearSummary: "艾斯屈塔的脾氣/橡樹之心 + 鳳凰/精神盾 + 蛇魔法師之皮 + 破火咒符"
+        gearSummary: "艾斯屈塔的憤怒/橡樹之心 + 鳳凰/精神盾 + 蛇魔法師之皮 + 火焰裂隙"
       }
     ]
   },
@@ -199,7 +199,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
     skillTrees: [
       {
         name: "召喚法術 (Summoning)",
-        description: "統帥骷髏狂潮、復 raw 怪物與鮮血魔像的強大軍勢。",
+        description: "統帥骷髏狂潮、復活怪物與鮮血魔像的強大軍勢。",
         keySkills: ["復生骷髏", "骷髏專精", "鋼鐵魔像", "重生 (Revive)"]
       },
       {
@@ -462,7 +462,7 @@ export const CHARACTER_CLASSES_DATA: CharacterClassData[] = [
         name: "裂地火德 (Fire Druid)",
         tier: "A",
         coreSkills: "裂地之火 + 火山噴發 + 毀天滅地 + 橡木智者滿",
-        gearSummary: "橡樹之心/掠鴉之霜 + 精神盾 + 謎團 + 破火咒符"
+        gearSummary: "橡樹之心/掠鴉之王 + 精神盾 + 謎團 + 火焰裂隙"
       }
     ]
   }
