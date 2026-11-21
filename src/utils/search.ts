@@ -11,6 +11,7 @@ import { RUNEWORDS_DATA } from '../data/runewords';
 import { UNIQUE_ITEMS_DATA } from '../data/uniqueItems';
 import { SET_ITEMS_DATA, ALL_SET_PIECES } from '../data/setItems';
 import { CUBE_RECIPES_DATA } from '../data/cubeRecipes';
+import { getAllCraftedRecipes } from '../data/codex/craftedItems';
 import { AREA_LEVELS_DATA } from '../data/areaLevels';
 import { MERCENARIES_DATA } from '../data/mercenaries';
 import { VALUATION_ITEMS_DATA } from '../data/affixes';
@@ -287,6 +288,112 @@ export const searchOmni = (query: string, isEn = false): SearchResultItem[] => {
         badge: (isEn ? 'Cube Transmutation' : '方塊合成'),
         preview: isEn ? `${(recipe.inputsEn ?? recipe.inputs).join(' + ')} -> ${recipe.outputEn ?? recipe.output}` : `${recipe.inputs.join(' + ')} -> ${recipe.output}`,
         targetTab: 'cube'
+      });
+    }
+  }
+
+  // 5b. Search All 36 Crafted Items (Blood / Caster / Hit Power / Safety)
+  for (const cr of getAllCraftedRecipes()) {
+    const textToMatch = [
+      cr.name,
+      cr.nameEn,
+      '手工合成 手工裝 橙裝 crafted',
+      cr.bases.join(' '),
+      cr.basesEn.join(' '),
+      cr.runeName,
+      cr.runeNameEn,
+      cr.gemName,
+      cr.gemNameEn,
+      cr.fixedMods.join(' '),
+      cr.fixedModsEn.join(' '),
+    ].join(' ').toLowerCase();
+
+    if (textToMatch.includes(q)) {
+      results.push({
+        id: `crafted_${cr.id}`,
+        type: 'cube',
+        title: cr.name,
+        titleEn: cr.nameEn,
+        category: isEn ? `Crafted Item (${cr.gemNameEn})` : `手工合成物品（${cr.gemName}）`,
+        badge: cr.highlight ? (isEn ? cr.highlight.tagEn : cr.highlight.tag) : (isEn ? 'Crafted' : '橙色手工'),
+        preview: isEn
+          ? `${cr.basesEn.join('/')} + ${cr.runeNameEn} + ${cr.gemNameEn} | ${cr.fixedModsEn.join(', ')}`
+          : `${cr.bases.join('／')} + ${cr.runeName} + ${cr.gemName} | ${cr.fixedMods.join('、')}`,
+        targetTab: 'cube',
+      });
+    }
+  }
+
+  // 5c. Quick Guide Entries (Patch 3.4 / S16, Unique Upgrades, Leveling, Farming)
+  const guideShortcuts: { id: string; keys: string; type: SearchResultItem['type']; title: string; titleEn: string; category: string; categoryEn: string; badge: string; badgeEn: string; preview: string; previewEn: string; targetTab: string }[] = [
+    {
+      id: 'guide_patches_s16',
+      keys: 's16 s15 patch 3.4 3.3 版本改動 天梯第16季 天梯第15季 物品調整 更新',
+      type: 'quest',
+      title: '版本改動（Patch 3.3 / 3.4・天梯第 15、16 季）',
+      titleEn: 'Patch Changes (Patch 3.3 / 3.4 · Ladder S15 & S16)',
+      category: '版本改動',
+      categoryEn: 'Patch Changes',
+      badge: 'Patch 3.4 / S16',
+      badgeEn: 'Patch 3.4 / S16',
+      preview: '暗金、套裝與符文之語數值調整完整對照（含天梯第 16 季預覽）',
+      previewEn: 'Complete balance changes to Uniques, Sets, and Runewords in Patches 3.3 & 3.4',
+      targetTab: 'patches',
+    },
+    {
+      id: 'guide_unique_upgrades',
+      keys: '暗金升級 升級底材 無形升級 unique upgrades upping',
+      type: 'unique',
+      title: '暗金升級指南（一般→進階→菁英）',
+      titleEn: 'Unique Upgrades Guide (Normal → Exceptional → Elite)',
+      category: '裝備圖鑑',
+      categoryEn: 'Equipment',
+      badge: '升級分析',
+      badgeEn: 'Upgrade Guide',
+      preview: '哪些暗金值得方塊升級底材、防禦／傷害變化與無形建議',
+      previewEn: 'Which uniques are worth upgrading in the Cube, defense/damage gains, and ethereal tips',
+      targetTab: 'upgrades',
+    },
+    {
+      id: 'guide_leveling_scenes',
+      keys: '練等場景 練等 經驗懲罰 快速升級 leveling areas',
+      type: 'area',
+      title: '練等場景（依角色等級推薦不扣經驗區域）',
+      titleEn: 'Leveling Areas (Full XP Zones by Character Level)',
+      category: '英雄與加點',
+      categoryEn: 'Heroes & Builds',
+      badge: '練等指南',
+      badgeEn: 'Leveling',
+      preview: '輸入目前等級，直接找出三難度不被扣經驗的最佳練等場景',
+      previewEn: 'Find areas with full XP efficiency for your current character level',
+      targetTab: 'leveling',
+    },
+    {
+      id: 'guide_farming_scenes',
+      keys: '打寶場景 農裝 避開免疫 刷寶 farming areas mf',
+      type: 'area',
+      title: '打寶場景（依流派傷害避開免疫怪物）',
+      titleEn: 'Farming Areas (Hell Zones Matched to Your Damage Type)',
+      category: '戰役與終局',
+      categoryEn: 'Campaign & Endgame',
+      badge: '打寶推薦',
+      badgeEn: 'Farming',
+      preview: '依職業流派或主要元素，篩選地獄高階場景裡免疫最少的地方',
+      previewEn: 'Filter high-level Hell areas with the fewest immunities for your build',
+      targetTab: 'farming',
+    },
+  ];
+  for (const g of guideShortcuts) {
+    if (g.keys.includes(q) || g.title.toLowerCase().includes(q) || g.titleEn.toLowerCase().includes(q)) {
+      results.push({
+        id: g.id,
+        type: g.type,
+        title: g.title,
+        titleEn: g.titleEn,
+        category: isEn ? g.categoryEn : g.category,
+        badge: isEn ? g.badgeEn : g.badge,
+        preview: isEn ? g.previewEn : g.preview,
+        targetTab: g.targetTab,
       });
     }
   }

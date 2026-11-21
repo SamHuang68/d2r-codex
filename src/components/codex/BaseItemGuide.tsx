@@ -230,21 +230,18 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
                   {isEn ? 'Recommended Runewords:' : '推薦頂級符文之語:'}
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {item.recommendedRunewords.map((rw: string) => {
-                    const rwCleanName = rw.split(' ')[0];
-                    return (
+                  {item.recommendedRunewords.map((rw: string) => (
                       <button
                         key={rw}
                         type="button"
-                        onClick={() => onNavigateToRuneword?.(rwCleanName)}
+                        onClick={() => onNavigateToRuneword?.(rw)}
                         className="group/rw px-2 py-0.5 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-750 border border-sanctuary-750 hover:border-d2-gold text-[11px] font-mono text-d2-gold hover:text-white transition-all flex items-center gap-1 cursor-pointer shadow-sm hover:scale-105"
                         title={isEn ? `Click to view [${rw}] Runeword recipe & stats` : `點擊查看【${rw}】完整組成符文與屬性`}
                       >
                         <span>{rw}</span>
                         <span className="text-[9px] text-d2-gold/60 group-hover/rw:text-d2-gold">↗</span>
                       </button>
-                    );
-                  })}
+                  ))}
                 </div>
               </div>
             )}

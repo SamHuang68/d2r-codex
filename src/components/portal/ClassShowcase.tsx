@@ -3,18 +3,21 @@ import { useLanguage } from '../../context/LanguageContext';
 import { CHARACTER_CLASSES_DATA } from '../../data/classes';
 import { CLASS_TRANSLATIONS } from '../../data/classTranslations';
 import { getClassImage } from '../../utils/classImages';
+import { GearSummaryLinks } from '../common/GearSummaryLinks';
 import { Sparkles, Shield, Swords, Compass, Flame } from 'lucide-react';
 
 interface ClassShowcaseProps {
   onCheckBreakpoints: (className: string) => void;
   onExploreSkills?: (className: string) => void;
-  onExploreBuilds?: () => void;
+  onExploreBuilds?: (className: string) => void;
+  onNavigateItem?: (itemName: string) => void;
 }
 
 export const ClassShowcase: React.FC<ClassShowcaseProps> = ({ 
   onCheckBreakpoints, 
   onExploreSkills, 
-  onExploreBuilds 
+  onExploreBuilds,
+  onNavigateItem,
 }) => {
   const { isEn } = useLanguage();
   const [selectedClassId, setSelectedClassId] = useState(CHARACTER_CLASSES_DATA[0].id);
@@ -254,14 +257,19 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
                           </div>
                           <div className="text-xs text-d2-magic">
                             <strong className="text-sanctuary-300">{isEn ? 'BiS Gear: ' : '畢業配裝：'}</strong>
-                            {isEn && buildTr ? buildTr.gearSummary : build.gearSummary}
+                            <GearSummaryLinks
+                              gearSummary={isEn && buildTr ? buildTr.gearSummary : build.gearSummary}
+                              onSelect={onNavigateItem}
+                              linkClassName="hover:underline hover:text-d2-unique cursor-pointer"
+                            />
                           </div>
                         </div>
 
                         {onExploreBuilds && (
                           <button
-                            onClick={onExploreBuilds}
-                            className="px-3 py-1.5 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-750 text-d2-unique border border-sanctuary-700 text-xs font-mono shrink-0 transition-colors flex items-center gap-1 self-end sm:self-center"
+                            type="button"
+                            onClick={() => onExploreBuilds(currentClass.name)}
+                            className="px-3 py-1.5 rounded-lg bg-sanctuary-800 hover:bg-sanctuary-750 text-d2-unique border border-sanctuary-700 text-xs font-mono shrink-0 transition-colors flex items-center gap-1 self-end sm:self-center cursor-pointer"
                           >
                             <span>{isEn ? 'Load Build' : '載入配裝'}</span>
                             <span>→</span>

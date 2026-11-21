@@ -22,3 +22,13 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <App />
   </React.StrictMode>
 );
+
+// 正式環境註冊輕量離線快取 Service Worker（依 <base> 定位 sw.js，相容自訂網域與子路徑部署）
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    const swUrl = new URL('sw.js', document.baseURI).href;
+    navigator.serviceWorker.register(swUrl).catch(() => {
+      /* 瀏覽器封鎖或非安全來源時靜默略過，不影響正常使用 */
+    });
+  });
+}

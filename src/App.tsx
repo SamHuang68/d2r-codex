@@ -231,7 +231,11 @@ const AppContent: React.FC = () => {
                 setSelectedInitialClass(cls);
                 handleNavigate('skills');
               }}
-              onExploreBuilds={() => handleNavigate('planner')}
+              onExploreBuilds={(cls) => {
+                setSelectedInitialClass(cls);
+                handleNavigate('planner');
+              }}
+              onNavigateItem={handleItemOrRunewordNavigate}
             />
             <DLCReign 
               onExploreDLCItems={() => handleNavigate('runewords')}
@@ -288,7 +292,7 @@ const AppContent: React.FC = () => {
         {activeTab === 'bases' && (
           <BaseItemGuide 
             initialQuery={targetQuery}
-            onNavigateToRuneword={(rw) => handleNavigate('runewords', rw)}
+            onNavigateToRuneword={handleItemOrRunewordNavigate}
           />
         )}
         {activeTab === 'quests' && <QuestGuide />}
@@ -334,29 +338,19 @@ const AppContent: React.FC = () => {
         {activeTab === 'grail' && <HolyGrailTracker />}
         {activeTab === 'planner' && (
           <div className="space-y-4">
-            <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 flex items-center justify-between">
-              <div className="flex items-center gap-2 bg-sanctuary-950/80 p-1.5 rounded-2xl border border-sanctuary-800">
-                <button
-                  onClick={() => setPlannerSubMode('armory')}
-                  className={`px-4 py-1.5 rounded-xl text-xs font-diablo transition-all ${
-                    plannerSubMode === 'armory'
-                      ? 'bg-gradient-to-r from-d2-unique to-amber-600 text-sanctuary-950 font-bold shadow-md'
-                      : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-900'
-                  }`}
-                >
-                  {t('🎮 1:1 全息配裝模擬器', '🎮 1:1 Armory Simulator')}
-                </button>
-                <button
-                  onClick={() => setPlannerSubMode('notes')}
-                  className={`px-4 py-1.5 rounded-xl text-xs font-diablo transition-all ${
-                    plannerSubMode === 'notes'
-                      ? 'bg-gradient-to-r from-d2-unique to-amber-600 text-sanctuary-950 font-bold shadow-md'
-                      : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-900'
-                  }`}
-                >
-                  {t('📋 傳統流派筆記清單', '📋 Meta Build Notes')}
-                </button>
-              </div>
+            <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 pt-3 flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() => setPlannerSubMode(plannerSubMode === 'armory' ? 'notes' : 'armory')}
+                className="px-3 py-1 rounded-lg text-[11px] font-mono text-sanctuary-400 hover:text-d2-unique bg-sanctuary-950/70 border border-sanctuary-800 hover:border-sanctuary-600 transition-colors cursor-pointer"
+                title={plannerSubMode === 'armory'
+                  ? t('查看舊版純文字流派筆記清單（保留原存檔）', 'Open legacy text-only build notes (preserves old notes)')
+                  : t('返回 1:1 全息配裝模擬器', 'Back to 1:1 Armory Simulator')}
+              >
+                {plannerSubMode === 'armory'
+                  ? t('舊版純文字筆記 ↗', 'Legacy Build Notes ↗')
+                  : t('← 返回 1:1 配裝模擬器', '← Back to Armory Simulator')}
+              </button>
             </div>
 
             {plannerSubMode === 'armory' ? (

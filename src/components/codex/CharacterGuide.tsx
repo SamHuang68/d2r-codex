@@ -10,6 +10,7 @@ import {
   Flame 
 } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
+import { GearSummaryLinks } from '../common/GearSummaryLinks';
 
 export interface CharacterGuideProps {
   onNavigateToSkills?: (className: string) => void;
@@ -359,37 +360,10 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
                       <div>
                         <span className="text-sanctuary-500 font-medium">{isEn ? "Signature Gear: " : "代表性配裝："}</span>
                         <span className="text-d2-unique font-medium">
-                          {gearSummary.split(/\s+\+\s+/).map((gearItem, gIdx, arr) => {
-                            const cleanItem = gearItem.trim();
-                            const subItems = cleanItem.includes('/') ? cleanItem.split('/') : [cleanItem];
-                            return (
-                              <React.Fragment key={gIdx}>
-                                {subItems.map((sub, sIdx) => {
-                                  const trimmedSub = sub.trim();
-                                  return (
-                                    <React.Fragment key={sIdx}>
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          if (onNavigateToItems) {
-                                            onNavigateToItems(trimmedSub);
-                                          } else {
-                                            onNavigateToRunewords?.(trimmedSub);
-                                          }
-                                        }}
-                                        className="hover:underline hover:text-amber-300 cursor-pointer"
-                                        title={isEn ? `Search gear "${trimmedSub}"` : `前往查詢【${trimmedSub}】`}
-                                      >
-                                        {trimmedSub}
-                                      </button>
-                                      {sIdx < subItems.length - 1 && <span className="text-sanctuary-400 mx-0.5">/</span>}
-                                    </React.Fragment>
-                                  );
-                                })}
-                                {gIdx < arr.length - 1 && <span className="text-sanctuary-500 mx-1">+</span>}
-                              </React.Fragment>
-                            );
-                          })}
+                          <GearSummaryLinks
+                            gearSummary={gearSummary}
+                            onSelect={onNavigateToItems ?? onNavigateToRunewords}
+                          />
                         </span>
                       </div>
                       {(onNavigateToSkills || onNavigateToPlanner) && (
