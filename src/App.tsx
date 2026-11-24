@@ -341,7 +341,7 @@ const AppContent: React.FC = () => {
         {activeTab === 'planner' && (
           <div className="space-y-4">
             <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 pt-3 flex flex-wrap items-center justify-between gap-3">
-              <h1 className="font-diablo text-xl sm:text-2xl font-bold text-d2-unique">
+              <h1 className="font-diablo text-xl sm:text-2xl font-bold text-d2-unique text-balance leading-tight min-w-0">
                 {plannerSubMode === 'armory'
                   ? t('1:1 配裝模擬器', 'Armory Planner')
                   : t('配裝筆記工坊', 'Legacy Build Notes')}

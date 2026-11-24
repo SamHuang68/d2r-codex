@@ -70,9 +70,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab, onOpenS
 
         {/* Hero Title */}
         <h1 className="font-diablo text-3xl sm:text-5xl lg:text-5xl font-extrabold tracking-wider text-sanctuary-100 max-w-4xl mx-auto leading-tight text-balance">
-          {t('聖休亞瑞的命運，', 'The Fate of Sanctuary, ')}
+          {isEn ? 'The Fate of Sanctuary, ' : <>聖休亞瑞的<span className="whitespace-nowrap">命運，</span></>}
           <span className="whitespace-nowrap bg-gradient-to-r from-d2-unique via-amber-200 to-d2-fire bg-clip-text text-transparent drop-shadow-sm">
-            {t('由你執掌', 'In Your Hands')}
+            {isEn ? 'In Your Hands' : '由你執掌'}
           </span>
         </h1>
 

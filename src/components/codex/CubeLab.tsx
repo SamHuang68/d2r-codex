@@ -5,6 +5,7 @@ import { GameIcon } from '../common/GameIcons';
 import { Plus, ArrowRight, Sparkles, Flame } from 'lucide-react';
 import { CubeRecipeData } from '../../types';
 import { SectionHead } from '../common/TreeIndex';
+import { HeadingText } from '../common/HeadingText';
 import { useLanguage } from '../../context/LanguageContext';
 import { CubeCraftShowcase } from './CubeCraftShowcase';
 import { CraftedItemsCatalog } from './CraftedItemsCatalog';
@@ -60,9 +61,11 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-magic flex items-center gap-2">
-            <GameIcon name="cube" className="w-7 h-7 text-d2-magic" />
-            <span>{t('赫拉迪姆方塊煉金工坊 (Cube Recipes)', 'Horadric Cube Alchemy Lab')}</span>
+          <h1 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-magic leading-tight flex items-start gap-2 min-w-0">
+            <GameIcon name="cube" className="w-7 h-7 text-d2-magic shrink-0 mt-0.5" />
+            <span className="min-w-0 flex-1 text-pretty">
+              <HeadingText text={t('赫拉迪姆方塊煉金工坊 (Cube Recipes)', 'Horadric Cube Alchemy Lab')} />
+            </span>
           </h1>
           <p className="text-xs sm:text-sm text-sanctuary-400 mt-1">
             {t(

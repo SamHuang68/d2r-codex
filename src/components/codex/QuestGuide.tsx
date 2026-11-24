@@ -18,6 +18,7 @@ import {
   Flame
 } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
+import { HeadingText } from '../common/HeadingText';
 import { announceAct } from '../../utils/actMusicBus';
 
 export const QuestGuide: React.FC = () => {
@@ -69,8 +70,8 @@ export const QuestGuide: React.FC = () => {
             <GameIcon name="scroll" className="w-4 h-4 text-d2-gold animate-pulse" />
             Complete Questline & World Events Almanac
           </div>
-          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            {isEn ? "All Acts Quest Guide & Endgame World Events" : "全章節任務寶典與終局世界事件"}
+          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1 text-balance leading-tight">
+            <HeadingText text={isEn ? "All Acts Quest Guide & Endgame World Events" : "全章節任務寶典與終局世界事件"} />
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-3xl">
             {isEn ? "Covers all 27 quests across Acts 1 to 5, permanent +12 Skill Points, +15 Stat Points, +60 Life, and +30 All Resistances rewards guide, with Secret Cow Level, Uber Tristram, Diablo Clone, and Terror Zones (TZ) walkthroughs." : "收錄 Act 1 至 Act 5 全部 27 個任務詳細步驟、永久 +12 技能點、+15 屬性點、+60 生命值與 +30 全抗性全獎勵攻略，附帶乳牛關、紅門六王、地表大菠蘿與邪惡威脅區域 TZ 指南。"}

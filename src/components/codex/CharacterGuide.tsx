@@ -10,6 +10,7 @@ import {
   Flame 
 } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
+import { HeadingText } from '../common/HeadingText';
 import { GearSummaryLinks } from '../common/GearSummaryLinks';
 
 export interface CharacterGuideProps {
@@ -92,8 +93,8 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
             <GameIcon name="helm" className="w-4 h-4 text-d2-fire animate-pulse" />
             Character Classes & Mechanics Compendium
           </div>
-          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            {t('八大英雄角色寶典與機制圖解', 'Character Classes & Mechanics Compendium')}
+          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1 text-balance leading-tight">
+            <HeadingText text={t('八大英雄角色寶典與機制圖解', 'Character Classes & Mechanics Compendium')} />
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-3xl">
             {t('收錄全職業屬性成長曲線、加點黃金律、專屬底材與裝備分析、幀數斷點基底，以及終局主流流派圖解。', 'Stat progression curves, stat allocation rules, class-specific gear mechanics, and frame breakpoints.')}

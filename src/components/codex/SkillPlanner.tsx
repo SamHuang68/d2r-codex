@@ -19,6 +19,7 @@ import {
   Network
 } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
+import { HeadingText } from '../common/HeadingText';
 
 
 const MAX_TOTAL_POINTS = 110; // 98 (等級 2-99) + 12 (任務獎勵)
@@ -230,8 +231,8 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
             <GameIcon name="tree" className="w-4 h-4 text-d2-gold animate-pulse" />
             Authentic In-Game Skill Tree & Synergy Matrix
           </div>
-          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            {t('八大職業全技能樹與協同矩陣模擬器', 'Skill Trees & Synergy Matrix Planner')}
+          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1 text-balance leading-tight">
+            <HeadingText text={t('八大職業全技能樹與協同矩陣模擬器', 'Skill Trees & Synergy Matrix Planner')} />
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-3xl">
             {isEn

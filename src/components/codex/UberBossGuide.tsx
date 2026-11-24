@@ -11,6 +11,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
+import { HeadingText } from '../common/HeadingText';
 
 export const UberBossGuide: React.FC = () => {
   const { t, isEn } = useLanguage();
@@ -51,8 +52,8 @@ export const UberBossGuide: React.FC = () => {
             <GameIcon name="skull" className="w-4 h-4 text-d2-fire animate-pulse" />
             Endgame Uber Tristram & Diablo Clone Guide
           </div>
-          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            {t('紅門六王與地表暗黑攻略寶典', 'Uber Tristram & Diablo Clone Guide')}
+          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1 text-balance leading-tight">
+            <HeadingText text={t('紅門六王與地表暗黑攻略寶典', 'Uber Tristram & Diablo Clone Guide')} />
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-2xl">
             {t('收錄地獄火炬 (Hellfire Torch) 9把鑰匙三紅門合成流程、盾擊聖騎士單挑六大魔神核心鐵律，以及超級迪亞布羅 (DClone 毀符) 刷新機制。', 'Complete endgame guide for Hellfire Torch (Key farming, Organs, Uber Tristram Smiter strategy) and Diablo Clone (Annihilus charm) spawning mechanics.')}
