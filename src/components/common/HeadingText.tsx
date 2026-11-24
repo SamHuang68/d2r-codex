@@ -32,6 +32,10 @@ const ATOMIC = [
   '模擬器',
   '工坊',
   '方塊',
+  // 英文標題的末段專名。只收在 390px、text-2xl 放得下、且不會把前一個詞單獨留在上一行的詞組。
+  'Relics Compendium',
+  'Copyright Notice',
+  'Complete Codex',
 ];
 
 const ATOMIC_RE = new RegExp(`(\\([^)]*\\))|(${ATOMIC.join('|')})`, 'g');
