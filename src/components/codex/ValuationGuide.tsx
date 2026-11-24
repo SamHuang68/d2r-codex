@@ -16,6 +16,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
+import { HeadingText } from '../common/HeadingText';
 
 /** 天價神物的部位分類（依序分段顯示） */
 const VAL_CATS: { id: string; label: string; labelEn: string }[] = [
@@ -205,8 +206,8 @@ export const ValuationGuide: React.FC = () => {
             <GameIcon name="gem" className="w-4 h-4 text-d2-fire animate-pulse" />
             Trophy Item Price & Affix Valuation Guide
           </div>
-          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            {isEn ? 'Trophy Item & Affix Valuation Guide' : '極品藍黃詞綴與鑑寶估價指南'}
+          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1 text-balance leading-tight">
+            <HeadingText text={isEn ? 'Trophy Item & Affix Valuation Guide' : '極品藍黃詞綴與鑑寶估價指南'} />
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-2xl">
             {isEn

@@ -5,6 +5,7 @@ import { GameIcon } from '../common/GameIcons';
 import { Plus, ArrowRight, Sparkles, Flame } from 'lucide-react';
 import { CubeRecipeData } from '../../types';
 import { SectionHead } from '../common/TreeIndex';
+import { HeadingText } from '../common/HeadingText';
 import { useLanguage } from '../../context/LanguageContext';
 import { CubeCraftShowcase } from './CubeCraftShowcase';
 import { CraftedItemsCatalog } from './CraftedItemsCatalog';
@@ -60,10 +61,12 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-magic flex items-center gap-2">
-            <GameIcon name="cube" className="w-7 h-7 text-d2-magic" />
-            <span>{t('赫拉迪姆方塊煉金工坊 (Cube Recipes)', 'Horadric Cube Alchemy Lab')}</span>
-          </h2>
+          <h1 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-magic leading-tight flex items-start gap-2 min-w-0">
+            <GameIcon name="cube" className="w-7 h-7 text-d2-magic shrink-0 mt-0.5" />
+            <span className="min-w-0 flex-1 text-pretty">
+              <HeadingText text={t('赫拉迪姆方塊煉金工坊 (Cube Recipes)', 'Horadric Cube Alchemy Lab')} />
+            </span>
+          </h1>
           <p className="text-xs sm:text-sm text-sanctuary-400 mt-1">
             {t(
               '白裝打孔隨機公式、暗金／亮黃底材升級、完整 36 條四大系列手工合成物品（血腥／施法／重擊／防護）與赦免徽章洗點全收錄。',
@@ -73,7 +76,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
         </div>
 
         {/* Category Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 no-scrollbar self-start md:self-auto text-xs">
+        <div className="flex w-full min-w-0 max-w-full items-center gap-1.5 overflow-x-auto pb-2 no-scrollbar self-start md:self-auto text-xs">
           {categories.map((cat) => {
             const isActive = activeCategory === cat.id;
             return (
@@ -81,7 +84,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
                 key={cat.id}
                 type="button"
                 onClick={() => setActiveCategory(cat.id as any)}
-                className={`px-3 py-1.5 rounded-lg font-medium shrink-0 transition-colors border cursor-pointer ${
+                className={`min-h-11 px-3 rounded-lg font-medium shrink-0 transition-colors border cursor-pointer ${
                   isActive
                     ? 'bg-sanctuary-800 text-d2-magic border-d2-magic/50 shadow'
                     : 'bg-sanctuary-950 text-sanctuary-400 border-sanctuary-800 hover:text-white'
@@ -98,7 +101,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
       <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-sanctuary-950 via-sanctuary-900 to-sanctuary-950 border border-sanctuary-800 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
         <div className="flex items-center gap-4">
           <div className="relative w-16 h-16 rounded-2xl bg-sanctuary-950/90 border border-d2-magic/40 flex items-center justify-center p-1.5 shadow-[0_0_15px_rgba(105,105,255,0.2)] shrink-0">
-            <img src={imgCube} alt="Horadric Cube" className="w-12 h-12 object-contain" />
+            <img src={imgCube} alt="Horadric Cube" width={48} height={48} className="w-12 h-12 object-contain" loading="lazy" decoding="async" />
             <div className="absolute -bottom-1 -right-1 px-1 rounded bg-d2-magic/20 text-[9px] font-mono text-d2-magic border border-d2-magic/40">
               {isEn ? '4 Slots' : '4格'}
             </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ItemIcon } from '../common/ItemIcon';
 import { BASE_ITEMS_DATA } from '../../data/bases';
+import { RUNE_BY_NUMBER } from '../../data/runes';
 import { Crown, ShieldCheck, Sparkles, ArrowRight, ChevronDown, ChevronUp, Zap, Flame } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -43,7 +44,7 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     sockets: 3,
     runes: [
       { num: 31, nameZh: '喬', nameEn: 'Jah' },
-      { num: 6, nameZh: '伊蘇', nameEn: 'Ith' },
+      { num: 6, nameZh: '伊司', nameEn: 'Ith' },
       { num: 30, nameZh: '貝', nameEn: 'Ber' },
     ],
     allowedBasesZh: '護甲 (3 孔)',
@@ -82,7 +83,7 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
       { num: 30, nameZh: '貝', nameEn: 'Ber' },
       { num: 23, nameZh: '馬爾', nameEn: 'Mal' },
       { num: 30, nameZh: '貝', nameEn: 'Ber' },
-      { num: 24, nameZh: '伊斯特', nameEn: 'Ist' },
+      { num: 24, nameZh: '伊司特', nameEn: 'Ist' },
     ],
     allowedBasesZh: '長柄武器 / 長矛 (4 孔)',
     allowedBasesEn: 'Polearms / Spears (4 Sockets)',
@@ -273,7 +274,7 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     category: 'starter',
     sockets: 2,
     runes: [
-      { num: 4, nameZh: '奈夫', nameEn: 'Nef' },
+      { num: 4, nameZh: '那夫', nameEn: 'Nef' },
       { num: 17, nameZh: '盧姆', nameEn: 'Lum' },
     ],
     allowedBasesZh: '護甲 (2 孔)',
@@ -541,13 +542,18 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
 
                   {/* 特色亮點標籤與引言 */}
                   <div className="my-3">
-                    <div className="text-xs font-bold text-sanctuary-200 flex items-center gap-1.5 bg-sanctuary-900/80 px-2.5 py-1.5 rounded-lg border border-sanctuary-800">
+                    <div className="text-xs font-bold text-sanctuary-200 flex items-start gap-1.5 bg-sanctuary-900/80 px-2.5 py-1.5 rounded-lg border border-sanctuary-800">
                       {item.category === 'iconic' ? (
-                        <Flame className="w-3.5 h-3.5 text-d2-fire shrink-0" />
+                        <Flame className="w-3.5 h-3.5 mt-0.5 text-d2-fire shrink-0" />
                       ) : (
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <ShieldCheck className="w-3.5 h-3.5 mt-0.5 text-emerald-400 shrink-0" />
                       )}
-                      <span className="truncate">{isEn ? item.highlightTagEn : item.highlightTag}</span>
+                      <span
+                        className="min-w-0 flex-1 line-clamp-2 leading-snug"
+                        title={isEn ? item.highlightTagEn : item.highlightTag}
+                      >
+                        {isEn ? item.highlightTagEn : item.highlightTag}
+                      </span>
                     </div>
                     <p className="text-[11px] text-sanctuary-400 mt-2 line-clamp-2 leading-relaxed">
                       {isEn ? item.quoteEn : item.quote}
@@ -561,7 +567,11 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
                       <span className="text-[9px] text-d2-gold">{isEn ? 'Strict Order' : '嚴格順序'}</span>
                     </div>
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      {item.runes.map((rune, idx) => (
+                      {item.runes.map((rune, idx) => {
+                        const authRune = RUNE_BY_NUMBER.get(rune.num);
+                        const runeZh = authRune?.name ?? rune.nameZh;
+                        const runeEn = authRune?.nameEn ?? rune.nameEn;
+                        return (
                         <React.Fragment key={idx}>
                           <button
                             type="button"
@@ -570,18 +580,20 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
                               onNavigateToRune?.(rune.num);
                             }}
                             className={`group/slot relative flex items-center gap-1 px-2 py-1 rounded-lg bg-sanctuary-900 border ${styles.slotBorder} hover:border-d2-unique transition-all cursor-pointer shadow-sm`}
-                            title={isEn ? `View Rune #${rune.num} ${rune.nameEn}` : `點擊查看 ${rune.num}# 符文【${rune.nameZh}】`}
+                            title={isEn ? `View Rune #${rune.num} ${runeEn}` : `點擊查看 ${rune.num}# 符文【${runeZh}】`}
                           >
                             <span className="text-[10px] text-sanctuary-500 font-mono font-bold mr-0.5">
                               {idx + 1}.
                             </span>
                             <ItemIcon
                               runeNumber={rune.num}
+                              name={runeZh}
+                              nameEn={runeEn}
                               size="xs"
                               showBorder={false}
                             />
                             <span className="text-xs font-mono font-bold text-sanctuary-200 group-hover/slot:text-d2-gold transition-colors">
-                              {isEn ? rune.nameEn : rune.nameZh}
+                              {isEn ? runeEn : runeZh}
                             </span>
                             <span className="text-[10px] font-mono text-sanctuary-400">
                               #{rune.num}
@@ -591,7 +603,8 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
                             <ArrowRight className={`w-3 h-3 ${styles.arrowColor} opacity-70 shrink-0`} />
                           )}
                         </React.Fragment>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
 

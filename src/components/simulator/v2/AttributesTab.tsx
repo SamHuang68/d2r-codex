@@ -170,9 +170,9 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
 
   return (
     <div>
-      <div className="d2-title" style={{ fontSize: 13, padding: '2px 0 12px', marginBottom: 12 }}>
-        {className}　<span style={{ fontFamily: 'Cinzel, serif', letterSpacing: '.1em' }}>LV {level}</span>
-      </div>
+      <h3 className="d2-title" style={{ fontSize: 13, padding: '2px 0 12px', marginBottom: 12 }}>
+        {isEn ? `Attributes · ${className}` : `屬性 · ${className}`}　<span style={{ fontFamily: 'Cinzel, serif', letterSpacing: '.1em' }}>LV {level}</span>
+      </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_1.35fr] gap-4">
         {/* 左：四屬性＋加點 */}
@@ -235,7 +235,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
       </div>
 
       <div className="mt-5">
-        <div className="t-gold text-sm tracking-[.2em] mb-2" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "COMBAT CONDITIONS" : "戰鬥條件"}</div>
+        <h3 className="t-gold text-sm tracking-[.2em] mb-2" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "COMBAT CONDITIONS" : "戰鬥條件"}</h3>
         <div className="d2-row" style={{ flexWrap: 'wrap' }}>
           <label className="d2-field">{isEn ? "Target Res" : "目標抗性"}
             <select className="d2-select" value={[0, 25, 50, 75, 100].includes(targetRes) ? targetRes : 'custom'} onChange={(e) => { if (e.target.value !== 'custom') onTargetRes(Number(e.target.value)); }} aria-label={isEn ? "Target Resistance Preset" : "目標抗性預設"}>
@@ -273,7 +273,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
         </div>
         {passives.length > 0 && (
           <div className="mt-3" aria-label={isEn ? 'Passive skill effects' : '被動技能效果'}>
-            <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "PASSIVE SKILLS" : "被 動 技 能"}</div>
+            <h3 className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "PASSIVE SKILLS" : "被 動 技 能"}</h3>
             <div className="space-y-1">
               {passives.map((p, i) => (
                 <div key={`${p.skillId}-${p.stat}-${i}`} className="d2-row" title={isEn ? (p.applied ? 'Included in the character stats above' : 'Available in game; displayed only because the planner has no matching stat field') : (p.applied ? '已計入上方的角色數值' : '遊戲內有這個效果，但本模擬器沒有對應的數值欄位，只列出不計入')}>
@@ -288,7 +288,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
 
       {BREAKPOINTS.fcr[classCode] && (
         <div className="mt-5" aria-label={isEn ? 'Breakpoints' : '斷點'}>
-          <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "BREAKPOINTS" : "斷 點"}</div>
+          <h3 className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "BREAKPOINTS" : "斷 點"}</h3>
           <div className="grid grid-cols-1 gap-1.5">
             {BP_ROWS.map((r) => <BreakpointRow key={`${classCode}-${r.kind}`} kind={r.kind} label={isEn ? r.labelEn : r.label} unit={isEn ? r.unitEn : r.unit} classCode={classCode} value={s[r.stat] ?? 0} />)}
           </div>
@@ -302,7 +302,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
 
       {result.sets.length > 0 && (
         <div className="mt-5" aria-label={isEn ? 'Sets' : '套裝'}>
-          <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "SET BONUSES" : "套 裝"}</div>
+          <h3 className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "SET BONUSES" : "套 裝"}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
             {result.sets.map((x) => (
               <Row key={x.id} label={(isEn && x.nameEn ? x.nameEn : x.name) ?? ''} tone={x.full ? 't-set' : ''}
@@ -319,7 +319,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
       )}
 
       <div className="mt-5" aria-label={isEn ? 'Survivability' : '生存力'}>
-        <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "SURVIVABILITY" : "生 存 力"}</div>
+        <h3 className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "SURVIVABILITY" : "生 存 力"}</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
           <Row label={isEn ? "Physical Damage Reduction (PDR %)" : "物理傷害減免"} value={`${sv.pdr}%${sv.pdrRaw > PDR_CAP ? (isEn ? ` (Gear ${sv.pdrRaw}%, capped at ${PDR_CAP}%)` : `（裝備 ${sv.pdrRaw}%，超出上限 ${PDR_CAP}% 的部分無效）`) : sv.pdr >= PDR_CAP ? (isEn ? ' (Capped)' : '（已達上限）') : ''}`} tone={sv.pdr >= PDR_CAP ? 't-unique' : ''} title={isEn ? "Damage reduced by N%, physical only, cap 50%" : "「受到的傷害降低 N%」，只對物理傷害，上限 50%"} />
           <Row label={isEn ? "Damage Reduced by (Flat DR)" : "固定傷害減免"} value={`${sv.flatDr}`} title={isEn ? "Damage Reduced by N: subtract flat amount from incoming physical damage" : "Damage Reduced by N：每次受到的物理傷害先減掉這個數字"} />
@@ -337,7 +337,7 @@ export const AttributesTab: React.FC<Props> = ({ className, classCode, level, re
 
       {mfRaw > 0 && (
         <div className="mt-5" aria-label={isEn ? 'Magic find efficiency' : '尋寶效益'}>
-          <div className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "MAGIC FIND SCALING" : "尋 寶 效 益"}</div>
+          <h3 className="t-gold text-sm tracking-[.2em] mb-1.5" style={{ fontFamily: '"Noto Serif TC", "PMingLiU", serif', fontWeight: 700 }}>{isEn ? "MAGIC FIND SCALING" : "尋 寶 效 益"}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
             <Row label={isEn ? "Magic Find (Total Gear)" : "MF（裝備合計）"} value={`${mfRaw}%`} tone="t-unique" title={isEn ? "Magic Find from equipped gear" : "裝備提供的魔法物品尋獲率（含依等級成長的部分）"} />
             {s.item_goldbonus ? <Row label={isEn ? "Extra Gold" : "金幣掉落"} value={`${s.item_goldbonus}%`} /> : null}

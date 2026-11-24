@@ -151,7 +151,11 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
     ? {}
     : { height: px, minWidth: Math.round(px * 0.6), maxWidth: `min(100%, ${px}px)` };
   const { isEn } = useLanguage();
-  const alt = (isEn ? nameEn || name : name || nameEn) || 'Item';
+  const alt = (
+    runeNumber !== undefined || rarity === 'rune'
+      ? (isEn ? (nameEn || name) : (name && nameEn && name !== nameEn ? `${name} ${nameEn}` : (name || nameEn)))
+      : (isEn ? nameEn || name : name || nameEn)
+  ) || 'Item';
 
   return (
     <Container
@@ -173,7 +177,10 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
               src={displaySrc}
               alt={alt}
               className="w-full h-full object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+              width={px}
+              height={px * 2}
               loading="lazy"
+              decoding="async"
               referrerPolicy="no-referrer"
               onError={handleLoadError}
             />
@@ -206,6 +213,7 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
               fill ? 'w-full h-full' : 'h-full w-auto max-w-full'
             }`}
             loading="lazy"
+            decoding="async"
             onError={handleLoadError}
           />
         )

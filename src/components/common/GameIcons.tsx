@@ -7,13 +7,15 @@ export interface GameIconProps {
   className?: string;
   /** true 時強制使用向量圖示（網站標誌等品牌用途）；預設優先顯示遊戲內圖樣 */
   vector?: boolean;
+  /** 首屏圖示不要延遲載入（頂欄標誌） */
+  priority?: boolean;
 }
 
 /**
  * 主題圖示：預設顯示對應的遊戲內圖樣（gameIconImages.ts），大小由 className 決定；
  * 沒有對應圖樣或指定 vector 時，顯示跟著文字色（currentColor）的向量圖示。
  */
-export const GameIcon: React.FC<GameIconProps> = ({ name, className, vector }) => {
+export const GameIcon: React.FC<GameIconProps> = ({ name, className, vector, priority }) => {
   const img = vector ? undefined : gameIconImageUrl(name);
   if (img) {
     return (
@@ -21,8 +23,9 @@ export const GameIcon: React.FC<GameIconProps> = ({ name, className, vector }) =
         src={img}
         alt=""
         aria-hidden="true"
-        loading="lazy"
-        decoding="async"
+        loading={priority ? 'eager' : 'lazy'}
+        decoding={priority ? 'sync' : 'async'}
+        fetchPriority={priority ? 'high' : 'low'}
         draggable={false}
         className={`object-contain shrink-0 ${className ?? ''}`}
       />

@@ -271,6 +271,7 @@ const AppContent: React.FC = () => {
             onOpenItem={(id) => handleNavigate('runewords', undefined, undefined, undefined, id)}
             onNavigateToRune={(n) => handleNavigate('runes', undefined, n)}
             onNavigateToBase={(base) => handleNavigate('bases', base)}
+            onNavigatePatches={() => handleNavigate('patches')}
           />
         )}
         {activeTab === 'items' && (
@@ -280,6 +281,7 @@ const AppContent: React.FC = () => {
             initialItemId={itemId}
             onOpenItem={(id) => handleNavigate('items', undefined, undefined, undefined, id)}
             onNavigateToBase={(base) => handleNavigate('bases', base)}
+            onNavigatePatches={() => handleNavigate('patches')}
           />
         )}
         {activeTab === 'props' && (
@@ -338,7 +340,12 @@ const AppContent: React.FC = () => {
         {activeTab === 'grail' && <HolyGrailTracker />}
         {activeTab === 'planner' && (
           <div className="space-y-4">
-            <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 pt-3 flex items-center justify-end">
+            <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 pt-3 flex flex-wrap items-center justify-between gap-3">
+              <h1 className="font-diablo text-xl sm:text-2xl font-bold text-d2-unique text-balance leading-tight min-w-0">
+                {plannerSubMode === 'armory'
+                  ? t('1:1 配裝模擬器', 'Armory Planner')
+                  : t('配裝筆記工坊', 'Legacy Build Notes')}
+              </h1>
               <button
                 type="button"
                 onClick={() => setPlannerSubMode(plannerSubMode === 'armory' ? 'notes' : 'armory')}

@@ -5,12 +5,24 @@
 import { RUNEWORDS_DATA } from '../data/runewords';
 import { UNIQUE_ITEMS_DATA } from '../data/uniqueItems';
 import { SET_ITEMS_DATA } from '../data/setItems';
+import { PATCH_34_ENTRIES_BY_NAME } from '../data/patchNotes';
 
 /** 連結一律相對於網站根目錄（單品外殼寫死了指向根目錄的 <base>），例如 items/<id>/ */
 export interface ItemPage { lang: 'zh' | 'en'; tab: string; id: string; /** 中文名與英文名（結構化資料用） */ name: string; nameEn: string; title: string; description: string; bodyHtml: string }
 
 const esc = (v: unknown) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const clip = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1)}…` : s);
+
+const patch34Html = (nameEn: string, lang: 'zh' | 'en'): string => {
+  const entry = PATCH_34_ENTRIES_BY_NAME[nameEn];
+  if (!entry) return '';
+  if (lang === 'en') {
+    const items = entry.changes.map((c) => `<li>${esc(c.en)}</li>`).join('');
+    return `<p><strong>Adjusted in Patch 3.4 — base values on this page are not yet updated; <a href="en/patches/">see Patch Changes →</a></strong></p><ul>${items}</ul>`;
+  }
+  const items = entry.changes.map((c) => `<li>${esc(c.zh)}</li>`).join('');
+  return `<p><strong>此物品於 3.4 有調整，本頁數值尚未套用，以<a href="patches/">版本改動頁</a>為準 →</strong></p><ul>${items}</ul>`;
+};
 
 const runewordPages = (): ItemPage[] => RUNEWORDS_DATA.map((rw) => {
   const name = `${rw.name}（${rw.nameEn}）`;
@@ -26,7 +38,7 @@ const runewordPages = (): ItemPage[] => RUNEWORDS_DATA.map((rw) => {
     nameEn: rw.nameEn,
     title: `${name}符文之語配方`,
     description: clip(`${name}：${facts}。${attrs.slice(0, 4).join('、')}。`, 200),
-    bodyHtml: `<section><h2>${esc(name)}</h2><p>${esc(facts)}</p><h3>屬性</h3><ul>${rw.attributes.map((a) => `<li>${esc(a)}</li>`).join('')}</ul></section>`,
+    bodyHtml: `<section><h2>${esc(name)}</h2><p>${esc(facts)}</p>${patch34Html(rw.nameEn, 'zh')}<h3>屬性</h3><ul>${rw.attributes.map((a) => `<li>${esc(a)}</li>`).join('')}</ul></section>`,
   };
 });
 
@@ -46,7 +58,7 @@ const uniquePages = (): ItemPage[] => UNIQUE_ITEMS_DATA.map((u) => {
     nameEn: u.nameEn,
     title: `${name}暗金裝備`,
     description: clip(`${name}：${facts}。${stats.slice(0, 4).join('、')}。`, 200),
-    bodyHtml: `<section><h2>${esc(name)}</h2><p>${esc(facts)}</p><h3>屬性</h3>${ul(u.attributes)}${u.flavorText ? `<p>${esc(u.flavorText)}</p>` : ''}</section>`,
+    bodyHtml: `<section><h2>${esc(name)}</h2><p>${esc(facts)}</p>${patch34Html(u.nameEn, 'zh')}<h3>屬性</h3>${ul(u.attributes)}${u.flavorText ? `<p>${esc(u.flavorText)}</p>` : ''}</section>`,
   };
 });
 
@@ -65,7 +77,7 @@ const setPages = (): ItemPage[] => SET_ITEMS_DATA.flatMap((set) => {
     nameEn: set.nameEn,
     title: `${setName}套裝`,
     description: clip(`${setName}：共 ${set.pieces.length} 件。${set.pieces.map((p) => p.name).join('、')}。${bonuses.slice(0, 2).join('；')}`, 200),
-    bodyHtml: `<section><h2>${esc(setName)}</h2><p>${set.pieces.length} 件套裝</p><h3>部件</h3>${pieceList}<h3>套裝加成</h3>${ul(bonuses)}</section>`,
+    bodyHtml: `<section><h2>${esc(setName)}</h2><p>${set.pieces.length} 件套裝</p>${patch34Html(set.nameEn, 'zh')}<h3>部件</h3>${pieceList}<h3>套裝加成</h3>${ul(bonuses)}</section>`,
   };
   const pages = set.pieces.map((p): ItemPage => {
     const name = `${p.name}（${p.nameEn}）`;
@@ -78,7 +90,7 @@ const setPages = (): ItemPage[] => SET_ITEMS_DATA.flatMap((set) => {
       nameEn: p.nameEn,
       title: `${name}套裝裝備－${set.name}`,
       description: clip(`${name}：${facts}。${p.attributes.filter(isStat).slice(0, 4).join('、')}。`, 200),
-      bodyHtml: `<section><h2>${esc(name)}</h2><p>${esc(facts)}</p><h3>屬性</h3>${ul(p.attributes)}<p><a href="items/${encodeURIComponent(set.id)}/">${esc(setName)}</a></p></section>`,
+      bodyHtml: `<section><h2>${esc(name)}</h2><p>${esc(facts)}</p>${patch34Html(p.nameEn, 'zh')}<h3>屬性</h3>${ul(p.attributes)}<p><a href="items/${encodeURIComponent(set.id)}/">${esc(setName)}</a></p></section>`,
     };
   });
   return [setPage, ...pages];
@@ -89,28 +101,28 @@ const setPages = (): ItemPage[] => SET_ITEMS_DATA.flatMap((set) => {
  * 英文版單品頁：只放英文事實（名稱、底材、需求等級、符文組合）。屬性文字的英文資料不存在（資料表只有繁體中文的屬性字串），
  * 所以靜態頁不放屬性；互動頁（有 JavaScript）仍會顯示完整內容。
  */
-const enFacts = (head: string, facts: string, note = true) => `<section><h2>${esc(head)}</h2><p>${esc(facts)}</p>${note ? '<p>Full stats are shown on the interactive page.</p>' : ''}</section>`;
+const enFacts = (head: string, facts: string, note = true, extra = '') => `<section><h2>${esc(head)}</h2><p>${esc(facts)}</p>${extra}${note ? '<p>Full stats are shown on the interactive page.</p>' : ''}</section>`;
 const kindOf = { runeword: 'Runeword', unique: 'Unique Item', set: 'Set', piece: 'Set Item' };
 
 const runewordPagesEn = (): ItemPage[] => RUNEWORDS_DATA.map((rw) => {
   const facts = `Runeword ${rw.nameEn}: runes ${rw.runes.join(' + ')}, ${rw.sockets} sockets, required level ${rw.requiredLevel}, for ${(rw.allowedBasesEn ?? rw.allowedBases).join(', ')}${rw.ladderOnly ? ' (ladder only)' : ''}.`;
-  return { lang: 'en', tab: 'runewords', id: rw.id, name: rw.nameEn, nameEn: rw.nameEn, title: `${rw.nameEn} ${kindOf.runeword}`, description: clip(facts, 200), bodyHtml: enFacts(rw.nameEn, facts) };
+  return { lang: 'en', tab: 'runewords', id: rw.id, name: rw.nameEn, nameEn: rw.nameEn, title: `${rw.nameEn} ${kindOf.runeword}`, description: clip(facts, 200), bodyHtml: enFacts(rw.nameEn, facts, true, patch34Html(rw.nameEn, 'en')) };
 });
 
 const uniquePagesEn = (): ItemPage[] => UNIQUE_ITEMS_DATA.map((u) => {
   const facts = `Unique ${u.baseItemEn ?? u.baseItem}, required level ${u.requiredLevel}${u.ladderOnly ? ', ladder only' : ''}.`;
-  return { lang: 'en', tab: 'items', id: u.id, name: u.nameEn, nameEn: u.nameEn, title: `${u.nameEn} ${kindOf.unique}`, description: clip(`${u.nameEn}: ${facts}`, 200), bodyHtml: enFacts(u.nameEn, facts) };
+  return { lang: 'en', tab: 'items', id: u.id, name: u.nameEn, nameEn: u.nameEn, title: `${u.nameEn} ${kindOf.unique}`, description: clip(`${u.nameEn}: ${facts}`, 200), bodyHtml: enFacts(u.nameEn, facts, true, patch34Html(u.nameEn, 'en')) };
 });
 
 const setPagesEn = (): ItemPage[] => SET_ITEMS_DATA.flatMap((set) => {
   const setFacts = `${set.nameEn} set, ${set.pieces.length} pieces: ${set.pieces.map((p) => p.nameEn).join(', ')}.`;
   const setPage: ItemPage = {
     lang: 'en', tab: 'items', id: set.id, name: set.nameEn, nameEn: set.nameEn, title: `${set.nameEn} ${kindOf.set}`, description: clip(setFacts, 200),
-    bodyHtml: `<section><h2>${esc(set.nameEn)}</h2><p>${esc(setFacts)}</p><ul>${set.pieces.map((p) => `<li><a href="en/items/${encodeURIComponent(p.id)}/">${esc(p.nameEn)}</a></li>`).join('')}</ul></section>`,
+    bodyHtml: `<section><h2>${esc(set.nameEn)}</h2><p>${esc(setFacts)}</p>${patch34Html(set.nameEn, 'en')}<ul>${set.pieces.map((p) => `<li><a href="en/items/${encodeURIComponent(p.id)}/">${esc(p.nameEn)}</a></li>`).join('')}</ul></section>`,
   };
   const pieces = set.pieces.map((p): ItemPage => {
     const facts = `${set.nameEn} set ${p.baseItemEn ?? p.baseItem}, required level ${p.requiredLevel}.`;
-    return { lang: 'en', tab: 'items', id: p.id, name: p.nameEn, nameEn: p.nameEn, title: `${p.nameEn} ${kindOf.piece} - ${set.nameEn}`, description: clip(`${p.nameEn}: ${facts}`, 200), bodyHtml: enFacts(p.nameEn, facts) };
+    return { lang: 'en', tab: 'items', id: p.id, name: p.nameEn, nameEn: p.nameEn, title: `${p.nameEn} ${kindOf.piece} - ${set.nameEn}`, description: clip(`${p.nameEn}: ${facts}`, 200), bodyHtml: enFacts(p.nameEn, facts, true, patch34Html(p.nameEn, 'en')) };
   });
   return [setPage, ...pieces];
 });

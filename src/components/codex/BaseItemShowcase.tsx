@@ -512,11 +512,11 @@ export const BaseItemShowcase: React.FC<BaseItemShowcaseProps> = ({
         </div>
 
         {/* 控制切換頁簽 */}
-        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-sanctuary-900 border border-sanctuary-800 self-start lg:self-auto shrink-0">
+        <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-2xl bg-sanctuary-900 border border-sanctuary-800 self-start lg:self-auto max-w-full">
           <button
             type="button"
             onClick={() => setActiveTab('bis')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`min-h-11 px-3.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'bis'
                 ? 'bg-d2-socket text-sanctuary-950 font-bold shadow-md shadow-d2-socket/20'
                 : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-850'
@@ -529,7 +529,7 @@ export const BaseItemShowcase: React.FC<BaseItemShowcaseProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('weight')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`min-h-11 px-3.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'weight'
                 ? 'bg-d2-socket text-sanctuary-950 font-bold shadow-md shadow-d2-socket/20'
                 : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-850'
@@ -542,7 +542,7 @@ export const BaseItemShowcase: React.FC<BaseItemShowcaseProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('eth')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`min-h-11 px-3.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'eth'
                 ? 'bg-d2-socket text-sanctuary-950 font-bold shadow-md shadow-d2-socket/20'
                 : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-850'
@@ -565,17 +565,17 @@ export const BaseItemShowcase: React.FC<BaseItemShowcaseProps> = ({
               >
                 <div>
                   {/* 頭部標題與目標符文之語 */}
-                  <div className="flex items-start justify-between gap-3 pb-3 border-b border-sanctuary-800">
-                    <div>
-                      <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-start justify-between gap-3 pb-3 border-b border-sanctuary-800">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className="px-2 py-0.5 rounded-md bg-sanctuary-800 text-[10px] font-mono text-d2-gold font-bold border border-d2-gold/30">
                           {isEn ? matchup.badgeEn : matchup.badge}
                         </span>
-                        <h3 className="text-base md:text-lg font-diablo font-bold text-sanctuary-100 group-hover:text-d2-socket transition-colors">
+                        <h3 className="text-base md:text-lg font-diablo font-bold text-sanctuary-100 group-hover:text-d2-socket transition-colors break-words">
                           {isEn ? matchup.titleEn : matchup.title}
                         </h3>
                       </div>
-                      <p className="text-[11px] text-sanctuary-400 mt-1 leading-relaxed">
+                      <p className="text-xs text-sanctuary-400 mt-1 leading-relaxed">
                         {isEn ? matchup.subtitleEn : matchup.subtitle}
                       </p>
                     </div>
@@ -584,7 +584,7 @@ export const BaseItemShowcase: React.FC<BaseItemShowcaseProps> = ({
                     <button
                       type="button"
                       onClick={() => onNavigateToRuneword?.(matchup.runewordName)}
-                      className="shrink-0 px-2.5 py-1.5 rounded-xl bg-d2-gold/10 hover:bg-d2-gold/20 border border-d2-gold/40 text-xs text-d2-gold font-mono font-bold flex items-center gap-1.5 transition-all shadow group/rw"
+                      className="shrink-0 min-h-11 px-2.5 rounded-xl bg-d2-gold/10 hover:bg-d2-gold/20 border border-d2-gold/40 text-xs text-d2-gold font-mono font-bold flex items-center gap-1.5 transition-all shadow group/rw"
                       title={isEn ? `View Runeword ${matchup.runewordNameEn}` : `點擊查看【${matchup.runewordName}】配方`}
                     >
                       <Layers className="w-3 h-3 text-d2-gold" />

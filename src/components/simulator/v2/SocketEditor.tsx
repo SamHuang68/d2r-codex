@@ -153,7 +153,7 @@ export const SocketEditor: React.FC<Props> = ({ eq, level, onChange, onChangeBas
     <div className="mt-3 space-y-2 text-xs">
       {entry.kind === 'runeword' && bases.length > 1 && (
         <label className="d2-field w-full">{isEn ? "Base Item" : "底材"}
-          <select value={entry.baseCode} onChange={(e) => onChangeBase(e.target.value)} className="d2-select flex-1 min-w-0">
+          <select aria-label={isEn ? "Runeword Base Item" : "符文之語底材"} value={entry.baseCode} onChange={(e) => onChangeBase(e.target.value)} className="d2-select flex-1 min-w-0">
             {bases.map((b) => <option key={b.code} value={b.code}>{isEn ? `${b.nameEn} · ${b.tier ?? 'normal'}${b.class ? ' · Class Specific' : ''} · Req Str ${b.reqStr ?? 0}` : `${b.name}（${b.nameEn}） ${TIER_ZH[b.tier ?? 'normal']}${b.class ? ' · 職業專屬' : ''} · 需求力量 ${b.reqStr ?? 0}`}</option>)}
           </select>
         </label>
@@ -163,7 +163,7 @@ export const SocketEditor: React.FC<Props> = ({ eq, level, onChange, onChangeBas
       )}
       {!cap.fixed && cap.max > cap.count && (
         <label className="d2-field">{isEn ? "Sockets" : "孔數"}
-          <select value={count} onChange={(e) => { const n = Number(e.target.value); onChange({ socketCount: n, sockets: socks.slice(0, n) }); }} className="d2-select">
+          <select aria-label={isEn ? "Socket Count" : "裝備孔數"} value={count} onChange={(e) => { const n = Number(e.target.value); onChange({ socketCount: n, sockets: socks.slice(0, n) }); }} className="d2-select">
             {Array.from({ length: cap.max - cap.count + 1 }, (_, i) => <option key={i} value={cap.count + i}>{cap.count + i}</option>)}
           </select>
           <span style={{ color: 'var(--faint)' }}>{isEn ? `${cap.count > 0 ? `${cap.count} innate sockets; ` : ''}maximum ${cap.max} sockets` : `${cap.count > 0 ? `自帶 ${cap.count} 孔，` : ''}最多 ${cap.max} 孔`}</span>

@@ -13,6 +13,7 @@ import {
   Swords
 } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
+import { HeadingText } from '../common/HeadingText';
 import { announceAct } from '../../utils/actMusicBus';
 
 /**
@@ -339,8 +340,8 @@ export const AreaGuide: React.FC = () => {
             <GameIcon name="map" className="w-4 h-4 text-d2-fire animate-pulse" />
             Endgame Farming & Terror Zones
           </div>
-          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            {t('場景寶典與邪惡威脅區域', 'Area Levels & Terror Zones Guide')}
+          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1 text-balance leading-tight">
+            <HeadingText text={t('場景寶典與邪惡威脅區域', 'Area Levels & Terror Zones Guide')} />
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-2xl">
             {t(

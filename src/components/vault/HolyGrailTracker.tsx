@@ -23,6 +23,7 @@ import {
   Unlock
 } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
+import { HeadingText } from '../common/HeadingText';
 
 const TC87_IDENTIFIERS = [
   "tyraels_might",
@@ -365,8 +366,8 @@ export const HolyGrailTracker: React.FC = () => {
             <GameIcon name="grail" className="w-4 h-4 text-d2-gold animate-pulse" />
             Diablo II: Resurrected Holy Grail Checklist
           </div>
-          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            {isEn ? "Diablo II: Resurrected Holy Grail Checklist" : "暗黑聖杯挑戰進度追蹤 (Holy Grail Tracker)"}
+          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1 text-balance leading-tight">
+            <HeadingText text={isEn ? "Diablo II: Resurrected Holy Grail Checklist" : "暗黑聖杯挑戰進度追蹤 (Holy Grail Tracker)"} />
           </h1>
           <p className="text-xs sm:text-sm text-sanctuary-400 mt-1 max-w-2xl">
             {isEn 

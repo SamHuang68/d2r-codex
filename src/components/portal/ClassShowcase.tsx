@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { CHARACTER_CLASSES_DATA } from '../../data/classes';
 import { CLASS_TRANSLATIONS } from '../../data/classTranslations';
-import { getClassImage } from '../../utils/classImages';
+import { getClassImage, getClassImageSrcSet } from '../../utils/classImages';
 import { GearSummaryLinks } from '../common/GearSummaryLinks';
 import { Sparkles, Shield, Swords, Compass, Flame } from 'lucide-react';
 
@@ -59,7 +59,13 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
               >
                 <img
                   src={getClassImage(cls.id)}
+                  srcSet={getClassImageSrcSet(cls.id)}
+                  sizes="24px"
+                  width={24}
+                  height={24}
                   alt=""
+                  loading="lazy"
+                  decoding="async"
                   className={`w-6 h-6 rounded-full object-cover object-[75%_15%] border transition-transform ${
                     isSelected ? 'border-d2-unique scale-110 shadow-sm' : 'border-sanctuary-700/60 opacity-80'
                   }`}
@@ -93,7 +99,13 @@ export const ClassShowcase: React.FC<ClassShowcaseProps> = ({
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-sanctuary-950">
                   <img
                     src={getClassImage(currentClass.id)}
-                    alt={currentClass.nameEn}
+                    srcSet={getClassImageSrcSet(currentClass.id)}
+                    sizes="(min-width: 1024px) 480px, calc(100vw - 5rem)"
+                    width={1280}
+                    height={720}
+                    alt={isEn ? currentClass.nameEn : `${currentClass.name} (${currentClass.nameEn})`}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                   />
                   {/* Atmospheric Gradients */}

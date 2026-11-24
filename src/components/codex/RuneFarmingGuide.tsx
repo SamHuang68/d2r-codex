@@ -4,7 +4,7 @@ import {
   RUNE_MECHANICS_GUIDE,
   BOSS_RUNE_DROP_CAPS
 } from '../../data/codex/runeFarming';
-import { RUNES_DATA } from '../../data/runes';
+import { RUNES_DATA, RUNE_BY_NUMBER } from '../../data/runes';
 import { ItemIcon } from '../common/ItemIcon';
 import { useLanguage } from '../../context/LanguageContext';
 import {
@@ -455,9 +455,9 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
                     </div>
 
                     {/* 推薦人數標章（獨立於上方右側，享有充裕空間） */}
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-sanctuary-900 border border-sanctuary-750 text-[11px] font-mono text-d2-gold shrink-0">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-sanctuary-900 border border-sanctuary-750 text-xs font-mono text-d2-gold max-w-full">
                       <Users className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                      <span>{isEn ? source.recommendedPlayerCountEn : source.recommendedPlayerCountZh}</span>
+                      <span className="min-w-0 break-words">{isEn ? source.recommendedPlayerCountEn : source.recommendedPlayerCountZh}</span>
                     </div>
                   </div>
 
@@ -830,7 +830,7 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
                         className="font-bold text-d2-rune hover:underline cursor-pointer inline-flex items-center gap-0.5 text-[11px]"
                         title={t('點擊查看符文', 'Click to view rune')}
                       >
-                        <ItemIcon runeNumber={boss.nightmareMaxRune} size="xs" showBorder={false} />
+                        <ItemIcon runeNumber={boss.nightmareMaxRune} name={RUNE_BY_NUMBER.get(boss.nightmareMaxRune)?.name} nameEn={RUNE_BY_NUMBER.get(boss.nightmareMaxRune)?.nameEn} size="xs" showBorder={false} />
                         <span>{boss.nightmareMaxRune}#</span>
                       </button>
                     </div>
@@ -846,7 +846,7 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
                         }`}
                         title={t('點擊查看符文', 'Click to view rune')}
                       >
-                        <ItemIcon runeNumber={boss.hellMaxRune} size="xs" showBorder={false} />
+                        <ItemIcon runeNumber={boss.hellMaxRune} name={RUNE_BY_NUMBER.get(boss.hellMaxRune)?.name} nameEn={RUNE_BY_NUMBER.get(boss.hellMaxRune)?.nameEn} size="xs" showBorder={false} />
                         <span>{boss.hellMaxRune}#</span>
                       </button>
                     </div>

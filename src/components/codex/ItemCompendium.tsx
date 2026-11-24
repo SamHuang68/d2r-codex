@@ -9,7 +9,9 @@ import { PageHeader } from '../common/PageHeader';
 import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, MoreButton, crumbsOf, useDirectory, useDetailBudget } from '../common/TreeIndex';
 import type { SetItemCollection, UniqueItemData, GearSlot } from '../../types';
 import { CLASS_ZH_TO_EN } from '../../engine/slots';
-import { TIER_LABEL, DEFAULT_TIER, TreeNode, buildTree, recount, findNode, leavesOf, inNode, relPath } from '../../utils/equipTaxonomy';
+import { TIER_LABEL, TIER_LABEL_EN, DEFAULT_TIER, TreeNode, buildTree, recount, findNode, leavesOf, inNode, relPath } from '../../utils/equipTaxonomy';
+import { sameBaseItems } from '../../utils/sameBaseItems';
+import { FactGrid, RelatedLinks, type RelatedLink } from './DetailAside';
 import { ITEM_TREE_DEFS, CHARM_LABEL, CHARM_LABEL_EN, U_ENTRIES, S_ENTRIES, UEntry, SEntry } from '../../utils/itemIndex';
 import { CrossPropertyFilterBar } from './CrossPropertyFilterBar';
 import { CrossItemCard } from './CrossItemCard';
@@ -34,10 +36,11 @@ export interface ItemCompendiumProps {
   initialNode?: string;
   /** 單品網址（/items/<id>/）指定的暗金、套裝部件或整組套裝 id */
   initialItemId?: string;
-  /** 點卡片標題時前往該單品網址 */
-  onOpenItem?: (id: string) => void;
+  /** 點卡片標題時前往該單品網址（傳入 undefined 表示回到清單） */
+  onOpenItem?: (id?: string) => void;
   onNavigateToBase?: (baseName: string) => void;
   onNavigateToRune?: (runeNumber: number) => void;
+  onNavigatePatches?: () => void;
 }
 
 /** 分類磚的代表圖（以去掉品階後的相對路徑查；該節點內沒有這件時，改用節點內最高等級者） */
@@ -101,11 +104,13 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   onOpenItem,
   onNavigateToBase,
   onNavigateToRune,
+  onNavigatePatches,
 }) => {
   const { t, isEn } = useLanguage();
   const [sel, setSel] = useState<string>(initialNode ?? `u/${DEFAULT_TIER}`);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [onlyS16, setOnlyS16] = useState<boolean>(false);
+  const [isCrossOpen, setIsCrossOpen] = useState<boolean>(false);
 
   // 跨裝備特殊屬性篩選 State
   const [selectedPropertyIds, setSelectedPropertyIds] = useState<string[]>([]);
@@ -332,7 +337,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             ...(item.isNewDLC ? ['RotW DLC'] : []),
             ...(patch34 ? [isEn ? 'S16 Preview' : 'S16 改動預覽'] : []),
           ]}
-          rightAddon={patch34 ? <PatchChangeNote entry={patch34} /> : undefined}
+          rightAddon={patch34 ? <PatchChangeNote entry={patch34} onOpenPatches={onNavigatePatches} /> : undefined}
           className="h-full hover:border-d2-unique"
         />
       </div>
@@ -439,7 +444,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                       </div>
                       {piecePatch34 && (
                         <div className="min-w-0">
-                          <PatchChangeNote entry={piecePatch34} compact />
+                          <PatchChangeNote entry={piecePatch34} compact onOpenPatches={onNavigatePatches} />
                         </div>
                       )}
                     </div>
@@ -469,7 +474,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             </div>
             {setPatch34 && (
               <div className="min-w-0">
-                <PatchChangeNote entry={setPatch34} />
+                <PatchChangeNote entry={setPatch34} onOpenPatches={onNavigatePatches} />
               </div>
             )}
           </div>
@@ -581,84 +586,287 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     );
   };
 
+  const detailHit = useMemo(() => {
+    if (!initialItemId) return null;
+    const uEntry = U_ENTRIES.find((e) => e.item.id === initialItemId);
+    if (uEntry) {
+      return { kind: 'unique' as const, leaf: uEntry.leaf, name: uEntry.item.name, nameEn: uEntry.item.nameEn, uEntry };
+    }
+    for (const sEntry of S_ENTRIES) {
+      const piece = sEntry.set.pieces.find((p) => p.id === initialItemId);
+      if (piece) {
+        return { kind: 'piece' as const, leaf: sEntry.leaf, name: piece.name, nameEn: piece.nameEn, piece, sEntry };
+      }
+      if (sEntry.set.id === initialItemId) {
+        return { kind: 'set' as const, leaf: sEntry.leaf, name: sEntry.set.name, nameEn: sEntry.set.nameEn, sEntry };
+      }
+    }
+    return null;
+  }, [initialItemId]);
+
+  const detailCrumbs = useMemo(() => {
+    if (!detailHit) return [];
+    return crumbsOf(isEn ? 'All Equipment' : '全部裝備', baseTree, detailHit.leaf, isEn);
+  }, [detailHit, baseTree, isEn]);
+
+  const SLOT_LABEL: Record<string, { zh: string; en: string }> = {
+    weapon: { zh: '武器', en: 'Weapon' },
+    shield: { zh: '盾牌', en: 'Shield' },
+    helm: { zh: '頭盔', en: 'Helm' },
+    armor: { zh: '護甲', en: 'Body Armor' },
+    gloves: { zh: '手套', en: 'Gloves' },
+    boots: { zh: '靴子', en: 'Boots' },
+    belt: { zh: '腰帶', en: 'Belt' },
+    amulet: { zh: '護身符', en: 'Amulet' },
+    ring: { zh: '戒指', en: 'Ring' },
+    charm: { zh: '咒符', en: 'Charm' },
+    jewel: { zh: '珠寶', en: 'Jewel' },
+  };
+
+  const itemFacts = (item: { requiredLevel: number; requiredStr?: number; requiredDex?: number; slot: string; grade?: string; baseItem: string; baseItemEn?: string; classOnly?: string | null }) => [
+    { label: t('需求等級', 'Required Level'), value: item.requiredLevel > 0 ? String(item.requiredLevel) : '' },
+    { label: t('需求力量', 'Required Strength'), value: item.requiredStr ? String(item.requiredStr) : '' },
+    { label: t('需求敏捷', 'Required Dexterity'), value: item.requiredDex ? String(item.requiredDex) : '' },
+    { label: t('部位', 'Slot'), value: SLOT_LABEL[item.slot] ? (isEn ? SLOT_LABEL[item.slot].en : SLOT_LABEL[item.slot].zh) : item.slot },
+    { label: t('品階', 'Tier'), value: item.grade ? (isEn ? (TIER_LABEL_EN[item.grade as keyof typeof TIER_LABEL_EN] ?? item.grade) : (TIER_LABEL[item.grade as keyof typeof TIER_LABEL] ?? item.grade)) : '' },
+    { label: t('底材', 'Base'), value: isEn ? (item.baseItemEn || item.baseItem) : item.baseItem },
+    { label: t('職業限定', 'Class only'), value: item.classOnly ? (isEn ? (CLASS_ZH_TO_EN[item.classOnly] || item.classOnly) : item.classOnly) : '' },
+  ];
+
+  const itemHref = (id: string, name: string, nameEn: string, tone: string): RelatedLink => ({
+    key: id,
+    href: pathForTab('items', id),
+    label: isEn ? nameEn : `${name} (${nameEn})`,
+    tone,
+    onClick: (event) => {
+      if (!onOpenItem || !isPlainLeftClick(event)) return;
+      event.preventDefault();
+      onOpenItem(id);
+    },
+  });
+
+  const handleBackToList = (targetNode?: string) => {
+    setSearchQuery('');
+    setSel(targetNode ?? `u/${DEFAULT_TIER}`);
+    onOpenItem?.(undefined);
+  };
+
   return (
     <div className="py-8 max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
+      {detailHit && (
+        <section aria-label={isEn ? detailHit.nameEn : `${detailHit.name} ${detailHit.nameEn}`} className="mb-8 rounded-2xl border border-d2-unique/40 bg-sanctuary-900/70 p-4 sm:p-6 shadow-2xl space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <nav aria-label={isEn ? 'Breadcrumb' : '麵包屑導覽'} className="flex flex-wrap items-center gap-1.5 text-xs text-sanctuary-400">
+              {detailCrumbs.map((c, idx) => (
+                <React.Fragment key={c.id}>
+                  {idx > 0 && <span aria-hidden="true">›</span>}
+                  <a
+                    href={pathForTab('items')}
+                    onClick={(e) => {
+                      if (!isPlainLeftClick(e)) return;
+                      e.preventDefault();
+                      handleBackToList(c.id);
+                    }}
+                    className="hover:text-d2-unique hover:underline"
+                  >
+                    {c.label}
+                  </a>
+                </React.Fragment>
+              ))}
+              {detailHit.kind === 'piece' && (
+                <>
+                  <span aria-hidden="true">›</span>
+                  <a
+                    href={pathForTab('items', detailHit.sEntry.set.id)}
+                    onClick={(e) => {
+                      if (!onOpenItem || !isPlainLeftClick(e)) return;
+                      e.preventDefault();
+                      onOpenItem(detailHit.sEntry.set.id);
+                    }}
+                    className="hover:text-d2-set hover:underline"
+                  >
+                    {isEn ? detailHit.sEntry.set.nameEn : detailHit.sEntry.set.name}
+                  </a>
+                </>
+              )}
+              <span aria-hidden="true">›</span>
+              <span aria-current="page" className="text-sanctuary-200 font-semibold">
+                {isEn ? detailHit.nameEn : detailHit.name}
+              </span>
+            </nav>
+
+            <a
+              href={pathForTab('items')}
+              onClick={(e) => {
+                if (!isPlainLeftClick(e)) return;
+                e.preventDefault();
+                handleBackToList('all');
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sanctuary-950 border border-sanctuary-700 hover:border-d2-unique text-xs text-sanctuary-200 hover:text-d2-unique transition-colors"
+            >
+              ← {t('回到清單', 'Back to list')}
+            </a>
+          </div>
+
+          <h1 className={`font-diablo text-2xl sm:text-3xl font-bold break-words ${detailHit.kind === 'unique' ? 'text-d2-unique' : 'text-d2-set'}`}>
+            {isEn ? detailHit.nameEn : `${detailHit.name} ${detailHit.nameEn}`}
+          </h1>
+
+          {detailHit.kind === 'unique' && (
+            <>
+              <FactGrid rows={itemFacts(detailHit.uEntry.item)} />
+              <RelatedLinks
+                title={t('同底材的其他裝備', 'Other items on this base')}
+                links={sameBaseItems(detailHit.uEntry.item.baseItem, detailHit.uEntry.item.baseItemId, detailHit.uEntry.item.id).map((hit) => itemHref(hit.id, hit.name, hit.nameEn, hit.kind === 'set' ? 'text-d2-set' : 'text-d2-unique'))}
+              />
+              {uniqueCard(detailHit.uEntry)}
+            </>
+          )}
+          {detailHit.kind === 'set' && setCard(detailHit.sEntry.set)}
+          {detailHit.kind === 'piece' && (() => {
+            const { piece, sEntry } = detailHit;
+            const piecePatch34 = PATCH_34_ENTRIES_BY_NAME[piece.nameEn] ?? PATCH_34_ENTRIES_BY_NAME[sEntry.set.nameEn];
+            return (
+              <div className="space-y-3">
+                <FactGrid rows={itemFacts(piece)} accent="text-d2-set/80" />
+                <RelatedLinks
+                  title={t('同套裝的其他部件', 'Other pieces in this set')}
+                  links={sEntry.set.pieces.filter((other) => other.id !== piece.id).map((other) => itemHref(other.id, other.name, other.nameEn, 'text-d2-set'))}
+                />
+                <RelatedLinks
+                  title={t('同底材的其他裝備', 'Other items on this base')}
+                  links={sameBaseItems(piece.baseItem, piece.baseItemId, piece.id).map((hit) => itemHref(hit.id, hit.name, hit.nameEn, hit.kind === 'set' ? 'text-d2-set' : 'text-d2-unique'))}
+                />
+                <ItemTooltip
+                  layout="row"
+                  title={piece.name}
+                  titleEn={piece.nameEn}
+                  titleHref={pathForTab('items', piece.id)}
+                  onTitleClick={onOpenItem ? () => onOpenItem(piece.id) : undefined}
+                  baseItem={piece.baseItem}
+                  baseItemEn={piece.baseItemEn}
+                  rarity="set"
+                  requiredLevel={piece.requiredLevel}
+                  attributes={isEn ? piece.attributesEn ?? piece.attributes : piece.attributes}
+                  setBonuses={isEn ? sEntry.set.partialBonusesEn ?? sEntry.set.partialBonuses : sEntry.set.partialBonuses}
+                  fullSetBonuses={isEn ? sEntry.set.fullBonusesEn ?? sEntry.set.fullBonuses : sEntry.set.fullBonuses}
+                  onNavigateToBase={onNavigateToBase}
+                  imageUrl={piece.imageUrl}
+                  badges={[
+                    isEn ? sEntry.set.nameEn : sEntry.set.name,
+                    ...(piecePatch34 ? [isEn ? 'S16 Preview' : 'S16 改動預覽'] : []),
+                  ]}
+                  rightAddon={piecePatch34 ? <PatchChangeNote entry={piecePatch34} onOpenPatches={onNavigatePatches} /> : undefined}
+                />
+                <div className="text-xs text-sanctuary-300">
+                  {t('所屬完整套裝：', 'Part of full set: ')}
+                  <a
+                    href={pathForTab('items', sEntry.set.id)}
+                    onClick={(e) => {
+                      if (!onOpenItem || !isPlainLeftClick(e)) return;
+                      e.preventDefault();
+                      onOpenItem(sEntry.set.id);
+                    }}
+                    className="text-d2-set hover:underline font-semibold"
+                  >
+                    {isEn ? sEntry.set.nameEn : `${sEntry.set.name} (${sEntry.set.nameEn})`}
+                  </a>
+                </div>
+              </div>
+            );
+          })()}
+        </section>
+      )}
+
       <PageHeader
+        headingTag={detailHit ? 'h2' : 'h1'}
         icon={<GameIcon name="sword" className="w-7 h-7" />}
         title={t('裝備寶典 (暗金 · 套裝 · 符文之語)', 'Equipment Codex (Uniques · Sets · Runewords)')}
         desc={t('收錄暗黑破壞神二代各部位指標性暗金裝備、全套套裝與經典符文之語，支援跨裝備特殊屬性（永不毀損、+全技能、全抗、MF 等）一鍵篩選。未選取特殊屬性時保留階層式分類樹。', 'Comprehensive codex of iconic Unique gear, complete Sets, and Runewords. Supports one-click cross-equipment filtering by key special properties (Indestructible, +All Skills, All Res, MF, etc.).')}
         right={
-          <div className="text-xs text-sanctuary-400 font-mono px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800 self-start shrink-0 whitespace-nowrap">
+          <div className="text-xs text-sanctuary-400 font-mono px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800 self-start max-w-full">
             {isCrossPropertyMode
               ? (isEn ? `Matched: ${filteredCrossItems.length} (Uniques ${rarityCounts.unique} · Sets ${rarityCounts.set} · Runewords ${rarityCounts.runeword})` : `跨裝備符合: ${filteredCrossItems.length} (暗金 ${rarityCounts.unique} · 套裝 ${rarityCounts.set} · 符文組 ${rarityCounts.runeword})`)
-              : (isEn ? `Uniques ${uHere.length} · Sets ${sHere.length}` : `暗金 ${uHere.length} ・ 套裝 ${sHere.length}`)}
+              : (isEn ? `Category: Uniques ${uHere.length} · Sets ${sHere.length}` : `目前分類：暗金 ${uHere.length} ・ 套裝 ${sHere.length}`)}
           </div>
         }
       />
 
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 mb-5">
-        <div className="relative flex-1 min-w-0">
-          <Search className="w-4 h-4 text-sanctuary-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={t('搜尋暗金、套裝或符文之語名稱、底材或屬性 (例如：軍帽、獅鷲、塔拉夏、精神、謎團、SOJ...)；索引數量會即時對應', 'Search Uniques, Sets, Runewords, Bases, or Affixes (e.g. Shako, Griffon, Tal Rasha, Spirit, Enigma, SOJ...)')}
-            className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-4 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
-          />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')} aria-label={isEn ? "Clear search" : "清除搜尋"} className="absolute right-3 top-1/2 -translate-y-1/2 text-sanctuary-400 hover:text-white">
-              <X className="w-4 h-4" />
-            </button>
-          )}
+      <div className="sticky top-14 z-30 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 py-2 mb-2 bg-sanctuary-950/95 backdrop-blur-md border-b border-sanctuary-800/70">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+          <div className="relative flex-1 min-w-0">
+            <Search aria-hidden="true" className="w-4 h-4 text-sanctuary-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              aria-label={t('搜尋暗金、套裝或符文之語', 'Search Uniques, Sets, or Runewords')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('搜尋名稱、底材或屬性', 'Search name, base, or affix')}
+              className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-12 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} aria-label={isEn ? "Clear search" : "清除搜尋"} className="absolute right-0 top-1/2 -translate-y-1/2 min-w-11 min-h-11 flex items-center justify-center text-sanctuary-400 hover:text-white">
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setOnlyS16((prev) => {
+                const next = !prev;
+                if (next) setSel('all');
+                return next;
+              });
+            }}
+            aria-pressed={onlyS16}
+            className={`shrink-0 min-h-11 px-3.5 rounded-lg border text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+              onlyS16
+                ? 'bg-purple-900/70 border-purple-400 text-purple-100 shadow-sm'
+                : 'bg-sanctuary-950 border-sanctuary-750 text-purple-300 hover:border-purple-500/60 hover:bg-purple-950/30'
+            }`}
+            title={t('僅顯示天梯第 16 季（Patch 3.4）有數值調整的暗金與套裝', 'Show only Unique & Set items adjusted in Ladder Season 16 (Patch 3.4)')}
+          >
+            <span>✦</span>
+            <span>{t(`只看 S16 改動 (${s16TotalCount})`, `S16 Changes (${s16TotalCount})`)}</span>
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            setOnlyS16((prev) => {
-              const next = !prev;
-              if (next) setSel('all');
-              return next;
-            });
-          }}
-          aria-pressed={onlyS16}
-          className={`shrink-0 px-3.5 py-2.5 rounded-lg border text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
-            onlyS16
-              ? 'bg-purple-900/70 border-purple-400 text-purple-100 shadow-sm'
-              : 'bg-sanctuary-950 border-sanctuary-750 text-purple-300 hover:border-purple-500/60 hover:bg-purple-950/30'
-          }`}
-          title={t('僅顯示天梯第 16 季（Patch 3.4）有數值調整的暗金與套裝', 'Show only Unique & Set items adjusted in Ladder Season 16 (Patch 3.4)')}
-        >
-          <span>✦</span>
-          <span>{t(`只看 S16 改動 (${s16TotalCount})`, `S16 Changes (${s16TotalCount})`)}</span>
-        </button>
       </div>
+        <p className="mb-3 text-xs text-sanctuary-400">
+          {t(
+            '範例：軍帽、獅鷲、塔拉夏、精神、謎團、SOJ；索引數量會即時對應。',
+            'Examples: Shako, Griffon, Tal Rasha, Spirit, Enigma, SOJ; tree counts update live.'
+          )}
+        </p>
 
-      {/* 跨裝備特殊屬性篩選列：預設收合，讓樹狀索引在第一屏；有套用篩選時自動展開 */}
+      {/* 跨裝備特殊屬性篩選列：預設收合，展開時才掛載面板避免隱藏空的 heading */}
       <details
         className="mb-5 group"
-        open={selectedPropertyIds.length > 0 || selectedRarity !== 'all' || selectedSlot !== 'all' || undefined}
+        open={isCrossOpen || selectedPropertyIds.length > 0 || selectedRarity !== 'all' || selectedSlot !== 'all'}
+        onToggle={(e) => setIsCrossOpen((e.currentTarget as HTMLDetailsElement).open)}
       >
-        <summary className="cursor-pointer select-none rounded-xl border border-sanctuary-800 bg-sanctuary-900/60 px-4 py-2.5 text-sm text-sanctuary-200 hover:border-sanctuary-600">
+        <summary className="cursor-pointer select-none rounded-xl border border-sanctuary-800 bg-sanctuary-900/60 px-4 min-h-11 py-2.5 text-sm text-sanctuary-200 hover:border-sanctuary-600 flex items-center">
           {isEn ? 'Cross-item special property filter' : '跨裝備特殊屬性篩選（永不毀損、全技能、全抗、MF…）'}
           {(selectedPropertyIds.length > 0 || selectedRarity !== 'all' || selectedSlot !== 'all') && (
             <span className="ml-2 text-d2-unique">{isEn ? 'active' : '已套用'}</span>
           )}
         </summary>
-        <div className="mt-3">
-      <CrossPropertyFilterBar
-        selectedPropertyIds={selectedPropertyIds}
-        onToggleProperty={handleToggleProperty}
-        selectedRarity={selectedRarity}
-        onSelectRarity={setSelectedRarity}
-        selectedSlot={selectedSlot}
-        onSelectSlot={setSelectedSlot}
-        onClearFilters={handleClearCrossFilters}
-        totalHits={filteredCrossItems.length}
-        propertyCounts={propertyCounts}
-        rarityCounts={rarityCounts}
-      />
-        </div>
+        {(isCrossOpen || selectedPropertyIds.length > 0 || selectedRarity !== 'all' || selectedSlot !== 'all') && (
+          <div className="mt-3">
+            <CrossPropertyFilterBar
+              selectedPropertyIds={selectedPropertyIds}
+              onToggleProperty={handleToggleProperty}
+              selectedRarity={selectedRarity}
+              onSelectRarity={setSelectedRarity}
+              selectedSlot={selectedSlot}
+              onSelectSlot={setSelectedSlot}
+              onClearFilters={handleClearCrossFilters}
+              totalHits={filteredCrossItems.length}
+              propertyCounts={propertyCounts}
+              rarityCounts={rarityCounts}
+            />
+          </div>
+        )}
       </details>
 
       {isCrossPropertyMode ? (
@@ -685,8 +893,9 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
               </button>
 
               <div className="flex items-center gap-1 border-l border-sanctuary-800 pl-2">
-                <ArrowUpDown className="w-3.5 h-3.5 text-sanctuary-400" />
+                <ArrowUpDown aria-hidden="true" className="w-3.5 h-3.5 text-sanctuary-400" />
                 <select
+                  aria-label={t('排序方式', 'Sort items')}
                   value={crossSortBy}
                   onChange={(e) => setCrossSortBy(e.target.value as any)}
                   className="bg-sanctuary-900 border border-sanctuary-750 rounded px-2 py-0.5 text-sanctuary-200 focus:outline-none"
@@ -720,6 +929,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                   activePropertyDefs={activePropertyDefs}
                   onNavigateToBase={onNavigateToBase}
                   onNavigateToRune={onNavigateToRune}
+                  onNavigatePatches={onNavigatePatches}
                 />
               ))}
             </div>

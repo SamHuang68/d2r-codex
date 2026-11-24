@@ -84,7 +84,7 @@ export const MusicControl: React.FC = () => {
         aria-haspopup="dialog"
         aria-label={t('音樂', 'Music')}
         title={t('背景音樂', 'Background music')}
-        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border text-xs transition-all duration-200 ${on ? 'border-d2-unique/60 text-d2-unique' : 'border-sanctuary-750 text-sanctuary-300 hover:text-sanctuary-100'}`}
+        className={`flex items-center justify-center gap-1.5 min-h-11 min-w-11 px-2.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border text-xs transition-all duration-200 ${on ? 'border-d2-unique/60 text-d2-unique' : 'border-sanctuary-750 text-sanctuary-300 hover:text-sanctuary-100'}`}
       >
         <Music className={`w-3.5 h-3.5 ${on ? 'text-d2-unique' : 'text-sanctuary-400'}`} />
         <span className="hidden sm:inline">{t('音樂', 'Music')}</span>

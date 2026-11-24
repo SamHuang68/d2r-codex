@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ItemIcon } from '../common/ItemIcon';
+import { RUNE_BY_NUMBER } from '../../data/runes';
 import { Sparkles, ArrowRight, Dices, ChevronDown, ChevronUp, Flame, Award, Plus } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -86,7 +87,7 @@ const CRAFT_ITEMS: CraftSpotlight[] = [
     taglineEn: 'Top-tier gloves for Smiter, Zealot, and Javazon boss hunting',
     inputs: [
       { name: '魔法厚皮手套/鯊皮手套/吸血鬼骸骨手套', nameEn: 'Heavy/Sharkskin/Vampirebone Gloves', isBase: true },
-      { name: '4# 奈夫 (Nef)', nameEn: '#4 Nef', runeNum: 4 },
+      { name: '4# 那夫 (Nef)', nameEn: '#4 Nef', runeNum: 4 },
       { name: '完美紅寶石', nameEn: 'Perfect Ruby', isGem: true },
       { name: '任意珠寶', nameEn: 'Any Jewel' },
     ],
@@ -176,7 +177,7 @@ const CRAFT_ITEMS: CraftSpotlight[] = [
     taglineEn: 'One of the few belts that grant Faster Cast Rate, such as Arachnid Mesh and Gheed\'s Wager',
     inputs: [
       { name: '魔法輕腰帶/鯊皮腰帶/吸血鬼牙腰帶', nameEn: 'Light/Sharkskin/Vampirefang Belt', isBase: true },
-      { name: '6# 伊蘇 (Ith)', nameEn: '#6 Ith', runeNum: 6 },
+      { name: '6# 伊司 (Ith)', nameEn: '#6 Ith', runeNum: 6 },
       { name: '完美紫寶石', nameEn: 'Perfect Amethyst', isGem: true },
       { name: '任意珠寶', nameEn: 'Any Jewel' },
     ],
@@ -601,7 +602,10 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                           {item.inputs.map((inp, idx) => (
                             <React.Fragment key={idx}>
                               {idx > 0 && <Plus className="w-3 h-3 text-sanctuary-500 shrink-0" />}
-                              {inp.runeNum ? (
+                              {inp.runeNum ? (() => {
+                                const rune = RUNE_BY_NUMBER.get(inp.runeNum);
+                                const runeLabel = rune ? (isEn ? `#${rune.number} ${rune.nameEn}` : `${rune.number}# ${rune.name} (${rune.nameEn})`) : (isEn && inp.nameEn ? inp.nameEn : inp.name);
+                                return (
                                 <button
                                   type="button"
                                   onClick={(e) => {
@@ -611,10 +615,11 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                                   className="group/rune flex items-center gap-1 px-2 py-1 rounded-lg bg-sanctuary-900 border border-d2-rune/40 hover:border-d2-rune text-[11px] text-d2-rune hover:text-white font-mono transition-all cursor-pointer shadow-sm"
                                   title={isEn ? `View Rune #${inp.runeNum}` : `點擊查看 ${inp.runeNum}# 符文`}
                                 >
-                                  <ItemIcon runeNumber={inp.runeNum} size="xs" showBorder={false} />
-                                  <span>{isEn && inp.nameEn ? inp.nameEn : inp.name}</span>
+                                  <ItemIcon runeNumber={inp.runeNum} name={rune?.name} nameEn={rune?.nameEn} size="xs" showBorder={false} />
+                                  <span>{runeLabel}</span>
                                 </button>
-                              ) : (
+                                );
+                              })() : (
                                 <span className="flex items-center gap-1 px-2 py-1 rounded-lg bg-sanctuary-900 border border-sanctuary-750 text-[11px] text-sanctuary-200 font-mono">
                                   <ItemIcon name={inp.name} nameEn={inp.nameEn} size="xs" showBorder={false} />
                                   <span className="truncate max-w-[120px]">{isEn && inp.nameEn ? inp.nameEn : inp.name}</span>
@@ -719,7 +724,9 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                         {isEn ? 'Upgrade Formula:' : '升級所需材料：'}
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5 font-mono">
-                        {item.formulaRunes.map((rNum) => (
+                        {item.formulaRunes.map((rNum) => {
+                          const rune = RUNE_BY_NUMBER.get(rNum);
+                          return (
                           <button
                             key={rNum}
                             type="button"
@@ -730,10 +737,11 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                             className="flex items-center gap-1 px-2 py-1 rounded bg-sanctuary-900 border border-d2-rune/40 hover:border-d2-rune text-[11px] text-d2-rune hover:text-white"
                             title={isEn ? `View Rune #${rNum}` : `查看 ${rNum}# 符文`}
                           >
-                            <ItemIcon runeNumber={rNum} size="xs" showBorder={false} />
-                            <span>{rNum}#</span>
+                            <ItemIcon runeNumber={rNum} name={rune?.name} nameEn={rune?.nameEn} size="xs" showBorder={false} />
+                            <span>{rNum}# {rune ? (isEn ? rune.nameEn : rune.name) : ''}</span>
                           </button>
-                        ))}
+                          );
+                        })}
                         <span className="flex items-center gap-1 px-2 py-1 rounded bg-sanctuary-900 border border-sanctuary-750 text-[11px] text-sanctuary-200">
                           <ItemIcon name={item.gemZh} nameEn={item.gemEn} size="xs" showBorder={false} />
                           <span>{isEn ? item.gemEn : item.gemZh}</span>
@@ -807,7 +815,11 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                         {isEn ? 'Socketing Ingredients:' : '打孔固定材料：'}
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5 font-mono">
-                        {item.runes.map((r) => (
+                        {item.runes.map((r) => {
+                          const rune = RUNE_BY_NUMBER.get(r.num);
+                          const zh = rune ? `${rune.name} ${rune.nameEn}` : r.name;
+                          const en = rune ? `${rune.nameEn} (#${rune.number})` : r.nameEn;
+                          return (
                           <button
                             key={r.num}
                             type="button"
@@ -818,10 +830,11 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                             className="flex items-center gap-1 px-2 py-1 rounded bg-sanctuary-900 border border-d2-rune/40 hover:border-d2-rune text-[11px] text-d2-rune hover:text-white"
                             title={isEn ? `View Rune #${r.num}` : `查看 ${r.num}# 符文`}
                           >
-                            <ItemIcon runeNumber={r.num} size="xs" showBorder={false} />
-                            <span>{isEn ? r.nameEn : r.name}</span>
+                            <ItemIcon runeNumber={r.num} name={rune?.name} nameEn={rune?.nameEn} size="xs" showBorder={false} />
+                            <span>{isEn ? en : zh}</span>
                           </button>
-                        ))}
+                          );
+                        })}
                         <span className="flex items-center gap-1 px-2 py-1 rounded bg-sanctuary-900 border border-sanctuary-750 text-[11px] text-sanctuary-200">
                           <ItemIcon name={item.gem} nameEn={item.gemEn} size="xs" showBorder={false} />
                           <span>{isEn ? item.gemEn : item.gem}</span>

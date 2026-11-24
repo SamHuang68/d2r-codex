@@ -80,12 +80,12 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="font-diablo text-base font-bold text-sanctuary-100 flex items-center gap-2">
+            <h2 className="font-diablo text-base font-bold text-sanctuary-100 flex items-center gap-2">
               <span>{t('跨裝備特殊屬性篩選', 'Cross-Equipment Special Property Filter')}</span>
               <span className="text-xs px-2 py-0.5 rounded-full bg-d2-unique/15 text-d2-unique border border-d2-unique/30 font-sans font-semibold">
                 {t('暗金 · 套裝 · 符文組', 'Uniques · Sets · Runewords')}
               </span>
-            </h3>
+            </h2>
             <p className="text-xs text-sanctuary-400 mt-0.5">
               {t('快速定位擁有關鍵 Meta 屬性（永不毀損、+全技能、全抗、MF 等）的代表性神裝', 'Filter iconic endgame gear by key meta properties like Indestructible, +All Skills, All Res, MF, etc.')}
             </p>
@@ -116,7 +116,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
                 key={tab.id}
                 type="button"
                 onClick={() => onSelectRarity(tab.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer flex items-center gap-1.5 ${
+                className={`min-h-11 px-3 rounded-lg text-xs font-medium border transition-all cursor-pointer flex items-center gap-1.5 ${
                   isSelected
                     ? 'bg-sanctuary-850 border-sanctuary-600 shadow-sm ' + tab.tone
                     : 'bg-sanctuary-900/60 border-sanctuary-800 text-sanctuary-400 hover:bg-sanctuary-900 ' + tab.tone
@@ -135,9 +135,10 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
         <div className="flex items-center gap-2">
           <span className="text-xs text-sanctuary-400 font-medium shrink-0">{isEn ? 'Slot:' : '部位:'}</span>
           <select
+            aria-label={isEn ? 'Filter by slot' : '依裝備部位篩選'}
             value={selectedSlot}
             onChange={(e) => onSelectSlot(e.target.value as any)}
-            className="bg-sanctuary-900 border border-sanctuary-750 rounded-lg px-2.5 py-1 text-xs text-sanctuary-200 focus:outline-none focus:border-d2-unique"
+            className="min-h-11 bg-sanctuary-900 border border-sanctuary-750 rounded-lg px-2.5 text-xs text-sanctuary-200 focus:outline-none focus:border-d2-unique"
           >
             {slotOptions.map((opt) => (
               <option key={opt.id} value={opt.id}>
@@ -169,7 +170,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
                 type="button"
                 onClick={() => onToggleProperty(prop.id)}
                 title={isEn ? (prop.descriptionEn || prop.labelEn) : prop.description}
-                className={`px-2.5 py-1.2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer border ${
+                className={`min-h-11 px-2.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer border ${
                   isSelected
                     ? 'bg-d2-unique/20 text-d2-unique border-d2-unique shadow-sm ring-1 ring-d2-unique/40'
                     : count > 0
@@ -195,7 +196,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
           <button
             type="button"
             onClick={() => setShowAllProps(!showAllProps)}
-            className="px-2.5 py-1.2 rounded-lg text-xs font-medium bg-sanctuary-900 hover:bg-sanctuary-850 text-d2-magic border border-sanctuary-750 hover:border-d2-magic/60 transition-all flex items-center gap-1 cursor-pointer"
+            className="min-h-11 px-2.5 rounded-lg text-xs font-medium bg-sanctuary-900 hover:bg-sanctuary-850 text-d2-magic border border-sanctuary-750 hover:border-d2-magic/60 transition-all flex items-center gap-1 cursor-pointer"
           >
             <span>{showAllProps ? (isEn ? 'Show Less' : '收起更多') : (isEn ? `More Properties (${remainingProps.length})` : `更多屬性 (${remainingProps.length})`)}</span>
             {showAllProps ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -216,7 +217,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
                     type="button"
                     onClick={() => onToggleProperty(prop.id)}
                     title={isEn ? (prop.descriptionEn || prop.labelEn) : prop.description}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer border ${
+                    className={`min-h-11 px-2.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer border ${
                       isSelected
                         ? 'bg-d2-magic/20 text-d2-magic border-d2-magic shadow-sm ring-1 ring-d2-magic/40'
                         : count > 0

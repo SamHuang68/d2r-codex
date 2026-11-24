@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { SKILLS_DATA, SkillData } from '../../data/skills';
 import { SkillTreeCanvas } from './SkillTreeCanvas';
 import { useLanguage } from '../../context/LanguageContext';
-import { getClassImage } from '../../utils/classImages';
+import { getClassImage, getClassImageSrcSet } from '../../utils/classImages';
 import { CLASS_ZH_TO_EN } from '../../engine/slots';
 import { SkillSynergyPanel } from './SkillSynergyPanel';
 import { 
@@ -19,6 +19,7 @@ import {
   Network
 } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
+import { HeadingText } from '../common/HeadingText';
 
 
 const MAX_TOTAL_POINTS = 110; // 98 (等級 2-99) + 12 (任務獎勵)
@@ -230,8 +231,8 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
             <GameIcon name="tree" className="w-4 h-4 text-d2-gold animate-pulse" />
             Authentic In-Game Skill Tree & Synergy Matrix
           </div>
-          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            {t('八大職業全技能樹與協同矩陣模擬器', 'Skill Trees & Synergy Matrix Planner')}
+          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1 text-balance leading-tight">
+            <HeadingText text={t('八大職業全技能樹與協同矩陣模擬器', 'Skill Trees & Synergy Matrix Planner')} />
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-3xl">
             {isEn
@@ -287,7 +288,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "魔�
                   : 'bg-sanctuary-900/60 border-sanctuary-800/80 text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-850'
               }`}
             >
-              <img src={getClassImage(cls.characterClass)} alt="" className={`w-5 h-5 rounded-full object-cover object-[75%_15%] border transition-transform ${isSelected ? 'border-d2-gold scale-110 shadow-sm' : 'border-sanctuary-700/60 opacity-80'}`} />
+              <img src={getClassImage(cls.characterClass)} srcSet={getClassImageSrcSet(cls.characterClass)} sizes="20px" width={20} height={20} alt="" loading="lazy" decoding="async" className={`w-5 h-5 rounded-full object-cover object-[75%_15%] border transition-transform ${isSelected ? 'border-d2-gold scale-110 shadow-sm' : 'border-sanctuary-700/60 opacity-80'}`} />
               {isEn ? (CLASS_ZH_TO_EN[cls.characterClass] || cls.characterClass) : cls.characterClass}
             </button>
           );

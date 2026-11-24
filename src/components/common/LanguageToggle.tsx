@@ -17,7 +17,7 @@ export const LanguageToggle: React.FC<LanguageToggleProps> = ({
     <button
       type="button"
       onClick={toggleLang}
-      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-xs transition-all duration-200 cursor-pointer shadow-inner group ${className}`}
+      className={`flex items-center gap-1.5 min-h-11 px-2.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-xs transition-all duration-200 cursor-pointer shadow-inner group ${className}`}
       title={isEn ? '切換為繁體中文 (Switch to Traditional Chinese)' : 'Switch to English (切換為英文)'}
       // 無障礙名稱要包含畫面上看得到的文字（「中 / EN」），語音控制才叫得動
       aria-label={showLabel ? (isEn ? 'ZH / EN, Switch to Traditional Chinese' : '中 / EN, Switch to English') : (isEn ? 'Switch to Traditional Chinese' : 'Switch to English')}

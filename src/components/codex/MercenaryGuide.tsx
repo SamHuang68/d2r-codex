@@ -20,6 +20,7 @@ import {
   Shield
 } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
+import { HeadingText } from '../common/HeadingText';
 
 export interface MercenaryGuideProps {
   onNavigateItem?: (itemName: string) => void;
@@ -93,8 +94,8 @@ export const MercenaryGuide: React.FC<MercenaryGuideProps> = ({ onNavigateItem, 
             <GameIcon name="swords" className="w-4 h-4 text-d2-fire animate-pulse" />
             Mercenaries Compendium & Meta Builds
           </div>
-          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            {t('傭兵搭配矩陣與終局配裝', 'Mercenary Matrix & Meta Builds')}
+          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1 text-balance leading-tight">
+            <HeadingText text={t('傭兵搭配矩陣與終局配裝', 'Mercenary Matrix & Meta Builds')} />
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-2xl">
             {t(

@@ -68,3 +68,13 @@ export const RUNES_DATA: RuneData[] = gameData.bases
       cubeRecipeEn: enInfo?.cube,
     };
   });
+
+/** 依符文編號（1–33）查找單一來源的遊戲官方符文名稱與資料 */
+export const RUNE_BY_NUMBER: Map<number, RuneData> = new Map(RUNES_DATA.map((r) => [r.number, r]));
+
+/** 依符文編號回傳統一的繁中或英文符文名稱 */
+export const getRuneName = (num: number, isEn = false): string => {
+  const r = RUNE_BY_NUMBER.get(num);
+  if (!r) return `#${num}`;
+  return isEn ? r.nameEn : r.name;
+};

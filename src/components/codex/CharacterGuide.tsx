@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CHARACTER_CLASSES_DATA } from '../../data/classes';
 import { CLASS_TRANSLATIONS } from '../../data/classTranslations';
 import { useLanguage } from '../../context/LanguageContext';
-import { getClassImage } from '../../utils/classImages';
+import { getClassImage, getClassImageSrcSet } from '../../utils/classImages';
 import { 
   Shield, 
   Sparkles, 
@@ -10,6 +10,7 @@ import {
   Flame 
 } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
+import { HeadingText } from '../common/HeadingText';
 import { GearSummaryLinks } from '../common/GearSummaryLinks';
 
 export interface CharacterGuideProps {
@@ -92,8 +93,8 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
             <GameIcon name="helm" className="w-4 h-4 text-d2-fire animate-pulse" />
             Character Classes & Mechanics Compendium
           </div>
-          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1">
-            {t('八大英雄角色寶典與機制圖解', 'Character Classes & Mechanics Compendium')}
+          <h1 className="text-3xl sm:text-4xl font-diablo font-bold text-sanctuary-100 mt-1 text-balance leading-tight">
+            <HeadingText text={t('八大英雄角色寶典與機制圖解', 'Character Classes & Mechanics Compendium')} />
           </h1>
           <p className="text-sanctuary-400 text-sm mt-1 max-w-3xl">
             {t('收錄全職業屬性成長曲線、加點黃金律、專屬底材與裝備分析、幀數斷點基底，以及終局主流流派圖解。', 'Stat progression curves, stat allocation rules, class-specific gear mechanics, and frame breakpoints.')}
@@ -136,14 +137,14 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
       </div>
 
       {/* Class Selector Tabs with Avatars */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-3 border-b border-sanctuary-850 no-scrollbar">
+      <div className="flex w-full min-w-0 items-center gap-2 overflow-x-auto pb-3 border-b border-sanctuary-850 no-scrollbar">
         {CHARACTER_CLASSES_DATA.map((cls) => {
           const isSelected = cls.id === selectedClassId;
           return (
             <button
               key={cls.id}
               onClick={() => setSelectedClassId(cls.id)}
-              className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0 border ${
+              className={`flex items-center gap-2.5 min-h-11 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0 border ${
                 isSelected
                   ? 'bg-sanctuary-800 text-d2-unique border-d2-unique/60 shadow-md shadow-d2-unique/10 font-bold'
                   : 'bg-sanctuary-950/80 text-sanctuary-400 border-sanctuary-800 hover:text-sanctuary-200'
@@ -151,7 +152,13 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
             >
               <img
                 src={getClassImage(cls.id)}
+                srcSet={getClassImageSrcSet(cls.id)}
+                sizes="24px"
+                width={24}
+                height={24}
                 alt=""
+                loading="lazy"
+                decoding="async"
                 className={`w-6 h-6 rounded-full object-cover object-[75%_15%] border transition-transform ${
                   isSelected ? 'border-d2-unique scale-110 shadow-sm' : 'border-sanctuary-700/60 opacity-80'
                 }`}
@@ -174,7 +181,13 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
           <div className="relative h-44 sm:h-56 md:h-64 w-full overflow-hidden bg-sanctuary-950">
             <img
               src={getClassImage(currentClass.id)}
-              alt={currentClass.nameEn}
+              srcSet={getClassImageSrcSet(currentClass.id)}
+              sizes="(min-width: 1280px) 1152px, calc(100vw - 5rem)"
+              width={1152}
+              height={256}
+              alt={isEn ? currentClass.nameEn : `${currentClass.name} (${currentClass.nameEn})`}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
             />
             {/* Atmospheric Gradients */}
