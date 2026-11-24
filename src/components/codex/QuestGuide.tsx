@@ -253,7 +253,11 @@ export const QuestGuide: React.FC = () => {
                           <img
                             src={visual.image}
                             alt={isEn ? visual.subjectEn : visual.subjectZh}
+                            width={96}
+                            height={96}
                             className="w-full h-full object-cover object-top"
+                            loading="lazy"
+                            decoding="async"
                           />
                           {visual.isBoss && (
                             <div className="absolute top-1 right-1 px-1.5 py-0.2 rounded bg-d2-gold/90 text-sanctuary-950 text-[9px] font-bold font-mono tracking-wider shadow">
@@ -359,7 +363,11 @@ export const QuestGuide: React.FC = () => {
                         <img
                           src={evtVisual.image}
                           alt={isEn ? evtVisual.subjectEn : evtVisual.subjectZh}
+                          width={64}
+                          height={64}
                           className="w-full h-full object-cover object-top"
+                          loading="lazy"
+                          decoding="async"
                         />
                       </div>
                       <div>

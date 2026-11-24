@@ -288,7 +288,7 @@ export const SkillPlanner: React.FC<SkillPlannerProps> = ({ initialClass = "é­”æ
                   : 'bg-sanctuary-900/60 border-sanctuary-800/80 text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-850'
               }`}
             >
-              <img src={getClassImage(cls.characterClass)} srcSet={getClassImageSrcSet(cls.characterClass)} sizes="20px" alt="" className={`w-5 h-5 rounded-full object-cover object-[75%_15%] border transition-transform ${isSelected ? 'border-d2-gold scale-110 shadow-sm' : 'border-sanctuary-700/60 opacity-80'}`} />
+              <img src={getClassImage(cls.characterClass)} srcSet={getClassImageSrcSet(cls.characterClass)} sizes="20px" width={20} height={20} alt="" loading="lazy" decoding="async" className={`w-5 h-5 rounded-full object-cover object-[75%_15%] border transition-transform ${isSelected ? 'border-d2-gold scale-110 shadow-sm' : 'border-sanctuary-700/60 opacity-80'}`} />
               {isEn ? (CLASS_ZH_TO_EN[cls.characterClass] || cls.characterClass) : cls.characterClass}
             </button>
           );

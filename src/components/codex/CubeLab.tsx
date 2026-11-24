@@ -101,7 +101,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
       <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-sanctuary-950 via-sanctuary-900 to-sanctuary-950 border border-sanctuary-800 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
         <div className="flex items-center gap-4">
           <div className="relative w-16 h-16 rounded-2xl bg-sanctuary-950/90 border border-d2-magic/40 flex items-center justify-center p-1.5 shadow-[0_0_15px_rgba(105,105,255,0.2)] shrink-0">
-            <img src={imgCube} alt="Horadric Cube" className="w-12 h-12 object-contain" />
+            <img src={imgCube} alt="Horadric Cube" width={48} height={48} className="w-12 h-12 object-contain" loading="lazy" decoding="async" />
             <div className="absolute -bottom-1 -right-1 px-1 rounded bg-d2-magic/20 text-[9px] font-mono text-d2-magic border border-d2-magic/40">
               {isEn ? '4 Slots' : '4格'}
             </div>

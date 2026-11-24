@@ -106,7 +106,7 @@ export const UberBossGuide: React.FC = () => {
               {/* Step 1 Visual */}
               <div className="p-3 rounded-2xl bg-sanctuary-950/80 border border-sanctuary-800/80 flex items-center gap-3">
                 <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-d2-gold/40 bg-sanctuary-900 flex items-center justify-center">
-                  <img src={imgUberKey} alt="Keys" className="w-8 h-8 object-contain" />
+                  <img loading="lazy" decoding="async" src={imgUberKey} alt="Keys" className="w-8 h-8 object-contain" />
                 </div>
                 <div className="min-w-0">
                   <div className="text-[11px] font-mono text-d2-gold font-bold">{isEn ? 'Step 1' : '第 1 階段'}</div>
@@ -118,7 +118,7 @@ export const UberBossGuide: React.FC = () => {
               {/* Step 2 Visual */}
               <div className="p-3 rounded-2xl bg-sanctuary-950/80 border border-sanctuary-800/80 flex items-center gap-3">
                 <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-d2-fire/40 bg-sanctuary-900 flex items-center justify-center">
-                  <img src={imgCube} alt="Cube" className="w-8 h-8 object-contain" />
+                  <img loading="lazy" decoding="async" src={imgCube} alt="Cube" className="w-8 h-8 object-contain" />
                 </div>
                 <div className="min-w-0">
                   <div className="text-[11px] font-mono text-d2-fire font-bold">{isEn ? 'Step 2' : '第 2 階段'}</div>
@@ -130,7 +130,7 @@ export const UberBossGuide: React.FC = () => {
               {/* Step 3 Visual */}
               <div className="p-3 rounded-2xl bg-sanctuary-950/80 border border-sanctuary-800/80 flex items-center gap-3">
                 <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-purple-500/40 bg-sanctuary-900 flex items-center justify-center">
-                  <img src={imgMephistoBrain} alt="Organs" className="w-8 h-8 object-contain" />
+                  <img loading="lazy" decoding="async" src={imgMephistoBrain} alt="Organs" className="w-8 h-8 object-contain" />
                 </div>
                 <div className="min-w-0">
                   <div className="text-[11px] font-mono text-purple-400 font-bold">{isEn ? 'Step 3' : '第 3 階段'}</div>
@@ -142,7 +142,7 @@ export const UberBossGuide: React.FC = () => {
               {/* Step 4 Visual */}
               <div className="p-3 rounded-2xl bg-sanctuary-950/80 border border-d2-unique/60 bg-gradient-to-br from-sanctuary-950 to-d2-unique/10 flex items-center gap-3 shadow-[0_0_15px_rgba(200,165,100,0.15)]">
                 <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-d2-unique bg-sanctuary-900 flex items-center justify-center">
-                  <img src={imgTorch} alt="Hellfire Torch" className="w-full h-full object-cover" />
+                  <img loading="lazy" decoding="async" src={imgTorch} alt="Hellfire Torch" className="w-full h-full object-cover" />
                 </div>
                 <div className="min-w-0">
                   <div className="text-[11px] font-mono text-d2-unique font-bold">{isEn ? 'Goal' : '終極目標'}</div>
@@ -187,7 +187,7 @@ export const UberBossGuide: React.FC = () => {
                       {/* Countess */}
                       <div className="flex flex-col items-center text-center p-2 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800">
                         <div className="w-12 h-12 rounded-lg overflow-hidden border border-sanctuary-700 bg-sanctuary-950 mb-1">
-                          <img src={imgCountess} alt="The Countess" className="w-full h-full object-cover object-top" />
+                          <img loading="lazy" decoding="async" src={imgCountess} alt="The Countess" className="w-full h-full object-cover object-top" />
                         </div>
                         <span className="text-[11px] font-bold text-sanctuary-200 truncate w-full">{isEn ? 'Countess' : '女伯爵'}</span>
                         <span className="text-[10px] text-d2-gold font-mono">{isEn ? 'Terror Key' : '恐懼之鑰'}</span>
@@ -196,7 +196,7 @@ export const UberBossGuide: React.FC = () => {
                       {/* Summoner */}
                       <div className="flex flex-col items-center text-center p-2 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800">
                         <div className="w-12 h-12 rounded-lg overflow-hidden border border-sanctuary-700 bg-sanctuary-950 mb-1">
-                          <img src={imgSummoner} alt="The Summoner" className="w-full h-full object-cover object-top" />
+                          <img loading="lazy" decoding="async" src={imgSummoner} alt="The Summoner" className="w-full h-full object-cover object-top" />
                         </div>
                         <span className="text-[11px] font-bold text-sanctuary-200 truncate w-full">{isEn ? 'Summoner' : '召喚師'}</span>
                         <span className="text-[10px] text-d2-gold font-mono">{isEn ? 'Hate Key' : '憎恨之鑰'}</span>
@@ -205,7 +205,7 @@ export const UberBossGuide: React.FC = () => {
                       {/* Nihlathak */}
                       <div className="flex flex-col items-center text-center p-2 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800">
                         <div className="w-12 h-12 rounded-lg overflow-hidden border border-sanctuary-700 bg-sanctuary-950 mb-1">
-                          <img src={imgNihlathak} alt="Nihlathak" className="w-full h-full object-cover object-top" />
+                          <img loading="lazy" decoding="async" src={imgNihlathak} alt="Nihlathak" className="w-full h-full object-cover object-top" />
                         </div>
                         <span className="text-[11px] font-bold text-sanctuary-200 truncate w-full">{isEn ? 'Nihlathak' : '尼拉塞克'}</span>
                         <span className="text-[10px] text-d2-gold font-mono">{isEn ? 'Destr. Key' : '毀滅之鑰'}</span>
@@ -228,7 +228,7 @@ export const UberBossGuide: React.FC = () => {
 
                   {/* Rewards */}
                   <div className="text-xs bg-sanctuary-900/60 p-3 rounded-xl border border-sanctuary-800 text-sanctuary-300 flex items-center gap-2">
-                    <img src={imgUberKey} alt="Key" className="w-5 h-5 object-contain shrink-0" />
+                    <img loading="lazy" decoding="async" src={imgUberKey} alt="Key" className="w-5 h-5 object-contain shrink-0" />
                     <div>
                       <span className="text-d2-gold font-bold font-mono">{isEn ? "Stage Rewards: " : "階段收穫："}</span>
                       {isEn ? UBER_TRISTRAM_GUIDE.steps[0].rewardsEn : UBER_TRISTRAM_GUIDE.steps[0].rewards}
@@ -269,9 +269,9 @@ export const UberBossGuide: React.FC = () => {
                       {/* Lilith -> Eye */}
                       <div className="flex flex-col items-center text-center p-2 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800">
                         <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-sanctuary-700 bg-sanctuary-950 mb-1">
-                          <img src={imgLilith} alt="Lilith" className="w-full h-full object-cover object-top" />
+                          <img loading="lazy" decoding="async" src={imgLilith} alt="Lilith" className="w-full h-full object-cover object-top" />
                           <div className="absolute bottom-0 right-0 w-5 h-5 rounded-tl bg-sanctuary-950/90 flex items-center justify-center p-0.5 border-t border-l border-sanctuary-700">
-                            <img src={imgBaalEye} alt="Baal's Eye" className="w-full h-full object-contain" />
+                            <img loading="lazy" decoding="async" src={imgBaalEye} alt="Baal's Eye" className="w-full h-full object-contain" />
                           </div>
                         </div>
                         <span className="text-[11px] font-bold text-sanctuary-200 truncate w-full">{isEn ? 'Lilith' : '莉莉絲'}</span>
@@ -281,9 +281,9 @@ export const UberBossGuide: React.FC = () => {
                       {/* Uber Duriel -> Brain */}
                       <div className="flex flex-col items-center text-center p-2 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800">
                         <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-sanctuary-700 bg-sanctuary-950 mb-1">
-                          <img src={imgUberDuriel} alt="Uber Duriel" className="w-full h-full object-cover object-top" />
+                          <img loading="lazy" decoding="async" src={imgUberDuriel} alt="Uber Duriel" className="w-full h-full object-cover object-top" />
                           <div className="absolute bottom-0 right-0 w-5 h-5 rounded-tl bg-sanctuary-950/90 flex items-center justify-center p-0.5 border-t border-l border-sanctuary-700">
-                            <img src={imgMephistoBrain} alt="Mephisto's Brain" className="w-full h-full object-contain" />
+                            <img loading="lazy" decoding="async" src={imgMephistoBrain} alt="Mephisto's Brain" className="w-full h-full object-contain" />
                           </div>
                         </div>
                         <span className="text-[11px] font-bold text-sanctuary-200 truncate w-full">{isEn ? 'Uber Duriel' : '超級都瑞爾'}</span>
@@ -293,9 +293,9 @@ export const UberBossGuide: React.FC = () => {
                       {/* Uber Izual -> Horn */}
                       <div className="flex flex-col items-center text-center p-2 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800">
                         <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-sanctuary-700 bg-sanctuary-950 mb-1">
-                          <img src={imgUberIzual} alt="Uber Izual" className="w-full h-full object-cover object-top" />
+                          <img loading="lazy" decoding="async" src={imgUberIzual} alt="Uber Izual" className="w-full h-full object-cover object-top" />
                           <div className="absolute bottom-0 right-0 w-5 h-5 rounded-tl bg-sanctuary-950/90 flex items-center justify-center p-0.5 border-t border-l border-sanctuary-700">
-                            <img src={imgDiabloHorn} alt="Diablo's Horn" className="w-full h-full object-contain" />
+                            <img loading="lazy" decoding="async" src={imgDiabloHorn} alt="Diablo's Horn" className="w-full h-full object-contain" />
                           </div>
                         </div>
                         <span className="text-[11px] font-bold text-sanctuary-200 truncate w-full">{isEn ? 'Uber Izual' : '超級伊卒爾'}</span>
@@ -320,9 +320,9 @@ export const UberBossGuide: React.FC = () => {
                   {/* Rewards */}
                   <div className="text-xs bg-sanctuary-900/60 p-3 rounded-xl border border-sanctuary-800 text-sanctuary-300 flex items-center gap-2">
                     <div className="flex -space-x-1 shrink-0">
-                      <img src={imgBaalEye} alt="Eye" className="w-4 h-4 object-contain" />
-                      <img src={imgMephistoBrain} alt="Brain" className="w-4 h-4 object-contain" />
-                      <img src={imgDiabloHorn} alt="Horn" className="w-4 h-4 object-contain" />
+                      <img loading="lazy" decoding="async" src={imgBaalEye} alt="Eye" className="w-4 h-4 object-contain" />
+                      <img loading="lazy" decoding="async" src={imgMephistoBrain} alt="Brain" className="w-4 h-4 object-contain" />
+                      <img loading="lazy" decoding="async" src={imgDiabloHorn} alt="Horn" className="w-4 h-4 object-contain" />
                     </div>
                     <div>
                       <span className="text-d2-fire font-bold font-mono">{isEn ? "Stage Rewards: " : "階段收穫："}</span>
@@ -364,7 +364,7 @@ export const UberBossGuide: React.FC = () => {
                       {/* Uber Mephisto */}
                       <div className="flex flex-col items-center text-center p-2 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800">
                         <div className="w-12 h-12 rounded-lg overflow-hidden border border-sanctuary-700 bg-sanctuary-950 mb-1">
-                          <img src={imgUberMephisto} alt="Uber Mephisto" className="w-full h-full object-cover object-top" />
+                          <img loading="lazy" decoding="async" src={imgUberMephisto} alt="Uber Mephisto" className="w-full h-full object-cover object-top" />
                         </div>
                         <span className="text-[11px] font-bold text-sanctuary-200 truncate w-full">{isEn ? 'Uber Mephisto' : '超級墨菲'}</span>
                         <span className="text-[10px] text-d2-fire font-mono">{isEn ? 'Lv20 Aura' : '20級信念'}</span>
@@ -373,7 +373,7 @@ export const UberBossGuide: React.FC = () => {
                       {/* Uber Baal */}
                       <div className="flex flex-col items-center text-center p-2 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800">
                         <div className="w-12 h-12 rounded-lg overflow-hidden border border-sanctuary-700 bg-sanctuary-950 mb-1">
-                          <img src={imgUberBaal} alt="Uber Baal" className="w-full h-full object-cover object-top" />
+                          <img loading="lazy" decoding="async" src={imgUberBaal} alt="Uber Baal" className="w-full h-full object-cover object-top" />
                         </div>
                         <span className="text-[11px] font-bold text-sanctuary-200 truncate w-full">{isEn ? 'Uber Baal' : '超級巴爾'}</span>
                         <span className="text-[10px] text-sanctuary-400 font-mono">{isEn ? 'Mana Burn' : '法力燃燒'}</span>
@@ -382,7 +382,7 @@ export const UberBossGuide: React.FC = () => {
                       {/* Uber Diablo */}
                       <div className="flex flex-col items-center text-center p-2 rounded-xl bg-sanctuary-900/60 border border-sanctuary-800">
                         <div className="w-12 h-12 rounded-lg overflow-hidden border border-sanctuary-700 bg-sanctuary-950 mb-1">
-                          <img src={imgUberDiablo} alt="Uber Diablo" className="w-full h-full object-cover object-top" />
+                          <img loading="lazy" decoding="async" src={imgUberDiablo} alt="Uber Diablo" className="w-full h-full object-cover object-top" />
                         </div>
                         <span className="text-[11px] font-bold text-sanctuary-200 truncate w-full">{isEn ? 'Uber Diablo' : '超級菠蘿'}</span>
                         <span className="text-[10px] text-d2-fire font-mono">{isEn ? 'Armageddon' : '毀天滅地'}</span>
@@ -406,7 +406,7 @@ export const UberBossGuide: React.FC = () => {
                   {/* Rewards */}
                   <div className="text-xs bg-sanctuary-900/60 p-3 rounded-xl border border-d2-unique/40 text-sanctuary-300 flex items-center gap-3 bg-d2-unique/5">
                     <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-d2-unique bg-sanctuary-950 shadow">
-                      <img src={imgTorch} alt="Torch" className="w-full h-full object-cover" />
+                      <img loading="lazy" decoding="async" src={imgTorch} alt="Torch" className="w-full h-full object-cover" />
                     </div>
                     <div>
                       <span className="text-d2-unique font-bold font-mono">{isEn ? "Stage Rewards: " : "階段收穫："}</span>
@@ -428,7 +428,7 @@ export const UberBossGuide: React.FC = () => {
           <div className="bg-sanctuary-900/50 border border-sanctuary-800 rounded-3xl p-6 sm:p-8 space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0 border border-d2-gold/50 bg-sanctuary-950 shadow-lg shadow-d2-gold/10">
-                <img src={imgPaladin} alt="Paladin Smiter" className="w-full h-full object-cover object-top" />
+                <img loading="lazy" decoding="async" src={imgPaladin} alt="Paladin Smiter" className="w-full h-full object-cover object-top" />
                 <div className="absolute inset-0 border border-d2-gold/30 rounded-2xl pointer-events-none" />
               </div>
               <div className="min-w-0 flex-1">
@@ -472,7 +472,7 @@ export const UberBossGuide: React.FC = () => {
           <div className="bg-gradient-to-r from-d2-blood/20 via-sanctuary-900/80 to-sanctuary-950 border border-d2-blood/40 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-[0_0_25px_rgba(180,40,40,0.15)]">
             <div className="flex items-start sm:items-center gap-5">
               <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 border-2 border-d2-blood/60 bg-sanctuary-950 shadow-[0_0_20px_rgba(200,40,40,0.3)]">
-                <img src={imgDiabloClone} alt="Diablo Clone" className="w-full h-full object-cover object-top" />
+                <img loading="lazy" decoding="async" src={imgDiabloClone} alt="Diablo Clone" className="w-full h-full object-cover object-top" />
                 <div className="absolute top-1 right-1 px-1.5 py-0.2 rounded bg-d2-blood text-white text-[9px] font-bold font-mono tracking-wider">
                   CLONE
                 </div>
@@ -494,7 +494,7 @@ export const UberBossGuide: React.FC = () => {
             {/* Annihilus Charm Showcase Box */}
             <div className="flex items-center gap-3.5 px-5 py-3 rounded-2xl bg-sanctuary-950/90 border border-d2-unique/60 shadow-[0_0_15px_rgba(200,165,100,0.2)] shrink-0">
               <div className="w-12 h-12 rounded-xl bg-sanctuary-900 border border-d2-unique/40 flex items-center justify-center p-1">
-                <img src={imgAnni} alt="Annihilus" className="w-full h-full object-contain" />
+                <img loading="lazy" decoding="async" src={imgAnni} alt="Annihilus" className="w-full h-full object-contain" />
               </div>
               <div>
                 <div className="text-[10px] font-mono text-d2-unique font-bold">{isEn ? 'Unique Small Charm' : '暗金小型咒符'}</div>

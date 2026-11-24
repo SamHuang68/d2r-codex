@@ -355,7 +355,11 @@ export const BossTacticsShowcase: React.FC<BossTacticsShowcaseProps> = ({
             <img
               src={bossImg}
               alt={isEn ? currentBoss.nameEn : currentBoss.name}
+              width={240}
+              height={240}
               className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+              decoding="async"
             />
             <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-sanctuary-950/90 text-d2-unique text-[10px] font-mono font-bold border border-d2-unique/40 shadow">
               {isEn ? currentBoss.actTitleEn : currentBoss.actTitleZh}
