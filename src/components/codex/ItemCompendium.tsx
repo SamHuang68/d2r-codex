@@ -9,7 +9,9 @@ import { PageHeader } from '../common/PageHeader';
 import { TreeIndex, Crumbs, SectionHead, DirChip, ViewToggle, MoreButton, crumbsOf, useDirectory, useDetailBudget } from '../common/TreeIndex';
 import type { SetItemCollection, UniqueItemData, GearSlot } from '../../types';
 import { CLASS_ZH_TO_EN } from '../../engine/slots';
-import { TIER_LABEL, DEFAULT_TIER, TreeNode, buildTree, recount, findNode, leavesOf, inNode, relPath } from '../../utils/equipTaxonomy';
+import { TIER_LABEL, TIER_LABEL_EN, DEFAULT_TIER, TreeNode, buildTree, recount, findNode, leavesOf, inNode, relPath } from '../../utils/equipTaxonomy';
+import { sameBaseItems } from '../../utils/sameBaseItems';
+import { FactGrid, RelatedLinks, type RelatedLink } from './DetailAside';
 import { ITEM_TREE_DEFS, CHARM_LABEL, CHARM_LABEL_EN, U_ENTRIES, S_ENTRIES, UEntry, SEntry } from '../../utils/itemIndex';
 import { CrossPropertyFilterBar } from './CrossPropertyFilterBar';
 import { CrossItemCard } from './CrossItemCard';
@@ -607,6 +609,42 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     return crumbsOf(isEn ? 'All Equipment' : '全部裝備', baseTree, detailHit.leaf, isEn);
   }, [detailHit, baseTree, isEn]);
 
+  const SLOT_LABEL: Record<string, { zh: string; en: string }> = {
+    weapon: { zh: '武器', en: 'Weapon' },
+    shield: { zh: '盾牌', en: 'Shield' },
+    helm: { zh: '頭盔', en: 'Helm' },
+    armor: { zh: '護甲', en: 'Body Armor' },
+    gloves: { zh: '手套', en: 'Gloves' },
+    boots: { zh: '靴子', en: 'Boots' },
+    belt: { zh: '腰帶', en: 'Belt' },
+    amulet: { zh: '護身符', en: 'Amulet' },
+    ring: { zh: '戒指', en: 'Ring' },
+    charm: { zh: '咒符', en: 'Charm' },
+    jewel: { zh: '珠寶', en: 'Jewel' },
+  };
+
+  const itemFacts = (item: { requiredLevel: number; requiredStr?: number; requiredDex?: number; slot: string; grade?: string; baseItem: string; baseItemEn?: string; classOnly?: string | null }) => [
+    { label: t('需求等級', 'Required Level'), value: item.requiredLevel > 0 ? String(item.requiredLevel) : '' },
+    { label: t('需求力量', 'Required Strength'), value: item.requiredStr ? String(item.requiredStr) : '' },
+    { label: t('需求敏捷', 'Required Dexterity'), value: item.requiredDex ? String(item.requiredDex) : '' },
+    { label: t('部位', 'Slot'), value: SLOT_LABEL[item.slot] ? (isEn ? SLOT_LABEL[item.slot].en : SLOT_LABEL[item.slot].zh) : item.slot },
+    { label: t('品階', 'Tier'), value: item.grade ? (isEn ? (TIER_LABEL_EN[item.grade as keyof typeof TIER_LABEL_EN] ?? item.grade) : (TIER_LABEL[item.grade as keyof typeof TIER_LABEL] ?? item.grade)) : '' },
+    { label: t('底材', 'Base'), value: isEn ? (item.baseItemEn || item.baseItem) : item.baseItem },
+    { label: t('職業限定', 'Class only'), value: item.classOnly ? (isEn ? (CLASS_ZH_TO_EN[item.classOnly] || item.classOnly) : item.classOnly) : '' },
+  ];
+
+  const itemHref = (id: string, name: string, nameEn: string, tone: string): RelatedLink => ({
+    key: id,
+    href: pathForTab('items', id),
+    label: isEn ? nameEn : `${name} (${nameEn})`,
+    tone,
+    onClick: (event) => {
+      if (!onOpenItem || !isPlainLeftClick(event)) return;
+      event.preventDefault();
+      onOpenItem(id);
+    },
+  });
+
   const handleBackToList = (targetNode?: string) => {
     setSearchQuery('');
     setSel(targetNode ?? `u/${DEFAULT_TIER}`);
@@ -674,13 +712,31 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             {isEn ? detailHit.nameEn : `${detailHit.name} ${detailHit.nameEn}`}
           </h1>
 
-          {detailHit.kind === 'unique' && uniqueCard(detailHit.uEntry)}
+          {detailHit.kind === 'unique' && (
+            <>
+              <FactGrid rows={itemFacts(detailHit.uEntry.item)} />
+              <RelatedLinks
+                title={t('同底材的其他裝備', 'Other items on this base')}
+                links={sameBaseItems(detailHit.uEntry.item.baseItem, detailHit.uEntry.item.baseItemId, detailHit.uEntry.item.id).map((hit) => itemHref(hit.id, hit.name, hit.nameEn, hit.kind === 'set' ? 'text-d2-set' : 'text-d2-unique'))}
+              />
+              {uniqueCard(detailHit.uEntry)}
+            </>
+          )}
           {detailHit.kind === 'set' && setCard(detailHit.sEntry.set)}
           {detailHit.kind === 'piece' && (() => {
             const { piece, sEntry } = detailHit;
             const piecePatch34 = PATCH_34_ENTRIES_BY_NAME[piece.nameEn] ?? PATCH_34_ENTRIES_BY_NAME[sEntry.set.nameEn];
             return (
               <div className="space-y-3">
+                <FactGrid rows={itemFacts(piece)} accent="text-d2-set/80" />
+                <RelatedLinks
+                  title={t('同套裝的其他部件', 'Other pieces in this set')}
+                  links={sEntry.set.pieces.filter((other) => other.id !== piece.id).map((other) => itemHref(other.id, other.name, other.nameEn, 'text-d2-set'))}
+                />
+                <RelatedLinks
+                  title={t('同底材的其他裝備', 'Other items on this base')}
+                  links={sameBaseItems(piece.baseItem, piece.baseItemId, piece.id).map((hit) => itemHref(hit.id, hit.name, hit.nameEn, hit.kind === 'set' ? 'text-d2-set' : 'text-d2-unique'))}
+                />
                 <ItemTooltip
                   layout="row"
                   title={piece.name}

@@ -17,6 +17,7 @@ import { pathForTab } from '../../utils/routes';
 import { isPlainLeftClick } from '../layout/navConfig';
 import { PATCH_34_ENTRIES_BY_NAME } from '../../data/patchNotes';
 import { PatchChangeNote } from '../common/PatchChangeNote';
+import { FactGrid, RelatedLinks } from './DetailAside';
 
 export interface RunewordFinderProps {
   initialQuery?: string;
@@ -581,7 +582,56 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
             {isEn ? detailRw.nameEn : `${detailRw.name} ${detailRw.nameEn}`}
           </h1>
 
+          <FactGrid
+            accent="text-d2-rune/80"
+            rows={[
+              { label: t('需求等級', 'Required Level'), value: String(detailRw.requiredLevel) },
+              { label: t('孔數', 'Sockets'), value: String(detailRw.sockets) },
+              { label: t('可用底材', 'Allowed bases'), value: (isEn ? detailRw.allowedBasesEn ?? detailRw.allowedBases : detailRw.allowedBases).join(isEn ? ' / ' : '、') },
+              {
+                label: t('符文順序', 'Rune order'),
+                value: detailRw.runeNumbers.map((num, index) => {
+                  const rune = RUNE_BY_NUMBER.get(num);
+                  const en = rune?.nameEn ?? detailRw.runes[index];
+                  const zh = rune?.name ?? detailRw.runes[index];
+                  return isEn ? en : `${zh} (${en})`;
+                }).join(' → '),
+              },
+            ]}
+          />
+
           {runewordCard(detailRw)}
+
+          <div className="space-y-4">
+            {(() => {
+              const seen = new Set<number>();
+              return detailRw.runeNumbers.map((num, index) => {
+                if (seen.has(num)) return null;
+                seen.add(num);
+                const rune = RUNE_BY_NUMBER.get(num);
+                const en = rune?.nameEn ?? detailRw.runes[index];
+                const zh = rune?.name ?? detailRw.runes[index];
+                const others = RUNEWORDS_DATA.filter((other) => other.id !== detailRw.id && other.runeNumbers.includes(num));
+                return (
+                  <RelatedLinks
+                    key={num}
+                    title={t(`也使用${zh}（${en}）的符文之語`, `Other runewords using ${en}`)}
+                    links={others.map((other) => ({
+                      key: `${num}-${other.id}`,
+                      href: pathForTab('runewords', other.id),
+                      label: isEn ? other.nameEn : `${other.name} (${other.nameEn})`,
+                      tone: 'text-d2-rune',
+                      onClick: (event) => {
+                        if (!onOpenItem || !isPlainLeftClick(event)) return;
+                        event.preventDefault();
+                        onOpenItem(other.id);
+                      },
+                    }))}
+                  />
+                );
+              });
+            })()}
+          </div>
         </section>
       )}
 
