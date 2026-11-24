@@ -1,5 +1,13 @@
 /*
   Strict-Transport-Security: max-age=31536000
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://cloudflareinsights.com https://*.cloudflareinsights.com; frame-src https://www.youtube-nocookie.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+
+# 上面的 CSP 目前只回報、不攔截（Report-Only），觀察一段時間沒有誤報再考慮轉強制：
+# - script-src 'unsafe-inline'：index.html 與各分頁外殼有行內腳本（推算 <base> 的那段內容含建置時替換的分頁名單、
+#   首頁的預先抓取腳本含帶雜湊的 chunk 檔名，雜湊會隨內容變），以及載入 Google Fonts 的固定腳本；不允許 'unsafe-eval'。
+# - style-src 'unsafe-inline'：React 的 style 屬性與 Google Fonts 樣式表；font-src 為 fonts.gstatic.com。
+# - static.cloudflareinsights.com / cloudflareinsights.com：Cloudflare Web Analytics 的 beacon 腳本與回傳。
+# - frame-src：首頁實機影片（youtube-nocookie）。img-src data:：CSS 裡的 data: SVG 雜訊材質。
 
 # Cloudflare Pages 的回應標頭（GitHub Pages 不支援這個檔，會忽略）
 # /assets/* 的檔名帶內容雜湊，內容不變檔名就不變，可以長期快取；

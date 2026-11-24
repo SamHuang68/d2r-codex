@@ -8,7 +8,7 @@
     font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
 
-  /* 鍵盤焦點。已自訂 focus 樣式的控制項用 focus:outline-none 蓋掉這條。 */
+  /* 鍵盤焦點。utilities 的 focus:outline-none 會蓋掉這條；用了它的控制項必須自己補 focus-visible:ring-2 focus-visible:ring-d2-gold（或等效）樣式。 */
   :focus-visible {
     outline: 2px solid #d4af37;
     outline-offset: 2px;

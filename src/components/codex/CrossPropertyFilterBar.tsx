@@ -138,7 +138,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
             aria-label={isEn ? 'Filter by slot' : '依裝備部位篩選'}
             value={selectedSlot}
             onChange={(e) => onSelectSlot(e.target.value as any)}
-            className="min-h-11 bg-sanctuary-900 border border-sanctuary-750 rounded-lg px-2.5 text-xs text-sanctuary-200 focus:outline-none focus:border-d2-unique"
+            className="min-h-11 bg-sanctuary-900 border border-sanctuary-750 rounded-lg px-2.5 text-xs text-sanctuary-200 focus:outline-none focus:border-d2-unique focus-visible:ring-2 focus-visible:ring-d2-gold"
           >
             {slotOptions.map((opt) => (
               <option key={opt.id} value={opt.id}>
