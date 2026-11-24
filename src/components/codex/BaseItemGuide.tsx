@@ -400,9 +400,10 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
           </button>
 
           <div className="relative flex-1 min-w-[180px]">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-sanctuary-500" />
+            <Search aria-hidden="true" className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-sanctuary-500" />
             <input
               type="text"
+              aria-label={t('搜尋底材', 'Search base items')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t('搜尋底材、英文名或推薦符文 (如: 悔恨、謎團)...', 'Search bases, English name, or runewords (e.g. Grief, Enigma)...')}

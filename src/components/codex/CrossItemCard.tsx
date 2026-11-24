@@ -4,12 +4,14 @@ import { ItemIcon } from '../common/ItemIcon';
 import { useLanguage } from '../../context/LanguageContext';
 import { PATCH_34_ENTRIES_BY_NAME } from '../../data/patchNotes';
 import { PatchChangeNote } from '../common/PatchChangeNote';
+import { RUNE_BY_NUMBER } from '../../data/runes';
 
 export interface CrossItemCardProps {
   item: UnifiedGearItem;
   activePropertyDefs?: SpecialPropertyDef[];
   onNavigateToBase?: (baseName: string) => void;
   onNavigateToRune?: (runeNumber: number) => void;
+  onNavigatePatches?: () => void;
 }
 
 import { CLASS_ZH_TO_EN } from '../../engine/slots';
@@ -20,6 +22,7 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
   activePropertyDefs = [],
   onNavigateToBase,
   onNavigateToRune,
+  onNavigatePatches,
 }) => {
   const { isEn } = useLanguage();
   const patch34 = item.nameEn ? PATCH_34_ENTRIES_BY_NAME[item.nameEn] : undefined;
@@ -341,6 +344,7 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
             <span className="text-[11px] text-sanctuary-400 font-medium mr-1">{isEn ? "Socket Order:" : "鑲嵌順序:"}</span>
             {item.runes.map((runeName, i) => {
               const runeNum = item.runeNumbers?.[i];
+              const rune = runeNum ? RUNE_BY_NUMBER.get(runeNum) : undefined;
               return (
                 <button
                   key={i}
@@ -350,7 +354,7 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
                   title={runeNum ? `查看 ${runeNum}# 符文` : undefined}
                 >
                   <span className="font-bold">{runeNum}#</span>
-                  <span>{runeName}</span>
+                  <span>{isEn ? (rune?.nameEn ?? runeName) : (rune ? `${rune.name} (${rune.nameEn})` : runeName)}</span>
                 </button>
               );
             })}
@@ -382,7 +386,7 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
 
           {patch34 && (
             <div className="min-w-0">
-              <PatchChangeNote entry={patch34} />
+              <PatchChangeNote entry={patch34} onOpenPatches={onNavigatePatches} />
             </div>
           )}
         </div>

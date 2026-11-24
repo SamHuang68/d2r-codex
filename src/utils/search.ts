@@ -5,7 +5,7 @@ import { MERCENARIES_EN } from '../data/mercenariesEn';
 import { QUESTS_EN, WORLD_EVENTS_EN } from '../data/questsEn';
 import skillDescEn from '../data/skills/skillDescEn.json';
 import { CLASS_ZH_TO_EN } from '../engine/slots';
-import { RUNES_DATA } from '../data/runes';
+import { RUNES_DATA, RUNE_BY_NUMBER } from '../data/runes';
 import { actZh } from './actLabel';
 import { RUNEWORDS_DATA } from '../data/runewords';
 import { UNIQUE_ITEMS_DATA } from '../data/uniqueItems';
@@ -157,6 +157,7 @@ export const searchOmni = (query: string, isEn = false): SearchResultItem[] => {
       rw.nameEn,
       rw.nameClassic || '',
       rw.runes.join(' '),
+      rw.runeNumbers.map((n) => RUNE_BY_NUMBER.get(n)?.name ?? '').join(' '),
       rw.allowedBases.join(' '),
       rw.tags.join(' '),
       rw.attributes.join(' '),

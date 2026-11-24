@@ -313,19 +313,25 @@ export const SectionHead: React.FC<{
   shown?: number;
   tone?: IndexTone;
   level?: 2 | 3;
-  /** 實際輸出的標題標籤；預設分段標題為 h3、子段為 h4（頁面標題為 h2 的頁面）。頁面標題是 h1 時改傳 h2／h3 */
+  /** 實際輸出的標題標籤；預設分段標題為 h2、子段為 h3（對應 h1 頁面標題） */
   tag?: 'h2' | 'h3' | 'h4';
   onOpen?: () => void;
   openLabel?: string;
 }> = ({ id, title, sub, count, shown, tone = 'unique', level = 2, tag, onOpen, openLabel = '查看全部' }) => {
-  const Tag = tag ?? ((level === 2 ? 'h3' : 'h4') as 'h3' | 'h4');
+  const { isEn } = useLanguage();
+  const Tag = tag ?? ((level === 2 ? 'h2' : 'h3') as 'h2' | 'h3');
+  const countText = shown !== undefined && shown < count ? `${shown} / ${count}` : `${count}`;
+  const ariaLabel = isEn
+    ? `${title}${sub ? ` ${sub}` : ''}, ${countText} items`
+    : `${title}${sub ? ` ${sub}` : ''}，${countText} 項`;
   return (
     <div id={id} className={`flex items-baseline justify-between gap-3 border-b border-sanctuary-800 pb-1.5 mb-3 scroll-mt-20`}>
-      <Tag className={`font-diablo font-bold min-w-0 ${level === 2 ? 'text-lg' : 'text-base'} ${TONE[tone].text}`}>
-        {title}
-        {sub && <span className="ml-2 text-[11px] font-mono font-normal text-sanctuary-400">{sub}</span>}
-        <span className="ml-2 text-xs font-mono font-normal text-sanctuary-400">
-          {shown !== undefined && shown < count ? `${shown} / ${count}` : count}
+      <Tag aria-label={ariaLabel} className={`font-diablo font-bold min-w-0 ${level === 2 ? 'text-lg' : 'text-base'} ${TONE[tone].text}`}>
+        <span>{title}</span>
+        {sub && <>{' '}<span className="ml-1.5 text-[11px] font-mono font-normal text-sanctuary-400">{sub}</span></>}
+        {' '}
+        <span className="ml-1.5 text-xs font-mono font-normal text-sanctuary-400">
+          {countText}
         </span>
       </Tag>
       {onOpen && (

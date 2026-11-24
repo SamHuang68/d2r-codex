@@ -49,7 +49,7 @@ const staticRoutes = (): Plugin => {
     transformIndexHtml: {
       order: 'pre',
       handler(html) {
-        return html.replace('__TABS__', JSON.stringify(ROUTES.map((r) => r.id))).replace('__ITEM_TABS__', JSON.stringify(ITEM_TABS));
+        return html.replace('__TABS__', JSON.stringify(ROUTES.filter((r) => r.id !== 'overview').map((r) => r.id))).replace('__ITEM_TABS__', JSON.stringify(ITEM_TABS));
       },
     },
     closeBundle() {
@@ -85,25 +85,26 @@ const staticRoutes = (): Plugin => {
           .replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${u}$2`)
           .replace(/(<meta property="og:image" content=")[^"]*(")/, `$1${pg.ogImage}$2`)
           .replace(/(<meta name="twitter:image" content=")[^"]*(")/, `$1${pg.ogImage}$2`)
-          .replace(/(<meta property="og:image:height" content="[^"]*" \/>)/, `$1${nl}    <meta property="og:image:alt" content="${t}" />`)
+          .replace(/(<meta property="og:image:alt" content=")[^"]*(")/, `$1${t}$2`)
+          .replace(/(<meta name="twitter:image:alt" content=")[^"]*(")/, `$1${t}$2`)
           .replace(/(<meta name="twitter:card" content="[^"]*" \/>)/, `$1${nl}    <meta name="twitter:title" content="${t}" />${nl}    <meta name="twitter:description" content="${d}" />`)
           // 結構化資料（JSON-LD）：< 一律跳脫，避免內容裡的字串提早結束 <script>
           .replace('</head>', `    <link rel="canonical" href="${u}" />${nl}${alts}${nl}    <script type="application/ld+json">${JSON.stringify(pg.ld.length === 1 ? pg.ld[0] : { '@context': 'https://schema.org', '@graph': pg.ld }).replace(/</g, '\\u003c').replace(/^\{/, pg.ld.length === 1 ? '{"@context":"https://schema.org",' : '{')}</script>${nl}  </head>`)
           .replace('<div id="root"></div>', `<div id="root"></div>${nl}    ${noscript(pg)}`);
-        if (pg.lang === 'en') out = out.replace('<html lang="zh-TW"', '<html lang="en"').replace(/(<meta property="og:locale" content=")[^"]*(")/, '$1en_US$2');
+        if (pg.lang === 'en') out = out.replace('<html lang="zh-Hant"', '<html lang="en"').replace(/(<meta property="og:locale" content=")[^"]*(")/, '$1en_US$2');
         if (pg.depth > 0) out = out.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />${nl}    <base href="${'../'.repeat(pg.depth)}" />`);
         return out;
       };
-      const siteRef = (l: L) => ({ '@type': 'WebSite', '@id': `${SITE_ORIGIN}/${prefixOf(l)}#website`, name: l === 'en' ? 'Sanctuary Codex' : '聖休亞瑞典藏中樞', alternateName: l === 'en' ? '聖休亞瑞典藏中樞' : 'D2R Sanctuary Codex', url: urlOf(prefixOf(l)), inLanguage: l === 'en' ? 'en' : 'zh-TW' });
+      const siteRef = (l: L) => ({ '@type': 'WebSite', '@id': `${SITE_ORIGIN}/${prefixOf(l)}#website`, name: l === 'en' ? 'Sanctuary Codex' : '聖休亞瑞典藏中樞', alternateName: l === 'en' ? '聖休亞瑞典藏中樞' : 'D2R Sanctuary Codex', url: urlOf(prefixOf(l)), inLanguage: l === 'en' ? 'en' : 'zh-Hant' });
       const crumbs = (items: { name: string; path: string }[]) => ({
         '@type': 'BreadcrumbList',
         itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: urlOf(it.path) })),
       });
-      const ogFor = (l: L, tab: string) => (tab === 'overview' ? `${SITE_ORIGIN}/og.png` : `${SITE_ORIGIN}/og/${l === 'en' ? 'en/' : ''}${tab}.jpg`);
+      const ogFor = (l: L, tab: string) => (tab === 'overview' ? `${SITE_ORIGIN}/og.jpg` : `${SITE_ORIGIN}/og/${l === 'en' ? 'en/' : ''}${tab}.jpg`);
       const pages: Page[] = [];
       for (const l of ['zh', 'en'] as L[]) {
         const pf = prefixOf(l);
-        const lg = l === 'en' ? 'en' : 'zh-TW';
+        const lg = l === 'en' ? 'en' : 'zh-Hant';
         for (const r of ROUTES) {
           const name = l === 'en' ? r.titleEn : r.title;
           const desc = l === 'en' ? r.descriptionEn : r.description;
@@ -152,7 +153,7 @@ const staticRoutes = (): Plugin => {
               url: urlOf(pagePath),
               name: ip.title,
               description: ip.description,
-              inLanguage: l === 'en' ? 'en' : 'zh-TW',
+              inLanguage: l === 'en' ? 'en' : 'zh-Hant',
               isPartOf: { '@id': siteRef(l)['@id'] },
               about: { '@type': 'Thing', name: ip.name, alternateName: l === 'en' ? undefined : ip.nameEn },
             },

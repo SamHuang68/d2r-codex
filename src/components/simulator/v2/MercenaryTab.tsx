@@ -50,7 +50,7 @@ const SlotCard: React.FC<{ slot: MercSlot; eq?: Equipped; warn?: string; onPick:
               </select>
             )}
             <label className="d2-field ml-3" title="無形：底材防禦／傷害 ×1.5">
-              <input type="checkbox" className="d2-check" checked={!!eq.ethereal} onChange={(e) => onChange({ ...eq, ethereal: e.target.checked || undefined })} />{isEn ? "Eth" : "無形"}
+              <input type="checkbox" aria-label={isEn ? `${MERC_SLOT_EN[slot]} Ethereal` : `${MERC_SLOT_ZH[slot]}無形`} className="d2-check" checked={!!eq.ethereal} onChange={(e) => onChange({ ...eq, ethereal: e.target.checked || undefined })} />{isEn ? "Eth" : "無形"}
             </label>
             {warn && <span className="block text-xs t-bad">{warn}</span>}
           </>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Sparkles, ArrowRight, X, Search } from 'lucide-react';
 import portalSummary from '../../data/codex/portalSummary.json';
+import meta from '../../data/game/meta.json';
 import { useLanguage } from '../../context/LanguageContext';
 
 // 與首頁分類磚共用預先產生的小摘要，不在首頁載入百科大資料。
@@ -42,12 +43,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab, onOpenS
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Top Announcement Pill */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sanctuary-900 border border-d2-unique/30 text-xs text-d2-unique mb-4 shadow-glow-gold/40">
-          <Sparkles className="w-3.5 h-3.5" />
+        <div className="inline-flex flex-wrap items-center justify-center gap-2 px-3 py-1.5 rounded-full bg-sanctuary-900 border border-d2-unique/30 text-xs text-d2-unique mb-4 shadow-glow-gold/40">
+          <Sparkles aria-hidden="true" className="w-3.5 h-3.5 shrink-0" />
           <span className="font-semibold tracking-wide">
             {t('DLC《術士軍臨》REIGN OF THE WARLOCK 全新收錄', 'DLC REIGN OF THE WARLOCK Included')}
           </span>
-          <span className="text-sanctuary-400 font-mono">v2.6+</span>
+          <span className="text-sanctuary-400 font-mono border-l border-sanctuary-700 pl-2">
+            {t('網站 v2.6+', 'Site v2.6+')}
+          </span>
+          <span className="text-sanctuary-300 font-mono border-l border-sanctuary-700 pl-2">
+            {t(`遊戲資料 ${meta.gameVersion}`, `Game Data ${meta.gameVersion}`)}
+          </span>
         </div>
 
         {/* Hero Title */}

@@ -1,3 +1,6 @@
+/*
+  Strict-Transport-Security: max-age=31536000
+
 # Cloudflare Pages 的回應標頭（GitHub Pages 不支援這個檔，會忽略）
 # /assets/* 的檔名帶內容雜湊，內容不變檔名就不變，可以長期快取；
 # 首頁 HTML 每次都要重新確認，改版後才不會拿到「舊 HTML 配新檔案」。

@@ -34,10 +34,11 @@ export interface ItemCompendiumProps {
   initialNode?: string;
   /** 單品網址（/items/<id>/）指定的暗金、套裝部件或整組套裝 id */
   initialItemId?: string;
-  /** 點卡片標題時前往該單品網址 */
-  onOpenItem?: (id: string) => void;
+  /** 點卡片標題時前往該單品網址（傳入 undefined 表示回到清單） */
+  onOpenItem?: (id?: string) => void;
   onNavigateToBase?: (baseName: string) => void;
   onNavigateToRune?: (runeNumber: number) => void;
+  onNavigatePatches?: () => void;
 }
 
 /** 分類磚的代表圖（以去掉品階後的相對路徑查；該節點內沒有這件時，改用節點內最高等級者） */
@@ -101,11 +102,13 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   onOpenItem,
   onNavigateToBase,
   onNavigateToRune,
+  onNavigatePatches,
 }) => {
   const { t, isEn } = useLanguage();
   const [sel, setSel] = useState<string>(initialNode ?? `u/${DEFAULT_TIER}`);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [onlyS16, setOnlyS16] = useState<boolean>(false);
+  const [isCrossOpen, setIsCrossOpen] = useState<boolean>(false);
 
   // 跨裝備特殊屬性篩選 State
   const [selectedPropertyIds, setSelectedPropertyIds] = useState<string[]>([]);
@@ -332,7 +335,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             ...(item.isNewDLC ? ['RotW DLC'] : []),
             ...(patch34 ? [isEn ? 'S16 Preview' : 'S16 改動預覽'] : []),
           ]}
-          rightAddon={patch34 ? <PatchChangeNote entry={patch34} /> : undefined}
+          rightAddon={patch34 ? <PatchChangeNote entry={patch34} onOpenPatches={onNavigatePatches} /> : undefined}
           className="h-full hover:border-d2-unique"
         />
       </div>
@@ -439,7 +442,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                       </div>
                       {piecePatch34 && (
                         <div className="min-w-0">
-                          <PatchChangeNote entry={piecePatch34} compact />
+                          <PatchChangeNote entry={piecePatch34} compact onOpenPatches={onNavigatePatches} />
                         </div>
                       )}
                     </div>
@@ -469,7 +472,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             </div>
             {setPatch34 && (
               <div className="min-w-0">
-                <PatchChangeNote entry={setPatch34} />
+                <PatchChangeNote entry={setPatch34} onOpenPatches={onNavigatePatches} />
               </div>
             )}
           </div>
@@ -581,9 +584,146 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     );
   };
 
+  const detailHit = useMemo(() => {
+    if (!initialItemId) return null;
+    const uEntry = U_ENTRIES.find((e) => e.item.id === initialItemId);
+    if (uEntry) {
+      return { kind: 'unique' as const, leaf: uEntry.leaf, name: uEntry.item.name, nameEn: uEntry.item.nameEn, uEntry };
+    }
+    for (const sEntry of S_ENTRIES) {
+      const piece = sEntry.set.pieces.find((p) => p.id === initialItemId);
+      if (piece) {
+        return { kind: 'piece' as const, leaf: sEntry.leaf, name: piece.name, nameEn: piece.nameEn, piece, sEntry };
+      }
+      if (sEntry.set.id === initialItemId) {
+        return { kind: 'set' as const, leaf: sEntry.leaf, name: sEntry.set.name, nameEn: sEntry.set.nameEn, sEntry };
+      }
+    }
+    return null;
+  }, [initialItemId]);
+
+  const detailCrumbs = useMemo(() => {
+    if (!detailHit) return [];
+    return crumbsOf(isEn ? 'All Equipment' : '全部裝備', baseTree, detailHit.leaf, isEn);
+  }, [detailHit, baseTree, isEn]);
+
+  const handleBackToList = (targetNode?: string) => {
+    setSearchQuery('');
+    setSel(targetNode ?? `u/${DEFAULT_TIER}`);
+    onOpenItem?.(undefined);
+  };
+
   return (
     <div className="py-8 max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
+      {detailHit && (
+        <section aria-label={isEn ? detailHit.nameEn : `${detailHit.name} ${detailHit.nameEn}`} className="mb-8 rounded-2xl border border-d2-unique/40 bg-sanctuary-900/70 p-4 sm:p-6 shadow-2xl space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <nav aria-label={isEn ? 'Breadcrumb' : '麵包屑導覽'} className="flex flex-wrap items-center gap-1.5 text-xs text-sanctuary-400">
+              {detailCrumbs.map((c, idx) => (
+                <React.Fragment key={c.id}>
+                  {idx > 0 && <span aria-hidden="true">›</span>}
+                  <a
+                    href={pathForTab('items')}
+                    onClick={(e) => {
+                      if (!isPlainLeftClick(e)) return;
+                      e.preventDefault();
+                      handleBackToList(c.id);
+                    }}
+                    className="hover:text-d2-unique hover:underline"
+                  >
+                    {c.label}
+                  </a>
+                </React.Fragment>
+              ))}
+              {detailHit.kind === 'piece' && (
+                <>
+                  <span aria-hidden="true">›</span>
+                  <a
+                    href={pathForTab('items', detailHit.sEntry.set.id)}
+                    onClick={(e) => {
+                      if (!onOpenItem || !isPlainLeftClick(e)) return;
+                      e.preventDefault();
+                      onOpenItem(detailHit.sEntry.set.id);
+                    }}
+                    className="hover:text-d2-set hover:underline"
+                  >
+                    {isEn ? detailHit.sEntry.set.nameEn : detailHit.sEntry.set.name}
+                  </a>
+                </>
+              )}
+              <span aria-hidden="true">›</span>
+              <span aria-current="page" className="text-sanctuary-200 font-semibold">
+                {isEn ? detailHit.nameEn : detailHit.name}
+              </span>
+            </nav>
+
+            <a
+              href={pathForTab('items')}
+              onClick={(e) => {
+                if (!isPlainLeftClick(e)) return;
+                e.preventDefault();
+                handleBackToList('all');
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sanctuary-950 border border-sanctuary-700 hover:border-d2-unique text-xs text-sanctuary-200 hover:text-d2-unique transition-colors"
+            >
+              ← {t('回到清單', 'Back to list')}
+            </a>
+          </div>
+
+          <h1 className={`font-diablo text-2xl sm:text-3xl font-bold ${detailHit.kind === 'unique' ? 'text-d2-unique' : 'text-d2-set'}`}>
+            {isEn ? detailHit.nameEn : `${detailHit.name} ${detailHit.nameEn}`}
+          </h1>
+
+          {detailHit.kind === 'unique' && uniqueCard(detailHit.uEntry)}
+          {detailHit.kind === 'set' && setCard(detailHit.sEntry.set)}
+          {detailHit.kind === 'piece' && (() => {
+            const { piece, sEntry } = detailHit;
+            const piecePatch34 = PATCH_34_ENTRIES_BY_NAME[piece.nameEn] ?? PATCH_34_ENTRIES_BY_NAME[sEntry.set.nameEn];
+            return (
+              <div className="space-y-3">
+                <ItemTooltip
+                  layout="row"
+                  title={piece.name}
+                  titleEn={piece.nameEn}
+                  titleHref={pathForTab('items', piece.id)}
+                  onTitleClick={onOpenItem ? () => onOpenItem(piece.id) : undefined}
+                  baseItem={piece.baseItem}
+                  baseItemEn={piece.baseItemEn}
+                  rarity="set"
+                  requiredLevel={piece.requiredLevel}
+                  attributes={isEn ? piece.attributesEn ?? piece.attributes : piece.attributes}
+                  setBonuses={isEn ? sEntry.set.partialBonusesEn ?? sEntry.set.partialBonuses : sEntry.set.partialBonuses}
+                  fullSetBonuses={isEn ? sEntry.set.fullBonusesEn ?? sEntry.set.fullBonuses : sEntry.set.fullBonuses}
+                  onNavigateToBase={onNavigateToBase}
+                  imageUrl={piece.imageUrl}
+                  badges={[
+                    isEn ? sEntry.set.nameEn : sEntry.set.name,
+                    ...(piecePatch34 ? [isEn ? 'S16 Preview' : 'S16 改動預覽'] : []),
+                  ]}
+                  rightAddon={piecePatch34 ? <PatchChangeNote entry={piecePatch34} onOpenPatches={onNavigatePatches} /> : undefined}
+                />
+                <div className="text-xs text-sanctuary-300">
+                  {t('所屬完整套裝：', 'Part of full set: ')}
+                  <a
+                    href={pathForTab('items', sEntry.set.id)}
+                    onClick={(e) => {
+                      if (!onOpenItem || !isPlainLeftClick(e)) return;
+                      e.preventDefault();
+                      onOpenItem(sEntry.set.id);
+                    }}
+                    className="text-d2-set hover:underline font-semibold"
+                  >
+                    {isEn ? sEntry.set.nameEn : `${sEntry.set.name} (${sEntry.set.nameEn})`}
+                  </a>
+                </div>
+              </div>
+            );
+          })()}
+        </section>
+      )}
+
       <PageHeader
+        headingTag={detailHit ? 'h2' : 'h1'}
         icon={<GameIcon name="sword" className="w-7 h-7" />}
         title={t('裝備寶典 (暗金 · 套裝 · 符文之語)', 'Equipment Codex (Uniques · Sets · Runewords)')}
         desc={t('收錄暗黑破壞神二代各部位指標性暗金裝備、全套套裝與經典符文之語，支援跨裝備特殊屬性（永不毀損、+全技能、全抗、MF 等）一鍵篩選。未選取特殊屬性時保留階層式分類樹。', 'Comprehensive codex of iconic Unique gear, complete Sets, and Runewords. Supports one-click cross-equipment filtering by key special properties (Indestructible, +All Skills, All Res, MF, etc.).')}
@@ -591,16 +731,17 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
           <div className="text-xs text-sanctuary-400 font-mono px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800 self-start shrink-0 whitespace-nowrap">
             {isCrossPropertyMode
               ? (isEn ? `Matched: ${filteredCrossItems.length} (Uniques ${rarityCounts.unique} · Sets ${rarityCounts.set} · Runewords ${rarityCounts.runeword})` : `跨裝備符合: ${filteredCrossItems.length} (暗金 ${rarityCounts.unique} · 套裝 ${rarityCounts.set} · 符文組 ${rarityCounts.runeword})`)
-              : (isEn ? `Uniques ${uHere.length} · Sets ${sHere.length}` : `暗金 ${uHere.length} ・ 套裝 ${sHere.length}`)}
+              : (isEn ? `Category: Uniques ${uHere.length} · Sets ${sHere.length}` : `目前分類：暗金 ${uHere.length} ・ 套裝 ${sHere.length}`)}
           </div>
         }
       />
 
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 mb-5">
         <div className="relative flex-1 min-w-0">
-          <Search className="w-4 h-4 text-sanctuary-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search aria-hidden="true" className="w-4 h-4 text-sanctuary-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
+            aria-label={t('搜尋暗金、套裝或符文之語', 'Search Uniques, Sets, or Runewords')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('搜尋暗金、套裝或符文之語名稱、底材或屬性 (例如：軍帽、獅鷲、塔拉夏、精神、謎團、SOJ...)；索引數量會即時對應', 'Search Uniques, Sets, Runewords, Bases, or Affixes (e.g. Shako, Griffon, Tal Rasha, Spirit, Enigma, SOJ...)')}
@@ -634,10 +775,11 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         </button>
       </div>
 
-      {/* 跨裝備特殊屬性篩選列：預設收合，讓樹狀索引在第一屏；有套用篩選時自動展開 */}
+      {/* 跨裝備特殊屬性篩選列：預設收合，展開時才掛載面板避免隱藏空的 heading */}
       <details
         className="mb-5 group"
-        open={selectedPropertyIds.length > 0 || selectedRarity !== 'all' || selectedSlot !== 'all' || undefined}
+        open={isCrossOpen || selectedPropertyIds.length > 0 || selectedRarity !== 'all' || selectedSlot !== 'all'}
+        onToggle={(e) => setIsCrossOpen((e.currentTarget as HTMLDetailsElement).open)}
       >
         <summary className="cursor-pointer select-none rounded-xl border border-sanctuary-800 bg-sanctuary-900/60 px-4 py-2.5 text-sm text-sanctuary-200 hover:border-sanctuary-600">
           {isEn ? 'Cross-item special property filter' : '跨裝備特殊屬性篩選（永不毀損、全技能、全抗、MF…）'}
@@ -645,20 +787,22 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             <span className="ml-2 text-d2-unique">{isEn ? 'active' : '已套用'}</span>
           )}
         </summary>
-        <div className="mt-3">
-      <CrossPropertyFilterBar
-        selectedPropertyIds={selectedPropertyIds}
-        onToggleProperty={handleToggleProperty}
-        selectedRarity={selectedRarity}
-        onSelectRarity={setSelectedRarity}
-        selectedSlot={selectedSlot}
-        onSelectSlot={setSelectedSlot}
-        onClearFilters={handleClearCrossFilters}
-        totalHits={filteredCrossItems.length}
-        propertyCounts={propertyCounts}
-        rarityCounts={rarityCounts}
-      />
-        </div>
+        {(isCrossOpen || selectedPropertyIds.length > 0 || selectedRarity !== 'all' || selectedSlot !== 'all') && (
+          <div className="mt-3">
+            <CrossPropertyFilterBar
+              selectedPropertyIds={selectedPropertyIds}
+              onToggleProperty={handleToggleProperty}
+              selectedRarity={selectedRarity}
+              onSelectRarity={setSelectedRarity}
+              selectedSlot={selectedSlot}
+              onSelectSlot={setSelectedSlot}
+              onClearFilters={handleClearCrossFilters}
+              totalHits={filteredCrossItems.length}
+              propertyCounts={propertyCounts}
+              rarityCounts={rarityCounts}
+            />
+          </div>
+        )}
       </details>
 
       {isCrossPropertyMode ? (
@@ -685,8 +829,9 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
               </button>
 
               <div className="flex items-center gap-1 border-l border-sanctuary-800 pl-2">
-                <ArrowUpDown className="w-3.5 h-3.5 text-sanctuary-400" />
+                <ArrowUpDown aria-hidden="true" className="w-3.5 h-3.5 text-sanctuary-400" />
                 <select
+                  aria-label={t('排序方式', 'Sort items')}
                   value={crossSortBy}
                   onChange={(e) => setCrossSortBy(e.target.value as any)}
                   className="bg-sanctuary-900 border border-sanctuary-750 rounded px-2 py-0.5 text-sanctuary-200 focus:outline-none"
@@ -720,6 +865,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                   activePropertyDefs={activePropertyDefs}
                   onNavigateToBase={onNavigateToBase}
                   onNavigateToRune={onNavigateToRune}
+                  onNavigatePatches={onNavigatePatches}
                 />
               ))}
             </div>

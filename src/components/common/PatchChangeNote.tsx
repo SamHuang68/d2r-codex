@@ -2,11 +2,14 @@ import React from 'react';
 import { Sparkles } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { type PatchEntry, type PatchChange, S16_SCOPE_NOTES } from '../../data/patchNotes';
+import { pathForTab } from '../../utils/routes';
+import { isPlainLeftClick } from '../layout/navConfig';
 
 export interface PatchChangeNoteProps {
   entry: PatchEntry;
   className?: string;
   compact?: boolean;
+  onOpenPatches?: () => void;
 }
 
 const MARK: Record<PatchChange['type'], { sym: string; cls: string; zh: string; en: string }> = {
@@ -18,7 +21,8 @@ const MARK: Record<PatchChange['type'], { sym: string; cls: string; zh: string; 
 export const PatchChangeNote: React.FC<PatchChangeNoteProps> = ({
   entry,
   className = '',
-  compact = false
+  compact = false,
+  onOpenPatches,
 }) => {
   const { t, isEn } = useLanguage();
 
@@ -63,6 +67,23 @@ export const PatchChangeNote: React.FC<PatchChangeNoteProps> = ({
           </li>
         ))}
       </ul>
+
+      {/* 醒目未套用提示與前往版本改動頁連結 */}
+      <div className="mt-2.5 pt-2 border-t border-purple-900/50">
+        <a
+          href={pathForTab('patches')}
+          onClick={(e) => {
+            if (!onOpenPatches || !isPlainLeftClick(e)) return;
+            e.preventDefault();
+            onOpenPatches();
+          }}
+          className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-300 hover:text-amber-200 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold rounded"
+        >
+          {isEn
+            ? 'Adjusted in 3.4 — stats on this page are not yet updated, see Patch Changes →'
+            : '此物品於 3.4 有調整，本頁數值尚未套用，以版本改動頁為準 →'}
+        </a>
+      </div>
     </div>
   );
 };

@@ -80,12 +80,12 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="font-diablo text-base font-bold text-sanctuary-100 flex items-center gap-2">
+            <h2 className="font-diablo text-base font-bold text-sanctuary-100 flex items-center gap-2">
               <span>{t('跨裝備特殊屬性篩選', 'Cross-Equipment Special Property Filter')}</span>
               <span className="text-xs px-2 py-0.5 rounded-full bg-d2-unique/15 text-d2-unique border border-d2-unique/30 font-sans font-semibold">
                 {t('暗金 · 套裝 · 符文組', 'Uniques · Sets · Runewords')}
               </span>
-            </h3>
+            </h2>
             <p className="text-xs text-sanctuary-400 mt-0.5">
               {t('快速定位擁有關鍵 Meta 屬性（永不毀損、+全技能、全抗、MF 等）的代表性神裝', 'Filter iconic endgame gear by key meta properties like Indestructible, +All Skills, All Res, MF, etc.')}
             </p>
@@ -135,6 +135,7 @@ export const CrossPropertyFilterBar: React.FC<CrossPropertyFilterBarProps> = ({
         <div className="flex items-center gap-2">
           <span className="text-xs text-sanctuary-400 font-medium shrink-0">{isEn ? 'Slot:' : '部位:'}</span>
           <select
+            aria-label={isEn ? 'Filter by slot' : '依裝備部位篩選'}
             value={selectedSlot}
             onChange={(e) => onSelectSlot(e.target.value as any)}
             className="bg-sanctuary-900 border border-sanctuary-750 rounded-lg px-2.5 py-1 text-xs text-sanctuary-200 focus:outline-none focus:border-d2-unique"

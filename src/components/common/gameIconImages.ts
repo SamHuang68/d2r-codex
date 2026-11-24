@@ -5,11 +5,11 @@ import type { GameIconName } from './gameIconPaths';
  * 路徑相對於 public/images；沒有列在這裡的名稱會退回向量圖示。
  */
 export const GAME_ICON_IMAGES: Partial<Record<GameIconName, string>> = {
-  gate: 'shrines/portal.gif', // 主頁：城鎮傳送門
+  gate: 'icons/gate.webp', // 主頁：城鎮傳送門（48px 小圖示專用最佳化）
   patch: 'items/jewels/fire.gif', // 版本改動：彩虹刻面珠寶
   helm: 'items/bases/arreats_face.gif', // 角色：亞瑞特的面容（職業頭盔）
   tree: 'shrines/skill_bonus.gif', // 技能：技能聖壇
-  anvil: 'items/bases/archon_plate.gif', // 配裝模擬：統御者鎧甲
+  anvil: 'icons/anvil.webp', // 配裝模擬：統御者鎧甲（48px 小圖示專用最佳化）
   steps: 'shrines/stamina_bonus.gif', // 機制斷點：耐力聖壇
   levelup: 'shrines/experience_bonus.gif', // 經驗值表：經驗聖壇
   flag: 'shrines/well.gif', // 練等場景：泉水
@@ -17,11 +17,11 @@ export const GAME_ICON_IMAGES: Partial<Record<GameIconName, string>> = {
   sword: 'items/uniques/harlequin_crest.gif', // 裝備寶典：軍帽
   upgrade: 'items/bases/colossus_blade.gif', // 暗金升級：巨神刃
   rune: 'items/runes/ber.png', // 符文之語：Ber 符文
-  shield: 'items/bases/monarch.gif', // 底材：君主盾
+  shield: 'icons/shield.webp', // 底材：君主盾（48px 小圖示專用最佳化）
   stone: 'items/runes/el.png', // 符文寶庫：El 符文
   flask: 'items/props/full_rejuvenation.gif', // 道具：全效回復藥劑
   cube: 'items/props/horadric_cube.gif', // 方塊：赫拉迪克方塊
-  tag: 'items/charms/grand_charm.gif', // 詞綴：超大型護身符
+  tag: 'icons/tag.webp', // 詞綴：超大型護身符（48px 小圖示專用最佳化）
   gem: 'items/props/perfect_diamond.gif', // 估價：完美的鑽石
   grail: 'items/uniques/the_stone_of_jordan.gif', // 聖杯：喬丹之石
   scroll: 'monsters/radament.png', // 任務：拉達曼特

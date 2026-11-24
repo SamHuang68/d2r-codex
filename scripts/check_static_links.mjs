@@ -50,7 +50,7 @@ for (const file of pages) {
     if (!m || !fs.existsSync(path.join(dist, m[1]))) bad.push(`${rel || '/'}：${prop} 指到不存在的檔案（${img}）`);
   }
   // 語言版本：<html lang> 要和網址的語言一致；hreflang 的每個網址都要有對應頁面，且那一頁也要指回來（互相指向）
-  const wantLang = rel === 'en' || rel.startsWith('en/') ? 'en' : 'zh-TW';
+  const wantLang = rel === 'en' || rel.startsWith('en/') ? 'en' : 'zh-Hant';
   if (!new RegExp(`<html lang="${wantLang}"`).test(html)) bad.push(`${rel || '/'}：<html lang> 應為 ${wantLang}`);
   const here = `https://d2r.samhuang68.org/${rel ? `${rel}/` : ''}`;
   for (const m of html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"/g)) {

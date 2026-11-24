@@ -151,7 +151,11 @@ export const ItemIcon: React.FC<ItemIconProps> = ({
     ? {}
     : { height: px, minWidth: Math.round(px * 0.6), maxWidth: `min(100%, ${px}px)` };
   const { isEn } = useLanguage();
-  const alt = (isEn ? nameEn || name : name || nameEn) || 'Item';
+  const alt = (
+    runeNumber !== undefined || rarity === 'rune'
+      ? (isEn ? (nameEn || name) : (name && nameEn && name !== nameEn ? `${name} ${nameEn}` : (name || nameEn)))
+      : (isEn ? nameEn || name : name || nameEn)
+  ) || 'Item';
 
   return (
     <Container

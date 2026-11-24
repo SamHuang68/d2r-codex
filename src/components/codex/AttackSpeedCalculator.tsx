@@ -85,14 +85,14 @@ export const AttackSpeedCalculator: React.FC = () => {
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="flex flex-col gap-1 text-xs text-sanctuary-300">
             {t('武器種類', 'Weapon type')}
-            <select className={selectCls} value={effectiveType} onChange={(e) => { setWeaponType(e.target.value); setBaseCode(''); setOneHanded(false); }}>
+            <select aria-label={t('武器種類', 'Weapon type')} className={selectCls} value={effectiveType} onChange={(e) => { setWeaponType(e.target.value); setBaseCode(''); setOneHanded(false); }}>
               <option value="none">{t('空手（沒有武器）', 'Unarmed (no weapon)')}</option>
               {types.map((wt) => <option key={wt.code} value={wt.code}>{isEn ? wt.en : wt.zh}</option>)}
             </select>
           </label>
           <label className="flex flex-col gap-1 text-xs text-sanctuary-300">
             {t('武器底材', 'Weapon base')}
-            <select className={selectCls} value={base?.code ?? ''} disabled={effectiveType === 'none'} onChange={(e) => { setBaseCode(e.target.value); setOneHanded(false); }}>
+            <select aria-label={t('武器底材', 'Weapon base')} className={selectCls} value={base?.code ?? ''} disabled={effectiveType === 'none'} onChange={(e) => { setBaseCode(e.target.value); setOneHanded(false); }}>
               {bases.map((b) => (
                 <option key={b.code} value={b.code}>
                   {isEn ? (b.nameEnUS ?? b.nameEn) : b.name}（{isEn ? ({ normal: 'Normal', exceptional: 'Exceptional', elite: 'Elite' } as Record<string, string>)[b.tier ?? 'normal'] : ({ normal: '普通', exceptional: '精良', elite: '菁英' } as Record<string, string>)[b.tier ?? 'normal']}・WSM {b.speed ?? 0}）

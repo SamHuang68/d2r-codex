@@ -60,10 +60,10 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-magic flex items-center gap-2">
+          <h1 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-magic flex items-center gap-2">
             <GameIcon name="cube" className="w-7 h-7 text-d2-magic" />
             <span>{t('赫拉迪姆方塊煉金工坊 (Cube Recipes)', 'Horadric Cube Alchemy Lab')}</span>
-          </h2>
+          </h1>
           <p className="text-xs sm:text-sm text-sanctuary-400 mt-1">
             {t(
               '白裝打孔隨機公式、暗金／亮黃底材升級、完整 36 條四大系列手工合成物品（血腥／施法／重擊／防護）與赦免徽章洗點全收錄。',

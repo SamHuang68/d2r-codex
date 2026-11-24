@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RUNES_DATA } from '../../data/runes';
+import { RUNES_DATA, RUNE_BY_NUMBER } from '../../data/runes';
 import { RUNEWORDS_DATA } from '../../data/runewords';
 import { RUNE_MILESTONE_BADGES, RUNE_SPECIAL_UTILITIES } from '../../data/codex/runeFarming';
 import { RuneFarmingGuide } from './RuneFarmingGuide';
@@ -128,7 +128,11 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
           { num: 30, nameZh: '貝', nameEn: 'Ber', roleZh: '元素破免・壓碎之尊', roleEn: 'Sundering Pillar • Crushing Blow', descZh: '組成「無限」與「謎團」的雙重基石，提供 20% 壓碎與 8% 物理減傷。', descEn: 'Twin cornerstone of Infinity and Enigma; grants 20% Crushing Blow & 8% DR.' },
           { num: 28, nameZh: '羅', nameEn: 'Lo', roleZh: '物理質變・致命極限', roleEn: 'Physical Ascension • Deadly Strike', descZh: '「剛毅」與「悔恨」雙神裝核心，賦予 20% 致命打擊與抗性上限。', descEn: 'Core of Fortitude & Grief; grants 20% Deadly Strike and +5% Max Light Res.' },
           { num: 33, nameZh: '薩德', nameEn: 'Zod', roleZh: '萬劫不滅・永不毀損', roleEn: 'Eternal Indestructible • Rarest Rune', descZh: '聖休亞瑞最稀有的終極神符，賦予無形極品武器裝備永生。', descEn: 'Rarest rune in Sanctuary; grants Indestructible to godly ethereal weapons.' },
-        ].map((hr) => (
+        ].map((hr) => {
+          const authRune = RUNE_BY_NUMBER.get(hr.num);
+          const runeZh = authRune?.name ?? hr.nameZh;
+          const runeEn = authRune?.nameEn ?? hr.nameEn;
+          return (
           <button
             key={hr.num}
             type="button"
@@ -137,10 +141,10 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
           >
             <div className="flex items-center justify-between pb-2 border-b border-sanctuary-800">
               <div className="flex items-center gap-2">
-                <ItemIcon runeNumber={hr.num} size="sm" showBorder={false} />
+                <ItemIcon runeNumber={hr.num} name={runeZh} nameEn={runeEn} size="sm" showBorder={false} />
                 <div>
                   <div className="font-diablo text-base font-bold text-amber-300 group-hover/hr:text-white">
-                    {hr.num}# {isEn ? hr.nameEn : hr.nameZh} {!isEn && <span className="text-xs font-mono font-normal text-sanctuary-400">({hr.nameEn})</span>}
+                    {hr.num}# {isEn ? runeEn : runeZh} {!isEn && <span className="text-xs font-mono font-normal text-sanctuary-400">({runeEn})</span>}
                   </div>
                   <div className="text-[10px] text-d2-gold font-mono">{isEn ? hr.roleEn : hr.roleZh}</div>
                 </div>
@@ -153,7 +157,8 @@ export const RuneCompendium: React.FC<RuneCompendiumProps> = ({
               {isEn ? hr.descEn : hr.descZh}
             </p>
           </button>
-        ))}
+          );
+        })}
       </div>
 
       {/* 33 枚符文快速跳轉牆 */}

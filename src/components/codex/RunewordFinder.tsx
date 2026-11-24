@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { RUNEWORDS_DATA } from '../../data/runewords';
+import { RUNE_BY_NUMBER } from '../../data/runes';
 import { cleanSearchQuery, normalizeItemQuery } from '../../utils/itemQueryNormalizer';
+import { expandLegacyQuery } from '../../utils/termAliases';
 import { ItemIcon } from '../common/ItemIcon';
 import { BASE_ITEMS_DATA } from '../../data/bases';
 import { CategoryTiles, CategoryTile } from '../common/CategoryTiles';
@@ -20,10 +22,11 @@ export interface RunewordFinderProps {
   initialQuery?: string;
   /** 單品網址（/runewords/enigma/）指定的符文之語 id：載入時以它的名稱搜尋 */
   initialItemId?: string;
-  /** 點卡片標題時前往該符文之語的單品網址 */
-  onOpenItem?: (id: string) => void;
+  /** 點卡片標題時前往該符文之語的單品網址（傳入 undefined 表示回到清單） */
+  onOpenItem?: (id?: string) => void;
   onNavigateToRune?: (runeNumber: number) => void;
   onNavigateToBase?: (baseName: string) => void;
+  onNavigatePatches?: () => void;
 }
 
 type RW = (typeof RUNEWORDS_DATA)[number];
@@ -161,6 +164,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
   onOpenItem,
   onNavigateToRune,
   onNavigateToBase,
+  onNavigatePatches,
 }) => {
   const { t, isEn } = useLanguage();
   const [searchQuery, setSearchQuery] = useState(initialQuery);
@@ -221,13 +225,15 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
         if (norm && norm.type === 'runeword' && rw.id === norm.id) {
           // Exact alias or normalized match (e.g. 剛毅甲 -> fortitude, 信心弓 -> faith)
         } else {
-          const queryTerms = cleanSearchQuery(searchQuery);
+          const expanded = expandLegacyQuery(searchQuery);
+          const queryTerms = Array.from(new Set(expanded.flatMap((q) => cleanSearchQuery(q))));
           const matchesQuery = queryTerms.some((term) => {
             const q = term.toLowerCase().trim();
             const matchesName = rw.name.toLowerCase().includes(q) || 
                                 rw.nameEn.toLowerCase().includes(q) ||
                                 (rw.nameClassic && rw.nameClassic.toLowerCase().includes(q));
-            const matchesRunes = rw.runes.some((r) => r.toLowerCase().includes(q));
+            const matchesRunes = rw.runes.some((r) => r.toLowerCase().includes(q)) ||
+                                 rw.runeNumbers.some((n) => (RUNE_BY_NUMBER.get(n)?.name ?? '').toLowerCase().includes(q));
             const matchesAttrs = [...rw.attributes, ...(rw.attributesEn ?? [])].some((a) => a.toLowerCase().includes(q));
             const matchesBases = rw.allowedBases.some((b) => b.toLowerCase().includes(q));
             return matchesName || matchesRunes || matchesAttrs || matchesBases;
@@ -424,31 +430,37 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    {rw.runes.map((r, i) => (
+                    {rw.runes.map((r, i) => {
+                      const runeNum = rw.runeNumbers[i];
+                      const authRune = RUNE_BY_NUMBER.get(runeNum);
+                      const runeZh = authRune?.name ?? r;
+                      const runeEn = authRune?.nameEn ?? r;
+                      return (
                       <React.Fragment key={i}>
                         {i > 0 && (
-                          <ArrowRight className="w-3.5 h-3.5 text-d2-rune/60 shrink-0" />
+                          <ArrowRight aria-hidden="true" className="w-3.5 h-3.5 text-d2-rune/60 shrink-0" />
                         )}
                         <button
                           key={i}
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            onNavigateToRune?.(rw.runeNumbers[i]);
+                            onNavigateToRune?.(runeNum);
                           }}
                           className="group/rune flex flex-col items-center gap-1 px-2.5 pt-1.5 pb-2 rounded-lg bg-sanctuary-900/90 hover:bg-d2-rune/20 border border-sanctuary-750 hover:border-d2-rune transition-all hover:scale-105 cursor-pointer min-w-[66px] shadow-sm"
-                          title={isEn ? `Click to view Rune #${rw.runeNumbers[i]} details & recipes` : `點擊跳轉查看 ${rw.runeNumbers[i]}號 符文詳細屬性與方塊合成`}
+                          title={isEn ? `Click to view Rune #${runeNum} details & recipes` : `點擊跳轉查看 ${runeNum}號 符文詳細屬性與方塊合成`}
                         >
                           <span className="text-[9px] font-mono text-sanctuary-500 leading-none group-hover/rune:text-amber-300">
                             #{i + 1}
                           </span>
-                          <ItemIcon runeNumber={rw.runeNumbers[i]} size="sm" showBorder={false} />
+                          <ItemIcon runeNumber={runeNum} name={runeZh} nameEn={runeEn} size="sm" showBorder={false} />
                           <span className="text-[11px] font-mono font-bold text-d2-rune group-hover/rune:text-white leading-none mt-0.5">
-                            {rw.runeNumbers[i]}# {r}
+                            {runeNum}# {isEn ? runeEn : `${runeZh} (${runeEn})`}
                           </span>
                         </button>
                       </React.Fragment>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -482,7 +494,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                   {/* S16 改動預覽附註（置於原物品說明右側） */}
                   {patch34 && (
                     <div className="min-w-0">
-                      <PatchChangeNote entry={patch34} />
+                      <PatchChangeNote entry={patch34} onOpenPatches={onNavigatePatches} />
                     </div>
                   )}
                 </div>
@@ -508,9 +520,73 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
     );
   };
 
+  const detailRw = useMemo(
+    () => (initialItemId ? RUNEWORDS_DATA.find((x) => x.id === initialItemId) ?? null : null),
+    [initialItemId],
+  );
+  const detailCrumbs = useMemo(() => {
+    if (!detailRw) return [];
+    const g = groupsOf(detailRw)[0];
+    return crumbsOf(isEn ? 'All Runewords' : '全部符文之語', baseTree, g ? `${g.id}/${detailRw.sockets}` : 'all', isEn);
+  }, [detailRw, baseTree, isEn]);
+
+  const handleBackToList = (targetNode?: string) => {
+    setSearchQuery('');
+    setSel(targetNode ?? 'all');
+    onOpenItem?.(undefined);
+  };
+
   return (
     <div className="py-8 max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
+      {detailRw && (
+        <section aria-label={isEn ? detailRw.nameEn : `${detailRw.name} ${detailRw.nameEn}`} className="mb-8 rounded-2xl border border-d2-rune/40 bg-sanctuary-900/70 p-4 sm:p-6 shadow-2xl space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <nav aria-label={isEn ? 'Breadcrumb' : '麵包屑導覽'} className="flex flex-wrap items-center gap-1.5 text-xs text-sanctuary-400">
+              {detailCrumbs.map((c, idx) => (
+                <React.Fragment key={c.id}>
+                  {idx > 0 && <span aria-hidden="true">›</span>}
+                  <a
+                    href={pathForTab('runewords')}
+                    onClick={(e) => {
+                      if (!isPlainLeftClick(e)) return;
+                      e.preventDefault();
+                      handleBackToList(c.id);
+                    }}
+                    className="hover:text-d2-rune hover:underline"
+                  >
+                    {c.label}
+                  </a>
+                </React.Fragment>
+              ))}
+              <span aria-hidden="true">›</span>
+              <span aria-current="page" className="text-sanctuary-200 font-semibold">
+                {isEn ? detailRw.nameEn : detailRw.name}
+              </span>
+            </nav>
+
+            <a
+              href={pathForTab('runewords')}
+              onClick={(e) => {
+                if (!isPlainLeftClick(e)) return;
+                e.preventDefault();
+                handleBackToList('all');
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sanctuary-950 border border-sanctuary-700 hover:border-d2-rune text-xs text-sanctuary-200 hover:text-d2-rune transition-colors"
+            >
+              ← {t('回到清單', 'Back to list')}
+            </a>
+          </div>
+
+          <h1 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-unique">
+            {isEn ? detailRw.nameEn : `${detailRw.name} ${detailRw.nameEn}`}
+          </h1>
+
+          {runewordCard(detailRw)}
+        </section>
+      )}
+
       <PageHeader
+        headingTag={detailRw ? 'h2' : 'h1'}
         icon={<GameIcon name="rune" className="w-7 h-7" />}
         title={t('符文之語全能檢索手冊', 'Runewords Complete Codex')}
         desc={t('包含全經典、天梯限定及最新《術士軍臨》DLC 符文之語，支援按底材孔數與關鍵屬性即時交叉篩選。依「底材類型 → 孔數」分層，每層內依需求等級排序。', 'Complete database of Classic, Ladder-only, and Reign of the Warlock DLC runewords with multi-dimensional filtering by sockets, bases, and affixes.')}
@@ -542,9 +618,10 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
       <div className="p-4 rounded-xl bg-sanctuary-900/90 border border-sanctuary-800 shadow-xl space-y-4 mb-8">
         {/* Top: Search bar */}
         <div className="relative">
-          <Search className="w-4 h-4 text-sanctuary-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search aria-hidden="true" className="w-4 h-4 text-sanctuary-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
+            aria-label={t('搜尋符文之語', 'Search Runewords')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('快速搜尋符文之語 (例如：謎團、精神、悔恨、Jah、FCR、Teleport...)', 'Search Runewords (e.g. Enigma, Spirit, Grief, Jah, FCR, Teleport...)')}
@@ -552,6 +629,8 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
           />
           {searchQuery && (
             <button
+              type="button"
+              aria-label={t('清除搜尋', 'Clear search')}
               onClick={() => setSearchQuery('')}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-sanctuary-400 hover:text-white"
             >
@@ -617,6 +696,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
             <label className="flex items-center gap-2 cursor-pointer select-none text-sanctuary-300">
               <input
                 type="checkbox"
+                aria-label={isEn ? 'Ladder Only' : '只看天梯限定 (Ladder)'}
                 checked={onlyLadder}
                 onChange={(e) => setOnlyLadder(e.target.checked)}
                 className="rounded bg-sanctuary-950 border-sanctuary-700 text-d2-unique focus:ring-0"
@@ -630,6 +710,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
             <label className="flex items-center gap-2 cursor-pointer select-none text-d2-fire">
               <input
                 type="checkbox"
+                aria-label={isEn ? 'Reign of the Warlock (RotW)' : '只看術士軍臨 (RotW)'}
                 checked={onlyDLC}
                 onChange={(e) => setOnlyDLC(e.target.checked)}
                 className="rounded bg-sanctuary-950 border-sanctuary-700 text-d2-fire focus:ring-0"
@@ -643,6 +724,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
             <label className="flex items-center gap-2 cursor-pointer select-none text-purple-300">
               <input
                 type="checkbox"
+                aria-label={isEn ? 'S16 Changes' : '只看 S16 改動'}
                 checked={onlyS16}
                 onChange={(e) => {
                   const next = e.target.checked;

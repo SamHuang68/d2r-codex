@@ -174,7 +174,7 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
           <div className="relative h-44 sm:h-56 md:h-64 w-full overflow-hidden bg-sanctuary-950">
             <img
               src={getClassImage(currentClass.id)}
-              alt={currentClass.nameEn}
+              alt={isEn ? currentClass.nameEn : `${currentClass.name} (${currentClass.nameEn})`}
               className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
             />
             {/* Atmospheric Gradients */}

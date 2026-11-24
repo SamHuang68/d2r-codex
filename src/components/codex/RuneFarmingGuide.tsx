@@ -4,7 +4,7 @@ import {
   RUNE_MECHANICS_GUIDE,
   BOSS_RUNE_DROP_CAPS
 } from '../../data/codex/runeFarming';
-import { RUNES_DATA } from '../../data/runes';
+import { RUNES_DATA, RUNE_BY_NUMBER } from '../../data/runes';
 import { ItemIcon } from '../common/ItemIcon';
 import { useLanguage } from '../../context/LanguageContext';
 import {
@@ -830,7 +830,7 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
                         className="font-bold text-d2-rune hover:underline cursor-pointer inline-flex items-center gap-0.5 text-[11px]"
                         title={t('點擊查看符文', 'Click to view rune')}
                       >
-                        <ItemIcon runeNumber={boss.nightmareMaxRune} size="xs" showBorder={false} />
+                        <ItemIcon runeNumber={boss.nightmareMaxRune} name={RUNE_BY_NUMBER.get(boss.nightmareMaxRune)?.name} nameEn={RUNE_BY_NUMBER.get(boss.nightmareMaxRune)?.nameEn} size="xs" showBorder={false} />
                         <span>{boss.nightmareMaxRune}#</span>
                       </button>
                     </div>
@@ -846,7 +846,7 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
                         }`}
                         title={t('點擊查看符文', 'Click to view rune')}
                       >
-                        <ItemIcon runeNumber={boss.hellMaxRune} size="xs" showBorder={false} />
+                        <ItemIcon runeNumber={boss.hellMaxRune} name={RUNE_BY_NUMBER.get(boss.hellMaxRune)?.name} nameEn={RUNE_BY_NUMBER.get(boss.hellMaxRune)?.nameEn} size="xs" showBorder={false} />
                         <span>{boss.hellMaxRune}#</span>
                       </button>
                     </div>

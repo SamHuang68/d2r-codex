@@ -48,7 +48,7 @@ export interface SimulatorV2Props {
 const NumSelect: React.FC<{ label: string; value: number; max: number; onChange: (n: number) => void; title?: string }> = ({ label, value, max, onChange, title }) => (
   <label className="d2-field" title={title}>
     {label}
-    <select value={value} onChange={(e) => onChange(Number(e.target.value))} className="d2-select">
+    <select aria-label={label} value={value} onChange={(e) => onChange(Number(e.target.value))} className="d2-select">
       {Array.from({ length: max + 1 }, (_, i) => <option key={i} value={i}>{i}</option>)}
     </select>
   </label>
@@ -327,10 +327,10 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
           </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2" style={{ borderTop: '1px solid #2e271c', paddingTop: 10 }}>
             <label className="d2-field">{isEn ? "Level" : "等級"}
-              <input type="number" min={1} max={99} value={level} onChange={(e) => setLevel(Math.max(1, Math.min(99, Number(e.target.value) || 1)))} className="d2-input" style={{ width: 62 }} />
+              <input type="number" aria-label={isEn ? "Character Level" : "角色等級"} min={1} max={99} value={level} onChange={(e) => setLevel(Math.max(1, Math.min(99, Number(e.target.value) || 1)))} className="d2-input" style={{ width: 62 }} />
             </label>
             <label className="d2-field">{isEn ? "Difficulty" : "難度"}
-              <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as Difficulty)} className="d2-select">
+              <select aria-label={isEn ? "Difficulty" : "遊戲難度"} value={difficulty} onChange={(e) => setDifficulty(e.target.value as Difficulty)} className="d2-select">
                 {(Object.keys(DIFF_ZH) as Difficulty[]).map((d) => <option key={d} value={d}>{isEn ? DIFF_EN[d] : DIFF_ZH[d]}</option>)}
               </select>
             </label>
@@ -340,7 +340,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
             <NumSelect label={isEn ? "Lam Esen" : "拉姆艾森之書"} value={quests.lamEsen} max={3} onChange={(n) => setQuests((q) => ({ ...q, lamEsen: n }))} title={isEn ? 'Act III: +5 attribute points per difficulty' : '第三章，每難度 +5 屬性點'} />
             <NumSelect label={isEn ? "Skill Quests" : "技能點任務"} value={quests.skillPts} max={3} onChange={(n) => setQuests((q) => ({ ...q, skillPts: n }))} title={isEn ? 'Den of Evil 1, Radament 1, Izual 2: +4 skill points per difficulty (community reference; not verified in game)' : '魔物巢穴 1、拉瑪達 1、伊卒爾 2，每難度共 +4 技能點（社群共識，未於遊戲內核對）'} />
             <label className="d2-field" title={isEn ? "Affix rolls min/max values" : "裝備詞綴範圍值取上限或下限"}>{isEn ? "Rolls" : "屬性取值"}
-              <select value={rollMax ? 'max' : 'min'} onChange={(e) => setRollMax(e.target.value === 'max')} className="d2-select">
+              <select aria-label={isEn ? "Affix roll range" : "裝備詞綴屬性取值"} value={rollMax ? 'max' : 'min'} onChange={(e) => setRollMax(e.target.value === 'max')} className="d2-select">
                 <option value="max">{isEn ? "Max" : "上限"}</option><option value="min">{isEn ? "Min" : "下限"}</option>
               </select>
             </label>
@@ -357,7 +357,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         {/* 左半：物品欄 */}
         <div className="d2-panel min-w-0">
-          <div className="d2-title">{isEn ? "INVENTORY" : "物 品 欄"}</div>
+          <h2 className="d2-title">{isEn ? "INVENTORY" : "物 品 欄"}</h2>
           <div className="d2-panel-body">
             <PaperDollV2 engineClass={cls.en} equipped={equipped} charms={charms} swap={swap} onSwap={setSwap} dragging={dragging}
               canDrop={canDrop} onDropItem={place} onRemoveCharm={(i) => setCharms((c) => c.filter((_, j) => j !== i))}
@@ -367,7 +367,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
                 <div className="d2-tip"><ItemTooltipBody eq={selEq} level={level} rollMax={rollMax} attrs={tipAttrs} equippedSetNames={setNamesOf(equipped, selEq.entry.setId)} /></div>
                 <div className="flex flex-wrap items-center justify-center gap-4 mt-2">
                   {(selEq.entry.group === 'armor' || selEq.entry.group === 'weapon') && (
-                    <label className="d2-field"><input type="checkbox" className="d2-check" checked={!!selEq.ethereal} onChange={(e) => setEquipped((m) => ({ ...m, [selected]: { ...m[selected]!, ethereal: e.target.checked } }))} />{isEn ? "Eth" : "無形"}</label>
+                    <label className="d2-field"><input type="checkbox" aria-label={isEn ? "Ethereal" : "無形"} className="d2-check" checked={!!selEq.ethereal} onChange={(e) => setEquipped((m) => ({ ...m, [selected]: { ...m[selected]!, ethereal: e.target.checked } }))} />{isEn ? "Eth" : "無形"}</label>
                   )}
                   {onNavigateItem && selEq.entry.kind !== 'base' && <button type="button" onClick={() => onNavigateItem(selEq.entry.name)} className="d2-btn is-quiet" title={isEn ? 'View this item in the Codex; your build is autosaved and restored when you return' : '到百科頁查看這件物品（配裝會自動暫存，回來時還原）'}>{isEn ? "View Codex" : "在百科中查看"}</button>}
                   <button type="button" onClick={() => unequip(selected)} className="d2-btn is-danger">{isEn ? "Unequip" : "卸下"}</button>
@@ -393,6 +393,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
 
         {/* 右半：三個 tab */}
         <div className="d2-panel min-w-0">
+          <h2 className="sr-only">{isEn ? 'Attributes & Build Tabs' : '屬性與角色配置'}</h2>
           <div className="d2-tabs" role="tablist">
             {([['stats', isEn ? 'Attributes' : '屬性頁'], ['gear', isEn ? 'Gear Library' : '樹狀裝備庫'], ['skills', isEn ? 'Skill Trees' : '技能樹'], ['merc', isEn ? 'Mercenary' : '傭兵']] as [TabKey, string][]).map(([k, label]) => (
               <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => { setTab(k); if (k === 'gear') setPickerOpen(true); }} className="d2-tab">{label}</button>
@@ -425,6 +426,7 @@ export const SimulatorV2: React.FC<SimulatorV2Props> = ({ initialClass = '魔法
 
       {/* 底部：生命球／摘要／法力球 */}
       <div className="d2-panel" aria-live="polite">
+        <h2 className="sr-only">{isEn ? 'Character Summary' : '生命與角色摘要'}</h2>
         <div className="d2-panel-body flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
           <div className="d2-orb is-life" title={isEn ? "Life" : "生命"}><b>{result.life.toLocaleString()}</b><span>{isEn ? "Life" : "生命"}</span></div>
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 flex-1 min-w-[220px]">

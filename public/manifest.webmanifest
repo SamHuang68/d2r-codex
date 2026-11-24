@@ -7,7 +7,7 @@
   "display": "standalone",
   "background_color": "#060709",
   "theme_color": "#060709",
-  "lang": "zh-TW",
+  "lang": "zh-Hant",
   "icons": [
     {
       "src": "./icon-192.png",
