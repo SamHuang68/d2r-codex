@@ -7,6 +7,12 @@
     @apply bg-sanctuary-950 text-sanctuary-100 antialiased;
     font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
+
+  /* 鍵盤焦點。已自訂 focus 樣式的控制項用 focus:outline-none 蓋掉這條。 */
+  :focus-visible {
+    outline: 2px solid #d4af37;
+    outline-offset: 2px;
+  }
 }
 
 /* Custom Sanctuary Scrollbar */
