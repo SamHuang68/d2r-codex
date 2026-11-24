@@ -14,7 +14,7 @@ interface HeroSectionProps {
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab, onOpenSearch }) => {
-  const { t } = useLanguage();
+  const { t, isEn } = useLanguage();
   const [showVideoModal, setShowVideoModal] = useState(false);
 
   const videoRef = useRef<HTMLDialogElement>(null);
@@ -43,23 +43,35 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigateTab, onOpenS
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Top Announcement Pill */}
-        <div className="inline-flex flex-wrap items-center justify-center gap-2 px-3 py-1.5 rounded-full bg-sanctuary-900 border border-d2-unique/30 text-xs text-d2-unique mb-4 shadow-glow-gold/40">
+        <div className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 px-3 py-1.5 rounded-2xl sm:rounded-full bg-sanctuary-900 border border-d2-unique/30 text-xs text-d2-unique mb-4 shadow-glow-gold/40">
           <Sparkles aria-hidden="true" className="w-3.5 h-3.5 shrink-0" />
           <span className="font-semibold tracking-wide">
-            {t('DLC《術士軍臨》REIGN OF THE WARLOCK 全新收錄', 'DLC REIGN OF THE WARLOCK Included')}
+            {isEn ? (
+              <>
+                DLC <span className="whitespace-nowrap">REIGN OF THE WARLOCK</span>{' '}
+                <span className="whitespace-nowrap">Included</span>
+              </>
+            ) : (
+              <>
+                DLC《術士軍臨》 <span className="whitespace-nowrap">REIGN OF THE WARLOCK</span>{' '}
+                <span className="whitespace-nowrap">全新收錄</span>
+              </>
+            )}
           </span>
-          <span className="text-sanctuary-400 font-mono border-l border-sanctuary-700 pl-2">
-            {t('網站 v2.6+', 'Site v2.6+')}
-          </span>
-          <span className="text-sanctuary-300 font-mono border-l border-sanctuary-700 pl-2">
-            {t(`遊戲資料 ${meta.gameVersion}`, `Game Data ${meta.gameVersion}`)}
+          <span className="inline-flex items-center gap-2 whitespace-nowrap sm:border-l sm:border-sanctuary-700 sm:pl-2">
+            <span className="text-sanctuary-400 font-mono whitespace-nowrap">
+              {t('網站 v2.6+', 'Site v2.6+')}
+            </span>
+            <span className="text-sanctuary-300 font-mono border-l border-sanctuary-700 pl-2 whitespace-nowrap">
+              {t(`遊戲資料 ${meta.gameVersion}`, `Game Data ${meta.gameVersion}`)}
+            </span>
           </span>
         </div>
 
         {/* Hero Title */}
-        <h1 className="font-diablo text-3xl sm:text-5xl lg:text-5xl font-extrabold tracking-wider text-sanctuary-100 max-w-4xl mx-auto leading-tight">
+        <h1 className="font-diablo text-3xl sm:text-5xl lg:text-5xl font-extrabold tracking-wider text-sanctuary-100 max-w-4xl mx-auto leading-tight text-balance">
           {t('聖休亞瑞的命運，', 'The Fate of Sanctuary, ')}
-          <span className="bg-gradient-to-r from-d2-unique via-amber-200 to-d2-fire bg-clip-text text-transparent drop-shadow-sm">
+          <span className="whitespace-nowrap bg-gradient-to-r from-d2-unique via-amber-200 to-d2-fire bg-clip-text text-transparent drop-shadow-sm">
             {t('由你執掌', 'In Your Hands')}
           </span>
         </h1>

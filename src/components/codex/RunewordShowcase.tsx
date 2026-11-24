@@ -542,13 +542,18 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
 
                   {/* 特色亮點標籤與引言 */}
                   <div className="my-3">
-                    <div className="text-xs font-bold text-sanctuary-200 flex items-center gap-1.5 bg-sanctuary-900/80 px-2.5 py-1.5 rounded-lg border border-sanctuary-800">
+                    <div className="text-xs font-bold text-sanctuary-200 flex items-start gap-1.5 bg-sanctuary-900/80 px-2.5 py-1.5 rounded-lg border border-sanctuary-800">
                       {item.category === 'iconic' ? (
-                        <Flame className="w-3.5 h-3.5 text-d2-fire shrink-0" />
+                        <Flame className="w-3.5 h-3.5 mt-0.5 text-d2-fire shrink-0" />
                       ) : (
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <ShieldCheck className="w-3.5 h-3.5 mt-0.5 text-emerald-400 shrink-0" />
                       )}
-                      <span className="truncate">{isEn ? item.highlightTagEn : item.highlightTag}</span>
+                      <span
+                        className="min-w-0 flex-1 line-clamp-2 leading-snug"
+                        title={isEn ? item.highlightTagEn : item.highlightTag}
+                      >
+                        {isEn ? item.highlightTagEn : item.highlightTag}
+                      </span>
                     </div>
                     <p className="text-[11px] text-sanctuary-400 mt-2 line-clamp-2 leading-relaxed">
                       {isEn ? item.quoteEn : item.quote}

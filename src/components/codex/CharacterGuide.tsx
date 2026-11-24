@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CHARACTER_CLASSES_DATA } from '../../data/classes';
 import { CLASS_TRANSLATIONS } from '../../data/classTranslations';
 import { useLanguage } from '../../context/LanguageContext';
-import { getClassImage } from '../../utils/classImages';
+import { getClassImage, getClassImageSrcSet } from '../../utils/classImages';
 import { 
   Shield, 
   Sparkles, 
@@ -151,6 +151,8 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
             >
               <img
                 src={getClassImage(cls.id)}
+                srcSet={getClassImageSrcSet(cls.id)}
+                sizes="24px"
                 alt=""
                 className={`w-6 h-6 rounded-full object-cover object-[75%_15%] border transition-transform ${
                   isSelected ? 'border-d2-unique scale-110 shadow-sm' : 'border-sanctuary-700/60 opacity-80'
@@ -174,6 +176,8 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
           <div className="relative h-44 sm:h-56 md:h-64 w-full overflow-hidden bg-sanctuary-950">
             <img
               src={getClassImage(currentClass.id)}
+              srcSet={getClassImageSrcSet(currentClass.id)}
+              sizes="(min-width: 1280px) 1152px, calc(100vw - 5rem)"
               alt={isEn ? currentClass.nameEn : `${currentClass.name} (${currentClass.nameEn})`}
               className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
             />

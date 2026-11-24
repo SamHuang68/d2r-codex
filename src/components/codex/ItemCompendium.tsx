@@ -670,7 +670,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             </a>
           </div>
 
-          <h1 className={`font-diablo text-2xl sm:text-3xl font-bold ${detailHit.kind === 'unique' ? 'text-d2-unique' : 'text-d2-set'}`}>
+          <h1 className={`font-diablo text-2xl sm:text-3xl font-bold break-words ${detailHit.kind === 'unique' ? 'text-d2-unique' : 'text-d2-set'}`}>
             {isEn ? detailHit.nameEn : `${detailHit.name} ${detailHit.nameEn}`}
           </h1>
 
@@ -736,43 +736,51 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         }
       />
 
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 mb-5">
-        <div className="relative flex-1 min-w-0">
-          <Search aria-hidden="true" className="w-4 h-4 text-sanctuary-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            aria-label={t('搜尋暗金、套裝或符文之語', 'Search Uniques, Sets, or Runewords')}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={t('搜尋暗金、套裝或符文之語名稱、底材或屬性 (例如：軍帽、獅鷲、塔拉夏、精神、謎團、SOJ...)；索引數量會即時對應', 'Search Uniques, Sets, Runewords, Bases, or Affixes (e.g. Shako, Griffon, Tal Rasha, Spirit, Enigma, SOJ...)')}
-            className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-4 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
-          />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')} aria-label={isEn ? "Clear search" : "清除搜尋"} className="absolute right-3 top-1/2 -translate-y-1/2 text-sanctuary-400 hover:text-white">
-              <X className="w-4 h-4" />
-            </button>
-          )}
+      <div className="mb-5">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+          <div className="relative flex-1 min-w-0">
+            <Search aria-hidden="true" className="w-4 h-4 text-sanctuary-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              aria-label={t('搜尋暗金、套裝或符文之語', 'Search Uniques, Sets, or Runewords')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('搜尋名稱、底材或屬性', 'Search name, base, or affix')}
+              className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-9 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} aria-label={isEn ? "Clear search" : "清除搜尋"} className="absolute right-3 top-1/2 -translate-y-1/2 text-sanctuary-400 hover:text-white">
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setOnlyS16((prev) => {
+                const next = !prev;
+                if (next) setSel('all');
+                return next;
+              });
+            }}
+            aria-pressed={onlyS16}
+            className={`shrink-0 px-3.5 py-2.5 rounded-lg border text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+              onlyS16
+                ? 'bg-purple-900/70 border-purple-400 text-purple-100 shadow-sm'
+                : 'bg-sanctuary-950 border-sanctuary-750 text-purple-300 hover:border-purple-500/60 hover:bg-purple-950/30'
+            }`}
+            title={t('僅顯示天梯第 16 季（Patch 3.4）有數值調整的暗金與套裝', 'Show only Unique & Set items adjusted in Ladder Season 16 (Patch 3.4)')}
+          >
+            <span>✦</span>
+            <span>{t(`只看 S16 改動 (${s16TotalCount})`, `S16 Changes (${s16TotalCount})`)}</span>
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            setOnlyS16((prev) => {
-              const next = !prev;
-              if (next) setSel('all');
-              return next;
-            });
-          }}
-          aria-pressed={onlyS16}
-          className={`shrink-0 px-3.5 py-2.5 rounded-lg border text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
-            onlyS16
-              ? 'bg-purple-900/70 border-purple-400 text-purple-100 shadow-sm'
-              : 'bg-sanctuary-950 border-sanctuary-750 text-purple-300 hover:border-purple-500/60 hover:bg-purple-950/30'
-          }`}
-          title={t('僅顯示天梯第 16 季（Patch 3.4）有數值調整的暗金與套裝', 'Show only Unique & Set items adjusted in Ladder Season 16 (Patch 3.4)')}
-        >
-          <span>✦</span>
-          <span>{t(`只看 S16 改動 (${s16TotalCount})`, `S16 Changes (${s16TotalCount})`)}</span>
-        </button>
+        <p className="mt-1.5 text-xs text-sanctuary-400">
+          {t(
+            '範例：軍帽、獅鷲、塔拉夏、精神、謎團、SOJ；索引數量會即時對應。',
+            'Examples: Shako, Griffon, Tal Rasha, Spirit, Enigma, SOJ; tree counts update live.'
+          )}
+        </p>
       </div>
 
       {/* 跨裝備特殊屬性篩選列：預設收合，展開時才掛載面板避免隱藏空的 heading */}

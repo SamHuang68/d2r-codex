@@ -2,7 +2,7 @@ import React, { lazy, Suspense, useState } from 'react';
 import { BREAKPOINTS_DATA } from '../../data/breakpoints';
 import { AREA_LEVELS_DATA } from '../../data/areaLevels';
 import { CLASS_ZH_TO_EN } from '../../engine/slots';
-import { getClassImage } from '../../utils/classImages';
+import { getClassImage, getClassImageSrcSet } from '../../utils/classImages';
 import { Compass, Zap, MapPin, Sparkles, Swords } from 'lucide-react';
 import { GameIcon } from '../common/GameIcons';
 import { useLanguage } from '../../context/LanguageContext';
@@ -211,6 +211,8 @@ export const BreakpointTable: React.FC<BreakpointTableProps> = ({ initialClass =
                     <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden mb-1.5 border border-sanctuary-750 shadow-inner">
                       <img
                         src={getClassImage(cls)}
+                        srcSet={getClassImageSrcSet(cls)}
+                        sizes="(min-width: 640px) 56px, 48px"
                         alt={isEn ? CLASS_ZH_TO_EN[cls] ?? cls : cls}
                         className="w-full h-full object-cover object-[75%_15%] transition-transform duration-300 group-hover:scale-110"
                       />

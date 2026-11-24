@@ -42,7 +42,7 @@ export const PatchChangeNote: React.FC<PatchChangeNoteProps> = ({
             </span>
           </div>
 
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-950/70 text-amber-300 border border-amber-600/40 font-semibold shrink-0">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-950/70 text-amber-300 border border-amber-600/40 font-semibold max-w-full">
             {isEn ? S16_SCOPE_NOTES.modeScopeEn : S16_SCOPE_NOTES.modeScopeZh}
           </span>
         </div>
