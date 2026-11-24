@@ -173,7 +173,7 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
                   type="button"
                   onClick={() => toggle(n.id)}
                   aria-label={isEn ? `${expanded ? 'Collapse ' : 'Expand '}${n.en || n.label}` : `${expanded ? '收合' : '展開'}${n.label}`}
-                  className="w-6 shrink-0 flex items-center justify-center text-sanctuary-500 hover:text-sanctuary-200"
+                  className="w-11 sm:w-6 shrink-0 min-h-11 sm:min-h-0 flex items-center justify-center text-sanctuary-500 hover:text-sanctuary-200"
                 >
                   <ChevronRight className={`w-3.5 h-3.5 transition-transform ${expanded ? 'rotate-90' : ''}`} />
                 </button>
@@ -189,7 +189,7 @@ export const TreeIndex: React.FC<TreeIndexProps> = ({
                 onClick={() => select(n.id)}
                 aria-current={active ? 'true' : undefined}
                 title={isEn ? (n.en || n.label) : (n.en ? `${n.label}（${n.en}）` : n.label)}
-                className={`flex-1 min-w-0 flex items-center justify-between gap-2 py-1.5 pr-2 text-left text-[13px] ${
+                className={`flex-1 min-w-0 flex items-center justify-between gap-2 min-h-11 sm:min-h-0 py-1.5 pr-2 text-left text-sm ${
                   active ? `${t.text} font-bold` : depth === 1 ? 'text-sanctuary-100 font-semibold' : 'text-sanctuary-300 hover:text-sanctuary-100'
                 }`}
               >
@@ -295,7 +295,7 @@ export const Crumbs: React.FC<{ crumbs: { id: string; label: string }[]; onSelec
           {last ? (
             <span className={`font-bold ${TONE[tone].text}`} aria-current="page">{c.label}</span>
           ) : (
-            <button type="button" onClick={() => onSelect(c.id)} className="hover:text-sanctuary-100 hover:underline">{c.label}</button>
+            <button type="button" onClick={() => onSelect(c.id)} className="inline-flex items-center min-h-11 sm:min-h-0 px-1 hover:text-sanctuary-100 hover:underline">{c.label}</button>
           )}
         </React.Fragment>
       );
@@ -427,7 +427,7 @@ export const ViewToggle: React.FC<{ dir: boolean; onChange: (v: 'dir' | 'detail'
           type="button"
           onClick={() => onChange(k)}
           aria-pressed={on}
-          className={`px-3 py-1 rounded-md ${on ? 'bg-sanctuary-700 text-sanctuary-100 font-bold' : 'text-sanctuary-400 hover:text-sanctuary-100'}`}
+          className={`min-h-11 sm:min-h-0 px-3 py-1 rounded-md ${on ? 'bg-sanctuary-700 text-sanctuary-100 font-bold' : 'text-sanctuary-400 hover:text-sanctuary-100'}`}
         >
           {label}
         </button>
@@ -450,14 +450,14 @@ export const DirChip: React.FC<{
     type="button"
     onClick={onClick}
     title={hint ?? title}
-    className={`group flex items-center gap-2.5 p-2 rounded-lg bg-sanctuary-900/60 border border-sanctuary-800 text-left min-w-0 ${
+    className={`group flex items-center gap-2.5 min-h-11 p-2 rounded-lg bg-sanctuary-900/60 border border-sanctuary-800 text-left min-w-0 ${
       tone === 'set' ? 'hover:border-d2-set/70' : tone === 'rune' ? 'hover:border-d2-rune/70' : tone === 'socket' ? 'hover:border-d2-socket/70' : 'hover:border-d2-unique/70'
     }`}
   >
     {icon}
     <span className="min-w-0">
       <span className={`block font-diablo font-bold text-sm truncate ${TONE[tone].text}`}>{title}</span>
-      {sub && <span className="block text-[11px] text-sanctuary-400 truncate">{sub}</span>}
+      {sub && <span className="block text-xs text-sanctuary-400 truncate">{sub}</span>}
     </span>
   </button>
 );

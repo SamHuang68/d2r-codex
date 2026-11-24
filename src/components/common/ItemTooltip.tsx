@@ -120,7 +120,7 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
                 e.stopPropagation();
                 onNavigateToBase(baseItem || primaryBase);
               }}
-              className="hover:text-d2-socket hover:underline cursor-pointer transition-colors inline-flex items-center gap-1 group/base"
+              className="hover:text-d2-socket hover:underline cursor-pointer transition-colors inline-flex items-center gap-1 min-h-11 group/base"
               title={isEn ? `Click to view base item guide` : `點擊查看【${baseItem}】符文底材指南`}
             >
               <span>{primaryBase}</span>
@@ -188,7 +188,7 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({
           )}
 
           {flavorText && (
-            <div className="mt-3 pt-2 border-t border-sanctuary-800 text-[11px] text-sanctuary-400 italic text-left">
+            <div className="mt-3 pt-2 border-t border-sanctuary-800 text-xs text-sanctuary-400 italic text-left">
               "{flavorText}"
             </div>
           )}

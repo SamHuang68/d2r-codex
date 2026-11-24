@@ -455,9 +455,9 @@ export const RuneFarmingGuide: React.FC<RuneFarmingGuideProps> = ({
                     </div>
 
                     {/* 推薦人數標章（獨立於上方右側，享有充裕空間） */}
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-sanctuary-900 border border-sanctuary-750 text-[11px] font-mono text-d2-gold shrink-0">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-sanctuary-900 border border-sanctuary-750 text-xs font-mono text-d2-gold max-w-full">
                       <Users className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                      <span>{isEn ? source.recommendedPlayerCountEn : source.recommendedPlayerCountZh}</span>
+                      <span className="min-w-0 break-words">{isEn ? source.recommendedPlayerCountEn : source.recommendedPlayerCountZh}</span>
                     </div>
                   </div>
 

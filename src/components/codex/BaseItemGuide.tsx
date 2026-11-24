@@ -353,16 +353,16 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
       />
 
       {/* 篩選與搜尋列 */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+      <div className="sticky top-14 z-30 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 py-2 bg-sanctuary-950/95 backdrop-blur-md border-b border-sanctuary-800/70 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         {/* 握持（僅武器） */}
-        <div className="flex items-center gap-1.5 bg-sanctuary-900/80 p-1.5 rounded-2xl border border-sanctuary-800 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-1.5 bg-sanctuary-900/80 p-1.5 rounded-2xl border border-sanctuary-800 overflow-x-auto no-scrollbar min-w-0 max-w-full">
           <span className="pl-2 pr-1 text-[11px] text-sanctuary-500 whitespace-nowrap">{isEn ? 'Grip (Weapons)' : '握持（僅武器）'}</span>
           {handOpts.map((o) => (
             <button
               key={o.id}
               onClick={() => setHand(o.id)}
               aria-pressed={hand === o.id}
-              className={`px-4 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap ${
+              className={`min-h-11 px-4 rounded-xl text-xs font-medium transition-all whitespace-nowrap flex items-center ${
                 hand === o.id
                   ? 'bg-d2-socket text-sanctuary-950 font-bold shadow-md shadow-d2-socket/20'
                   : 'text-sanctuary-400 hover:text-sanctuary-200 hover:bg-sanctuary-800/60'
@@ -377,7 +377,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
         <div className="flex flex-wrap items-center gap-2 flex-1 max-w-xl">
           <button
             onClick={() => setFilterEthOnly(!filterEthOnly)}
-            className={`px-3 py-2 rounded-xl text-xs font-mono transition-all border flex items-center gap-1.5 shrink-0 ${
+            className={`min-h-11 px-3 rounded-xl text-xs font-mono transition-all border flex items-center gap-1.5 shrink-0 ${
               filterEthOnly
                 ? 'bg-sanctuary-800 border-d2-cold text-d2-cold font-bold'
                 : 'bg-sanctuary-900 border-sanctuary-800 text-sanctuary-400 hover:text-sanctuary-200'
@@ -389,7 +389,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
 
           <button
             onClick={() => setFilterSuperiorOnly(!filterSuperiorOnly)}
-            className={`px-3 py-2 rounded-xl text-xs font-mono transition-all border flex items-center gap-1.5 shrink-0 ${
+            className={`min-h-11 px-3 rounded-xl text-xs font-mono transition-all border flex items-center gap-1.5 shrink-0 ${
               filterSuperiorOnly
                 ? 'bg-sanctuary-800 border-d2-gold text-d2-gold font-bold'
                 : 'bg-sanctuary-900 border-sanctuary-800 text-sanctuary-400 hover:text-sanctuary-200'
@@ -407,7 +407,7 @@ export const BaseItemGuide: React.FC<BaseItemGuideProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t('搜尋底材、英文名或推薦符文 (如: 悔恨、謎團)...', 'Search bases, English name, or runewords (e.g. Grief, Enigma)...')}
-              className="w-full bg-sanctuary-900 border border-sanctuary-800 rounded-xl pl-9 pr-4 py-2 text-xs text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-socket transition-colors"
+              className="w-full min-h-11 bg-sanctuary-900 border border-sanctuary-800 rounded-xl pl-9 pr-4 py-2 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-socket transition-colors"
             />
           </div>
         </div>

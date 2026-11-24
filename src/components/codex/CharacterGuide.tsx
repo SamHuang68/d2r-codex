@@ -137,14 +137,14 @@ export const CharacterGuide: React.FC<CharacterGuideProps> = ({
       </div>
 
       {/* Class Selector Tabs with Avatars */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-3 border-b border-sanctuary-850 no-scrollbar">
+      <div className="flex w-full min-w-0 items-center gap-2 overflow-x-auto pb-3 border-b border-sanctuary-850 no-scrollbar">
         {CHARACTER_CLASSES_DATA.map((cls) => {
           const isSelected = cls.id === selectedClassId;
           return (
             <button
               key={cls.id}
               onClick={() => setSelectedClassId(cls.id)}
-              className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0 border ${
+              className={`flex items-center gap-2.5 min-h-11 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0 border ${
                 isSelected
                   ? 'bg-sanctuary-800 text-d2-unique border-d2-unique/60 shadow-md shadow-d2-unique/10 font-bold'
                   : 'bg-sanctuary-950/80 text-sanctuary-400 border-sanctuary-800 hover:text-sanctuary-200'

@@ -591,7 +591,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
         title={t('符文之語全能檢索手冊', 'Runewords Complete Codex')}
         desc={t('包含全經典、天梯限定及最新《術士軍臨》DLC 符文之語，支援按底材孔數與關鍵屬性即時交叉篩選。依「底材類型 → 孔數」分層，每層內依需求等級排序。', 'Complete database of Classic, Ladder-only, and Reign of the Warlock DLC runewords with multi-dimensional filtering by sockets, bases, and affixes.')}
         right={
-          <div className="text-xs text-sanctuary-400 font-mono self-start shrink-0 whitespace-nowrap px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800">
+          <div className="text-xs text-sanctuary-400 font-mono self-start max-w-full px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800">
             {isEn ? (
               <>Recorded <span className="text-d2-unique font-bold">{RUNEWORDS_DATA.length}</span> • Matched <span className="text-d2-set font-bold">{filteredRunewords.length}</span></>
             ) : (
@@ -614,9 +614,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
         onNavigateToBase={onNavigateToBase}
       />
 
-      {/* Filter Toolbar */}
-      <div className="p-4 rounded-xl bg-sanctuary-900/90 border border-sanctuary-800 shadow-xl space-y-4 mb-8">
-        {/* Top: Search bar */}
+      <div className="sticky top-14 z-30 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 py-2 mb-3 bg-sanctuary-950/95 backdrop-blur-md border-b border-sanctuary-800/70">
         <div className="relative">
           <Search aria-hidden="true" className="w-4 h-4 text-sanctuary-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -625,21 +623,24 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('快速搜尋符文之語 (例如：謎團、精神、悔恨、Jah、FCR、Teleport...)', 'Search Runewords (e.g. Enigma, Spirit, Grief, Jah, FCR, Teleport...)')}
-            className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-4 py-2 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
+            className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-12 py-2 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
           />
           {searchQuery && (
             <button
               type="button"
               aria-label={t('清除搜尋', 'Clear search')}
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-sanctuary-400 hover:text-white"
+              className="absolute right-0 top-1/2 -translate-y-1/2 min-w-11 min-h-11 flex items-center justify-center text-sanctuary-400 hover:text-white"
             >
               <X className="w-4 h-4" />
             </button>
           )}
         </div>
+      </div>
 
-        {/* Bottom Filter Selectors */}
+      {/* Filter Toolbar */}
+      <div className="p-4 rounded-xl bg-sanctuary-900/90 border border-sanctuary-800 shadow-xl space-y-4 mb-8">
+        {/* Filter Selectors */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 text-xs">
           {/* Socket Filter */}
           <div>
@@ -648,7 +649,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               aria-label={t('孔數 (Sockets)', 'Sockets')}
               value={selectedSockets}
               onChange={(e) => setSelectedSockets(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-              className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"
+              className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"
             >
               <option value="all">{isEn ? 'All Sockets' : '全部孔數'}</option>
               <option value="2">2 {isEn ? 'Sockets' : '孔'}</option>
@@ -666,7 +667,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               aria-label={t('底材類別 (Bases)', 'Bases')}
               value={selectedBase}
               onChange={(e) => setSelectedBase(e.target.value)}
-              className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"
+              className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"
             >
               <option value="all">{isEn ? 'All Bases' : '全部底材'}</option>
               {allBases.map((b) => (
@@ -682,7 +683,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               aria-label={t('核心詞綴 (Tags)', 'Key Affixes')}
               value={selectedTag}
               onChange={(e) => setSelectedTag(e.target.value)}
-              className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"
+              className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"
             >
               <option value="all">{isEn ? 'All Tags' : '全部標籤'}</option>
               {allTags.map((t) => (
@@ -693,13 +694,13 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
 
           {/* Ladder toggle */}
           <div className="flex items-end pb-1.5">
-            <label className="flex items-center gap-2 cursor-pointer select-none text-sanctuary-300">
+            <label className="flex items-center gap-2 cursor-pointer select-none text-sanctuary-300 min-h-11">
               <input
                 type="checkbox"
                 aria-label={isEn ? 'Ladder Only' : '只看天梯限定 (Ladder)'}
                 checked={onlyLadder}
                 onChange={(e) => setOnlyLadder(e.target.checked)}
-                className="rounded bg-sanctuary-950 border-sanctuary-700 text-d2-unique focus:ring-0"
+                className="w-5 h-5 rounded bg-sanctuary-950 border-sanctuary-700 text-d2-unique focus:ring-0"
               />
               <span>{isEn ? 'Ladder Only' : '天梯限定 (Ladder)'}</span>
             </label>
@@ -707,13 +708,13 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
 
           {/* DLC RotW toggle */}
           <div className="flex items-end pb-1.5">
-            <label className="flex items-center gap-2 cursor-pointer select-none text-d2-fire">
+            <label className="flex items-center gap-2 cursor-pointer select-none text-d2-fire min-h-11">
               <input
                 type="checkbox"
                 aria-label={isEn ? 'Reign of the Warlock (RotW)' : '只看術士軍臨 (RotW)'}
                 checked={onlyDLC}
                 onChange={(e) => setOnlyDLC(e.target.checked)}
-                className="rounded bg-sanctuary-950 border-sanctuary-700 text-d2-fire focus:ring-0"
+                className="w-5 h-5 rounded bg-sanctuary-950 border-sanctuary-700 text-d2-fire focus:ring-0"
               />
               <span>{isEn ? 'Reign of the Warlock (RotW)' : '術士軍臨 (RotW)'}</span>
             </label>
@@ -721,7 +722,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
 
           {/* S16 Patch 3.4 toggle */}
           <div className="flex items-end pb-1.5">
-            <label className="flex items-center gap-2 cursor-pointer select-none text-purple-300">
+            <label className="flex items-center gap-2 cursor-pointer select-none text-purple-300 min-h-11">
               <input
                 type="checkbox"
                 aria-label={isEn ? 'S16 Changes' : '只看 S16 改動'}
@@ -731,7 +732,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                   setOnlyS16(next);
                   if (next) setSel('all');
                 }}
-                className="rounded bg-sanctuary-950 border-sanctuary-700 text-purple-400 focus:ring-0"
+                className="w-5 h-5 rounded bg-sanctuary-950 border-sanctuary-700 text-purple-400 focus:ring-0"
               />
               <span>{isEn ? 'S16 Changes' : '只看 S16 改動'}</span>
             </label>
@@ -741,7 +742,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
           <div className="flex items-end">
             <button
               onClick={resetFilters}
-              className="w-full py-1.5 px-3 rounded bg-sanctuary-800 hover:bg-sanctuary-750 text-sanctuary-300 text-xs flex items-center justify-center gap-1.5 border border-sanctuary-700"
+              className="w-full min-h-11 px-3 rounded bg-sanctuary-800 hover:bg-sanctuary-750 text-sanctuary-300 text-xs flex items-center justify-center gap-1.5 border border-sanctuary-700"
             >
               <Filter className="w-3.5 h-3.5" />
               <span>{t('清除篩選', 'Reset')}</span>

@@ -76,7 +76,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
         </div>
 
         {/* Category Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 no-scrollbar self-start md:self-auto text-xs">
+        <div className="flex w-full min-w-0 max-w-full items-center gap-1.5 overflow-x-auto pb-2 no-scrollbar self-start md:self-auto text-xs">
           {categories.map((cat) => {
             const isActive = activeCategory === cat.id;
             return (
@@ -84,7 +84,7 @@ export const CubeLab: React.FC<CubeLabProps> = ({ onNavigateToRune }) => {
                 key={cat.id}
                 type="button"
                 onClick={() => setActiveCategory(cat.id as any)}
-                className={`px-3 py-1.5 rounded-lg font-medium shrink-0 transition-colors border cursor-pointer ${
+                className={`min-h-11 px-3 rounded-lg font-medium shrink-0 transition-colors border cursor-pointer ${
                   isActive
                     ? 'bg-sanctuary-800 text-d2-magic border-d2-magic/50 shadow'
                     : 'bg-sanctuary-950 text-sanctuary-400 border-sanctuary-800 hover:text-white'

@@ -728,7 +728,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         title={t('裝備寶典 (暗金 · 套裝 · 符文之語)', 'Equipment Codex (Uniques · Sets · Runewords)')}
         desc={t('收錄暗黑破壞神二代各部位指標性暗金裝備、全套套裝與經典符文之語，支援跨裝備特殊屬性（永不毀損、+全技能、全抗、MF 等）一鍵篩選。未選取特殊屬性時保留階層式分類樹。', 'Comprehensive codex of iconic Unique gear, complete Sets, and Runewords. Supports one-click cross-equipment filtering by key special properties (Indestructible, +All Skills, All Res, MF, etc.).')}
         right={
-          <div className="text-xs text-sanctuary-400 font-mono px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800 self-start shrink-0 whitespace-nowrap">
+          <div className="text-xs text-sanctuary-400 font-mono px-3 py-1.5 rounded-lg bg-sanctuary-900 border border-sanctuary-800 self-start max-w-full">
             {isCrossPropertyMode
               ? (isEn ? `Matched: ${filteredCrossItems.length} (Uniques ${rarityCounts.unique} · Sets ${rarityCounts.set} · Runewords ${rarityCounts.runeword})` : `跨裝備符合: ${filteredCrossItems.length} (暗金 ${rarityCounts.unique} · 套裝 ${rarityCounts.set} · 符文組 ${rarityCounts.runeword})`)
               : (isEn ? `Category: Uniques ${uHere.length} · Sets ${sHere.length}` : `目前分類：暗金 ${uHere.length} ・ 套裝 ${sHere.length}`)}
@@ -736,7 +736,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         }
       />
 
-      <div className="mb-5">
+      <div className="sticky top-14 z-30 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 py-2 mb-2 bg-sanctuary-950/95 backdrop-blur-md border-b border-sanctuary-800/70">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
           <div className="relative flex-1 min-w-0">
             <Search aria-hidden="true" className="w-4 h-4 text-sanctuary-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -746,10 +746,10 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t('搜尋名稱、底材或屬性', 'Search name, base, or affix')}
-              className="w-full bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-9 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
+              className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-12 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
             />
             {searchQuery && (
-              <button onClick={() => setSearchQuery('')} aria-label={isEn ? "Clear search" : "清除搜尋"} className="absolute right-3 top-1/2 -translate-y-1/2 text-sanctuary-400 hover:text-white">
+              <button onClick={() => setSearchQuery('')} aria-label={isEn ? "Clear search" : "清除搜尋"} className="absolute right-0 top-1/2 -translate-y-1/2 min-w-11 min-h-11 flex items-center justify-center text-sanctuary-400 hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             )}
@@ -764,7 +764,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
               });
             }}
             aria-pressed={onlyS16}
-            className={`shrink-0 px-3.5 py-2.5 rounded-lg border text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+            className={`shrink-0 min-h-11 px-3.5 rounded-lg border text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
               onlyS16
                 ? 'bg-purple-900/70 border-purple-400 text-purple-100 shadow-sm'
                 : 'bg-sanctuary-950 border-sanctuary-750 text-purple-300 hover:border-purple-500/60 hover:bg-purple-950/30'
@@ -775,13 +775,13 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
             <span>{t(`只看 S16 改動 (${s16TotalCount})`, `S16 Changes (${s16TotalCount})`)}</span>
           </button>
         </div>
-        <p className="mt-1.5 text-xs text-sanctuary-400">
+      </div>
+        <p className="mb-3 text-xs text-sanctuary-400">
           {t(
             '範例：軍帽、獅鷲、塔拉夏、精神、謎團、SOJ；索引數量會即時對應。',
             'Examples: Shako, Griffon, Tal Rasha, Spirit, Enigma, SOJ; tree counts update live.'
           )}
         </p>
-      </div>
 
       {/* 跨裝備特殊屬性篩選列：預設收合，展開時才掛載面板避免隱藏空的 heading */}
       <details
@@ -789,7 +789,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         open={isCrossOpen || selectedPropertyIds.length > 0 || selectedRarity !== 'all' || selectedSlot !== 'all'}
         onToggle={(e) => setIsCrossOpen((e.currentTarget as HTMLDetailsElement).open)}
       >
-        <summary className="cursor-pointer select-none rounded-xl border border-sanctuary-800 bg-sanctuary-900/60 px-4 py-2.5 text-sm text-sanctuary-200 hover:border-sanctuary-600">
+        <summary className="cursor-pointer select-none rounded-xl border border-sanctuary-800 bg-sanctuary-900/60 px-4 min-h-11 py-2.5 text-sm text-sanctuary-200 hover:border-sanctuary-600 flex items-center">
           {isEn ? 'Cross-item special property filter' : '跨裝備特殊屬性篩選（永不毀損、全技能、全抗、MF…）'}
           {(selectedPropertyIds.length > 0 || selectedRarity !== 'all' || selectedSlot !== 'all') && (
             <span className="ml-2 text-d2-unique">{isEn ? 'active' : '已套用'}</span>

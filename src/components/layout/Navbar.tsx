@@ -39,7 +39,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
         <a
           href={tabHref('overview')}
           onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); setActiveTab('overview'); }}
-          className="flex items-center gap-2.5 cursor-pointer group shrink-0"
+          className="flex items-center gap-2.5 cursor-pointer group shrink-0 min-h-11 min-w-11"
         >
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-d2-unique to-sanctuary-900 p-0.5 shadow-glow-gold flex items-center justify-center">
             <div className="w-full h-full bg-sanctuary-950 rounded-[7px] flex items-center justify-center">
@@ -85,7 +85,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenS
           {/* 全域搜尋按鈕 */}
           <button
             onClick={onOpenSearch}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-sanctuary-300 hover:text-sanctuary-100 text-xs transition-colors shadow-inner"
+            className="flex items-center justify-center gap-2 min-h-11 min-w-11 px-3 rounded-lg bg-sanctuary-900 hover:bg-sanctuary-850 border border-sanctuary-750 text-sanctuary-300 hover:text-sanctuary-100 text-xs transition-colors shadow-inner"
             title={t('按下 Q 或 / 鍵快速搜尋', 'Press Q or / to search')}
           >
             <Search className="w-3.5 h-3.5 text-sanctuary-400" />
