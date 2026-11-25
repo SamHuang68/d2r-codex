@@ -326,16 +326,20 @@ export const SectionHead: React.FC<{
     : `${title}${sub ? ` ${sub}` : ''}，${countText} 項`;
   return (
     <div id={id} className={`flex items-baseline justify-between gap-3 border-b border-sanctuary-800 pb-1.5 mb-3 scroll-mt-20`}>
-      <Tag aria-label={ariaLabel} className={`font-diablo font-bold min-w-0 ${level === 2 ? 'text-lg' : 'text-base'} ${TONE[tone].text}`}>
-        <span>{title}</span>
-        {sub && <>{' '}<span className="ml-1.5 text-[11px] font-mono font-normal text-sanctuary-400">{sub}</span></>}
-        {' '}
-        <span className="ml-1.5 text-xs font-mono font-normal text-sanctuary-400">
+      {/* title／sub／count 各自為不可拆的單位：標題過長時省略並以 title 屬性顯示全文，英文副標次之，數量永不縮 */}
+      <Tag aria-label={ariaLabel} className={`flex items-baseline gap-x-1.5 min-w-0 font-diablo font-bold ${level === 2 ? 'text-lg' : 'text-base'} ${TONE[tone].text}`}>
+        <span className="min-w-0 truncate whitespace-nowrap" title={title}>{title}</span>
+        {sub && (
+          <span className="min-w-0 truncate whitespace-nowrap shrink-[2] text-[11px] font-mono font-normal text-sanctuary-400" title={sub}>
+            {sub}
+          </span>
+        )}
+        <span className="shrink-0 whitespace-nowrap text-xs font-mono font-normal tabular-nums text-sanctuary-400">
           {countText}
         </span>
       </Tag>
       {onOpen && (
-        <button type="button" onClick={onOpen} className="shrink-0 text-xs text-sanctuary-300 hover:text-white hover:underline">
+        <button type="button" onClick={onOpen} className="shrink-0 whitespace-nowrap text-xs text-sanctuary-300 hover:text-white hover:underline">
           {openLabel} →
         </button>
       )}

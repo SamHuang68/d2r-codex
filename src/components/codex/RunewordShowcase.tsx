@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { ItemIcon } from '../common/ItemIcon';
 import { BASE_ITEMS_DATA } from '../../data/bases';
 import { RUNE_BY_NUMBER } from '../../data/runes';
@@ -343,6 +343,10 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
   },
 ];
 
+// 分頁標籤：nowrap 不拆字；窄螢幕縮 padding 並保留約 44px 觸控高度
+const TAB_BASE_CLASS =
+  'shrink-0 whitespace-nowrap min-h-[44px] sm:min-h-[36px] px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5';
+
 export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
   onSelectRuneword,
   onNavigateToRune,
@@ -350,7 +354,18 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
 }) => {
   const { isEn } = useLanguage();
   const [activeTab, setActiveTab] = useState<'all' | 'iconic' | 'starter'>('all');
-  const [isExpanded, setIsExpanded] = useState<boolean>(true);
+  // 預設收合：只顯示頂欄（標題、分頁、切換鈕），使用者主動展開才渲染八張卡片
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const panelId = `runeword-showcase-panel-${useId().replace(/:/g, '')}`;
+  const toggleLabel = isExpanded
+    ? (isEn ? 'Collapse Showcase' : '收合展廳')
+    : (isEn ? 'Expand Showcase' : '展開展廳');
+
+  // 收合狀態下點選分頁，視為想看該分類 → 一併展開
+  const selectTab = (tab: 'all' | 'iconic' | 'starter') => {
+    setActiveTab(tab);
+    setIsExpanded(true);
+  };
 
   const filteredItems = SHOWCASE_ITEMS.filter((item) => {
     if (activeTab === 'iconic') return item.category === 'iconic';
@@ -408,20 +423,29 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
   return (
     <div className="mb-8 rounded-3xl bg-sanctuary-900/80 border border-sanctuary-800 shadow-2xl overflow-hidden transition-all duration-300">
       {/* 展廳頂部導航列 */}
-      <div className="p-4 sm:p-5 border-b border-sanctuary-800/80 bg-gradient-to-r from-sanctuary-950 via-sanctuary-900 to-sanctuary-950 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+      {/* flex-wrap：標題區優先佔寬（basis 32rem），放不下時控制列整列換到下一行，不擠壓標題 */}
+      <div className="p-4 sm:p-5 border-b border-sanctuary-800/80 bg-gradient-to-r from-sanctuary-950 via-sanctuary-900 to-sanctuary-950 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3 min-w-0 grow basis-full lg:basis-[32rem]">
           <div className="w-10 h-10 rounded-xl bg-d2-gold/10 border border-d2-gold/30 flex items-center justify-center shrink-0 shadow-glow-gold/20">
             <Zap className="w-5 h-5 text-d2-gold animate-pulse" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="font-diablo text-lg sm:text-xl font-bold text-sanctuary-100 flex items-center gap-2">
-                <span>{isEn ? 'Runeword Hall of Fame & Inscription Orders' : '符文之語殿堂神裝與拓荒神器展廳'}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-d2-gold/20 text-d2-gold border border-d2-gold/40 font-mono font-bold">
-                  HALL OF RUNES
+          <div className="min-w-0 flex-1">
+            {/* 標題與徽章為兩個 flex-wrap 單位：徽章 nowrap 不可拆，空間不足整顆換到標題下一行 */}
+            <h2 className="font-diablo text-base sm:text-lg font-bold text-sanctuary-100 flex flex-wrap items-center gap-x-2 gap-y-1 leading-snug">
+              {isEn ? (
+                <span className="min-w-0 [text-wrap:balance]">Runeword Hall of Fame &amp; Inscription Orders</span>
+              ) : (
+                // 中文以詞組為單位 nowrap，只允許在「殿堂」與「神裝」之間換行，避免把「拓荒」拆開
+                <span className="min-w-0">
+                  <span className="whitespace-nowrap">符文之語殿堂</span>
+                  <wbr />
+                  <span className="whitespace-nowrap">神裝與拓荒神器展廳</span>
                 </span>
-              </h2>
-            </div>
+              )}
+              <span className="text-[10px] leading-none px-2 py-1 rounded-full bg-d2-gold/20 text-d2-gold border border-d2-gold/40 font-mono font-bold whitespace-nowrap shrink-0">
+                HALL OF RUNES
+              </span>
+            </h2>
             <p className="text-xs text-sanctuary-400 mt-0.5">
               {isEn
                 ? 'Iconic Big Four endgame runewords & MVP starter gears. Inscription sockets order visualized.'
@@ -431,65 +455,76 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
         </div>
 
         {/* 控制項：分類切換分頁與展開/收合按鈕 */}
-        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
-          <div className="inline-flex rounded-xl border border-sanctuary-750 bg-sanctuary-950 p-1 text-xs" role="tablist">
+        {/* 窄螢幕：分頁列可橫向滑動（標籤一律 nowrap 不拆字），切換鈕固定在右側 */}
+        <div className="flex items-center gap-2 min-w-0 max-w-full w-full lg:w-auto shrink-0 justify-end">
+          <div
+            className="flex min-w-0 overflow-x-auto overscroll-x-contain rounded-xl border border-sanctuary-750 bg-sanctuary-950 p-1 text-xs"
+            role="tablist"
+            aria-label={isEn ? 'Showcase categories' : '展廳分類'}
+          >
             <button
               type="button"
               role="tab"
               aria-selected={activeTab === 'all'}
-              onClick={() => setActiveTab('all')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 ${
+              aria-controls={panelId}
+              onClick={() => selectTab('all')}
+              className={`${TAB_BASE_CLASS} ${
                 activeTab === 'all'
                   ? 'bg-sanctuary-800 text-d2-unique font-bold shadow'
                   : 'text-sanctuary-400 hover:text-sanctuary-100'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
               <span>{isEn ? 'All (8)' : '全部展廳 (8)'}</span>
             </button>
             <button
               type="button"
               role="tab"
               aria-selected={activeTab === 'iconic'}
-              onClick={() => setActiveTab('iconic')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 ${
+              aria-controls={panelId}
+              onClick={() => selectTab('iconic')}
+              className={`${TAB_BASE_CLASS} ${
                 activeTab === 'iconic'
                   ? 'bg-amber-950/80 text-amber-300 border border-amber-600/50 font-bold shadow'
                   : 'text-sanctuary-400 hover:text-sanctuary-100'
               }`}
             >
-              <Crown className="w-3.5 h-3.5 text-d2-gold" />
+              <Crown className="w-3.5 h-3.5 text-d2-gold shrink-0" />
               <span>{isEn ? 'Endgame Big 4' : '四大終極信仰'}</span>
             </button>
             <button
               type="button"
               role="tab"
               aria-selected={activeTab === 'starter'}
-              onClick={() => setActiveTab('starter')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 ${
+              aria-controls={panelId}
+              onClick={() => selectTab('starter')}
+              className={`${TAB_BASE_CLASS} ${
                 activeTab === 'starter'
                   ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-600/50 font-bold shadow'
                   : 'text-sanctuary-400 hover:text-sanctuary-100'
               }`}
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
               <span>{isEn ? 'Starter MVPs' : '四大平民拓荒'}</span>
             </button>
           </div>
 
           <button
             type="button"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 rounded-xl bg-sanctuary-950 border border-sanctuary-750 text-sanctuary-400 hover:text-white transition-colors"
-            title={isExpanded ? (isEn ? 'Collapse Showcase' : '收合展廳') : (isEn ? 'Expand Showcase' : '展開展廳')}
-            aria-label={isExpanded ? (isEn ? 'Collapse Showcase' : '收合展廳') : (isEn ? 'Expand Showcase' : '展開展廳')}
+            onClick={() => setIsExpanded((prev) => !prev)}
+            aria-expanded={isExpanded}
+            aria-controls={panelId}
+            className="shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-sanctuary-950 border border-sanctuary-750 text-sanctuary-400 hover:text-white transition-colors"
+            title={toggleLabel}
+            aria-label={toggleLabel}
           >
-            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {isExpanded ? <ChevronUp className="w-4 h-4" aria-hidden="true" /> : <ChevronDown className="w-4 h-4" aria-hidden="true" />}
           </button>
         </div>
       </div>
 
-      {/* 展廳內容主體 */}
+      {/* 展廳內容主體：容器常駐（供 aria-controls 指向），收合時不渲染卡片 */}
+      <div id={panelId} role="region" aria-label={isEn ? 'Runeword Hall of Fame' : '符文之語殿堂展廳'} hidden={!isExpanded}>
       {isExpanded && (
         <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 bg-sanctuary-950/50">
           {filteredItems.map((item) => {
@@ -505,7 +540,8 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
                 <div>
                   {/* 卡片標題與代表裝備圖標 */}
                   {/* 徽章放進可換行的標題列（不再與標題搶同一列的固定寬度）：窄卡片時自動換到標題下一行，不會被卡片邊緣裁掉或壓到標題 */}
-                  <div className="flex items-start gap-3 pb-3 border-b border-sanctuary-800">
+                  <div className="pb-3 border-b border-sanctuary-800">
+                  <div className="flex items-start gap-3">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <ItemIcon
                         {...baseImg(item.baseRepEn)}
@@ -525,21 +561,28 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
                             {item.category === 'iconic' ? (isEn ? 'ENDGAME' : '終極神裝') : (isEn ? 'STARTER' : '平民神器')}
                           </span>
                           {!isEn && item.nameEn && (
-                            <span className="text-xs text-sanctuary-400 font-mono italic">
+                            <span className="text-xs text-sanctuary-400 font-mono italic whitespace-nowrap">
                               ({item.nameEn})
                             </span>
                           )}
                           {item.alias && !isEn && (
-                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-sanctuary-800 text-sanctuary-300 font-medium">
+                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-sanctuary-800 text-sanctuary-300 font-medium whitespace-nowrap">
                               俗稱 {item.alias}
                             </span>
                           )}
                         </div>
-                        <div className="text-[11px] text-sanctuary-400 font-mono mt-0.5">
-                          {isEn ? item.allowedBasesEn : item.allowedBasesZh} • Lv {item.reqLevel}
-                        </div>
                       </div>
                     </div>
+                  </div>
+                  {/* 短 meta 列移到圖示下方佔滿卡片寬度（窄四欄時不再被擠成 "Body / Armor (3 / Sockets)"）；
+                      底材與等級各為 nowrap 單位，仍放不下時底材以 ellipsis 截斷，title 顯示全文 */}
+                  <div
+                    className="flex items-center gap-x-1.5 min-w-0 text-[11px] text-sanctuary-400 font-mono mt-2"
+                    title={`${isEn ? item.allowedBasesEn : item.allowedBasesZh} • Lv ${item.reqLevel}`}
+                  >
+                    <span className="min-w-0 truncate">{isEn ? item.allowedBasesEn : item.allowedBasesZh}</span>
+                    <span className="shrink-0 whitespace-nowrap">• Lv {item.reqLevel}</span>
+                  </div>
                   </div>
 
                   {/* 特色亮點標籤與引言 */}
@@ -564,9 +607,14 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
 
                   {/* 核心符文插槽依序排列 (Inscription Sockets Bar) */}
                   <div className="my-3 p-2.5 rounded-xl bg-sanctuary-950/90 border border-sanctuary-800/80 shadow-inner">
-                    <div className="text-[10px] text-sanctuary-400 font-mono mb-2 flex items-center justify-between">
-                      <span>{isEn ? `${item.sockets} Inscription Sockets Order:` : `${item.sockets} 孔符文鑲嵌插槽順序：`}</span>
-                      <span className="text-[9px] text-d2-gold">{isEn ? 'Strict Order' : '嚴格順序'}</span>
+                    <div className="text-[10px] text-sanctuary-400 font-mono mb-2 flex items-center justify-between gap-2 min-w-0">
+                      <span
+                        className="min-w-0 truncate"
+                        title={isEn ? `${item.sockets} Inscription Sockets Order` : `${item.sockets} 孔符文鑲嵌插槽順序`}
+                      >
+                        {isEn ? `${item.sockets} Inscription Sockets Order:` : `${item.sockets} 孔符文鑲嵌插槽順序：`}
+                      </span>
+                      <span className="text-[9px] text-d2-gold shrink-0 whitespace-nowrap">{isEn ? 'Strict Order' : '嚴格順序'}</span>
                     </div>
                     <div className="flex items-center gap-1.5 flex-wrap">
                       {item.runes.map((rune, idx) => {
@@ -626,8 +674,8 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
 
                 {/* 底部首選底材與操作列 */}
                 <div className="pt-3 border-t border-sanctuary-800/80 space-y-2">
-                  <div className="flex items-center justify-between text-[11px] font-mono">
-                    <span className="text-sanctuary-400">{isEn ? 'BiS Base:' : '首選底材：'}</span>
+                  <div className="flex items-center justify-between gap-2 min-w-0 text-[11px] font-mono">
+                    <span className="text-sanctuary-400 shrink-0 whitespace-nowrap">{isEn ? 'BiS Base:' : '首選底材：'}</span>
                     <button
                       type="button"
                       onClick={() => onNavigateToBase?.(item.recommendedBase.split('/')[0].trim())}
@@ -652,6 +700,7 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
           })}
         </div>
       )}
+      </div>
     </div>
   );
 };

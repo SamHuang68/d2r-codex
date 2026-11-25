@@ -361,16 +361,16 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
         <div>
           {/* Header: Title & Runes Badges */}
           <div className="flex items-start justify-between gap-3 pb-3 border-b border-sanctuary-850">
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3 min-w-0">
               <ItemIcon
                 {...repFor(rw.allowedBases)}
                 rarity="runeword"
                 size="lg"
                 imageUrl={rw.imageUrl || repFor(rw.allowedBases).imageUrl}
               />
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-diablo text-lg font-bold text-d2-unique group-hover:text-amber-300 transition-colors">
+              <div className="min-w-0">
+                <div className="flex items-center gap-x-2 gap-y-0.5 flex-wrap">
+                  <h3 className="font-diablo text-lg font-bold text-d2-unique group-hover:text-amber-300 transition-colors break-normal">
                     <a
                       href={pathForTab('runewords', rw.id)}
                       onClick={(e) => { if (!onOpenItem || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenItem(rw.id); }}
@@ -380,13 +380,14 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                     </a>
                   </h3>
                   {!isEn && rw.nameEn && (
-                    <span className="text-xs text-sanctuary-400 font-mono italic">
+                    <span className="text-xs text-sanctuary-400 font-mono italic whitespace-nowrap">
                       {rw.nameEn}
                     </span>
                   )}
                 </div>
+                {/* 短數值列：等級／孔數為不可拆單位，每個底材名稱 nowrap，只在底材之間換行 */}
                 <div className="text-xs text-sanctuary-300 mt-1 flex items-center gap-1.5 flex-wrap">
-                  <span>{isEn ? 'Req Level:' : '需求等級:'} <strong className="text-sanctuary-100">{rw.requiredLevel}</strong> • {rw.sockets} {isEn ? 'Sockets' : '孔'}</span>
+                  <span className="whitespace-nowrap">{isEn ? 'Req Level:' : '需求等級:'} <strong className="text-sanctuary-100">{rw.requiredLevel}</strong> • {rw.sockets} {isEn ? 'Sockets' : '孔'}</span>
                   <span>(</span>
                   {rw.allowedBases.map((base, bIdx) => (
                     <React.Fragment key={bIdx}>
@@ -397,7 +398,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                           e.stopPropagation();
                           onNavigateToBase?.(base);
                         }}
-                        className="text-sanctuary-300 hover:text-d2-socket hover:underline cursor-pointer transition-colors"
+                        className="text-sanctuary-300 hover:text-d2-socket hover:underline cursor-pointer transition-colors whitespace-nowrap"
                         title={isEn ? `Click to view [${base}] Runeword Base Guide` : `點擊查看【${base}】頂級符文底材指南`}
                       >
                         {isEn && rw.allowedBasesEn?.[bIdx] ? rw.allowedBasesEn[bIdx] : base}
@@ -412,17 +413,17 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
             {/* Badges */}
             <div className="flex flex-col items-end gap-1 shrink-0">
               {patch34 && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-purple-900/60 text-purple-200 border border-purple-500/40 font-semibold font-mono">
+                <span className="text-[10px] px-2 py-0.5 rounded bg-purple-900/60 text-purple-200 border border-purple-500/40 font-semibold font-mono whitespace-nowrap">
                   {isEn ? 'S16 Preview' : 'S16 改動預覽'}
                 </span>
               )}
               {rw.isNewDLC && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-d2-fire/20 text-d2-fire border border-d2-fire/40 font-bold font-mono">
+                <span className="text-[10px] px-2 py-0.5 rounded bg-d2-fire/20 text-d2-fire border border-d2-fire/40 font-bold font-mono whitespace-nowrap">
                   RotW DLC
                 </span>
               )}
               {rw.ladderOnly && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-medium">
+                <span className="text-[10px] px-2 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-medium whitespace-nowrap">
                   {isEn ? 'Ladder Only' : '天梯限定'}
                 </span>
               )}
@@ -431,12 +432,13 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
 
                 {/* Rune Inscription Sockets Sequence */}
                 <div className="my-3 p-3 rounded-xl bg-sanctuary-950/90 border border-sanctuary-800 shadow-inner">
-                  <div className="flex items-center justify-between text-xs text-sanctuary-400 font-mono mb-2">
-                    <span className="flex items-center gap-1.5 font-bold text-d2-rune">
-                      <Sparkles className="w-3.5 h-3.5 text-d2-rune" />
+                  {/* 兩段提示各自 nowrap；放不下時右側提示整段換到下一行 */}
+                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-sanctuary-400 font-mono mb-2">
+                    <span className="flex items-center gap-1.5 font-bold text-d2-rune whitespace-nowrap">
+                      <Sparkles className="w-3.5 h-3.5 text-d2-rune shrink-0" />
                       {isEn ? 'Socket Inscription Order:' : '符文鑲嵌槽位先後順序：'}
                     </span>
-                    <span className="text-[10px] text-amber-500/80 font-mono">
+                    <span className="text-[10px] text-amber-500/80 font-mono whitespace-nowrap">
                       {isEn ? '⚠ Strict Order Required' : '⚠ 必須依序鑲嵌・順序錯誤無法成形'}
                     </span>
                   </div>
@@ -465,7 +467,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                             #{i + 1}
                           </span>
                           <ItemIcon runeNumber={runeNum} name={runeZh} nameEn={runeEn} size="sm" showBorder={false} />
-                          <span className="text-[11px] font-mono font-bold text-d2-rune group-hover/rune:text-white leading-none mt-0.5">
+                          <span className="text-[11px] font-mono font-bold text-d2-rune group-hover/rune:text-white leading-none mt-0.5 whitespace-nowrap">
                             {runeNum}# {isEn ? runeEn : `${runeZh} (${runeEn})`}
                           </span>
                         </button>
@@ -514,14 +516,17 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               {/* Recommended Bases & Tags Footer */}
               <div className="mt-4 pt-3 border-t border-sanctuary-850/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-sanctuary-400">
                 {rw.recommendedBases ? (
-                  <div className="truncate">
+                  <div
+                    className="truncate min-w-0"
+                    title={`${isEn ? 'Recommended Bases: ' : '推薦底材：'}${isEn && rw.id === 'hustle' ? 'Phase Blade / Archon Plate / Dusk Shroud' : rw.recommendedBases}`}
+                  >
                     <strong className="text-sanctuary-300">{isEn ? 'Recommended Bases: ' : '推薦底材：'}</strong>
                     <span className="text-d2-white font-medium">{isEn && rw.id === 'hustle' ? 'Phase Blade / Archon Plate / Dusk Shroud' : rw.recommendedBases}</span>
                   </div>
                 ) : <div />}
                 <div className="flex items-center gap-1 flex-wrap shrink-0">
                   {rw.tags.map((t, i) => (
-                    <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-sanctuary-900 text-sanctuary-400 border border-sanctuary-800">
+                    <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-sanctuary-900 text-sanctuary-400 border border-sanctuary-800 whitespace-nowrap">
                       #{isEn ? ({ '攻速': 'IAS', '靈氣': 'Aura', '跑步速度': 'FRW', '打擊恢復': 'FHR' } as Record<string, string>)[t] ?? t : t}
                     </span>
                   ))}
@@ -565,7 +570,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                         e.preventDefault();
                         handleBackToList('all');
                       }}
-                      className="hover:text-d2-rune hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold"
+                      className="whitespace-nowrap hover:text-d2-rune hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold"
                     >
                       {c.label}
                     </a>
@@ -573,7 +578,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                     <button
                       type="button"
                       onClick={() => handleBackToList(c.id)}
-                      className="hover:text-d2-rune hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold"
+                      className="whitespace-nowrap hover:text-d2-rune hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold"
                     >
                       {c.label}
                     </button>
@@ -581,7 +586,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                 </React.Fragment>
               ))}
               <span aria-hidden="true">›</span>
-              <span aria-current="page" className="text-sanctuary-200 font-semibold">
+              <span aria-current="page" className="whitespace-nowrap text-sanctuary-200 font-semibold">
                 {isEn ? detailRw.nameEn : detailRw.name}
               </span>
             </nav>
@@ -593,14 +598,22 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                 e.preventDefault();
                 handleBackToList('all');
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sanctuary-950 border border-sanctuary-700 hover:border-d2-rune text-xs text-sanctuary-200 hover:text-d2-rune transition-colors"
+              className="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sanctuary-950 border border-sanctuary-700 hover:border-d2-rune text-xs text-sanctuary-200 hover:text-d2-rune transition-colors"
             >
               ← {t('回到清單', 'Back to list')}
             </a>
           </div>
 
-          <h1 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-unique">
-            {isEn ? detailRw.nameEn : `${detailRw.name} ${detailRw.nameEn}`}
+          <h1 className="font-diablo text-2xl sm:text-3xl font-bold text-d2-unique flex flex-wrap items-baseline gap-x-3">
+            {isEn ? (
+              detailRw.nameEn
+            ) : (
+              <>
+                {/* 中文名不在字中間斷；英文名較長，維持在空白處換行，避免 390px 溢出 */}
+                <span className="whitespace-nowrap">{detailRw.name}</span>
+                <span className="min-w-0">{detailRw.nameEn}</span>
+              </>
+            )}
           </h1>
 
           <FactGrid

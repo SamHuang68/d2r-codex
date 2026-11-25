@@ -17,6 +17,9 @@ export interface CrossItemCardProps {
 import { CLASS_ZH_TO_EN } from '../../engine/slots';
 const CLASS_NAME_EN = CLASS_ZH_TO_EN;
 
+// 短徽章／短數值單位：一律不拆行（只在單位之間換行）
+const NOWRAP = 'whitespace-nowrap';
+
 export const CrossItemCard: React.FC<CrossItemCardProps> = ({
   item,
   activePropertyDefs = [],
@@ -39,7 +42,7 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
         <div>
           {/* 標題列 */}
           <div className="flex items-start justify-between gap-3 border-b border-sanctuary-850 pb-3 mb-3">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               <ItemIcon
                 name={item.name}
                 nameEn={item.nameEn}
@@ -49,19 +52,19 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
                 size="md"
                 imageUrl={item.imageUrl}
               />
-              <div>
+              <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h4 className="font-diablo text-base font-bold text-d2-unique group-hover:text-amber-300 transition-colors">
+                  <h4 className="font-diablo text-base font-bold text-d2-unique group-hover:text-amber-300 transition-colors break-normal">
                     {isEn && item.nameEn ? item.nameEn : item.name}
                   </h4>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-mono">
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-mono shrink-0 ${NOWRAP}`}>
                     {isEn ? 'Unique' : '暗金'}
                   </span>
                 </div>
                 <div className="text-xs text-sanctuary-400 font-mono italic">
                   {isEn && item.nameEn ? item.name : item.nameEn}
                   {item.nameClassic && item.nameClassic !== item.name && (
-                    <span className="text-sanctuary-500 font-sans ml-1">
+                    <span className={`text-sanctuary-500 font-sans ml-1 ${NOWRAP}`}>
                       (舊譯: {item.nameClassic})
                     </span>
                   )}
@@ -72,54 +75,54 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
             {/* 標籤 Badge */}
             <div className="flex flex-col items-end gap-1 shrink-0">
               {patch34 && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-purple-900/60 text-purple-200 border border-purple-500/40 font-semibold font-mono">
+                <span className={`text-[10px] px-2 py-0.5 rounded bg-purple-900/60 text-purple-200 border border-purple-500/40 font-semibold font-mono ${NOWRAP}`}>
                   {isEn ? 'S16 Preview' : 'S16 改動預覽'}
                 </span>
               )}
               {item.isNewDLC && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-d2-fire/20 text-d2-fire border border-d2-fire/40 font-bold font-mono">
+                <span className={`text-[10px] px-2 py-0.5 rounded bg-d2-fire/20 text-d2-fire border border-d2-fire/40 font-bold font-mono ${NOWRAP}`}>
                   RotW DLC
                 </span>
               )}
               {item.ladderOnly && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-medium">
+                <span className={`text-[10px] px-2 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-medium ${NOWRAP}`}>
                   {isEn ? 'Ladder Only' : '天梯限定'}
                 </span>
               )}
               {item.classOnly && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-sanctuary-900 text-d2-magic border border-d2-magic/30 font-medium">
+                <span className={`text-[10px] px-2 py-0.5 rounded bg-sanctuary-900 text-d2-magic border border-d2-magic/30 font-medium ${NOWRAP}`}>
                   {isEn ? `${CLASS_NAME_EN[item.classOnly] || item.classOnly} Only` : `${item.classOnly}專用`}
                 </span>
               )}
             </div>
           </div>
 
-          {/* 底材與需求等級 */}
-          <div className="text-xs text-sanctuary-400 mb-3 flex items-center gap-2 flex-wrap font-medium">
-            <span className="text-sanctuary-300 font-semibold">{isEn && item.slotLabelEn ? item.slotLabelEn : item.slotLabel}</span>
-            <span>•</span>
+          {/* 底材與需求等級：每個片段 nowrap，只在片段之間換行 */}
+          <div className="text-xs text-sanctuary-400 mb-3 flex items-center gap-x-2 gap-y-1 flex-wrap font-medium">
+            <span className={`text-sanctuary-300 font-semibold ${NOWRAP}`}>{isEn && item.slotLabelEn ? item.slotLabelEn : item.slotLabel}</span>
+            <span aria-hidden="true">•</span>
             {onNavigateToBase ? (
               <button
                 type="button"
                 onClick={() => onNavigateToBase(item.baseItem)}
-                className="hover:text-d2-socket hover:underline cursor-pointer transition-colors inline-flex items-center gap-0.5"
+                className={`hover:text-d2-socket hover:underline cursor-pointer transition-colors inline-flex items-center gap-0.5 ${NOWRAP}`}
                 title={isEn ? `View "${item.baseItemEn || item.baseItem}" base info` : `查看【${item.baseItem}】底材資料`}
               >
                 <span>{isEn && item.baseItemEn ? item.baseItemEn : item.baseItem}</span>
                 <span className="text-[9px] text-d2-socket">↗</span>
               </button>
             ) : (
-              <span>{isEn && item.baseItemEn ? item.baseItemEn : item.baseItem}</span>
+              <span className={NOWRAP}>{isEn && item.baseItemEn ? item.baseItemEn : item.baseItem}</span>
             )}
-            <span>•</span>
-            <span>
+            <span aria-hidden="true">•</span>
+            <span className={NOWRAP}>
               {isEn ? 'Req Level:' : '需求等級:'} <strong className="text-sanctuary-100">{item.requiredLevel}</strong>
             </span>
             {item.requiredStr ? (
-              <span>{isEn ? 'Str:' : '力量:'} <strong className="text-sanctuary-200">{item.requiredStr}</strong></span>
+              <span className={NOWRAP}>{isEn ? 'Str:' : '力量:'} <strong className="text-sanctuary-200">{item.requiredStr}</strong></span>
             ) : null}
             {item.requiredDex ? (
-              <span>{isEn ? 'Dex:' : '敏捷:'} <strong className="text-sanctuary-200">{item.requiredDex}</strong></span>
+              <span className={NOWRAP}>{isEn ? 'Dex:' : '敏捷:'} <strong className="text-sanctuary-200">{item.requiredDex}</strong></span>
             ) : null}
           </div>
 
@@ -164,7 +167,7 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
         <div>
           {/* 標題列 */}
           <div className="flex items-start justify-between gap-3 border-b border-sanctuary-850 pb-3 mb-3">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               <ItemIcon
                 name={item.name}
                 nameEn={item.nameEn}
@@ -174,12 +177,12 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
                 size="md"
                 imageUrl={item.imageUrl}
               />
-              <div>
+              <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h4 className="font-diablo text-base font-bold text-d2-set group-hover:text-green-300 transition-colors">
+                  <h4 className="font-diablo text-base font-bold text-d2-set group-hover:text-green-300 transition-colors break-normal">
                     {isEn && item.nameEn ? item.nameEn : item.name}
                   </h4>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-d2-set/20 text-d2-set border border-d2-set/40 font-mono">
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded bg-d2-set/20 text-d2-set border border-d2-set/40 font-mono shrink-0 ${NOWRAP}`}>
                     {isEn ? 'Set Piece' : '套裝配件'}
                   </span>
                 </div>
@@ -197,44 +200,44 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
             {/* 專用標籤 */}
             <div className="flex flex-col items-end gap-1 shrink-0">
               {patch34 && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-purple-900/60 text-purple-200 border border-purple-500/40 font-semibold font-mono">
+                <span className={`text-[10px] px-2 py-0.5 rounded bg-purple-900/60 text-purple-200 border border-purple-500/40 font-semibold font-mono ${NOWRAP}`}>
                   {isEn ? 'S16 Preview' : 'S16 改動預覽'}
                 </span>
               )}
               {item.classOnly && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-sanctuary-900 text-d2-set border border-d2-set/30 font-medium">
+                <span className={`text-[10px] px-2 py-0.5 rounded bg-sanctuary-900 text-d2-set border border-d2-set/30 font-medium ${NOWRAP}`}>
                   {isEn ? `${CLASS_NAME_EN[item.classOnly] || item.classOnly} Only` : `${item.classOnly}專用`}
                 </span>
               )}
             </div>
           </div>
 
-          {/* 底材與需求等級 */}
-          <div className="text-xs text-sanctuary-400 mb-3 flex items-center gap-2 flex-wrap font-medium">
-            <span className="text-sanctuary-300 font-semibold">{isEn && item.slotLabelEn ? item.slotLabelEn : item.slotLabel}</span>
-            <span>•</span>
+          {/* 底材與需求等級：每個片段 nowrap，只在片段之間換行 */}
+          <div className="text-xs text-sanctuary-400 mb-3 flex items-center gap-x-2 gap-y-1 flex-wrap font-medium">
+            <span className={`text-sanctuary-300 font-semibold ${NOWRAP}`}>{isEn && item.slotLabelEn ? item.slotLabelEn : item.slotLabel}</span>
+            <span aria-hidden="true">•</span>
             {onNavigateToBase ? (
               <button
                 type="button"
                 onClick={() => onNavigateToBase(item.baseItem)}
-                className="hover:text-d2-socket hover:underline cursor-pointer transition-colors inline-flex items-center gap-0.5"
+                className={`hover:text-d2-socket hover:underline cursor-pointer transition-colors inline-flex items-center gap-0.5 ${NOWRAP}`}
                 title={`查看【${item.baseItem}】底材資料`}
               >
                 <span>{item.baseItem}</span>
                 <span className="text-[9px] text-d2-socket">↗</span>
               </button>
             ) : (
-              <span>{item.baseItem}</span>
+              <span className={NOWRAP}>{item.baseItem}</span>
             )}
-            <span>•</span>
-            <span>
+            <span aria-hidden="true">•</span>
+            <span className={NOWRAP}>
               {isEn ? 'Req Level:' : '需求等級:'} <strong className="text-sanctuary-100">{item.requiredLevel}</strong>
             </span>
             {item.requiredStr ? (
-              <span>{isEn ? 'Str:' : '力量:'} <strong className="text-sanctuary-200">{item.requiredStr}</strong></span>
+              <span className={NOWRAP}>{isEn ? 'Str:' : '力量:'} <strong className="text-sanctuary-200">{item.requiredStr}</strong></span>
             ) : null}
             {item.requiredDex ? (
-              <span>{isEn ? 'Dex:' : '敏捷:'} <strong className="text-sanctuary-200">{item.requiredDex}</strong></span>
+              <span className={NOWRAP}>{isEn ? 'Dex:' : '敏捷:'} <strong className="text-sanctuary-200">{item.requiredDex}</strong></span>
             ) : null}
           </div>
 
@@ -273,12 +276,13 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
   }
 
   // 3. 符文之語卡片 (Runeword)
+  const allowedBasesText = `${isEn ? 'Allowed Bases: ' : '適用底材: '}${isEn && item.baseItemEn ? item.baseItemEn : item.baseItem}`;
   return (
     <div className={`bg-sanctuary-950 border border-sanctuary-800 hover:border-d2-rune/60 rounded-xl p-4 sm:p-5 shadow-lg transition-all flex flex-col justify-between group ${patch34 ? 'xl:col-span-2' : ''}`}>
       <div>
         {/* 標題列 */}
         <div className="flex items-start justify-between gap-3 border-b border-sanctuary-850 pb-3 mb-3">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <ItemIcon
               name={item.name}
               nameEn={item.nameEn}
@@ -287,19 +291,19 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
               size="md"
               imageUrl={item.imageUrl}
             />
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h4 className="font-diablo text-base font-bold text-d2-unique group-hover:text-amber-300 transition-colors">
+                <h4 className="font-diablo text-base font-bold text-d2-unique group-hover:text-amber-300 transition-colors break-normal">
                   {isEn && item.nameEn ? item.nameEn : item.name}
                 </h4>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-d2-rune/20 text-d2-rune border border-d2-rune/40 font-mono font-semibold">
+                <span className={`text-[10px] px-1.5 py-0.5 rounded bg-d2-rune/20 text-d2-rune border border-d2-rune/40 font-mono font-semibold shrink-0 ${NOWRAP}`}>
                   {isEn ? `Runeword (${item.sockets} Sockets)` : `符文之語 (${item.sockets} 孔)`}
                 </span>
               </div>
               <div className="text-xs text-sanctuary-400 font-mono italic">
                 {isEn && item.nameEn ? item.name : item.nameEn}
                 {item.nameClassic && item.nameClassic !== item.name && (
-                  <span className="text-sanctuary-500 font-sans ml-1">
+                  <span className={`text-sanctuary-500 font-sans ml-1 ${NOWRAP}`}>
                     (舊譯: {item.nameClassic})
                   </span>
                 )}
@@ -310,38 +314,38 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
           {/* 標籤 Badge */}
           <div className="flex flex-col items-end gap-1 shrink-0">
             {patch34 && (
-              <span className="text-[10px] px-2 py-0.5 rounded bg-purple-900/60 text-purple-200 border border-purple-500/40 font-semibold font-mono">
+              <span className={`text-[10px] px-2 py-0.5 rounded bg-purple-900/60 text-purple-200 border border-purple-500/40 font-semibold font-mono ${NOWRAP}`}>
                 {isEn ? 'S16 Preview' : 'S16 改動預覽'}
               </span>
             )}
             {item.isNewDLC && (
-              <span className="text-[10px] px-2 py-0.5 rounded bg-d2-fire/20 text-d2-fire border border-d2-fire/40 font-bold font-mono">
+              <span className={`text-[10px] px-2 py-0.5 rounded bg-d2-fire/20 text-d2-fire border border-d2-fire/40 font-bold font-mono ${NOWRAP}`}>
                 RotW DLC
               </span>
             )}
             {item.ladderOnly && (
-              <span className="text-[10px] px-2 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-medium">
+              <span className={`text-[10px] px-2 py-0.5 rounded bg-d2-unique/20 text-d2-unique border border-d2-unique/40 font-medium ${NOWRAP}`}>
                 {isEn ? 'Ladder Only' : '天梯限定'}
               </span>
             )}
           </div>
         </div>
 
-        {/* 底材需求與適用槽位 */}
-        <div className="text-xs text-sanctuary-400 mb-2 flex items-center gap-2 flex-wrap font-medium">
-          <span className="text-d2-rune font-semibold">{isEn && item.slotLabelEn ? item.slotLabelEn : item.slotLabel}</span>
-          <span>•</span>
-          <span>
+        {/* 底材需求與適用槽位：短片段 nowrap；底材清單可能很長，單行 ellipsis + title 顯示全文 */}
+        <div className="text-xs text-sanctuary-400 mb-2 flex items-center gap-x-2 gap-y-1 flex-wrap font-medium min-w-0">
+          <span className={`text-d2-rune font-semibold ${NOWRAP}`}>{isEn && item.slotLabelEn ? item.slotLabelEn : item.slotLabel}</span>
+          <span aria-hidden="true">•</span>
+          <span className={NOWRAP}>
             {isEn ? 'Req Level:' : '需求等級:'} <strong className="text-sanctuary-100">{item.requiredLevel}</strong>
           </span>
-          <span>•</span>
-          <span className="text-sanctuary-300">{isEn ? "Allowed Bases: " : "適用底材: "}{isEn && item.baseItemEn ? item.baseItemEn : item.baseItem}</span>
+          <span aria-hidden="true">•</span>
+          <span className="text-sanctuary-300 min-w-0 max-w-full truncate" title={allowedBasesText}>{allowedBasesText}</span>
         </div>
 
         {/* 符文鑲嵌清單 */}
         {item.runes && item.runeNumbers && (
           <div className="py-2.5 mb-3 flex items-center gap-1.5 flex-wrap border-y border-sanctuary-850/60">
-            <span className="text-[11px] text-sanctuary-400 font-medium mr-1">{isEn ? "Socket Order:" : "鑲嵌順序:"}</span>
+            <span className={`text-[11px] text-sanctuary-400 font-medium mr-1 ${NOWRAP}`}>{isEn ? "Socket Order:" : "鑲嵌順序:"}</span>
             {item.runes.map((runeName, i) => {
               const runeNum = item.runeNumbers?.[i];
               const rune = runeNum ? RUNE_BY_NUMBER.get(runeNum) : undefined;
@@ -350,7 +354,7 @@ export const CrossItemCard: React.FC<CrossItemCardProps> = ({
                   key={i}
                   type="button"
                   onClick={() => runeNum && onNavigateToRune?.(runeNum)}
-                  className="px-2 py-1 rounded bg-d2-rune/10 hover:bg-d2-rune/20 border border-d2-rune/30 hover:border-d2-rune text-[11px] font-mono text-d2-rune hover:text-white transition-all flex items-center gap-1 cursor-pointer"
+                  className={`px-2 py-1 rounded bg-d2-rune/10 hover:bg-d2-rune/20 border border-d2-rune/30 hover:border-d2-rune text-[11px] font-mono text-d2-rune hover:text-white transition-all flex items-center gap-1 cursor-pointer ${NOWRAP}`}
                   title={runeNum ? `查看 ${runeNum}# 符文` : undefined}
                 >
                   <span className="font-bold">{runeNum}#</span>
