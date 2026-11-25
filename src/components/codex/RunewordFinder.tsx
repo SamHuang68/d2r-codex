@@ -168,7 +168,8 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
   onNavigatePatches,
 }) => {
   const { t, isEn } = useLanguage();
-  const [searchQuery, setSearchQuery] = useState(initialQuery);
+  // 單品網址的頁面：下方清單不帶預填搜尋（否則清單只剩這一組，跟上方詳情重複）
+  const [searchQuery, setSearchQuery] = useState(initialItemId ? '' : initialQuery);
   const [selectedSockets, setSelectedSockets] = useState<number | 'all'>('all');
   const [selectedBase, setSelectedBase] = useState<string>('all');
   const [selectedTag, setSelectedTag] = useState<string>('all');
@@ -186,23 +187,32 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
     return baseImg(g ? g.rep : 'Phase Blade');
   };
 
-  // 單品網址：以該符文之語的名稱搜尋，並把分頁標題改成它的名稱
+  // 單品網址：把分頁標題改成它的名稱
   React.useEffect(() => {
     if (!initialItemId) return;
     const rw = RUNEWORDS_DATA.find((x) => x.id === initialItemId);
     if (!rw) return;
-    setSearchQuery(isEn ? rw.nameEn : rw.name);
-    setSel('all');
     document.title = isEn ? `${rw.nameEn} Runeword | Sanctuary Codex | D2R Database` : `${rw.name}（${rw.nameEn}）符文之語配方 | 聖休亞瑞典藏中樞 | D2R Sanctuary Codex`;
   }, [initialItemId, isEn]);
 
-  // Sync initialQuery when prop changes
+  // 單品網址：下方清單不預填搜尋（否則只剩這一組、與上方詳情重複），改停在它所屬的「底材 → 孔數」分類，照常列出同分類
   React.useEffect(() => {
+    if (!initialItemId) return;
+    const rw = RUNEWORDS_DATA.find((x) => x.id === initialItemId);
+    if (!rw) return;
+    const g = groupsOf(rw)[0];
+    setSearchQuery('');
+    setSel(g ? `${g.id}/${rw.sockets}` : 'all');
+  }, [initialItemId]);
+
+  // Sync initialQuery when prop changes（單品網址時不套用，理由同上）
+  React.useEffect(() => {
+    if (initialItemId) return;
     if (initialQuery !== undefined) {
       setSearchQuery(initialQuery);
       if (initialQuery) setSel('all');
     }
-  }, [initialQuery]);
+  }, [initialQuery, initialItemId]);
 
   // Extract all unique bases & tags
   const allBases = useMemo(() => {
@@ -543,20 +553,31 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
         <section aria-label={isEn ? detailRw.nameEn : `${detailRw.name} ${detailRw.nameEn}`} className="mb-8 rounded-2xl border border-d2-rune/40 bg-sanctuary-900/70 p-4 sm:p-6 shadow-2xl space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <nav aria-label={isEn ? 'Breadcrumb' : '麵包屑導覽'} className="flex flex-wrap items-center gap-1.5 text-xs text-sanctuary-400">
+              {/* 根層「全部符文之語」就是 /runewords/ 的預設畫面，可用真連結；底材、孔數等分類節點沒有自己的網址，用按鈕切換下方清單 */}
               {detailCrumbs.map((c, idx) => (
                 <React.Fragment key={c.id}>
                   {idx > 0 && <span aria-hidden="true">›</span>}
-                  <a
-                    href={pathForTab('runewords')}
-                    onClick={(e) => {
-                      if (!isPlainLeftClick(e)) return;
-                      e.preventDefault();
-                      handleBackToList(c.id);
-                    }}
-                    className="hover:text-d2-rune hover:underline"
-                  >
-                    {c.label}
-                  </a>
+                  {c.id === 'all' ? (
+                    <a
+                      href={pathForTab('runewords')}
+                      onClick={(e) => {
+                        if (!isPlainLeftClick(e)) return;
+                        e.preventDefault();
+                        handleBackToList('all');
+                      }}
+                      className="hover:text-d2-rune hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold"
+                    >
+                      {c.label}
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => handleBackToList(c.id)}
+                      className="hover:text-d2-rune hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold"
+                    >
+                      {c.label}
+                    </button>
+                  )}
                 </React.Fragment>
               ))}
               <span aria-hidden="true">›</span>
@@ -673,7 +694,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('快速搜尋符文之語 (例如：謎團、精神、悔恨、Jah、FCR、Teleport...)', 'Search Runewords (e.g. Enigma, Spirit, Grief, Jah, FCR, Teleport...)')}
-            className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-12 py-2 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
+            className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-12 py-2 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60 focus-visible:ring-2 focus-visible:ring-d2-gold"
           />
           {searchQuery && (
             <button
@@ -699,7 +720,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               aria-label={t('孔數 (Sockets)', 'Sockets')}
               value={selectedSockets}
               onChange={(e) => setSelectedSockets(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-              className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"
+              className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold"
             >
               <option value="all">{isEn ? 'All Sockets' : '全部孔數'}</option>
               <option value="2">2 {isEn ? 'Sockets' : '孔'}</option>
@@ -717,7 +738,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               aria-label={t('底材類別 (Bases)', 'Bases')}
               value={selectedBase}
               onChange={(e) => setSelectedBase(e.target.value)}
-              className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"
+              className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold"
             >
               <option value="all">{isEn ? 'All Bases' : '全部底材'}</option>
               {allBases.map((b) => (
@@ -733,7 +754,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
               aria-label={t('核心詞綴 (Tags)', 'Key Affixes')}
               value={selectedTag}
               onChange={(e) => setSelectedTag(e.target.value)}
-              className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none"
+              className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded px-2.5 py-1.5 text-sanctuary-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold"
             >
               <option value="all">{isEn ? 'All Tags' : '全部標籤'}</option>
               {allTags.map((t) => (
@@ -750,7 +771,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                 aria-label={isEn ? 'Ladder Only' : '只看天梯限定 (Ladder)'}
                 checked={onlyLadder}
                 onChange={(e) => setOnlyLadder(e.target.checked)}
-                className="w-5 h-5 rounded bg-sanctuary-950 border-sanctuary-700 text-d2-unique focus:ring-0"
+                className="w-5 h-5 rounded bg-sanctuary-950 border-sanctuary-700 text-d2-unique focus:ring-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-d2-gold"
               />
               <span>{isEn ? 'Ladder Only' : '天梯限定 (Ladder)'}</span>
             </label>
@@ -764,7 +785,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                 aria-label={isEn ? 'Reign of the Warlock (RotW)' : '只看術士軍臨 (RotW)'}
                 checked={onlyDLC}
                 onChange={(e) => setOnlyDLC(e.target.checked)}
-                className="w-5 h-5 rounded bg-sanctuary-950 border-sanctuary-700 text-d2-fire focus:ring-0"
+                className="w-5 h-5 rounded bg-sanctuary-950 border-sanctuary-700 text-d2-fire focus:ring-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-d2-gold"
               />
               <span>{isEn ? 'Reign of the Warlock (RotW)' : '術士軍臨 (RotW)'}</span>
             </label>
@@ -782,7 +803,7 @@ export const RunewordFinder: React.FC<RunewordFinderProps> = ({
                   setOnlyS16(next);
                   if (next) setSel('all');
                 }}
-                className="w-5 h-5 rounded bg-sanctuary-950 border-sanctuary-700 text-purple-400 focus:ring-0"
+                className="w-5 h-5 rounded bg-sanctuary-950 border-sanctuary-700 text-purple-400 focus:ring-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-d2-gold"
               />
               <span>{isEn ? 'S16 Changes' : '只看 S16 改動'}</span>
             </label>

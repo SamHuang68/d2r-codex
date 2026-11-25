@@ -504,8 +504,9 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
 
                 <div>
                   {/* 卡片標題與代表裝備圖標 */}
-                  <div className="flex items-start justify-between gap-3 pb-3 border-b border-sanctuary-800">
-                    <div className="flex items-center gap-3">
+                  {/* 徽章放進可換行的標題列（不再與標題搶同一列的固定寬度）：窄卡片時自動換到標題下一行，不會被卡片邊緣裁掉或壓到標題 */}
+                  <div className="flex items-start gap-3 pb-3 border-b border-sanctuary-800">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
                       <ItemIcon
                         {...baseImg(item.baseRepEn)}
                         rarity="runeword"
@@ -513,11 +514,16 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
                         showBorder={true}
                         className="shrink-0"
                       />
-                      <div>
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <h3 className={`font-diablo text-xl font-bold ${styles.titleColor} tracking-wide`}>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-x-2 gap-y-1 flex-wrap">
+                          {/* 不加 break-words / min-w-0：保持完整單字，只在單字邊界換行（flex item 預設 min-width:auto 不會切開單字） */}
+                          <h3 className={`font-diablo text-xl font-bold ${styles.titleColor} tracking-wide break-normal`}>
                             {isEn ? item.nameEn : item.name}
                           </h3>
+                          {/* 徽章與標題同在 flex-wrap 列：空間不足時整顆換到下一行，不壓縮標題、不被卡片 overflow-hidden 裁切 */}
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full border font-mono font-bold shrink-0 whitespace-nowrap ${styles.badgeBg}`}>
+                            {item.category === 'iconic' ? (isEn ? 'ENDGAME' : '終極神裝') : (isEn ? 'STARTER' : '平民神器')}
+                          </span>
                           {!isEn && item.nameEn && (
                             <span className="text-xs text-sanctuary-400 font-mono italic">
                               ({item.nameEn})
@@ -534,10 +540,6 @@ export const RunewordShowcase: React.FC<RunewordShowcaseProps> = ({
                         </div>
                       </div>
                     </div>
-
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full border font-mono font-bold shrink-0 ${styles.badgeBg}`}>
-                      {item.category === 'iconic' ? (isEn ? 'ENDGAME' : '終極神裝') : (isEn ? 'STARTER' : '平民神器')}
-                    </span>
                   </div>
 
                   {/* 特色亮點標籤與引言 */}

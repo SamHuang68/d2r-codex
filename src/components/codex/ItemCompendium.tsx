@@ -108,7 +108,8 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
 }) => {
   const { t, isEn } = useLanguage();
   const [sel, setSel] = useState<string>(initialNode ?? `u/${DEFAULT_TIER}`);
-  const [searchQuery, setSearchQuery] = useState(initialQuery);
+  // 單品網址的頁面：下方清單不帶預填搜尋（否則清單只剩這一件，跟上方詳情重複）
+  const [searchQuery, setSearchQuery] = useState(initialItemId ? '' : initialQuery);
   const [onlyS16, setOnlyS16] = useState<boolean>(false);
   const [isCrossOpen, setIsCrossOpen] = useState<boolean>(false);
 
@@ -185,7 +186,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
   // 是否進入跨裝備屬性檢索模式
   const isCrossPropertyMode = selectedPropertyIds.length > 0 || selectedRarity === 'runeword';
 
-  // 單品網址：以該單品（暗金、套裝部件或整組套裝）的名稱搜尋，並把分頁標題改成它的名稱
+  // 單品網址：把分頁標題改成它的名稱
   React.useEffect(() => {
     if (!initialItemId) return;
     const u = UNIQUE_ITEMS_DATA.find((x) => x.id === initialItemId);
@@ -193,19 +194,28 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
     const set = u || piece ? undefined : SET_ITEMS_DATA.find((s) => s.id === initialItemId);
     const hit = u ?? piece?.p ?? set;
     if (!hit) return;
-    setSearchQuery(isEn ? hit.nameEn : hit.name);
-    setSel('all');
     const kind = u ? '暗金裝備' : piece ? `套裝裝備－${piece.s.name}` : '套裝';
     document.title = isEn ? `${hit.nameEn} | Sanctuary Codex | D2R Database` : `${hit.name}（${hit.nameEn}）${kind} | 聖休亞瑞典藏中樞 | D2R Sanctuary Codex`;
   }, [initialItemId, isEn]);
 
-  // Sync initialQuery when prop changes
+  // 單品網址：下方清單不預填搜尋（否則只剩這一件、與上方詳情重複），改停在該單品所屬分類，照常列出同分類的裝備
   React.useEffect(() => {
+    if (!initialItemId) return;
+    const leaf = U_ENTRIES.find((e) => e.item.id === initialItemId)?.leaf
+      ?? S_ENTRIES.find((e) => e.set.id === initialItemId || e.set.pieces.some((p) => p.id === initialItemId))?.leaf;
+    if (!leaf) return;
+    setSearchQuery('');
+    setSel(leaf);
+  }, [initialItemId]);
+
+  // Sync initialQuery when prop changes（單品網址時不套用，理由同上）
+  React.useEffect(() => {
+    if (initialItemId) return;
     if (initialQuery !== undefined && initialQuery !== '') {
       setSearchQuery(initialQuery);
       setSel('all');
     }
-  }, [initialQuery]);
+  }, [initialQuery, initialItemId]);
 
   const hasS16Set = (s: SetItemCollection) =>
     Boolean(PATCH_34_ENTRIES_BY_NAME[s.nameEn] || s.pieces.some((p) => PATCH_34_ENTRIES_BY_NAME[p.nameEn]));
@@ -657,20 +667,17 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
         <section aria-label={isEn ? detailHit.nameEn : `${detailHit.name} ${detailHit.nameEn}`} className="mb-8 rounded-2xl border border-d2-unique/40 bg-sanctuary-900/70 p-4 sm:p-6 shadow-2xl space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <nav aria-label={isEn ? 'Breadcrumb' : '麵包屑導覽'} className="flex flex-wrap items-center gap-1.5 text-xs text-sanctuary-400">
+              {/* 分類節點沒有自己的網址（/items/ 本身停在暗金·菁英，不是「全部裝備」），所以用按鈕切換下方清單，不放會導到別處的 href */}
               {detailCrumbs.map((c, idx) => (
                 <React.Fragment key={c.id}>
                   {idx > 0 && <span aria-hidden="true">›</span>}
-                  <a
-                    href={pathForTab('items')}
-                    onClick={(e) => {
-                      if (!isPlainLeftClick(e)) return;
-                      e.preventDefault();
-                      handleBackToList(c.id);
-                    }}
-                    className="hover:text-d2-unique hover:underline"
+                  <button
+                    type="button"
+                    onClick={() => handleBackToList(c.id)}
+                    className="hover:text-d2-unique hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold"
                   >
                     {c.label}
-                  </a>
+                  </button>
                 </React.Fragment>
               ))}
               {detailHit.kind === 'piece' && (
@@ -700,7 +707,8 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
               onClick={(e) => {
                 if (!isPlainLeftClick(e)) return;
                 e.preventDefault();
-                handleBackToList('all');
+                // 與 href（/items/ 預設停在暗金·菁英）一致，一般點擊與另開分頁到同一個畫面
+                handleBackToList();
               }}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sanctuary-950 border border-sanctuary-700 hover:border-d2-unique text-xs text-sanctuary-200 hover:text-d2-unique transition-colors"
             >
@@ -802,7 +810,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t('搜尋名稱、底材或屬性', 'Search name, base, or affix')}
-              className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-12 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60"
+              className="w-full min-h-11 bg-sanctuary-950 border border-sanctuary-750 rounded-lg pl-10 pr-12 py-2.5 text-sm text-sanctuary-100 placeholder-sanctuary-500 focus:outline-none focus:border-d2-unique/60 focus-visible:ring-2 focus-visible:ring-d2-gold"
             />
             {searchQuery && (
               <button onClick={() => setSearchQuery('')} aria-label={isEn ? "Clear search" : "清除搜尋"} className="absolute right-0 top-1/2 -translate-y-1/2 min-w-11 min-h-11 flex items-center justify-center text-sanctuary-400 hover:text-white">
@@ -898,7 +906,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                   aria-label={t('排序方式', 'Sort items')}
                   value={crossSortBy}
                   onChange={(e) => setCrossSortBy(e.target.value as any)}
-                  className="bg-sanctuary-900 border border-sanctuary-750 rounded px-2 py-0.5 text-sanctuary-200 focus:outline-none"
+                  className="bg-sanctuary-900 border border-sanctuary-750 rounded px-2 py-0.5 text-sanctuary-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold"
                 >
                   <option value="level-desc">{isEn ? 'Req Level (High to Low)' : '需求等級 (高至低)'}</option>
                   <option value="level-asc">{isEn ? 'Req Level (Low to High)' : '需求等級 (低至高)'}</option>
