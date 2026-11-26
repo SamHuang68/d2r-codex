@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Calculator, Search, Sparkles, X } from 'lucide-react';
 import {
   CRAFT_FAMILIES,
@@ -13,6 +13,8 @@ import { useLanguage } from '../../context/LanguageContext';
 
 export interface CraftedItemsCatalogProps {
   onNavigateToRune?: (runeNumber: number) => void;
+  /** 從全站搜尋帶進來的手工裝名稱：預先填入大全的搜尋框 */
+  initialQuery?: string;
 }
 
 const FAMILY_META = new Map(CRAFT_FAMILIES.map((f) => [f.id, f]));
@@ -21,14 +23,22 @@ const FAMILY_META = new Map(CRAFT_FAMILIES.map((f) => [f.id, f]));
  * 完整手工合成物品大全（4 大系列 × 9 部位 = 36 條完整配方）
  * 全部底材名稱、符文、寶石與固定數值皆由遊戲資料表 cube.json / bases.json / gems.json 動態產生。
  */
-export const CraftedItemsCatalog: React.FC<CraftedItemsCatalogProps> = ({ onNavigateToRune }) => {
+export const CraftedItemsCatalog: React.FC<CraftedItemsCatalogProps> = ({ onNavigateToRune, initialQuery }) => {
   const { t, isEn } = useLanguage();
   const allRecipes = useMemo(() => getAllCraftedRecipes(), []);
 
   const [family, setFamily] = useState<'all' | CraftFamilyId>('all');
   const [slot, setSlot] = useState<'all' | CraftSlotId>('all');
   const [onlyMeta, setOnlyMeta] = useState(false);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialQuery ?? '');
+  // 搜尋帶入另一件手工裝時更新搜尋框（並清掉會把它濾掉的篩選）
+  useEffect(() => {
+    if (!initialQuery) return;
+    setQuery(initialQuery);
+    setFamily('all');
+    setSlot('all');
+    setOnlyMeta(false);
+  }, [initialQuery]);
 
   // 互動式手工 ilvl 計算器
   const [clvl, setClvl] = useState(93);

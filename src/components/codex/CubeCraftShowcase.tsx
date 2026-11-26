@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ItemIcon } from '../common/ItemIcon';
 import { RUNE_BY_NUMBER } from '../../data/runes';
 import { Sparkles, ArrowRight, Dices, ChevronDown, ChevronUp, Flame, Award, Plus } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
+export type CubeShowcaseTab = 'crafts' | 'upgrades' | 'roulette';
+
 export interface CubeCraftShowcaseProps {
   onNavigateToRune?: (runeNumber: number) => void;
   onScrollToRecipe?: (recipeId: string) => void;
+  /** 是否一開始就展開；預設 true（維持舊行為），方塊工坊的分類頁傳 false */
+  defaultExpanded?: boolean;
+  /** 一開始選中的分頁 */
+  initialTab?: CubeShowcaseTab;
+  /** 只顯示這些分頁（方塊工坊依分類只放對應的一頁）；不給就全部顯示 */
+  allowedTabs?: CubeShowcaseTab[];
 }
 
 interface CraftSpotlight {
@@ -433,10 +441,27 @@ const SOCKET_ROULETTE: SocketRoulette[] = [
 export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
   onNavigateToRune,
   onScrollToRecipe,
+  defaultExpanded = true,
+  initialTab,
+  allowedTabs,
 }) => {
   const { isEn } = useLanguage();
-  const [activeTab, setActiveTab] = useState<'crafts' | 'upgrades' | 'roulette'>('crafts');
-  const [isExpanded, setIsExpanded] = useState<boolean>(true);
+  const showTab = (tab: CubeShowcaseTab) => !allowedTabs || allowedTabs.includes(tab);
+  const [activeTab, setActiveTabState] = useState<CubeShowcaseTab>(
+    () => initialTab ?? allowedTabs?.[0] ?? 'crafts'
+  );
+  const [isExpanded, setIsExpanded] = useState<boolean>(defaultExpanded);
+  // 父層換了允許的分頁時，不要沿用上一個分類的 activeTab（同一個元件被复用時會發生）
+  useEffect(() => {
+    const next = initialTab ?? allowedTabs?.[0] ?? 'crafts';
+    if (allowedTabs && !allowedTabs.includes(activeTab)) setActiveTabState(next);
+    else if (initialTab && initialTab !== activeTab && allowedTabs?.length === 1) setActiveTabState(initialTab);
+  }, [initialTab, allowedTabs]); // eslint-disable-line react-hooks/exhaustive-deps
+  /** 收合時點分頁＝想看內容：切換並展開 */
+  const setActiveTab = (tab: CubeShowcaseTab) => {
+    setActiveTabState(tab);
+    setIsExpanded(true);
+  };
 
   const getAccentStyles = (accent: CraftSpotlight['accent']) => {
     switch (accent) {
@@ -500,6 +525,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
         {/* 分頁切換與展開收合控制項 */}
         <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
           <div className="inline-flex rounded-xl border border-sanctuary-750 bg-sanctuary-950 p-1 text-xs" role="tablist">
+            {showTab('crafts') && (
             <button
               type="button"
               role="tab"
@@ -514,6 +540,8 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
               <Award className="w-3.5 h-3.5" />
               <span>{isEn ? 'GG Crafts (4)' : '四大手工神裝 (4)'}</span>
             </button>
+            )}
+            {showTab('upgrades') && (
             <button
               type="button"
               role="tab"
@@ -528,6 +556,8 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
               <Flame className="w-3.5 h-3.5 text-d2-fire" />
               <span>{isEn ? 'Unique Upgrades (4)' : '經典暗金升級 (4)'}</span>
             </button>
+            )}
+            {showTab('roulette') && (
             <button
               type="button"
               role="tab"
@@ -542,10 +572,12 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
               <Dices className="w-3.5 h-3.5 text-emerald-400" />
               <span>{isEn ? 'Socket Roulette' : '打孔博弈輪盤'}</span>
             </button>
+            )}
           </div>
 
           <button
             type="button"
+            aria-expanded={isExpanded}
             onClick={() => setIsExpanded(!isExpanded)}
             className="p-2 rounded-xl bg-sanctuary-950 border border-sanctuary-750 text-sanctuary-400 hover:text-white transition-colors"
             title={isExpanded ? (isEn ? 'Collapse' : '收合展廳') : (isEn ? 'Expand' : '展開展廳')}
@@ -560,7 +592,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
       {isExpanded && (
         <div className="p-4 sm:p-6 bg-sanctuary-950/50">
           {/* Tab 1: 四大極品手工神裝 (GG Crafts) */}
-          {activeTab === 'crafts' && (
+          {showTab('crafts') && activeTab === 'crafts' && (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
               {CRAFT_ITEMS.map((item) => {
                 const styles = getAccentStyles(item.accent);
@@ -680,7 +712,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
           )}
 
           {/* Tab 2: 經典暗金跨階升級 (Iconic Unique Upgrades) */}
-          {activeTab === 'upgrades' && (
+          {showTab('upgrades') && activeTab === 'upgrades' && (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
               {UPGRADE_ITEMS.map((item) => (
                 <div
@@ -783,7 +815,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
           )}
 
           {/* Tab 3: 底材打孔博弈輪盤 (Socketing Roulette) */}
-          {activeTab === 'roulette' && (
+          {showTab('roulette') && activeTab === 'roulette' && (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
               {SOCKET_ROULETTE.map((item, idx) => (
                 <div

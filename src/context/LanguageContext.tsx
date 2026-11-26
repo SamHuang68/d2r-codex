@@ -26,8 +26,13 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const setLang = (newLang: Language) => {
     try {
       if (typeof window !== 'undefined' && newLang !== langFromLocation()) {
-        // 換成另一種語言的網址（同一頁、同一個單品）；沿用歷史紀錄裡的導覽狀態，上一頁／下一頁才能還原
-        window.history.pushState(window.history.state, '', switchLangPath(newLang) + window.location.search);
+        // 換成另一種語言的網址（同一頁、同一個單品）；沿用歷史紀錄裡的導覽狀態，上一頁／下一頁才能還原。
+        // 頁內 hash（例如方塊工坊的 #cube-socket）一併保留，切換語言後停在同一個分類
+        window.history.pushState(
+          window.history.state,
+          '',
+          switchLangPath(newLang) + window.location.search + window.location.hash
+        );
       }
     } catch {
       // 網址無法改寫時仍切換畫面語言
