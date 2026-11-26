@@ -674,7 +674,7 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                   <button
                     type="button"
                     onClick={() => handleBackToList(c.id)}
-                    className="hover:text-d2-unique hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold"
+                    className="whitespace-nowrap hover:text-d2-unique hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-d2-gold"
                   >
                     {c.label}
                   </button>
@@ -690,14 +690,14 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                       e.preventDefault();
                       onOpenItem(detailHit.sEntry.set.id);
                     }}
-                    className="hover:text-d2-set hover:underline"
+                    className="whitespace-nowrap hover:text-d2-set hover:underline"
                   >
                     {isEn ? detailHit.sEntry.set.nameEn : detailHit.sEntry.set.name}
                   </a>
                 </>
               )}
               <span aria-hidden="true">›</span>
-              <span aria-current="page" className="text-sanctuary-200 font-semibold">
+              <span aria-current="page" className="whitespace-nowrap text-sanctuary-200 font-semibold">
                 {isEn ? detailHit.nameEn : detailHit.name}
               </span>
             </nav>
@@ -710,14 +710,22 @@ export const ItemCompendium: React.FC<ItemCompendiumProps> = ({
                 // 與 href（/items/ 預設停在暗金·菁英）一致，一般點擊與另開分頁到同一個畫面
                 handleBackToList();
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sanctuary-950 border border-sanctuary-700 hover:border-d2-unique text-xs text-sanctuary-200 hover:text-d2-unique transition-colors"
+              className="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sanctuary-950 border border-sanctuary-700 hover:border-d2-unique text-xs text-sanctuary-200 hover:text-d2-unique transition-colors"
             >
               ← {t('回到清單', 'Back to list')}
             </a>
           </div>
 
-          <h1 className={`font-diablo text-2xl sm:text-3xl font-bold break-words ${detailHit.kind === 'unique' ? 'text-d2-unique' : 'text-d2-set'}`}>
-            {isEn ? detailHit.nameEn : `${detailHit.name} ${detailHit.nameEn}`}
+          <h1 className={`font-diablo text-2xl sm:text-3xl font-bold break-words flex flex-wrap items-baseline gap-x-3 ${detailHit.kind === 'unique' ? 'text-d2-unique' : 'text-d2-set'}`}>
+            {isEn ? (
+              detailHit.nameEn
+            ) : (
+              <>
+                {/* 中文名不在字中間斷；英文名較長，維持在空白處換行，避免 390px 溢出 */}
+                <span className="whitespace-nowrap">{detailHit.name}</span>
+                <span className="min-w-0">{detailHit.nameEn}</span>
+              </>
+            )}
           </h1>
 
           {detailHit.kind === 'unique' && (
