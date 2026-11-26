@@ -46,7 +46,8 @@ const ROUTES = [
   { hash: '#valuation', min: 2500, label: '估價' },
   { hash: '#uber', min: 900, label: '暗黑破壞神三兄弟' },
   { hash: '#runes', min: 3000, label: '符文寶庫' },
-  { hash: '#cube', min: 3000, label: '赫拉迪克方塊' },
+  // 方塊工坊進版改為字典式目錄（分類選項＋詞條名稱），不再一次倒出全部配方卡，門檻從 3000 調為 2000 仍遠高於空白頁
+  { hash: '#cube', min: 2000, label: '赫拉迪克方塊' },
   { hash: '#areas', min: 1600, label: '區域' },
   { hash: '#monsters', min: 4000, label: '怪物圖鑑' },
   { hash: '#affixes', min: 4000, label: '詞綴寶典' },

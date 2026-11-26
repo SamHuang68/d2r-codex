@@ -306,6 +306,7 @@ const AppContent: React.FC = () => {
         )}
         {activeTab === 'cube' && (
           <CubeLab 
+            initialQuery={targetQuery}
             onNavigateToRune={(n) => handleNavigate('runes', undefined, n)}
           />
         )}
