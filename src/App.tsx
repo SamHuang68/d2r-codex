@@ -9,6 +9,7 @@ import { LanguageProvider, useLanguage } from './context/LanguageContext';
 
 import { HeroSection } from './components/portal/HeroSection';
 import { KNOWN_TABS, ROUTES, parsePath, pathForTab } from './utils/routes';
+import { CUBE_NAV_EVENT } from './data/cubeCategories';
 import { CategoryGrid } from './components/portal/CategoryGrid';
 import { ClassShowcase } from './components/portal/ClassShowcase';
 import { DLCReign } from './components/portal/DLCReign';
@@ -162,12 +163,16 @@ const AppContent: React.FC = () => {
     const effectiveTab = tab === 'sets' ? 'items' : tab;
     // 沒帶搜尋字串的導覽（側欄、首頁磚）要清掉上一次跨頁帶來的搜尋字串，否則各清單頁會帶著舊關鍵字重新載入
     const next: NavState = { tab: effectiveTab, query: query ?? '', node: node ?? (tab === 'sets' ? 's' : undefined), runeNumber, cls: navRef.current.cls, item };
-    if (!sameNav(navRef.current, next)) {
+    // 已在方塊工坊某個分類（#cube-socket 等）再點「方塊工坊」：導覽狀態相同，但仍要回到無 hash 的總目錄
+    const leaveCubeHash = effectiveTab === 'cube' && window.location.hash !== '';
+    if (!sameNav(navRef.current, next) || leaveCubeHash) {
       // 離開之前先把目前這一筆的捲動位置存進去，按上一頁時回到原本看的位置
       window.history.replaceState({ ...(window.history.state ?? {}), [NAV_KEY]: navRef.current, scrollY: window.scrollY }, '');
       window.history.pushState({ [NAV_KEY]: next }, '', pathForTab(effectiveTab, item));
     }
     applyNav(next);
+    // pushState 不會觸發 hashchange / popstate：通知方塊工坊重新讀取網址
+    if (effectiveTab === 'cube') window.dispatchEvent(new Event(CUBE_NAV_EVENT));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

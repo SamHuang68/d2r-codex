@@ -10,6 +10,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { CubeCraftShowcase, CubeShowcaseTab } from './CubeCraftShowcase';
 import { CraftedItemsCatalog } from './CraftedItemsCatalog';
 import { getAllCraftedRecipes } from '../../data/codex/craftedItems';
+import { CUBE_CATEGORY_LABEL, CUBE_NAV_EVENT, CUBE_RECIPE_ALIASES } from '../../data/cubeCategories';
 
 export interface CubeLabProps {
   initialQuery?: string;
@@ -22,15 +23,10 @@ type Sub = 'unique-weapon' | 'unique-armor' | 'rare-weapon' | 'rare-armor';
 const CATS: Cat[] = ['socket', 'upgrade', 'craft', 'repair', 'misc'];
 const SUBS: Sub[] = ['unique-weapon', 'unique-armor', 'rare-weapon', 'rare-armor'];
 
-const CAT_LABEL: Record<Cat, [string, string]> = {
-  socket: ['裝備打孔', 'Socketing'],
-  upgrade: ['裝備階級升級', 'Item Upgrades'],
-  craft: ['手工神裝工藝', 'Crafted Items'],
-  repair: ['免錢修理充能', 'Repairs & Recharging'],
-  misc: ['洗裝與洗點', 'Rerolling & Respec'],
-};
+const CAT_LABEL = CUBE_CATEGORY_LABEL;
+const CRAFTED_COUNT = getAllCraftedRecipes().length;
 
-/** 短說明只根據本站已收錄的 30 條配方與 36 條手工大全，不擴大成尚未核可的配方類型 */
+/** 短說明只根據本站已收錄的方塊配方與手工大全（筆數由資料計算），不擴大成尚未核可的配方類型 */
 const CAT_DESC: Record<Cat, [string, string]> = {
   socket: [
     '白裝打孔隨機公式：只能用在無前綴的普通白裝或無形白裝，特等或劣質無法以方塊打孔。依武器、胸甲、頭盔、盾牌使用不同符文與完美寶石，孔數由物品等級與底材上限決定，是準備符文之語底材的常用方式。',
@@ -41,12 +37,12 @@ const CAT_DESC: Record<Cat, [string, string]> = {
     'Upgrade Unique or Rare weapons and armor from Normal to Exceptional, or Exceptional to Elite. Variable rolls are kept; strength and dexterity requirements follow the new base. Grouped into Unique Weapons, Unique Armor, Rare Weapons and Rare Armor.',
   ],
   craft: [
-    '四大系列手工合成（血腥、施法、重擊、防護）共 36 條完整配方，另附 6 則精選卡片。以指定底材加上符文、寶石與珠寶合成，固定屬性之外再隨機附加數條詞綴。本頁可用名稱、底材或符文搜尋大全。',
-    'All 36 crafted recipes in the Blood, Caster, Hit Power and Safety families, plus six featured cards. A named base plus a rune, a gem and a jewel yields fixed mods and several random affixes. The catalog on this page is searchable by name, base or rune.',
+    `四大系列手工合成（血腥、施法、重擊、防護）共 ${CRAFTED_COUNT} 條完整配方，另附 6 則精選卡片。以指定底材加上符文、寶石與珠寶合成，固定屬性之外再隨機附加數條詞綴。本頁可用名稱、底材或符文搜尋大全。`,
+    `All ${CRAFTED_COUNT} crafted recipes in the Blood, Caster, Hit Power and Safety families, plus six featured cards. A named base plus a rune, a gem and a jewel yields fixed mods and several random affixes. The catalog on this page is searchable by name, base or rune.`,
   ],
   repair: [
-    '免金幣完全修理武器或防具，也可一次修復並為充能物品重新聚氣；另有用 Hel 符文加傳送卷軸拔除已鑲嵌物（鑲嵌物會消失）。對無法在城鎮修理的無形裝備特別有用。',
-    'Fully repair a weapon or armor for no gold, or repair and recharge in one recipe. A Hel rune plus a Town Portal scroll unsockets an item (the socketed gems or runes are destroyed). Especially useful for ethereal gear that a vendor cannot repair.',
+    '免金幣完全修理武器或防具；加上必要的寶石則可一次修復並為充能物品重新聚氣。另有用 Hel 符文加傳送卷軸拔除已鑲嵌物（鑲嵌物會消失）。無形裝備無法以方塊修理耐久。',
+    'Fully repair a weapon or armor for no gold; adding the required gem repairs and recharges in one recipe. A Hel rune plus a Town Portal scroll unsockets an item (the socketed gems or runes are destroyed). Ethereal items cannot be repaired with the cube.',
   ],
   misc: [
     '本站目前收錄的雜項方塊公式：赦免徽章洗點、開啟秘密乳牛關、重骰魔法咒符／珠寶與亮黃物品，以及群魔亂舞儀式材料。不含尚未核可中英對照的符文或寶石升級表。',
@@ -78,10 +74,13 @@ type View =
   | { kind: 'sub'; sub: Sub }
   | { kind: 'recipe'; r: CubeRecipeData };
 
+const findRecipe = (id: string) => CUBE_RECIPES_DATA.find((x) => x.id === id);
+
 const parseHash = (h: string): View => {
   const s = decodeURIComponent(h.replace(/^#/, ''));
   if (s.startsWith('recipe-')) {
-    const r = CUBE_RECIPES_DATA.find((x) => x.id === s.slice(7));
+    const id = s.slice(7);
+    const r = findRecipe(CUBE_RECIPE_ALIASES[id] ?? id);
     if (r) return { kind: 'recipe', r };
   }
   if (s.startsWith('cube-upgrade-')) {
@@ -110,11 +109,14 @@ export const CubeLab: React.FC<CubeLabProps> = ({ initialQuery, onNavigateToRune
 
   useEffect(() => {
     const sync = () => setHash(window.location.hash);
+    // 只讀網址、不呼叫 history API；App 以 pushState 導覽後送出 CUBE_NAV_EVENT（pushState 不觸發 hashchange / popstate）
     window.addEventListener('hashchange', sync);
     window.addEventListener('popstate', sync);
+    window.addEventListener(CUBE_NAV_EVENT, sync);
     return () => {
       window.removeEventListener('hashchange', sync);
       window.removeEventListener('popstate', sync);
+      window.removeEventListener(CUBE_NAV_EVENT, sync);
     };
   }, []);
 
@@ -142,12 +144,19 @@ export const CubeLab: React.FC<CubeLabProps> = ({ initialQuery, onNavigateToRune
 
   useEffect(() => {
     const q = initialQuery?.trim();
-    if (!q || lastQuery.current === q) return;
+    if (!q) {
+      lastQuery.current = undefined;
+      return;
+    }
+    if (lastQuery.current === q) return;
     lastQuery.current = q;
     const lq = q.toLowerCase();
-    const r = CUBE_RECIPES_DATA.find(
-      (x) => x.id.toLowerCase() === lq || x.title === q || x.titleEn.toLowerCase() === lq || recipeHash(x.id) === lq,
-    );
+    const alias = CUBE_RECIPE_ALIASES[lq.replace(/^recipe-/, '')];
+    const r =
+      (alias && findRecipe(alias)) ||
+      CUBE_RECIPES_DATA.find(
+        (x) => x.id.toLowerCase() === lq || x.title === q || x.titleEn.toLowerCase() === lq || recipeHash(x.id) === lq,
+      );
     if (r) {
       go(recipeHash(r.id), recipeHash(r.id));
       return;
@@ -255,17 +264,17 @@ export const CubeLab: React.FC<CubeLabProps> = ({ initialQuery, onNavigateToRune
                 {isEn && recipe.titleEn ? recipe.titleEn : recipe.title}
               </HeadingTag>
               {!isEn && recipe.titleEn && (
-                <div className="text-[11px] text-sanctuary-400 font-mono italic">{recipe.titleEn}</div>
+                <div className="text-xs text-sanctuary-400 font-mono italic">{recipe.titleEn}</div>
               )}
             </div>
-            <span className="shrink-0 text-[10px] px-2 py-0.5 rounded bg-d2-magic/10 text-d2-magic border border-d2-magic/30 font-medium font-mono">
-              {recipe.category.toUpperCase()}
+            <span className="shrink-0 whitespace-nowrap text-[11px] px-2 py-0.5 rounded bg-d2-magic/10 text-d2-magic border border-d2-magic/30 font-medium">
+              {L(CAT_LABEL[recipe.category])}
             </span>
           </div>
           <div className="py-4 space-y-3">
-            <div className="text-xs text-sanctuary-400 font-medium flex items-center justify-between gap-2">
+            <div className="text-[13px] text-sanctuary-400 font-medium flex items-center justify-between gap-2">
               <span className="whitespace-nowrap">{isEn ? 'Transmutation Inputs:' : '方塊投入材料 (Inputs)：'}</span>
-              <span className="text-[10px] text-sanctuary-500 font-mono shrink-0">
+              <span className="text-xs text-sanctuary-500 font-mono shrink-0 whitespace-nowrap">
                 {isEn ? `${inputs.length} Items` : `${recipe.inputs.length} 件材料`}
               </span>
             </div>
@@ -312,8 +321,8 @@ export const CubeLab: React.FC<CubeLabProps> = ({ initialQuery, onNavigateToRune
           </div>
         </div>
         {(isEn && recipe.notesEn ? recipe.notesEn : recipe.notes) && (
-          <div className="mt-3 pt-3 border-t border-sanctuary-850/80 text-xs text-sanctuary-400 italic bg-sanctuary-900/40 p-2.5 rounded-lg leading-relaxed">
-            💡 <span className="text-sanctuary-300">{isEn && recipe.notesEn ? recipe.notesEn : recipe.notes}</span>
+          <div className="mt-3 pt-3 border-t border-sanctuary-850/80 text-[13px] text-sanctuary-400 italic bg-sanctuary-900/40 p-2.5 rounded-lg leading-relaxed">
+            💡 <span className="text-sanctuary-300 whitespace-pre-line">{isEn && recipe.notesEn ? recipe.notesEn : recipe.notes}</span>
           </div>
         )}
       </div>
@@ -423,25 +432,42 @@ export const CubeLab: React.FC<CubeLabProps> = ({ initialQuery, onNavigateToRune
   if (view.kind === 'dir') {
     body = (
       <>
-        <p className="text-sm text-sanctuary-400 leading-relaxed max-w-3xl">
-          {t(
-            '請先選一個分類再看配方，不必一次把全部卡片攤開。每張分類卡標出目前收錄的筆數；也可用下方查找框依名稱跳到單一公式或 36 條手工大全。',
-            'Choose a category first — this page does not dump every recipe card up front. Each option shows how many recipes are in the codex. Use the lookup below to jump to one formula or into the 36-item crafted catalog.',
+        <div className="min-w-0 max-w-xl">
+          <label className="block text-sm text-sanctuary-300" htmlFor="cube-lookup">
+            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+              <Search className="w-3.5 h-3.5" />
+              {isEn ? 'Find a recipe' : '查找配方'}
+            </span>
+          </label>
+          <input
+            id="cube-lookup"
+            value={lookup}
+            onChange={(e) => setLookup(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key !== 'Enter' || !lookupHits[0]) return;
+              lookupHits[0].onPick();
+            }}
+            placeholder={isEn ? 'Recipe or crafted item name' : '配方或手工物品名稱'}
+            className="mt-1 w-full rounded-xl border border-sanctuary-800 bg-sanctuary-950 px-3 py-2 text-sm min-h-11"
+          />
+          {lookup.trim() && (
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {lookupHits.map((hit) => (
+                <li key={hit.key} className="min-w-0">
+                  <button
+                    type="button"
+                    className="inline-block max-w-full truncate rounded-lg bg-sanctuary-900 border border-sanctuary-800 px-2 py-1 text-xs hover:border-d2-magic/50"
+                    onClick={hit.onPick}
+                  >
+                    {hit.label}
+                  </button>
+                </li>
+              ))}
+              {lookupHits.length === 0 && (
+                <li className="text-xs text-sanctuary-500">{isEn ? 'No matching recipe in this codex.' : '本典目前沒有符合的配方。'}</li>
+              )}
+            </ul>
           )}
-        </p>
-        <div className="mt-4 text-sm text-sanctuary-400 leading-relaxed space-y-3 max-w-3xl">
-          <p>
-            {t(
-              '本典目前收錄 30 條已核可中英對照的方塊公式，再加上手工分類裡的 36 條合成物品大全。請先進目錄、再進入單一類型；沒有核可資料的符文升級、寶石升級、消耗品或新生特大咒符表不會出現在這裡。',
-              'This codex currently lists 30 bilingual cube recipes plus the 36-item crafted catalog under Crafted Items. The structure is a directory first, then one type at a time. Unverified rune upgrades, gem upgrades, consumables and crafted grand-charm tables are not added here.',
-            )}
-          </p>
-          <p>
-            {t(
-              '裝備打孔四則只適用無前綴普通白裝或無形白裝；裝備階級升級八則依暗金／亮黃與武器／防具再分成四組；手工神裝工藝含六則精選與完整 36 條大全（血腥、施法、重擊、防護）；免錢修理充能含修理、充能與 Hel 拔孔；洗裝與洗點含赦免徽章、乳牛關、重骰咒符珠寶或亮黃物品，以及群魔亂舞儀式材料。',
-              'Socketing has four recipes for plain normal or ethereal white bases. Item Upgrades has eight recipes in four sub-groups (Unique/Rare × Weapons/Armor). Crafted Items has six featured cards and all 36 Blood, Caster, Hit Power and Safety recipes. Repairs & Recharging covers free repair, recharge, and unsocketing with Hel. Rerolling & Respec covers the Token of Absolution, the Cow Level, charm or jewel and rare rerolls, and Pandemonium Event organs.',
-            )}
-          </p>
         </div>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 min-w-0">
           {CATS.map((c) => option(c, `cube-${c}`, L(CAT_LABEL[c]), byCat[c].length, L(CAT_DESC[c])))}
@@ -450,8 +476,8 @@ export const CubeLab: React.FC<CubeLabProps> = ({ initialQuery, onNavigateToRune
           <h2 className="font-diablo text-lg font-bold text-d2-magic">{isEn ? 'Recipe index' : '公式詞條'}</h2>
           <p className="text-sm text-sanctuary-400">
             {isEn
-              ? 'Names only — choose a title to open its category (or sub-group) and jump to that card. This is the word list, not a dump of every recipe card.'
-              : '這裡只列出名稱。點選詞條會進入該分類（升級則進入子群組）並跳到該張配方卡，而不是在進版展開全部卡片。'}
+              ? 'Choose a name to open its category (or upgrade sub-group) at that recipe.'
+              : '點選名稱會打開該分類（升級則進入子群組）並跳到那張配方。'}
           </p>
           {CATS.map((c) => (
             <div key={`idx-${c}`}>
@@ -499,43 +525,6 @@ export const CubeLab: React.FC<CubeLabProps> = ({ initialQuery, onNavigateToRune
               ))}
             </ul>
           </div>
-        </div>
-        <div className="mt-8 min-w-0 max-w-xl">
-          <label className="block text-sm text-sanctuary-300" htmlFor="cube-lookup">
-            <span className="inline-flex items-center gap-1.5">
-              <Search className="w-3.5 h-3.5" />
-              {isEn ? 'Find a recipe' : '查找配方'}
-            </span>
-          </label>
-          <input
-            id="cube-lookup"
-            value={lookup}
-            onChange={(e) => setLookup(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key !== 'Enter' || !lookupHits[0]) return;
-              lookupHits[0].onPick();
-            }}
-            placeholder={isEn ? 'Recipe or crafted item name' : '配方或手工物品名稱'}
-            className="mt-1 w-full rounded-xl border border-sanctuary-800 bg-sanctuary-950 px-3 py-2 text-sm min-h-11"
-          />
-          {lookup.trim() && (
-            <ul className="mt-3 flex flex-wrap gap-2">
-              {lookupHits.map((hit) => (
-                <li key={hit.key}>
-                  <button
-                    type="button"
-                    className="inline-block max-w-full truncate rounded-lg bg-sanctuary-900 border border-sanctuary-800 px-2 py-1 text-xs hover:border-d2-magic/50"
-                    onClick={hit.onPick}
-                  >
-                    {hit.label}
-                  </button>
-                </li>
-              ))}
-              {lookupHits.length === 0 && (
-                <li className="text-xs text-sanctuary-500">{isEn ? 'No matching recipe in this codex.' : '本典目前沒有符合的配方。'}</li>
-              )}
-            </ul>
-          )}
         </div>
       </>
     );
@@ -606,8 +595,8 @@ export const CubeLab: React.FC<CubeLabProps> = ({ initialQuery, onNavigateToRune
         {view.kind === 'dir' && (
           <p className="text-sm text-sanctuary-400 mt-1">
             {t(
-              '白裝打孔、暗金／亮黃底材升級、完整 36 條四大系列手工合成，以及修理充能與洗裝洗點公式，依分類查閱。',
-              'Look up socketing, Unique/Rare upgrades, all 36 crafted recipes, repairs and rerolls by category, like a dictionary.',
+              `收錄 ${CUBE_RECIPES_DATA.length} 條方塊公式與 ${CRAFTED_COUNT} 條手工合成物品，可直接查找或依分類查閱；未經核可的符文／寶石升級表不列入。`,
+              `${CUBE_RECIPES_DATA.length} cube recipes and ${CRAFTED_COUNT} crafted items: search by name or browse by category. Unverified rune and gem upgrade tables are not listed.`,
             )}
           </p>
         )}

@@ -134,17 +134,17 @@ export const CraftedItemsCatalog: React.FC<CraftedItemsCatalogProps> = ({ onNavi
               />
             </label>
             <div className="p-2 rounded-xl bg-sanctuary-950 border border-orange-500/30 text-center">
-              <div className="text-[10px] text-sanctuary-400">{t('成品 ilvl', 'Crafted ilvl')}</div>
+              <div className="text-xs text-sanctuary-400">{t('成品 ilvl', 'Crafted ilvl')}</div>
               <div className="text-lg font-mono font-bold text-orange-300">{craftedIlvl}</div>
             </div>
             <div className="p-2 rounded-xl bg-sanctuary-950 border border-sanctuary-800 text-center">
-              <div className="text-[10px] text-sanctuary-400">{t('項鍊 +2 職業技能', 'Amulet +2 Skills')}</div>
+              <div className="text-xs text-sanctuary-400">{t('項鍊 +2 職業技能', 'Amulet +2 Skills')}</div>
               <div className={`text-xs font-bold mt-1 ${craftedIlvl >= 90 ? 'text-emerald-400' : 'text-sanctuary-400'}`}>
                 {craftedIlvl >= 90 ? t('✓ 已達標 (≥ 90)', '✓ Eligible (≥ 90)') : t(`尚差 ${90 - craftedIlvl} 級`, `Need +${90 - craftedIlvl}`)}
               </div>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-sanctuary-300">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-sanctuary-300">
             <span className="font-mono text-sanctuary-400">
               ilvl = ⌊clvl/2⌋ + ⌊{t('底材 ilvl', 'base ilvl')}/2⌋
             </span>
@@ -159,7 +159,7 @@ export const CraftedItemsCatalog: React.FC<CraftedItemsCatalogProps> = ({ onNavi
 
         <div className="lg:col-span-5 p-4 rounded-2xl bg-sanctuary-900/70 border border-sanctuary-800 text-xs space-y-2">
           <div className="font-bold text-sanctuary-200">{t('手工裝備必知規則', 'Key Crafting Rules')}</div>
-          <ul className="space-y-1 text-[11px] text-sanctuary-300 leading-relaxed list-disc pl-4">
+          <ul className="space-y-1 text-xs text-sanctuary-300 leading-relaxed list-disc pl-4">
             <li>
               {t(
                 '隨機詞綴門檻：ilvl 1–30 出 1–4 條、31–50 至少 2 條、51–70 至少 3 條、ilvl ≥ 71 必出滿 4 條。',
@@ -287,14 +287,14 @@ export const CraftedItemsCatalog: React.FC<CraftedItemsCatalogProps> = ({ onNavi
                       <h4 className="font-diablo text-sm font-bold text-orange-300">
                         {isEn ? r.nameEn : r.name}
                       </h4>
-                      {!isEn && <div className="text-[11px] font-mono text-sanctuary-400 italic">{r.nameEn}</div>}
+                      {!isEn && <div className="text-xs font-mono text-sanctuary-400 italic">{r.nameEn}</div>}
                     </div>
                     <div className="flex flex-col items-end gap-1 shrink-0">
-                      <span className={`text-[10px] px-2 py-0.5 rounded border font-mono ${fam.badgeCls}`}>
+                      <span className={`text-[11px] whitespace-nowrap px-2 py-0.5 rounded border font-mono ${fam.badgeCls}`}>
                         {isEn ? fam.labelEn : fam.label}
                       </span>
                       {r.highlight && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-950/70 text-d2-gold border border-d2-gold/40 font-semibold">
+                        <span className="text-[11px] whitespace-nowrap px-1.5 py-0.5 rounded bg-amber-950/70 text-d2-gold border border-d2-gold/40 font-semibold">
                           ★ {isEn ? r.highlight.tagEn : r.highlight.tag}
                         </span>
                       )}
@@ -303,13 +303,13 @@ export const CraftedItemsCatalog: React.FC<CraftedItemsCatalogProps> = ({ onNavi
 
                   {/* 材料清單 */}
                   <div className="space-y-1.5 text-xs">
-                    <div className="text-[11px] text-sanctuary-300">
+                    <div className="text-xs text-sanctuary-300">
                       <span className="text-sanctuary-500">{t('魔法底材：', 'Magic Base: ')}</span>
                       <span className="text-d2-magic font-medium">
                         {bases.join(isEn ? ' / ' : ' ／ ')}
                       </span>
                     </div>
-                    <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+                    <div className="flex flex-wrap items-center gap-1.5 text-xs">
                       {onNavigateToRune && r.runeNumber > 0 ? (
                         <button
                           type="button"
@@ -340,14 +340,14 @@ export const CraftedItemsCatalog: React.FC<CraftedItemsCatalogProps> = ({ onNavi
                         • {line}
                       </div>
                     ))}
-                    <div className="text-[11px] text-d2-magic/90 pt-0.5">
+                    <div className="text-xs text-d2-magic/90 pt-0.5">
                       • {t('+ 1～4 條隨機詞綴（ilvl ≥ 71 必出 4 條）', '+ 1–4 random affixes (4 guaranteed at ilvl ≥ 71)')}
                     </div>
                   </div>
                 </div>
 
                 {r.highlight && (
-                  <p className="text-[11px] text-sanctuary-300 bg-amber-950/20 border border-d2-gold/20 rounded-lg px-2.5 py-2 leading-relaxed">
+                  <p className="text-xs text-sanctuary-300 bg-amber-950/20 border border-d2-gold/20 rounded-lg px-2.5 py-2 leading-relaxed">
                     {isEn ? r.highlight.tipEn : r.highlight.tip}
                   </p>
                 )}
