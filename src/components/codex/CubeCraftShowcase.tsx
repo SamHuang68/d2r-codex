@@ -179,10 +179,10 @@ const CRAFT_ITEMS: CraftSpotlight[] = [
     name: '施法者手工腰帶',
     nameEn: 'Caster Belt',
     category: 'craft',
-    badge: '10% FCR 腰帶',
-    badgeEn: '10% FCR Belt',
-    tagline: '少數提供 FCR 的腰帶（蜘蛛之網、基德的賭注等）',
-    taglineEn: 'One of the few belts that grant Faster Cast Rate, such as Arachnid Mesh and Gheed\'s Wager',
+    badge: '5–10% FCR 腰帶',
+    badgeEn: '5–10% FCR Belt',
+    tagline: '少數提供 FCR 的腰帶之一；暗金 FCR 腰帶另有蜘蛛之網（20%）與基德的賭注（10–20%）',
+    taglineEn: 'One of the few belts that grant Faster Cast Rate; unique FCR belts include Arachnid Mesh (20%) and Gheed\'s Wager (10–20%)',
     inputs: [
       { name: '魔法輕腰帶/鯊皮腰帶/吸血鬼牙腰帶', nameEn: 'Light/Sharkskin/Vampirefang Belt', isBase: true },
       { name: '6# 伊司 (Ith)', nameEn: '#6 Ith', runeNum: 6 },
@@ -266,12 +266,12 @@ const UPGRADE_ITEMS: UpgradeSpotlight[] = [
       '需求力量僅需 84 點，法師與全法系皆可輕鬆穿戴',
     ],
     benefitsEn: [
-      'Defense skyrockets from 279 to 800 ~ 1034!',
-      'Fully retains +1 All Skills, 35% FCR, and +35 All Resistances.',
+      'Defense skyrockets from 244 ~ 277 to 800 ~ 1034!',
+      'Fully retains +1 All Skills, 30% FCR, and 20~35 All Resistances.',
       'Only requires 84 Strength, easily wearable by any caster.',
     ],
-    whyUpgrade: '全暗黑性價比第一的神甲升級。只需 18#+20#，立刻將進階蛇魔法師之皮升級為防禦突破千點的菁英神裝。',
-    whyUpgradeEn: 'Best value armor upgrade in D2R. For just Ko + Lem, transforms Vipermagi into an elite defense body armor over 1000 Def.',
+    whyUpgrade: '全暗黑性價比第一的神甲升級。只需 18#+20#，立刻將進階蛇魔法師之皮升級為防禦最高可達 1034 的菁英神裝。',
+    whyUpgradeEn: 'Best value armor upgrade in D2R. For just Ko + Lem, transforms Vipermagi into an elite body armor with up to 1034 defense.',
   },
   {
     id: 'upgrade_unique_armor_excep_to_elite_hoz',
@@ -348,17 +348,15 @@ const UPGRADE_ITEMS: UpgradeSpotlight[] = [
     gemZh: '完美鑽石',
     gemEn: 'Perfect Diamond',
     benefits: [
-      '防禦力從 25 左右翻近三倍至 70 點以上',
       '僅需低階 7#+13# 符文，造價極其平民',
-      '需求力量僅 88 點，施法職業開荒也能穿戴',
+      '升級後需求力量為 88 點',
     ],
     benefitsEn: [
-      'Nearly triples defense from 25 to 70+.',
       'Extremely cheap early ladder cost (Tal + Shael).',
-      'Requires only 58 Strength, easily wearable by any caster.',
+      'Requires 88 Strength after the upgrade.',
     ],
-    whyUpgrade: '法系開荒最便宜的高收益升級。微小的符文代價換取穩定的基礎防禦強化，無損任何施法屬性。',
-    whyUpgradeEn: 'Cheapest high-yield caster upgrade for early ladders. Free extra defense for negligible low rune costs with zero downside.',
+    whyUpgrade: '以低階符文（7# 塔爾 + 13# 夏）將底材由輕型護手升級為戰鬥護手（進階）。升級後力量需求由 45 提高為 88，使用前請確認角色力量足夠。',
+    whyUpgradeEn: 'Uses low runes (Tal + Shael) to change the base from Light Gauntlets to Battle Gauntlets (Exceptional). The Strength requirement rises from 45 to 88, so check that your character has enough Strength before using it.',
   },
 ];
 
@@ -509,7 +507,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
             <div className="flex items-center gap-2">
               <h2 className="font-diablo text-lg sm:text-xl font-bold text-sanctuary-100 flex items-center gap-2">
                 <span>{isEn ? 'Horadric Transmutation Master Hall' : '方塊煉金極品工藝與跨階升級展廳'}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-d2-magic/20 text-d2-magic border border-d2-magic/40 font-mono font-bold">
+                <span className="text-[11px] whitespace-nowrap px-2 py-0.5 rounded-full bg-d2-magic/20 text-d2-magic border border-d2-magic/40 font-mono font-bold">
                   MASTER ALCHEMY
                 </span>
               </h2>
@@ -615,20 +613,20 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-sanctuary-300 font-mono mt-0.5">
+                          <div className="text-xs text-sanctuary-300 font-mono mt-0.5">
                             {isEn ? item.taglineEn : item.tagline}
                           </div>
                         </div>
-                        <span className={`text-[10px] px-2 py-0.5 rounded-full border font-mono font-bold shrink-0 ${styles.badgeBg}`}>
+                        <span className={`text-[11px] whitespace-nowrap px-2 py-0.5 rounded-full border font-mono font-bold shrink-0 ${styles.badgeBg}`}>
                           {isEn ? item.badgeEn : item.badge}
                         </span>
                       </div>
 
                       {/* 投入材料插槽視覺化 (Input Ingredients) */}
                       <div className="my-3 p-2.5 rounded-xl bg-sanctuary-950/90 border border-sanctuary-800/80 shadow-inner">
-                        <div className="text-[10px] text-sanctuary-400 font-mono mb-2 flex items-center justify-between">
+                        <div className="text-xs text-sanctuary-400 font-mono mb-2 flex items-center justify-between">
                           <span>{isEn ? 'Required Ingredients:' : '方塊煉金材料：'}</span>
-                          <span className="text-[9px] text-d2-magic">{isEn ? 'All 4 Required' : '4件齊全'}</span>
+                          <span className="text-[11px] whitespace-nowrap text-d2-magic">{isEn ? 'All 4 Required' : '4件齊全'}</span>
                         </div>
                         <div className="flex flex-wrap items-center gap-1.5">
                           {item.inputs.map((inp, idx) => (
@@ -644,7 +642,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                                     e.stopPropagation();
                                     onNavigateToRune?.(inp.runeNum!);
                                   }}
-                                  className="group/rune flex items-center gap-1 px-2 py-1 rounded-lg bg-sanctuary-900 border border-d2-rune/40 hover:border-d2-rune text-[11px] text-d2-rune hover:text-white font-mono transition-all cursor-pointer shadow-sm"
+                                  className="group/rune flex items-center gap-1 px-2 py-1 rounded-lg bg-sanctuary-900 border border-d2-rune/40 hover:border-d2-rune text-xs text-d2-rune hover:text-white font-mono transition-all cursor-pointer shadow-sm"
                                   title={isEn ? `View Rune #${inp.runeNum}` : `點擊查看 ${inp.runeNum}# 符文`}
                                 >
                                   <ItemIcon runeNumber={inp.runeNum} name={rune?.name} nameEn={rune?.nameEn} size="xs" showBorder={false} />
@@ -652,7 +650,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                                 </button>
                                 );
                               })() : (
-                                <span className="flex items-center gap-1 px-2 py-1 rounded-lg bg-sanctuary-900 border border-sanctuary-750 text-[11px] text-sanctuary-200 font-mono">
+                                <span className="flex items-center gap-1 px-2 py-1 rounded-lg bg-sanctuary-900 border border-sanctuary-750 text-xs text-sanctuary-200 font-mono">
                                   <ItemIcon name={inp.name} nameEn={inp.nameEn} size="xs" showBorder={false} />
                                   <span className="truncate max-w-[120px]">{isEn && inp.nameEn ? inp.nameEn : inp.name}</span>
                                 </span>
@@ -665,11 +663,11 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                       {/* 固定詞綴與畢業天花板詞綴 */}
                       <div className="space-y-3 my-3">
                         <div className="p-2.5 rounded-xl bg-sanctuary-900/60 border border-sanctuary-850">
-                          <div className="text-[10px] font-mono text-sanctuary-400 font-bold mb-1">
+                          <div className="text-xs font-mono text-sanctuary-400 font-bold mb-1">
                             {isEn ? 'Inherent Base Affixes (Guaranteed):' : '✨ 方塊固有詞綴 (每次必出)：'}
                           </div>
                           {(isEn ? item.inherentAffixesEn : item.inherentAffixes).map((aff, aIdx) => (
-                            <div key={aIdx} className="text-[11px] text-sanctuary-200 leading-snug flex items-center gap-1">
+                            <div key={aIdx} className="text-xs text-sanctuary-200 leading-snug flex items-center gap-1">
                               <span className="text-d2-magic font-bold">•</span>
                               <span>{aff}</span>
                             </div>
@@ -677,12 +675,12 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                         </div>
 
                         <div className="p-2.5 rounded-xl bg-sanctuary-900/80 border border-amber-600/30">
-                          <div className="text-[10px] font-mono text-d2-gold font-bold mb-1 flex items-center gap-1">
+                          <div className="text-xs font-mono text-d2-gold font-bold mb-1 flex items-center gap-1">
                             <Sparkles className="w-3 h-3 text-d2-gold" />
-                            <span>{isEn ? 'GG Roll Goals (Trophy Cap):' : '🏆 頂級天價畢業詞綴 (GG Roll)：'}</span>
+                            <span>{isEn ? 'High affix targets:' : '較佳隨機詞綴目標：'}</span>
                           </div>
                           {(isEn ? item.ggRollEn : item.ggRoll).map((gg, gIdx) => (
-                            <div key={gIdx} className="text-[11px] text-amber-200/90 leading-snug flex items-center gap-1">
+                            <div key={gIdx} className="text-xs text-amber-200/90 leading-snug flex items-center gap-1">
                               <span className="text-d2-unique font-bold">★</span>
                               <span>{gg}</span>
                             </div>
@@ -691,7 +689,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                       </div>
 
                       {/* 專家戰略提示 */}
-                      <p className="text-[11px] text-sanctuary-400 italic bg-sanctuary-900/40 p-2 rounded-lg border border-sanctuary-850/60 leading-relaxed mb-4">
+                      <p className="text-xs text-sanctuary-400 italic bg-sanctuary-900/40 p-2 rounded-lg border border-sanctuary-850/60 leading-relaxed mb-4">
                         💡 {isEn ? item.tacticalTipEn : item.tacticalTip}
                       </p>
                     </div>
@@ -727,12 +725,12 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                           {isEn ? item.nameEn : item.name}
                         </h3>
                         {!isEn && item.nameEn && (
-                          <div className="text-[11px] text-sanctuary-400 font-mono italic">
+                          <div className="text-xs text-sanctuary-400 font-mono italic">
                             {item.nameEn}
                           </div>
                         )}
                       </div>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-950/80 text-amber-300 border border-amber-600/50 font-mono font-bold shrink-0">
+                      <span className="text-[11px] whitespace-nowrap px-2 py-0.5 rounded-full bg-amber-950/80 text-amber-300 border border-amber-600/50 font-mono font-bold shrink-0">
                         {isEn ? item.tierChangeEn : item.tierChange}
                       </span>
                     </div>
@@ -740,19 +738,19 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                     {/* 前後底材對照徽章 */}
                     <div className="my-3 p-3 rounded-xl bg-sanctuary-950/90 border border-sanctuary-800 flex items-center justify-between text-xs">
                       <div className="text-center space-y-1">
-                        <div className="text-[10px] text-sanctuary-400 font-mono">{isEn ? 'Original Base' : '原版底材'}</div>
+                        <div className="text-xs text-sanctuary-400 font-mono">{isEn ? 'Original Base' : '原版底材'}</div>
                         <div className="text-sanctuary-200 font-bold">{isEn ? item.beforeItemEn : item.beforeItem}</div>
                       </div>
                       <ArrowRight className="w-4 h-4 text-amber-400 shrink-0" />
                       <div className="text-center space-y-1">
-                        <div className="text-[10px] text-amber-400 font-mono">{isEn ? 'Upgraded Base' : '升級後底材'}</div>
+                        <div className="text-xs text-amber-400 font-mono">{isEn ? 'Upgraded Base' : '升級後底材'}</div>
                         <div className="text-d2-unique font-bold">{isEn ? item.afterItemEn : item.afterItem}</div>
                       </div>
                     </div>
 
                     {/* 升級公式原料圖騰 */}
                     <div className="my-3 p-2.5 rounded-xl bg-sanctuary-900/60 border border-sanctuary-850 text-xs">
-                      <div className="text-[10px] text-sanctuary-400 font-mono mb-1.5">
+                      <div className="text-xs text-sanctuary-400 font-mono mb-1.5">
                         {isEn ? 'Upgrade Formula:' : '升級所需材料：'}
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5 font-mono">
@@ -766,7 +764,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                               e.stopPropagation();
                               onNavigateToRune?.(rNum);
                             }}
-                            className="flex items-center gap-1 px-2 py-1 rounded bg-sanctuary-900 border border-d2-rune/40 hover:border-d2-rune text-[11px] text-d2-rune hover:text-white"
+                            className="flex items-center gap-1 px-2 py-1 rounded bg-sanctuary-900 border border-d2-rune/40 hover:border-d2-rune text-xs text-d2-rune hover:text-white"
                             title={isEn ? `View Rune #${rNum}` : `查看 ${rNum}# 符文`}
                           >
                             <ItemIcon runeNumber={rNum} name={rune?.name} nameEn={rune?.nameEn} size="xs" showBorder={false} />
@@ -774,7 +772,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                           </button>
                           );
                         })}
-                        <span className="flex items-center gap-1 px-2 py-1 rounded bg-sanctuary-900 border border-sanctuary-750 text-[11px] text-sanctuary-200">
+                        <span className="flex items-center gap-1 px-2 py-1 rounded bg-sanctuary-900 border border-sanctuary-750 text-xs text-sanctuary-200">
                           <ItemIcon name={item.gemZh} nameEn={item.gemEn} size="xs" showBorder={false} />
                           <span>{isEn ? item.gemEn : item.gemZh}</span>
                         </span>
@@ -783,11 +781,11 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
 
                     {/* 升級核心增益 */}
                     <div className="space-y-1.5 my-3 p-2.5 rounded-xl bg-sanctuary-900/40 border border-sanctuary-850">
-                      <div className="text-[10px] font-mono text-sanctuary-400 font-bold mb-1">
+                      <div className="text-xs font-mono text-sanctuary-400 font-bold mb-1">
                         {isEn ? 'Key Upgrade Benefits:' : '升級核心增益：'}
                       </div>
                       {(isEn ? item.benefitsEn : item.benefits).map((benefit, bIdx) => (
-                        <div key={bIdx} className="text-[11px] text-sanctuary-200 leading-snug flex items-center gap-1">
+                        <div key={bIdx} className="text-xs text-sanctuary-200 leading-snug flex items-center gap-1">
                           <span className="text-amber-400 font-bold">•</span>
                           <span>{benefit}</span>
                         </div>
@@ -795,7 +793,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                     </div>
 
                     {/* 為何值得升級 */}
-                    <p className="text-[11px] text-sanctuary-400 italic bg-sanctuary-900/40 p-2 rounded-lg border border-sanctuary-850/60 leading-relaxed mb-4">
+                    <p className="text-xs text-sanctuary-400 italic bg-sanctuary-900/40 p-2 rounded-lg border border-sanctuary-850/60 leading-relaxed mb-4">
                       💡 <strong>{isEn ? 'Why Upgrade: ' : '為何值得升級：'}</strong>{isEn ? item.whyUpgradeEn : item.whyUpgrade}
                     </p>
                   </div>
@@ -831,19 +829,19 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                           <span>{isEn ? item.typeEn : item.type}</span>
                         </h3>
                         {!isEn && item.typeEn && (
-                          <div className="text-[11px] text-sanctuary-400 font-mono italic">
+                          <div className="text-xs text-sanctuary-400 font-mono italic">
                             {item.typeEn}
                           </div>
                         )}
                       </div>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-600/50 font-mono font-bold shrink-0">
+                      <span className="text-[11px] whitespace-nowrap px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-600/50 font-mono font-bold shrink-0">
                         {isEn ? `Max ${item.maxSockets} Sockets` : `最大 ${item.maxSockets} 孔`}
                       </span>
                     </div>
 
                     {/* 打孔公式材料 */}
                     <div className="my-3 p-2.5 rounded-xl bg-sanctuary-950/90 border border-sanctuary-800/80">
-                      <div className="text-[10px] text-sanctuary-400 font-mono mb-1.5">
+                      <div className="text-xs text-sanctuary-400 font-mono mb-1.5">
                         {isEn ? 'Socketing Ingredients:' : '打孔固定材料：'}
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5 font-mono">
@@ -859,7 +857,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                               e.stopPropagation();
                               onNavigateToRune?.(r.num);
                             }}
-                            className="flex items-center gap-1 px-2 py-1 rounded bg-sanctuary-900 border border-d2-rune/40 hover:border-d2-rune text-[11px] text-d2-rune hover:text-white"
+                            className="flex items-center gap-1 px-2 py-1 rounded bg-sanctuary-900 border border-d2-rune/40 hover:border-d2-rune text-xs text-d2-rune hover:text-white"
                             title={isEn ? `View Rune #${r.num}` : `查看 ${r.num}# 符文`}
                           >
                             <ItemIcon runeNumber={r.num} name={rune?.name} nameEn={rune?.nameEn} size="xs" showBorder={false} />
@@ -867,7 +865,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                           </button>
                           );
                         })}
-                        <span className="flex items-center gap-1 px-2 py-1 rounded bg-sanctuary-900 border border-sanctuary-750 text-[11px] text-sanctuary-200">
+                        <span className="flex items-center gap-1 px-2 py-1 rounded bg-sanctuary-900 border border-sanctuary-750 text-xs text-sanctuary-200">
                           <ItemIcon name={item.gem} nameEn={item.gemEn} size="xs" showBorder={false} />
                           <span>{isEn ? item.gemEn : item.gem}</span>
                         </span>
@@ -876,27 +874,27 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
 
                     {/* 機率與規則 */}
                     <div className="p-2.5 rounded-xl bg-sanctuary-900/60 border border-sanctuary-850 text-xs space-y-1.5 my-3">
-                      <div className="text-[10px] font-mono text-emerald-400 font-bold">
+                      <div className="text-xs font-mono text-emerald-400 font-bold">
                         {isEn ? '🎲 Rolling & Cap Mechanics:' : '🎲 擲骰與截斷機制：'}
                       </div>
-                      <p className="text-[11px] text-sanctuary-200 leading-relaxed">
+                      <p className="text-xs text-sanctuary-200 leading-relaxed">
                         {isEn ? item.rollDetailsEn : item.rollDetails}
                       </p>
                     </div>
 
                     {/* 最佳底材用途 */}
                     <div className="p-2.5 rounded-xl bg-sanctuary-900/40 border border-sanctuary-850 text-xs space-y-1 my-3">
-                      <div className="text-[10px] font-mono text-sanctuary-400 font-bold">
+                      <div className="text-xs font-mono text-sanctuary-400 font-bold">
                         {isEn ? '🎯 Premier Targets:' : '🎯 最常打孔目標：'}
                       </div>
-                      <p className="text-[11px] text-amber-200/90 leading-relaxed font-mono">
+                      <p className="text-xs text-amber-200/90 leading-relaxed font-mono">
                         {isEn ? item.bestUseEn : item.bestUse}
                       </p>
                     </div>
                   </div>
 
                   {/* 提示備註 */}
-                  <div className="text-[10px] text-sanctuary-500 font-mono pt-2 border-t border-sanctuary-850">
+                  <div className="text-xs text-sanctuary-500 font-mono pt-2 border-t border-sanctuary-850">
                     {isEn
                       ? '⚠ Normal & Eth plain bases only (Superior cannot be cube-socketed, use Larzuk)'
                       : '⚠ 僅限白色普通與無形白裝（特等 Superior 無法方塊打孔，需找第五章拉蘇克）'}

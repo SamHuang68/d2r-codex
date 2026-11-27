@@ -11,6 +11,7 @@ import { RUNEWORDS_DATA } from '../data/runewords';
 import { UNIQUE_ITEMS_DATA } from '../data/uniqueItems';
 import { SET_ITEMS_DATA, ALL_SET_PIECES } from '../data/setItems';
 import { CUBE_RECIPES_DATA } from '../data/cubeRecipes';
+import { CUBE_CATEGORY_LABEL } from '../data/cubeCategories';
 import { getAllCraftedRecipes } from '../data/codex/craftedItems';
 import { AREA_LEVELS_DATA } from '../data/areaLevels';
 import { MERCENARIES_DATA } from '../data/mercenaries';
@@ -274,18 +275,23 @@ export const searchOmni = (query: string, isEn = false): SearchResultItem[] => {
       recipe.title,
       recipe.titleEn,
       recipe.category,
+      ...CUBE_CATEGORY_LABEL[recipe.category],
       recipe.inputs.join(' '),
+      (recipe.inputsEn ?? []).join(' '),
       recipe.output,
-      recipe.notes || ''
+      recipe.outputEn ?? '',
+      recipe.notes || '',
+      recipe.notesEn ?? ''
     ].join(' ').toLowerCase();
 
     if (textToMatch.includes(q)) {
+      const [catZh, catEn] = CUBE_CATEGORY_LABEL[recipe.category];
       results.push({
         id: recipe.id,
         type: 'cube',
         title: recipe.title,
         titleEn: recipe.titleEn,
-        category: isEn ? `Cube Recipe (${recipe.category})` : `方塊公式 (${recipe.category})`,
+        category: isEn ? `Cube Recipe (${catEn})` : `方塊公式 (${catZh})`,
         badge: (isEn ? 'Cube Transmutation' : '方塊合成'),
         preview: isEn ? `${(recipe.inputsEn ?? recipe.inputs).join(' + ')} -> ${recipe.outputEn ?? recipe.output}` : `${recipe.inputs.join(' + ')} -> ${recipe.output}`,
         targetTab: 'cube'

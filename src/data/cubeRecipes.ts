@@ -178,8 +178,8 @@ notes: "地獄難度四大關底 Boss 掉落精華，供無限次洗點使用。
     output: "開啟通往秘密乳牛關 (Moo Moo Farm) 的紅色傳送門",
         inputsEn: ["1x Wirt's Leg","1x Tome of Town Portal"],
     outputEn: "Red Portal to the Secret Cow Level (Moo Moo Farm)",
-notes: "需在同一難度完成擊殺巴爾後，於第一章俠盜營地內放入方塊轉化。",
-    notesEn: "Must defeat Baal on the same difficulty; transmute inside Act 1 Rogue Encampment."
+notes: "需在已擊敗該難度巴爾之後，於第 1 章俠盜營地放入維特的腿與城鎮傳送之書轉化。D2R 中擊殺牛王不會鎖關，之後仍可再開門。",
+    notesEn: "Must have defeated Baal on that difficulty; transmute Wirt's Leg + Tome of Town Portal in the Act 1 Rogue Encampment. In D2R, killing the Cow King no longer locks the portal."
   },
   {
     id: "repair_weapon",
@@ -190,8 +190,8 @@ notes: "需在同一難度完成擊殺巴爾後，於第一章俠盜營地內放
     output: "耐久度全滿的武器",
         inputsEn: ["1x Ort (#9)","1x Damaged Weapon"],
     outputEn: "Fully Repaired Weapon (Full Durability)",
-notes: "無形 (Ethereal) 裝備無法透過此配方修復耐久。要連聚氣技能次數一起補滿，請用下方「武器快速修復與聚氣充能」（再加 1 顆碎裂寶石）。",
-    notesEn: "Ethereal items cannot be repaired. To recharge spell charges as well, add a chipped gem."
+notes: "無形 (Ethereal) 裝備無法透過此配方修復耐久。若要一併充能，請用另一條「武器快速修復與聚氣充能」（Ort + 必要的碎裂寶石 + 武器）。",
+    notesEn: "Ethereal items cannot be repaired this way. To also refill charges, use the separate recharge recipe (Ort + the required chipped gem + weapon)."
   },
   {
     id: "repair_armor",
@@ -202,20 +202,8 @@ notes: "無形 (Ethereal) 裝備無法透過此配方修復耐久。要連聚氣
     output: "耐久度全滿的防具",
         inputsEn: ["1x Ral (#8)","1x Damaged Armor"],
     outputEn: "Fully Repaired Armor (Full Durability)",
-notes: "修理高額維修費的符文之語（如剛毅、謎團）時省錢妙招。無形裝備無法修復耐久。要連聚氣技能次數一起補滿，請用下方「防具快速修復與聚氣充能」（再加 1 顆瑕疵寶石）。",
-    notesEn: "Saves massive gold on high-repair Runewords like Fortitude or Enigma. Ethereal items cannot be repaired."
-  },
-  {
-    id: "reroll_grand_charm",
-    category: "misc",
-    title: "重置魔法特大咒符 (洗技能板)",
-    titleEn: "Reroll Magic Grand Charm",
-    inputs: ["3x 任意完美寶石 (Perfect Gems)", "1x 魔法特大咒符 (遊戲配方接受任何魔法物品；洗板建議 ilvl 85+)"],
-    output: "隨機重新生成屬性的魔法特大咒符",
-        inputsEn: ["3x Any Perfect Gems","1x Magic Grand Charm (ilvl 85+ recommended)"],
-    outputEn: "Rerolled Magic Grand Charm (New Random Affixes, same ilvl)",
-notes: "使用巴爾、迪亞布羅、尼拉塞克掉落的 91+ 級咒符，有機會洗出 +1 技能 +45 生命的夢幻神板！",
-    notesEn: "Using ilvl 91+ charms from Baal, Diablo, or Nihlathak can roll +1 Skill and +45 Life!"
+notes: "修理高額維修費的符文之語（如剛毅、謎團）時省錢妙招。無形裝備無法以此修復耐久。若要一併充能，請用另一條「防具快速修復與聚氣充能」（Ral + 必要的瑕疵寶石 + 防具）。",
+    notesEn: "Saves gold on high-repair Runewords like Fortitude or Enigma. Ethereal items cannot be repaired this way. To also refill charges, use the separate recharge recipe (Ral + the required flawed gem + armor)."
   },
   {
     id: "unsocket_item",
@@ -286,8 +274,8 @@ notes: "常用於升級極品雙抗跑鞋或高防禦稀有頭甲。",
     output: "手工施法腰帶 (固定附帶 +5-10% 快速施法速度 FCR、法力回充 +4-10%、+10-20 法力)",
         inputsEn: ["1x Magic Light Belt/Sharkskin Belt/Vampirefang Belt","1x Ith (#6)","1x Perfect Amethyst","1x Any Jewel"],
     outputEn: "Crafted Caster Belt (+5-10% FCR, Regenerate Mana +4-10%, +10-20 Mana)",
-notes: "在沒有蜘蛛之網前，唯一的 10% FCR 腰帶來源！",
-    notesEn: "The only belt in the game besides Arachnid Mesh that provides 10% Faster Cast Rate!"
+notes: "手工施法腰帶是 5–10% FCR 的腰帶來源之一；暗金 FCR 腰帶另有蜘蛛之網 (20% FCR) 與基德的賭注 (10–20% FCR)。",
+    notesEn: "Crafted caster belts are one source of 5–10% FCR belts; unique FCR belts include Arachnid Mesh (20% FCR) and Gheed's Wager (10–20% FCR)."
   },
   {
     id: "craft_blood_ring",
@@ -329,8 +317,8 @@ notes: "收集『墨菲斯托之腦 + 巴爾之眼 + 迪亞布羅之角』三樣
     output: "全新隨機屬性的同類型魔法物品 (維持原物品等級 ilvl 不變)",
         inputsEn: ["3x Any Perfect Gems (Including Skulls)","1x Magic Item (Grand Charm, Jewel, Circlet)"],
     outputEn: "Rerolled Magic Item (New random affixes, same ilvl preserved)",
-notes: "【神級致富公式】！使用巴爾 (ilvl 99)、迪亞布羅 (ilvl 94)、尼拉塞克 (ilvl 92) 或 Terror Zone 邪惡威脅區域 (ilvl 91+) 掉落的大板，可用 3 顆雜碎紫/紅/黃等完美寶石無限洗出『+1 職業單系技能 + 41-45 生命』的天價畢業板！",
-    notesEn: "Endless source of wealth: reroll high-level Grand Charms for +1 Skill and +41-45 Life."
+notes: "高等級特大咒符重洗：以 3 顆完美寶石（紫、紅、黃等皆可）將魔法物品重洗為新的魔法物品，物品等級 (ilvl) 維持不變。巴爾 (ilvl 99)、迪亞布羅 (ilvl 94)、尼拉塞克 (ilvl 92) 或 Terror Zone 邪惡威脅區域 (ilvl 91+) 掉落的特大咒符，可反覆重洗以嘗試『+1 職業單系技能 + 41-45 生命』的詞綴組合。\n附註（洗技能板）：ilvl 91 以上的特大咒符（巴爾、迪亞布羅、尼拉塞克等來源）才有機會洗出 +1 職業單系技能與高生命；每次結果隨機，不保證洗出。",
+    notesEn: "Reroll high-level Grand Charms repeatedly while hunting for +1 Skill and +41-45 Life.\nSub-note (skiller boards): only grand charms with ilvl 91+ (e.g. from Baal, Diablo, Nihlathak) can roll +1 skill tree and high life; every reroll is random and nothing is guaranteed."
   },
   {
     id: "reroll_rare_item",
@@ -344,8 +332,8 @@ notes: "【神級致富公式】！使用巴爾 (ilvl 99)、迪亞布羅 (ilvl 9
     output: "全新屬性的稀有物品 (ilvl = 0.4 * clvl + 0.4 * 原 ilvl)",
         inputsEn: ["6x Perfect Skulls","1x Rare Item"],
     outputEn: "Rerolled Rare Item (ilvl = 0.4 * clvl + 0.4 * original ilvl)",
-notes: "洗權冠 (Diadem) 的最強神技！由於權冠具有極高的品質等級 (qlvl 85) 與魔法等級 (magic_lvl 18)，即使公式會降低 ilvl，洗權冠永遠能夠出現 +2 職業技能、20% FCR 與 2 孔的頂級詞綴！",
-    notesEn: "Godly on Diadems: qlvl 85 and magic_lvl 18 guarantees +2 Skills and 20% FCR can always roll!"
+notes: "權冠 (Diadem) 重洗說明：由於權冠具有極高的品質等級 (qlvl 85) 與魔法等級 (magic_lvl 18)，即使公式會降低 ilvl，洗權冠永遠能夠出現 +2 職業技能、20% FCR 與 2 孔的頂級詞綴！",
+    notesEn: "Rerolling Diadems: qlvl 85 and magic_lvl 18 guarantees +2 Skills and 20% FCR can always roll!"
   },
   {
     id: "repair_armor_recharge",
@@ -354,14 +342,14 @@ notes: "洗權冠 (Diadem) 的最強神技！由於權冠具有極高的品質�
     titleEn: "Fully Repair and Recharge Armor",
     inputs: [
       "1x 8# 拉爾 (Ral)",
-      "1x 瑕疵寶石 (Flawed Gem，充能選用)",
+      "1x 瑕疵寶石 (Flawed Gem，充能必要)",
       "1x 耐久度受損或充能耗盡的防具"
     ],
     output: "耐久度與聚氣次數 100% 完整修復的防具",
-        inputsEn: ["1x Ral (#8)","1x Flawed Gem (optional for spell charges)","1x Damaged/Depleted Armor"],
+        inputsEn: ["1x Ral (#8)","1x Flawed Gem (required for recharging)","1x Damaged/Depleted Armor"],
     outputEn: "Fully Repaired and Recharged Armor",
-notes: "節省數十萬修理費的神技！對於特等的 (Superior) 詞綴的謎團甲或剛毅甲，鐵匠修理費用常高達 50-80 萬金幣；使用 1 顆 8# Ral 放入方塊即可 0 元秒修！若加上 1 顆瑕疵寶石，還能同時補滿所有聚氣次數。",
-    notesEn: "Saves up to 800k gold repairing Superior Enigma or Fortitude armor."
+notes: "節省數十萬修理費的神技！對於特等的 (Superior) 詞綴的謎團甲或剛毅甲，鐵匠修理費用常高達 50-80 萬金幣；以方塊修理可省下這筆金幣。本配方的瑕疵寶石是必要材料，能在修滿耐久的同時補滿聚氣次數；只需修理時用「完全修理防具」（Ral + 防具）即可。無形裝備無法以此修復。",
+    notesEn: "Saves up to 800k gold repairing Superior Enigma or Fortitude armor. The flawed gem is required here: it refills charges along with full durability. For repair only, use Fully Repair Armor (Ral + armor). Ethereal items cannot be repaired this way."
   },
   {
     id: "repair_weapon_recharge",
@@ -370,29 +358,14 @@ notes: "節省數十萬修理費的神技！對於特等的 (Superior) 詞綴的
     titleEn: "Fully Repair and Recharge Weapon",
     inputs: [
       "1x 9# 歐特 (Ort)",
-      "1x 碎裂寶石 (Chipped Gem，充能選用)",
+      "1x 碎裂寶石 (Chipped Gem，充能必要)",
       "1x 耐久度受損或充能耗盡的武器"
     ],
     output: "耐久度與聚氣次數 100% 完整修復的武器",
-        inputsEn: ["1x Ort (#9)","1x Chipped Gem (optional for spell charges)","1x Damaged/Depleted Weapon"],
+        inputsEn: ["1x Ort (#9)","1x Chipped Gem (required for recharging)","1x Damaged/Depleted Weapon"],
     outputEn: "Fully Repaired and Recharged Weapon",
-notes: "使用 1 顆 9# Ort 即可完全修復任何非無形武器的耐久度，省去昂貴的鐵匠修理金幣。",
-    notesEn: "1x Ort completely repairs any non-ethereal weapon, saving costly blacksmith repair fees."
-  },
-  {
-    id: "cow_level_portal",
-    category: "misc",
-    title: "開啟秘密乳牛關 (The Secret Cow Level)",
-    titleEn: "Open The Secret Cow Level",
-    inputs: [
-      "1x 維特的腿 (Wirt's Leg - 於崔斯特姆左上角維特的屍體取得)",
-      "1x 城鎮傳送之書 (Tome of Town Portal)"
-    ],
-    output: "開啟通往【秘密乳牛關】的深紅色傳送門",
-        inputsEn: ["1x Wirt's Leg (from Wirt's corpse in Tristram)","1x Tome of Town Portal"],
-    outputEn: "Deep Red Portal to the Secret Cow Level",
-notes: "需在已擊敗該難度巴爾的狀態下，於第 1 章俠盜營地放入方塊轉化開啟。在 D2R 中擊殺『牛王 (Cow King)』後，未來仍然可以無限重複開啟乳牛關，不必再擔心鎖關！是刷鑲嵌底材與高階符文的聖地。",
-    notesEn: "In D2R, killing the Cow King no longer locks the Cow Level; you can open it infinitely!"
+notes: "本配方的碎裂寶石是必要材料，能在修滿非無形武器耐久的同時補滿聚氣次數，省去鐵匠修理金幣；只需修理時用「完全修理武器」（Ort + 武器）即可。",
+    notesEn: "The chipped gem is required here: it refills charges along with full durability on any non-ethereal weapon, saving blacksmith fees. For repair only, use Fully Repair Weapon (Ort + weapon)."
   }
 ];
 
