@@ -355,8 +355,8 @@ const UPGRADE_ITEMS: UpgradeSpotlight[] = [
       'Extremely cheap early ladder cost (Tal + Shael).',
       'Requires 88 Strength after the upgrade.',
     ],
-    whyUpgrade: '法系開荒最便宜的高收益升級。微小的符文代價換取穩定的基礎防禦強化，無損任何施法屬性。',
-    whyUpgradeEn: 'Cheapest high-yield caster upgrade for early ladders. Free extra defense for negligible low rune costs with zero downside.',
+    whyUpgrade: '以低階符文（7# 塔爾 + 13# 夏）將底材由輕型護手升級為戰鬥護手（進階）。升級後力量需求由 45 提高為 88，使用前請確認角色力量足夠。',
+    whyUpgradeEn: 'Uses low runes (Tal + Shael) to change the base from Light Gauntlets to Battle Gauntlets (Exceptional). The Strength requirement rises from 45 to 88, so check that your character has enough Strength before using it.',
   },
 ];
 
@@ -677,7 +677,7 @@ export const CubeCraftShowcase: React.FC<CubeCraftShowcaseProps> = ({
                         <div className="p-2.5 rounded-xl bg-sanctuary-900/80 border border-amber-600/30">
                           <div className="text-xs font-mono text-d2-gold font-bold mb-1 flex items-center gap-1">
                             <Sparkles className="w-3 h-3 text-d2-gold" />
-                            <span>{isEn ? 'GG Roll Goals (Trophy Cap):' : '🏆 頂級天價畢業詞綴 (GG Roll)：'}</span>
+                            <span>{isEn ? 'High affix targets:' : '較佳隨機詞綴目標：'}</span>
                           </div>
                           {(isEn ? item.ggRollEn : item.ggRoll).map((gg, gIdx) => (
                             <div key={gIdx} className="text-xs text-amber-200/90 leading-snug flex items-center gap-1">
